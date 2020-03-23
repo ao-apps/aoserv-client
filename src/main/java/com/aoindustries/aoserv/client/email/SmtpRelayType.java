@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2003-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -35,7 +35,7 @@ import java.sql.SQLException;
  * The <code>EmailSmtpRelayType</code> of an <code>EmailSmtpRelay</code>
  * controls the servers response.
  *
- * @see  EmailSmtpRelay
+ * @see  SmtpRelay
  *
  * @author  AO Industries, Inc.
  */

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -35,8 +35,8 @@ import java.sql.SQLException;
  * All of the possible Linux login shells are provided as
  * <code>Shell</code>s.
  *
- * @see  LinuxAccount
- * @see  LinuxAccountType
+ * @see  User
+ * @see  UserType
  *
  * @author  AO Industries, Inc.
  */

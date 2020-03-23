@@ -91,7 +91,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		/**
 		 * Determines if a name can be used as a GECOS field.  A GECOS field
 		 * is valid if it is between 1 and 100 characters in length and uses only
-		 * <code>[a-z,A-Z,0-9,-,_,@, ,.,#,=,/,$,%,^,&,*,(,),?,']</code> for each
+		 * {@code [a-z,A-Z,0-9,-,_,@, ,.,#,=,/,$,%,^,&,*,(,),?,']} for each
 		 * character.<br>
 		 * <br>
 		 * Refer to <code>man 5 passwd</code>
@@ -238,7 +238,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 	 *   <li>Be non-empty</li>
 	 *   <li>Be between 1 and 32 characters</li>
 	 *   <li>Must start with <code>[a-z]</code></li>
-	 *   <li>Uses only ASCII 0x21 through 0x7f, excluding <code>space , : ( ) [ ] ' " | & ; A-Z \ /</code></li>
+	 *   <li>Uses only ASCII 0x21 through 0x7f, excluding {@code space , : ( ) [ ] ' " | & ; A-Z \ /}</li>
 	 *   <li>
 	 *     If contains any @ symbol, must also be a valid email address.  Please note that the
 	 *     reverse is not implied - email addresses may exist that are not valid user names.
@@ -263,7 +263,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		/**
 		 * The maximum length of a Linux username.
 		 * <p>
-		 * <b>Implementation Note:</b><br />
+		 * <b>Implementation Note:</b><br>
 		 * 32 characters
 		 * </p>
 		 */
@@ -555,8 +555,8 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 	 * <code>LinuxAccount</code>.  The strength requirement
 	 * depends on the <code>LinuxAccountType</code>.
 	 *
-	 * @see  LinuxAccountType#enforceStrongPassword(String)
-	 * @see  PasswordChecker#checkPassword(String,String,boolean,boolean)
+	 * @see  UserType#getPasswordStrength(java.lang.String)
+	 * @see  PasswordChecker#checkPassword(com.aoindustries.aoserv.client.account.User.Name, java.lang.String, com.aoindustries.aoserv.client.password.PasswordChecker.PasswordStrength)
 	 */
 	public static List<PasswordChecker.Result> checkPassword(Name username, String type, String password) throws IOException {
 		return PasswordChecker.checkPassword(username, password, UserType.getPasswordStrength(type));

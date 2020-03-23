@@ -1404,7 +1404,7 @@ final public class Server
 
 		/**
 		 * Gets the number of kilobytes of data out of sync, in Kibibytes.
-		 * @link http://www.drbd.org/users-guide/ch-admin.html#s-performance-indicators
+		 * <a href="http://www.drbd.org/users-guide/ch-admin.html#s-performance-indicators">http://www.drbd.org/users-guide/ch-admin.html#s-performance-indicators</a>
 		 */
 		public Long getOutOfSync() {
 			return outOfSync;
@@ -2392,7 +2392,7 @@ final public class Server
 	/**
 	 * Gets the filesystem states report.
 	 *
-	 * @Deprecated  Use {@code getFilesystemsCsvReport()} instead to let the API parse the report.
+	 * @deprecated  Use {@code getFilesystemsCsvReport()} instead to let the API parse the report.
 	 */
 	public String getFilesystemsCsvReport() throws IOException, SQLException {
 		return table.getConnector().requestStringQuery(true, AoservProtocol.CommandID.GET_AO_SERVER_FILESYSTEMS_CSV_REPORT, pkey);

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -32,7 +32,7 @@ import java.sql.SQLException;
  * The table containing all of the possible types of actions that may
  * be performed on a ticket.
  *
- * @see TicketAction
+ * @see Action
  * @see Ticket
  *
  * @author  AO Industries, Inc.

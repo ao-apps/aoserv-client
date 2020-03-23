@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -45,7 +45,7 @@ import java.util.List;
  * email arrives in the inbox, it may be retrieved via one of
  * several mail protocols, including the common POP3 and IMAP.
  *
- * @see  LinuxAccount
+ * @see  User
  * @see  Address
  *
  * @author  AO Industries, Inc.

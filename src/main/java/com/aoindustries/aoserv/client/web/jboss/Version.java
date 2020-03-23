@@ -39,7 +39,7 @@ import java.sql.SQLException;
  * EJB Container.  Sites configured to use JBoss are called
  * HttpdJBossSites.
  *
- * @see  HttpdJBossSite
+ * @see  Site
  * @see  SoftwareVersion
  *
  * @author  AO Industries, Inc.

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -24,6 +24,7 @@ package com.aoindustries.aoserv.client.email;
 
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.net.Bind;
+import com.aoindustries.aoserv.client.net.IpAddress;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.stream.StreamableInput;
@@ -113,7 +114,7 @@ final public class SendmailBind extends CachedObjectIntegerKey<SendmailBind> {
 	 * The name is unique per-{@link SendmailServer}.
 	 * The name will never contain a space.
 	 * Will default to a generated value based on {@link SendmailServer#getHostname()} or
-	 * {@link IPAddress#getHostname()} if not specified.
+	 * {@link IpAddress#getHostname()} if not specified.
 	 */
 	public String getName() {
 		assert name == null || name.indexOf(' ') == -1;

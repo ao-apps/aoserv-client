@@ -52,7 +52,7 @@ import java.util.concurrent.ConcurrentMap;
  * that are common to all servers.
  *
  * @see  UserServer
- * @see  MySQLDBUser
+ * @see  DatabaseUser
  *
  * @author  AO Industries, Inc.
  */
@@ -80,7 +80,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		/**
 		 * The maximum length of a MySQL username.
 		 * <p>
-		 * <b>Implementation Note:</b><br />
+		 * <b>Implementation Note:</b><br>
 		 * 32 characters as of <a href="https://dev.mysql.com/doc/relnotes/mysql/5.7/en/news-5-7-8.html">MySQL 5.7.8</a>
 		 * </p>
 		 */
@@ -189,7 +189,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 	/**
 	 * The maximum length of a MySQL username.
 	 *
-	 * @deprecated  Please use {@link MySQLUserId#MAX_LENGTH} instead.
+	 * @deprecated  Please use {@link Name#MAX_LENGTH} instead.
 	 */
 	@Deprecated
 	public static final int MAX_USERNAME_LENGTH = Name.MAX_LENGTH;

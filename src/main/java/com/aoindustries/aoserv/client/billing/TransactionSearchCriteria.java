@@ -30,6 +30,7 @@ import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.payment.PaymentType;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Type;
+import com.aoindustries.io.stream.Streamable;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.sql.UnmodifiableTimestamp;
@@ -219,7 +220,7 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 	/**
 	 * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
 	 *
-	 * @see  #read(StreamableInput,AOServProtocol.Version)
+	 * @see  #read(com.aoindustries.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
 	 */
 	@Deprecated
 	@Override
@@ -306,7 +307,7 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 	/**
 	 * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
 	 *
-	 * @see  #write(StreamableOutput,AOServProtocol.Version)
+	 * @see  #write(com.aoindustries.io.stream.StreamableOutput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
 	 */
 	@Deprecated
 	@Override

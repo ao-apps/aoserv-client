@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2009-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2009-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -25,6 +25,7 @@ package com.aoindustries.aoserv.client.reseller;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.CachedObjectAccountNameKey;
 import com.aoindustries.aoserv.client.email.Address;
+import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.linux.UserServer;
 import com.aoindustries.aoserv.client.net.Bind;
 import com.aoindustries.aoserv.client.pki.EncryptionKey;

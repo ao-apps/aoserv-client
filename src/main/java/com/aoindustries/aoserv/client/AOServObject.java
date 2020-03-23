@@ -445,7 +445,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	/**
 	 * {@inheritDoc}
 	 * <p>
-	 * <b>Implementation Note:</b><br />
+	 * <b>Implementation Note:</b><br>
 	 * This default implementation considers the object equal when it is the same class
 	 * (via {@link #getClass()} and has equal keys (via {@link #getKey()}).
 	 * </p>
@@ -502,7 +502,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	/**
 	 * {@inheritDoc}
 	 * <p>
-	 * <b>Implementation Note:</b><br />
+	 * <b>Implementation Note:</b><br>
 	 * This default implementation calls {@link #hashCode()} on the key (from {@link #getKey()}).
 	 * </p>
 	 */
@@ -538,7 +538,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	/**
 	 * {@inheritDoc}
 	 * <p>
-	 * <b>Implementation Note:</b><br />
+	 * <b>Implementation Note:</b><br>
 	 * This default implementation calls {@link #toStringImpl()}, which
 	 * is allowed to throw exceptions.
 	 * </p>
@@ -559,7 +559,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	/**
 	 * {@link #toString()} implementation that is allowed to throw exceptions.
 	 * <p>
-	 * <b>Implementation Note:</b><br />
+	 * <b>Implementation Note:</b><br>
 	 * This default implementation calls {@link #toString()} on the key (from {@link #getKey()}).
 	 * When the key is {@code null}, uses the default implementation from {@link Object#toString()}.
 	 * </p>

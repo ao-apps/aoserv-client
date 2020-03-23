@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -33,9 +33,9 @@ import com.aoindustries.aoserv.client.linux.User;
 import com.aoindustries.aoserv.client.net.IpAddress;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
+import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
-import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.Email;
 import com.aoindustries.util.IntList;
@@ -45,7 +45,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * @see  HttpdTomcatStdSite
+ * @see  PrivateTomcatSite
  *
  * @author  AO Industries, Inc.
  */

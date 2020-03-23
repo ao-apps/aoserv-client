@@ -253,7 +253,7 @@ final public class List extends CachedObjectIntegerKey<List> implements Removabl
 	 *
 	 * TODO: Self-validating type
 	 *
-	 * @see  OperatingSystemVersion#isValidEmailListRegularPath(com.aoindustries.aoserv.client.validator.UnixPath)
+	 * @see  OperatingSystemVersion#isValidEmailListRegularPath(com.aoindustries.aoserv.client.linux.PosixPath)
 	 */
 	public static boolean isValidRegularPath(PosixPath path, int osv) {
 		// Must start with LIST_DIRECTORY

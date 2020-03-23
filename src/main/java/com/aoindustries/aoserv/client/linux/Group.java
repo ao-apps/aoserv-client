@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -66,7 +66,7 @@ final public class Group extends CachedObjectGroupNameKey<Group> implements Remo
 	 *   <li>Be non-empty</li>
 	 *   <li>Be between 1 and 32 characters</li>
 	 *   <li>Must start with <code>[a-z]</code></li>
-	 *   <li>Uses only ASCII 0x21 through 0x7f, excluding <code>space , : ( ) [ ] ' " | & ; A-Z \ / @</code></li>
+	 *   <li>Uses only ASCII 0x21 through 0x7f, excluding {@code space , : ( ) [ ] ' " | & ; A-Z \ / @}</li>
 	 *   <li>TODO: May only end on "$"?</li>
 	 * </ul>
 	 *

@@ -83,7 +83,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 	 *   <li>Be non-empty</li>
 	 *   <li>Be between 1 and 255 characters</li>
 	 *   <li>Must start with <code>[a-z]</code></li>
-	 *   <li>Uses only ASCII 0x21 through 0x7f, excluding <code>space , : ( ) [ ] ' " | & ; A-Z \ /</code></li>
+	 *   <li>Uses only ASCII 0x21 through 0x7f, excluding {@code space , : ( ) [ ] ' " | & ; A-Z \ /}</li>
 	 *   <li>
 	 *     If contains any @ symbol, must also be a valid email address.  Please note that the
 	 *     reverse is not implied - email addresses may exist that are not valid user ids.

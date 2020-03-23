@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2006-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2006-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -547,7 +547,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 	/**
 	 * The maximum length of the name.
 	 *
-	 * @deprecated  Please use {@link MySQLServerName#MAX_LENGTH} instead.
+	 * @deprecated  Please use {@link Name#MAX_LENGTH} instead.
 	 */
 	@Deprecated
 	public static final int MAX_SERVER_NAME_LENGTH = Name.MAX_LENGTH;

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2017, 2018, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -25,7 +25,7 @@ package com.aoindustries.aoserv.client.linux;
 import com.aoindustries.aoserv.client.CachedObject;
 
 /**
- * An object that is cached and uses {@link GroupName} as its primary key,
+ * An object that is cached and uses {@link Group.Name} as its primary key,
  *
  * @author  AO Industries, Inc.
  */

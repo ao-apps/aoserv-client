@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -39,7 +39,7 @@ public interface Removable {
 	/**
 	 * Lists the reasons an object may not be removed.
 	 *
-	 * @return  an empty <code>List<CannotRemoveReason></code> if this object may be removed, or a list of descriptions
+	 * @return  an empty {@code List<CannotRemoveReason>} if this object may be removed, or a list of descriptions
 	 */
 	List<? extends CannotRemoveReason<?>> getCannotRemoveReasons() throws IOException, SQLException;
 

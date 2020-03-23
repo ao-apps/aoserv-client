@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2003-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -307,14 +307,14 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 	}
 
 	/**
-	 * @see  EmailList#getListPath(java.lang.String, int)
+	 * @see  List#getListPath(java.lang.String, int)
 	 */
 	public PosixPath getEmailListPath(String name) throws ValidationException {
 		return List.getListPath(name, pkey);
 	}
 
 	/**
-	 * @see  EmailList#isValidRegularPath(com.aoindustries.aoserv.client.validator.UnixPath, int)
+	 * @see  List#isValidRegularPath(com.aoindustries.aoserv.client.linux.PosixPath, int)
 	 */
 	public boolean isValidEmailListRegularPath(PosixPath path) {
 		return List.isValidRegularPath(path, pkey);

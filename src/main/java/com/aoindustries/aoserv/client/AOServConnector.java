@@ -902,7 +902,7 @@ abstract public class AOServConnector implements SchemaParent {
 	 *
 	 * @param  connection  the connection to release
 	 *
-	 * @exception  if an error occurred while closing or releasing the conection
+	 * @throws  IOException  if an error occurred while closing or releasing the connection
 	 *
 	 * @see  #getConnection
 	 */

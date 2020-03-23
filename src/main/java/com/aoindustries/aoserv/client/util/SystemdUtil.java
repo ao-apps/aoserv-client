@@ -22,6 +22,8 @@
  */
 package com.aoindustries.aoserv.client.util;
 
+import com.aoindustries.aoserv.client.email.SendmailServer;
+import com.aoindustries.aoserv.client.web.HttpdServer;
 import com.aoindustries.lang.Strings;
 import java.nio.charset.StandardCharsets;
 

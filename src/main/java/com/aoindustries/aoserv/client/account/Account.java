@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -562,7 +562,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	}
 
 	/**
-	 * @deprecated  Please use {@link NoticeLogTable#addNoticeLog(com.aoindustries.aoserv.client.account.Account, java.lang.String, com.aoindustries.net.Email, com.aoindustries.aoserv.client.billing.NoticeType, com.aoindustries.aoserv.client.billing.Transaction)
+	 * @deprecated  Please use {@link NoticeLogTable#addNoticeLog(com.aoindustries.aoserv.client.account.Account, java.lang.String, com.aoindustries.net.Email, com.aoindustries.aoserv.client.billing.NoticeType, com.aoindustries.aoserv.client.billing.Transaction)}
 	 */
 	@Deprecated
 	public void addNoticeLog(
@@ -602,7 +602,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	}
 
 	/**
-	 * @deprecated  Please use {@link TransactionTable#add(int, java.sql.Timestamp, com.aoindustries.aoserv.client.account.Account, com.aoindustries.aoserv.client.account.Account, com.aoindustries.aoserv.client.account.Administrator, com.aoindustries.aoserv.client.billing.TransactionType, java.lang.String, int, com.aoindustries.util.i18n.Money, com.aoindustries.aoserv.client.payment.PaymentType, java.lang.String, com.aoindustries.aoserv.client.payment.Processor, byte)
+	 * @deprecated  Please use {@link TransactionTable#add(int, java.sql.Timestamp, com.aoindustries.aoserv.client.account.Account, com.aoindustries.aoserv.client.account.Account, com.aoindustries.aoserv.client.account.Administrator, com.aoindustries.aoserv.client.billing.TransactionType, java.lang.String, int, com.aoindustries.util.i18n.Money, com.aoindustries.aoserv.client.payment.PaymentType, java.lang.String, com.aoindustries.aoserv.client.payment.Processor, byte)}
 	 */
 	@Deprecated
 	public int addTransaction(
@@ -746,7 +746,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	}
 
 	/**
-	 * @deprecated  Please use {@link TransactionTable#getAccountBalance(com.aoindustries.aoserv.client.account.Account, long)} directly
+	 * @deprecated  Please use {@link TransactionTable#getAccountBalance(com.aoindustries.aoserv.client.account.Account, java.sql.Timestamp)} directly
 	 */
 	@Deprecated
 	public Monies getAccountBalance(Timestamp before) throws IOException, SQLException {
@@ -768,9 +768,9 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	/**
 	 * Gets a comma-separated list of account balances before a given time.
 	 *
-	 * @see  #getAccountBalance(long)
+	 * @see  #getAccountBalance(java.sql.Timestamp)
 	 *
-	 * @deprecated  Please use {@link #getAccountBalance(long)} and {@link Monies#toString()} instead
+	 * @deprecated  Please use {@link #getAccountBalance(java.sql.Timestamp)} and {@link Monies#toString()} instead
 	 */
 	@Deprecated
 	public String getAccountBalanceString(Timestamp before) throws IOException, SQLException {
@@ -902,7 +902,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	}
 
 	/**
-	 * @deprecated  Please use {@link TransactionTable#getConfirmedAccountBalance(com.aoindustries.aoserv.client.account.Account, long)} directly
+	 * @deprecated  Please use {@link TransactionTable#getConfirmedAccountBalance(com.aoindustries.aoserv.client.account.Account, java.sql.Timestamp)} directly
 	 */
 	@Deprecated
 	public Monies getConfirmedAccountBalance(Timestamp before) throws IOException, SQLException {

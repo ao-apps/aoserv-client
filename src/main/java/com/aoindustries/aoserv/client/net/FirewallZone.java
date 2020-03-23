@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -76,7 +76,7 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
 	 * </ol>
 	 * <p>
 	 * Additionally, we tried creating a new zone with some UTF-8 characters, specifically Japanese,
-	 * and <code>firewalld-cmd</code> just stalled, not even responding to <kbd>Ctrl-C</kbd>.  We are implementing with a
+	 * and <code>firewalld-cmd</code> just stalled, not even responding to <code>Ctrl-C</code>.  We are implementing with a
 	 * strict ASCII-compatible definition of "alphanumeric".
 	 * </p>
 	 *

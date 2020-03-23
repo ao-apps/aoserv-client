@@ -38,7 +38,7 @@ import java.sql.SQLException;
  * configured in several ways, only what is common to every type of
  * JBoss installation is stored in <code>HttpdJBossSite</code>.
  *
- * @see  HttpdSite
+ * @see  com.aoindustries.aoserv.client.web.Site
  *
  * @author  AO Industries, Inc.
  */

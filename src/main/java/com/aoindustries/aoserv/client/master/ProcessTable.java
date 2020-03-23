@@ -45,7 +45,6 @@ final public class ProcessTable extends AOServTable<SmallIdentifier,Process> {
 
 	/**
 	 * Data comes from the server sorted.
-	 * @return
 	 */
 	@Override
 	protected OrderBy[] getDefaultOrderBy() {

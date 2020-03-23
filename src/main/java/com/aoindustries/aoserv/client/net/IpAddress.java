@@ -25,15 +25,16 @@ package com.aoindustries.aoserv.client.net;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.billing.Package;
+import com.aoindustries.aoserv.client.ftp.PrivateServer;
 import com.aoindustries.aoserv.client.net.monitoring.IpAddressMonitoring;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
+import com.aoindustries.lang.Strings;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.sql.UnmodifiableTimestamp;
-import com.aoindustries.lang.Strings;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -53,7 +54,7 @@ import java.util.concurrent.ConcurrentMap;
  * @see  Host
  * @see  Package
  * @see  Bind
- * @see  PrivateFTPServer
+ * @see  PrivateServer
  *
  * @author  AO Industries, Inc.
  */

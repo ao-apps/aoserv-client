@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2014, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2014, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -39,7 +39,7 @@ import java.sql.SQLException;
  * details about which values should be used in the destination field, and whether
  * a priority, weight, and port should exist.
  *
- * @see  DNSRecord
+ * @see  Record
  *
  * @author  AO Industries, Inc.
  */

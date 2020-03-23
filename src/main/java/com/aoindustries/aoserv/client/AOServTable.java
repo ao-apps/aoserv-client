@@ -520,7 +520,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 	/**
 	 * Gets the ComparisonSortAlgorithm used to sort the table.
 	 * <p>
-	 * <b>Implementation Note:</b><br />
+	 * <b>Implementation Note:</b><br>
 	 * Defaults to {@link JavaSort}.
 	 * </p>
 	 */
@@ -649,9 +649,9 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 	/**
 	 * Gets the rows in a more efficient, indexed manner.
 	 * <p>
-	 * <b>Implementation Note:</b><br />
+	 * <b>Implementation Note:</b><br>
 	 * This default implementation simply throws UnsupportedOperationException.
-	 * </p>>
+	 * </p>
 	 *
 	 * @exception UnsupportedOperationException if not supported by the specific table implementation
 	 */

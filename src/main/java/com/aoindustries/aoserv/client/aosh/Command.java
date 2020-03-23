@@ -35,8 +35,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Information about every command in the <code>AOSH</code> is
- * available through the use of <code>AOSHCommand<code>s.
+ * Information about every command in the {@link AOSH} is
+ * available through the use of {@link Command}.
  *
  * @see AOSH
  *

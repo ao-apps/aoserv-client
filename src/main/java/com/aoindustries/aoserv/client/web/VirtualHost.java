@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -342,8 +342,8 @@ final public class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
 	 * <li>{@code null} - Automatic mode</li>
 	 * <li>{@code "true"} - Include manually enabled</li>
 	 * <li>{@code "false"} - Include manually disabled</li>
-	 * <li>{@code "IfModule &lt;module_name&gt;"} - Include when a module is enabled</li>
-	 * <li>{@code "IfModule !&lt;module_name&gt;"} - Include when a module is disabled</li>
+	 * <li>{@code "IfModule <module_name>"} - Include when a module is enabled</li>
+	 * <li>{@code "IfModule !<module_name>"} - Include when a module is disabled</li>
 	 * <li>Any future unrecognized value should be treated as equivalent to {@code null} (automatic mode)</li>
 	 * </ul>
 	 */

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -30,9 +30,9 @@ import com.aoindustries.aoserv.client.password.PasswordChecker;
 import com.aoindustries.aoserv.client.password.PasswordProtected;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
+import com.aoindustries.io.FastExternalizable;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
-import com.aoindustries.io.FastExternalizable;
 import com.aoindustries.validation.InvalidResult;
 import com.aoindustries.validation.ValidResult;
 import com.aoindustries.validation.ValidationException;
@@ -176,7 +176,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Removab
 	/**
 	 * The maximum length of a PostgreSQL username.
 	 *
-	 * @deprecated  Please use {@link PostgresUserId#MAX_LENGTH} instead.
+	 * @deprecated  Please use {@link Name#MAX_LENGTH} instead.
 	 */
 	@Deprecated
 	public static final int MAX_USERNAME_LENGTH = Name.MAX_LENGTH;
