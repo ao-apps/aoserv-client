@@ -98,6 +98,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<links>
 								<link>${javadoc.link.javase}</link>
 								<!-- Direct -->
+								<link>https://aoindustries.com/ao-collections/apidocs/</link>
 								<link>https://aoindustries.com/ao-lang/apidocs/</link>
 								<link>https://aoindustries.com/ao-net-types/apidocs/</link>
 								<link>https://aoindustries.com/ao-style/apidocs/</link>
@@ -120,6 +121,9 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 				<groupId>mysql</groupId><artifactId>mysql-connector-java</artifactId><version>8.0.19</version>
 			</dependency>
 			<!-- Direct -->
+			<dependency>
+				<groupId>com.aoindustries</groupId><artifactId>ao-collections</artifactId><version>1.0.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
+			</dependency>
 			<dependency>
 				<groupId>com.aoindustries</groupId><artifactId>ao-lang</artifactId><version>4.0.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
 			</dependency>
@@ -146,6 +150,9 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 			<scope>test</scope>
 		</dependency>
 		<!-- Direct -->
+		<dependency>
+			<groupId>com.aoindustries</groupId><artifactId>ao-collections</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>com.aoindustries</groupId><artifactId>ao-lang</artifactId>
 		</dependency>

@@ -37,7 +37,6 @@ import com.aoindustries.dto.DtoFactory;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.Port;
-import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.Internable;
 import com.aoindustries.validation.InvalidResult;
 import com.aoindustries.validation.ValidResult;
@@ -52,6 +51,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -268,7 +268,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 	 * preference.  Index <code>0</code> is the most
 	 * preferred.
 	 */
-	public static final List<String> PREFERRED_VERSION_PREFIXES = AoCollections.optimalUnmodifiableList(
+	public static final List<String> PREFERRED_VERSION_PREFIXES = Collections.unmodifiableList(
 		Arrays.asList(
 			VERSION_8_0_PREFIX,
 			VERSION_5_7_PREFIX,

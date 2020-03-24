@@ -56,9 +56,11 @@ import com.aoindustries.aoserv.client.scm.CvsRepository;
 import com.aoindustries.aoserv.client.web.HttpdServer;
 import com.aoindustries.aoserv.client.web.Site;
 import com.aoindustries.aoserv.client.web.tomcat.SharedTomcat;
+import com.aoindustries.collections.AoCollections;
 import com.aoindustries.dto.DtoFactory;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
+import com.aoindustries.lang.Strings;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.Email;
 import com.aoindustries.net.HostAddress;
@@ -66,10 +68,8 @@ import com.aoindustries.net.InetAddress;
 import com.aoindustries.net.Port;
 import com.aoindustries.net.URIParameters;
 import com.aoindustries.sql.UnmodifiableTimestamp;
-import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.BufferManager;
 import com.aoindustries.util.InternUtils;
-import com.aoindustries.lang.Strings;
 import com.aoindustries.util.WrappedException;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -2394,6 +2394,7 @@ final public class Server
 	 *
 	 * @deprecated  Use {@code getFilesystemsCsvReport()} instead to let the API parse the report.
 	 */
+	@Deprecated
 	public String getFilesystemsCsvReport() throws IOException, SQLException {
 		return table.getConnector().requestStringQuery(true, AoservProtocol.CommandID.GET_AO_SERVER_FILESYSTEMS_CSV_REPORT, pkey);
 	}
