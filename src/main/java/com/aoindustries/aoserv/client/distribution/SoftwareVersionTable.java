@@ -133,7 +133,7 @@ final public class SoftwareVersionTable extends GlobalTableIntegerKey<SoftwareVe
 		// Prepare names
 		String[] nameWords = null;
 		if (name != null) {
-			nameWords=Strings.splitString(name);
+			nameWords=Strings.split(name);
 			int len = nameWords.length;
 			for (int c = 0; c < len; c++) nameWords[c]=nameWords[c].toLowerCase();
 		}
@@ -141,7 +141,7 @@ final public class SoftwareVersionTable extends GlobalTableIntegerKey<SoftwareVe
 		// Version
 		String[] versionWords = null;
 		if (version != null) {
-			versionWords = Strings.splitString(version);
+			versionWords = Strings.split(version);
 			int len = versionWords.length;
 			for (int c = 0; c < len; c++) versionWords[c]=versionWords[c].toLowerCase();
 		}

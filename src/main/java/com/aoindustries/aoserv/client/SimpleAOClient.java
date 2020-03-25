@@ -420,7 +420,7 @@ final public class SimpleAOClient {
 	 */
 	private Category getTicketCategory(String path) throws IllegalArgumentException, IOException, SQLException {
 		Category tc = null;
-		for(String name : Strings.splitString(path, '/')) {
+		for(String name : Strings.split(path, '/')) {
 			Category newTc = connector.getReseller().getCategory().getTicketCategory(tc, name);
 			if(newTc==null) {
 				if(tc==null) throw new IllegalArgumentException("Unable to find top-level TicketCategory: "+name);

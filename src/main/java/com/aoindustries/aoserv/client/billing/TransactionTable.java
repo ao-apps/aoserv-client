@@ -414,7 +414,7 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 
 	private static boolean matchesWords(String value, String words) {
 		String lower = value == null ? null : value.toLowerCase(Locale.ROOT);
-		for(String word : Strings.splitString(words)) {
+		for(String word : Strings.split(words)) {
 			if(lower == null || !lower.contains(word.toLowerCase(Locale.ROOT))) {
 				return false;
 			}

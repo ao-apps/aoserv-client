@@ -118,7 +118,7 @@ final public class List extends CachedObjectIntegerKey<List> implements Removabl
 	 */
 	public int getAddressListCount() throws IOException, SQLException {
 		String list=getAddressList();
-		java.util.List<String> lines=Strings.splitString(list, '\n');
+		java.util.List<String> lines=Strings.split(list, '\n');
 		int count=0;
 		for(String line : lines) {
 			if(line.trim().length()>0) count++;

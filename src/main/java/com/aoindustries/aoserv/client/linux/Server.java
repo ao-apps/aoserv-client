@@ -1222,7 +1222,7 @@ final public class Server
 		List<MdMismatchReport> reports = new ArrayList<>(lines.size());
 		for(String line : lines) {
 			lineNum++;
-			List<String> values = Strings.splitString(line, '\t');
+			List<String> values = Strings.split(line, '\t');
 			if(values.size() != 3) {
 				throw new ParseException(
 					accessor.getMessage(
@@ -1427,7 +1427,7 @@ final public class Server
 		List<DrbdReport> reports = new ArrayList<>(lines.size());
 		for(String line : lines) {
 			lineNum++;
-			List<String> values = Strings.splitString(line, '\t');
+			List<String> values = Strings.split(line, '\t');
 			if(values.size() != 7) {
 				throw new ParseException(
 					accessor.getMessage(
@@ -1585,7 +1585,7 @@ final public class Server
 				for(int c=0;c<size;c++) {
 					final int lineNum = c+1;
 					String line = lines.get(c);
-					List<String> fields = Strings.splitString(line, '\t');
+					List<String> fields = Strings.split(line, '\t');
 					if(fields.size()!=6) throw new ParseException(
 						accessor.getMessage(
 							"Server.LvmReport.VolumeGroup.parseVgsReport.badColumnCount",
@@ -1711,7 +1711,7 @@ final public class Server
 				for(int c=0;c<size;c++) {
 					final int lineNum = c+1;
 					String line = lines.get(c);
-					List<String> fields = Strings.splitString(line, '\t');
+					List<String> fields = Strings.split(line, '\t');
 					if(fields.size()!=5) throw new ParseException(
 						accessor.getMessage(
 							"Server.LvmReport.PhysicalVolume.parsePvsReport.badColumnCount",
@@ -1906,7 +1906,7 @@ final public class Server
 				for(int c=0;c<size;c++) {
 					final int lineNum = c+1;
 					final String line = lines.get(c);
-					final List<String> fields = Strings.splitString(line, '\t');
+					final List<String> fields = Strings.split(line, '\t');
 					if(fields.size()!=7) throw new ParseException(
 						accessor.getMessage(
 							"Server.LvmReport.LogicalVolume.parseLsvReport.badColumnCount",
@@ -1921,7 +1921,7 @@ final public class Server
 					final SegmentType segType = SegmentType.valueOf(fields.get(3).trim());
 					final int stripeCount = Integer.parseInt(fields.get(4).trim());
 					final long segStartPe = Long.parseLong(fields.get(5).trim());
-					final List<String> segPeRanges = Strings.splitString(fields.get(6).trim(), ' ');
+					final List<String> segPeRanges = Strings.split(fields.get(6).trim(), ' ');
 
 					// Find the volume group
 					VolumeGroup volumeGroup = volumeGroups.get(vgName);
@@ -2581,7 +2581,7 @@ final public class Server
 		if(lines.isEmpty()) throw new IOException("No lines from report");
 		for(int i=0, numLines=lines.size(); i<numLines; i++) {
 			String line = lines.get(i);
-			List<String> columns = Strings.splitString(line, "\",\"");
+			List<String> columns = Strings.split(line, "\",\"");
 			if(columns.size() != 15) throw new IOException("Line does not have 15 columns: " + columns.size());
 			String mountPoint = columns.get(0);
 			if(!mountPoint.startsWith("\"")) throw new AssertionError();

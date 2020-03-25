@@ -80,7 +80,7 @@ final public class IpAddress extends CachedObjectIntegerKey<IpAddress> {
 		Integer result = intForIPAddressCache.get(ipAddress);
 		if(result==null) {
 			// There must be four octets with . between
-			List<String> octets=Strings.splitString(ipAddress, '.');
+			List<String> octets=Strings.split(ipAddress, '.');
 			if(octets.size()!=4) throw new IllegalArgumentException("Invalid IP address: "+ipAddress);
 
 			// Each octet should be from 1 to 3 digits, all numbers

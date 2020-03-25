@@ -465,7 +465,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 		final String LIST = "https://jdbc.postgresql.org/documentation/documentation.html";
 		final String HEAD = "https://jdbc.postgresql.org/documentation/head/index.html";
 		String version = getPostgresServer().getVersion().getTechnologyVersion(table.getConnector()).getVersion();
-		List<String> split = Strings.splitString(version, '.');
+		List<String> split = Strings.split(version, '.');
 		if(split.size() < 2) {
 			return LIST;
 		} else {

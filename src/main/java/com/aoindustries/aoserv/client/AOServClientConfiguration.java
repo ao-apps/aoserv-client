@@ -65,7 +65,7 @@ final public class AOServClientConfiguration {
 	 * Gets the list of protocols in preferred order.
 	 */
 	static List<String> getProtocols() throws ConfigurationException {
-		return Strings.splitStringCommaSpace(getProperty("aoserv.client.protocols"));
+		return Strings.splitCommaSpace(getProperty("aoserv.client.protocols"));
 	}
 
 	/**
