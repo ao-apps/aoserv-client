@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2010-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2010-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -25,8 +25,8 @@ package com.aoindustries.aoserv.client.pki;
 
 import static com.aoindustries.aoserv.client.pki.ApplicationResources.accessor;
 import com.aoindustries.dto.DtoFactory;
+import com.aoindustries.exception.WrappedException;
 import com.aoindustries.util.Base64Coder;
-import com.aoindustries.util.WrappedException;
 import com.aoindustries.validation.InvalidResult;
 import com.aoindustries.validation.ValidResult;
 import com.aoindustries.validation.ValidationException;

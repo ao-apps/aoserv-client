@@ -1114,7 +1114,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 
 	@SuppressWarnings("deprecation")
 	public void move(Server from, Server to, TerminalWriter out) throws IOException, SQLException {
-		if(true) throw new com.aoindustries.lang.NotImplementedException("TODO: Finish implementation");
+		if(true) throw new com.aoindustries.exception.NotImplementedException("TODO: Finish implementation");
 		if(from.equals(to)) throw new SQLException("Cannot move from Server "+from.getHostname()+" to Server "+to.getHostname()+": same Server");
 
 		AccountHost fromAccountHost = getAccountHost(from.getHost());
