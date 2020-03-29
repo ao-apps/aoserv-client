@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2020-03-19T10:18:58-05:00"
+		dateModified="2020-03-29T04:35:29-05:00"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -82,49 +82,59 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					<li>Look into jOOQ: https://www.jooq.org/</li>
 				</ul>
 				-->
-				<ul>
-					<li>Minimum Java version changed from 1.7 to 1.8.</li>
-					<li>
-						Reduced use of property substitutions in <code>pom.xml</code>.
-						This is to help 3rd-party parsers that fail to perform full Maven-compatible substitutions.
-					</li>
-					<li>Fixed bug wrong column returned for "canceled".</li>
-					<li>Added support for <ao:a href="https://www.postgresql.org/docs/12/index.html">PostgreSQL 12</ao:a>.</li>
-					<li>Connection pool statistics and password checker results HTML generation now support both SGML and XML serializations.</li>
-					<li>Now supporting <ao:a href="https://tomcat.apache.org/tomcat-9.0-doc/config/ajp.html">Tomcat's <code>tomcatAuthentication</code> configuration</ao:a>:
-						<ol>
-							<li>Added column <code>web.tomcat.PrivateTomcatSite.tomcatAuthentication</code></li>
-							<li>Added AOSH command <code>web.tomcat.PrivateTomcatSite.tomcatAuthentication.set</code></li>
-							<li>Added column <code>web.tomcat.SharedTomcat.tomcatAuthentication</code></li>
-							<li>Added AOSH command <code>web.tomcat.SharedTomcat.tomcatAuthentication.set</code></li>
-						</ol>
-					</li>
-					<li><code>AOServConnector.getConnector(…)</code> may now be obtained without any checked exceptions:
-						<ol>
-							<li><code>AOServClientConfiguration</code> throws <code>ConfigurationException</code></li>
-							<li><code>AOServConnector.getConnector(…)</code> throws <code>ConfigurationException</code></li>
-							<li>Removed other unnecessary uses of <code>IOException</code> incorrectly left in <code>Schema</code> constructors.</li>
-						</ol>
-					</li>
-					<li>Fixed ambiguous definitions of <code>PROTOCOL</code>, now:
-						<ol>
-							<li><code>TCPConnector.TCP_PROTOCOL</code></li>
-							<li><code>SSLConnector.SSL_PROTOCOL</code></li>
-						</ol>
-					</li>
-					<li>
-						<code>TicketLoggingHandler</code> significantly reworked
-						to be compatible with <code>logging.properties</code>.
-					</li>
-					<li>
-						<code>AOServConnector.getConnector(…)</code> no longer takes a <code>Logger</code> argument.
-						It will use a logger based on the selected implementation class.
-					</li>
-					<li>Updated dependencies.</li>
-					<li>Changed default CVS repository permissions from <code>0770</code> to <code>02770</code>.</li>
-				</ul>
 			</changelog:release>
 		</c:if>
+
+		<changelog:release
+			projectName="@{documented.name}"
+			version="1.84.0"
+			datePublished="2020-03-29T04:35:29-05:00"
+			groupId="@{project.groupId}"
+			artifactId="@{documented.artifactId}"
+			scmUrl="@{project.scm.url}"
+		>
+			<ul>
+				<li>Minimum Java version changed from 1.7 to 1.8.</li>
+				<li>
+					Reduced use of property substitutions in <code>pom.xml</code>.
+					This is to help 3rd-party parsers that fail to perform full Maven-compatible substitutions.
+				</li>
+				<li>Fixed bug wrong column returned for "canceled".</li>
+				<li>Added support for <ao:a href="https://www.postgresql.org/docs/12/index.html">PostgreSQL 12</ao:a>.</li>
+				<li>Connection pool statistics and password checker results HTML generation now support both SGML and XML serializations.</li>
+				<li>Now supporting <ao:a href="https://tomcat.apache.org/tomcat-9.0-doc/config/ajp.html">Tomcat's <code>tomcatAuthentication</code> configuration</ao:a>:
+					<ol>
+						<li>Added column <code>web.tomcat.PrivateTomcatSite.tomcatAuthentication</code></li>
+						<li>Added AOSH command <code>web.tomcat.PrivateTomcatSite.tomcatAuthentication.set</code></li>
+						<li>Added column <code>web.tomcat.SharedTomcat.tomcatAuthentication</code></li>
+						<li>Added AOSH command <code>web.tomcat.SharedTomcat.tomcatAuthentication.set</code></li>
+					</ol>
+				</li>
+				<li><code>AOServConnector.getConnector(…)</code> may now be obtained without any checked exceptions:
+					<ol>
+						<li><code>AOServClientConfiguration</code> throws <code>ConfigurationException</code></li>
+						<li><code>AOServConnector.getConnector(…)</code> throws <code>ConfigurationException</code></li>
+						<li>Removed other unnecessary uses of <code>IOException</code> incorrectly left in <code>Schema</code> constructors.</li>
+					</ol>
+				</li>
+				<li>Fixed ambiguous definitions of <code>PROTOCOL</code>, now:
+					<ol>
+						<li><code>TCPConnector.TCP_PROTOCOL</code></li>
+						<li><code>SSLConnector.SSL_PROTOCOL</code></li>
+					</ol>
+				</li>
+				<li>
+					<code>TicketLoggingHandler</code> significantly reworked
+					to be compatible with <code>logging.properties</code>.
+				</li>
+				<li>
+					<code>AOServConnector.getConnector(…)</code> no longer takes a <code>Logger</code> argument.
+					It will use a logger based on the selected implementation class.
+				</li>
+				<li>Updated dependencies.</li>
+				<li>Changed default CVS repository permissions from <code>0770</code> to <code>02770</code>.</li>
+			</ul>
+		</changelog:release>
 
 		<changelog:release
 			projectName="@{documented.name}"
