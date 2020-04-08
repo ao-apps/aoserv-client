@@ -87,6 +87,9 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						Fixed <code>IndexOutOfBoundsException</code> on <code>AOServTable.removeProgressListener(…)</code>
 						and <code>AOServTable.removeTableListener(…)</code>.
 					</li>
+					<li>
+						Added MySQL collation <code>utf8mb4_general_ci</code>.
+					</li>
 				</ul>
 			</changelog:release>
 		</c:if>
