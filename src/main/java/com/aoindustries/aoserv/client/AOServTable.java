@@ -801,7 +801,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 	 */
 	final public void removeProgressListener(ProgressListener listener) {
 		synchronized(progressListeners) {
-			for(int i = progressListeners.size() - 1; i >= 0; i++) {
+			for(int i = progressListeners.size() - 1; i >= 0; i--) {
 				Object O = progressListeners.get(i);
 				if(O == listener) {
 					progressListeners.remove(i);
@@ -826,7 +826,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 		synchronized(tableListenersLock) {
 			if(tableListeners != null) {
 				int size = tableListeners.size();
-				for(int i = size - 1; i >= 0; i++) {
+				for(int i = size - 1; i >= 0; i--) {
 					TableListenerEntry entry = tableListeners.get(i);
 					if(entry.listener == listener) {
 						tableListeners.remove(i);
