@@ -74,14 +74,14 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	 * function correctly.  See <a href="https://github.com/pgjdbc/pgjdbc/issues/641">Issue #641</a> for more
 	 * details.
 	 */
-	public static final boolean USE_SQL_DATA = true;
+	public static final boolean USE_SQL_DATA = false;
 
 	/**
 	 * Enables the use of {@link SQLData} on writeObject.  This currently requires our forked PostgreSQL JDBC driver to
 	 * function correctly.  See <a href="https://github.com/pgjdbc/pgjdbc/pull/1377">Pull request #1377</a> for more
 	 * details.
 	 */
-	public static final boolean USE_SQL_DATA_WRITE = true;
+	public static final boolean USE_SQL_DATA_WRITE = false;
 
 	/**
 	 * Enables the use of arrays of domains.  This is currently not supported by PostgreSQL.
