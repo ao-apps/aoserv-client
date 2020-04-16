@@ -23,9 +23,9 @@
 package com.aoindustries.aoserv.client.password;
 
 import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.lang.Strings;
 import com.aoindustries.security.Identifier;
 import com.aoindustries.security.SmallIdentifier;
-import com.aoindustries.lang.Strings;
 import java.io.IOException;
 import java.security.SecureRandom;
 
