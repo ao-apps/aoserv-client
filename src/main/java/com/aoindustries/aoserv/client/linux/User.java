@@ -434,8 +434,17 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		SYSTEMD_NETWORK,
 		TCPDUMP,
 		TSS,
-		UNBOUND
-	;
+		UNBOUND,
+		// AOServ Master:
+		AOSERV_MASTER,
+		// AOServ Schema:
+		ACCOUNTING,
+		BILLING,
+		DISTRIBUTION,
+		INFRASTRUCTURE,
+		MANAGEMENT,
+		MONITORING,
+		RESELLER;
 
 	/**
 	 * @deprecated  User httpd no longer used.
@@ -494,6 +503,16 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 			UNBOUND = Name.valueOf("unbound");
 			// Now unused
 			HTTPD = Name.valueOf("httpd");
+			// AOServ Master:
+			AOSERV_MASTER = Name.valueOf("aoserv-master");
+			// AOServ Schema:
+			ACCOUNTING = Name.valueOf("accounting");
+			BILLING = Name.valueOf("billing");
+			DISTRIBUTION = Name.valueOf("distribution");
+			INFRASTRUCTURE = Name.valueOf("infrastructure");
+			MANAGEMENT = Name.valueOf("management");
+			MONITORING = Name.valueOf("monitoring");
+			RESELLER = Name.valueOf("reseller");
 		} catch(ValidationException e) {
 			throw new AssertionError("These hard-coded values are valid", e);
 		}

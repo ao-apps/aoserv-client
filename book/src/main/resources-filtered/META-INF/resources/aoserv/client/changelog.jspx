@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2020-04-13T22:08:04-05:00"
+		dateModified="2020-04-14T13:43:31-05:00"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -87,6 +87,26 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						Removed dependency on the special AO PostgreSQL JDBC driver, pending acceptance of
 						<ao:a href="https://github.com/pgjdbc/pgjdbc/pull/1378">Implement single-attribute type map support for SQLData and Enum</ao:a>.
 						This allows us to use the current releases from the Central Repository.
+					</li>
+					<li>New system users and groups:
+						<ul>
+							<li><core:link book="/aoserv/master" page="/index.jspx" />:
+								<ol>
+									<li><code>aoserv-master</code></li>
+								</ol>
+							</li>
+							<li><core:link book="/aoserv/schema" page="/index.jspx" />:
+								<ol>
+									<li><code>accounting</code></li>
+									<li><code>billing</code></li>
+									<li><code>distribution</code></li>
+									<li><code>infrastructure</code></li>
+									<li><code>management</code></li>
+									<li><code>monitoring</code></li>
+									<li><code>reseller</code></li>
+								</ol>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</changelog:release>
