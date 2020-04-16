@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2020-04-14T13:43:31-05:00"
+		dateModified="2020-04-16T18:01:20-05:00"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -107,6 +107,11 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 								</ol>
 							</li>
 						</ul>
+					</li>
+					<li>
+						New special database <code>aoserv-master</code> that cannot be added or removed through API calls.
+						This will replace <code>aoindustries</code> on the next <core:link book="/aoserv/master" page="/index.jspx" />
+						PostgreSQL major update.
 					</li>
 				</ul>
 			</changelog:release>

@@ -253,8 +253,9 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 		/** Monitoring */
 		POSTGRESMON,
 		/** AO Platform Components */
-		AOINDUSTRIES,
+		AOINDUSTRIES, // TODO: Remove once renamed to "aoserv-master"
 		AOSERV,
+		AOSERV_MASTER,
 		AOWEB;
 
 	static {
@@ -264,6 +265,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 			POSTGRESMON = Name.valueOf("postgresmon");
 			AOINDUSTRIES = Name.valueOf("aoindustries");
 			AOSERV = Name.valueOf("aoserv");
+			AOSERV_MASTER = Name.valueOf("aoserv-master");
 			AOWEB = Name.valueOf("aoweb");
 		} catch(ValidationException e) {
 			throw new AssertionError("These hard-coded values are valid", e);
@@ -283,6 +285,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 			// AO Platform Components
 			|| name.equals(AOINDUSTRIES)
 			|| name.equals(AOSERV)
+			|| name.equals(AOSERV_MASTER)
 			|| name.equals(AOWEB);
 	}
 
