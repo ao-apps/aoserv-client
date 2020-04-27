@@ -138,7 +138,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 				<groupId>junit</groupId><artifactId>junit</artifactId><version>4.13</version>
 			</dependency>
 			<dependency>
-				<groupId>mysql</groupId><artifactId>mysql-connector-java</artifactId><version>8.0.19</version>
+				<groupId>mysql</groupId><artifactId>mysql-connector-java</artifactId><version>8.0.20</version>
 			</dependency>
 			<!-- Test Transitive -->
 			<dependency>
