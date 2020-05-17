@@ -106,6 +106,9 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 								<link>https://aoindustries.com/ao-lang/apidocs/</link>
 								<link>https://aoindustries.com/ao-net-types/apidocs/</link>
 								<link>https://aoindustries.com/aocode-public/apidocs/</link>
+								<!-- Test Direct -->
+								<link>https://junit.org/junit4/javadoc/latest/</link>
+								<!-- No apidocs: <groupId>mysql</groupId><artifactId>mysql-connector-java</artifactId> -->
 							</links>
 						</configuration>
 					</plugin>
