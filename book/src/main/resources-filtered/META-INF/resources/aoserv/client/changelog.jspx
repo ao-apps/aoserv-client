@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2020-06-10T04:32:20-05:00"
+		dateModified="2020-06-11T08:34:35-05:00"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -53,13 +53,8 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 				artifactId="@{documented.artifactId}"
 				scmUrl="@{project.scm.url}"
 			>
+				<!-- TODO:
 				<ul>
-					<li>
-						Fixed translations properly encode <code>'</code> as <code>''</code> inside
-						resource bundles.
-					</li>
-					<li>Updated dependencies.</li>
-					<!-- TODO:
 					<li>Added schemas (where some object can exist without schema, such as "int"?)</li>
 					<li>Added a type registry based on ServiceLoader</li>
 					<li>Added a cast registry based on ServiceLoader</li>
@@ -85,50 +80,25 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					-->
 					<!-- TODO:
 					<li>Look into jOOQ: https://www.jooq.org/</li>
-					-->
 				</ul>
+				-->
 			</changelog:release>
 		</c:if>
 
 		<changelog:release
 			projectName="@{documented.name}"
-			version="1.84.2"
-			datePublished="2020-04-25T10:46:27-05:00"
+			version="1.84.6"
+			datePublished="2020-06-11T08:34:35-05:00"
 			groupId="@{project.groupId}"
 			artifactId="@{documented.artifactId}"
 			scmUrl="@{project.scm.url}"
 		>
 			<ul>
 				<li>
-					Removed dependency on the special AO PostgreSQL JDBC driver, pending acceptance of
-					<ao:a href="https://github.com/pgjdbc/pgjdbc/pull/1378">Implement single-attribute type map support for SQLData and Enum</ao:a>.
-					This allows us to use the current releases from the Central Repository.
+					Fixed translations properly encode <code>'</code> as <code>''</code> inside
+					resource bundles.
 				</li>
-				<li>New system users and groups:
-					<ul>
-						<li><core:link book="/aoserv/master" page="/index.jspx" />:
-							<ol>
-								<li><code>aoserv-master</code></li>
-							</ol>
-						</li>
-						<li><core:link book="/aoserv/schema" page="/index.jspx" />:
-							<ol>
-								<li><code>accounting</code></li>
-								<li><code>billing</code></li>
-								<li><code>distribution</code></li>
-								<li><code>infrastructure</code></li>
-								<li><code>management</code></li>
-								<li><code>monitoring</code></li>
-								<li><code>reseller</code></li>
-							</ol>
-						</li>
-					</ul>
-				</li>
-				<li>
-					New special database <code>aoserv-master</code> that cannot be added or removed through API calls.
-					This will replace <code>aoindustries</code> on the next <core:link book="/aoserv/master" page="/index.jspx" />
-					PostgreSQL major update.
-				</li>
+				<li>Updated dependencies.</li>
 			</ul>
 		</changelog:release>
 
