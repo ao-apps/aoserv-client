@@ -26,6 +26,7 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.monitoring.AlertLevel;
 import com.aoindustries.aoserv.client.mysql.Server;
+import com.aoindustries.aoserv.client.net.Host;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.stream.StreamableInput;
@@ -110,6 +111,19 @@ final public class MysqlReplication extends CachedObjectIntegerKey<MysqlReplicat
 
 	public int getMonitoringSecondsBehindCritical() {
 		return monitoring_seconds_behind_critical;
+	}
+
+	/**
+	 * Determines if monitoring is enabled for this replication.
+	 * This is based on {@link Host#isMonitoringEnabled()} derived from either
+	 * {@link #getLinuxServer()} or {@link #getFailoverFileReplication()}.
+	 */
+	public boolean isMonitoringEnabled() throws SQLException, IOException {
+		com.aoindustries.aoserv.client.linux.Server linuxServer =
+			(ao_server != -1)
+			? getLinuxServer()
+			: getFailoverFileReplication().getBackupPartition().getLinuxServer();
+		return linuxServer.getHost().isMonitoringEnabled();
 	}
 
 	public AlertLevel getMaxAlertLevel() {
