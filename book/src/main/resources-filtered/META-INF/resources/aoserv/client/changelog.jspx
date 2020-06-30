@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2020-06-29T16:05:24-05:00"
+		dateModified="2020-06-30T13:25:22-05:00"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -53,9 +53,6 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 				artifactId="@{documented.artifactId}"
 				scmUrl="@{project.scm.url}"
 			>
-				<ul>
-					<li>Monitoring of MySQL replication slaves is now disabled when monitoring of the slave's host is disabled.</li>
-				</ul>
 				<!-- TODO:
 				<ul>
 					<li>Added schemas (where some object can exist without schema, such as "int"?)</li>
@@ -87,6 +84,19 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 				-->
 			</changelog:release>
 		</c:if>
+
+		<changelog:release
+			projectName="@{documented.name}"
+			version="1.84.8"
+			datePublished="2020-06-30T13:25:22-05:00"
+			groupId="@{project.groupId}"
+			artifactId="@{documented.artifactId}"
+			scmUrl="@{project.scm.url}"
+		>
+			<ul>
+				<li>Monitoring of MySQL replication slaves is now disabled when monitoring of the slave's host is disabled.</li>
+			</ul>
+		</changelog:release>
 
 		<changelog:release
 			projectName="@{documented.name}"
