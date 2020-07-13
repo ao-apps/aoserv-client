@@ -396,6 +396,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		AWSTATS,
 		BIN,
 		BIRD,
+		CENTOS, // Amazon EC2 cloud-init
 		CHRONY,
 		CLAMSCAN,
 		CLAMUPDATE,
@@ -462,6 +463,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 			AWSTATS = Name.valueOf("awstats");
 			BIN = Name.valueOf("bin");
 			BIRD = Name.valueOf("bird");
+			CENTOS = Name.valueOf("centos");
 			CHRONY = Name.valueOf("chrony");
 			CLAMSCAN = Name.valueOf("clamscan");
 			CLAMUPDATE = Name.valueOf("clamupdate");

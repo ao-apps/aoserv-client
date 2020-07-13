@@ -245,6 +245,7 @@ final public class Group extends CachedObjectGroupNameKey<Group> implements Remo
 		BIN,
 		BIRD,
 		CDROM,
+		CENTOS, // Amazon EC2 cloud-init
 		CGRED,
 		CHRONY,
 		CLAMSCAN,
@@ -332,6 +333,7 @@ final public class Group extends CachedObjectGroupNameKey<Group> implements Remo
 			BIN = Name.valueOf("bin");
 			BIRD = Name.valueOf("bird");
 			CDROM = Name.valueOf("cdrom");
+			CENTOS = Name.valueOf("centos");
 			CGRED = Name.valueOf("cgred");
 			CHRONY = Name.valueOf("chrony");
 			CLAMSCAN = Name.valueOf("clamscan");
