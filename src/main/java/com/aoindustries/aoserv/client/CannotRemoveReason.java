@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2004-2009, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2004-2009, 2016, 2017, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -47,15 +47,19 @@ public final class CannotRemoveReason<T extends AOServObject<?,? extends T>> {
 		this.dependentObjects=dependentObject==null?null:Collections.singletonList(dependentObject);
 	}
 
+	/**
+	 * @param  dependentObjects  No defensive copy is made
+	 */
 	public CannotRemoveReason(String reason, List<T> dependentObjects) {
 		this.reason=reason;
-		this.dependentObjects=dependentObjects;
+		this.dependentObjects = Collections.unmodifiableList(dependentObjects);
 	}
 
 	public String getReason() {
 		return reason;
 	}
 
+	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
 	public List<T> getDependentObjects() {
 		return dependentObjects;
 	}

@@ -56,6 +56,7 @@ final public class ProfileTable extends CachedTableIntegerKey<Profile> {
 		new OrderBy(Profile.COLUMN_PRIORITY_name, DESCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -93,8 +94,8 @@ final public class ProfileTable extends CachedTableIntegerKey<Profile> {
 			true,
 			AoservProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
-				int pkey;
-				IntList invalidateList;
+				private int pkey;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {
@@ -117,11 +118,15 @@ final public class ProfileTable extends CachedTableIntegerKey<Profile> {
 					out.writeBoolean(sendInvoice);
 					out.writeUTF(billingContact);
 					out.writeCompressedInt(billingEmail.size());
-					for(Email email : billingEmail) out.writeUTF(email.toString());
+					for(Email email : billingEmail) {
+						out.writeUTF(email.toString());
+					}
 					out.writeEnum(billingEmailFormat);
 					out.writeUTF(technicalContact);
 					out.writeCompressedInt(technicalEmail.size());
-					for(Email email : technicalEmail) out.writeUTF(email.toString());
+					for(Email email : technicalEmail) {
+						out.writeUTF(email.toString());
+					}
 					out.writeEnum(technicalEmailFormat);
 				}
 
@@ -162,7 +167,7 @@ final public class ProfileTable extends CachedTableIntegerKey<Profile> {
 		for(int c=0;c<size;c++) {
 			Profile profile=cached.get(c);
 			// Return first found because sorted highest priority first
-			if(profile.accounting.equals(account_name)) return profile;
+			if(profile.getAccount_name().equals(account_name)) return profile;
 		}
 		return null;
 	}

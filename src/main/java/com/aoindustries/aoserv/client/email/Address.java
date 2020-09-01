@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -59,8 +59,8 @@ final public class Address extends CachedObjectIntegerKey<Address> implements Re
 	static final String COLUMN_DOMAIN_name = "domain";
 	static final String COLUMN_ADDRESS_name = "address";
 
-	String address;
-	int domain;
+	private String address;
+	private int domain;
 
 	public int addEmailForwarding(Email destination) throws IOException, SQLException {
 		return table.getConnector().getEmail().getForwarding().addEmailForwarding(this, destination);
@@ -184,20 +184,28 @@ final public class Address extends CachedObjectIntegerKey<Address> implements Re
 		BlackholeAddress bea=getBlackholeEmailAddress();
 		if(bea!=null) reasons.addAll(bea.getCannotRemoveReasons());
 
-		for(Forwarding ef : getEmailForwardings()) reasons.addAll(ef.getCannotRemoveReasons());
+		for(Forwarding ef : getEmailForwardings()) {
+			reasons.addAll(ef.getCannotRemoveReasons());
+		}
 
-		for(ListAddress ela : table.getConnector().getEmail().getListAddress().getEmailListAddresses(this)) reasons.addAll(ela.getCannotRemoveReasons());
+		for(ListAddress ela : table.getConnector().getEmail().getListAddress().getEmailListAddresses(this)) {
+			reasons.addAll(ela.getCannotRemoveReasons());
+		}
 
-		for(PipeAddress epa : getEmailPipeAddresses()) reasons.addAll(epa.getCannotRemoveReasons());
+		for(PipeAddress epa : getEmailPipeAddresses()) {
+			reasons.addAll(epa.getCannotRemoveReasons());
+		}
 
-		for(InboxAddress laa : getLinuxAccAddresses()) reasons.addAll(laa.getCannotRemoveReasons());
+		for(InboxAddress laa : getLinuxAccAddresses()) {
+			reasons.addAll(laa.getCannotRemoveReasons());
+		}
 
 		// Cannot be used as any part of a majordomo list
 		for(MajordomoList ml : table.getConnector().getEmail().getMajordomoList().getRows()) {
 			if(
-				ml.owner_listname_add==pkey
-				|| ml.listname_owner_add==pkey
-				|| ml.listname_approval_add==pkey
+				ml.getOwnerListAddress_id() == pkey
+				|| ml.getListOwnerAddress_id() == pkey
+				|| ml.getListApprovalAddress_id() == pkey
 			) {
 				Domain ed=ml.getMajordomoServer().getDomain();
 				reasons.add(new CannotRemoveReason<>("Used by Majordomo list "+ml.getName()+'@'+ed.getDomain()+" on "+ed.getLinuxServer().getHostname(), ml));
@@ -207,8 +215,8 @@ final public class Address extends CachedObjectIntegerKey<Address> implements Re
 		// Cannot be used as any part of a majordomo server
 		for(MajordomoServer ms : table.getConnector().getEmail().getMajordomoServer().getRows()) {
 			if(
-				ms.owner_majordomo_add==pkey
-				|| ms.majordomo_owner_add==pkey
+				ms.getOwnerMajordomoAddress_id() == pkey
+				|| ms.getMajordomoOwnerAddress_id() == pkey
 			) {
 				Domain ed=ms.getDomain();
 				reasons.add(new CannotRemoveReason<>("Used by Majordomo server "+ed.getDomain()+" on "+ed.getLinuxServer().getHostname(), ms));

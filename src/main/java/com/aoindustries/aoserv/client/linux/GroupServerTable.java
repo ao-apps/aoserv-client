@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -54,6 +54,7 @@ final public class GroupServerTable extends CachedTableIntegerKey<GroupServer> {
 		new OrderBy(GroupServer.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -104,7 +105,7 @@ final public class GroupServerTable extends CachedTableIntegerKey<GroupServer> {
 		for (int c = 0; c < len; c++) {
 			// Must be for the correct server
 			GroupServer group = list.get(c);
-			if (aoPKey==group.ao_server) {
+			if (aoPKey==group.getServer_host_id()) {
 				// Must be for the correct business
 				Group linuxGroup = group.getLinuxGroup();
 				Package pk=linuxGroup.getPackage();
@@ -129,10 +130,10 @@ final public class GroupServerTable extends CachedTableIntegerKey<GroupServer> {
 				int len=list.size();
 				for(int c=0; c<len; c++) {
 					GroupServer lsg=list.get(c);
-					Integer I=lsg.ao_server;
+					Integer I=lsg.getServer_host_id();
 					Map<Group.Name,GroupServer> serverHash=nameHash.get(I);
 					if(serverHash==null) nameHash.put(I, serverHash=new HashMap<>());
-					if(serverHash.put(lsg.name, lsg)!=null) throw new SQLException("LinuxServerGroup name exists more than once on server: "+lsg.name+" on "+I);
+					if(serverHash.put(lsg.getLinuxGroup_name(), lsg)!=null) throw new SQLException("LinuxServerGroup name exists more than once on server: "+lsg.getLinuxGroup_name()+" on "+I);
 
 				}
 				nameHashBuilt=true;
@@ -155,7 +156,7 @@ final public class GroupServerTable extends CachedTableIntegerKey<GroupServer> {
 				int len=list.size();
 				for(int c=0; c<len; c++) {
 					GroupServer lsg=list.get(c);
-					Integer serverI=lsg.ao_server;
+					Integer serverI=lsg.getServer_host_id();
 					Map<LinuxId,GroupServer> serverHash = gidHash.get(serverI);
 					if(serverHash==null) gidHash.put(serverI, serverHash=new HashMap<>());
 					LinuxId gidI=lsg.getGid();
@@ -192,7 +193,7 @@ final public class GroupServerTable extends CachedTableIntegerKey<GroupServer> {
 		Group linuxGroup=connector.getLinux().getGroupUser().getPrimaryGroup(linuxAccount);
 		if(linuxGroup==null) throw new SQLException("Unable to find primary LinuxGroup for username="+linuxAccount.getUsername_id());
 		GroupServer lsg=getLinuxServerGroup(account.getServer(), linuxGroup.getName());
-		if(lsg==null) throw new SQLException("Unable to find LinuxServerGroup: "+linuxGroup.getName()+" on "+account.ao_server);
+		if(lsg==null) throw new SQLException("Unable to find LinuxServerGroup: "+linuxGroup.getName()+" on "+account.getAoServer_server_id());
 		return lsg;
 	}
 

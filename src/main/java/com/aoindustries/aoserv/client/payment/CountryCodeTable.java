@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -52,6 +52,7 @@ final public class CountryCodeTable extends GlobalTableStringKey<CountryCode> {
 		new OrderBy(CountryCode.COLUMN_NAME_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -107,7 +108,9 @@ final public class CountryCodeTable extends GlobalTableStringKey<CountryCode> {
 		// Package the results
 		List<CountryCode> ccs=getRows();
 		List<CountryCode> results=new ArrayList<>(ccs.size() + biggest.size());
-		for(String code : biggest) results.add(get(code));
+		for(String code : biggest) {
+			results.add(get(code));
+		}
 		results.addAll(ccs);
 
 		// Return the results

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -51,6 +51,7 @@ final public class CertificateTable extends CachedTableIntegerKey<Certificate> {
 		new OrderBy(Certificate.COLUMN_CERT_FILE_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}

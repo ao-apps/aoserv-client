@@ -57,6 +57,7 @@ final public class UserTable extends CachedTableUserNameKey<User> {
 		new OrderBy(User.COLUMN_USERNAME_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -75,7 +76,7 @@ final public class UserTable extends CachedTableUserNameKey<User> {
 			true,
 			AoservProtocol.CommandID.ADD,
 			new AOServConnector.UpdateRequest() {
-				IntList invalidateList;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {

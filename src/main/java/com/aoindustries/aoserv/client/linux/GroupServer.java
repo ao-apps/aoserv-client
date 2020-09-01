@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -64,9 +64,9 @@ final public class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
 	static final String COLUMN_NAME_name = "name";
 	static final String COLUMN_AO_SERVER_name = "ao_server";
 
-	Group.Name name;
-	int ao_server;
-	LinuxId gid;
+	private Group.Name name;
+	private int ao_server;
+	private LinuxId gid;
 	private UnmodifiableTimestamp created;
 
 	public List<UserServer> getAlternateLinuxServerAccounts() throws SQLException, IOException {
@@ -74,6 +74,7 @@ final public class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
 	}
 
 	@Override
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	protected Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_PKEY: return pkey;
@@ -89,6 +90,7 @@ final public class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
 		return gid;
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getCreated() {
 		return created;
 	}

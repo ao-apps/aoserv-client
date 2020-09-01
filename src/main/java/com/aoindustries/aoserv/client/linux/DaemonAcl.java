@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -52,7 +52,7 @@ public final class DaemonAcl extends CachedObjectIntegerKey<DaemonAcl>
 	static final String COLUMN_AO_SERVER_name = "ao_server";
 	static final String COLUMN_HOST_name = "host";
 
-	int aoServer;
+	private int aoServer;
 	private HostAddress host;
 
 	@Override

@@ -165,10 +165,12 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 		paymentConfirmed = ANY;
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getAfter() {
 		return after;
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getBefore() {
 		return before;
 	}

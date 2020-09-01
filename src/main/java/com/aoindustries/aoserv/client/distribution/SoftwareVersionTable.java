@@ -62,6 +62,7 @@ final public class SoftwareVersionTable extends GlobalTableIntegerKey<SoftwareVe
 		new OrderBy(SoftwareVersion.COLUMN_VERSION_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -79,6 +80,7 @@ final public class SoftwareVersionTable extends GlobalTableIntegerKey<SoftwareVe
 		return getUniqueRow(SoftwareVersion.COLUMN_PKEY, pkey);
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getMaximumUpdatedTime() throws IOException, SQLException {
 		synchronized(SoftwareVersionTable.class) {
 			if(maximumUpdatedTime == null) {
@@ -87,7 +89,7 @@ final public class SoftwareVersionTable extends GlobalTableIntegerKey<SoftwareVe
 				UnmodifiableTimestamp max = null;
 				for(int c=0;c<size;c++) {
 					SoftwareVersion version=versions.get(c);
-					UnmodifiableTimestamp mod = version.updated;
+					UnmodifiableTimestamp mod = version.getUpdated();
 					if(max == null || mod.compareTo(max) > 0) max = mod;
 				}
 				maximumUpdatedTime = max;
@@ -112,7 +114,7 @@ final public class SoftwareVersionTable extends GlobalTableIntegerKey<SoftwareVe
 		int size=table.size();
 		for(int c=0;c<size;c++) {
 			SoftwareVersion tv=table.get(c);
-			if(tv.name.equals(name) && tv.version.equals(version) && tv.getOperatingSystemVersion_id()==osvPKey) return tv;
+			if(tv.getTechnologyName_name().equals(name) && tv.getVersion().equals(version) && tv.getOperatingSystemVersion_id()==osvPKey) return tv;
 		}
 		return null;
 	}
@@ -135,7 +137,9 @@ final public class SoftwareVersionTable extends GlobalTableIntegerKey<SoftwareVe
 		if (name != null) {
 			nameWords=Strings.split(name);
 			int len = nameWords.length;
-			for (int c = 0; c < len; c++) nameWords[c]=nameWords[c].toLowerCase();
+			for (int c = 0; c < len; c++) {
+				nameWords[c]=nameWords[c].toLowerCase();
+			}
 		}
 
 		// Version
@@ -143,7 +147,9 @@ final public class SoftwareVersionTable extends GlobalTableIntegerKey<SoftwareVe
 		if (version != null) {
 			versionWords = Strings.split(version);
 			int len = versionWords.length;
-			for (int c = 0; c < len; c++) versionWords[c]=versionWords[c].toLowerCase();
+			for (int c = 0; c < len; c++) {
+				versionWords[c]=versionWords[c].toLowerCase();
+			}
 		}
 
 		List<SoftwareVersion> table=getRows();
@@ -157,7 +163,7 @@ final public class SoftwareVersionTable extends GlobalTableIntegerKey<SoftwareVe
 				// Check the name
 				boolean found=true;
 				if(nameWords!=null) {
-					String S=TV.name.toLowerCase();
+					String S=TV.getTechnologyName_name().toLowerCase();
 					for (String nameWord : nameWords) {
 						if (!S.contains(nameWord)) {
 							found=false;
@@ -168,7 +174,7 @@ final public class SoftwareVersionTable extends GlobalTableIntegerKey<SoftwareVe
 				if(found) {
 					// Check the version
 					if(versionWords!=null) {
-						String S=TV.version.toLowerCase();
+						String S=TV.getVersion().toLowerCase();
 						for (String versionWord : versionWords) {
 							if (!S.contains(versionWord)) {
 								found=false;
@@ -200,11 +206,11 @@ final public class SoftwareVersionTable extends GlobalTableIntegerKey<SoftwareVe
 							for(int d=0;d<len && addAt==-1;d++) {
 								SoftwareVersion compVersion=matches.get(d);
 								if (orderBy == NAME) {
-									if(TV.name.compareToIgnoreCase(compVersion.name)<0) addAt=d;
+									if(TV.getTechnologyName_name().compareToIgnoreCase(compVersion.getTechnologyName_name())<0) addAt=d;
 								} else if (orderBy == VERSION) {
-									if(TV.version.compareToIgnoreCase(compVersion.version)<0) addAt=d;
+									if(TV.getVersion().compareToIgnoreCase(compVersion.getVersion())<0) addAt=d;
 								} else if (orderBy == UPDATED) {
-									if(TV.updated.compareTo(compVersion.updated) > 0) addAt=d;
+									if(TV.getUpdated().compareTo(compVersion.getUpdated()) > 0) addAt=d;
 								} else throw new IllegalArgumentException("Invalid value for orderBy: " + orderBy);
 							}
 							matches.add(addAt==-1?len:addAt, TV);

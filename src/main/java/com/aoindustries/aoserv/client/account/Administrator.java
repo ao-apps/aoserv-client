@@ -93,8 +93,8 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 		country,
 		zip
 	;
-	int disable_log;
-	boolean can_switch_users;
+	private int disable_log;
+	private boolean can_switch_users;
 	private String support_code;
 
 	@Override
@@ -201,6 +201,7 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 	}
 
 	@Override
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	protected Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_USERNAME: return pkey;
@@ -236,6 +237,7 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 		return countryCode;
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getCreated() {
 		return created;
 	}
@@ -529,7 +531,7 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 			true,
 			AoservProtocol.CommandID.SET_BUSINESS_ADMINISTRATOR_PROFILE,
 			new AOServConnector.UpdateRequest() {
-				IntList invalidateList;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2003-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -51,6 +51,7 @@ final public class BackupReportTable extends AOServTable<Integer,BackupReport> {
 		new OrderBy(BackupReport.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -73,25 +74,25 @@ final public class BackupReportTable extends AOServTable<Integer,BackupReport> {
 	}
 
 	public List<BackupReport> getBackupReports(Package pk) throws IOException, SQLException {
-		int pkPKey=pk.getPkey();
+		int package_id = pk.getPkey();
 		List<BackupReport> cached=getRows();
 		int size=cached.size();
 		List<BackupReport> matches=new ArrayList<>(size);
 		for(int c=0;c<size;c++) {
 			BackupReport br=cached.get(c);
-			if(br.packageNum==pkPKey) matches.add(br);
+			if(br.getPackage_id() == package_id) matches.add(br);
 		}
 		return matches;
 	}
 
-	public List<BackupReport> getBackupReports(Host se) throws IOException, SQLException {
-		int sePKey=se.getPkey();
+	public List<BackupReport> getBackupReports(Host host) throws IOException, SQLException {
+		int hots_id = host.getPkey();
 		List<BackupReport> cached=getRows();
 		int size=cached.size();
 		List<BackupReport> matches=new ArrayList<>(size);
 		for(int c=0;c<size;c++) {
 			BackupReport br=cached.get(c);
-			if(br.server==sePKey) matches.add(br);
+			if(br.getHost_id() == hots_id) matches.add(br);
 		}
 		return matches;
 	}

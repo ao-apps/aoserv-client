@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2018  AO Industries, Inc.
+ * Copyright (C) 2018, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -24,8 +24,7 @@ package com.aoindustries.aoserv.client.util;
 
 import static com.aoindustries.aoserv.client.util.ApacheEscape.DEFAULT_DOLLAR_VARIABLE;
 import static com.aoindustries.aoserv.client.util.ApacheEscape.escape;
-import junit.framework.Assert;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import org.junit.Test;
 
 /**
@@ -189,19 +188,19 @@ public class ApacheEscapeTest {
 			if(ch != '\t') {
 				try {
 					escape(null, ch + "Test");
-					Assert.fail("Control character allowed at beginning: " + (int)ch);
+					fail("Control character allowed at beginning: " + (int)ch);
 				} catch(IllegalArgumentException e) {
 					// Expected
 				}
 				try {
 					escape(null, "Test" + ch + "test");
-					Assert.fail("Control character allowed in middle: " + (int)ch);
+					fail("Control character allowed in middle: " + (int)ch);
 				} catch(IllegalArgumentException e) {
 					// Expected
 				}
 				try {
 					escape(null, "Test" + ch);
-					Assert.fail("Control character allowed at end: " + (int)ch);
+					fail("Control character allowed at end: " + (int)ch);
 				} catch(IllegalArgumentException e) {
 					// Expected
 				}

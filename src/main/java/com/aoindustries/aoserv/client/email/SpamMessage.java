@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2003-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -51,7 +51,7 @@ final public class SpamMessage extends AOServObject<Integer,SpamMessage> impleme
 	;
 	static final String COLUMN_PKEY_name = "pkey";
 
-	AOServTable<Integer,SpamMessage> table;
+	private AOServTable<Integer,SpamMessage> table;
 
 	private int pkey;
 	private int email_relay;
@@ -76,6 +76,7 @@ final public class SpamMessage extends AOServObject<Integer,SpamMessage> impleme
 		return er;
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getTime() {
 		return time;
 	}
@@ -85,6 +86,7 @@ final public class SpamMessage extends AOServObject<Integer,SpamMessage> impleme
 	}
 
 	@Override
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	protected Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_PKEY: return pkey;

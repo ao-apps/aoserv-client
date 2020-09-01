@@ -54,6 +54,7 @@ import junit.framework.TestSuite;
  *
  * @author  AO Industries, Inc.
  */
+@SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class MySQLTODO extends TestCase {
 
 	private AOServConnector conn;
@@ -76,8 +77,12 @@ public class MySQLTODO extends TestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
-		for(Database md : mysqlDatabases) md.remove();
-		for(UserServer msu : mysqlServerUsers) msu.remove();
+		for(Database md : mysqlDatabases) {
+			md.remove();
+		}
+		for(UserServer msu : mysqlServerUsers) {
+			msu.remove();
+		}
 		if(mysqlUser!=null) mysqlUser.remove();
 		if(username!=null) username.remove();
 		conn=null;
@@ -252,13 +257,13 @@ public class MySQLTODO extends TestCase {
 	private Connection getConnection(Database md, UserServer msu) throws Exception {
 		try {
 			assertEquals(md.getMySQLServer(), msu.getMySQLServer());
-			Class.forName(md.getJdbcDriver()).newInstance();
+			Class.forName(md.getJdbcDriver()).getConstructor().newInstance();
 			return DriverManager.getConnection(
 				md.getJdbcUrl(true),
 				msu.getMySQLUser().getUsername().getUsername().toString(),
 				mysqlServerUserPasswords.get(msu)
 			);
-		} catch(ClassNotFoundException | InstantiationException | IllegalAccessException err) {
+		} catch(ReflectiveOperationException err) {
 			fail(err.toString());
 			return null;
 		}
@@ -274,6 +279,7 @@ public class MySQLTODO extends TestCase {
 	/**
 	 * Test that cannot connect until MySQLDBUser added
 	 */
+	@SuppressWarnings("try")
 	private void doCantConnectTest() throws Exception {
 		System.out.print("Testing not allowed to connect to MySQLDatabase until MySQLDBUser added: ");
 		for(Database md : mysqlDatabases) {
@@ -316,7 +322,7 @@ public class MySQLTODO extends TestCase {
 		for(Database md : mysqlDatabases) {
 			System.out.print('.');
 			UserServer msu = getMySQLServerUser(md.getMySQLServer());
-			md.addMySQLServerUser(msu, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+			conn.getMysql().getDatabaseUser().addMySQLDBUser(md, msu, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
 			md.getMySQLServer().getLinuxServer().waitForMySQLDBUserRebuild();
 		}
 		System.out.println(" Done");

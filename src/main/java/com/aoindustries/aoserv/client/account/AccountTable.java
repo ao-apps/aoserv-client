@@ -61,6 +61,7 @@ final public class AccountTable extends CachedTableAccountNameKey<Account> {
 		new OrderBy(Account.COLUMN_ACCOUNTING_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -79,7 +80,7 @@ final public class AccountTable extends CachedTableAccountNameKey<Account> {
 			true,
 			AoservProtocol.CommandID.ADD,
 			new AOServConnector.UpdateRequest() {
-				IntList invalidateList;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {
@@ -151,7 +152,7 @@ final public class AccountTable extends CachedTableAccountNameKey<Account> {
 		int size=cached.size();
 		for(int c=0;c<size;c++) {
 			Account bu=cached.get(c);
-			if(accounting.equals(bu.parent)) matches.add(bu);
+			if(accounting.equals(bu.getParent_name())) matches.add(bu);
 		}
 		return matches;
 	}
@@ -189,7 +190,7 @@ final public class AccountTable extends CachedTableAccountNameKey<Account> {
 		int size=cached.size();
 		for(int c=0;c<size;c++) {
 			Account bu=cached.get(c);
-			if(bu.parent==null || getUniqueRow(Account.COLUMN_ACCOUNTING, bu.parent)==null) matches.add(bu);
+			if(bu.getParent_name()==null || getUniqueRow(Account.COLUMN_ACCOUNTING, bu.getParent_name())==null) matches.add(bu);
 		}
 		return matches;
 	}
@@ -321,15 +322,18 @@ final public class AccountTable extends CachedTableAccountNameKey<Account> {
 	private final Tree<Account> tree = () -> {
 		List<Account> topLevelAccounts = getTopLevelAccounts();
 		int size = topLevelAccounts.size();
-		if(size==0) {
-			return Collections.emptyList();
-		} else if(size==1) {
-			Node<Account> singleNode = new AccountTreeNode(topLevelAccounts.get(0));
-			return Collections.singletonList(singleNode);
-		} else {
-			List<Node<Account>> rootNodes = new ArrayList<>(size);
-			for(Account topLevelAccount : topLevelAccounts) rootNodes.add(new AccountTreeNode(topLevelAccount));
-			return Collections.unmodifiableList(rootNodes);
+		switch (size) {
+			case 0:
+				return Collections.emptyList();
+			case 1:
+				Node<Account> singleNode = new AccountTreeNode(topLevelAccounts.get(0));
+				return Collections.singletonList(singleNode);
+			default:
+				List<Node<Account>> rootNodes = new ArrayList<>(size);
+				for(Account topLevelAccount : topLevelAccounts) {
+					rootNodes.add(new AccountTreeNode(topLevelAccount));
+				}
+				return Collections.unmodifiableList(rootNodes);
 		}
 	};
 
@@ -346,21 +350,24 @@ final public class AccountTable extends CachedTableAccountNameKey<Account> {
 			// Look for any existing children
 			List<Account> children = business.getChildAccounts();
 			int size = children.size();
-			if(size==0) {
-				if(business.canAddAccounts()) {
-					// Can have children but empty
-					return Collections.emptyList();
-				} else {
-					// Not allowed to have children
-					return null;
-				}
-			} else if(size==1) {
-				Node<Account> singleNode = new AccountTreeNode(children.get(0));
-				return Collections.singletonList(singleNode);
-			} else {
-				List<Node<Account>> childNodes = new ArrayList<>(size);
-				for(Account child : children) childNodes.add(new AccountTreeNode(child));
-				return Collections.unmodifiableList(childNodes);
+			switch (size) {
+				case 0:
+					if(business.canAddAccounts()) {
+						// Can have children but empty
+						return Collections.emptyList();
+					} else {
+						// Not allowed to have children
+						return null;
+					}
+				case 1:
+					Node<Account> singleNode = new AccountTreeNode(children.get(0));
+					return Collections.singletonList(singleNode);
+				default:
+					List<Node<Account>> childNodes = new ArrayList<>(size);
+					for(Account child : children) {
+						childNodes.add(new AccountTreeNode(child));
+					}
+					return Collections.unmodifiableList(childNodes);
 			}
 		}
 

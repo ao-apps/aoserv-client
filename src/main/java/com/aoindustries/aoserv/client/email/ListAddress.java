@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -54,8 +54,8 @@ final public class ListAddress extends CachedObjectIntegerKey<ListAddress> imple
 	static final String COLUMN_EMAIL_ADDRESS_name = "email_address";
 	static final String COLUMN_EMAIL_LIST_name = "email_list";
 
-	int email_address;
-	int email_list;
+	private int email_address;
+	private int email_list;
 
 	@Override
 	protected Object getColumnImpl(int i) {

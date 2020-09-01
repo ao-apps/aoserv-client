@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -71,6 +71,7 @@ final public class FileReplicationLog extends AOServObject<Integer,FileReplicati
 	}
 
 	@Override
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	protected Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_PKEY: return pkey;
@@ -85,10 +86,12 @@ final public class FileReplicationLog extends AOServObject<Integer,FileReplicati
 		}
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getStartTime() {
 		return startTime;
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getEndTime() {
 		return endTime;
 	}

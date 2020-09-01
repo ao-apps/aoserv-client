@@ -59,6 +59,7 @@ public final class SmtpRelayTable extends CachedTableIntegerKey<SmtpRelay> {
 		new OrderBy(SmtpRelay.COLUMN_PACKAGE_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -68,8 +69,8 @@ public final class SmtpRelayTable extends CachedTableIntegerKey<SmtpRelay> {
 			true,
 			AoservProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
-				int pkey;
-				IntList invalidateList;
+				private int pkey;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {
@@ -115,9 +116,13 @@ public final class SmtpRelayTable extends CachedTableIntegerKey<SmtpRelay> {
 		int len = cached.size();
 		for (int c = 0; c < len; c++) {
 			SmtpRelay relay=cached.get(c);
+			Integer hostId;
 			if(
-				packageName.equals(relay.packageName)
-				&& (relay.ao_server==-1 || relay.ao_server==aoPKey)
+				packageName.equals(relay.getPackage_name())
+				&& (
+					(hostId = relay.getLinuxServer_host_id()) == null
+					|| hostId == aoPKey
+				)
 				&& host.equals(relay.getHost())
 			) return relay;
 		}
@@ -136,7 +141,11 @@ public final class SmtpRelayTable extends CachedTableIntegerKey<SmtpRelay> {
 		List<SmtpRelay> matches=new ArrayList<>(len);
 		for (int c = 0; c < len; c++) {
 			SmtpRelay relay = cached.get(c);
-			if (relay.ao_server==-1 || relay.ao_server==aoPKey) matches.add(relay);
+			Integer hostId;
+			if (
+				(hostId = relay.getLinuxServer_host_id()) == null
+				|| hostId == aoPKey
+			) matches.add(relay);
 		}
 		return matches;
 	}

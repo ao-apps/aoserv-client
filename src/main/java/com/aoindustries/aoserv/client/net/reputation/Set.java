@@ -152,6 +152,7 @@ final public class Set extends CachedObjectIntegerKey<Set> {
 	}
 
 	@Override
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	protected Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_PKEY: return pkey;
@@ -242,6 +243,7 @@ final public class Set extends CachedObjectIntegerKey<Set> {
 	/**
 	 * Gets the last time the hosts were decayed.
 	 */
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getLastHostDecay() {
 		return lastHostDecay;
 	}
@@ -256,6 +258,7 @@ final public class Set extends CachedObjectIntegerKey<Set> {
 	/**
 	 * Gets the last time the networks were decayed.
 	 */
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getLastNetworkDecay() {
 		return lastNetworkDecay;
 	}
@@ -263,6 +266,7 @@ final public class Set extends CachedObjectIntegerKey<Set> {
 	/**
 	 * Gets the last time reputation was added.
 	 */
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getLastReputationAdded() {
 		return lastReputationAdded;
 	}
@@ -377,7 +381,7 @@ final public class Set extends CachedObjectIntegerKey<Set> {
 				true,
 				AoservProtocol.CommandID.ADD_IP_REPUTATION,
 				new AOServConnector.UpdateRequest() {
-					IntList invalidateList;
+					private IntList invalidateList;
 
 					@Override
 					public void writeRequest(StreamableOutput out) throws IOException {

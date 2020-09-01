@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2012, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2002-2012, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -63,6 +63,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 		new OrderBy(CvsRepository.COLUMN_PATH_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -101,7 +102,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 		int size=cached.size();
 		for(int c=0;c<size;c++) {
 			CvsRepository cr=cached.get(c);
-			if(cr.path.equals(path) && cr.getLinuxServerAccount().getAoServer_server_id()==aoPKey) return cr;
+			if(cr.getPath().equals(path) && cr.getLinuxServerAccount().getAoServer_server_id()==aoPKey) return cr;
 		}
 		return null;
 	}

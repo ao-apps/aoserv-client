@@ -56,6 +56,7 @@ final public class DatabaseUserTable extends CachedTableIntegerKey<DatabaseUser>
 		new OrderBy(DatabaseUser.COLUMN_MYSQL_SERVER_USER_name+'.'+UserServer.COLUMN_USERNAME_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -88,8 +89,8 @@ final public class DatabaseUserTable extends CachedTableIntegerKey<DatabaseUser>
 			true,
 			AoservProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
-				int pkey;
-				IntList invalidateList;
+				private int pkey;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {
@@ -150,7 +151,7 @@ final public class DatabaseUserTable extends CachedTableIntegerKey<DatabaseUser>
 		int size=cached.size();
 		for(int c=0;c<size;c++) {
 			DatabaseUser mdu=cached.get(c);
-			if(mdu.mysql_server_user==msuPKey) return mdu;
+			if(mdu.getMySQLServerUser_id() == msuPKey) return mdu;
 		}
 		return null;
 	}
@@ -183,7 +184,9 @@ final public class DatabaseUserTable extends CachedTableIntegerKey<DatabaseUser>
 		List<DatabaseUser> cached=getMySQLDBUsers(md);
 		int len=cached.size();
 		List<UserServer> array=new ArrayList<>(len);
-		for(int c=0;c<len;c++) array.add(cached.get(c).getMySQLServerUser());
+		for(int c=0;c<len;c++) {
+			array.add(cached.get(c).getMySQLServerUser());
+		}
 		return array;
 	}
 

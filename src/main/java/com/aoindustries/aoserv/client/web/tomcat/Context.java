@@ -77,13 +77,13 @@ final public class Context extends CachedObjectIntegerKey<Context> implements Re
 	public static final String ROOT_PATH="";
 	public static final String ROOT_DOC_BASE="ROOT";
 
-	int tomcat_site;
+	private int tomcat_site;
 	private String class_name;
 	private boolean cookies;
 	private boolean cross_context;
 	private PosixPath doc_base;
 	private boolean override;
-	String path;
+	private String path;
 	private boolean privileged;
 	private boolean reloadable;
 	private boolean use_naming;
@@ -148,6 +148,10 @@ final public class Context extends CachedObjectIntegerKey<Context> implements Re
 			case 14: return server_xml_configured;
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
+	}
+
+	public int getHttpdTomcatSite_httpdSite_id() {
+		return tomcat_site;
 	}
 
 	public Site getHttpdTomcatSite() throws SQLException, IOException {
@@ -327,7 +331,7 @@ final public class Context extends CachedObjectIntegerKey<Context> implements Re
 			true,
 			AoservProtocol.CommandID.SET_HTTPD_TOMCAT_CONTEXT_ATTRIBUTES,
 			new AOServConnector.UpdateRequest() {
-				IntList invalidateList;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {

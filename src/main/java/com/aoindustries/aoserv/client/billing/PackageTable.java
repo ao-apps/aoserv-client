@@ -51,6 +51,7 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 		new OrderBy(Package.COLUMN_NAME_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}

@@ -49,7 +49,7 @@ final public class Header extends CachedObjectIntegerKey<Header> {
 	static final String COLUMN_HTTPD_SITE_BIND_name = "httpd_site_bind";
 	static final String COLUMN_SORT_ORDER_name = "sort_order";
 
-	int httpd_site_bind;
+	private int httpd_site_bind;
 	private short sortOrder;
 
 	// Matches aoserv-master-db/aoindustries/aoweb/Header.Type-type.sql

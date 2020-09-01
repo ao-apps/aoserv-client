@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -53,14 +53,14 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
 	 */
 	public static final int MAX_NAME_LENGTH=64;
 
-	int majordomo_server;
-	String name;
-	int listname_pipe_add;
-	int listname_list_add;
-	int owner_listname_add;
-	int listname_owner_add;
-	int listname_approval_add;
-	int listname_request_pipe_add;
+	private int majordomo_server;
+	private String name;
+	private int listname_pipe_add;
+	private int listname_list_add;
+	private int owner_listname_add;
+	private int listname_owner_add;
+	private int listname_approval_add;
+	private int listname_request_pipe_add;
 
 	@Override
 	protected Object getColumnImpl(int i) {
@@ -158,6 +158,10 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
 		return pipeAddress;
 	}
 
+	public int getListApprovalAddress_id() {
+		return listname_approval_add;
+	}
+
 	public Address getListApprovalAddress() throws SQLException, IOException {
 		Address address=table.getConnector().getEmail().getAddress().get(listname_approval_add);
 		if(address==null) throw new SQLException("Unable to find EmailAddress: "+listname_approval_add);
@@ -168,6 +172,10 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
 		ListAddress listAddress=table.getConnector().getEmail().getListAddress().get(listname_list_add);
 		if(listAddress==null) throw new SQLException("Unable to find EmailListAddress: "+listname_list_add);
 		return listAddress;
+	}
+
+	public int getListOwnerAddress_id() {
+		return listname_owner_add;
 	}
 
 	public Address getListOwnerAddress() throws SQLException, IOException {
@@ -186,10 +194,18 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
 		return name;
 	}
 
+	public int getOwnerListAddress_id() {
+		return owner_listname_add;
+	}
+
 	public Address getOwnerListAddress() throws SQLException, IOException {
 		Address address=table.getConnector().getEmail().getAddress().get(owner_listname_add);
 		if(address==null) throw new SQLException("Unable to find EmailAddress: "+owner_listname_add);
 		return address;
+	}
+
+	public int getMajordomoServer_domain_id() {
+		return majordomo_server;
 	}
 
 	public MajordomoServer getMajordomoServer() throws SQLException, IOException {

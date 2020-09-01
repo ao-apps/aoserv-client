@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -55,6 +55,7 @@ final public class CommandTable extends GlobalTableStringKey<Command> {
 		new OrderBy(Command.COLUMN_COMMAND_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -105,9 +106,16 @@ final public class CommandTable extends GlobalTableStringKey<Command> {
 			if(argCount==1) {
 				TableTable schemaTableTable=connector.getSchema().getTable();
 				for(int c=-1;c<numTables;c++) {
-					Table schemaTable=c==-1?null:schemaTableTable.get(c);
-					String title=c==-1?"Global Commands:":(schemaTable.getDisplay()+':');
-					List<Command> commands=c==-1?getGlobalAOSHCommands():schemaTable.getAOSHCommands(connector);
+					String title;
+					List<Command> commands;
+					if(c == -1) {
+						title = "Global Commands:";
+						commands = getGlobalAOSHCommands();
+					} else {
+						Table schemaTable = schemaTableTable.get(c);
+						title = schemaTable.getDisplay() + ':';
+						commands = schemaTable.getAOSHCommands(connector);
+					}
 					printHelpList(out, title, commands, true, c>=0);
 				}
 				out.flush();
@@ -115,9 +123,16 @@ final public class CommandTable extends GlobalTableStringKey<Command> {
 				if(args[1].equalsIgnoreCase("syntax")) {
 					TableTable schemaTableTable=connector.getSchema().getTable();
 					for(int c=-1;c<numTables;c++) {
-						Table schemaTable=c==-1?null:schemaTableTable.get(c);
-						String title=c==-1?"Global Commands:":(schemaTable.getDisplay()+':');
-						List<Command> commands=c==-1?getGlobalAOSHCommands():schemaTable.getAOSHCommands(connector);
+						String title;
+						List<Command> commands;
+						if(c == -1) {
+							title = "Global Commands:";
+							commands = getGlobalAOSHCommands();
+						} else {
+							Table schemaTable = schemaTableTable.get(c);
+							title = schemaTable.getDisplay() + ':';
+							commands = schemaTable.getAOSHCommands(connector);
+						}
 						printHelpList(out, title, commands, false, c>=0);
 					}
 					out.flush();
@@ -166,7 +181,9 @@ final public class CommandTable extends GlobalTableStringKey<Command> {
 				out.print("    ");
 				out.print(command);
 				int space=Math.max(1, 40-command.length());
-				for(int d=0;d<space;d++) out.print(d>0 && d<(space-1)?'.':' ');
+				for(int d=0;d<space;d++) {
+					out.print(d>0 && d<(space-1)?'.':' ');
+				}
 				// Print the description without the HTML tags
 				String desc = shortOrSchema ? aoshCom.getDescription() : aoshCom.getSyntax();
 				Command.printNoHTML(out, desc);

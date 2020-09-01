@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2006-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2006-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -40,6 +40,7 @@ import junit.framework.TestSuite;
  *
  * @author  AO Industries, Inc.
  */
+@SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class ObjectTypesTODO extends TestCase {
 
 	private List<AOServConnector> conns;
@@ -134,8 +135,12 @@ public class ObjectTypesTODO extends TestCase {
 										//case SchemaType.ZIP: {expectedType=String.class; String zip=(String)value; break;}
 										case Type.ZONE: {expectedType=String.class; String zone=(String)value; break;}
 										case Type.BIG_DECIMAL: {expectedType=BigDecimal.class; BigDecimal bigDecimal=(BigDecimal)value; break;}
-										default: fail("Unexpected SchemaType id: "+typeNum);
+										default: {
+											fail("Unexpected SchemaType id: "+typeNum);
+											throw new AssertionError();
+										}
 									}
+									assert expectedType != null;
 									String string=type.getString(value, -1);
 									Object parsedValue=type.parseString(string);
 									if(value instanceof Date) {

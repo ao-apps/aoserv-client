@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -53,6 +53,7 @@ final public class ListAddressTable extends CachedTableIntegerKey<ListAddress> {
 		new OrderBy(ListAddress.COLUMN_EMAIL_LIST_name+'.'+List.COLUMN_PATH_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -81,11 +82,13 @@ final public class ListAddressTable extends CachedTableIntegerKey<ListAddress> {
 		java.util.List<ListAddress> cached=getEmailListAddresses(list);
 		int len=cached.size();
 		java.util.List<Address> eas=new ArrayList<>(len);
-		for(int c=0;c<len;c++) eas.add(cached.get(c).getEmailAddress());
-			return eas;
+		for(int c=0;c<len;c++) {
+			eas.add(cached.get(c).getEmailAddress());
 		}
+		return eas;
+	}
 
-		ListAddress getEmailListAddress(Address ea, List list) throws IOException, SQLException {
+	ListAddress getEmailListAddress(Address ea, List list) throws IOException, SQLException {
 		int pkey=ea.getPkey();
 		// Use the index first
 		java.util.List<ListAddress> cached=getEmailListAddresses(list);
@@ -106,7 +109,9 @@ final public class ListAddressTable extends CachedTableIntegerKey<ListAddress> {
 		java.util.List<ListAddress> cached=getEmailListAddresses(ea);
 		int len=cached.size();
 		java.util.List<List> els=new ArrayList<>(len);
-		for(int c=0;c<len;c++) els.add(cached.get(c).getEmailList());
+		for(int c=0;c<len;c++) {
+			els.add(cached.get(c).getEmailList());
+		}
 		return els;
 	}
 
@@ -129,7 +134,7 @@ final public class ListAddressTable extends CachedTableIntegerKey<ListAddress> {
 		java.util.List<ListAddress> matches=new ArrayList<>(len);
 		for (int c = 0; c < len; c++) {
 			ListAddress list=cached.get(c);
-			if(list.getEmailAddress().getDomain().ao_server==aoPKey) matches.add(list);
+			if(list.getEmailAddress().getDomain().getLinuxServer_host_id() == aoPKey) matches.add(list);
 		}
 		return matches;
 	}

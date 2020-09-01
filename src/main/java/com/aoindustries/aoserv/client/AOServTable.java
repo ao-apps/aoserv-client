@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.logging.Level;
 
 /**
  * An <code>AOServTable</code> provides access to one
@@ -72,12 +73,26 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 			return "tableListenersLock - "+getTableID();
 		}
 	};
-	final TableListenersLock tableListenersLock = new TableListenersLock();
+
+	final private static class TableListenerEntry {
+
+		private final TableListener listener;
+		private final long delay;
+		// All accesses should be protected by the table.eventLock
+		long delayStart = -1;
+
+		private TableListenerEntry(TableListener listener, long delay) {
+			this.listener = listener;
+			this.delay = delay;
+		}
+	}
+
+	private final TableListenersLock tableListenersLock = new TableListenersLock();
 
 	/**
 	 * The list of <code>TableListener</code>s.
 	 */
-	List<TableListenerEntry> tableListeners;
+	private List<TableListenerEntry> tableListeners;
 
 	/**
 	 * The lock used for cache event handling.
@@ -90,16 +105,97 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 	}
 	final EventLock eventLock=new EventLock();
 
+	final private class TableEventThread extends Thread {
+
+		private TableEventThread() {
+			setName("TableEventThread #" + getId() + " ("+AOServTable.this.getTableID()+") - "+AOServTable.this.getClass().getName());
+			setDaemon(true);
+		}
+
+		@Override
+		@SuppressWarnings("NestedSynchronizedStatement")
+		public void run() {
+			OUTER_LOOP :
+			while(true) {
+				try {
+					synchronized(eventLock) {
+						while(true) {
+							if(thread != this) break OUTER_LOOP;
+							long time = System.currentTimeMillis();
+							// Run anything that should be ran, calculating the minimum sleep time
+							// for the next wait period.
+							long minTime = Long.MAX_VALUE;
+							// Get a copy to not hold lock too long
+							List<TableListenerEntry> tableListenersSnapshot;
+							synchronized(tableListenersLock) {
+								tableListenersSnapshot = (tableListeners == null) ? null : new ArrayList<>(tableListeners);
+							}
+							if(tableListenersSnapshot != null) {
+								int size = tableListenersSnapshot.size();
+								for (TableListenerEntry entry : tableListenersSnapshot) {
+									// skip immediate listeners
+									long delay = entry.delay;
+									if(delay>0) {
+										long delayStart = entry.delayStart;
+										// Is the table idle?
+										if (delayStart != -1) {
+											// Has the system time been modified to an earlier time?
+											if (delayStart > time) delayStart = entry.delayStart = time;
+											long endTime = delayStart + delay;
+											if (time >= endTime) {
+												// Ready to run
+												entry.delayStart = -1;
+												// System.out.println("DEBUG: Started TableEventThread: run: "+getName()+" calling tableUpdated on "+entry.listener);
+												// Run in a different thread to avoid deadlock and increase concurrency responding to table update events.
+												AOServConnector.executorService.submit(() -> entry.listener.tableUpdated(AOServTable.this));
+											} else {
+												// Remaining delay
+												long remaining = endTime - time;
+												if (remaining < minTime) minTime = remaining;
+											}
+										}
+									}
+								}
+							}
+							if(minTime==Long.MAX_VALUE) {
+								// System.out.println("DEBUG: TableEventThread: run: "+getName()+" size="+size+", waiting indefinitely");
+								eventLock.wait();
+							} else {
+								// System.out.println("DEBUG: TableEventThread: run: "+getName()+" size="+size+", waiting for "+minTime+" ms");
+								eventLock.wait(minTime);
+							}
+						}
+					}
+				} catch (ThreadDeath TD) {
+					throw TD;
+				} catch (Error | RuntimeException |InterruptedException e) { // TODO: Consistency about catching Error, too?
+					connector.getLogger().log(Level.SEVERE, null, e);
+				}
+			}
+		}
+	}
+
 	/**
 	 * The thread that is performing the batched updates.
 	 * All access should be protected by the eventLock.
 	 */
-	TableEventThread thread;
+	private TableEventThread thread;
 
 	/**
 	 * The list of <code>ProgressListener</code>s.
 	 */
 	final List<ProgressListener> progressListeners = new ArrayList<>();
+
+	final private static class TableLoadListenerEntry {
+
+		private final TableLoadListener listener;
+		private Object param;
+
+		private TableLoadListenerEntry(TableLoadListener listener, Object param) {
+			this.listener=listener;
+			this.param=param;
+		}
+	}
 
 	/**
 	 * All of the table load listeners.
@@ -170,7 +266,10 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 			tableListeners.add(new TableListenerEntry(listener, batchTime));
 		}
 		synchronized(eventLock) {
-			if(batchTime>0 && thread==null) thread=new TableEventThread(this);
+			if(batchTime > 0 && thread == null) {
+				(thread = new TableEventThread()).start();
+				// System.out.println("DEBUG: Started TableEventThread: "+thread.getName());
+			}
 			// Tell the thread to recalc its stuff
 			eventLock.notifyAll();
 		}
@@ -188,6 +287,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 	 * Clears the cache, freeing up memory.  The data will be reloaded upon
 	 * next use.
 	 */
+	@SuppressWarnings("NoopMethodInAbstractClass")
 	public void clearCache() {
 	}
 
@@ -223,7 +323,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 	 */
 	public static final boolean DESCENDING=false;
 
-	protected static class OrderBy {
+	public static class OrderBy {
 		final private String expression;
 		final private boolean order;
 
@@ -260,14 +360,16 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 		if(orderBys == null) return null;
 		int len = orderBys.length;
 		SQLExpression[] exprs = new SQLExpression[len];
-		for(int c = 0; c < len; c++) exprs[c] = Parser.parseSQLExpression(this, orderBys[c].getExpression());
+		for(int c = 0; c < len; c++) {
+			exprs[c] = Parser.parseSQLExpression(this, orderBys[c].getExpression());
+		}
 		return exprs;
 	}
 
 	protected V getNewObject() throws IOException {
 		try {
-			return clazz.newInstance();
-		} catch(InstantiationException | IllegalAccessException err) {
+			return clazz.getConstructor().newInstance();
+		} catch(ReflectiveOperationException err) {
 			throw new IOException("Error loading class", err);
 		}
 	}
@@ -284,21 +386,24 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 		return connector.requestResult(allowRetry,
 			commID,
 			new AOServConnector.ResultRequest<V>() {
-				V result;
+				private V result;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {
 					AOServConnector.writeParams(params, out);
 				}
 
-				@SuppressWarnings({"unchecked"})
 				@Override
 				public void readResponse(StreamableInput in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code==AoservProtocol.NEXT) {
 						V obj=getNewObject();
 						obj.read(in, AoservProtocol.Version.CURRENT_VERSION);
-						if(obj instanceof SingleTableObject) ((SingleTableObject<K,V>)obj).setTable(AOServTable.this);
+						if(obj instanceof SingleTableObject) {
+							@SuppressWarnings("unchecked")
+							SingleTableObject<K,V> sto = (SingleTableObject)obj;
+							sto.setTable(AOServTable.this);
+						}
 						result = obj;
 					} else {
 						AoservProtocol.checkResult(code, in);
@@ -343,7 +448,9 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 		final int loadCount = loadListeners == null ? 0 : loadListeners.length;
 
 		// Start the progresses at zero.  Progress notified before table listeners, so GUI elements can set a progress bar back to zero before showing it on table load
-		for(int c = 0; c < progCount; c++) progListeners[c].onProgressChanged(this, 0, progressScales[c]);
+		for(int c = 0; c < progCount; c++) {
+			progListeners[c].onProgressChanged(this, 0, progressScales[c]);
+		}
 
 		// Tell each load listener that we are starting
 		for(int c = 0; c < loadCount; c++) {
@@ -364,7 +471,6 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 							AOServConnector.writeParams(params, out);
 						}
 
-						@SuppressWarnings({"unchecked"})
 						@Override
 						public void readResponse(StreamableInput in) throws IOException, SQLException {
 							// Remove anything that was added during a previous attempt
@@ -408,7 +514,11 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 								while((code = in.readByte()) == AoservProtocol.NEXT) {
 									V obj = getNewObject();
 									obj.read(in, AoservProtocol.Version.CURRENT_VERSION);
-									if(obj instanceof SingleTableObject) ((SingleTableObject<K,V>)obj).setTable(AOServTable.this);
+									if(obj instanceof SingleTableObject) {
+										@SuppressWarnings("unchecked")
+										SingleTableObject<K,V> sto = (SingleTableObject)obj;
+										sto.setTable(AOServTable.this);
+									}
 
 									// Sort and add
 									list.add(obj);
@@ -929,6 +1039,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 	/**
 	 * Gets a Map-compatible view of this table.
 	 */
+	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
 	public Map<K,V> getMap() {
 		return map;
 	}
@@ -1002,12 +1113,16 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 			throw new UnsupportedOperationException();
 		}
 
-		@SuppressWarnings({"unchecked"})
+		// Not documented, but resolves "Suspicious call to Map.containsKey" in NetBeans:
+		// https://bz.apache.org/netbeans/show_bug.cgi?id=169080
+		@SuppressWarnings("collection-remove")
 		@Override
 		public boolean containsValue(Object value) {
-			V aoObj=(V)value;
-			Object key=aoObj.getKey();
-			return containsKey(key);
+			if(!clazz.isInstance(value)) {
+				return false;
+			} else {
+				return containsKey(clazz.cast(value).getKey());
+			}
 		}
 
 		@Override

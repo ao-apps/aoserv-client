@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -55,8 +55,8 @@ final public class DatabaseUser extends CachedObjectIntegerKey<DatabaseUser> imp
 	static final String COLUMN_MYSQL_DATABASE_name = "mysql_database";
 	static final String COLUMN_MYSQL_SERVER_USER_name = "mysql_server_user";
 
-	int mysql_database;
-	int mysql_server_user;
+	private int mysql_database;
+	private int mysql_server_user;
 
 	private boolean
 		select_priv,
@@ -190,8 +190,12 @@ final public class DatabaseUser extends CachedObjectIntegerKey<DatabaseUser> imp
 		return table.getConnector().getMysql().getDatabase().get(mysql_database);
 	}
 
+	public int getMySQLServerUser_id() {
+		return mysql_server_user;
+	}
+
 	public UserServer getMySQLServerUser() throws IOException, SQLException {
-		// May be null due to filtering or a recently removed table
+		// May be null due to filtering or a recently removed row
 		return table.getConnector().getMysql().getUserServer().get(mysql_server_user);
 	}
 

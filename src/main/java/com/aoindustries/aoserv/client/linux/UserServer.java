@@ -101,15 +101,15 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	 */
 	public static final int DEFAULT_SPAM_ASSASSIN_DISCARD_SCORE = 20;
 
-	User.Name username;
-	int ao_server;
-	LinuxId uid;
+	private User.Name username;
+	private int ao_server;
+	private LinuxId uid;
 	private PosixPath home;
-	int autoresponder_from;
+	private int autoresponder_from;
 	private String autoresponder_subject;
 	private String autoresponder_path;
 	private boolean is_autoresponder_enabled;
-	int disable_log;
+	private int disable_log;
 	private String predisable_password;
 	private UnmodifiableTimestamp created;
 	private boolean use_inbox;
@@ -129,16 +129,24 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 		if(uid.compareTo(getServer().getUidMin()) < 0) return false;
 
 		// cvs_repositories
-		for(CvsRepository cr : getCvsRepositories()) if(!cr.isDisabled()) return false;
+		for(CvsRepository cr : getCvsRepositories()) {
+			if(!cr.isDisabled()) return false;
+		}
 
 		// httpd_shared_tomcats
-		for(SharedTomcat hst : getHttpdSharedTomcats()) if(!hst.isDisabled()) return false;
+		for(SharedTomcat hst : getHttpdSharedTomcats()) {
+			if(!hst.isDisabled()) return false;
+		}
 
 		// email_lists
-		for(com.aoindustries.aoserv.client.email.List el : getEmailLists()) if(!el.isDisabled()) return false;
+		for(com.aoindustries.aoserv.client.email.List el : getEmailLists()) {
+			if(!el.isDisabled()) return false;
+		}
 
 		// httpd_sites
-		for(Site hs : getHttpdSites()) if(!hs.isDisabled()) return false;
+		for(Site hs : getHttpdSites()) {
+			if(!hs.isDisabled()) return false;
+		}
 
 		return true;
 	}
@@ -165,7 +173,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 			false,
 			AoservProtocol.CommandID.COPY_HOME_DIRECTORY,
 			new AOServConnector.ResultRequest<Long>() {
-				long result;
+				private long result;
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {
 					out.writeCompressedInt(pkey);
@@ -205,6 +213,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	}
 
 	@Override
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	protected Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_PKEY: return pkey;
@@ -315,7 +324,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 			AoservProtocol.CommandID.GET_INBOX_ATTRIBUTES,
 			new AOServConnector.ResultRequest<InboxAttributes>() {
 
-				InboxAttributes result;
+				private InboxAttributes result;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {
@@ -406,6 +415,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 		return predisable_password;
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getCreated() {
 		return created;
 	}
@@ -653,7 +663,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 			true,
 			AoservProtocol.CommandID.SET_AUTORESPONDER,
 			new AOServConnector.UpdateRequest() {
-				IntList invalidateList;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {
@@ -713,7 +723,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 			true,
 			AoservProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_PREDISABLE_PASSWORD,
 			new AOServConnector.UpdateRequest() {
-				IntList invalidateList;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {

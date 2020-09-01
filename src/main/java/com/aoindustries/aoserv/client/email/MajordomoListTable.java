@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -53,6 +53,7 @@ final public class MajordomoListTable extends CachedTableIntegerKey<MajordomoLis
 		new OrderBy(MajordomoList.COLUMN_NAME_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -76,14 +77,14 @@ final public class MajordomoListTable extends CachedTableIntegerKey<MajordomoLis
 	}
 
 	MajordomoList getMajordomoList(MajordomoServer ms, String listName) throws IOException, SQLException {
-		int majordomo_server=ms.getPkey();
+		int majordomo_server = ms.getPkey();
 		List<MajordomoList> mls=getRows();
 		int len=mls.size();
 		for(int c=0;c<len;c++) {
 			MajordomoList ml=mls.get(c);
 			if(
-				ml.majordomo_server==majordomo_server
-				&& ml.name.equals(listName)
+				ml.getMajordomoServer_domain_id() == majordomo_server
+				&& ml.getName().equals(listName)
 			) return ml;
 		}
 		return null;

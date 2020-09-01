@@ -86,6 +86,7 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 	}
 
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
 	public List<? extends AOServTable<?,?>> getTables() {
 		return tables;
 	}

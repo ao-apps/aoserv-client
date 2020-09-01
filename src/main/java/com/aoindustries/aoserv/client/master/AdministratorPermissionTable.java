@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2007-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2007-2009, 2016, 2017, 2018, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -51,6 +51,7 @@ final public class AdministratorPermissionTable extends CachedTableIntegerKey<Ad
 		new OrderBy(AdministratorPermission.COLUMN_PERMISSION_name+'.'+Permission.COLUMN_SORT_ORDER_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -88,8 +89,8 @@ final public class AdministratorPermissionTable extends CachedTableIntegerKey<Ad
 				Map<User.Name,SortedSet<String>> newCachedPermissions = new HashMap<>();
 				List<AdministratorPermission> baps = getRows();
 				for(AdministratorPermission bap : baps) {
-					User.Name bapUsername = bap.username;
-					String bapPermission = bap.permission;
+					User.Name bapUsername = bap.getAdministrator_username();
+					String bapPermission = bap.getAOServPermission_name();
 					SortedSet<String> perms = newCachedPermissions.get(bapUsername);
 					if(perms==null) newCachedPermissions.put(bapUsername, perms = new TreeSet<>());
 					perms.add(bapPermission);

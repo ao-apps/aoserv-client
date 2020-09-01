@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -60,10 +60,10 @@ final public class Pipe extends CachedObjectIntegerKey<Pipe> implements Removabl
 	static final String COLUMN_AO_SERVER_name = "ao_server";
 	static final String COLUMN_COMMAND_name = "command";
 
-	int ao_server;
+	private int ao_server;
 	private String command;
-	Account.Name packageName;
-	int disable_log;
+	private Account.Name packageName;
+	private int disable_log;
 
 	public int addEmailAddress(Address address) throws IOException, SQLException {
 		return table.getConnector().getEmail().getPipeAddress().addEmailPipeAddress(address, this);

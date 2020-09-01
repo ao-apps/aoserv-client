@@ -57,14 +57,14 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 	static final String COLUMN_ACCOUNTING_name = "accounting";
 	static final String COLUMN_PRIORITY_name = "priority";
 
-	Account.Name accounting;
+	private Account.Name accounting;
 	private int priority;
 
 	private String name;
 
 	private boolean isPrivate;
 	private String phone, fax, address1, address2, city, state;
-	String country;
+	private String country;
 	private String zip;
 
 	private boolean sendInvoice;
@@ -111,6 +111,7 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 		return billingContact;
 	}
 
+	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
 	public Set<Email> getBillingEmail() {
 		return billingEmail;
 	}
@@ -134,6 +135,7 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 	}
 
 	@Override
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	protected Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_PKEY: return pkey;
@@ -173,6 +175,7 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 		return countryCode;
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getCreated() {
 		return created;
 	}
@@ -206,6 +209,7 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 		return technicalContact;
 	}
 
+	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
 	public Set<Email> getTechnicalEmail() {
 		return technicalEmail;
 	}
@@ -218,6 +222,10 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 		return zip;
 	}
 
+	/**
+	 * Splits emails into an unmodifiable set.
+	 */
+	@SuppressWarnings("AssignmentToForLoopParameter")
 	public static Set<Email> splitEmails(String value) throws ValidationException {
 		List<String> split = Strings.splitCommaSpace(value);
 		Set<Email> emails = new LinkedHashSet<>(split.size()*4/3+1);
@@ -225,7 +233,7 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 			s = s.trim();
 			if(!s.isEmpty()) emails.add(Email.valueOf(s));
 		}
-		return emails;
+		return AoCollections.optimalUnmodifiableSet(emails);
 	}
 
 	private static Set<Email> getEmailSet(Array array) throws SQLException, ValidationException {
@@ -384,7 +392,9 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 		} else {
 			int size = billingEmail.size();
 			out.writeCompressedInt(size);
-			for(Email email : billingEmail) out.writeUTF(email.toString());
+			for(Email email : billingEmail) {
+				out.writeUTF(email.toString());
+			}
 		}
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_20) >= 0) {
 			out.writeEnum(billingEmailFormat);
@@ -395,7 +405,9 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 		} else {
 			int size = technicalEmail.size();
 			out.writeCompressedInt(size);
-			for(Email email : technicalEmail) out.writeUTF(email.toString());
+			for(Email email : technicalEmail) {
+				out.writeUTF(email.toString());
+			}
 		}
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_20) >= 0) {
 			out.writeEnum(technicalEmailFormat);

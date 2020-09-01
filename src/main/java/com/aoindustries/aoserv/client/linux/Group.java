@@ -211,7 +211,8 @@ final public class Group extends CachedObjectGroupNameKey<Group> implements Remo
 			Name existing = interned.get(name);
 			if(existing==null) {
 				String internedId = name.intern();
-				Name addMe = (name == internedId) ? this : new Name(internedId); // Using identity String comparison to see if already interned
+				@SuppressWarnings("StringEquality") // Using identity String comparison to see if already interned
+				Name addMe = (name == internedId) ? this : new Name(internedId);
 				existing = interned.putIfAbsent(internedId, addMe);
 				if(existing==null) existing = addMe;
 			}
@@ -408,7 +409,7 @@ final public class Group extends CachedObjectGroupNameKey<Group> implements Remo
 		}
 	}
 
-	Account.Name packageName;
+	private Account.Name packageName;
 	private String type;
 
 	public int addLinuxAccount(User user) throws IOException, SQLException {
@@ -495,7 +496,9 @@ final public class Group extends CachedObjectGroupNameKey<Group> implements Remo
 		}
 
 		// All LinuxServerGroups must be removable
-		for(GroupServer lsg : getLinuxServerGroups()) reasons.addAll(lsg.getCannotRemoveReasons());
+		for(GroupServer lsg : getLinuxServerGroups()) {
+			reasons.addAll(lsg.getCannotRemoveReasons());
+		}
 
 		return reasons;
 	}

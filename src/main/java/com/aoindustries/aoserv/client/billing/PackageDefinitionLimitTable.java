@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2005-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2005-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -49,6 +49,7 @@ public final class PackageDefinitionLimitTable extends CachedTableIntegerKey<Pac
 		new OrderBy(PackageDefinitionLimit.COLUMN_RESOURCE_name+'.'+Resource.COLUMN_NAME_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -67,7 +68,9 @@ public final class PackageDefinitionLimitTable extends CachedTableIntegerKey<Pac
 		if(resource==null) throw new AssertionError("resource is null");
 		String resourceName=resource.getName();
 		// Use the index first
-		for(PackageDefinitionLimit limit : getPackageDefinitionLimits(packageDefinition)) if(limit.getResource_name().equals(resourceName)) return limit;
+		for(PackageDefinitionLimit limit : getPackageDefinitionLimits(packageDefinition)) {
+			if(limit.getResource_name().equals(resourceName)) return limit;
+		}
 		return null;
 	}
 

@@ -54,6 +54,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		new OrderBy(UserServer.COLUMN_MYSQL_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -64,8 +65,8 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 			true,
 			AoservProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
-				int pkey;
-				IntList invalidateList;
+				private int pkey;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {

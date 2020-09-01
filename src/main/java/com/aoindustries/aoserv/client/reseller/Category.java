@@ -55,8 +55,8 @@ final public class Category extends CachedObjectIntegerKey<Category> {
 	 */
 	public static final int AOSERV_MASTER_PKEY = 110;
 
-	int parent;
-	String name;
+	private int parent;
+	private String name;
 
 	@Override
 	protected Object getColumnImpl(int i) {
@@ -66,6 +66,10 @@ final public class Category extends CachedObjectIntegerKey<Category> {
 			case COLUMN_NAME: return name;
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
+	}
+
+	public Integer getParent_id() {
+		return (parent == -1) ? null : parent;
 	}
 
 	/**

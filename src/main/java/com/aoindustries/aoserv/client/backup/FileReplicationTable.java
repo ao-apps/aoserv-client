@@ -56,6 +56,7 @@ final public class FileReplicationTable extends CachedTableIntegerKey<FileReplic
 	};
 
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}

@@ -194,7 +194,9 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
 
 		private static final Map<String,Version> versionMap = new HashMap<>();
 		static {
-			for(Version version : values()) versionMap.put(version.getVersion(), version);
+			for(Version version : values()) {
+				versionMap.put(version.getVersion(), version);
+			}
 		}
 
 		/**

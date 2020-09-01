@@ -50,14 +50,13 @@ final public class SQLComparator<T> implements Comparator<T> {
 		this.sortOrders=sortOrders;
 	}
 
-	@SuppressWarnings({"unchecked"})
 	@Override
 	public int compare(T O1, T O2) {
 		try {
 			if(O1 instanceof AOServObject) {
-				AOServObject AO1=(AOServObject)O1;
+				AOServObject<?,?> AO1=(AOServObject)O1;
 				if(O2 instanceof AOServObject) {
-					AOServObject AO2=(AOServObject)O2;
+					AOServObject<?,?> AO2=(AOServObject)O2;
 					return AO1.compareTo(connector, AO2, exprs, sortOrders);
 				} else if(O2 instanceof Object[]) {
 					return AO1.compareTo(connector, (Object[])O2, exprs, sortOrders);
@@ -65,19 +64,23 @@ final public class SQLComparator<T> implements Comparator<T> {
 					return AO1.compareTo(connector, (Comparable)O2, exprs, sortOrders);
 				} else throw new IllegalArgumentException("O2 must be either AOServObject, Object[], or Comparable");
 			} else if(O1 instanceof Object[]) {
+				@SuppressWarnings({"unchecked"})
 				T[] OA1=(T[])O1;
 				if(O2 instanceof AOServObject) {
-					AOServObject AO2=(AOServObject)O2;
+					AOServObject<?,?> AO2=(AOServObject)O2;
 					return -AO2.compareTo(connector, OA1, exprs, sortOrders);
 				} else if(O2 instanceof Object[]) {
-					return compare(OA1, (T[])O2);
+					@SuppressWarnings({"unchecked"})
+					T[] OA2=(T[])O2;
+					return compare(OA1, OA2);
 				} else if(O2 instanceof Comparable) {
 					throw new IllegalArgumentException("Comparing of Object[] and Comparable not supported.");
 				} else throw new IllegalArgumentException("O2 must be either AOServObject, Object[], or Comparable");
 			} else if(O1 instanceof Comparable) {
-				Comparable C1=(Comparable)O1;
+				@SuppressWarnings({"unchecked"})
+				Comparable<Object> C1=(Comparable)O1;
 				if(O2 instanceof AOServObject) {
-					AOServObject AO2=(AOServObject)O2;
+					AOServObject<?,?> AO2=(AOServObject)O2;
 					return -AO2.compareTo(connector, C1, exprs, sortOrders);
 				} else if(O2 instanceof Object[]) {
 					throw new IllegalArgumentException("Comparing of Comparable and Object[] not supported.");

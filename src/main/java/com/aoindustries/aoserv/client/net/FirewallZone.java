@@ -214,6 +214,7 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
 			Name existing = interned.get(name);
 			if(existing == null) {
 				String internedName = name.intern();
+				@SuppressWarnings("StringEquality")
 				Name addMe = (name == internedName) ? this : new Name(internedName);
 				existing = interned.putIfAbsent(internedName, addMe);
 				if(existing == null) existing = addMe;
@@ -258,7 +259,7 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
 	static final String COLUMN_SERVER_name = "server";
 	static final String COLUMN_NAME_name = "name";
 
-	int server;
+	private int server;
 	private Name name;
 	private String _short;
 	private String description;

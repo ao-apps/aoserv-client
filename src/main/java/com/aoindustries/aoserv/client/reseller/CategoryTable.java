@@ -52,6 +52,7 @@ final public class CategoryTable extends CachedTableIntegerKey<Category> {
 		new OrderBy(Category.COLUMN_NAME_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -70,7 +71,7 @@ final public class CategoryTable extends CachedTableIntegerKey<Category> {
 		int size=cached.size();
 		for(int c=0;c<size;c++) {
 			Category tc=cached.get(c);
-			if(tc.parent==-1) matches.add(tc);
+			if(tc.getParent_id() == null) matches.add(tc);
 		}
 		return matches;
 	}
@@ -92,12 +93,12 @@ final public class CategoryTable extends CachedTableIntegerKey<Category> {
 		if(parent==null) {
 			// Search all top-level
 			for(Category tc : getRows()) {
-				if(tc.parent==-1 && tc.name.equals(name)) return tc;
+				if(tc.getParent_id() == null && tc.getName().equals(name)) return tc;
 			}
 		} else {
 			// Use indexing from above
 			for(Category child : getChildrenCategories(parent)) {
-				if(child.name.equals(name)) return child;
+				if(child.getName().equals(name)) return child;
 			}
 		}
 		return null;
@@ -124,7 +125,9 @@ final public class CategoryTable extends CachedTableIntegerKey<Category> {
 			return Collections.singletonList(singleNode);
 		} else {
 			List<Node<Category>> rootNodes = new ArrayList<>(size);
-			for(Category topLevelCategory : topLevelCategories) rootNodes.add(new TicketCategoryTreeNode(topLevelCategory));
+			for(Category topLevelCategory : topLevelCategories) {
+				rootNodes.add(new TicketCategoryTreeNode(topLevelCategory));
+			}
 			return Collections.unmodifiableList(rootNodes);
 		}
 	};
@@ -150,7 +153,9 @@ final public class CategoryTable extends CachedTableIntegerKey<Category> {
 				return Collections.singletonList(singleNode);
 			} else {
 				List<Node<Category>> childNodes = new ArrayList<>(size);
-				for(Category child : children) childNodes.add(new TicketCategoryTreeNode(child));
+				for(Category child : children) {
+					childNodes.add(new TicketCategoryTreeNode(child));
+				}
 				return Collections.unmodifiableList(childNodes);
 			}
 		}

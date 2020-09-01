@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -55,6 +55,7 @@ final public class InboxAddressTable extends CachedTableIntegerKey<InboxAddress>
 		new OrderBy(InboxAddress.COLUMN_LINUX_SERVER_ACCOUNT_name+'.'+UserServer.COLUMN_USERNAME_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -90,14 +91,14 @@ final public class InboxAddressTable extends CachedTableIntegerKey<InboxAddress>
 		return getIndexedRows(InboxAddress.COLUMN_LINUX_SERVER_ACCOUNT, lsa.getPkey());
 	}
 
-	public InboxAddress getLinuxAccAddress(Address ea, UserServer lsa) throws IOException, SQLException {
-		int pkey=ea.getPkey();
+	public InboxAddress getLinuxAccAddress(Address address, UserServer lsa) throws IOException, SQLException {
+		int address_id = address.getPkey();
 		int lsaPKey=lsa.getPkey();
 		List<InboxAddress> cached=getRows();
 		int size=cached.size();
 		for(int c=0;c<size;c++) {
 			InboxAddress laa=cached.get(c);
-			if(laa.email_address==pkey && laa.linux_server_account==lsaPKey) return laa;
+			if(laa.getEmailAddress_id() == address_id && laa.getLinuxServerAccount_id() == lsaPKey) return laa;
 		}
 		return null;
 	}
@@ -109,19 +110,19 @@ final public class InboxAddressTable extends CachedTableIntegerKey<InboxAddress>
 		List<InboxAddress> matches=new ArrayList<>(len);
 		for (int c = 0; c < len; c++) {
 			InboxAddress acc = cached.get(c);
-			if(acc.getEmailAddress().getDomain().ao_server==aoPKey) matches.add(acc);
+			if(acc.getEmailAddress().getDomain().getLinuxServer_host_id() == aoPKey) matches.add(acc);
 		}
 		return matches;
 	}
 
 	List<UserServer> getLinuxServerAccounts(Address address) throws IOException, SQLException {
-		int pkey=address.getPkey();
+		int address_id = address.getPkey();
 		List<InboxAddress> cached = getRows();
 		int len = cached.size();
 		List<UserServer> matches=new ArrayList<>(len);
 		for (int c = 0; c < len; c++) {
 			InboxAddress acc = cached.get(c);
-			if (acc.email_address==pkey) {
+			if (acc.getEmailAddress_id() == address_id) {
 				UserServer lsa=acc.getLinuxServerAccount();
 				if(lsa!=null) matches.add(lsa);
 			}

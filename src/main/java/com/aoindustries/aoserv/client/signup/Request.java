@@ -109,6 +109,7 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 	transient private String billing_zip;
 
 	@Override
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	protected Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_PKEY: return pkey;
@@ -303,6 +304,7 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 		return br;
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getTime() {
 		return time;
 	}
@@ -443,6 +445,7 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 		return table.getConnector().getAccount().getAdministrator().get(completed_by);
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getCompletedTime() {
 		return completed_time;
 	}

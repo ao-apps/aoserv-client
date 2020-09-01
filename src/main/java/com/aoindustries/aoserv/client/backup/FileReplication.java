@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2013, 2015, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2003-2013, 2015, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -56,7 +56,7 @@ final public class FileReplication extends CachedObjectIntegerKey<FileReplicatio
 	static final String COLUMN_SERVER_name = "server";
 	static final String COLUMN_BACKUP_PARTITION_name = "backup_partition";
 
-	int server;
+	private int server;
 	private int backup_partition;
 	private Long max_bit_rate;
 	private boolean use_compression;
@@ -232,6 +232,7 @@ final public class FileReplication extends CachedObjectIntegerKey<FileReplicatio
 	}
 
 	@Override
+	@SuppressWarnings("null") // Should not be necessary, bug in NetBeans 12.0?
 	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(server);
@@ -248,7 +249,7 @@ final public class FileReplication extends CachedObjectIntegerKey<FileReplicatio
 			else maxBitRateInt = max_bit_rate.intValue();
 			out.writeInt(maxBitRateInt);
 		} else if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_62)>=0) {
-			out.writeLong(max_bit_rate==null ? -1 : max_bit_rate);
+			out.writeLong((max_bit_rate == null) ? -1 : max_bit_rate);
 		}
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30)<=0) out.writeLong(-1); // last_start_time
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_9)>=0) out.writeBoolean(use_compression);
@@ -360,7 +361,7 @@ final public class FileReplication extends CachedObjectIntegerKey<FileReplicatio
 			true,
 			AoservProtocol.CommandID.GET_FAILOVER_FILE_REPLICATION_ACTIVITY,
 			new AOServConnector.ResultRequest<Activity>() {
-				Activity activity;
+				private Activity activity;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {

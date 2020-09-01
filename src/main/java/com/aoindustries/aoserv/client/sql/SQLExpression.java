@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2002-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -35,20 +35,19 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class SQLExpression {
+public interface SQLExpression {
 
-	abstract public String getColumnName();
+	String getColumnName();
 
 	/**
 	 * Evaluates the expression on the given connector and object.
 	 */
-	abstract public Object evaluate(AOServConnector conn, AOServObject obj) throws IOException, SQLException;
+	Object evaluate(AOServConnector conn, AOServObject<?,?> obj) throws IOException, SQLException;
 
-	abstract public Type getType();
+	Type getType();
 
 	/**
 	 * Gets all of the tables referenced by this expression.
 	 */
-	public void getReferencedTables(AOServConnector conn, List<Table> tables) throws IOException, SQLException {
-	}
+	void getReferencedTables(AOServConnector conn, List<Table> tables) throws IOException, SQLException;
 }

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2002-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -36,7 +36,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class SQLColumnValue extends SQLExpression {
+final public class SQLColumnValue implements SQLExpression {
 
 	final private Column column;
 	final private Type columnType;
@@ -58,7 +58,7 @@ final public class SQLColumnValue extends SQLExpression {
 	}
 
 	@Override
-	public Object evaluate(AOServConnector conn, AOServObject obj) {
+	public Object evaluate(AOServConnector conn, AOServObject<?,?> obj) {
 		return obj.getColumn(column.getIndex());
 	}
 

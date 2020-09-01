@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2005-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2005-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -60,7 +60,7 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
 	private int soft_limit;
 	private int hard_limit;
 	private Money additionalRate;
-	String additional_transaction_type;
+	private String additional_transaction_type;
 
 	public PackageDefinitionLimit() {
 	}
@@ -159,6 +159,10 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
 	 */
 	public String getAdditionalRatePerUnit() throws IOException, SQLException {
 		return additionalRate == null ? null : getResource().getPerUnit(additionalRate);
+	}
+
+	public String getAdditionalTransactionType_name() {
+		return additional_transaction_type;
 	}
 
 	public TransactionType getAdditionalTransactionType() throws SQLException, IOException {

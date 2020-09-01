@@ -63,6 +63,7 @@ final public class BindTable extends CachedTableIntegerKey<Bind> {
 		new OrderBy(Bind.COLUMN_PORT_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -80,8 +81,8 @@ final public class BindTable extends CachedTableIntegerKey<Bind> {
 			true,
 			AoservProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
-				int pkey;
-				IntList invalidateList;
+				private int pkey;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {

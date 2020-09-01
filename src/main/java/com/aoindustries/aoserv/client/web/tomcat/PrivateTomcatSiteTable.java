@@ -43,7 +43,6 @@ import com.aoindustries.net.Email;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;
-import java.util.List;
 
 /**
  * @see  PrivateTomcatSite
@@ -61,6 +60,7 @@ final public class PrivateTomcatSiteTable extends CachedTableIntegerKey<PrivateT
 		new OrderBy(PrivateTomcatSite.COLUMN_TOMCAT_SITE_name+'.'+Site.COLUMN_HTTPD_SITE_name+'.'+com.aoindustries.aoserv.client.web.Site.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -82,8 +82,8 @@ final public class PrivateTomcatSiteTable extends CachedTableIntegerKey<PrivateT
 			true,
 			AoservProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
-				int pkey;
-				IntList invalidateList;
+				private int pkey;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {
@@ -130,16 +130,8 @@ final public class PrivateTomcatSiteTable extends CachedTableIntegerKey<PrivateT
 		return getUniqueRow(PrivateTomcatSite.COLUMN_TOMCAT_SITE, pkey);
 	}
 
-	public PrivateTomcatSite getHttpdTomcatStdSiteByShutdownPort(Bind nb) throws IOException, SQLException {
-		int pkey=nb.getId();
-
-		List<PrivateTomcatSite> cached=getRows();
-		int size=cached.size();
-		for(int c=0;c<size;c++) {
-			PrivateTomcatSite tomcat=cached.get(c);
-			if(tomcat.tomcat4_shutdown_port==pkey) return tomcat;
-		}
-		return null;
+	public PrivateTomcatSite getHttpdTomcatStdSiteByShutdownPort(Bind bind) throws IOException, SQLException {
+		return getUniqueRow(PrivateTomcatSite.COLUMN_TOMCAT4_SHUTDOWN_PORT, bind.getId());
 	}
 
 	@Override

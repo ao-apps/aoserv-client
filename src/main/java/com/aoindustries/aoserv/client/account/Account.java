@@ -43,9 +43,7 @@ import com.aoindustries.aoserv.client.email.Domain;
 import com.aoindustries.aoserv.client.email.Forwarding;
 import com.aoindustries.aoserv.client.linux.GroupServer;
 import com.aoindustries.aoserv.client.linux.Server;
-import com.aoindustries.aoserv.client.linux.UserServer;
 import com.aoindustries.aoserv.client.net.Host;
-import com.aoindustries.aoserv.client.net.IpAddress;
 import com.aoindustries.aoserv.client.payment.CountryCode;
 import com.aoindustries.aoserv.client.payment.CreditCard;
 import com.aoindustries.aoserv.client.payment.Payment;
@@ -58,7 +56,6 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.ticket.Ticket;
 import com.aoindustries.collections.IntList;
-import com.aoindustries.collections.SortedArrayList;
 import com.aoindustries.dto.DtoFactory;
 import com.aoindustries.io.FastExternalizable;
 import com.aoindustries.io.FastObjectInput;
@@ -67,7 +64,6 @@ import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.Email;
-import com.aoindustries.net.InetAddress;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.ComparatorUtils;
 import com.aoindustries.util.InternUtils;
@@ -260,6 +256,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 			if(existing==null) {
 				String internedName = name.intern();
 				String internedUpperName = upperName.intern();
+				@SuppressWarnings("StringEquality")
 				Name addMe = (name == internedName) && (upperName == internedUpperName) ? this : new Name(internedName, internedUpperName);
 				existing = interned.putIfAbsent(internedName, addMe);
 				if(existing==null) existing = addMe;
@@ -326,20 +323,20 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	 */
 	public static final int MAXIMUM_BUSINESS_TREE_DEPTH = 7;
 
-	String contractVersion;
+	private String contractVersion;
 	private UnmodifiableTimestamp created;
 
 	private UnmodifiableTimestamp canceled;
 
 	private String cancelReason;
 
-	Name parent;
+	private Name parent;
 
 	private boolean can_add_backup_server;
 	private boolean can_add_businesses;
 	private boolean can_see_prices;
 
-	int disable_log;
+	private int disable_log;
 	private String do_not_disable_reason;
 	private boolean auto_enable;
 	private boolean bill_parent;
@@ -657,7 +654,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 			true,
 			AoservProtocol.CommandID.CANCEL_BUSINESS,
 			new AOServConnector.UpdateRequest() {
-				IntList invalidateList;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {
@@ -707,7 +704,9 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		if(isRootAccount()) return false;
 
 		// packages
-		for(Package pk : getPackages()) if(!pk.isDisabled()) return false;
+		for(Package pk : getPackages()) {
+			if(!pk.isDisabled()) return false;
+		}
 
 		return true;
 	}
@@ -822,7 +821,12 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		Name rootAccount_name = table.getConnector().getAccount().getAccount().getRootAccount_name();
 		Account bu=this;
 		Account tempParent;
-		while((tempParent=bu.getParent())!=null && !tempParent.getName().equals(rootAccount_name)) bu=tempParent;
+		while(
+			(tempParent = bu.getParent()) != null
+			&& !tempParent.getName().equals(rootAccount_name)
+		) {
+			bu = tempParent;
+		}
 		return bu;
 	}
 
@@ -861,6 +865,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		return table.getConnector().getAccount().getAccountHost().getAccountHosts(this);
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getCanceled() {
 		return canceled;
 	}
@@ -874,6 +879,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	}
 
 	@Override
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	protected Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_ACCOUNTING: return pkey;
@@ -913,6 +919,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		return contractVersion;
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getCreated() {
 		return created;
 	}
@@ -1115,6 +1122,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	@SuppressWarnings("deprecation")
 	public void move(Server from, Server to, TerminalWriter out) throws IOException, SQLException {
 		if(true) throw new com.aoindustries.exception.NotImplementedException("TODO: Finish implementation");
+		/* TODO: Finish implementation:
 		if(from.equals(to)) throw new SQLException("Cannot move from Server "+from.getHostname()+" to Server "+to.getHostname()+": same Server");
 
 		AccountHost fromAccountHost = getAccountHost(from.getHost());
@@ -1359,6 +1367,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 			out.flush();
 		}
 		fromAccountHost.remove();
+		 */
 	}
 
 	@Override

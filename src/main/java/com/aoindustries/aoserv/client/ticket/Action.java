@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -90,6 +90,7 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 	private String raw_email;
 
 	@Override
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	protected Object getColumnImpl(int i) throws IOException, SQLException {
 		switch(i) {
 			case COLUMN_PKEY: return pkey;
@@ -130,6 +131,7 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 		return table.getConnector().getAccount().getAdministrator().get(administrator);
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getTime() {
 		return time;
 	}
@@ -275,43 +277,47 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 		if(summary!=null) return summary;
 		final String oldValue;
 		final String newValue;
-		if(action_type.equals(ActionType.SET_BUSINESS)) {
-			oldValue = Objects.toString(old_accounting, null);
-			newValue = Objects.toString(new_accounting, null);
-		} else if(
-			action_type.equals(ActionType.SET_CLIENT_PRIORITY)
-			|| action_type.equals(ActionType.SET_ADMIN_PRIORITY)
-		) {
-			oldValue = old_priority;
-			newValue = new_priority;
-		} else if(action_type.equals(ActionType.SET_TYPE)) {
-			oldValue = getOldType().toStringImpl();
-			newValue = getNewType().toStringImpl();
-		} else if(action_type.equals(ActionType.SET_STATUS)) {
-			oldValue = getOldStatus().toStringImpl();
-			newValue = getNewStatus().toStringImpl();
-		} else if(action_type.equals(ActionType.ASSIGN)) {
-			Administrator oldAssignedTo = getOldAssignedTo();
-			Administrator newAssignedTo = getNewAssignedTo();
-			oldValue = oldAssignedTo!=null ? oldAssignedTo.getName() : old_assigned_to!=null ? accessor.getMessage("TicketAction.old_assigned_to.filtered") : null;
-			newValue = newAssignedTo!=null ? newAssignedTo.getName() : new_assigned_to!=null ? accessor.getMessage("TicketAction.new_assigned_to.filtered") : null;
-		} else if(action_type.equals(ActionType.SET_CATEGORY)) {
-			Category oldCategory = getOldCategory();
-			Category newCategory = getNewCategory();
-			oldValue = oldCategory!=null ? oldCategory.toStringImpl() : null;
-			newValue = newCategory!=null ? newCategory.toStringImpl() : null;
-		} else if(
-			action_type.equals(ActionType.SET_CONTACT_EMAILS)
-			|| action_type.equals(ActionType.SET_CONTACT_PHONE_NUMBERS)
-			|| action_type.equals(ActionType.SET_SUMMARY)
-			|| action_type.equals(ActionType.SET_INTERNAL_NOTES)
-			|| action_type.equals(ActionType.ADD_ANNOTATION)
-		) {
-			// These either have no old/new value or their value is not altered in any way
-			oldValue = getOldValue();
-			newValue = getNewValue();
-		} else {
-			throw new SQLException("Unexpected value for action_type: "+action_type);
+		switch (action_type) {
+			case ActionType.SET_BUSINESS:
+				oldValue = Objects.toString(old_accounting, null);
+				newValue = Objects.toString(new_accounting, null);
+				break;
+			case ActionType.SET_CLIENT_PRIORITY:
+			case ActionType.SET_ADMIN_PRIORITY:
+				oldValue = old_priority;
+				newValue = new_priority;
+				break;
+			case ActionType.SET_TYPE:
+				oldValue = getOldType().toStringImpl();
+				newValue = getNewType().toStringImpl();
+				break;
+			case ActionType.SET_STATUS:
+				oldValue = getOldStatus().toStringImpl();
+				newValue = getNewStatus().toStringImpl();
+				break;
+			case ActionType.ASSIGN:
+				Administrator oldAssignedTo = getOldAssignedTo();
+				Administrator newAssignedTo = getNewAssignedTo();
+				oldValue = oldAssignedTo!=null ? oldAssignedTo.getName() : old_assigned_to!=null ? accessor.getMessage("TicketAction.old_assigned_to.filtered") : null;
+				newValue = newAssignedTo!=null ? newAssignedTo.getName() : new_assigned_to!=null ? accessor.getMessage("TicketAction.new_assigned_to.filtered") : null;
+				break;
+			case ActionType.SET_CATEGORY:
+				Category oldCategory = getOldCategory();
+				Category newCategory = getNewCategory();
+				oldValue = oldCategory!=null ? oldCategory.toStringImpl() : null;
+				newValue = newCategory!=null ? newCategory.toStringImpl() : null;
+				break;
+			case ActionType.SET_CONTACT_EMAILS:
+			case ActionType.SET_CONTACT_PHONE_NUMBERS:
+			case ActionType.SET_SUMMARY:
+			case ActionType.SET_INTERNAL_NOTES:
+			case ActionType.ADD_ANNOTATION:
+				// These either have no old/new value or their value is not altered in any way
+				oldValue = getOldValue();
+				newValue = getNewValue();
+				break;
+			default:
+				throw new SQLException("Unexpected value for action_type: "+action_type);
 		}
 		return getTicketActionType().generateSummary(table.getConnector(), oldValue, newValue);
 	}

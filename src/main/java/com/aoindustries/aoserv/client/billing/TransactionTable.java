@@ -79,6 +79,7 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 		new OrderBy(Transaction.COLUMN_TRANSID_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}

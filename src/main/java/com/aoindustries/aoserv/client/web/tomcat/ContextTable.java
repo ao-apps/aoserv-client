@@ -57,6 +57,7 @@ final public class ContextTable extends CachedTableIntegerKey<Context> {
 		new OrderBy(Context.COLUMN_PATH_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -81,8 +82,8 @@ final public class ContextTable extends CachedTableIntegerKey<Context> {
 			true,
 			AoservProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
-				int pkey;
-				IntList invalidateList;
+				private int pkey;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {
@@ -135,7 +136,7 @@ final public class ContextTable extends CachedTableIntegerKey<Context> {
 		int size=cached.size();
 		for(int c=0;c<size;c++) {
 			Context htc=cached.get(c);
-			if(htc.tomcat_site==hts_pkey && htc.path.equals(path)) return htc;
+			if(htc.getHttpdTomcatSite_httpdSite_id()==hts_pkey && htc.getPath().equals(path)) return htc;
 		}
 		return null;
 	}

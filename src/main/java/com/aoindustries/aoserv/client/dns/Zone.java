@@ -86,7 +86,7 @@ final public class Zone extends CachedObjectStringKey<Zone> implements Removable
 	public static final int DEFAULT_MX_PRIORITY = 10;
 
 	private String file;
-	Account.Name packageName;
+	private Account.Name packageName;
 	private String hostmaster;
 	private long serial;
 	private int ttl;
@@ -264,7 +264,9 @@ final public class Zone extends CachedObjectStringKey<Zone> implements Removable
 		line.append(linePrefix);
 		line.append(domain);
 		int count=Math.max(1, 24-domain.length());
-		for(int d=0;d<count;d++) line.append(' ');
+		for(int d=0;d<count;d++) {
+			line.append(' ');
+		}
 		if (recordTtl!=Record.NO_TTL) {
 			String s=String.valueOf(recordTtl);
 			line.append(s);
@@ -274,11 +276,15 @@ final public class Zone extends CachedObjectStringKey<Zone> implements Removable
 			line.append(s);
 			count=Math.max(1, 24-s.length());
 		}
-		for(int d=0;d<count;d++) line.append(' ');
+		for(int d=0;d<count;d++) {
+			line.append(' ');
+		}
 		line.append("IN   ");
 		line.append(type);
 		count=Math.max(1, 8-type.length());
-		for(int d=0;d<count;d++) line.append(' ');
+		for(int d=0;d<count;d++) {
+			line.append(' ');
+		}
 		if(priority!=Record.NO_PRIORITY) {
 			line.append(priority);
 			line.append(' ');

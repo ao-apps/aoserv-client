@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2002-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -110,12 +110,12 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 		return true;
 	}
 
-	PosixPath path;
-	int linux_server_account;
-	int linux_server_group;
+	private PosixPath path;
+	private int linux_server_account;
+	private int linux_server_group;
 	private long mode;
 	private UnmodifiableTimestamp created;
-	int disable_log;
+	private int disable_log;
 
 	@Override
 	public boolean canDisable() {
@@ -140,6 +140,7 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 	}
 
 	@Override
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	protected Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_PKEY: return pkey;
@@ -194,6 +195,7 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 		return mode;
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getCreated() {
 		return created;
 	}

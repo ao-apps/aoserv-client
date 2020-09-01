@@ -61,6 +61,7 @@ final public class HostTable extends CachedTableIntegerKey<Host> {
 		new OrderBy(Host.COLUMN_NAME_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -82,8 +83,8 @@ final public class HostTable extends CachedTableIntegerKey<Host> {
 			true,
 			AoservProtocol.CommandID.ADD_BACKUP_SERVER,
 			new AOServConnector.ResultRequest<Integer>() {
-				int pkey;
-				IntList invalidateList;
+				private int pkey;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {
@@ -207,7 +208,9 @@ final public class HostTable extends CachedTableIntegerKey<Host> {
 
 	public Host getHost(Package pk, String name) throws IOException, SQLException {
 		// Use index first
-		for(Host se : getServers(pk)) if(se.getName().equals(name)) return se;
+		for(Host se : getServers(pk)) {
+			if(se.getName().equals(name)) return se;
+		}
 		return null;
 	}
 

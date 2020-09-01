@@ -202,6 +202,7 @@ final public class Server
 		return distro_hour;
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getLastDistroTime() {
 		return last_distro_time;
 	}

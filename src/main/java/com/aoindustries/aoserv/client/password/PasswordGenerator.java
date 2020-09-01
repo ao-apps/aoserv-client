@@ -253,7 +253,9 @@ public class PasswordGenerator {
 			int ch=from.charAt(0);
 			if(ch>='a' && ch<='z') ch -= ('a'-'A');
 			to.append((char)ch);
-			for(int c=1;c<len;c++) to.append(from.charAt(c));
+			for(int c=1;c<len;c++) {
+				to.append(from.charAt(c));
+			}
 		}
 	}
 }

@@ -45,7 +45,8 @@ import java.sql.SQLException;
  */
 final public class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomcatSite> {
 
-	static final int COLUMN_TOMCAT_SITE=0;
+	static final int COLUMN_TOMCAT_SITE = 0;
+	static final int COLUMN_TOMCAT4_SHUTDOWN_PORT = 1;
 	static final String COLUMN_TOMCAT_SITE_name = "tomcat_site";
 
 	/**
@@ -59,7 +60,7 @@ final public class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomca
 
 	public static final String DEFAULT_TOMCAT_VERSION_PREFIX = Version.VERSION_9_0_PREFIX;
 
-	int tomcat4_shutdown_port;
+	private int tomcat4_shutdown_port;
 	private String tomcat4_shutdown_key;
 	private int maxPostSize;
 	private boolean unpackWARs;
@@ -70,7 +71,7 @@ final public class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomca
 	protected Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_TOMCAT_SITE: return pkey;
-			case 1: return tomcat4_shutdown_port==-1?null:tomcat4_shutdown_port;
+			case COLUMN_TOMCAT4_SHUTDOWN_PORT: return tomcat4_shutdown_port==-1?null:tomcat4_shutdown_port;
 			case 2: return tomcat4_shutdown_key;
 			case 3: return maxPostSize==-1 ? null: maxPostSize;
 			case 4: return unpackWARs;
@@ -102,7 +103,7 @@ final public class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomca
 			true,
 			AoservProtocol.CommandID.SET_HTTPD_TOMCAT_STD_SITE_MAX_POST_SIZE,
 			new AOServConnector.UpdateRequest() {
-				IntList invalidateList;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {
@@ -159,6 +160,10 @@ final public class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomca
 
 	public void setTomcatAuthentication(boolean tomcatAuthentication) throws IOException, SQLException {
 		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.web_tomcat_PrivateTomcatSite_tomcatAuthentication_set, pkey, tomcatAuthentication);
+	}
+
+	public Integer getTomcat4ShutdownPort_id() {
+		return (tomcat4_shutdown_port == -1) ? null : tomcat4_shutdown_port;
 	}
 
 	public Bind getTomcat4ShutdownPort() throws IOException, SQLException {

@@ -67,6 +67,7 @@ final public class GroupUserTable extends CachedTableIntegerKey<GroupUser> {
 		new OrderBy(GroupUser.COLUMN_USER_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}

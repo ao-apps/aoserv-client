@@ -61,11 +61,11 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 	static final String COLUMN_AO_SERVER_name = "ao_server";
 	static final String COLUMN_NAME_name = "name";
 
-	int ao_server;
+	private int ao_server;
 	private String name;
 	private boolean can_add_sites;
-	int linux_server_account;
-	int linux_server_group;
+	private int linux_server_account;
+	private int linux_server_group;
 	private int mod_php_version;
 	private boolean use_suexec;
 	private int packageNum;

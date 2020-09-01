@@ -45,25 +45,30 @@ import java.sql.SQLException;
 
 final public class Site extends CachedObjectIntegerKey<Site> {
 
-	static final int COLUMN_TOMCAT_SITE=0;
+	static final int COLUMN_TOMCAT_SITE = 0;
+	static final int COLUMN_JNP_BIND = 2;
+	static final int COLUMN_WEBSERVER_BIND = 3;
+	static final int COLUMN_RMI_BIND = 4;
+	static final int COLUMN_HYPERSONIC_BIND = 5;
+	static final int COLUMN_JMX_BIND = 6;
 	static final String COLUMN_TOMCAT_SITE_name = "tomcat_site";
 
 	private int version;
-	int jnpBind,
-		webserverBind,
-		rmiBind,
-		hypersonicBind,
-		jmxBind;
+	private int jnpBind;
+	private int webserverBind;
+	private int rmiBind;
+	private int hypersonicBind;
+	private int jmxBind;
 
 	@Override
 	protected Object getColumnImpl(int i) {
 		if(i==COLUMN_TOMCAT_SITE) return pkey;
 		if(i==1) return version;	
-		if(i==2) return jnpBind;
-		if(i==3) return webserverBind;
-		if(i==4) return rmiBind;
-		if(i==5) return hypersonicBind;
-		if(i==6) return jmxBind;
+		if(i==COLUMN_JNP_BIND) return jnpBind;
+		if(i==COLUMN_WEBSERVER_BIND) return webserverBind;
+		if(i==COLUMN_RMI_BIND) return rmiBind;
+		if(i==COLUMN_HYPERSONIC_BIND) return hypersonicBind;
+		if(i==COLUMN_JMX_BIND) return jmxBind;
 		throw new IllegalArgumentException("Invalid index: " + i);
 	}
 
@@ -79,10 +84,18 @@ final public class Site extends CachedObjectIntegerKey<Site> {
 		return obj;
 	}
 
+	public int getHypersonicBind_id() {
+		return hypersonicBind;
+	}
+
 	public Bind getHypersonicBind() throws IOException, SQLException {
 		Bind obj=table.getConnector().getNet().getBind().get(hypersonicBind);
 		if(obj==null) throw new SQLException("Unable to find NetBind: "+hypersonicBind);
 		return obj;
+	}
+
+	public int getJmxBind_id() {
+		return jmxBind;
 	}
 
 	public Bind getJmxBind() throws IOException, SQLException {
@@ -91,10 +104,18 @@ final public class Site extends CachedObjectIntegerKey<Site> {
 		return obj;
 	}
 
+	public int getJnpBind_id() {
+		return jnpBind;
+	}
+
 	public Bind getJnpBind() throws IOException, SQLException {
 		Bind obj=table.getConnector().getNet().getBind().get(jnpBind);
 		if(obj==null) throw new SQLException("Unable to find NetBind: "+jnpBind);
 		return obj;
+	}
+
+	public int getRmiBind_id() {
+		return rmiBind;
 	}
 
 	public Bind getRmiBind() throws SQLException, IOException {
@@ -106,6 +127,10 @@ final public class Site extends CachedObjectIntegerKey<Site> {
 	@Override
 	public Table.TableID getTableID() {
 		return Table.TableID.HTTPD_JBOSS_SITES;
+	}
+
+	public int getWebserverBind_id() {
+		return webserverBind;
 	}
 
 	public Bind getWebserverBind() throws IOException, SQLException {

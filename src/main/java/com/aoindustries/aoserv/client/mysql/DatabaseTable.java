@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -56,6 +56,7 @@ final public class DatabaseTable extends CachedTableIntegerKey<Database> {
 		new OrderBy(Database.COLUMN_MYSQL_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -91,7 +92,9 @@ final public class DatabaseTable extends CachedTableIntegerKey<Database> {
 
 	Database getMySQLDatabase(Database.Name name, Server ms) throws IOException, SQLException {
 		// Use index first
-		for(Database md : getMySQLDatabases(ms)) if(md.getName().equals(name)) return md;
+		for(Database md : getMySQLDatabases(ms)) {
+			if(md.getName().equals(name)) return md;
+		}
 		return null;
 	}
 
@@ -109,6 +112,7 @@ final public class DatabaseTable extends CachedTableIntegerKey<Database> {
 	}
 
 	@Override
+	@SuppressWarnings("UseOfSystemOutOrSystemErr")
 	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 		String command=args[0];
 		if(command.equalsIgnoreCase(Command.ADD_MYSQL_DATABASE)) {

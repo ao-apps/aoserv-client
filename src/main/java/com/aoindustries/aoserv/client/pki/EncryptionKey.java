@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2007-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2007-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -76,6 +76,7 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 	/**
 	 * Uses the provided public key to encrypt the data.
 	 */
+	@SuppressWarnings("ThrowFromFinallyBlock")
 	public static String encrypt(String signer, String recipient, String plaintext) throws IOException {
 		String[] command = {
 			"/usr/bin/gpg",
@@ -112,7 +113,9 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 			try (Reader errIn = new InputStreamReader(P.getErrorStream())) {
 				char[] buff = new char[4096];
 				int ret;
-				while((ret=errIn.read(buff, 0, 4096))!=-1) cout.write(buff, 0, ret);
+				while((ret=errIn.read(buff, 0, 4096))!=-1) {
+					cout.write(buff, 0, ret);
+				}
 			}
 			try {
 				int retCode = P.waitFor();
@@ -128,6 +131,7 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 	/**
 	 * Uses the provided private key to decrypt the data.
 	 */
+	@SuppressWarnings("ThrowFromFinallyBlock")
 	public static String decrypt(String recipient, String ciphertext, String passphrase) throws IOException {
 		String[] command = {
 			"/usr/bin/gpg",

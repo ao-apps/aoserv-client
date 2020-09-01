@@ -59,13 +59,13 @@ final public class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
 	static final String COLUMN_HTTPD_BIND_name = "httpd_bind";
 	static final String COLUMN_NAME_name = "name";
 
-	int httpd_site;
+	private int httpd_site;
 	private int httpd_bind;
 	private String name;
 	private PosixPath access_log;
 	private PosixPath error_log;
 	private int certificate;
-	int disable_log;
+	private int disable_log;
 	private String predisable_config;
 	private boolean isManual;
 	private boolean redirect_to_primary_hostname;
@@ -293,7 +293,7 @@ final public class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
 			true,
 			AoservProtocol.CommandID.SET_HTTPD_SITE_BIND_PREDISABLE_CONFIG,
 			new AOServConnector.UpdateRequest() {
-				IntList invalidateList;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {

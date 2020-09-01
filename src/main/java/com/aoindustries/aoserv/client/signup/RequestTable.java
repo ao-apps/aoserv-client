@@ -56,6 +56,7 @@ final public class RequestTable extends CachedTableIntegerKey<Request> {
 		new OrderBy(Request.COLUMN_TIME_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -161,8 +162,8 @@ final public class RequestTable extends CachedTableIntegerKey<Request> {
 			true,
 			AoservProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
-				int pkey;
-				IntList invalidateList;
+				private int pkey;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {

@@ -69,10 +69,10 @@ final public class List extends CachedObjectIntegerKey<List> implements Removabl
 	 */
 	public static final int MAX_NAME_LENGTH=64;
 
-	PosixPath path;
-	int linux_server_account;
-	int linux_server_group;
-	int disable_log;
+	private PosixPath path;
+	private int linux_server_account;
+	private int linux_server_group;
+	private int disable_log;
 
 	public int addEmailAddress(Address address) throws IOException, SQLException {
 		return table.getConnector().getEmail().getListAddress().addEmailListAddress(address, this);

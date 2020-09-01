@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2010-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2010-2013, 2016, 2017, 2018, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -75,19 +75,21 @@ final public class PosixPath implements
 		// Be non-empty
 		if(path.length()==0) return new InvalidResult(accessor, "PosixPath.validate.empty");
 		// Start with a /
-		if(path.charAt(0)!='/') return new InvalidResult(accessor, "PosixPath.validate.startWithNonSlash", path.charAt(0));
+		char ch;
+		if((ch = path.charAt(0))!='/') return new InvalidResult(accessor, "PosixPath.validate.startWithNonSlash", ch);
 		// Not contain any null characters
-		if(path.indexOf('\0')!=-1) return new InvalidResult(accessor, "PosixPath.validate.containsNullCharacter", path.indexOf('\0'));
+		int i;
+		if((i = path.indexOf('\0'))!=-1) return new InvalidResult(accessor, "PosixPath.validate.containsNullCharacter", i);
 		// Not contain any /../ or /./ path elements
-		if(path.indexOf("/../")!=-1) return new InvalidResult(accessor, "PosixPath.validate.containsDotDot", path.indexOf("/../"));
-		if(path.indexOf("/./")!=-1) return new InvalidResult(accessor, "PosixPath.validate.containsDot", path.indexOf("/./"));
+		if((i = path.indexOf("/../"))!=-1) return new InvalidResult(accessor, "PosixPath.validate.containsDotDot", i);
+		if((i = path.indexOf("/./"))!=-1) return new InvalidResult(accessor, "PosixPath.validate.containsDot", i);
 		// Not end with / unless "/"
 		if(path.length()>1 && path.endsWith("/")) return new InvalidResult(accessor, "PosixPath.validate.endsSlash");
 		// Not end with /.. or /.
 		if(path.endsWith("/.")) return new InvalidResult(accessor, "PosixPath.validate.endsSlashDot");
 		if(path.endsWith("/..")) return new InvalidResult(accessor, "PosixPath.validate.endsSlashDotDot");
 		// Not contain any // in the path
-		if(path.indexOf("//")!=-1) return new InvalidResult(accessor, "PosixPath.validate.containsDoubleSlash", path.indexOf("//"));
+		if((i = path.indexOf("//"))!=-1) return new InvalidResult(accessor, "PosixPath.validate.containsDoubleSlash", i);
 		return ValidResult.getInstance();
 	}
 
@@ -177,6 +179,7 @@ final public class PosixPath implements
 		PosixPath existing = interned.get(path);
 		if(existing==null) {
 			String internedPath = path.intern();
+			@SuppressWarnings("StringEquality")
 			PosixPath addMe = (path == internedPath) ? this : new PosixPath(internedPath);
 			existing = interned.putIfAbsent(internedPath, addMe);
 			if(existing==null) existing = addMe;

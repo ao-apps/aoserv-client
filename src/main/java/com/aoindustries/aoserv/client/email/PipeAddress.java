@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -54,8 +54,8 @@ final public class PipeAddress extends CachedObjectIntegerKey<PipeAddress> imple
 	static final String COLUMN_EMAIL_ADDRESS_name = "email_address";
 	static final String COLUMN_EMAIL_PIPE_name = "email_pipe";
 
-	int email_address;
-	int email_pipe;
+	private int email_address;
+	private int email_pipe;
 
 	@Override
 	protected Object getColumnImpl(int i) {
@@ -65,10 +65,18 @@ final public class PipeAddress extends CachedObjectIntegerKey<PipeAddress> imple
 		throw new IllegalArgumentException("Invalid index: " + i);
 	}
 
+	public int getEmailAddress_id() {
+		return email_address;
+	}
+
 	public Address getEmailAddress() throws SQLException, IOException {
 		Address emailAddressObject = table.getConnector().getEmail().getAddress().get(email_address);
 		if (emailAddressObject == null) throw new SQLException("Unable to find EmailAddress: " + email_address);
 		return emailAddressObject;
+	}
+
+	public int getEmailPipe_id() {
+		return email_pipe;
 	}
 
 	public Pipe getEmailPipe() throws SQLException, IOException {

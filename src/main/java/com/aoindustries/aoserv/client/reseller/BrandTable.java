@@ -50,6 +50,7 @@ final public class BrandTable extends CachedTableAccountNameKey<Brand> {
 		new OrderBy(Brand.COLUMN_ACCOUNTING_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -97,7 +98,9 @@ final public class BrandTable extends CachedTableAccountNameKey<Brand> {
 			return Collections.singletonList(singleNode);
 		} else {
 			List<Node<Brand>> rootNodes = new ArrayList<>(size);
-			for(Brand topLevelBrand : topLevelBrands) rootNodes.add(new BrandTreeNode(topLevelBrand));
+			for(Brand topLevelBrand : topLevelBrands) {
+				rootNodes.add(new BrandTreeNode(topLevelBrand));
+			}
 			return Collections.unmodifiableList(rootNodes);
 		}
 	};
@@ -127,7 +130,9 @@ final public class BrandTable extends CachedTableAccountNameKey<Brand> {
 				return Collections.singletonList(singleNode);
 			} else {
 				List<Node<Brand>> childNodes = new ArrayList<>(size);
-				for(Brand child : children) childNodes.add(new BrandTreeNode(child));
+				for(Brand child : children) {
+					childNodes.add(new BrandTreeNode(child));
+				}
 				return Collections.unmodifiableList(childNodes);
 			}
 		}

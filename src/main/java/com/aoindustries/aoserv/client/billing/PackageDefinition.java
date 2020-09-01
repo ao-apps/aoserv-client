@@ -56,10 +56,10 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 	static final String COLUMN_NAME_name = "name";
 	static final String COLUMN_VERSION_name = "version";
 
-	Account.Name accounting;
-	String category;
-	String name;
-	String version;
+	private Account.Name accounting;
+	private String category;
+	private String name;
+	private String version;
 	private String display;
 	private String description;
 	private Money setupFee;
@@ -100,6 +100,10 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 		return table.getConnector().getAccount().getAccount().get(accounting);
 	}
 
+	public String getPackageCategory_name() {
+		return category;
+	}
+
 	public PackageCategory getPackageCategory() throws SQLException, IOException {
 		PackageCategory pc=table.getConnector().getBilling().getPackageCategory().get(category);
 		if(pc==null) throw new SQLException("Unable to find PackageCategory: "+category);
@@ -127,7 +131,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 			true,
 			AoservProtocol.CommandID.SET_PACKAGE_DEFINITION_LIMITS,
 			new AOServConnector.UpdateRequest() {
-				IntList invalidateList;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {
@@ -138,8 +142,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 						out.writeCompressedInt(limit.getSoftLimit());
 						out.writeCompressedInt(limit.getHardLimit());
 						MoneyUtil.writeNullMoney(limit.getAdditionalRate(), out);
-						out.writeBoolean(limit.additional_transaction_type!=null);
-						if(limit.additional_transaction_type!=null) out.writeUTF(limit.additional_transaction_type);
+						out.writeNullUTF(limit.getAdditionalTransactionType_name());
 					}
 				}
 
@@ -341,7 +344,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 			true,
 			AoservProtocol.CommandID.UPDATE_PACKAGE_DEFINITION,
 			new AOServConnector.UpdateRequest() {
-				IntList invalidateList;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {

@@ -225,6 +225,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 			Name existing = interned.get(name);
 			if(existing==null) {
 				String internedName = name.intern();
+				@SuppressWarnings("StringEquality")
 				Name addMe = (name == internedName) ? this : new Name(internedName);
 				existing = interned.putIfAbsent(internedName, addMe);
 				if(existing==null) existing = addMe;
@@ -941,7 +942,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 
 				@Override
 				public List<TableStatus> afterRelease() {
-					return result;
+					return Collections.unmodifiableList(result);
 				}
 			}
 		);
@@ -1067,7 +1068,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 
 				@Override
 				public List<CheckTableResult> afterRelease() {
-					return result;
+					return Collections.unmodifiableList(result);
 				}
 			}
 		);

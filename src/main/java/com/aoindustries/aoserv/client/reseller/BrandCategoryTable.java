@@ -47,6 +47,7 @@ final public class BrandCategoryTable extends CachedTableIntegerKey<BrandCategor
 		new OrderBy(BrandCategory.COLUMN_CATEGORY_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}

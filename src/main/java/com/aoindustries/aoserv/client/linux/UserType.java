@@ -154,6 +154,7 @@ final public class UserType extends GlobalObjectStringKey<UserType> {
 		return pkey;
 	}
 
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	private static PosixPath[] getShellList(String type) throws SQLException {
 		if(type.equals(BACKUP)) return backupShells;
 		if(type.equals(EMAIL)) return emailShells;

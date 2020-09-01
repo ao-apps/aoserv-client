@@ -74,7 +74,7 @@ final public class PasswordChecker {
 	private static byte[] cachedWords;
 
 	public static class Result {
-		private String category;
+		private final String category;
 		private String result;
 
 		private Result(String category) {
@@ -100,7 +100,9 @@ final public class PasswordChecker {
 
 	public static List<Result> getAllGoodResults() {
 		List<Result> results = new ArrayList<>(NUM_CATEGORIES);
-		for(int c=0;c<NUM_CATEGORIES;c++) results.add(new Result(accessor.getMessage(categoryKeys[c])));
+		for(int c=0;c<NUM_CATEGORIES;c++) {
+			results.add(new Result(accessor.getMessage(categoryKeys[c])));
+		}
 		return results;
 	}
 
@@ -168,7 +170,9 @@ final public class PasswordChecker {
 			String backwards;
 			{
 				char[] backwards_ca = new char[passwordLen];
-				for (int c = 0; c < passwordLen; c++) backwards_ca[c] = password.charAt(passwordLen - c - 1);
+				for (int c = 0; c < passwordLen; c++) {
+					backwards_ca[c] = password.charAt(passwordLen - c - 1);
+				}
 				backwards = new String(backwards_ca);
 			}
 
@@ -193,7 +197,7 @@ final public class PasswordChecker {
 				int len = months.length;
 				for (int c = 0; c < len; c++) {
 					String month = months[c].toLowerCase();
-					if (lowerf.indexOf(month) != -1 || lowerb.indexOf(month) != -1) {
+					if (lowerf.contains(month) || lowerb.contains(month)) {
 						goodb = false;
 						break;
 					}
@@ -219,11 +223,15 @@ final public class PasswordChecker {
 				Loop :
 					while (pos < wordslen) {
 						// Find the beginning of the next word
-						while (pos < wordslen && words[pos] <= ' ') pos++;
+						while (pos < wordslen && words[pos] <= ' ') {
+							pos++;
+						}
 
 						// Search to the end of the word
 						int startpos = pos;
-						while (pos < wordslen && words[pos] > ' ') pos++;
+						while (pos < wordslen && words[pos] > ' ') {
+							pos++;
+						}
 
 						// Get the word
 						int wordlen = pos - startpos;
@@ -266,6 +274,7 @@ final public class PasswordChecker {
 	}
 */
 
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	private synchronized static byte[] getDictionary() throws IOException {
 		if(cachedWords==null) {
 			try (

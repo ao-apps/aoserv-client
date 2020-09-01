@@ -43,7 +43,6 @@ import com.aoindustries.net.Email;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;
-import java.util.List;
 
 /**
  * @see  Site
@@ -61,6 +60,7 @@ final public class SiteTable extends CachedTableIntegerKey<Site> {
 		new OrderBy(Site.COLUMN_TOMCAT_SITE_name+'.'+com.aoindustries.aoserv.client.web.tomcat.Site.COLUMN_HTTPD_SITE_name+'.'+com.aoindustries.aoserv.client.web.Site.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -82,8 +82,8 @@ final public class SiteTable extends CachedTableIntegerKey<Site> {
 			true,
 			AoservProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
-				int pkey;
-				IntList invalidateList;
+				private int pkey;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {
@@ -98,7 +98,9 @@ final public class SiteTable extends CachedTableIntegerKey<Site> {
 					out.writeCompressedInt(ipAddress==null?-1:ipAddress.getPkey());
 					out.writeUTF(primaryHttpHostname.toString());
 					out.writeCompressedInt(altHttpHostnames.length);
-					for(int c=0;c<altHttpHostnames.length;c++) out.writeUTF(altHttpHostnames[c].toString());
+					for(DomainName altHttpHostname : altHttpHostnames) {
+						out.writeUTF(altHttpHostname.toString());
+					}
 					out.writeCompressedInt(jBossVersion.getPkey());
 				}
 
@@ -128,64 +130,24 @@ final public class SiteTable extends CachedTableIntegerKey<Site> {
 		return getUniqueRow(Site.COLUMN_TOMCAT_SITE, pkey);
 	}
 
-	public Site getHttpdJBossSiteByRMIPort(Bind nb) throws IOException, SQLException {
-		int pkey=nb.getId();
-
-		List<Site> cached=getRows();
-		int size=cached.size();
-		for(int c=0;c<size;c++) {
-			Site jboss=cached.get(c);
-			if(jboss.rmiBind==pkey) return jboss;
-		}
-		return null;
+	public Site getHttpdJBossSiteByRMIPort(Bind bind) throws IOException, SQLException {
+		return getUniqueRow(Site.COLUMN_RMI_BIND, bind.getId());
 	}
 
-	public Site getHttpdJBossSiteByJNPPort(Bind nb) throws IOException, SQLException {
-		int pkey=nb.getId();
-
-		List<Site> cached=getRows();
-		int size=cached.size();
-		for(int c=0;c<size;c++) {
-			Site jboss=cached.get(c);
-			if(jboss.jnpBind==pkey) return jboss;
-		}
-		return null;
+	public Site getHttpdJBossSiteByJNPPort(Bind bind) throws IOException, SQLException {
+		return getUniqueRow(Site.COLUMN_JNP_BIND, bind.getId());
 	}
 
-	public Site getHttpdJBossSiteByWebserverPort(Bind nb) throws IOException, SQLException {
-		int pkey=nb.getId();
-
-		List<Site> cached=getRows();
-		int size=cached.size();
-		for(int c=0;c<size;c++) {
-			Site jboss=cached.get(c);
-			if(jboss.webserverBind==pkey) return jboss;
-		}
-		return null;
+	public Site getHttpdJBossSiteByWebserverPort(Bind bind) throws IOException, SQLException {
+		return getUniqueRow(Site.COLUMN_WEBSERVER_BIND, bind.getId());
 	}
 
-	public Site getHttpdJBossSiteByHypersonicPort(Bind nb) throws IOException, SQLException {
-		int pkey=nb.getId();
-
-		List<Site> cached=getRows();
-		int size=cached.size();
-		for(int c=0;c<size;c++) {
-			Site jboss=cached.get(c);
-			if(jboss.hypersonicBind==pkey) return jboss;
-		}
-		return null;
+	public Site getHttpdJBossSiteByHypersonicPort(Bind bind) throws IOException, SQLException {
+		return getUniqueRow(Site.COLUMN_HYPERSONIC_BIND, bind.getId());
 	}
 
-	public Site getHttpdJBossSiteByJMXPort(Bind nb) throws IOException, SQLException {
-		int pkey=nb.getId();
-
-		List<Site> cached=getRows();
-		int size=cached.size();
-		for(int c=0;c<size;c++) {
-			Site jboss=cached.get(c);
-			if(jboss.jmxBind==pkey) return jboss;
-		}
-		return null;
+	public Site getHttpdJBossSiteByJMXPort(Bind bind) throws IOException, SQLException {
+		return getUniqueRow(Site.COLUMN_JMX_BIND, bind.getId());
 	}
 
 	@Override

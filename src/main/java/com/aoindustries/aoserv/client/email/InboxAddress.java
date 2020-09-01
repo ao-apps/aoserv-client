@@ -60,8 +60,8 @@ final public class InboxAddress extends CachedObjectIntegerKey<InboxAddress> imp
 	static final String COLUMN_EMAIL_ADDRESS_name = "email_address";
 	static final String COLUMN_LINUX_SERVER_ACCOUNT_name = "linux_server_account";
 
-	int email_address;
-	int linux_server_account;
+	private int email_address;
+	private int linux_server_account;
 
 	// Protocol conversion <= 1.30:
 	private User.Name linux_account;
@@ -74,10 +74,18 @@ final public class InboxAddress extends CachedObjectIntegerKey<InboxAddress> imp
 		throw new IllegalArgumentException("Invalid index: " + i);
 	}
 
+	public int getEmailAddress_id() {
+		return email_address;
+	}
+
 	public Address getEmailAddress() throws SQLException, IOException {
 		Address emailAddressObject = table.getConnector().getEmail().getAddress().get(email_address);
 		if (emailAddressObject == null) throw new SQLException("Unable to find EmailAddress: " + email_address);
 		return emailAddressObject;
+	}
+
+	public int getLinuxServerAccount_id() {
+		return linux_server_account;
 	}
 
 	public UserServer getLinuxServerAccount() throws SQLException, IOException {

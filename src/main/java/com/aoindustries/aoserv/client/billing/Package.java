@@ -151,13 +151,27 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		if(disable_log!=-1) return false;
 
 		// Can only disabled when all dependent objects are already disabled
-		for(SharedTomcat hst : getHttpdSharedTomcats()) if(!hst.isDisabled()) return false;
-		for(Pipe ep : getEmailPipes()) if(!ep.isDisabled()) return false;
-		for(CvsRepository cr : getCvsRepositories()) if(!cr.isDisabled()) return false;
-		for(User un : getUsernames()) if(!un.isDisabled()) return false;
-		for(Site hs : getHttpdSites()) if(!hs.isDisabled()) return false;
-		for(com.aoindustries.aoserv.client.email.List el : getEmailLists()) if(!el.isDisabled()) return false;
-		for(SmtpRelay ssr : getEmailSmtpRelays()) if(!ssr.isDisabled()) return false;
+		for(SharedTomcat hst : getHttpdSharedTomcats()) {
+			if(!hst.isDisabled()) return false;
+		}
+		for(Pipe ep : getEmailPipes()) {
+			if(!ep.isDisabled()) return false;
+		}
+		for(CvsRepository cr : getCvsRepositories()) {
+			if(!cr.isDisabled()) return false;
+		}
+		for(User un : getUsernames()) {
+			if(!un.isDisabled()) return false;
+		}
+		for(Site hs : getHttpdSites()) {
+			if(!hs.isDisabled()) return false;
+		}
+		for(com.aoindustries.aoserv.client.email.List el : getEmailLists()) {
+			if(!el.isDisabled()) return false;
+		}
+		for(SmtpRelay ssr : getEmailSmtpRelays()) {
+			if(!ssr.isDisabled()) return false;
+		}
 
 		return true;
 	}
@@ -194,6 +208,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	}
 
 	@Override
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	protected Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_PKEY: return pkey;
@@ -213,6 +228,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		}
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getCreated() {
 		return created;
 	}

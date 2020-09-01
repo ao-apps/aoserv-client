@@ -345,7 +345,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 			true,
 			AoservProtocol.CommandID.SET_MYSQL_SERVER_USER_PREDISABLE_PASSWORD,
 			new AOServConnector.UpdateRequest() {
-				IntList invalidateList;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {

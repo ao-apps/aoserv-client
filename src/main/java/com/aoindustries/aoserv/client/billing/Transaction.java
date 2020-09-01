@@ -115,7 +115,7 @@ final public class Transaction extends CachedObjectIntegerKey<Transaction> {
 			true,
 			AoservProtocol.CommandID.TRANSACTION_APPROVED,
 			new AOServConnector.UpdateRequest() {
-				IntList invalidateList;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {
@@ -160,7 +160,7 @@ final public class Transaction extends CachedObjectIntegerKey<Transaction> {
 			true,
 			AoservProtocol.CommandID.TRANSACTION_DECLINED,
 			new AOServConnector.UpdateRequest() {
-				IntList invalidateList;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {
@@ -205,7 +205,7 @@ final public class Transaction extends CachedObjectIntegerKey<Transaction> {
 			true,
 			AoservProtocol.CommandID.TRANSACTION_HELD,
 			new AOServConnector.UpdateRequest() {
-				IntList invalidateList;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {
@@ -289,6 +289,7 @@ final public class Transaction extends CachedObjectIntegerKey<Transaction> {
 	}
 
 	@Override
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	protected Object getColumnImpl(int i) {
 		switch(i) {
 			case 0: return time;
@@ -378,6 +379,7 @@ final public class Transaction extends CachedObjectIntegerKey<Transaction> {
 		return Table.TableID.TRANSACTIONS;
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getTime() {
 		return time;
 	}
@@ -397,6 +399,7 @@ final public class Transaction extends CachedObjectIntegerKey<Transaction> {
 	}
 
 	@Override
+	@SuppressWarnings("ConvertToStringSwitch")
 	public void init(ResultSet result) throws SQLException {
 		try {
 			time = UnmodifiableTimestamp.valueOf(result.getTimestamp("time"));

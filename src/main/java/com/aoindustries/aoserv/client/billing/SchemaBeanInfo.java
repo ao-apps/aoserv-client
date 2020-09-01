@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -30,6 +30,7 @@ import java.beans.SimpleBeanInfo;
 
 public class SchemaBeanInfo extends SimpleBeanInfo {
 
+	@SuppressWarnings("VolatileArrayField")
 	private static volatile PropertyDescriptor[] properties;
 
 	@Override

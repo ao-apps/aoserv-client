@@ -56,6 +56,7 @@ final public class WorkerTable extends CachedTableIntegerKey<Worker> {
 		new OrderBy(Worker.COLUMN_NAME_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}

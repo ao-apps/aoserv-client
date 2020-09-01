@@ -77,7 +77,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Removab
 		/**
 		 * The maximum length of a PostgreSQL username.
 		 */
-		public static final int MAX_LENGTH = 31;
+		public static final int POSTGRESQL_NAME_MAX_LENGTH = 31;
 
 		/**
 		 * Validates a PostgreSQL user id.
@@ -86,7 +86,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Removab
 			if(id==null) return new InvalidResult(ApplicationResources.accessor, "User.Name.validate.isNull");
 			int len = id.length();
 			if(len==0) return new InvalidResult(ApplicationResources.accessor, "User.Name.validate.isEmpty");
-			if(len > MAX_LENGTH) return new InvalidResult(ApplicationResources.accessor, "User.Name.validate.tooLong", MAX_LENGTH, len);
+			if(len > POSTGRESQL_NAME_MAX_LENGTH) return new InvalidResult(ApplicationResources.accessor, "User.Name.validate.tooLong", POSTGRESQL_NAME_MAX_LENGTH, len);
 
 			// The first character must be [a-z] or [0-9]
 			char ch = id.charAt(0);
@@ -145,6 +145,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Removab
 			Name existing = interned.get(name);
 			if(existing==null) {
 				String internedId = name.intern();
+				@SuppressWarnings("StringEquality")
 				Name addMe = (name == internedId) ? this : new Name(internedId);
 				existing = interned.putIfAbsent(internedId, addMe);
 				if(existing==null) existing = addMe;
@@ -179,7 +180,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Removab
 	 * @deprecated  Please use {@link Name#MAX_LENGTH} instead.
 	 */
 	@Deprecated
-	public static final int MAX_USERNAME_LENGTH = Name.MAX_LENGTH;
+	public static final int MAX_USERNAME_LENGTH = Name.POSTGRESQL_NAME_MAX_LENGTH;
 
 	/**
 	 * The username of the PostgreSQL special users.
@@ -294,7 +295,9 @@ final public class User extends CachedObjectUserNameKey<User> implements Removab
 	@Override
 	public boolean canDisable() throws IOException, SQLException {
 		if(isDisabled() || isSpecial()) return false;
-		for(UserServer psu : getPostgresServerUsers()) if(!psu.isDisabled()) return false;
+		for(UserServer psu : getPostgresServerUsers()) {
+			if(!psu.isDisabled()) return false;
+		}
 		return true;
 	}
 
@@ -438,7 +441,9 @@ final public class User extends CachedObjectUserNameKey<User> implements Removab
 				)
 			);
 		}
-		for(UserServer psu : getPostgresServerUsers()) reasons.addAll(psu.getCannotRemoveReasons());
+		for(UserServer psu : getPostgresServerUsers()) {
+			reasons.addAll(psu.getCannotRemoveReasons());
+		}
 		return reasons;
 	}
 
@@ -455,7 +460,9 @@ final public class User extends CachedObjectUserNameKey<User> implements Removab
 
 	@Override
 	public void setPassword(String password) throws IOException, SQLException {
-		for(UserServer user : getPostgresServerUsers()) if(user.canSetPassword()) user.setPassword(password);
+		for(UserServer user : getPostgresServerUsers()) {
+			if(user.canSetPassword()) user.setPassword(password);
+		}
 	}
 
 	@Override

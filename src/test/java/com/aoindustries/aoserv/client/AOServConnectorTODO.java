@@ -42,6 +42,7 @@ import junit.framework.TestSuite;
  *
  * @author  AO Industries, Inc.
  */
+@SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class AOServConnectorTODO extends TestCase {
 
 	public static final User.Name REGULAR_USER_USERNAME;
@@ -102,7 +103,9 @@ public class AOServConnectorTODO extends TestCase {
 		for(AOServConnector conn : conns) {
 			User.Name username = conn.getCurrentAdministrator().getKey();
 			System.out.println("    "+username);
-			for(int c=0;c<1000;c++) conn.clearCaches();
+			for(int c=0;c<1000;c++) {
+				conn.clearCaches();
+			}
 		}
 	}
 
@@ -269,6 +272,7 @@ public class AOServConnectorTODO extends TestCase {
 	/**
 	 * Test the ability to get each table from the connector by table ID.  Also makes sure each table is a unique instance.
 	 */
+	@SuppressWarnings("rawtypes")
 	public void testGetTable() throws Exception {
 		System.out.println("Testing getTable and getTables");
 		for(AOServConnector conn : conns) {
@@ -293,12 +297,16 @@ public class AOServConnectorTODO extends TestCase {
 				}
 				if(c>0) {
 					// Make sure not a duplicate
-					for(int d=0;d<c;d++) assertNotSame(table, tables[d]);
+					for(int d=0;d<c;d++) {
+						assertNotSame(table, tables[d]);
+					}
 				}
 			}
 			List<? extends AOServTable<?,?>> allTables = conn.getTables();
 			assertEquals(tables.length, allTables.size());
-			for(int c=0;c<numTables;c++) assertSame(tables[c], allTables.get(c));
+			for(int c=0;c<numTables;c++) {
+				assertSame(tables[c], allTables.get(c));
+			}
 		}
 	}
 }

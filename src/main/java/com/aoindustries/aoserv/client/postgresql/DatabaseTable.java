@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -58,6 +58,7 @@ final public class DatabaseTable extends CachedTableIntegerKey<Database> {
 		new OrderBy(Database.COLUMN_POSTGRES_SERVER_name+'.'+Server.COLUMN_AO_SERVER_name+'.'+com.aoindustries.aoserv.client.linux.Server.COLUMN_HOSTNAME_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -97,7 +98,9 @@ final public class DatabaseTable extends CachedTableIntegerKey<Database> {
 
 	Database getPostgresDatabase(Database.Name name, Server postgresServer) throws IOException, SQLException {
 		// Use the index first
-		for(Database pd : getPostgresDatabases(postgresServer)) if(pd.getName().equals(name)) return pd;
+		for(Database pd : getPostgresDatabases(postgresServer)) {
+			if(pd.getName().equals(name)) return pd;
+		}
 		return null;
 	}
 
@@ -128,6 +131,7 @@ final public class DatabaseTable extends CachedTableIntegerKey<Database> {
 	}
 
 	@Override
+	@SuppressWarnings("UseOfSystemOutOrSystemErr")
 	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
 		String command=args[0];
 		if(command.equalsIgnoreCase(Command.ADD_POSTGRES_DATABASE)) {

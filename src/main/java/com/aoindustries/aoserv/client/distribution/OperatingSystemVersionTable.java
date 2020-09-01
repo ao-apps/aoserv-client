@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2003-2009, 2016, 2017, 2018, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -45,6 +45,7 @@ final public class OperatingSystemVersionTable extends GlobalTableIntegerKey<Ope
 		new OrderBy(OperatingSystemVersion.COLUMN_SORT_ORDER_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -54,9 +55,9 @@ final public class OperatingSystemVersionTable extends GlobalTableIntegerKey<Ope
 		String arch=architecture.getName();
 		for(OperatingSystemVersion osv : getRows()) {
 			if(
-				osv.version_name.equals(name)
-				&& osv.version_number.equals(version)
-				&& osv.architecture.equals(arch)
+				osv.getVersionName().equals(name)
+				&& osv.getVersionNumber().equals(version)
+				&& osv.getArchitecture_name().equals(arch)
 			) return osv;
 		}
 		return null;

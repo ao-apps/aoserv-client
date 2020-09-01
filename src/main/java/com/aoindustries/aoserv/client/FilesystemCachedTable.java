@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2003-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -144,6 +144,7 @@ public abstract class FilesystemCachedTable<K,V extends FilesystemCachedObject<K
 	//       This is necessary since lists from getRows() are unmodifiable.
 	//       Also, need a way to "close" this list as soon as no longer using it to free up disk resources.
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
 	public final List<V> getRows() throws IOException, SQLException {
 		synchronized(this) {
 			validateCache();
@@ -203,8 +204,13 @@ public abstract class FilesystemCachedTable<K,V extends FilesystemCachedObject<K
 			validateCache();
 			// Create any needed objects
 			int minLength=col+1;
-			if(columnLists==null) columnLists=new ArrayList<>(minLength);
-			else while(columnLists.size()<minLength) columnLists.add(null);
+			if(columnLists==null) {
+				columnLists=new ArrayList<>(minLength);
+			} else {
+				while(columnLists.size()<minLength) {
+					columnLists.add(null);
+				}
+			}
 			List<V> unmodifiableSortedList = columnLists.get(col);
 			if(unmodifiableSortedList==null) {
 				FileList<V> sortedFileList=new FileList<>(

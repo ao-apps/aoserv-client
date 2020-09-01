@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2002-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -35,7 +35,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class SQLCast extends SQLExpression {
+final public class SQLCast implements SQLExpression {
 
 	private final SQLExpression expression;
 	private final Type castToType;
@@ -56,7 +56,7 @@ final public class SQLCast extends SQLExpression {
 	}
 
 	@Override
-	public Object evaluate(AOServConnector conn, AOServObject obj) throws IOException, SQLException {
+	public Object evaluate(AOServConnector conn, AOServObject<?,?> obj) throws IOException, SQLException {
 		return expression.getType().cast(conn, expression.evaluate(conn, obj), castToType);
 	}
 

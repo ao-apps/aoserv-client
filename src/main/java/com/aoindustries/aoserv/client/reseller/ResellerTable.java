@@ -50,6 +50,7 @@ final public class ResellerTable extends CachedTableAccountNameKey<Reseller> {
 		new OrderBy(Reseller.COLUMN_ACCOUNTING_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -96,7 +97,9 @@ final public class ResellerTable extends CachedTableAccountNameKey<Reseller> {
 			return Collections.singletonList(singleNode);
 		} else {
 			List<Node<Reseller>> rootNodes = new ArrayList<>(size);
-			for(Reseller topLevelReseller : topLevelResellers) rootNodes.add(new ResellerTreeNode(topLevelReseller));
+			for(Reseller topLevelReseller : topLevelResellers) {
+				rootNodes.add(new ResellerTreeNode(topLevelReseller));
+			}
 			return Collections.unmodifiableList(rootNodes);
 		}
 	};
@@ -126,7 +129,9 @@ final public class ResellerTable extends CachedTableAccountNameKey<Reseller> {
 				return Collections.singletonList(singleNode);
 			} else {
 				List<Node<Reseller>> childNodes = new ArrayList<>(size);
-				for(Reseller child : children) childNodes.add(new ResellerTreeNode(child));
+				for(Reseller child : children) {
+					childNodes.add(new ResellerTreeNode(child));
+				}
 				return Collections.unmodifiableList(childNodes);
 			}
 		}

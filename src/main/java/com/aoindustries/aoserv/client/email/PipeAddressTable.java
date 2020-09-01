@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -54,6 +54,7 @@ final public class PipeAddressTable extends CachedTableIntegerKey<PipeAddress> {
 		new OrderBy(PipeAddress.COLUMN_EMAIL_PIPE_name+'.'+Pipe.COLUMN_COMMAND_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -74,13 +75,13 @@ final public class PipeAddressTable extends CachedTableIntegerKey<PipeAddress> {
 	}
 
 	List<Pipe> getEmailPipes(Address address) throws IOException, SQLException {
-		int pkey=address.getPkey();
+		int address_id = address.getPkey();
 		List<PipeAddress> cached=getRows();
 		int len = cached.size();
 		List<Pipe> matches=new ArrayList<>(len);
 		for (int c = 0; c < len; c++) {
 			PipeAddress pipe=cached.get(c);
-			if (pipe.email_address==pkey) {
+			if (pipe.getEmailAddress_id() == address_id) {
 				// The pipe might be filtered
 				Pipe ep=pipe.getEmailPipe();
 				if(ep!=null) matches.add(pipe.getEmailPipe());
@@ -106,13 +107,13 @@ final public class PipeAddressTable extends CachedTableIntegerKey<PipeAddress> {
 	}
 
 	PipeAddress getEmailPipeAddress(Address address, Pipe pipe) throws IOException, SQLException {
-		int pkey=address.getPkey();
+		int address_id = address.getPkey();
 		int pipePKey=pipe.getPkey();
 		List<PipeAddress> cached = getRows();
 		int len = cached.size();
 		for (int c = 0; c < len; c++) {
 			PipeAddress epa = cached.get(c);
-			if (epa.email_address==pkey && epa.email_pipe==pipePKey) return epa;
+			if (epa.getEmailAddress_id() == address_id && epa.getEmailPipe_id() == pipePKey) return epa;
 		}
 		return null;
 	}
@@ -124,7 +125,7 @@ final public class PipeAddressTable extends CachedTableIntegerKey<PipeAddress> {
 		List<PipeAddress> matches=new ArrayList<>(len);
 		for (int c = 0; c < len; c++) {
 			PipeAddress pipe = cached.get(c);
-			if(pipe.getEmailAddress().getDomain().ao_server==aoPKey) matches.add(pipe);
+			if(pipe.getEmailAddress().getDomain().getLinuxServer_host_id() == aoPKey) matches.add(pipe);
 		}
 		return matches;
 	}

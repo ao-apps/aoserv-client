@@ -198,6 +198,7 @@ public class TicketLoggingHandler extends QueuedHandler {
 		debug();
 	}
 
+	@SuppressWarnings("UseOfSystemOutOrSystemErr")
 	private void debug() {
 		if(DEBUG) {
 			System.err.println();

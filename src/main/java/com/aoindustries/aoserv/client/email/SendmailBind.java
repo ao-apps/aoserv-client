@@ -51,7 +51,7 @@ final public class SendmailBind extends CachedObjectIntegerKey<SendmailBind> {
 	;
 	static final String COLUMN_NET_BIND_name = "net_bind";
 
-	int sendmail_server;
+	private int sendmail_server;
 	private String name;
 
 	@Override

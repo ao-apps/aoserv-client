@@ -781,9 +781,7 @@ abstract public class AOServConnector implements SchemaParent {
 	 *
 	 * @see  Table
 	 */
-	@SuppressWarnings({"unchecked"})
-	// TODO: Better generics here
-	final public AOServTable<?,? extends AOServObject> getTable(int tableID) throws IllegalArgumentException {
+	final public AOServTable<?,?> getTable(int tableID) throws IllegalArgumentException {
 		if(tableID>=0 && tableID<tables.size()) return tables.get(tableID);
 		throw new IllegalArgumentException("Table not found for ID="+tableID);
 	}

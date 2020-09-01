@@ -57,6 +57,7 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
 		new OrderBy(CreditCard.COLUMN_CREATED_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -109,8 +110,8 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
 			true,
 			AoservProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
-				int pkey;
-				IntList invalidateList;
+				private int pkey;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {
@@ -190,7 +191,7 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
 		int size = cards.size();
 		for (int c = 0; c < size; c++) {
 			CreditCard tcard = cards.get(c);
-			if (tcard.getIsActive() && tcard.getUseMonthly() && tcard.accounting.equals(accounting)) return tcard;
+			if (tcard.getIsActive() && tcard.getUseMonthly() && tcard.getAccount_name().equals(accounting)) return tcard;
 		}
 		return null;
 	}

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -54,6 +54,7 @@ final public class MajordomoServerTable extends CachedTableIntegerKey<MajordomoS
 		new OrderBy(MajordomoServer.COLUMN_DOMAIN_name+'.'+Domain.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -87,7 +88,7 @@ final public class MajordomoServerTable extends CachedTableIntegerKey<MajordomoS
 		List<MajordomoServer> matches=new ArrayList<>(size);
 		for(int c=0;c<size;c++) {
 			MajordomoServer ms=cached.get(c);
-			if(ms.getDomain().ao_server==aoPKey) matches.add(ms);
+			if(ms.getDomain().getLinuxServer_host_id() == aoPKey) matches.add(ms);
 		}
 		return matches;
 	}

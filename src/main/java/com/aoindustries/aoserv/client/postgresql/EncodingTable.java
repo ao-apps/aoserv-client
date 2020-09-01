@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -46,6 +46,7 @@ final public class EncodingTable extends GlobalTableIntegerKey<Encoding> {
 		new OrderBy(Encoding.COLUMN_PKEY_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -65,7 +66,7 @@ final public class EncodingTable extends GlobalTableIntegerKey<Encoding> {
 		int cachedLen=cached.size();
 		for (int c = 0; c < cachedLen; c++) {
 			Encoding pe=cached.get(c);
-			if (pe.encoding.equals(encoding)) return pe;
+			if (pe.getEncoding().equals(encoding)) return pe;
 		}
 		return null;
 	}

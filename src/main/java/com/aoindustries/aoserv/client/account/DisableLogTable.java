@@ -49,6 +49,7 @@ final public class DisableLogTable extends CachedTableIntegerKey<DisableLog> {
 		new OrderBy(DisableLog.COLUMN_PKEY_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}

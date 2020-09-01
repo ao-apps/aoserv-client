@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2012, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2012, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -48,13 +48,13 @@ final public class Limiter extends CachedObjectIntegerKey<Limiter> {
 	static final String COLUMN_NET_DEVICE_name= "net_device";
 	static final String COLUMN_IDENTIFIER_name= "identifier";
 
-	int netDevice;
+	private int netDevice;
 	private String identifier;
 	private String description;
 
 	@Override
 	public Table.TableID getTableID() {
-	return Table.TableID.IP_REPUTATION_LIMITERS;
+		return Table.TableID.IP_REPUTATION_LIMITERS;
 	}
 
 	@Override

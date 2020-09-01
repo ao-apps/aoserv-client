@@ -131,17 +131,4 @@ public final class NestedInputStream extends InputStream {
 		bufferRead+=bufferLeft;
 		return bufferLeft;
 	}
-
-	/**
-     * @deprecated The finalization mechanism is inherently problematic.
-	 */
-    @Deprecated // Java 9: (since="9")
-	@Override
-	protected void finalize() throws Throwable {
-		if(buffer!=null) {
-			BufferManager.release(buffer, false);
-			buffer=null;
-		}
-		super.finalize();
-	}
 }

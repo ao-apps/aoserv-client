@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -57,10 +57,11 @@ final public class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
 	private DomainName hostname;
 	private Email email;
 	private UnmodifiableTimestamp created;
-	int pub_linux_server_account;
+	private int pub_linux_server_account;
 	private boolean allow_anonymous;
 
 	@Override
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	protected Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_NET_BIND: return pkey;
@@ -74,6 +75,7 @@ final public class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
 		}
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getCreated() {
 		return created;
 	}

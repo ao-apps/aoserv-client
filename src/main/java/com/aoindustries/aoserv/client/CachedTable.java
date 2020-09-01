@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -84,7 +84,9 @@ public abstract class CachedTable<K,V extends CachedObject<K,V>> extends AOServT
 				indexHashes=new ArrayList<>(minLength);
 				indexesHashed=new BitSet(minLength);
 			}
-			while(indexHashes.size()<minLength) indexHashes.add(null);
+			while(indexHashes.size()<minLength) {
+				indexHashes.add(null);
+			}
 			Map<Object,List<V>> map=indexHashes.get(col);
 			if(map==null) indexHashes.set(col, map=new HashMap<>());
 			if(!indexesHashed.get(col)) {
@@ -123,7 +125,9 @@ public abstract class CachedTable<K,V extends CachedObject<K,V>> extends AOServT
 				columnHashes=new ArrayList<>(minLength);
 				columnsHashed=new BitSet(minLength);
 			}
-			while(columnHashes.size()<minLength) columnHashes.add(null);
+			while(columnHashes.size()<minLength) {
+				columnHashes.add(null);
+			}
 			Map<Object,V> map=columnHashes.get(col);
 			if(!columnsHashed.get(col)) {
 				List<V> table=tableData;
@@ -150,6 +154,7 @@ public abstract class CachedTable<K,V extends CachedObject<K,V>> extends AOServT
 	 * Gets the complete list of objects in the table.
 	 */
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
 	public List<V> getRows() throws IOException, SQLException {
 		synchronized(this) {
 			validateCache();

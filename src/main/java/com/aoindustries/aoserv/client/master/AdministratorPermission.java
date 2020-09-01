@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2007-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2007-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -48,8 +48,8 @@ final public class AdministratorPermission extends CachedObjectIntegerKey<Admini
 	static final String COLUMN_USERNAME_name = "username";
 	static final String COLUMN_PERMISSION_name = "permission";
 
-	User.Name username;
-	String permission;
+	private User.Name username;
+	private String permission;
 
 	@Override
 	protected Object getColumnImpl(int i) {
@@ -61,10 +61,18 @@ final public class AdministratorPermission extends CachedObjectIntegerKey<Admini
 		}
 	}
 
+	public User.Name getAdministrator_username() {
+		return username;
+	}
+
 	public Administrator getAdministrator() throws SQLException, IOException {
 		Administrator obj = table.getConnector().getAccount().getAdministrator().get(username);
 		if(obj == null) throw new SQLException("Unable to find Administrator: " + username);
 		return obj;
+	}
+
+	public String getAOServPermission_name() {
+		return permission;
 	}
 
 	public Permission getAOServPermission() throws SQLException, IOException {

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -70,8 +70,8 @@ final public class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
 	static final String COLUMN_SERVER_name = "server";
 
 	private Account.Name accounting;
-	int server;
-	boolean is_default;
+	private int server;
+	private boolean is_default;
 	private boolean
 		can_control_apache,
 		can_control_cron,
@@ -142,6 +142,10 @@ final public class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
 			case 11: return can_control_virtual_server;
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
+	}
+
+	public int getHost_id() {
+		return server;
 	}
 
 	public Host getHost() throws IOException, SQLException {

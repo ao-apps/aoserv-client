@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -52,7 +52,9 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 	private static class Lock {}
 	private static final Lock[] locks = new Lock[numTables];
 	static {
-		for(int c=0;c<locks.length;c++) locks[c] = new Lock();
+		for(int c=0;c<locks.length;c++) {
+			locks[c] = new Lock();
+		}
 	}
 
 	/**
@@ -69,9 +71,12 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 	 * based on the server and then the table ID, and then the
 	 * column number.
 	 */
+	@SuppressWarnings("rawtypes")
 	private static final List<List<Map<Object,GlobalObject>>> tableHashes=new ArrayList<>(numTables);
 	static {
-		for(int c=0;c<numTables;c++) tableHashes.add(null);
+		for(int c=0;c<numTables;c++) {
+			tableHashes.add(null);
+		}
 	}
 	private static final BitSet[] hashLoadeds=new BitSet[numTables];
 
@@ -84,7 +89,9 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 	 */
 	private static final List<List<Map<Object,List<GlobalObject<?,?>>>>> indexHashes=new ArrayList<>(numTables);
 	static {
-		for(int c=0;c<numTables;c++) indexHashes.add(null);
+		for(int c=0;c<numTables;c++) {
+			indexHashes.add(null);
+		}
 	}
 	private static final BitSet[] indexLoadeds=new BitSet[numTables];
 
@@ -94,7 +101,9 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 	 */
 	private static final List<List<GlobalObject<?,?>>> tableObjs=new ArrayList<>(numTables);
 	static {
-		for(int c=0;c<numTables;c++) tableObjs.add(null);
+		for(int c=0;c<numTables;c++) {
+			tableObjs.add(null);
+		}
 	}
 
 	protected GlobalTable(AOServConnector connector, Class<V> clazz) {
@@ -105,6 +114,7 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 	 * Gets the number of accessible rows in the table or <code>-1</code> if the
 	 * table is not yet loaded.
 	 */
+	@SuppressWarnings("NestedSynchronizedStatement")
 	public final int getGlobalRowCount() {
 		int ordinal = getTableID().ordinal();
 		List<GlobalObject<?,?>> objs;
@@ -118,7 +128,6 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 	}
 
 	@Override
-	@SuppressWarnings({"unchecked"})
 	final public List<V> getIndexedRows(int col, Object value) throws IOException, SQLException {
 		Table.TableID tableID=getTableID();
 		int ordinal = tableID.ordinal();
@@ -134,14 +143,16 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 				tableValues = indexHashes.get(ordinal);
 				if(tableValues==null) indexHashes.set(ordinal, tableValues=new ArrayList<>(col+1));
 			}
-			while(tableValues.size()<=col) tableValues.add(null);
+			while(tableValues.size()<=col) {
+				tableValues.add(null);
+			}
 			Map<Object,List<GlobalObject<?,?>>> colIndexes=tableValues.get(col);
 			if(colIndexes==null) tableValues.set(col, colIndexes=new HashMap<>());
 
 			if(!isHashed) {
 				// Build the modifiable lists in a temporary Map
 				Map<Object,List<GlobalObject<?,?>>> modifiableIndexes=new HashMap<>();
-				for(GlobalObject O : getRows()) {
+				for(GlobalObject<K,V> O : getRows()) {
 					Object cvalue=O.getColumn(col);
 					List<GlobalObject<?,?>> list=modifiableIndexes.get(cvalue);
 					if(list==null) modifiableIndexes.put(cvalue, list=new ArrayList<>());
@@ -158,14 +169,14 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 				tableLoadeds.set(col);
 			}
 			// This returns unmodifable lists.
-			List<GlobalObject<?,?>> list=colIndexes.get(value);
+			@SuppressWarnings("unchecked")
+			List<V> list=(List<V>)colIndexes.get(value);
 			if(list==null) return Collections.emptyList();
-			return (List)list;
+			return list;
 		}
 	}
 
 	@Override
-	@SuppressWarnings({"unchecked"})
 	final protected V getUniqueRowImpl(int col, Object value) throws SQLException, IOException {
 		if(value == null) return null;
 		Table.TableID tableID=getTableID();
@@ -180,22 +191,32 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 			List<V> table=getRows();
 			int size=table.size();
 
-			List<Map<Object,GlobalObject>> tableValues;
+			final List<Map<Object,V>> tableValues;
 			synchronized(tableHashes) {
-				tableValues = tableHashes.get(ordinal);
-				if(tableValues==null) tableHashes.set(ordinal, tableValues=new ArrayList<>(col+1));
+				@SuppressWarnings("unchecked")
+				List<Map<Object,V>> existing = (List)tableHashes.get(ordinal);
+				if(existing != null) {
+					tableValues = existing;
+				} else {
+					tableValues = new ArrayList<>(col+1);
+					@SuppressWarnings({"unchecked", "rawtypes"})
+					List<Map<Object,GlobalObject>> toCache = (List)tableValues;
+					tableHashes.set(ordinal, toCache);
+				}
 			}
-			while(tableValues.size()<=col) tableValues.add(null);
-			Map<Object,GlobalObject> colValues=tableValues.get(col);
+			while(tableValues.size()<=col) {
+				tableValues.add(null);
+			}
+			Map<Object,V> colValues=tableValues.get(col);
 			if(colValues==null) tableValues.set(col, colValues=new HashMap<>(size*13/9));
 
 			if(!isHashed) {
 				colValues.clear();
 				for(int c=0;c<size;c++) {
-					GlobalObject O=table.get(c);
+					V O=table.get(c);
 					Object cvalue=O.getColumn(col);
 					if(cvalue!=null) {
-						GlobalObject old=colValues.put(cvalue, O);
+						V old=colValues.put(cvalue, O);
 						if(old!=null) throw new SQLException("Duplicate pkey entry for table "+getTableID()+" ("+getTableName()+"), column #"+col+": "+cvalue);
 					}
 				}
@@ -203,12 +224,11 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 				tableLoadeds.set(col);
 			}
 
-			return (V)colValues.get(value);
+			return colValues.get(value);
 		}
 	}
 
 	@Override
-	@SuppressWarnings({"unchecked"})
 	public List<V> getRows() throws IOException, SQLException {
 		Table.TableID tableID = getTableID();
 		int ordinal = tableID.ordinal();
@@ -216,8 +236,9 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 		synchronized(locks[ordinal]) {
 			validateCache();
 			synchronized(tableObjs) {
-				List<GlobalObject<?,?>> objs=tableObjs.get(ordinal);
-				return (List)objs;
+				@SuppressWarnings("unchecked")
+				List<V> objs = (List)tableObjs.get(ordinal);
+				return objs;
 			}
 		}
 	}

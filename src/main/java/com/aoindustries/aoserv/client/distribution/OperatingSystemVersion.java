@@ -91,9 +91,9 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 	public static final int MANDRAKE_10_1_I586=14;
 
 	private String operating_system;
-	String version_number;
-	String version_name;
-	String architecture;
+	private String version_number;
+	private String version_name;
+	private String architecture;
 	private String display;
 	private boolean is_aoserv_daemon_supported;
 	private short sort_order;
@@ -123,6 +123,10 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 
 	public String getVersionName() {
 		return version_name;
+	}
+
+	public String getArchitecture_name() {
+		return architecture;
 	}
 
 	public Architecture getArchitecture(AOServConnector connector) throws SQLException, IOException {

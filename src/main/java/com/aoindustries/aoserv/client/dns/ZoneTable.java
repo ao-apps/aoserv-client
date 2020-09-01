@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -55,6 +55,7 @@ final public class ZoneTable extends CachedTableStringKey<Zone> {
 		new OrderBy(Zone.COLUMN_ZONE_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -67,7 +68,9 @@ final public class ZoneTable extends CachedTableStringKey<Zone> {
 	private List<DomainName> getDNSTLDs() throws IOException, SQLException {
 		List<TopLevelDomain> tlds=connector.getDns().getTopLevelDomain().getRows();
 		List<DomainName> names=new ArrayList<>(tlds.size());
-		for(TopLevelDomain tld : tlds) names.add(tld.getDomain());
+		for(TopLevelDomain tld : tlds) {
+			names.add(tld.getDomain());
+		}
 		return names;
 	}
 
@@ -281,8 +284,6 @@ final public class ZoneTable extends CachedTableStringKey<Zone> {
 			if ((ch < 'a' || ch > 'z') && (ch < '0' || ch > '9') && ch != '-') return false;
 			if(ch>='0' && ch<='9') numCount++;
 		}
-		if(numCount==len) return false;
-
-		return true;
+		return (numCount != len);
 	}
 }

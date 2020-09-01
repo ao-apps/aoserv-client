@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2012, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2003-2012, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -49,8 +49,8 @@ final public class FileReplicationSetting extends CachedObjectIntegerKey<FileRep
 	static final String COLUMN_REPLICATION_name = "replication";
 	static final String COLUMN_PATH_name = "path";
 
-	int replication;
-	String path;
+	private int replication;
+	private String path;
 	private boolean backup_enabled;
 	private boolean required;
 

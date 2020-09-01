@@ -64,7 +64,7 @@ final public class Host extends CachedObjectIntegerKey<Host> implements Comparab
 	 */
 	public static final String HIDDEN_PASSWORD="*";
 
-	String farm;
+	private String farm;
 	private String description;
 	private int operating_system_version;
 	private int packageId;

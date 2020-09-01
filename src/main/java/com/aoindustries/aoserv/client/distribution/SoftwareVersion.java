@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -50,14 +50,16 @@ final public class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
 	public static final String COLUMN_VERSION_name = "version";
 	static final String COLUMN_NAME_name = "name";
 
-	String name, version;
-	UnmodifiableTimestamp updated;
+	private String name;
+	private String version;
+	private UnmodifiableTimestamp updated;
 	private User.Name owner;
 	private int operating_system_version;
 	private UnmodifiableTimestamp disable_time;
 	private String disable_reason;
 
 	@Override
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	protected Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_PKEY: return pkey;
@@ -101,6 +103,7 @@ final public class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
 		return disable_time == null || disable_time.getTime() > time;
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getDisableTime() {
 		return disable_time;
 	}
@@ -124,6 +127,7 @@ final public class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
 		return technologyName;
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getUpdated() {
 		return updated;
 	}

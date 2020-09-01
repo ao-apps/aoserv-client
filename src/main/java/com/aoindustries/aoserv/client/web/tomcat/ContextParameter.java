@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2006-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -51,8 +51,8 @@ final public class ContextParameter extends CachedObjectIntegerKey<ContextParame
 	static final String COLUMN_TOMCAT_CONTEXT_name = "tomcat_context";
 	static final String COLUMN_NAME_name = "name";
 
-	int tomcat_context;
-	String name;
+	private int tomcat_context;
+	private String name;
 	private String value;
 	private boolean override;
 	private String description;

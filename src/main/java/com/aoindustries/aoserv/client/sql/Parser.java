@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2019  AO Industries, Inc.
+ * Copyright (C) 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -129,6 +129,7 @@ public class Parser {
 	//       This should not hurt since we don't support any variable substitution inside double quotes anyway
 
 	// TODO: Unit tests
+	@SuppressWarnings("AssignmentToForLoopParameter")
 	public static String unquote(String str) {
 		int strLen = str.length();
 		StringBuilder unquoted = new StringBuilder(strLen);

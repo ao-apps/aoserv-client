@@ -48,8 +48,8 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
 	static final String COLUMN_AO_SERVER_name = "ao_server";
 	static final String COLUMN_PATH_name = "path";
 
-	int ao_server;
-	PosixPath path;
+	private int ao_server;
+	private PosixPath path;
 	private boolean enabled;
 	private boolean quota_enabled;
 

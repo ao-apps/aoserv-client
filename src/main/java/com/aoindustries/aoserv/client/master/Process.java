@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -40,6 +40,7 @@ import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -84,6 +85,7 @@ public class Process extends AOServObject<SmallIdentifier,Process> implements Si
 	}
 
 	@Override
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	protected Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_ID: return id;
@@ -157,6 +159,7 @@ public class Process extends AOServObject<SmallIdentifier,Process> implements Si
 		return is_secure;
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getConnectTime() {
 		return connect_time;
 	}
@@ -173,6 +176,7 @@ public class Process extends AOServObject<SmallIdentifier,Process> implements Si
 		return state;
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getStateStartTime() {
 		return state_start_time;
 	}
@@ -245,7 +249,7 @@ public class Process extends AOServObject<SmallIdentifier,Process> implements Si
 	}
 
 	public String[] getCommand() {
-		return command;
+		return Arrays.copyOf(command, command.length);
 	}
 
 	@Override

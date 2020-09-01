@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2009, 2014, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2003-2009, 2014, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -52,8 +52,8 @@ final public class MysqlReplication extends CachedObjectIntegerKey<MysqlReplicat
 	static final String COLUMN_REPLICATION_name = "replication";
 	static final String COLUMN_MYSQL_SERVER_name = "mysql_server";
 
-	int ao_server;
-	int replication;
+	private int ao_server;
+	private int replication;
 	private int mysql_server;
 	private int monitoring_seconds_behind_low;
 	private int monitoring_seconds_behind_medium;
@@ -306,7 +306,7 @@ final public class MysqlReplication extends CachedObjectIntegerKey<MysqlReplicat
 			true,
 			AoservProtocol.CommandID.GET_MYSQL_SLAVE_STATUS,
 			new AOServConnector.ResultRequest<SlaveStatus>() {
-				SlaveStatus result;
+				private SlaveStatus result;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2012, 2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2012, 2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -49,7 +49,7 @@ final public class Network extends CachedObjectLongKey<Network> {
 		COLUMN_NETWORK_name  = "network"
 	;
 
-	int set;
+	private int set;
 	private int network;
 	private int counter;
 

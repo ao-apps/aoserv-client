@@ -167,6 +167,7 @@ final public class IpAddress extends CachedObjectIntegerKey<IpAddress> {
 	private boolean monitoringEnabled;
 
 	@Override
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	protected Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_ID: return pkey;
@@ -227,6 +228,7 @@ final public class IpAddress extends CachedObjectIntegerKey<IpAddress> {
 	 * which allows the automated accounting to start the billing on the correct
 	 * day of the month.
 	 */
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getCreated() {
 		return created;
 	}

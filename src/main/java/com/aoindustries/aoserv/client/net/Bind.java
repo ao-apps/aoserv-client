@@ -748,7 +748,7 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 			true,
 			AoservProtocol.CommandID.SET_NET_BIND_FIREWALLD_ZONES,
 			new AOServConnector.UpdateRequest() {
-				IntList invalidateList;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {

@@ -56,6 +56,7 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
 		new OrderBy(Ticket.COLUMN_PKEY_name, DESCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -77,8 +78,8 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
 			true,
 			AoservProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
-				int pkey;
-				IntList invalidateList;
+				private int pkey;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {
@@ -94,7 +95,9 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
 					out.writeUTF(clientPriority.getPriority());
 					int size = contactEmails.size();
 					out.writeCompressedInt(size);
-					for(Email email : contactEmails) out.writeUTF(email.toString());
+					for(Email email : contactEmails) {
+						out.writeUTF(email.toString());
+					}
 					out.writeUTF(contactPhoneNumbers);
 				}
 

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -65,15 +65,15 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 	 */
 	public static final int HISTORY_DAYS=92;
 
-	Account.Name packageName;
-	int ao_server;
+	private Account.Name packageName;
+	private int ao_server;
 	private HostAddress host;
-	String type;
+	private String type;
 	private UnmodifiableTimestamp created;
 	private UnmodifiableTimestamp last_refreshed;
 	private int refresh_count;
 	private UnmodifiableTimestamp expiration;
-	int disable_log;
+	private int disable_log;
 
 	public int addSpamEmailMessage(String message) throws IOException, SQLException {
 		return table.getConnector().getEmail().getSpamMessage().addSpamEmailMessage(this, message);
@@ -102,6 +102,7 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 	}
 
 	@Override
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	protected Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_PKEY: return pkey;
@@ -118,6 +119,7 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 		}
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getCreated() {
 		return created;
 	}
@@ -135,6 +137,7 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 		return obj;
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getExpiration() {
 		return expiration;
 	}
@@ -149,8 +152,13 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 		return esrt;
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getLastRefreshed() {
 		return last_refreshed;
+	}
+
+	public Account.Name getPackage_name() {
+		return packageName;
 	}
 
 	public Package getPackage() throws IOException, SQLException {
@@ -160,6 +168,10 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 
 	public int getRefreshCount() {
 		return refresh_count;
+	}
+
+	public Integer getLinuxServer_host_id() {
+		return (ao_server == -1) ? null : ao_server;
 	}
 
 	public Server getLinuxServer() throws SQLException, IOException {

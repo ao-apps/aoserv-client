@@ -62,7 +62,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 	static final String COLUMN_PKEY_name = "pkey";
 
 	private String processorId;
-	Account.Name accounting;
+	private Account.Name accounting;
 	private String groupName;
 	private boolean testMode;
 	private int duplicateWindow;
@@ -423,6 +423,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 	/**
 	 * Gets the time of the authorization if not available.
 	 */
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getAuthorizationTime() {
 		return authorizationTime;
 	}
@@ -533,6 +534,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 	/**
 	 * Gets the time of the capture.
 	 */
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getCaptureTime() {
 		return captureTime;
 	}
@@ -579,6 +581,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 	/**
 	 * Gets the time of the void.
 	 */
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getVoidTime() {
 		return voidTime;
 	}
@@ -631,6 +634,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 	}
 
 	@Override
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	protected Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_PKEY: return pkey;
@@ -1135,7 +1139,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			true,
 			AoservProtocol.CommandID.CREDIT_CARD_TRANSACTION_SALE_COMPLETED,
 			new AOServConnector.UpdateRequest() {
-				IntList invalidateList;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {
@@ -1223,7 +1227,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			true,
 			AoservProtocol.CommandID.CREDIT_CARD_TRANSACTION_AUTHORIZE_COMPLETED,
 			new AOServConnector.UpdateRequest() {
-				IntList invalidateList;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {

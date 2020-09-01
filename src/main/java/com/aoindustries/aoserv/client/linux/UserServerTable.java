@@ -62,6 +62,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		new OrderBy(UserServer.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -132,8 +133,8 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		List<UserServer> matches=new ArrayList<>(cachedLen);
 		for(int c = 0; c < cachedLen; c++) {
 			UserServer linuxServerAccount = rows.get(c);
-			if(linuxServerAccount.ao_server == aoServer.getPkey()) {
-				User.Name username = linuxServerAccount.username;
+			if(linuxServerAccount.getAoServer_server_id() == aoServer.getPkey()) {
+				User.Name username = linuxServerAccount.getLinuxAccount_username_id();
 
 				// Must also have a non-primary entry in the LinuxGroupAccounts that is also a group on this server
 				for(GroupUser lga : connector.getLinux().getGroupUser().getLinuxGroupAccounts(groupName, username)) {
@@ -168,7 +169,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 					Integer I=lsa.getServer().getPkey();
 					Map<User.Name,UserServer> serverHash=nameHash.get(I);
 					if(serverHash==null) nameHash.put(I, serverHash=new HashMap<>());
-					if(serverHash.put(lsa.username, lsa)!=null) throw new SQLException("LinuxServerAccount username exists more than once on server: "+lsa.username+" on "+I);
+					if(serverHash.put(lsa.getLinuxAccount_username_id(), lsa)!=null) throw new SQLException("LinuxServerAccount username exists more than once on server: "+lsa.getLinuxAccount_username_id()+" on "+I);
 				}
 				nameHashBuilt=true;
 			}
@@ -194,10 +195,10 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		for (int c = 0; c < len; c++) {
 			UserServer account=list.get(c);
 			if(
-				account.username.equals(username)
+				account.getLinuxAccount_username_id().equals(username)
 				&& (!emailOnly || account.getLinuxAccount().getType().isEmail())
 			) {
-				if(account.disable_log!=-1) {
+				if(account.isDisabled()) {
 					if(disabledLSA==null) disabledLSA=account;
 				} else {
 					if(account.passwordMatches(password)) return account;
@@ -241,7 +242,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 					int lsasLen=lsas.size();
 					for(int d=0;d<lsasLen;d++) {
 						UserServer lsa=lsas.get(d);
-						if(lsa.disable_log!=-1) {
+						if(lsa.isDisabled()) {
 							if(disabledLSA==null) disabledLSA=lsa;
 						} else {
 							if(lsa.passwordMatches(password)) return lsa;
@@ -278,7 +279,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 					UserServer lsa=list.get(c);
 					LinuxId lsaUID = lsa.getUid();
 					// Only hash the root user for uid of 0
-					if(lsaUID.getId() != UserServer.ROOT_UID || lsa.username.equals(User.ROOT)) {
+					if(lsaUID.getId() != UserServer.ROOT_UID || lsa.getLinuxAccount_username_id().equals(User.ROOT)) {
 						Integer aoI=lsa.getServer().getPkey();
 						Map<LinuxId,UserServer> serverHash=uidHash.get(aoI);
 						if(serverHash==null) uidHash.put(aoI, serverHash=new HashMap<>());
@@ -558,7 +559,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		int size=cached.size();
 		for(int c=0;c<size;c++) {
 			UserServer lsa=cached.get(c);
-			if(lsa.ao_server==pkey) {
+			if(lsa.getAoServer_server_id()==pkey) {
 				PosixPath home=lsa.getHome();
 				if(
 					home.equals(directory)

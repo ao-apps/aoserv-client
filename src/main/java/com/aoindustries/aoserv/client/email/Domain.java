@@ -70,8 +70,8 @@ public final class Domain extends CachedObjectIntegerKey<Domain> implements Remo
 	static final String COLUMN_DOMAIN_name = "domain";
 
 	private DomainName domain;
-	int ao_server;
-	Account.Name packageName;
+	private int ao_server;
+	private Account.Name packageName;
 
 	public int addEmailAddress(String address) throws SQLException, IOException {
 		return table.getConnector().getEmail().getAddress().addEmailAddress(address, this);
@@ -123,6 +123,10 @@ public final class Domain extends CachedObjectIntegerKey<Domain> implements Remo
 		return packageObject;
 	}
 
+	public int getLinuxServer_host_id() {
+		return ao_server;
+	}
+
 	public Server getLinuxServer() throws SQLException, IOException {
 		Server ao=table.getConnector().getLinux().getServer().get(ao_server);
 		if(ao==null) throw new SQLException("Unable to find linux.Server: "+ao_server);
@@ -168,7 +172,9 @@ public final class Domain extends CachedObjectIntegerKey<Domain> implements Remo
 			reasons.add(new CannotRemoveReason<>("Used by Majordomo server "+ed.getDomain()+" on "+ed.getLinuxServer().getHostname(), ms));
 		}
 
-		for(Address ea : getEmailAddresses()) reasons.addAll(ea.getCannotRemoveReasons());
+		for(Address ea : getEmailAddresses()) {
+			reasons.addAll(ea.getCannotRemoveReasons());
+		}
 
 		return reasons;
 	}

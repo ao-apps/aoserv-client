@@ -56,6 +56,7 @@ final public class PaymentTable extends CachedTableIntegerKey<Payment> {
 		new OrderBy(Payment.COLUMN_PKEY_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -128,8 +129,8 @@ final public class PaymentTable extends CachedTableIntegerKey<Payment> {
 			true,
 			AoservProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
-				int pkey;
-				IntList invalidateList;
+				private int pkey;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {
@@ -244,7 +245,7 @@ final public class PaymentTable extends CachedTableIntegerKey<Payment> {
 		List<Payment> ccts = getRows();
 		for(int c=ccts.size()-1; c>=0; c--) {
 			Payment cct = ccts.get(c);
-			if(cct.accounting.equals(accounting)) return cct;
+			if(cct.getAccount_name().equals(accounting)) return cct;
 		}
 		return null;
 	}

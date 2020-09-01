@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2006-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -40,6 +40,7 @@ import junit.framework.TestSuite;
  *
  * @author  AO Industries, Inc.
  */
+@SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class GetIndexedRowTODO extends TestCase {
 
 	private List<AOServConnector> conns;
@@ -67,6 +68,7 @@ public class GetIndexedRowTODO extends TestCase {
 	/**
 	 * Test the size() method of each AOServTable.
 	 */
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	public void testGetIndexedRows() throws Exception {
 		System.out.println("Testing all indexed rows:");
 		System.out.println("+ means supported");

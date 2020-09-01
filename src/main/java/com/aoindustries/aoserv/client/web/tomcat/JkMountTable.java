@@ -56,6 +56,7 @@ final public class JkMountTable extends CachedTableIntegerKey<JkMount> {
 		new OrderBy(JkMount.COLUMN_PATH_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -70,8 +71,8 @@ final public class JkMountTable extends CachedTableIntegerKey<JkMount> {
 			true,
 			AoservProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
-				int pkey;
-				IntList invalidateList;
+				private int pkey;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {

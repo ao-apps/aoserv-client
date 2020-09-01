@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -48,7 +48,8 @@ final public class SoftwareCategorization extends GlobalObjectIntegerKey<Softwar
 	static final String COLUMN_NAME_name = "name";
 	static final String COLUMN_CLASS_name = "class";
 
-	String name, clazz;
+	private String name;
+	private String clazz;
 
 	@Override
 	protected Object getColumnImpl(int i) {

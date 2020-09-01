@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2012, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2002-2012, 2016, 2017, 2018, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -50,6 +50,7 @@ final public class BackupPartitionTable extends CachedTableIntegerKey<BackupPart
 		new OrderBy(BackupPartition.COLUMN_PATH_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -69,7 +70,7 @@ final public class BackupPartitionTable extends CachedTableIntegerKey<BackupPart
 		int size=cached.size();
 		for(int c=0;c<size;c++) {
 			BackupPartition bp=cached.get(c);
-			if(bp.path.equals(path)) return bp;
+			if(bp.getPath().toString().equals(path)) return bp;
 		}
 		return null;
 	}

@@ -81,13 +81,13 @@ final public class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
 	public static final String DEFAULT_TOMCAT_VERSION_PREFIX = Version.VERSION_9_0_PREFIX;
 
 	private String name;
-	int ao_server;
+	private int ao_server;
 	private int version;
-	int linux_server_account;
-	int linux_server_group;
-	int disable_log;
-	int tomcat4_worker;
-	int tomcat4_shutdown_port;
+	private int linux_server_account;
+	private int linux_server_group;
+	private int disable_log;
+	private int tomcat4_worker;
+	private int tomcat4_shutdown_port;
 	private String tomcat4_shutdown_key;
 	private boolean isManual;
 	private int maxPostSize;
@@ -296,7 +296,7 @@ final public class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
 			true,
 			AoservProtocol.CommandID.SET_HTTPD_SHARED_TOMCAT_MAX_POST_SIZE,
 			new AOServConnector.UpdateRequest() {
-				IntList invalidateList;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {

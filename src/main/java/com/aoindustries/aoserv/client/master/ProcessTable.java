@@ -66,7 +66,9 @@ final public class ProcessTable extends AOServTable<SmallIdentifier,Process> {
 	 */
 	public Process get(SmallIdentifier id) throws IOException, SQLException {
 		if(id == null) return null;
-		for(Process process : getRows()) if(id.equals(process.getId())) return process;
+		for(Process process : getRows()) {
+			if(id.equals(process.getId())) return process;
+		}
 		return null;
 	}
 

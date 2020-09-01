@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -62,9 +62,9 @@ final public class VirtualHostName extends CachedObjectIntegerKey<VirtualHostNam
 	static final String COLUMN_HOSTNAME_name = "hostname";
 	static final String COLUMN_HTTPD_SITE_BIND_name = "httpd_site_bind";
 
-	int httpd_site_bind;
+	private int httpd_site_bind;
 	private DomainName hostname;
-	boolean isPrimary;
+	private boolean isPrimary;
 
 	@Override
 	public List<CannotRemoveReason<VirtualHostName>> getCannotRemoveReasons() throws SQLException, IOException {

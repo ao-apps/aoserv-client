@@ -55,6 +55,7 @@ final public class AdministratorTable extends CachedTableUserNameKey<Administrat
 		new OrderBy(Administrator.COLUMN_USERNAME_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -102,7 +103,7 @@ final public class AdministratorTable extends CachedTableUserNameKey<Administrat
 			true,
 			AoservProtocol.CommandID.ADD,
 			new AOServConnector.UpdateRequest() {
-				IntList invalidateList;
+				private IntList invalidateList;
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {
 					out.writeCompressedInt(Table.TableID.BUSINESS_ADMINISTRATORS.ordinal());

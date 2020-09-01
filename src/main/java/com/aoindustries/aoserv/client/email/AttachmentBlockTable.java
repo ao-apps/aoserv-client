@@ -48,6 +48,7 @@ public final class AttachmentBlockTable extends CachedTableIntegerKey<Attachment
 		new OrderBy(AttachmentBlock.COLUMN_EXTENSION_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}

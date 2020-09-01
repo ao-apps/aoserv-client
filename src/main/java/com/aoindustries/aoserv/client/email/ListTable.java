@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -56,6 +56,7 @@ final public class ListTable extends CachedTableIntegerKey<List> {
 		new OrderBy(List.COLUMN_LINUX_SERVER_ACCOUNT_name+'.'+UserServer.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -132,7 +133,7 @@ final public class ListTable extends CachedTableIntegerKey<List> {
 		int size=cached.size();
 		for(int c=0;c<size;c++) {
 			List list=cached.get(c);
-			if(list.getLinuxServerGroup().getServer_host_id() == aoPKey && list.path.equals(path)) return list;
+			if(list.getLinuxServerGroup().getServer_host_id() == aoPKey && list.getPath().equals(path)) return list;
 		}
 		return null;
 	}

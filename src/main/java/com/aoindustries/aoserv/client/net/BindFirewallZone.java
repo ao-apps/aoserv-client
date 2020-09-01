@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -47,8 +47,8 @@ final public class BindFirewallZone extends CachedObjectIntegerKey<BindFirewallZ
 	static final String COLUMN_NET_BIND_name = "net_bind";
 	static final String COLUMN_FIREWALLD_ZONE_name = "firewalld_zone";
 
-	int net_bind;
-	int firewalld_zone;
+	private int net_bind;
+	private int firewalld_zone;
 
 	public Bind getNetBind() throws SQLException, IOException {
 		Bind obj = table.getConnector().getNet().getBind().get(net_bind);

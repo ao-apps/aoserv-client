@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -80,12 +80,12 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
 		MAJORDOMO_OWNER_ADDRESS="majordomo-owner"
 	;
 
-	int linux_server_account;
-	int linux_server_group;
-	String version;
-	int majordomo_pipe_address;
-	int owner_majordomo_add;
-	int majordomo_owner_add;
+	private int linux_server_account;
+	private int linux_server_group;
+	private String version;
+	private int majordomo_pipe_address;
+	private int owner_majordomo_add;
+	private int majordomo_owner_add;
 
 	public int addMajordomoList(
 		String listName
@@ -152,10 +152,18 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
 		return table.getConnector().getEmail().getMajordomoList().getMajordomoLists(this);
 	}
 
+	public int getMajordomoOwnerAddress_id() {
+		return majordomo_owner_add;
+	}
+
 	public Address getMajordomoOwnerAddress() throws SQLException, IOException {
 		Address obj=table.getConnector().getEmail().getAddress().get(majordomo_owner_add);
 		if(obj==null) throw new SQLException("Unable to find EmailAddress: "+majordomo_owner_add);
 		return obj;
+	}
+
+	public int getOwnerMajordomoAddress_id() {
+		return owner_majordomo_add;
 	}
 
 	public Address getOwnerMajordomoAddress() throws SQLException, IOException {

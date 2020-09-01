@@ -60,6 +60,7 @@ final public class SharedTomcatSiteTable extends CachedTableIntegerKey<SharedTom
 		new OrderBy(SharedTomcatSite.COLUMN_TOMCAT_SITE_name+'.'+Site.COLUMN_HTTPD_SITE_name+'.'+com.aoindustries.aoserv.client.web.Site.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -81,8 +82,8 @@ final public class SharedTomcatSiteTable extends CachedTableIntegerKey<SharedTom
 			true,
 			AoservProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
-				int pkey;
-				IntList invalidateList;
+				private int pkey;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {
@@ -97,7 +98,9 @@ final public class SharedTomcatSiteTable extends CachedTableIntegerKey<SharedTom
 					out.writeCompressedInt(ipAddress==null?-1:ipAddress.getId());
 					out.writeUTF(primaryHttpHostname.toString());
 					out.writeCompressedInt(altHttpHostnames.length);
-					for(int c=0;c<altHttpHostnames.length;c++) out.writeUTF(altHttpHostnames[c].toString());
+					for(DomainName altHttpHostname : altHttpHostnames) {
+						out.writeUTF(altHttpHostname.toString());
+					}
 					out.writeUTF(sharedTomcatName);
 				}
 

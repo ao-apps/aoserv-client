@@ -107,6 +107,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 	static final String COLUMN_OPEN_DATE_name = "open_date";
 
 	@Override
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	protected Object getColumnImpl(int i) throws IOException, SQLException {
 		switch(i) {
 			case COLUMN_PKEY: return pkey;
@@ -260,7 +261,9 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 			} else {
 				int size = contact_emails.size();
 				out.writeCompressedInt(size);
-				for(Email email : contact_emails) out.writeUTF(email.toString());
+				for(Email email : contact_emails) {
+					out.writeUTF(email.toString());
+				}
 			}
 			out.writeUTF(contact_phone_numbers);
 		}
@@ -348,6 +351,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 		return raw_email;
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getOpenDate() {
 		return open_date;
 	}
@@ -371,10 +375,12 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 		return statusObject;
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getStatusTimeout() {
 		return status_timeout;
 	}
 
+	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
 	public Set<Email> getContactEmails() {
 		return contact_emails;
 	}
@@ -425,7 +431,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 			true,
 			AoservProtocol.CommandID.ADD_TICKET_ANNOTATION,
 			new AOServConnector.UpdateRequest() {
-				IntList invalidateList;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {
@@ -463,13 +469,15 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 			true,
 			AoservProtocol.CommandID.SET_TICKET_CONTACT_EMAILS,
 			new AOServConnector.UpdateRequest() {
-				IntList invalidateList;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {
 					out.writeCompressedInt(pkey);
 					out.writeCompressedInt(contactEmails.size());
-					for(Email email : contactEmails) out.writeUTF(email.toString());
+					for(Email email : contactEmails) {
+						out.writeUTF(email.toString());
+					}
 				}
 
 				@Override
@@ -563,8 +571,8 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 			true,
 			AoservProtocol.CommandID.SET_TICKET_INTERNAL_NOTES,
 			new AOServConnector.ResultRequest<Boolean>() {
-				boolean result;
-				IntList invalidateList;
+				private boolean result;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2003-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -66,13 +66,13 @@ final public class BackupReport extends AOServObject<Integer,BackupReport> imple
 	public static final int MAX_REPORT_AGE=2*366+3*365; // Assumes worst-case of two leap years in 5-year span.
 
 	private int pkey;
-	int server;
-	int packageNum;
+	private int server;
+	private int package_id;
 	private long date;
 	private int file_count;
 	private long disk_size;
 
-	AOServTable<Integer,BackupReport> table;
+	private AOServTable<Integer,BackupReport> table;
 
 	@Override
 	public boolean equals(Object O) {
@@ -87,7 +87,7 @@ final public class BackupReport extends AOServObject<Integer,BackupReport> imple
 		switch(i) {
 			case COLUMN_PKEY: return pkey;
 			case 1: return server;
-			case 2: return packageNum;
+			case 2: return package_id;
 			case 3: return getDate();
 			case 4: return file_count;
 			case 5: return disk_size;
@@ -99,15 +99,23 @@ final public class BackupReport extends AOServObject<Integer,BackupReport> imple
 		return pkey;
 	}
 
+	public int getHost_id() {
+		return server;
+	}
+
 	public Host getHost() throws SQLException, IOException {
 		Host se=table.getConnector().getNet().getHost().get(server);
 		if(se==null) throw new SQLException("Unable to find Host: "+server);
 		return se;
 	}
 
+	public int getPackage_id() {
+		return package_id;
+	}
+
 	public Package getPackage() throws IOException, SQLException {
-		Package pk=table.getConnector().getBilling().getPackage().get(packageNum);
-		if(pk==null) throw new SQLException("Unable to find Package: "+packageNum);
+		Package pk=table.getConnector().getBilling().getPackage().get(package_id);
+		if(pk==null) throw new SQLException("Unable to find Package: "+package_id);
 		return pk;
 	}
 
@@ -147,7 +155,7 @@ final public class BackupReport extends AOServObject<Integer,BackupReport> imple
 	public void init(ResultSet result) throws SQLException {
 		pkey=result.getInt(1);
 		server=result.getInt(2);
-		packageNum=result.getInt(3);
+		package_id=result.getInt(3);
 		date=result.getDate(4).getTime();
 		file_count=result.getInt(5);
 		disk_size=result.getLong(6);
@@ -157,7 +165,7 @@ final public class BackupReport extends AOServObject<Integer,BackupReport> imple
 	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey=in.readCompressedInt();
 		server=in.readCompressedInt();
-		packageNum=in.readCompressedInt();
+		package_id=in.readCompressedInt();
 		date=in.readLong();
 		file_count=in.readInt();
 		disk_size=in.readLong();
@@ -173,7 +181,7 @@ final public class BackupReport extends AOServObject<Integer,BackupReport> imple
 	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(server);
-		out.writeCompressedInt(packageNum);
+		out.writeCompressedInt(package_id);
 		out.writeLong(date);
 		out.writeInt(file_count);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30)<=0) {

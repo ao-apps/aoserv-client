@@ -56,6 +56,7 @@ final public class FileReplicationScheduleTable extends CachedTableIntegerKey<Fi
 		new OrderBy(FileReplicationSchedule.COLUMN_MINUTE_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -81,7 +82,7 @@ final public class FileReplicationScheduleTable extends CachedTableIntegerKey<Fi
 			true,
 			AoservProtocol.CommandID.SET_FAILOVER_FILE_SCHEDULES,
 			new AOServConnector.UpdateRequest() {
-				IntList invalidateList;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {

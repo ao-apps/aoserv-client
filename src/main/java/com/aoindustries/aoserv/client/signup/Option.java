@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2007-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2007-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -45,7 +45,7 @@ final public class Option extends CachedObjectIntegerKey<Option> {
 	static final String COLUMN_REQUEST_name = "request";
 	static final String COLUMN_NAME_name = "name";
 
-	int request;
+	private int request;
 	private String name;
 	private String value;
 

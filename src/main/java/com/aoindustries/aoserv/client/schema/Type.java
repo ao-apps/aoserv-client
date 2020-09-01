@@ -457,7 +457,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 						case INT: return value==null?null:Integer.valueOf((Boolean)value?-1:0);
 						case LONG:
 						case OCTAL_LONG:
-							return value==null?null:Long.valueOf((Boolean)value?(long)-1:0);
+							return value==null?null:Long.valueOf((Boolean)value?-1:0);
 						case SHORT: return value==null?null:Short.valueOf((Boolean)value?(short)-1:0);
 						case BIG_DECIMAL: return value==null?null:(Boolean)value?bigDecimalNegativeOne:BigDecimal.ZERO;
 					}
@@ -690,7 +690,9 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 					switch(castToType.getId()) {
 						case HOSTNAME: {
 							String hname = (String)value;
-							while(hname.endsWith(".")) hname = hname.substring(0, hname.length()-1);
+							while(hname.endsWith(".")) {
+								hname = hname.substring(0, hname.length()-1);
+							}
 							return HostAddress.valueOf(hname);
 						}
 						case DOMAIN_NAME: return value==null?null:getDomainNameForZone((String)value);
@@ -806,7 +808,9 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 							int combinedLen = hexHi.length() + 32;
 							StringBuilder combined = new StringBuilder(combinedLen);
 							combined.append(hexHi);
-							while(combined.length() < (combinedLen - hexLo.length())) combined.append('0');
+							while(combined.length() < (combinedLen - hexLo.length())) {
+								combined.append('0');
+							}
 							combined.append(hexLo);
 							assert combined.length() == combinedLen;
 							return new BigDecimal(new BigInteger(combined.toString(), 16));
@@ -857,7 +861,9 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	}
 
 	private static DomainName getDomainNameForZone(String zone) throws ValidationException {
-		while(zone.endsWith(".")) zone=zone.substring(0, zone.length()-1);
+		while(zone.endsWith(".")) {
+			zone=zone.substring(0, zone.length()-1);
+		}
 		return DomainName.valueOf(zone);
 	}
 
@@ -1279,7 +1285,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 				case DECIMAL_3:
 					return SQLUtility.parseDecimal3(S);
 				case DOUBLE:
-					return new Double(S);
+					return Double.parseDouble(S);
 				case FKEY:
 				case INT:
 				case PKEY:

@@ -220,6 +220,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 			Name existing = interned.get(name);
 			if(existing==null) {
 				String internedName = name.intern();
+				@SuppressWarnings("StringEquality")
 				Name addMe = (name == internedName) ? this : new Name(internedName);
 				existing = interned.putIfAbsent(internedName, addMe);
 				if(existing==null) existing = addMe;

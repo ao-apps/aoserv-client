@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2002-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -206,6 +206,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 			Name existing = interned.get(name);
 			if(existing==null) {
 				String internedName = name.intern();
+				@SuppressWarnings("StringEquality")
 				Name addMe = (name == internedName) ? this : new Name(internedName);
 				existing = interned.putIfAbsent(internedName, addMe);
 				if(existing==null) existing = addMe;
@@ -378,7 +379,9 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 			if(words==null) {
 				ReservedWord[] values = values();
 				words = new HashSet<>(values.length*4/3+1);
-				for(ReservedWord word : values) words.add(word.name().toUpperCase(Locale.ROOT));
+				for(ReservedWord word : values) {
+					words.add(word.name().toUpperCase(Locale.ROOT));
+				}
 				reservedWords = words;
 			}
 			return words.contains(value.toUpperCase(Locale.ROOT));
@@ -576,7 +579,9 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 		List<UserServer> psu=getPostgresServerUsers();
 		int len=psu.size();
 		List<User> pu=new ArrayList<>(len);
-		for(int c=0;c<len;c++) pu.add(psu.get(c).getPostgresUser());
+		for(int c=0;c<len;c++) {
+			pu.add(psu.get(c).getPostgresUser());
+		}
 		return pu;
 	}
 

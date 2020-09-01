@@ -112,7 +112,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	}
 
 	private String processorId;
-	Account.Name accounting;
+	private Account.Name accounting;
 	private String groupName;
 	private String cardInfo; // TODO: Rename to maskedCardNumber
 	private Byte expirationMonth;
@@ -235,6 +235,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	}
 
 	@Override
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	protected Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_PKEY: return pkey;
@@ -332,6 +333,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 		return countryCodeObj;
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getCreated() {
 		return created;
 	}
@@ -349,6 +351,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 		return principalName;
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getDeactivatedOn() {
 		return deactivatedOn;
 	}
@@ -629,7 +632,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 			true,
 			AoservProtocol.CommandID.UPDATE_CREDIT_CARD_NUMBER_AND_EXPIRATION,
 			new AOServConnector.UpdateRequest() {
-				IntList invalidateList;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {

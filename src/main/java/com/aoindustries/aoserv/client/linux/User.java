@@ -218,7 +218,8 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 			Gecos existing = interned.get(value);
 			if(existing==null) {
 				String internedValue = value.intern();
-				Gecos addMe = (value == internedValue) ? this : new Gecos(internedValue); // Using identity String comparison to see if already interned
+				@SuppressWarnings("StringEquality") // Using identity String comparison to see if already interned
+				Gecos addMe = (value == internedValue) ? this : new Gecos(internedValue);
 				existing = interned.putIfAbsent(internedValue, addMe);
 				if(existing==null) existing = addMe;
 			}
@@ -267,7 +268,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		 * 32 characters
 		 * </p>
 		 */
-		public static final int MAX_LENGTH = 32;
+		public static final int LINUX_NAME_MAX_LENGTH = 32;
 
 		/**
 		 * Validates a {@link User} name.
@@ -276,7 +277,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 			if(name==null) return new InvalidResult(accessor, "User.Name.validate.isNull");
 			int len = name.length();
 			if(len==0) return new InvalidResult(accessor, "User.Name.validate.isEmpty");
-			if(len > MAX_LENGTH) return new InvalidResult(accessor, "User.Name.validate.tooLong", MAX_LENGTH, len);
+			if(len > LINUX_NAME_MAX_LENGTH) return new InvalidResult(accessor, "User.Name.validate.tooLong", LINUX_NAME_MAX_LENGTH, len);
 
 			// The first character must be [a-z]
 			char ch = name.charAt(0);
@@ -355,6 +356,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 			Name existing = interned.get(name);
 			if(existing==null) {
 				String internedId = name.intern();
+				@SuppressWarnings("StringEquality")
 				Name addMe = (name == internedId) ? this : new Name(internedId);
 				existing = interned.putIfAbsent(internedId, addMe);
 				if(existing==null) existing = addMe;
@@ -529,7 +531,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 	private String type;
 	private PosixPath shell;
 	private UnmodifiableTimestamp created;
-	int disable_log;
+	private int disable_log;
 
 	public void addFTPGuestUser() throws IOException, SQLException {
 		table.getConnector().getFtp().getGuestUser().addFTPGuestUser(pkey);
@@ -554,7 +556,9 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		if(disable_log!=-1) return false;
 
 		// linux_server_accounts
-		for(UserServer lsa : getLinuxServerAccounts()) if(!lsa.isDisabled()) return false;
+		for(UserServer lsa : getLinuxServerAccounts()) {
+			if(!lsa.isDisabled()) return false;
+		}
 
 		return true;
 	}
@@ -594,6 +598,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 	}
 
 	@Override
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	protected Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_USERNAME: return pkey;
@@ -609,6 +614,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		}
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getCreated() {
 		return created;
 	}

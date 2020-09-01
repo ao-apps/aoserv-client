@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2004-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2004-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -53,8 +53,8 @@ public final class AttachmentBlock extends CachedObjectIntegerKey<AttachmentBloc
 	static final String COLUMN_LINUX_SERVER_ACCOUNT_name = "linux_server_account";
 	static final String COLUMN_EXTENSION_name = "extension";
 
-	int linux_server_account;
-	String extension;
+	private int linux_server_account;
+	private String extension;
 
 	@Override
 	protected Object getColumnImpl(int i) {

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -59,6 +59,7 @@ final public class VirtualHostTable extends CachedTableIntegerKey<VirtualHost> {
 		new OrderBy(VirtualHost.COLUMN_NAME_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -81,7 +82,7 @@ final public class VirtualHostTable extends CachedTableIntegerKey<VirtualHost> {
 		List<VirtualHost> matches=new ArrayList<>(size);
 		for(int c=0;c<size;c++) {
 			VirtualHost siteBind=cached.get(c);
-			if(siteBind.getHttpdBind().httpd_server==serverPKey) matches.add(siteBind);
+			if(siteBind.getHttpdBind().getHttpdServer_pkey()==serverPKey) matches.add(siteBind);
 		}
 		return matches;
 	}

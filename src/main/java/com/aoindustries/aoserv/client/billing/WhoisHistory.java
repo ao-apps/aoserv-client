@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2007-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2007-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -68,6 +68,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 	private Account.Name accounting;
 
 	@Override
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	protected Object getColumnImpl(int i) throws IOException, SQLException {
 		switch(i) {
 			case COLUMN_id: return pkey;
@@ -91,6 +92,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 		return registrableDomain;
 	}
 
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	public UnmodifiableTimestamp getTime() {
 		return time;
 	}

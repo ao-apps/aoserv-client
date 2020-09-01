@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -443,7 +443,9 @@ final public class Site extends CachedObjectIntegerKey<Site> implements Disablab
 	@Override
 	public boolean canDisable() throws IOException, SQLException {
 		if(disable_log!=-1) return false;
-		for(VirtualHost hsb : getHttpdSiteBinds()) if(!hsb.isDisabled()) return false;
+		for(VirtualHost hsb : getHttpdSiteBinds()) {
+			if(!hsb.isDisabled()) return false;
+		}
 		return true;
 	}
 

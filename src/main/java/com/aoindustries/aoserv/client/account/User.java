@@ -244,6 +244,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 			Name existing = interned.get(name);
 			if(existing==null) {
 				String internedId = name.intern();
+				@SuppressWarnings("StringEquality")
 				Name addMe = (name == internedId) ? this : new Name(internedId);
 				existing = interned.putIfAbsent(internedId, addMe);
 				if(existing==null) existing = addMe;
@@ -429,8 +430,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		com.aoindustries.aoserv.client.mysql.User mu=getMySQLUser();
 		if(mu!=null && !mu.isDisabled()) return false;
 		com.aoindustries.aoserv.client.postgresql.User pu=getPostgresUser();
-		if(pu!=null && !pu.isDisabled()) return false;
-		return true;
+		return pu==null || pu.isDisabled();
 	}
 
 	@Override

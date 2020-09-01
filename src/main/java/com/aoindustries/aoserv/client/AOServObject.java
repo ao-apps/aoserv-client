@@ -136,7 +136,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	}
 
 	// TODO: Remove in AOServ 2
-	final public int compareTo(AOServConnector conn, AOServObject other, SQLExpression[] sortExpressions, boolean[] sortOrders) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
+	final public int compareTo(AOServConnector conn, AOServObject<?,?> other, SQLExpression[] sortExpressions, boolean[] sortOrders) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
 		int len = sortExpressions.length;
 		for(int c = 0; c < len; c++) {
 			SQLExpression expr = sortExpressions[c];
@@ -194,7 +194,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	}
 
 	// TODO: Remove in AOServ 2
-	final public int compareTo(AOServConnector conn, Comparable value, SQLExpression[] sortExpressions, boolean[] sortOrders) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
+	final public int compareTo(AOServConnector conn, Comparable<?> value, SQLExpression[] sortExpressions, boolean[] sortOrders) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
 		int len=sortExpressions.length;
 		for(int c=0;c<len;c++) {
 			SQLExpression expr=sortExpressions[c];

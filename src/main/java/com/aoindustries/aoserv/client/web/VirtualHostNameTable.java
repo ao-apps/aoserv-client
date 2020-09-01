@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -61,6 +61,7 @@ final public class VirtualHostNameTable extends CachedTableIntegerKey<VirtualHos
 		new OrderBy(VirtualHostName.COLUMN_HTTPD_SITE_BIND_name+'.'+VirtualHost.COLUMN_NAME_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -90,7 +91,7 @@ final public class VirtualHostNameTable extends CachedTableIntegerKey<VirtualHos
 		int size=cached.size();
 		for(int c=0;c<size;c++) {
 			VirtualHostName hsu=cached.get(c);
-			if(hsu.isPrimary) return hsu;
+			if(hsu.isPrimary()) return hsu;
 		}
 		throw new SQLException("Unable to find primary HttpdSiteURL for HttpdSiteBind with pkey="+bind.getPkey());
 	}
@@ -102,7 +103,7 @@ final public class VirtualHostNameTable extends CachedTableIntegerKey<VirtualHos
 		List<VirtualHostName> matches=new ArrayList<>(size-1);
 		for(int c=0;c<size;c++) {
 			VirtualHostName hsu=cached.get(c);
-			if(!hsu.isPrimary) matches.add(hsu);
+			if(!hsu.isPrimary()) matches.add(hsu);
 		}
 		return matches;
 	}

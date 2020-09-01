@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -70,7 +70,7 @@ final public class JkMount extends CachedObjectIntegerKey<JkMount> implements Re
 		;
 	}
 
-	int httpd_tomcat_site;
+	private int httpd_tomcat_site;
 	private String path;
 	private boolean mount;
 

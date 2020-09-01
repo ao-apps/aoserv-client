@@ -119,8 +119,8 @@ final public class Encoding extends GlobalObjectIntegerKey<Encoding> {
 		}
 	}
 
-	String encoding;
-	int postgres_version;
+	private String encoding;
+	private int postgres_version;
 
 	@Override
 	protected Object getColumnImpl(int i) {

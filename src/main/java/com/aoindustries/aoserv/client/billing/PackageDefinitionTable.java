@@ -55,6 +55,7 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
 		new OrderBy(PackageDefinition.COLUMN_VERSION_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -75,8 +76,8 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
 			true,
 			AoservProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
-				int pkey;
-				IntList invalidateList;
+				private int pkey;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {
@@ -127,10 +128,10 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
 		for(int c=0;c<size;c++) {
 			PackageDefinition pd=pds.get(c);
 			if(
-				pd.accounting.equals(accounting)
-				&& pd.category.equals(categoryName)
-				&& pd.name.equals(name)
-				&& pd.version.equals(version)
+				pd.getAccount_name().equals(accounting)
+				&& pd.getPackageCategory_name().equals(categoryName)
+				&& pd.getName().equals(name)
+				&& pd.getVersion().equals(version)
 			) return pd;
 		}
 		return null;
@@ -146,8 +147,8 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
 		for(int c=0;c<size;c++) {
 			PackageDefinition pd=cached.get(c);
 			if(
-				pd.accounting.equals(accounting)
-				&& pd.category.equals(categoryName)
+				pd.getAccount_name().equals(accounting)
+				&& pd.getPackageCategory_name().equals(categoryName)
 			) matches.add(pd);
 		}
 		return matches;

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -54,6 +54,7 @@ final public class AccountHostTable extends CachedTableIntegerKey<AccountHost> {
 		new OrderBy(AccountHost.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -80,19 +81,21 @@ final public class AccountHostTable extends CachedTableIntegerKey<AccountHost> {
 		List<AccountHost> cached = getAccountHosts(server);
 		int size=cached.size();
 		List<Account> businesses=new ArrayList<>(size);
-		for(int c=0;c<size;c++) businesses.add(cached.get(c).getAccount());
+		for(int c=0;c<size;c++) {
+			businesses.add(cached.get(c).getAccount());
+		}
 		return businesses;
 	}
 
-	AccountHost getAccountHost(Account bu, Host se) throws IOException, SQLException {
-		int pkey=se.getPkey();
+	AccountHost getAccountHost(Account account, Host host) throws IOException, SQLException {
+		int host_id = host.getPkey();
 
 		// Use the index first
-		List<AccountHost> cached = getAccountHosts(bu);
+		List<AccountHost> cached = getAccountHosts(account);
 		int size=cached.size();
 		for(int c=0;c<size;c++) {
 			AccountHost bs=cached.get(c);
-			if(bs.server==pkey) return bs;
+			if(bs.getHost_id() == host_id) return bs;
 		}
 		return null;
 	}
@@ -103,7 +106,7 @@ final public class AccountHostTable extends CachedTableIntegerKey<AccountHost> {
 		int size=cached.size();
 		for(int c=0;c<size;c++) {
 			AccountHost bs=cached.get(c);
-			if(bs.is_default) return bs.getHost();
+			if(bs.isDefault()) return bs.getHost();
 		}
 		return null;
 	}

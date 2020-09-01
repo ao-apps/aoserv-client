@@ -61,6 +61,7 @@ final public class SharedTomcatTable extends CachedTableIntegerKey<SharedTomcat>
 		new OrderBy(SharedTomcat.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -77,8 +78,8 @@ final public class SharedTomcatTable extends CachedTableIntegerKey<SharedTomcat>
 			true,
 			AoservProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
-				int pkey;
-				IntList invalidateList;
+				private int pkey;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {

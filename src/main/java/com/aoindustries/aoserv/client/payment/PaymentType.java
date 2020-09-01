@@ -60,7 +60,7 @@ final public class PaymentType extends GlobalObjectStringKey<PaymentType> {
 		WIRE = "wire"
 	;
 
-	String description;
+	private String description;
 
 	private boolean isActive;
 

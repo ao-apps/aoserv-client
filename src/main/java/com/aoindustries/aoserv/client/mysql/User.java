@@ -84,7 +84,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		 * 32 characters as of <a href="https://dev.mysql.com/doc/relnotes/mysql/5.7/en/news-5-7-8.html">MySQL 5.7.8</a>
 		 * </p>
 		 */
-		public static final int MAX_LENGTH = 32;
+		public static final int MYSQL_NAME_MAX_LENGTH = 32;
 
 		/**
 		 * Validates a {@link User} name.
@@ -98,7 +98,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 			) {
 				int len = name.length();
 				if(len==0) return new InvalidResult(accessor, "User.Name.validate.isEmpty");
-				if(len > MAX_LENGTH) return new InvalidResult(accessor, "User.Name.validate.tooLong", MAX_LENGTH, len);
+				if(len > MYSQL_NAME_MAX_LENGTH) return new InvalidResult(accessor, "User.Name.validate.tooLong", MYSQL_NAME_MAX_LENGTH, len);
 
 				// The first character must be [a-z] or [0-9]
 				char ch = name.charAt(0);
@@ -158,6 +158,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 			Name existing = interned.get(name);
 			if(existing==null) {
 				String internedId = name.intern();
+				@SuppressWarnings("StringEquality")
 				Name addMe = (name == internedId) ? this : new Name(internedId);
 				existing = interned.putIfAbsent(internedId, addMe);
 				if(existing==null) existing = addMe;
@@ -192,7 +193,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 	 * @deprecated  Please use {@link Name#MAX_LENGTH} instead.
 	 */
 	@Deprecated
-	public static final int MAX_USERNAME_LENGTH = Name.MAX_LENGTH;
+	public static final int MAX_USERNAME_LENGTH = Name.MYSQL_NAME_MAX_LENGTH;
 
 	/**
 	 * The username of the MySQL special users.
@@ -359,7 +360,9 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 	@Override
 	public boolean canDisable() throws IOException, SQLException {
 		if(isDisabled() || isSpecial()) return false;
-		for(UserServer msu : getMySQLServerUsers()) if(!msu.isDisabled()) return false;
+		for(UserServer msu : getMySQLServerUsers()) {
+			if(!msu.isDisabled()) return false;
+		}
 		return true;
 	}
 
@@ -628,7 +631,9 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 
 	@Override
 	public void setPassword(String password) throws IOException, SQLException {
-		for(UserServer user : getMySQLServerUsers()) user.setPassword(password);
+		for(UserServer user : getMySQLServerUsers()) {
+			user.setPassword(password);
+		}
 	}
 
 	@Override

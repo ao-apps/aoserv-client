@@ -91,6 +91,7 @@ public class TCPConnector extends AOServConnector {
 		}
 
 		@Override
+		@SuppressWarnings("SleepWhileInLoop")
 		public void run() {
 			try {
 				//System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Starting");
@@ -175,7 +176,7 @@ public class TCPConnector extends AOServConnector {
 						}
 					} catch(ThreadDeath TD) {
 						throw TD;
-					} catch(Throwable T) {
+					} catch(Error | RuntimeException | IOException T) {
 						if(isImmediateFail(T)) runMore = false;
 						else {
 							getLogger().log(Level.SEVERE, null, T);

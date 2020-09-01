@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -55,6 +55,7 @@ final public class AddressTable extends CachedTableIntegerKey<Address> {
 		new OrderBy(Address.COLUMN_ADDRESS_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -79,7 +80,7 @@ final public class AddressTable extends CachedTableIntegerKey<Address> {
 	public Address getEmailAddress(String address, Domain domain) throws IOException, SQLException {
 		// Uses index on domain first, then searched on address
 		for(Address emailAddress : domain.getEmailAddresses()) {
-			if(emailAddress.address.equals(address)) return emailAddress;
+			if(emailAddress.getAddress().equals(address)) return emailAddress;
 		}
 		return null;
 	}
@@ -95,7 +96,7 @@ final public class AddressTable extends CachedTableIntegerKey<Address> {
 		List<Address> matches=new ArrayList<>(len);
 		for (int c = 0; c < len; c++) {
 			Address address = addresses.get(c);
-			if (address.getDomain().ao_server==aoPKey) matches.add(address);
+			if (address.getDomain().getLinuxServer_host_id() == aoPKey) matches.add(address);
 		}
 		return matches;
 	}

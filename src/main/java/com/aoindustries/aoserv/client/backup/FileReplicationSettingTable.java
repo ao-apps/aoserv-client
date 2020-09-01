@@ -59,6 +59,7 @@ final public class FileReplicationSettingTable extends CachedTableIntegerKey<Fil
 		new OrderBy(FileReplicationSetting.COLUMN_PATH_name, ASCENDING)
 	};
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
 	protected OrderBy[] getDefaultOrderBy() {
 		return defaultOrderBy;
 	}
@@ -82,7 +83,9 @@ final public class FileReplicationSettingTable extends CachedTableIntegerKey<Fil
 
 	FileReplicationSetting getFileBackupSetting(FileReplication ffr, String path) throws IOException, SQLException {
 		// Use index first
-		for(FileReplicationSetting fbs : getFileBackupSettings(ffr)) if(fbs.path.equals(path)) return fbs;
+		for(FileReplicationSetting fbs : getFileBackupSettings(ffr)) {
+			if(fbs.getPath().equals(path)) return fbs;
+		}
 		return null;
 	}
 
@@ -146,7 +149,7 @@ final public class FileReplicationSettingTable extends CachedTableIntegerKey<Fil
 			true,
 			AoservProtocol.CommandID.SET_FILE_BACKUP_SETTINGS_ALL_AT_ONCE,
 			new AOServConnector.UpdateRequest() {
-				IntList invalidateList;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {
