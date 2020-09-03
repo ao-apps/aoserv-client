@@ -113,7 +113,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 		}
 
 		@Override
-		@SuppressWarnings("NestedSynchronizedStatement")
+		@SuppressWarnings({"NestedSynchronizedStatement", "UseSpecificCatch", "TooBroadCatch"})
 		public void run() {
 			OUTER_LOOP :
 			while(true) {
@@ -166,10 +166,10 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 							}
 						}
 					}
-				} catch (ThreadDeath TD) {
-					throw TD;
-				} catch (Error | RuntimeException |InterruptedException e) { // TODO: Consistency about catching Error, too?
-					connector.getLogger().log(Level.SEVERE, null, e);
+				} catch (ThreadDeath td) {
+					throw td;
+				} catch (Throwable t) {
+					connector.getLogger().log(Level.SEVERE, null, t);
 				}
 			}
 		}

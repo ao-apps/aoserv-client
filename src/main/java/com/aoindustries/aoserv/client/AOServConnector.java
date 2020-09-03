@@ -160,6 +160,7 @@ abstract public class AOServConnector implements SchemaParent {
 	protected final IdLock idLock = new IdLock();
 	protected Identifier id = null;
 
+	@SuppressWarnings("NonConstantLogger")
 	private final Logger logger;
 
 	/**
@@ -550,7 +551,9 @@ abstract public class AOServConnector implements SchemaParent {
 	 * Clears all caches used by this connector.
 	 */
 	public void clearCaches() {
-		for(AOServTable<?,?> table : tables) table.clearCache();
+		for(AOServTable<?,?> table : tables) {
+			table.clearCache();
+		}
 	}
 
 	/**
@@ -765,6 +768,7 @@ abstract public class AOServConnector implements SchemaParent {
 	 * Gets an unmodifiable list of all of the top-level schemas in the system.
 	 */
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
 	final public List<? extends Schema> getSchemas() {
 		return schemas;
 	}
@@ -795,6 +799,7 @@ abstract public class AOServConnector implements SchemaParent {
 	 * @see  #getTable(int)
 	 * @see  Table
 	 */
+	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
 	final public List<? extends AOServTable<?,?>> getTables() {
 		return tables;
 	}
@@ -830,7 +835,7 @@ abstract public class AOServConnector implements SchemaParent {
 			true,
 			AoservProtocol.CommandID.INVALIDATE_TABLE,
 			new UpdateRequest() {
-				IntList tableList;
+				private IntList tableList;
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {
 					out.writeCompressedInt(tableID);
@@ -907,7 +912,9 @@ abstract public class AOServConnector implements SchemaParent {
 	protected abstract void releaseConnection(AOServConnection connection) throws IOException;
 
 	final public void removeFromAllTables(TableListener listener) {
-		for(AOServTable<?,?> table : tables) table.removeTableListener(listener);
+		for(AOServTable<?,?> table : tables) {
+			table.removeTableListener(listener);
+		}
 	}
 
 	static void writeParams(Object[] params, StreamableOutput out) throws IOException {
@@ -990,6 +997,7 @@ abstract public class AOServConnector implements SchemaParent {
 		T afterRelease();
 	}
 
+	@SuppressWarnings("SleepWhileInLoop")
 	final public <T> T requestResult(
 		boolean allowRetry,
 		AoservProtocol.CommandID commID,
@@ -1031,6 +1039,7 @@ abstract public class AOServConnector implements SchemaParent {
 		throw new InterruptedIOException();
 	}
 
+	@SuppressWarnings("SleepWhileInLoop")
 	final public boolean requestBooleanQuery(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
@@ -1070,6 +1079,7 @@ abstract public class AOServConnector implements SchemaParent {
 		throw new InterruptedIOException();
 	}
 
+	@SuppressWarnings("SleepWhileInLoop")
 	final public boolean requestBooleanQueryIL(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
@@ -1117,6 +1127,7 @@ abstract public class AOServConnector implements SchemaParent {
 		throw new InterruptedIOException();
 	}
 
+	@SuppressWarnings("SleepWhileInLoop")
 	final public int requestIntQuery(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
@@ -1156,6 +1167,7 @@ abstract public class AOServConnector implements SchemaParent {
 		throw new InterruptedIOException();
 	}
 
+	@SuppressWarnings("SleepWhileInLoop")
 	final public int requestIntQueryIL(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
@@ -1203,6 +1215,7 @@ abstract public class AOServConnector implements SchemaParent {
 		throw new InterruptedIOException();
 	}
 
+	@SuppressWarnings("SleepWhileInLoop")
 	final public long requestLongQuery(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
@@ -1242,6 +1255,7 @@ abstract public class AOServConnector implements SchemaParent {
 		throw new InterruptedIOException();
 	}
 
+	@SuppressWarnings("SleepWhileInLoop")
 	final public short requestShortQuery(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
@@ -1281,6 +1295,7 @@ abstract public class AOServConnector implements SchemaParent {
 		throw new InterruptedIOException();
 	}
 
+	@SuppressWarnings("SleepWhileInLoop")
 	final public short requestShortQueryIL(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
@@ -1328,6 +1343,7 @@ abstract public class AOServConnector implements SchemaParent {
 		throw new InterruptedIOException();
 	}
 
+	@SuppressWarnings("SleepWhileInLoop")
 	final public String requestStringQuery(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
@@ -1370,6 +1386,7 @@ abstract public class AOServConnector implements SchemaParent {
 	/**
 	 * Performs a query returning a String of any length (not limited to size &lt;= 64k like requestStringQuery).
 	 */
+	@SuppressWarnings("SleepWhileInLoop")
 	final public String requestLongStringQuery(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
@@ -1413,6 +1430,7 @@ abstract public class AOServConnector implements SchemaParent {
 	 * Performs a query returning a String of any length (not limited to size &lt;= 64k like requestStringQuery) or {@code null}.
 	 * Supports nulls.
 	 */
+	@SuppressWarnings("SleepWhileInLoop")
 	final public String requestNullLongStringQuery(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
@@ -1476,6 +1494,7 @@ abstract public class AOServConnector implements SchemaParent {
 		void afterRelease();
 	}
 
+	@SuppressWarnings("SleepWhileInLoop")
 	final public void requestUpdate(
 		boolean allowRetry,
 		AoservProtocol.CommandID commID,
@@ -1518,6 +1537,7 @@ abstract public class AOServConnector implements SchemaParent {
 		throw new InterruptedIOException();
 	}
 
+	@SuppressWarnings("SleepWhileInLoop")
 	final public void requestUpdate(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
@@ -1556,6 +1576,7 @@ abstract public class AOServConnector implements SchemaParent {
 		throw new InterruptedIOException();
 	}
 
+	@SuppressWarnings("SleepWhileInLoop")
 	final public void requestUpdateIL(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
@@ -1661,6 +1682,7 @@ abstract public class AOServConnector implements SchemaParent {
 	/**
 	 * Is notified when a table listener is being added.
 	 */
+	@SuppressWarnings("NoopMethodInAbstractClass")
 	void addingTableListener() {
 	}
 
@@ -1672,7 +1694,7 @@ abstract public class AOServConnector implements SchemaParent {
 			true,
 			AoservProtocol.CommandID.GET_MASTER_ENTROPY,
 			new ResultRequest<Integer>() {
-				int numObtained;
+				private int numObtained;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {
@@ -1684,7 +1706,9 @@ abstract public class AOServConnector implements SchemaParent {
 					int code=in.readByte();
 					if(code==AoservProtocol.DONE) {
 						numObtained=in.readCompressedInt();
-						for(int c=0;c<numObtained;c++) buff[c]=in.readByte();
+						for(int c = 0; c < numObtained; c++) {
+							buff[c] = in.readByte();
+						}
 					} else {
 						AoservProtocol.checkResult(code, in);
 						throw new IOException("Unexpected response code: "+code);

@@ -91,7 +91,7 @@ public class TCPConnector extends AOServConnector {
 		}
 
 		@Override
-		@SuppressWarnings("SleepWhileInLoop")
+		@SuppressWarnings({"SleepWhileInLoop", "UseSpecificCatch", "TooBroadCatch"})
 		public void run() {
 			try {
 				//System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Starting");
@@ -174,12 +174,12 @@ public class TCPConnector extends AOServConnector {
 								getLogger().log(Level.WARNING, null, err2);
 							}
 						}
-					} catch(ThreadDeath TD) {
-						throw TD;
-					} catch(Error | RuntimeException | IOException T) {
-						if(isImmediateFail(T)) runMore = false;
+					} catch(ThreadDeath td) {
+						throw td;
+					} catch(Throwable t) {
+						if(isImmediateFail(t)) runMore = false;
 						else {
-							getLogger().log(Level.SEVERE, null, T);
+							getLogger().log(Level.SEVERE, null, t);
 							try {
 								//System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Sleeping after exception");
 								sleep(getFastRandom().nextInt(50000)+10000); // Wait between 10 and 60 seconds
