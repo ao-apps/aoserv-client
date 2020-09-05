@@ -1113,9 +1113,6 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 			throw new UnsupportedOperationException();
 		}
 
-		// Not documented, but resolves "Suspicious call to Map.containsKey" in NetBeans:
-		// https://bz.apache.org/netbeans/show_bug.cgi?id=169080
-		@SuppressWarnings("collection-remove")
 		@Override
 		public boolean containsValue(Object value) {
 			if(!clazz.isInstance(value)) {
