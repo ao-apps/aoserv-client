@@ -39,6 +39,7 @@ import com.aoindustries.util.sort.JavaSort;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -366,11 +367,20 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 		return exprs;
 	}
 
+	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	protected V getNewObject() throws IOException {
 		try {
 			return clazz.getConstructor().newInstance();
-		} catch(ReflectiveOperationException err) {
-			throw new IOException("Error loading class", err);
+		} catch(InvocationTargetException e) {
+			Throwable cause = e.getCause();
+			if(cause instanceof Error) throw (Error)cause;
+			if(cause instanceof RuntimeException) throw (RuntimeException)cause;
+			if(cause instanceof IOException) throw (IOException)cause;
+			throw new IOException(cause == null ? e : cause);
+		} catch(Error | RuntimeException e) {
+			throw e;
+		} catch(Throwable t) {
+			throw new IOException(t);
 		}
 	}
 
