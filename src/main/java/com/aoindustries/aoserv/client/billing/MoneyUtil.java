@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2019  AO Industries, Inc.
+ * Copyright (C) 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -64,17 +64,17 @@ public class MoneyUtil {
 		return new Money(currency, value);
 	}
 
-    /**
-     * Gets a {@link Money} type from two columns of a {@link ResultSet}.  Supports
-     * {@code null}.  If value is non-null then currency must also be non-null.
-     */
-    public static Money getMoney(ResultSet result, String currencyColumnLabel, String valueColumnLabel) throws SQLException {
-        BigDecimal value = result.getBigDecimal(valueColumnLabel);
-        if(value == null) return null;
-        String currencyCode = result.getString(currencyColumnLabel);
-        if(currencyCode == null) throw new SQLException(currencyColumnLabel + " == null && " + valueColumnLabel+" != null");
-        return new Money(Currency.getInstance(currencyCode), value);
-    }
+	/**
+	 * Gets a {@link Money} type from two columns of a {@link ResultSet}.  Supports
+	 * {@code null}.  If value is non-null then currency must also be non-null.
+	 */
+	public static Money getMoney(ResultSet result, String currencyColumnLabel, String valueColumnLabel) throws SQLException {
+		BigDecimal value = result.getBigDecimal(valueColumnLabel);
+		if(value == null) return null;
+		String currencyCode = result.getString(currencyColumnLabel);
+		if(currencyCode == null) throw new SQLException(currencyColumnLabel + " == null && " + valueColumnLabel+" != null");
+		return new Money(Currency.getInstance(currencyCode), value);
+	}
 
 	public static void writeMoney(Money money, StreamableOutput out) throws IOException {
 		out.writeUTF(money.getCurrency().getCurrencyCode());
