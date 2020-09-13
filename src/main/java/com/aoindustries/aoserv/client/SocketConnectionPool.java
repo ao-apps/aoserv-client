@@ -59,7 +59,13 @@ final class SocketConnectionPool extends AOPool<SocketConnection,IOException,Int
 
 	@Override
 	protected void close(SocketConnection conn) {
-		conn.close();
+		conn.abort();
+	}
+
+	// Expose to package
+	@Override
+	protected void release(SocketConnection connection) throws IOException {
+		super.release(connection);
 	}
 
 	@Override

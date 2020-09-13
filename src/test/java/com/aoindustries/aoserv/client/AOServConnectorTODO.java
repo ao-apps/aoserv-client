@@ -257,14 +257,16 @@ public class AOServConnectorTODO extends TestCase {
 	/**
 	 * Test of getConnection method, of class com.aoindustries.aoserv.client.AOServConnector.
 	 */
+	@SuppressWarnings("try")
 	public void testGetConnection() throws Exception {
-		System.out.println("Testing getConnection and releaseConnection");
+		System.out.println("Testing getConnection and close");
 		for(AOServConnector conn : conns) {
 			User.Name username = conn.getCurrentAdministrator().getKey();
 			System.out.println("    "+username);
 			for(int c=0;c<1000;c++) {
-				AOServConnection connection=conn.getConnection(1);
-				conn.releaseConnection(connection);
+				try (AOServConnection connection = conn.getConnection(1)) {
+					// Do nothing
+				}
 			}
 		}
 	}

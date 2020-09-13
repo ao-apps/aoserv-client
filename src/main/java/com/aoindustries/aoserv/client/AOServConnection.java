@@ -25,6 +25,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
+import java.io.Closeable;
 import java.io.IOException;
 
 /**
@@ -35,7 +36,7 @@ import java.io.IOException;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class AOServConnection {
+abstract public class AOServConnection implements Closeable {
 
 	/**
 	 * The connector that this connection is part of.
@@ -50,11 +51,21 @@ abstract public class AOServConnection {
 	}
 
 	/**
+	 * Releases this connection back to the pool.
+	 *
+	 * @see  AOServConnector#release(com.aoindustries.aoserv.client.AOServConnection)
+	 */
+	@Override
+	public void close() throws IOException {
+		connector.release(this);
+	}
+
+	/**
 	 * Closes this connection to the server
 	 * so that a reconnect is forced in the
 	 * future.
 	 */
-	abstract void close();
+	abstract void abort();
 
 	/**
 	 * Gets the stream to write to the server.

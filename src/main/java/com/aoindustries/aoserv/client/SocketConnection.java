@@ -25,6 +25,8 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
+import com.aoindustries.lang.AutoCloseables;
+import com.aoindustries.lang.Throwables;
 import com.aoindustries.security.Identifier;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -119,44 +121,32 @@ final public class SocketConnection extends AOServConnection {
 			this.seq = new AtomicLong(startSeq);
 			successful = true;
 		} finally {
-			if(!successful) close();
+			if(!successful) abort();
 		}
 	}
 
 	@Override
-	void close() {
-		if(in != null) {
-			try {
-				in.close();
-			} catch(IOException err) {
-				connector.getLogger().log(Level.WARNING, null, err);
-			}
+	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
+	void abort() {
+		Throwable t1 = null;
+		try {
+			out.writeCompressedInt(AoservProtocol.CommandID.QUIT.ordinal());
+			out.flush();
+		} catch(Throwable t) {
+			t1 = Throwables.addSuppressed(t1, t);
 		}
-		if(out != null) {
-			try {
-				out.writeCompressedInt(AoservProtocol.CommandID.QUIT.ordinal());
-				out.flush();
-			} catch(SocketException err) {
-				// Normal when the other side has terminated the connection
-			} catch(IOException err) {
-				connector.getLogger().log(Level.WARNING, null, err);
-			}
-			try {
-				out.close();
-			} catch(SocketException err) {
+		t1 = AutoCloseables.close(t1, in, out, socket);
+		if(t1 != null) {
+			connector.getLogger().log(
 				// Normal when the socket is already closed
-			} catch(IOException err) {
-				connector.getLogger().log(Level.WARNING, null, err);
-			}
+				(t1 instanceof SocketException)
+					? Level.FINE
+					: Level.WARNING,
+				null,
+				t1
+			);
 		}
-		if(socket != null) {
-			try {
-				socket.close();
-			} catch(IOException err) {
-				connector.getLogger().log(Level.WARNING, null, err);
-			}
-		}
-		isClosed=true;
+		isClosed = true;
 	}
 
 	InetAddress getLocalInetAddress() throws IOException {

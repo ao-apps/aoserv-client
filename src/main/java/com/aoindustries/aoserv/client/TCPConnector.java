@@ -98,8 +98,7 @@ public class TCPConnector extends AOServConnector {
 				boolean runMore=true;
 				while(runMore) {
 					try {
-						AOServConnection conn=getConnection(1);
-						try {
+						try (AOServConnection conn = getConnection(1)) {
 							try {
 								//System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: conn.identityHashCode="+System.identityHashCode(conn));
 								StreamableOutput out = conn.getRequestOut(AoservProtocol.CommandID.LISTEN_CACHES);
@@ -158,10 +157,9 @@ public class TCPConnector extends AOServConnector {
 									}
 								}
 							} finally {
-								conn.close();
+								// Force closed - no reuse after this normally neverending command
+								conn.abort();
 							}
-						} finally {
-							releaseConnection(conn);
 						}
 					} catch(EOFException err) {
 						if(isImmediateFail(err)) runMore = false;
@@ -344,20 +342,19 @@ public class TCPConnector extends AOServConnector {
 			)
 		) return true;
 		// Allow same class C subnet as this host
-		SocketConnection conn=(SocketConnection)getConnection(1);
-		try {
-			InetAddress ia=conn.getLocalInetAddress();
-			byte[] localAddress=ia.getAddress();
-			return
-				address[0]==localAddress[0]
-				&& address[1]==localAddress[1]
-				&& address[2]==localAddress[2]
-			;
-		} catch(IOException err) {
-			conn.close();
-			throw err;
-		} finally {
-			releaseConnection(conn);
+		try (SocketConnection conn = (SocketConnection)getConnection(1)) {
+			try {
+				InetAddress ia=conn.getLocalInetAddress();
+				byte[] localAddress=ia.getAddress();
+				return
+					address[0]==localAddress[0]
+					&& address[1]==localAddress[1]
+					&& address[2]==localAddress[2]
+				;
+			} catch(Error | RuntimeException | IOException err) {
+				conn.abort();
+				throw err;
+			}
 		}
 	}
 
@@ -367,9 +364,9 @@ public class TCPConnector extends AOServConnector {
 	}
 
 	@Override
-	protected final void releaseConnection(AOServConnection conn) throws IOException {
-		//System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorId()+"): releaseConnection("+System.identityHashCode(conn)+"): conn.identityHashCode="+System.identityHashCode(conn));
-		pool.releaseConnection((SocketConnection)conn);
+	protected final void release(AOServConnection conn) throws IOException {
+		//System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorId()+"): release("+System.identityHashCode(conn)+"): conn.identityHashCode="+System.identityHashCode(conn));
+		pool.release((SocketConnection)conn);
 	}
 
 	@Override
