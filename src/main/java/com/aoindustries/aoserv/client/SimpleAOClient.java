@@ -124,6 +124,7 @@ import com.aoindustries.collections.SortedArrayList;
 import com.aoindustries.exception.WrappedException;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.lang.Strings;
+import com.aoindustries.lang.Throwables;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.Email;
 import com.aoindustries.net.HostAddress;
@@ -874,17 +875,26 @@ final public class SimpleAOClient {
 		Email destination
 	) throws IllegalArgumentException, IOException, SQLException {
 		Domain sd=getEmailDomain(aoServer, domain);
-		Address eaddress=sd.getEmailAddress(address);
+		Address ea=sd.getEmailAddress(address);
 		boolean added=false;
-		if(eaddress==null) {
-			eaddress=connector.getEmail().getAddress().get(sd.addEmailAddress(address));
+		if(ea==null) {
+			ea=connector.getEmail().getAddress().get(sd.addEmailAddress(address));
 			added=true;
 		}
 		try {
-			return eaddress.addEmailForwarding(destination);
-		} catch(RuntimeException err) {
-			if(added && !eaddress.isUsed()) eaddress.remove();
-			throw err;
+			return ea.addEmailForwarding(destination);
+		} catch(Error | RuntimeException | IOException | SQLException e) {
+			try {
+				if(added && !ea.isUsed()) ea.remove();
+			} catch(ThreadDeath td) {
+				Throwable t = Throwables.addSuppressed(td, e);
+				assert t == td;
+				throw td;
+			} catch(Throwable t) {
+				Throwable t2 = Throwables.addSuppressed(e, t);
+				assert t2 == e;
+			}
+			throw e;
 		}
 	}
 
@@ -973,9 +983,18 @@ final public class SimpleAOClient {
 		}
 		try {
 			return el.addEmailAddress(ea);
-		} catch(RuntimeException err) {
-			if(added && !ea.isUsed()) ea.remove();
-			throw err;
+		} catch(Error | RuntimeException | IOException | SQLException e) {
+			try {
+				if(added && !ea.isUsed()) ea.remove();
+			} catch(ThreadDeath td) {
+				Throwable t = Throwables.addSuppressed(td, e);
+				assert t == td;
+				throw td;
+			} catch(Throwable t) {
+				Throwable t2 = Throwables.addSuppressed(e, t);
+				assert t2 == e;
+			}
+			throw e;
 		}
 	}
 
@@ -1048,9 +1067,18 @@ final public class SimpleAOClient {
 		}
 		try {
 			return ep.addEmailAddress(ea);
-		} catch(RuntimeException err) {
-			if(added && !ea.isUsed()) ea.remove();
-			throw err;
+		} catch(Error | RuntimeException | IOException | SQLException e) {
+			try {
+				if(added && !ea.isUsed()) ea.remove();
+			} catch(ThreadDeath td) {
+				Throwable t = Throwables.addSuppressed(td, e);
+				assert t == td;
+				throw td;
+			} catch(Throwable t) {
+				Throwable t2 = Throwables.addSuppressed(e, t);
+				assert t2 == e;
+			}
+			throw e;
 		}
 	}
 
@@ -1730,9 +1758,18 @@ final public class SimpleAOClient {
 		} else added=false;
 		try {
 			return lsa.addEmailAddress(ea);
-		} catch(RuntimeException err) {
-			if(added && !ea.isUsed()) ea.remove();
-			throw err;
+		} catch(Error | RuntimeException | IOException | SQLException e) {
+			try {
+				if(added && !ea.isUsed()) ea.remove();
+			} catch(ThreadDeath td) {
+				Throwable t = Throwables.addSuppressed(td, e);
+				assert t == td;
+				throw td;
+			} catch(Throwable t) {
+				Throwable t2 = Throwables.addSuppressed(e, t);
+				assert t2 == e;
+			}
+			throw e;
 		}
 	}
 

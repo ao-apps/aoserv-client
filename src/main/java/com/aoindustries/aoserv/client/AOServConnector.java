@@ -120,21 +120,25 @@ abstract public class AOServConnector implements SchemaParent {
 	 * Certain errors will not be retried.
 	 */
 	static boolean isImmediateFail(Throwable T) {
-		String message = T.getMessage();
-		return
-			(T instanceof ConfigurationException)
-			|| (
-				(T instanceof IOException)
-				&& message != null
-				&& (
-					message.equals("Connection attempted with invalid password")
-					|| message.equals("Connection attempted with empty password")
-					|| message.equals("Connection attempted with empty connect username")
-					|| message.startsWith("Unable to find Administrator: ")
-					|| message.startsWith("Not allowed to switch users from ")
+		if(T instanceof ThreadDeath) {
+			return true;
+		} else {
+			String message = T.getMessage();
+			return
+				(T instanceof ConfigurationException)
+				|| (
+					(T instanceof IOException)
+					&& message != null
+					&& (
+						message.equals("Connection attempted with invalid password")
+						|| message.equals("Connection attempted with empty password")
+						|| message.equals("Connection attempted with empty connect username")
+						|| message.startsWith("Unable to find Administrator: ")
+						|| message.startsWith("Not allowed to switch users from ")
+					)
 				)
-			)
-		;
+			;
+		}
 	}
 
 	/**
@@ -1015,7 +1019,7 @@ abstract public class AOServConnector implements SchemaParent {
 
 					StreamableInput in=connection.getResponseIn();
 					resultRequest.readResponse(in);
-				} catch(RuntimeException | IOException err) {
+				} catch(Error | RuntimeException | IOException err) {
 					connection.close();
 					throw err;
 				} finally {
@@ -1024,7 +1028,7 @@ abstract public class AOServConnector implements SchemaParent {
 				return resultRequest.afterRelease();
 			} catch(InterruptedIOException err) {
 				throw err;
-			} catch(RuntimeException | IOException | SQLException err) {
+			} catch(Error | RuntimeException | IOException | SQLException err) {
 				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
@@ -1056,7 +1060,7 @@ abstract public class AOServConnector implements SchemaParent {
 					if(code==AoservProtocol.DONE) return in.readBoolean();
 					AoservProtocol.checkResult(code, in);
 					throw new IOException("Unexpected response code: "+code);
-				} catch(RuntimeException | IOException err) {
+				} catch(Error | RuntimeException | IOException err) {
 					connection.close();
 					throw err;
 				} finally {
@@ -1064,7 +1068,7 @@ abstract public class AOServConnector implements SchemaParent {
 				}
 			} catch(InterruptedIOException err) {
 				throw err;
-			} catch(RuntimeException | IOException | SQLException err) {
+			} catch(Error | RuntimeException | IOException | SQLException err) {
 				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
@@ -1102,7 +1106,7 @@ abstract public class AOServConnector implements SchemaParent {
 						AoservProtocol.checkResult(code, in);
 						throw new IOException("Unexpected response code: "+code);
 					}
-				} catch(RuntimeException | IOException err) {
+				} catch(Error | RuntimeException | IOException err) {
 					connection.close();
 					throw err;
 				} finally {
@@ -1112,7 +1116,7 @@ abstract public class AOServConnector implements SchemaParent {
 				return result;
 			} catch(InterruptedIOException err) {
 				throw err;
-			} catch(RuntimeException | IOException | SQLException err) {
+			} catch(Error | RuntimeException | IOException | SQLException err) {
 				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
@@ -1144,7 +1148,7 @@ abstract public class AOServConnector implements SchemaParent {
 					if(code==AoservProtocol.DONE) return in.readCompressedInt();
 					AoservProtocol.checkResult(code, in);
 					throw new IOException("Unexpected response code: "+code);
-				} catch(RuntimeException | IOException err) {
+				} catch(Error | RuntimeException | IOException err) {
 					connection.close();
 					throw err;
 				} finally {
@@ -1152,7 +1156,7 @@ abstract public class AOServConnector implements SchemaParent {
 				}
 			} catch(InterruptedIOException err) {
 				throw err;
-			} catch(RuntimeException | IOException | SQLException err) {
+			} catch(Error | RuntimeException | IOException | SQLException err) {
 				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
@@ -1190,7 +1194,7 @@ abstract public class AOServConnector implements SchemaParent {
 						AoservProtocol.checkResult(code, in);
 						throw new IOException("Unexpected response code: "+code);
 					}
-				} catch(RuntimeException | IOException err) {
+				} catch(Error | RuntimeException | IOException err) {
 					connection.close();
 					throw err;
 				} finally {
@@ -1200,7 +1204,7 @@ abstract public class AOServConnector implements SchemaParent {
 				return result;
 			} catch(InterruptedIOException err) {
 				throw err;
-			} catch(RuntimeException | IOException | SQLException err) {
+			} catch(Error | RuntimeException | IOException | SQLException err) {
 				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
@@ -1232,7 +1236,7 @@ abstract public class AOServConnector implements SchemaParent {
 					if(code==AoservProtocol.DONE) return in.readLong();
 					AoservProtocol.checkResult(code, in);
 					throw new IOException("Unexpected response code: "+code);
-				} catch(RuntimeException | IOException err) {
+				} catch(Error | RuntimeException | IOException err) {
 					connection.close();
 					throw err;
 				} finally {
@@ -1240,7 +1244,7 @@ abstract public class AOServConnector implements SchemaParent {
 				}
 			} catch(InterruptedIOException err) {
 				throw err;
-			} catch(RuntimeException | IOException | SQLException err) {
+			} catch(Error | RuntimeException | IOException | SQLException err) {
 				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
@@ -1272,7 +1276,7 @@ abstract public class AOServConnector implements SchemaParent {
 					if(code==AoservProtocol.DONE) return in.readShort();
 					AoservProtocol.checkResult(code, in);
 					throw new IOException("Unexpected response code: "+code);
-				} catch(RuntimeException | IOException err) {
+				} catch(Error | RuntimeException | IOException err) {
 					connection.close();
 					throw err;
 				} finally {
@@ -1280,7 +1284,7 @@ abstract public class AOServConnector implements SchemaParent {
 				}
 			} catch(InterruptedIOException err) {
 				throw err;
-			} catch(RuntimeException | IOException | SQLException err) {
+			} catch(Error | RuntimeException | IOException | SQLException err) {
 				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
@@ -1318,7 +1322,7 @@ abstract public class AOServConnector implements SchemaParent {
 						AoservProtocol.checkResult(code, in);
 						throw new IOException("Unexpected response code: "+code);
 					}
-				} catch(RuntimeException | IOException err) {
+				} catch(Error | RuntimeException | IOException err) {
 					connection.close();
 					throw err;
 				} finally {
@@ -1328,7 +1332,7 @@ abstract public class AOServConnector implements SchemaParent {
 				return result;
 			} catch(InterruptedIOException err) {
 				throw err;
-			} catch(RuntimeException | IOException | SQLException err) {
+			} catch(Error | RuntimeException | IOException | SQLException err) {
 				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
@@ -1360,7 +1364,7 @@ abstract public class AOServConnector implements SchemaParent {
 					if(code==AoservProtocol.DONE) return in.readUTF();
 					AoservProtocol.checkResult(code, in);
 					throw new IOException("Unexpected response code: "+code);
-				} catch(RuntimeException | IOException err) {
+				} catch(Error | RuntimeException | IOException err) {
 					connection.close();
 					throw err;
 				} finally {
@@ -1368,7 +1372,7 @@ abstract public class AOServConnector implements SchemaParent {
 				}
 			} catch(InterruptedIOException err) {
 				throw err;
-			} catch(RuntimeException | IOException | SQLException err) {
+			} catch(Error | RuntimeException | IOException | SQLException err) {
 				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
@@ -1403,7 +1407,7 @@ abstract public class AOServConnector implements SchemaParent {
 					if(code==AoservProtocol.DONE) return in.readLongUTF();
 					AoservProtocol.checkResult(code, in);
 					throw new IOException("Unexpected response code: "+code);
-				} catch(RuntimeException | IOException err) {
+				} catch(Error | RuntimeException | IOException err) {
 					connection.close();
 					throw err;
 				} finally {
@@ -1411,7 +1415,7 @@ abstract public class AOServConnector implements SchemaParent {
 				}
 			} catch(InterruptedIOException err) {
 				throw err;
-			} catch(RuntimeException | IOException | SQLException err) {
+			} catch(Error | RuntimeException | IOException | SQLException err) {
 				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
@@ -1447,7 +1451,7 @@ abstract public class AOServConnector implements SchemaParent {
 					if(code==AoservProtocol.DONE) return in.readNullLongUTF();
 					AoservProtocol.checkResult(code, in);
 					throw new IOException("Unexpected response code: "+code);
-				} catch(RuntimeException | IOException err) {
+				} catch(Error | RuntimeException | IOException err) {
 					connection.close();
 					throw err;
 				} finally {
@@ -1455,7 +1459,7 @@ abstract public class AOServConnector implements SchemaParent {
 				}
 			} catch(InterruptedIOException err) {
 				throw err;
-			} catch(RuntimeException | IOException | SQLException err) {
+			} catch(Error | RuntimeException | IOException | SQLException err) {
 				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
@@ -1512,7 +1516,7 @@ abstract public class AOServConnector implements SchemaParent {
 
 					StreamableInput in=connection.getResponseIn();
 					updateRequest.readResponse(in);
-				} catch(RuntimeException | IOException err) {
+				} catch(Error | RuntimeException | IOException err) {
 					connection.close();
 					throw err;
 				} finally {
@@ -1522,7 +1526,7 @@ abstract public class AOServConnector implements SchemaParent {
 				return;
 			} catch(InterruptedIOException err) {
 				throw err;
-			} catch(RuntimeException | IOException | SQLException err) {
+			} catch(Error | RuntimeException | IOException | SQLException err) {
 				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
@@ -1552,7 +1556,7 @@ abstract public class AOServConnector implements SchemaParent {
 					StreamableInput in=connection.getResponseIn();
 					int code=in.readByte();
 					if(code!=AoservProtocol.DONE) AoservProtocol.checkResult(code, in);
-				} catch(RuntimeException | IOException err) {
+				} catch(Error | RuntimeException | IOException err) {
 					connection.close();
 					throw err;
 				} finally {
@@ -1561,7 +1565,7 @@ abstract public class AOServConnector implements SchemaParent {
 				return;
 			} catch(InterruptedIOException err) {
 				throw err;
-			} catch(RuntimeException | IOException | SQLException err) {
+			} catch(Error | RuntimeException | IOException | SQLException err) {
 				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
@@ -1596,7 +1600,7 @@ abstract public class AOServConnector implements SchemaParent {
 						AoservProtocol.checkResult(code, in);
 						throw new IOException("Unexpected response code: "+code);
 					}
-				} catch(RuntimeException | IOException err) {
+				} catch(Error | RuntimeException | IOException err) {
 					connection.close();
 					throw err;
 				} finally {
@@ -1606,7 +1610,7 @@ abstract public class AOServConnector implements SchemaParent {
 				return;
 			} catch(InterruptedIOException err) {
 				throw err;
-			} catch(RuntimeException | IOException | SQLException err) {
+			} catch(Error | RuntimeException | IOException | SQLException err) {
 				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {

@@ -592,7 +592,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 				if(cause instanceof SQLException) throw (SQLException)cause;
 				throw err;
 			}
-		} catch(IOException | SQLException | RuntimeException e) {
+		} catch(Error | RuntimeException | IOException | SQLException e) {
 			// Tell each load listener that we failed
 			for(int c = 0; c < loadCount; c++) {
 				TableLoadListenerEntry entry = loadListeners[c];

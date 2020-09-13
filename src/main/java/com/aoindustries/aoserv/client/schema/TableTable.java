@@ -187,7 +187,7 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 		}
 	}
 
-	@SuppressWarnings({"unchecked", "rawtypes", "AssignmentToForLoopParameter"})
+	@SuppressWarnings({"unchecked", "rawtypes", "AssignmentToForLoopParameter", "UseSpecificCatch", "TooBroadCatch"})
 	private void selectRows(String[] args, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IOException, SQLException {
 		int argCount = args.length;
 		List<String> expressionArgs = new ArrayList<>();
@@ -418,10 +418,10 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 				if(rowsCopied && rows instanceof AutoCloseable) {
 					try {
 						((AutoCloseable)rows).close();
-					} catch(RuntimeException | IOException | SQLException e) {
+					} catch(Error | RuntimeException | IOException | SQLException e) {
 						throw e;
-					} catch(Exception e) {
-						throw new WrappedException(e);
+					} catch(Throwable t) {
+						throw new WrappedException(t);
 					}
 				}
 			}

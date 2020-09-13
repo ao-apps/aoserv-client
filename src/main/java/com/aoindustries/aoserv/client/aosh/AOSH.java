@@ -36,6 +36,7 @@ import com.aoindustries.aoserv.client.schema.TableTable;
 import com.aoindustries.aoserv.client.schema.Type;
 import com.aoindustries.exception.ConfigurationException;
 import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.lang.SysExits;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.Email;
 import com.aoindustries.net.HostAddress;
@@ -60,6 +61,8 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * <code>AOSH</code> is a command interpreter and scripting language
@@ -69,6 +72,8 @@ import java.util.Locale;
  * @author  AO Industries, Inc.
  */
 final public class AOSH extends ShellInterpreter {
+
+	private static final Logger logger = Logger.getLogger(AOSH.class.getName());
 
 	private static final Reader nullInput=new CharArrayReader(new char[0]);
 
@@ -249,9 +254,11 @@ final public class AOSH extends ShellInterpreter {
 				out.println();
 				out.flush();
 			}
-		} catch(RuntimeException | IOException exc) {
-			err.println("aosh: unable to connect: "+exc.getMessage());
+		} catch(Throwable t) {
+			logger.log(Level.FINE, null, t);
+			err.println("aosh: unable to connect: " + t.getMessage());
 			err.flush();
+			System.exit(SysExits.getSysExit(t)); // TODO: Review other main methods
 		}
 	}
 
