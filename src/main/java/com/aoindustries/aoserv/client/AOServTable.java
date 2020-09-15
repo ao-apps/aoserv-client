@@ -32,6 +32,7 @@ import com.aoindustries.exception.WrappedException;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
+import com.aoindustries.lang.Throwables;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.table.TableListener;
 import com.aoindustries.util.sort.ComparisonSortAlgorithm;
@@ -370,17 +371,15 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	protected V getNewObject() throws IOException {
 		try {
-			return clazz.getConstructor().newInstance();
-		} catch(InvocationTargetException e) {
-			Throwable cause = e.getCause();
-			if(cause instanceof Error) throw (Error)cause;
-			if(cause instanceof RuntimeException) throw (RuntimeException)cause;
-			if(cause instanceof IOException) throw (IOException)cause;
-			throw new IOException(cause == null ? e : cause);
-		} catch(Error | RuntimeException e) {
-			throw e;
+			try {
+				return clazz.getConstructor().newInstance();
+			} catch(InvocationTargetException e) {
+				// Unwrap cause for more direct stack traces
+				Throwable cause = e.getCause();
+				throw (cause == null) ? e : cause;
+			}
 		} catch(Throwable t) {
-			throw new IOException(t);
+			throw Throwables.wrap(t, IOException.class, IOException::new);
 		}
 	}
 

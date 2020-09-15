@@ -24,6 +24,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.AOPool;
+import com.aoindustries.lang.Throwables;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.sql.SQLException;
@@ -58,8 +59,11 @@ final class SocketConnectionPool extends AOPool<SocketConnection,IOException,Int
 	}
 
 	@Override
-	protected void close(SocketConnection conn) {
-		conn.abort();
+	protected void close(SocketConnection conn) throws IOException {
+		Throwable t0 = conn.abort(null);
+		if(t0 != null) {
+			throw Throwables.wrap(t0, IOException.class, IOException::new);
+		}
 	}
 
 	// Expose to package

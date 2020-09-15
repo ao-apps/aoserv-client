@@ -82,7 +82,6 @@ final public class SocketConnection extends AOServConnection {
 	SocketConnection(TCPConnector connector) throws InterruptedIOException, IOException {
 		super(connector);
 		socket = connector.getSocket();
-		boolean successful = false;
 		try {
 			isClosed = false;
 			out = new StreamableOutput(new BufferedOutputStream(socket.getOutputStream()));
@@ -119,34 +118,27 @@ final public class SocketConnection extends AOServConnection {
 			}
 			final long startSeq = in.readLong();
 			this.seq = new AtomicLong(startSeq);
-			successful = true;
-		} finally {
-			if(!successful) abort();
+		} catch(Throwable t) {
+			throw Throwables.wrap(abort(t), IOException.class, IOException::new);
 		}
 	}
 
+	/**
+	 * Forces connection closed, adding any new throwables to {@code t0} via
+	 * {@link Throwables#addSuppressed(java.lang.Throwable, java.lang.Throwable)}.
+	 */
 	@Override
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
-	void abort() {
-		Throwable t1 = null;
+	Throwable abort(Throwable t0) {
 		try {
 			out.writeCompressedInt(AoservProtocol.CommandID.QUIT.ordinal());
 			out.flush();
 		} catch(Throwable t) {
-			t1 = Throwables.addSuppressed(t1, t);
+			t0 = Throwables.addSuppressed(t0, t);
 		}
-		t1 = AutoCloseables.close(t1, in, out, socket);
-		if(t1 != null) {
-			connector.getLogger().log(
-				// Normal when the socket is already closed
-				(t1 instanceof SocketException)
-					? Level.FINE
-					: Level.WARNING,
-				null,
-				t1
-			);
-		}
+		t0 = AutoCloseables.closeAndCatch(t0, in, out, socket);
 		isClosed = true;
+		return t0;
 	}
 
 	InetAddress getLocalInetAddress() throws IOException {

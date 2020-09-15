@@ -30,6 +30,7 @@ import com.aoindustries.collections.IntList;
 import com.aoindustries.io.AOPool;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
+import com.aoindustries.lang.Throwables;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.HostAddress;
 import com.aoindustries.net.Port;
@@ -39,6 +40,7 @@ import java.io.InterruptedIOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
@@ -98,7 +100,7 @@ public class TCPConnector extends AOServConnector {
 				boolean runMore=true;
 				while(runMore) {
 					try {
-						try (AOServConnection conn = getConnection(1)) {
+						try (SocketConnection conn = getConnection(1)) {
 							try {
 								//System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: conn.identityHashCode="+System.identityHashCode(conn));
 								StreamableOutput out = conn.getRequestOut(AoservProtocol.CommandID.LISTEN_CACHES);
@@ -158,7 +160,17 @@ public class TCPConnector extends AOServConnector {
 								}
 							} finally {
 								// Force closed - no reuse after this normally neverending command
-								conn.abort();
+								Throwable t0 = conn.abort(null);
+								if(t0 != null) {
+									getLogger().log(
+										// Normal when the socket is already closed
+										(t0 instanceof SocketException)
+											? Level.FINE
+											: Level.WARNING,
+										null,
+										t0
+									);
+								}
 							}
 						}
 					} catch(EOFException err) {
@@ -256,7 +268,7 @@ public class TCPConnector extends AOServConnector {
 	}
 
 	@Override
-	protected final AOServConnection getConnection(int maxConnections) throws InterruptedIOException, IOException {
+	protected final SocketConnection getConnection(int maxConnections) throws InterruptedIOException, IOException {
 		if(SwingUtilities.isEventDispatchThread()) {
 			getLogger().log(Level.WARNING, null, new RuntimeException(accessor.getMessage("TCPConnector.getConnection.isEventDispatchThread")));
 		}
@@ -331,6 +343,7 @@ public class TCPConnector extends AOServConnector {
 	}
 
 	@Override
+	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	public boolean isSecure() throws UnknownHostException, IOException {
 		byte[] address=InetAddress.getByName(hostname.toString()).getAddress();
 		if(
@@ -342,7 +355,7 @@ public class TCPConnector extends AOServConnector {
 			)
 		) return true;
 		// Allow same class C subnet as this host
-		try (SocketConnection conn = (SocketConnection)getConnection(1)) {
+		try (SocketConnection conn = getConnection(1)) {
 			try {
 				InetAddress ia=conn.getLocalInetAddress();
 				byte[] localAddress=ia.getAddress();
@@ -351,9 +364,8 @@ public class TCPConnector extends AOServConnector {
 					&& address[1]==localAddress[1]
 					&& address[2]==localAddress[2]
 				;
-			} catch(Error | RuntimeException | IOException err) {
-				conn.abort();
-				throw err;
+			} catch(Throwable t) {
+				throw Throwables.wrap(conn.abort(t), IOException.class, IOException::new);
 			}
 		}
 	}

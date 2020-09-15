@@ -42,6 +42,7 @@ import com.aoindustries.io.IoUtils;
 import com.aoindustries.io.stream.StreamWritable;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
+import com.aoindustries.lang.Throwables;
 import com.aoindustries.net.DomainLabel;
 import com.aoindustries.net.DomainLabels;
 import com.aoindustries.net.DomainName;
@@ -1024,8 +1025,7 @@ abstract public class AOServConnector implements SchemaParent {
 						StreamableInput in=connection.getResponseIn();
 						resultRequest.readResponse(in);
 					} catch(Error | RuntimeException | IOException err) {
-						connection.abort();
-						throw err;
+						throw Throwables.wrap(connection.abort(err), IOException.class, IOException::new);
 					}
 				}
 				return resultRequest.afterRelease();
@@ -1062,8 +1062,7 @@ abstract public class AOServConnector implements SchemaParent {
 						AoservProtocol.checkResult(code, in);
 						throw new IOException("Unexpected response code: "+code);
 					} catch(Error | RuntimeException | IOException err) {
-						connection.abort();
-						throw err;
+						throw Throwables.wrap(connection.abort(err), IOException.class, IOException::new);
 					}
 				}
 			} catch(Error | RuntimeException | IOException | SQLException err) {
@@ -1105,8 +1104,7 @@ abstract public class AOServConnector implements SchemaParent {
 							throw new IOException("Unexpected response code: "+code);
 						}
 					} catch(Error | RuntimeException | IOException err) {
-						connection.abort();
-						throw err;
+						throw Throwables.wrap(connection.abort(err), IOException.class, IOException::new);
 					}
 				}
 				tablesUpdated(invalidateList);
@@ -1144,8 +1142,7 @@ abstract public class AOServConnector implements SchemaParent {
 						AoservProtocol.checkResult(code, in);
 						throw new IOException("Unexpected response code: "+code);
 					} catch(Error | RuntimeException | IOException err) {
-						connection.abort();
-						throw err;
+						throw Throwables.wrap(connection.abort(err), IOException.class, IOException::new);
 					}
 				}
 			} catch(Error | RuntimeException | IOException | SQLException err) {
@@ -1187,8 +1184,7 @@ abstract public class AOServConnector implements SchemaParent {
 							throw new IOException("Unexpected response code: "+code);
 						}
 					} catch(Error | RuntimeException | IOException err) {
-						connection.abort();
-						throw err;
+						throw Throwables.wrap(connection.abort(err), IOException.class, IOException::new);
 					}
 				}
 				tablesUpdated(invalidateList);
@@ -1226,8 +1222,7 @@ abstract public class AOServConnector implements SchemaParent {
 						AoservProtocol.checkResult(code, in);
 						throw new IOException("Unexpected response code: "+code);
 					} catch(Error | RuntimeException | IOException err) {
-						connection.abort();
-						throw err;
+						throw Throwables.wrap(connection.abort(err), IOException.class, IOException::new);
 					}
 				}
 			} catch(Error | RuntimeException | IOException | SQLException err) {
@@ -1263,8 +1258,7 @@ abstract public class AOServConnector implements SchemaParent {
 						AoservProtocol.checkResult(code, in);
 						throw new IOException("Unexpected response code: "+code);
 					} catch(Error | RuntimeException | IOException err) {
-						connection.abort();
-						throw err;
+						throw Throwables.wrap(connection.abort(err), IOException.class, IOException::new);
 					}
 				}
 			} catch(Error | RuntimeException | IOException | SQLException err) {
@@ -1306,8 +1300,7 @@ abstract public class AOServConnector implements SchemaParent {
 							throw new IOException("Unexpected response code: "+code);
 						}
 					} catch(Error | RuntimeException | IOException err) {
-						connection.abort();
-						throw err;
+						throw Throwables.wrap(connection.abort(err), IOException.class, IOException::new);
 					}
 				}
 				tablesUpdated(invalidateList);
@@ -1345,8 +1338,7 @@ abstract public class AOServConnector implements SchemaParent {
 						AoservProtocol.checkResult(code, in);
 						throw new IOException("Unexpected response code: "+code);
 					} catch(Error | RuntimeException | IOException err) {
-						connection.abort();
-						throw err;
+						throw Throwables.wrap(connection.abort(err), IOException.class, IOException::new);
 					}
 				}
 			} catch(Error | RuntimeException | IOException | SQLException err) {
@@ -1385,8 +1377,7 @@ abstract public class AOServConnector implements SchemaParent {
 						AoservProtocol.checkResult(code, in);
 						throw new IOException("Unexpected response code: "+code);
 					} catch(Error | RuntimeException | IOException err) {
-						connection.abort();
-						throw err;
+						throw Throwables.wrap(connection.abort(err), IOException.class, IOException::new);
 					}
 				}
 			} catch(Error | RuntimeException | IOException | SQLException err) {
@@ -1426,8 +1417,7 @@ abstract public class AOServConnector implements SchemaParent {
 						AoservProtocol.checkResult(code, in);
 						throw new IOException("Unexpected response code: "+code);
 					} catch(Error | RuntimeException | IOException err) {
-						connection.abort();
-						throw err;
+						throw Throwables.wrap(connection.abort(err), IOException.class, IOException::new);
 					}
 				}
 			} catch(Error | RuntimeException | IOException | SQLException err) {
@@ -1488,8 +1478,7 @@ abstract public class AOServConnector implements SchemaParent {
 						StreamableInput in=connection.getResponseIn();
 						updateRequest.readResponse(in);
 					} catch(Error | RuntimeException | IOException err) {
-						connection.abort();
-						throw err;
+						throw Throwables.wrap(connection.abort(err), IOException.class, IOException::new);
 					}
 				}
 				updateRequest.afterRelease();
@@ -1525,8 +1514,7 @@ abstract public class AOServConnector implements SchemaParent {
 						int code=in.readByte();
 						if(code!=AoservProtocol.DONE) AoservProtocol.checkResult(code, in);
 					} catch(Error | RuntimeException | IOException err) {
-						connection.abort();
-						throw err;
+						throw Throwables.wrap(connection.abort(err), IOException.class, IOException::new);
 					}
 				}
 				return;
@@ -1566,8 +1554,7 @@ abstract public class AOServConnector implements SchemaParent {
 							throw new IOException("Unexpected response code: "+code);
 						}
 					} catch(Error | RuntimeException | IOException err) {
-						connection.abort();
-						throw err;
+						throw Throwables.wrap(connection.abort(err), IOException.class, IOException::new);
 					}
 				}
 				tablesUpdated(invalidateList);
