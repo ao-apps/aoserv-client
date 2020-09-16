@@ -61,9 +61,8 @@ abstract public class AOServConnection implements Closeable {
 	}
 
 	/**
-	 * Closes this connection to the server
-	 * so that a reconnect is forced in the
-	 * future.
+	 * Closes this connection to the server so that a reconnect is forced in the future.
+	 * Adds any new throwables to {@code t0} via {@link Throwables#addSuppressed(java.lang.Throwable, java.lang.Throwable)}.
 	 */
 	abstract Throwable abort(Throwable t0);
 
