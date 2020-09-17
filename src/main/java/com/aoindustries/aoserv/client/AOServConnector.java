@@ -148,6 +148,7 @@ abstract public class AOServConnector implements SchemaParent {
 	/**
 	 * One thread pool is shared by all instances.
 	 */
+	// TODO: Use ao-concurrent per connector instance, stopping when connector is idle (when it stops cache listener due to inactivity)
 	final static ExecutorService executorService = Executors.newCachedThreadPool();
 
 	/*private static final String[] profileTitles={
@@ -985,7 +986,7 @@ abstract public class AOServConnector implements SchemaParent {
 	 *
 	 * @see  #requestResult(boolean, com.aoindustries.aoserv.client.schema.AoservProtocol.CommandID, com.aoindustries.aoserv.client.AOServConnector.ResultRequest)
 	 */
-	public interface ResultRequest<T> {
+	public static interface ResultRequest<T> {
 		/**
 		 * Writes the request to the server.
 		 * This does not need to flush the output stream.
@@ -1022,8 +1023,7 @@ abstract public class AOServConnector implements SchemaParent {
 						resultRequest.writeRequest(out);
 						out.flush();
 
-						StreamableInput in=connection.getResponseIn();
-						resultRequest.readResponse(in);
+						resultRequest.readResponse(connection.getResponseIn());
 					} catch(Error | RuntimeException | IOException err) {
 						throw Throwables.wrap(connection.abort(err), IOException.class, IOException::new);
 					}
@@ -1440,7 +1440,7 @@ abstract public class AOServConnector implements SchemaParent {
 	 *
 	 * @see  #requestUpdate(boolean, com.aoindustries.aoserv.client.schema.AoservProtocol.CommandID, com.aoindustries.aoserv.client.AOServConnector.UpdateRequest)
 	 */
-	public interface UpdateRequest {
+	public static interface UpdateRequest {
 		/**
 		 * Writes the request to the server.
 		 * This does not need to flush the output stream.
@@ -1475,8 +1475,7 @@ abstract public class AOServConnector implements SchemaParent {
 						updateRequest.writeRequest(out);
 						out.flush();
 
-						StreamableInput in=connection.getResponseIn();
-						updateRequest.readResponse(in);
+						updateRequest.readResponse(connection.getResponseIn());
 					} catch(Error | RuntimeException | IOException err) {
 						throw Throwables.wrap(connection.abort(err), IOException.class, IOException::new);
 					}
