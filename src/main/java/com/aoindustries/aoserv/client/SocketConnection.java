@@ -34,10 +34,9 @@ import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.logging.Level;
 
 /**
  * A <code>SocketConnection</code> is a single, persistent, plaintext
@@ -52,7 +51,7 @@ final public class SocketConnection extends AOServConnection {
 	/**
 	 * Keeps a flag of the connection status.
 	 */
-	private boolean isClosed=true;
+	private final AtomicBoolean isClosed = new AtomicBoolean(true);
 
 	/**
 	 * The socket to the server.
@@ -79,11 +78,12 @@ final public class SocketConnection extends AOServConnection {
 	 */
 	private final AtomicLong seq;
 
+	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	SocketConnection(TCPConnector connector) throws InterruptedIOException, IOException {
 		super(connector);
 		socket = connector.getSocket();
 		try {
-			isClosed = false;
+			this.isClosed.set(false);
 			out = new StreamableOutput(new BufferedOutputStream(socket.getOutputStream()));
 			in = new StreamableInput(new BufferedInputStream(socket.getInputStream()));
 
@@ -130,14 +130,15 @@ final public class SocketConnection extends AOServConnection {
 	@Override
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	Throwable abort(Throwable t0) {
-		try {
-			out.writeCompressedInt(AoservProtocol.CommandID.QUIT.ordinal());
-			out.flush();
-		} catch(Throwable t) {
-			t0 = Throwables.addSuppressed(t0, t);
+		if(!isClosed.getAndSet(true)) {
+			try {
+				out.writeCompressedInt(AoservProtocol.CommandID.QUIT.ordinal());
+				out.flush();
+			} catch(Throwable t) {
+				t0 = Throwables.addSuppressed(t0, t);
+			}
+			t0 = AutoCloseables.closeAndCatch(t0, in, out, socket);
 		}
-		t0 = AutoCloseables.closeAndCatch(t0, in, out, socket);
-		isClosed = true;
 		return t0;
 	}
 
@@ -163,7 +164,10 @@ final public class SocketConnection extends AOServConnection {
 		return in;
 	}
 
+	/**
+	 * Determines if this connection has been closed.
+	 */
 	boolean isClosed() {
-		return isClosed;
+		return isClosed.get();
 	}
 }
