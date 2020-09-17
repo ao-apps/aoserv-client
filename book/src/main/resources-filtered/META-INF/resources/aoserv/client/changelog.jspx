@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2020-09-12T20:57:27-05:00"
+		dateModified="2020-09-15T04:09:01-05:00"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -56,7 +56,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 				<ul>
 					<li>Resolved editor warnings</li>
 					<li>
-						<code>AOServConnection</code> now implements <code>AutoCloseable</code> for use
+						<code>AOServConnection</code> now implements <code>Closeable</code> for use
 						in try-with-resources.  This is a behind-the-scenes detail and does not change
 						the public API.
 					</li>
