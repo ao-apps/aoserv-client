@@ -45,6 +45,7 @@ import com.aoindustries.aoserv.client.web.tomcat.PrivateTomcatSite;
 import com.aoindustries.aoserv.client.web.tomcat.SharedTomcat;
 import com.aoindustries.aoserv.client.web.tomcat.SharedTomcatSite;
 import com.aoindustries.aoserv.client.web.tomcat.Worker;
+import com.aoindustries.collections.AoCollections;
 import com.aoindustries.collections.IntList;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
@@ -598,7 +599,7 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 
 	public Set<FirewallZone.Name> getFirewalldZoneNames() throws IOException, SQLException {
 		List<BindFirewallZone> nbfzs = getNetBindFirewalldZones();
-		Set<FirewallZone.Name> fzns = new LinkedHashSet<>(nbfzs.size()*4/3+1);
+		Set<FirewallZone.Name> fzns = AoCollections.newLinkedHashSet(nbfzs.size());
 		for(BindFirewallZone nbfz : nbfzs) {
 			fzns.add(nbfz.getFirewalldZone().getName());
 		}

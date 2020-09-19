@@ -30,6 +30,7 @@ import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
+import com.aoindustries.collections.AoCollections;
 import com.aoindustries.collections.IntList;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.io.stream.StreamableInput;
@@ -40,7 +41,6 @@ import java.io.Reader;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -213,7 +213,7 @@ final public class BindTable extends CachedTableIntegerKey<Bind> {
 		if(command.equalsIgnoreCase(Command.ADD_NET_BIND)) {
 			if(AOSH.checkMinParamCount(Command.ADD_NET_BIND, args, 8, err)) {
 				final int varargStart = 9;
-				Set<FirewallZone.Name> firewalldZones = new LinkedHashSet<>((args.length - varargStart)*4/3+1);
+				Set<FirewallZone.Name> firewalldZones = AoCollections.newLinkedHashSet(args.length - varargStart);
 				for(int i = varargStart; i < args.length; i++) {
 					FirewallZone.Name name = AOSH.parseFirewalldZoneName(args[i], "firewalld_zone[" + (i - varargStart) + "]");
 					if(!firewalldZones.add(name)) {
@@ -248,7 +248,7 @@ final public class BindTable extends CachedTableIntegerKey<Bind> {
 		} else if(command.equalsIgnoreCase(Command.SET_NET_BIND_FIREWALLD_ZONES)) {
 			if(AOSH.checkMinParamCount(Command.SET_NET_BIND_FIREWALLD_ZONES, args, 1, err)) {
 				final int varargStart = 2;
-				Set<FirewallZone.Name> firewalldZones = new LinkedHashSet<>((args.length - varargStart)*4/3+1);
+				Set<FirewallZone.Name> firewalldZones = AoCollections.newLinkedHashSet(args.length - varargStart);
 				for(int i = varargStart; i < args.length; i++) {
 					FirewallZone.Name name = AOSH.parseFirewalldZoneName(args[i], "firewalld_zone[" + (i - varargStart) + "]");
 					if(!firewalldZones.add(name)) {

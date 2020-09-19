@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.collections.AoCollections;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -132,9 +133,8 @@ public abstract class CachedTable<K,V extends CachedObject<K,V>> extends AOServT
 			if(!columnsHashed.get(col)) {
 				List<V> table=tableData;
 				int size=table.size();
-				// HashMap default load factor is .75, so we go slightly more than 1/.75, or slightly more than 4/3.  13/9 is a little more than 4/3.
-				// This ensures the HashMap will not be restructured while loading the data.
-				if(map==null) columnHashes.set(col, map=new HashMap<>(size*13/9));
+				// Allow 25% growth before rehash
+				if(map == null) columnHashes.set(col, map = AoCollections.newHashMap((size * 5) >> 2));
 				else map.clear();
 				for(int c=0;c<size;c++) {
 					V O=table.get(c);

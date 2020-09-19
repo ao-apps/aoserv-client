@@ -24,6 +24,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
+import com.aoindustries.collections.AoCollections;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -208,7 +209,8 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 				tableValues.add(null);
 			}
 			Map<Object,V> colValues=tableValues.get(col);
-			if(colValues==null) tableValues.set(col, colValues=new HashMap<>(size*13/9));
+			// Allow 25% growth before rehash
+			if(colValues == null) tableValues.set(col, colValues = AoCollections.newHashMap((size * 5) >> 2));
 
 			if(!isHashed) {
 				colValues.clear();

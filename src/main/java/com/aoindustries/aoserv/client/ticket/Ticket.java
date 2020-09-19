@@ -45,7 +45,6 @@ import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -197,7 +196,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 			status_timeout = in.readNullUnmodifiableTimestamp();
 			{
 				int size = in.readCompressedInt();
-				Set<Email> emails = new LinkedHashSet<>(size*4/3+1);
+				Set<Email> emails = AoCollections.newLinkedHashSet(size);
 				for(int i = 0; i < size; i++) {
 					emails.add(Email.valueOf(in.readUTF()));
 				}

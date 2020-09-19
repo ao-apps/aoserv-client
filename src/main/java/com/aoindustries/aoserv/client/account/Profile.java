@@ -228,7 +228,7 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 	@SuppressWarnings("AssignmentToForLoopParameter")
 	public static Set<Email> splitEmails(String value) throws ValidationException {
 		List<String> split = Strings.splitCommaSpace(value);
-		Set<Email> emails = new LinkedHashSet<>(split.size()*4/3+1);
+		Set<Email> emails = AoCollections.newLinkedHashSet(split.size());
 		for(String s : split) {
 			s = s.trim();
 			if(!s.isEmpty()) emails.add(Email.valueOf(s));
@@ -334,7 +334,7 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 			billingContact=in.readUTF();
 			{
 				int size = in.readCompressedInt();
-				Set<Email> emails = new LinkedHashSet<>(size*4/3+1);
+				Set<Email> emails = AoCollections.newLinkedHashSet(size);
 				for(int i = 0; i < size; i++) {
 					emails.add(Email.valueOf(in.readUTF()));
 				}
@@ -344,7 +344,7 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 			technicalContact=in.readUTF();
 			{
 				int size = in.readCompressedInt();
-				Set<Email> emails = new LinkedHashSet<>(size*4/3+1);
+				Set<Email> emails = AoCollections.newLinkedHashSet(size);
 				for(int i = 0; i < size; i++) {
 					emails.add(Email.valueOf(in.readUTF()));
 				}

@@ -55,6 +55,7 @@ import com.aoindustries.aoserv.client.reseller.Brand;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.ticket.Ticket;
+import com.aoindustries.collections.AoCollections;
 import com.aoindustries.collections.IntList;
 import com.aoindustries.dto.DtoFactory;
 import com.aoindustries.io.FastExternalizable;
@@ -87,7 +88,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -1524,7 +1524,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	public Map<PackageCategory,List<PackageDefinition>> getActivePackageDefinitions() throws IOException, SQLException {
 		// Determine the active packages per category
 		List<PackageCategory> allCategories = table.getConnector().getBilling().getPackageCategory().getRows();
-		Map<PackageCategory,List<PackageDefinition>> categories = new LinkedHashMap<>(allCategories.size()*4/3+1);
+		Map<PackageCategory,List<PackageDefinition>> categories = AoCollections.newLinkedHashMap(allCategories.size());
 		for(PackageCategory category : allCategories) {
 			List<PackageDefinition> allDefinitions = getPackageDefinitions(category);
 			List<PackageDefinition> definitions = new ArrayList<>(allDefinitions.size());

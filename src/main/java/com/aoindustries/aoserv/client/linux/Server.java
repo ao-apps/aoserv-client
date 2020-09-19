@@ -1582,7 +1582,7 @@ final public class Server
 			private static Map<String,VolumeGroup> parseVgsReport(String vgs) throws ParseException {
 				List<String> lines = Strings.splitLines(vgs);
 				int size = lines.size();
-				Map<String,VolumeGroup> volumeGroups = new HashMap<>(size*4/3+1);
+				Map<String,VolumeGroup> volumeGroups = AoCollections.newHashMap(size);
 				for(int c=0;c<size;c++) {
 					final int lineNum = c+1;
 					String line = lines.get(c);
@@ -1705,10 +1705,10 @@ final public class Server
 			private static Map<String,PhysicalVolume> parsePvsReport(String pvs, Map<String,VolumeGroup> volumeGroups) throws ParseException {
 				List<String> lines = Strings.splitLines(pvs);
 				int size = lines.size();
-				Map<String,PhysicalVolume> physicalVolumes = new HashMap<>(size*4/3+1);
-				Map<String,Integer> vgPhysicalVolumeCounts = new HashMap<>(volumeGroups.size()*4/3+1);
-				Map<String,Long> vgExtentCountTotals = new HashMap<>(volumeGroups.size()*4/3+1);
-				Map<String,Long> vgAllocCountTotals = new HashMap<>(volumeGroups.size()*4/3+1);
+				Map<String,PhysicalVolume> physicalVolumes = AoCollections.newHashMap(size);
+				Map<String,Integer> vgPhysicalVolumeCounts = AoCollections.newHashMap(volumeGroups.size());
+				Map<String,Long> vgExtentCountTotals = AoCollections.newHashMap(volumeGroups.size());
+				Map<String,Long> vgAllocCountTotals = AoCollections.newHashMap(volumeGroups.size());
 				for(int c=0;c<size;c++) {
 					final int lineNum = c+1;
 					String line = lines.get(c);
@@ -2366,7 +2366,7 @@ final public class Server
 		String report = table.getConnector().requestStringQuery(true, AoservProtocol.CommandID.GET_AO_SERVER_HDD_MODEL_REPORT, pkey);
 		List<String> lines = Strings.splitLines(report);
 		int lineNum = 0;
-		Map<String,String> results = new HashMap<>(lines.size()*4/3+1);
+		Map<String,String> results = AoCollections.newHashMap(lines.size());
 		for(String line : lines) {
 			lineNum++;
 			int colonPos = line.indexOf(':');

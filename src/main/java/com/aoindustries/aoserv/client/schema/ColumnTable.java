@@ -24,11 +24,11 @@ package com.aoindustries.aoserv.client.schema;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.GlobalTableIntegerKey;
+import com.aoindustries.collections.AoCollections;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -83,7 +83,7 @@ final public class ColumnTable extends GlobalTableIntegerKey<Column> {
 			if(map==null || map.isEmpty()) {
 				List<Column> cols=getSchemaColumns(table);
 				int len=cols.size();
-				if(map==null) nameToColumns.set(tableID, map=new HashMap<>(len*4/3+1));
+				if(map == null) nameToColumns.set(tableID, map = AoCollections.newHashMap(len));
 				for(int c=0;c<len;c++) {
 					Column col=cols.get(c);
 					map.put(col.getName(), col);

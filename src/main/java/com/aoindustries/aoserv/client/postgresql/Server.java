@@ -28,6 +28,7 @@ import com.aoindustries.aoserv.client.net.Bind;
 import static com.aoindustries.aoserv.client.postgresql.ApplicationResources.accessor;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
+import com.aoindustries.collections.AoCollections;
 import com.aoindustries.dto.DtoFactory;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
@@ -45,7 +46,6 @@ import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -378,7 +378,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 			Set<String> words = reservedWords;
 			if(words==null) {
 				ReservedWord[] values = values();
-				words = new HashSet<>(values.length*4/3+1);
+				words = AoCollections.newHashSet(values.length);
 				for(ReservedWord word : values) {
 					words.add(word.name().toUpperCase(Locale.ROOT));
 				}
