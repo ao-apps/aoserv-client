@@ -257,13 +257,13 @@ public class MySQLTODO extends TestCase {
 	private Connection getConnection(Database md, UserServer msu) throws Exception {
 		try {
 			assertEquals(md.getMySQLServer(), msu.getMySQLServer());
-			Class.forName(md.getJdbcDriver()).getConstructor().newInstance();
+			Class.forName(md.getJdbcDriver());
 			return DriverManager.getConnection(
 				md.getJdbcUrl(true),
 				msu.getMySQLUser().getUsername().getUsername().toString(),
 				mysqlServerUserPasswords.get(msu)
 			);
-		} catch(ReflectiveOperationException err) {
+		} catch(ClassNotFoundException err) {
 			fail(err.toString());
 			return null;
 		}
