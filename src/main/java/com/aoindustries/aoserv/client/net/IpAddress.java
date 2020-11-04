@@ -34,6 +34,7 @@ import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.lang.Strings;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.InetAddress;
+import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -302,7 +303,7 @@ final public class IpAddress extends CachedObjectIntegerKey<IpAddress> {
 			isAlias = in.readBoolean();
 			hostname = DomainName.valueOf(in.readNullUTF());
 			package_id = in.readCompressedInt();
-			created = in.readUnmodifiableTimestamp();
+			created = SQLStreamables.readUnmodifiableTimestamp(in);
 			isAvailable = in.readBoolean();
 			isOverflow = in.readBoolean();
 			isDhcp = in.readBoolean();
@@ -334,7 +335,7 @@ final public class IpAddress extends CachedObjectIntegerKey<IpAddress> {
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(created.getTime());
 		} else {
-			out.writeTimestamp(created);
+			SQLStreamables.writeTimestamp(created, out);
 		}
 		out.writeBoolean(isAvailable);
 		out.writeBoolean(isOverflow);

@@ -39,6 +39,7 @@ import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.lang.Strings;
 import com.aoindustries.net.Email;
+import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.validation.ValidationException;
@@ -189,11 +190,11 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 			ticket_type = in.readUTF().intern();
 			from_address = Email.valueOf(in.readNullUTF());
 			summary = in.readUTF();
-			open_date = in.readUnmodifiableTimestamp();
+			open_date = SQLStreamables.readUnmodifiableTimestamp(in);
 			client_priority = in.readUTF().intern();
 			admin_priority = InternUtils.intern(in.readNullUTF());
 			status = in.readUTF().intern();
-			status_timeout = in.readNullUnmodifiableTimestamp();
+			status_timeout = SQLStreamables.readNullUnmodifiableTimestamp(in);
 			{
 				int size = in.readCompressedInt();
 				Set<Email> emails = AoCollections.newLinkedHashSet(size);
@@ -233,7 +234,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(open_date.getTime());
 		} else {
-			out.writeTimestamp(open_date);
+			SQLStreamables.writeTimestamp(open_date, out);
 		}
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43)<=0) out.writeLong(-1);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43)<=0) out.writeLong(-1);
@@ -250,7 +251,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 			if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 				out.writeLong(status_timeout == null ? -1 : status_timeout.getTime());
 			} else {
-				out.writeNullTimestamp(status_timeout);
+				SQLStreamables.writeNullTimestamp(status_timeout, out);
 			}
 		}
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_125)>=0 && protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43)<=0) out.writeNullUTF(null); // assigned_to

@@ -44,6 +44,7 @@ import com.aoindustries.collections.IntList;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.Email;
+import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.validation.ValidationException;
@@ -428,7 +429,7 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 			birthday=in.readLong();
 			isPreferred=in.readBoolean();
 			isPrivate=in.readBoolean();
-			created = in.readUnmodifiableTimestamp();
+			created = SQLStreamables.readUnmodifiableTimestamp(in);
 			work_phone=in.readUTF();
 			home_phone=in.readNullUTF();
 			cell_phone=in.readNullUTF();
@@ -584,7 +585,7 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(created.getTime());
 		} else {
-			out.writeTimestamp(created);
+			SQLStreamables.writeTimestamp(created, out);
 		}
 		out.writeUTF(work_phone);
 		out.writeNullUTF(home_phone);

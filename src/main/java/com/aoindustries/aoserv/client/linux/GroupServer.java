@@ -35,6 +35,7 @@ import com.aoindustries.aoserv.client.web.Site;
 import com.aoindustries.aoserv.client.web.tomcat.SharedTomcat;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
+import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -140,7 +141,7 @@ final public class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
 			name = Group.Name.valueOf(in.readUTF()).intern();
 			ao_server=in.readCompressedInt();
 			gid = LinuxId.valueOf(in.readCompressedInt());
-			created = in.readUnmodifiableTimestamp();
+			created = SQLStreamables.readUnmodifiableTimestamp(in);
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -221,7 +222,7 @@ final public class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(created.getTime());
 		} else {
-			out.writeTimestamp(created);
+			SQLStreamables.writeTimestamp(created, out);
 		}
 	}
 }

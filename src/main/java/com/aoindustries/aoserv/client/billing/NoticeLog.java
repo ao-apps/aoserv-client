@@ -29,6 +29,7 @@ import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.Email;
+import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.validation.ValidationException;
@@ -157,7 +158,7 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey = in.readCompressedInt();
-			create_time = in.readUnmodifiableTimestamp();
+			create_time = SQLStreamables.readUnmodifiableTimestamp(in);
 			accounting = Account.Name.valueOf(in.readUTF()).intern();
 			billing_contact = in.readUTF();
 			billing_email = Email.valueOf(in.readUTF());
@@ -179,7 +180,7 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(create_time.getTime());
 		} else {
-			out.writeTimestamp(create_time);
+			SQLStreamables.writeTimestamp(create_time, out);
 		}
 		out.writeUTF(accounting.toString());
 		out.writeUTF(billing_contact);

@@ -34,6 +34,7 @@ import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.security.Identifier;
 import com.aoindustries.security.SmallIdentifier;
+import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.validation.ValidationException;
@@ -213,7 +214,7 @@ public class Process extends AOServObject<SmallIdentifier,Process> implements Si
 			protocol = in.readUTF().intern();
 			aoserv_protocol = InternUtils.intern(in.readNullUTF());
 			is_secure = in.readBoolean();
-			connect_time = in.readUnmodifiableTimestamp();
+			connect_time = SQLStreamables.readUnmodifiableTimestamp(in);
 			use_count = in.readLong();
 			total_time = in.readLong();
 			priority = in.readCompressedInt();
@@ -227,7 +228,7 @@ public class Process extends AOServObject<SmallIdentifier,Process> implements Si
 					command[i] = in.readNullUTF();
 				}
 			}
-			state_start_time = in.readUnmodifiableTimestamp();
+			state_start_time = SQLStreamables.readUnmodifiableTimestamp(in);
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -316,7 +317,7 @@ public class Process extends AOServObject<SmallIdentifier,Process> implements Si
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(_connect_time.getTime());
 		} else {
-			out.writeTimestamp(_connect_time);
+			SQLStreamables.writeTimestamp(_connect_time, out);
 		}
 		out.writeLong(_use_count);
 		out.writeLong(_total_time);
@@ -335,7 +336,7 @@ public class Process extends AOServObject<SmallIdentifier,Process> implements Si
 					out.writeNullUTF(_command[i]);
 				}
 			}
-			out.writeTimestamp(_state_start_time);
+			SQLStreamables.writeTimestamp(_state_start_time, out);
 		}
 	}
 }

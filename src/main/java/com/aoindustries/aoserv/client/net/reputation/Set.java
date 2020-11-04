@@ -30,6 +30,7 @@ import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.collections.IntList;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
+import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -112,19 +113,19 @@ final public class Set extends CachedObjectIntegerKey<Set> {
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(lastHostDecay.getTime());
 		} else {
-			out.writeTimestamp(lastHostDecay);
+			SQLStreamables.writeTimestamp(lastHostDecay, out);
 		}
 		out.writeCompressedInt(networkDecayInterval);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(lastNetworkDecay.getTime());
 		} else {
-			out.writeTimestamp(lastNetworkDecay);
+			SQLStreamables.writeTimestamp(lastNetworkDecay, out);
 		}
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_67) >= 0) {
 			if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 				out.writeLong(lastReputationAdded.getTime());
 			} else {
-				out.writeTimestamp(lastReputationAdded);
+				SQLStreamables.writeTimestamp(lastReputationAdded, out);
 			}
 		}
 	}
@@ -142,10 +143,10 @@ final public class Set extends CachedObjectIntegerKey<Set> {
 			networkPrefix = in.readShort();
 			maxNetworkReputation = in.readShort();
 			hostDecayInterval = in.readCompressedInt();
-			lastHostDecay = in.readUnmodifiableTimestamp();
+			lastHostDecay = SQLStreamables.readUnmodifiableTimestamp(in);
 			networkDecayInterval = in.readCompressedInt();
-			lastNetworkDecay = in.readUnmodifiableTimestamp();
-			lastReputationAdded = in.readUnmodifiableTimestamp();
+			lastNetworkDecay = SQLStreamables.readUnmodifiableTimestamp(in);
+			lastReputationAdded = SQLStreamables.readUnmodifiableTimestamp(in);
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}

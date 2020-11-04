@@ -29,6 +29,7 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
+import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -127,10 +128,10 @@ final public class SpamMessage extends AOServObject<Integer,SpamMessage> impleme
 
 	@Override
 	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readCompressedInt();
-		email_relay=in.readCompressedInt();
-		time = in.readUnmodifiableTimestamp();
-		message=in.readUTF();
+		pkey = in.readCompressedInt();
+		email_relay = in.readCompressedInt();
+		time = SQLStreamables.readUnmodifiableTimestamp(in);
+		message = in.readUTF();
 	}
 
 	@Override
@@ -146,7 +147,7 @@ final public class SpamMessage extends AOServObject<Integer,SpamMessage> impleme
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(time.getTime());
 		} else {
-			out.writeTimestamp(time);
+			SQLStreamables.writeTimestamp(time, out);
 		}
 		out.writeUTF(message);
 	}

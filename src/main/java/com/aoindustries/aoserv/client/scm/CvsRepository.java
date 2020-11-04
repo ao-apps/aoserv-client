@@ -34,6 +34,7 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
+import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -229,7 +230,7 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 			linux_server_account=in.readCompressedInt();
 			linux_server_group=in.readCompressedInt();
 			mode=in.readLong();
-			created = in.readUnmodifiableTimestamp();
+			created = SQLStreamables.readUnmodifiableTimestamp(in);
 			disable_log=in.readCompressedInt();
 		} catch(ValidationException e) {
 			throw new IOException(e);
@@ -260,7 +261,7 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(created.getTime());
 		} else {
-			out.writeTimestamp(created);
+			SQLStreamables.writeTimestamp(created, out);
 		}
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30)<=0) {
 			out.writeShort(0);

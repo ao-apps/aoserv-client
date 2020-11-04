@@ -31,6 +31,7 @@ import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.lang.Strings;
 import com.aoindustries.net.Email;
+import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.validation.ValidationException;
@@ -330,7 +331,7 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 			country=in.readUTF().intern();
 			zip=in.readNullUTF();
 			sendInvoice=in.readBoolean();
-			created = in.readUnmodifiableTimestamp();
+			created = SQLStreamables.readUnmodifiableTimestamp(in);
 			billingContact=in.readUTF();
 			{
 				int size = in.readCompressedInt();
@@ -384,7 +385,7 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(created.getTime());
 		} else {
-			out.writeTimestamp(created);
+			SQLStreamables.writeTimestamp(created, out);
 		}
 		out.writeUTF(billingContact);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_22) < 0) {

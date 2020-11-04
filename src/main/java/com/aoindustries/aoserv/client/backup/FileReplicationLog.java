@@ -29,6 +29,7 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
+import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -154,8 +155,8 @@ final public class FileReplicationLog extends AOServObject<Integer,FileReplicati
 	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey=in.readCompressedInt();
 		replication=in.readCompressedInt();
-		startTime = in.readUnmodifiableTimestamp();
-		endTime = in.readUnmodifiableTimestamp();
+		startTime = SQLStreamables.readUnmodifiableTimestamp(in);
+		endTime = SQLStreamables.readUnmodifiableTimestamp(in);
 		scanned=in.readCompressedInt();
 		updated=in.readCompressedInt();
 		bytes=in.readLong();
@@ -176,8 +177,8 @@ final public class FileReplicationLog extends AOServObject<Integer,FileReplicati
 			out.writeLong(startTime.getTime());
 			out.writeLong(endTime.getTime());
 		} else {
-			out.writeTimestamp(startTime);
-			out.writeTimestamp(endTime);
+			SQLStreamables.writeTimestamp(startTime, out);
+			SQLStreamables.writeTimestamp(endTime, out);
 		}
 		out.writeCompressedInt(scanned);
 		out.writeCompressedInt(updated);

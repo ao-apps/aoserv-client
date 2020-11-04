@@ -65,6 +65,7 @@ import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.Email;
+import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.ComparatorUtils;
 import com.aoindustries.util.InternUtils;
@@ -1397,8 +1398,8 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		try {
 			pkey=Name.valueOf(in.readUTF()).intern();
 			contractVersion=InternUtils.intern(in.readNullUTF());
-			created = in.readUnmodifiableTimestamp();
-			canceled = in.readNullUnmodifiableTimestamp();
+			created = SQLStreamables.readUnmodifiableTimestamp(in);
+			canceled = SQLStreamables.readNullUnmodifiableTimestamp(in);
 			cancelReason=in.readNullUTF();
 			parent=InternUtils.intern(Name.valueOf(in.readNullUTF()));
 			can_add_backup_server=in.readBoolean();
@@ -1424,12 +1425,12 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(created.getTime());
 		} else {
-			out.writeTimestamp(created);
+			SQLStreamables.writeTimestamp(created, out);
 		}
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(canceled == null ? -1 : canceled.getTime());
 		} else {
-			out.writeNullTimestamp(canceled);
+			SQLStreamables.writeNullTimestamp(canceled, out);
 		}
 		out.writeNullUTF(cancelReason);
 		out.writeNullUTF(Objects.toString(parent, null));

@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2020-11-03T00:02:21-06:00"
+		dateModified="2020-11-04T16:19:56-06:00"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -60,6 +60,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						in try-with-resources.  This is a behind-the-scenes detail and does not change
 						the public API.
 					</li>
+					<li>Updated dependencies.</li>
 				</ul>
 				<!-- TODO:
 				<ul>

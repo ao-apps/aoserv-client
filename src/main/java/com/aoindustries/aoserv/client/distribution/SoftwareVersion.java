@@ -30,6 +30,7 @@ import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.web.tomcat.Version;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
+import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -162,7 +163,7 @@ final public class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
 			pkey = in.readCompressedInt();
 			name = in.readUTF().intern();
 			version = in.readUTF();
-			updated = in.readUnmodifiableTimestamp();
+			updated = SQLStreamables.readUnmodifiableTimestamp(in);
 			{
 				String s = in.readUTF();
 				if(AoservProtocol.FILTERED.equals(s)) {
@@ -172,7 +173,7 @@ final public class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
 				}
 			}
 			operating_system_version = in.readCompressedInt();
-			disable_time = in.readNullUnmodifiableTimestamp();
+			disable_time = SQLStreamables.readNullUnmodifiableTimestamp(in);
 			disable_reason = in.readNullUTF();
 		} catch(ValidationException e) {
 			throw new IOException(e);
@@ -187,7 +188,7 @@ final public class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(updated.getTime());
 		} else {
-			out.writeTimestamp(updated);
+			SQLStreamables.writeTimestamp(updated, out);
 		}
 		out.writeUTF(owner==null ? AoservProtocol.FILTERED : owner.toString());
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_108) >= 0) {
@@ -197,7 +198,7 @@ final public class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
 			if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 				out.writeLong(disable_time == null ? -1 : disable_time.getTime());
 			} else {
-				out.writeNullTimestamp(disable_time);
+				SQLStreamables.writeNullTimestamp(disable_time, out);
 			}
 			out.writeNullUTF(disable_reason);
 		}

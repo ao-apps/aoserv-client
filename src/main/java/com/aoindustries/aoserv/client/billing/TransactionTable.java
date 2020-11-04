@@ -39,6 +39,7 @@ import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.lang.Strings;
+import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.i18n.CurrencyComparator;
 import com.aoindustries.util.i18n.Money;
@@ -117,8 +118,8 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 			false,
 			AoservProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
-				int transid;
-				IntList invalidateList;
+				private int transid;
+				private IntList invalidateList;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {
@@ -129,7 +130,7 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 						out.writeNullLong(time == null ? null : time.getTime());
 					} else if(timeType == Type.TIME) {
 						out.writeByte('T');
-						out.writeNullTimestamp(time);
+						SQLStreamables.writeNullTimestamp(time, out);
 					} else {
 						throw new AssertionError("Unexpected value for timeType: " + timeType);
 					}
@@ -268,7 +269,9 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 			// Account active
 			monthlyRate = account.getBillingMonthlyRate();
 			// Add any zero-balances for any active billing
-			for(java.util.Currency currency : monthlyRate.getCurrencies()) accountBalance = accountBalance.add(new Money(currency, 0, 0));
+			for(java.util.Currency currency : monthlyRate.getCurrencies()) {
+				accountBalance = accountBalance.add(new Money(currency, 0, 0));
+			}
 		} else {
 			// Account canceled
 			monthlyRate = Monies.of();

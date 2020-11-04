@@ -27,6 +27,7 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
+import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -131,7 +132,7 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
-			time = in.readUnmodifiableTimestamp();
+			time = SQLStreamables.readUnmodifiableTimestamp(in);
 			accounting=Account.Name.valueOf(in.readUTF()).intern();
 			disabled_by = User.Name.valueOf(in.readUTF()).intern();
 			disable_reason=in.readNullUTF();
@@ -146,7 +147,7 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(time.getTime());
 		} else {
-			out.writeTimestamp(time);
+			SQLStreamables.writeTimestamp(time, out);
 		}
 		out.writeUTF(accounting.toString());
 		out.writeUTF(disabled_by.toString());

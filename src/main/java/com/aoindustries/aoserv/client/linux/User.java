@@ -39,6 +39,7 @@ import com.aoindustries.io.FastExternalizable;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.Email;
+import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.ComparatorUtils;
 import com.aoindustries.util.Internable;
@@ -762,7 +763,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 			home_phone = Gecos.valueOf(in.readNullUTF());
 			type = in.readUTF().intern();
 			shell = PosixPath.valueOf(in.readUTF()).intern();
-			created = in.readUnmodifiableTimestamp();
+			created = SQLStreamables.readUnmodifiableTimestamp(in);
 			disable_log = in.readCompressedInt();
 		} catch(ValidationException e) {
 			throw new IOException(e);
@@ -846,7 +847,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(created.getTime());
 		} else {
-			out.writeTimestamp(created);
+			SQLStreamables.writeTimestamp(created, out);
 		}
 		out.writeCompressedInt(disable_log);
 	}

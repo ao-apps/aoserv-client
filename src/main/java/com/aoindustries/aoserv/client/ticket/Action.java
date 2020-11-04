@@ -33,6 +33,7 @@ import static com.aoindustries.aoserv.client.ticket.ApplicationResources.accesso
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.Email;
+import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.validation.ValidationException;
@@ -393,7 +394,7 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 			pkey = in.readCompressedInt();
 			ticket = in.readCompressedInt();
 			administrator = InternUtils.intern(User.Name.valueOf(in.readNullUTF()));
-			time = in.readUnmodifiableTimestamp();
+			time = SQLStreamables.readUnmodifiableTimestamp(in);
 			action_type = in.readUTF().intern();
 			old_accounting = InternUtils.intern(Account.Name.valueOf(in.readNullUTF()));
 			new_accounting = InternUtils.intern(Account.Name.valueOf(in.readNullUTF()));
@@ -432,7 +433,7 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(time.getTime());
 		} else {
-			out.writeTimestamp(time);
+			SQLStreamables.writeTimestamp(time, out);
 		}
 		out.writeUTF(action_type);
 		out.writeNullUTF(Objects.toString(old_accounting, null));

@@ -35,6 +35,7 @@ import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.math.SafeMath;
 import com.aoindustries.net.Email;
+import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.util.i18n.Money;
@@ -905,7 +906,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			creditCardPostalCode = in.readNullUTF();
 			creditCardCountryCode = in.readUTF().intern();
 			creditCardComments = in.readNullUTF();
-			authorizationTime = in.readUnmodifiableTimestamp();
+			authorizationTime = SQLStreamables.readUnmodifiableTimestamp(in);
 			authorizationUsername = InternUtils.intern(User.Name.valueOf(in.readNullUTF()));
 			authorizationPrincipalName = InternUtils.intern(in.readNullUTF());
 			authorizationCommunicationResult = InternUtils.intern(in.readNullUTF());
@@ -929,7 +930,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			authorizationProviderAvsResult = InternUtils.intern(in.readNullUTF());
 			authorizationAvsResult = InternUtils.intern(in.readNullUTF());
 			authorizationApprovalCode = in.readNullUTF();
-			captureTime = in.readNullUnmodifiableTimestamp();
+			captureTime = SQLStreamables.readNullUnmodifiableTimestamp(in);
 			captureUsername = InternUtils.intern(User.Name.valueOf(in.readNullUTF()));
 			capturePrincipalName = InternUtils.intern(in.readNullUTF());
 			captureCommunicationResult = InternUtils.intern(in.readNullUTF());
@@ -937,7 +938,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			captureErrorCode = InternUtils.intern(in.readNullUTF());
 			captureProviderErrorMessage = in.readNullUTF();
 			captureProviderUniqueId = in.readNullUTF();
-			voidTime = in.readNullUnmodifiableTimestamp();
+			voidTime = SQLStreamables.readNullUnmodifiableTimestamp(in);
 			voidUsername = InternUtils.intern(User.Name.valueOf(in.readNullUTF()));
 			voidPrincipalName = InternUtils.intern(in.readNullUTF());
 			voidCommunicationResult = InternUtils.intern(in.readNullUTF());
@@ -1045,7 +1046,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(authorizationTime.getTime());
 		} else {
-			out.writeTimestamp(authorizationTime);
+			SQLStreamables.writeTimestamp(authorizationTime, out);
 		}
 		out.writeNullUTF(Objects.toString(authorizationUsername, null));
 		out.writeNullUTF(authorizationPrincipalName);
@@ -1075,7 +1076,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(captureTime == null ? -1 : captureTime.getTime());
 		} else {
-			out.writeNullTimestamp(captureTime);
+			SQLStreamables.writeNullTimestamp(captureTime, out);
 		}
 		out.writeNullUTF(Objects.toString(captureUsername, null));
 		out.writeNullUTF(capturePrincipalName);
@@ -1087,7 +1088,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(voidTime == null ? -1 : voidTime.getTime());
 		} else {
-			out.writeNullTimestamp(voidTime);
+			SQLStreamables.writeNullTimestamp(voidTime, out);
 		}
 		out.writeNullUTF(Objects.toString(voidUsername, null));
 		out.writeNullUTF(voidPrincipalName);
@@ -1165,7 +1166,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 					out.writeNullUTF(providerAvsResult);
 					out.writeNullUTF(avsResult);
 					out.writeNullUTF(approvalCode);
-					out.writeNullTimestamp(captureTime);
+					SQLStreamables.writeNullTimestamp(captureTime, out);
 					out.writeNullUTF(capturePrincipalName);
 					out.writeNullUTF(captureCommunicationResult);
 					out.writeNullUTF(captureProviderErrorCode);

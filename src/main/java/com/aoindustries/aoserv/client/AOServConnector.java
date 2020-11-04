@@ -52,6 +52,7 @@ import com.aoindustries.net.InetAddress;
 import com.aoindustries.net.MacAddress;
 import com.aoindustries.net.Port;
 import com.aoindustries.security.Identifier;
+import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.table.TableListener;
 import com.aoindustries.util.sort.ComparisonSortAlgorithm;
 import java.io.IOException;
@@ -939,7 +940,7 @@ abstract public class AOServConnector implements SchemaParent {
 			else if(param instanceof Boolean) out.writeBoolean((Boolean)param);
 			else if(param instanceof Short) out.writeShort((Short)param);
 			else if(param instanceof Byte) out.writeByte((Byte)param);
-			else if(param instanceof Timestamp) out.writeTimestamp((Timestamp)param);
+			else if(param instanceof Timestamp) SQLStreamables.writeTimestamp((Timestamp)param, out);
 			else if(param instanceof Enum) out.writeEnum((Enum)param);
 			else if(param instanceof byte[]) {
 				byte[] bytes=(byte[])param;

@@ -31,6 +31,7 @@ import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.math.SafeMath;
+import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.i18n.Money;
@@ -209,7 +210,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 			description = in.readNullUTF();
 			quantity = in.readCompressedInt();
 			rate = MoneyUtil.readNullMoney(in);
-			created = in.readUnmodifiableTimestamp();
+			created = SQLStreamables.readUnmodifiableTimestamp(in);
 			created_by = User.Name.valueOf(in.readUTF()).intern();
 			active = in.readBoolean();
 		} catch(ValidationException e) {
@@ -242,7 +243,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(created.getTime());
 		} else {
-			out.writeTimestamp(created);
+			SQLStreamables.writeTimestamp(created, out);
 		}
 		out.writeUTF(created_by.toString());
 		out.writeBoolean(active);

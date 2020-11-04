@@ -68,6 +68,7 @@ import com.aoindustries.net.HostAddress;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.net.Port;
 import com.aoindustries.net.URIParameters;
+import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.BufferManager;
 import com.aoindustries.util.InternUtils;
@@ -413,21 +414,21 @@ final public class Server
 	@Override
 	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
-			pkey=in.readCompressedInt();
-			hostname=DomainName.valueOf(in.readUTF());
-			daemon_bind=in.readCompressedInt();
-			daemon_key=HashedPassword.valueOf(in.readUTF());
-			pool_size=in.readCompressedInt();
-			distro_hour=in.readCompressedInt();
-			last_distro_time = in.readNullUnmodifiableTimestamp();
-			failover_server=in.readCompressedInt();
+			pkey = in.readCompressedInt();
+			hostname = DomainName.valueOf(in.readUTF());
+			daemon_bind = in.readCompressedInt();
+			daemon_key = HashedPassword.valueOf(in.readUTF());
+			pool_size = in.readCompressedInt();
+			distro_hour = in.readCompressedInt();
+			last_distro_time = SQLStreamables.readNullUnmodifiableTimestamp(in);
+			failover_server = in.readCompressedInt();
 			daemonDeviceId = InternUtils.intern(in.readNullUTF());
-			daemon_connect_bind=in.readCompressedInt();
-			time_zone=in.readUTF().intern();
-			jilter_bind=in.readCompressedInt();
-			restrict_outbound_email=in.readBoolean();
-			daemon_connect_address=InternUtils.intern(HostAddress.valueOf(in.readNullUTF()));
-			failover_batch_size=in.readCompressedInt();
+			daemon_connect_bind = in.readCompressedInt();
+			time_zone = in.readUTF().intern();
+			jilter_bind = in.readCompressedInt();
+			restrict_outbound_email = in.readBoolean();
+			daemon_connect_address = InternUtils.intern(HostAddress.valueOf(in.readNullUTF()));
+			failover_batch_size = in.readCompressedInt();
 			monitoring_load_low = in.readFloat();
 			monitoring_load_medium = in.readFloat();
 			monitoring_load_high = in.readFloat();
@@ -474,7 +475,7 @@ final public class Server
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(last_distro_time == null ? -1 : last_distro_time.getTime());
 		} else {
-			out.writeNullTimestamp(last_distro_time);
+			SQLStreamables.writeNullTimestamp(last_distro_time, out);
 		}
 		out.writeCompressedInt(failover_server);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30)<=0) {

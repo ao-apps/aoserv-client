@@ -52,6 +52,7 @@ import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.HostAddress;
 import com.aoindustries.net.InetAddress;
+import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -451,7 +452,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 			name = Account.Name.valueOf(in.readUTF()).intern();
 			account = Account.Name.valueOf(in.readUTF()).intern();
 			package_definition = in.readCompressedInt();
-			created = in.readUnmodifiableTimestamp();
+			created = SQLStreamables.readUnmodifiableTimestamp(in);
 			created_by = com.aoindustries.aoserv.client.account.User.Name.valueOf(in.readUTF()).intern();
 			disable_log = in.readCompressedInt();
 			email_in_burst = in.readCompressedInt();
@@ -480,7 +481,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(created.getTime());
 		} else {
-			out.writeTimestamp(created);
+			SQLStreamables.writeTimestamp(created, out);
 		}
 		out.writeUTF(created_by.toString());
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_122)<=0) {

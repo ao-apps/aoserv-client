@@ -36,6 +36,7 @@ import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.lang.Strings;
 import com.aoindustries.net.Email;
 import com.aoindustries.net.InetAddress;
+import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.validation.ValidationException;
@@ -207,43 +208,43 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 	@Override
 	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
-			pkey=in.readCompressedInt();
-			brand=Account.Name.valueOf(in.readUTF()).intern();
-			time = in.readUnmodifiableTimestamp();
-			ip_address=InetAddress.valueOf(in.readUTF());
-			package_definition=in.readCompressedInt();
-			business_name=in.readUTF();
-			business_phone=in.readUTF();
-			business_fax=in.readNullUTF();
-			business_address1=in.readUTF();
-			business_address2=in.readNullUTF();
-			business_city=in.readUTF();
-			business_state=InternUtils.intern(in.readNullUTF());
-			business_country=in.readUTF().intern();
-			business_zip=in.readNullUTF();
-			ba_name=in.readUTF();
-			ba_title=in.readNullUTF();
-			ba_work_phone=in.readUTF();
-			ba_cell_phone=in.readNullUTF();
-			ba_home_phone=in.readNullUTF();
-			ba_fax=in.readNullUTF();
-			ba_email=Email.valueOf(in.readUTF());
-			ba_address1=in.readNullUTF();
-			ba_address2=in.readNullUTF();
-			ba_city=in.readNullUTF();
-			ba_state=InternUtils.intern(in.readNullUTF());
-			ba_country=InternUtils.intern(in.readNullUTF());
-			ba_zip=in.readNullUTF();
+			pkey = in.readCompressedInt();
+			brand = Account.Name.valueOf(in.readUTF()).intern();
+			time = SQLStreamables.readUnmodifiableTimestamp(in);
+			ip_address = InetAddress.valueOf(in.readUTF());
+			package_definition = in.readCompressedInt();
+			business_name = in.readUTF();
+			business_phone = in.readUTF();
+			business_fax = in.readNullUTF();
+			business_address1 = in.readUTF();
+			business_address2 = in.readNullUTF();
+			business_city = in.readUTF();
+			business_state = InternUtils.intern(in.readNullUTF());
+			business_country = in.readUTF().intern();
+			business_zip = in.readNullUTF();
+			ba_name = in.readUTF();
+			ba_title = in.readNullUTF();
+			ba_work_phone = in.readUTF();
+			ba_cell_phone = in.readNullUTF();
+			ba_home_phone = in.readNullUTF();
+			ba_fax = in.readNullUTF();
+			ba_email = Email.valueOf(in.readUTF());
+			ba_address1 = in.readNullUTF();
+			ba_address2 = in.readNullUTF();
+			ba_city = in.readNullUTF();
+			ba_state = InternUtils.intern(in.readNullUTF());
+			ba_country = InternUtils.intern(in.readNullUTF());
+			ba_zip = in.readNullUTF();
 			ba_username = User.Name.valueOf(in.readUTF()).intern();
-			billing_contact=in.readUTF();
-			billing_email=Email.valueOf(in.readUTF());
-			billing_use_monthly=in.readBoolean();
-			billing_pay_one_year=in.readBoolean();
-			encrypted_data=in.readUTF();
-			encryption_from=in.readCompressedInt();
-			encryption_recipient=in.readCompressedInt();
+			billing_contact = in.readUTF();
+			billing_email = Email.valueOf(in.readUTF());
+			billing_use_monthly = in.readBoolean();
+			billing_pay_one_year = in.readBoolean();
+			encrypted_data = in.readUTF();
+			encryption_from = in.readCompressedInt();
+			encryption_recipient = in.readCompressedInt();
 			completed_by = InternUtils.intern(User.Name.valueOf(in.readNullUTF()));
-			completed_time = in.readNullUnmodifiableTimestamp();
+			completed_time = SQLStreamables.readNullUnmodifiableTimestamp(in);
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -256,7 +257,7 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(time.getTime());
 		} else {
-			out.writeTimestamp(time);
+			SQLStreamables.writeTimestamp(time, out);
 		}
 		out.writeUTF(ip_address.toString());
 		out.writeCompressedInt(package_definition);
@@ -294,7 +295,7 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(completed_time == null ? -1 : completed_time.getTime());
 		} else {
-			out.writeNullTimestamp(completed_time);
+			SQLStreamables.writeNullTimestamp(completed_time, out);
 		}
 	}
 

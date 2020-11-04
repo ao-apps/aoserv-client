@@ -35,6 +35,7 @@ import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.HostAddress;
+import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -213,16 +214,16 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 	@Override
 	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
-			pkey=in.readCompressedInt();
+			pkey = in.readCompressedInt();
 			packageName = Account.Name.valueOf(in.readUTF()).intern();
-			ao_server=in.readCompressedInt();
-			host=HostAddress.valueOf(in.readUTF());
-			type=in.readUTF().intern();
-			created = in.readUnmodifiableTimestamp();
-			last_refreshed = in.readUnmodifiableTimestamp();
-			refresh_count=in.readCompressedInt();
-			expiration = in.readNullUnmodifiableTimestamp();
-			disable_log=in.readCompressedInt();
+			ao_server = in.readCompressedInt();
+			host = HostAddress.valueOf(in.readUTF());
+			type = in.readUTF().intern();
+			created = SQLStreamables.readUnmodifiableTimestamp(in);
+			last_refreshed = SQLStreamables.readUnmodifiableTimestamp(in);
+			refresh_count = in.readCompressedInt();
+			expiration = SQLStreamables.readNullUnmodifiableTimestamp(in);
+			disable_log = in.readCompressedInt();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -267,18 +268,18 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(created.getTime());
 		} else {
-			out.writeTimestamp(created);
+			SQLStreamables.writeTimestamp(created, out);
 		}
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(last_refreshed.getTime());
 		} else {
-			out.writeTimestamp(last_refreshed);
+			SQLStreamables.writeTimestamp(last_refreshed, out);
 		}
 		out.writeCompressedInt(refresh_count);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(expiration == null ? -1 : expiration.getTime());
 		} else {
-			out.writeNullTimestamp(expiration);
+			SQLStreamables.writeNullTimestamp(expiration, out);
 		}
 		out.writeCompressedInt(disable_log);
 	}

@@ -30,6 +30,7 @@ import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.DomainName;
+import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -198,7 +199,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 		try {
 			pkey = in.readCompressedInt();
 			registrableDomain = DomainName.valueOf(in.readUTF()).intern();
-			time = in.readUnmodifiableTimestamp();
+			time = SQLStreamables.readUnmodifiableTimestamp(in);
 			exitStatus = in.readNullInteger();
 			// Note: these are loaded in a separate call to the master as-needed to conserve heap space:
 			// output = in.readUTF();
@@ -217,7 +218,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(time.getTime());
 		} else {
-			out.writeTimestamp(time);
+			SQLStreamables.writeTimestamp(time, out);
 		}
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_19) < 0) {
 			out.writeUTF(accounting.toString());

@@ -47,6 +47,7 @@ import com.aoindustries.aoserv.client.web.tomcat.SharedTomcat;
 import com.aoindustries.collections.IntList;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
+import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -541,23 +542,23 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	@Override
 	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
-			pkey=in.readCompressedInt();
+			pkey = in.readCompressedInt();
 			username = User.Name.valueOf(in.readUTF()).intern();
-			ao_server=in.readCompressedInt();
-			uid=LinuxId.valueOf(in.readCompressedInt());
+			ao_server = in.readCompressedInt();
+			uid = LinuxId.valueOf(in.readCompressedInt());
 			home = PosixPath.valueOf(in.readUTF());
-			autoresponder_from=in.readCompressedInt();
-			autoresponder_subject=in.readNullUTF();
-			autoresponder_path=in.readNullUTF();
-			is_autoresponder_enabled=in.readBoolean();
-			disable_log=in.readCompressedInt();
-			predisable_password=in.readNullUTF();
-			created = in.readUnmodifiableTimestamp();
-			use_inbox=in.readBoolean();
-			trash_email_retention=in.readCompressedInt();
-			junk_email_retention=in.readCompressedInt();
-			sa_integration_mode=in.readUTF().intern();
-			sa_required_score=in.readFloat();
+			autoresponder_from = in.readCompressedInt();
+			autoresponder_subject = in.readNullUTF();
+			autoresponder_path = in.readNullUTF();
+			is_autoresponder_enabled = in.readBoolean();
+			disable_log = in.readCompressedInt();
+			predisable_password = in.readNullUTF();
+			created = SQLStreamables.readUnmodifiableTimestamp(in);
+			use_inbox = in.readBoolean();
+			trash_email_retention = in.readCompressedInt();
+			junk_email_retention = in.readCompressedInt();
+			sa_integration_mode = in.readUTF().intern();
+			sa_required_score = in.readFloat();
 			sa_discard_score = in.readCompressedInt();
 			sudo = in.readNullUTF();
 		} catch(ValidationException e) {
@@ -778,7 +779,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(created.getTime());
 		} else {
-			out.writeTimestamp(created);
+			SQLStreamables.writeTimestamp(created, out);
 		}
 		out.writeBoolean(use_inbox);
 		out.writeCompressedInt(trash_email_retention);

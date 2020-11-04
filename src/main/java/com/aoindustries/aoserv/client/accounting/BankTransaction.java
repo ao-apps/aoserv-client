@@ -31,6 +31,7 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
+import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.InternUtils;
@@ -194,7 +195,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			id = in.readCompressedInt();
-			time = in.readUnmodifiableTimestamp();
+			time = SQLStreamables.readUnmodifiableTimestamp(in);
 			account = in.readUTF().intern();
 			processor = InternUtils.intern(in.readNullUTF());
 			administrator = User.Name.valueOf(in.readUTF()).intern();
@@ -230,7 +231,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 			if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 				out.writeLong(time.getTime());
 			} else {
-				out.writeTimestamp(time);
+				SQLStreamables.writeTimestamp(time, out);
 			}
 		}
 		out.writeUTF(account);

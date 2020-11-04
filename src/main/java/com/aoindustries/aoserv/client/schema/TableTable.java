@@ -32,6 +32,7 @@ import com.aoindustries.aoserv.client.sql.Parser;
 import com.aoindustries.aoserv.client.sql.SQLExpression;
 import com.aoindustries.exception.WrappedException;
 import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.lang.Throwables;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.sort.JavaSort;
 import java.io.IOException;
@@ -309,6 +310,7 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 			// Get the data
 			List<AOServObject> rows = null;
 			boolean rowsCopied = false;
+			Throwable t0 = null;
 			try {
 				// Sort if needed
 				if(orderExpressions.size() > 0) {
@@ -414,16 +416,21 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 					if(cause instanceof SQLException) throw (SQLException)cause;
 					throw e;
 				}
+			} catch(Throwable t) {
+				t0 = Throwables.addSuppressed(t0, t);
 			} finally {
 				if(rowsCopied && rows instanceof AutoCloseable) {
 					try {
 						((AutoCloseable)rows).close();
-					} catch(Error | RuntimeException | IOException | SQLException e) {
-						throw e;
 					} catch(Throwable t) {
-						throw new WrappedException(t);
+						t0 = Throwables.addSuppressed(t0, t);
 					}
 				}
+			}
+			if(t0 != null) {
+				if(t0 instanceof IOException) throw (IOException)t0;
+				if(t0 instanceof SQLException) throw (SQLException)t0;
+				throw Throwables.wrap(t0, WrappedException.class, WrappedException::new);
 			}
 			out.flush();
 		} else {

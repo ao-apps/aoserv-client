@@ -33,6 +33,7 @@ import com.aoindustries.aoserv.client.schema.Type;
 import com.aoindustries.io.stream.Streamable;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
+import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.validation.ValidationException;
@@ -240,8 +241,8 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 				l = in.readLong();
 				before = l == ANY ? null : new UnmodifiableTimestamp(l);
 			} else {
-				after = in.readNullUnmodifiableTimestamp();
-				before = in.readNullUnmodifiableTimestamp();
+				after = SQLStreamables.readNullUnmodifiableTimestamp(in);
+				before = SQLStreamables.readNullUnmodifiableTimestamp(in);
 			}
 			transid = in.readCompressedInt();
 			account = InternUtils.intern(Account.Name.valueOf(in.readNullUTF()));
@@ -324,8 +325,8 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 			out.writeLong(after == null ? ANY : after.getTime());
 			out.writeLong(before == null ? ANY : before.getTime());
 		} else {
-			out.writeNullTimestamp(after);
-			out.writeNullTimestamp(before);
+			SQLStreamables.writeNullTimestamp(after, out);
+			SQLStreamables.writeNullTimestamp(before, out);
 		}
 		out.writeCompressedInt(transid);
 		out.writeNullUTF(Objects.toString(account, null));

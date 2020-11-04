@@ -36,6 +36,7 @@ import com.aoindustries.collections.IntList;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.math.SafeMath;
+import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.InternUtils;
@@ -429,7 +430,7 @@ final public class Transaction extends CachedObjectIntegerKey<Transaction> {
 	@Override
 	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
-			time = in.readUnmodifiableTimestamp();
+			time = SQLStreamables.readUnmodifiableTimestamp(in);
 			pkey = in.readCompressedInt();
 			accounting = Account.Name.valueOf(in.readCompressedUTF()).intern();
 			source_accounting = Account.Name.valueOf(in.readCompressedUTF()).intern();
@@ -476,7 +477,7 @@ final public class Transaction extends CachedObjectIntegerKey<Transaction> {
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(time.getTime());
 		} else {
-			out.writeTimestamp(time);
+			SQLStreamables.writeTimestamp(time, out);
 		}
 		out.writeCompressedInt(pkey);
 		out.writeCompressedUTF(accounting.toString(), 0);

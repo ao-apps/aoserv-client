@@ -38,6 +38,7 @@ import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.math.SafeMath;
 import com.aoindustries.net.Email;
+import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.InternUtils;
@@ -440,39 +441,39 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	@Override
 	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
-			pkey=in.readCompressedInt();
-			processorId=in.readUTF().intern();
-			accounting=Account.Name.valueOf(in.readUTF()).intern();
-			groupName=in.readNullUTF();
-			cardInfo=in.readUTF();
+			pkey = in.readCompressedInt();
+			processorId = in.readUTF().intern();
+			accounting = Account.Name.valueOf(in.readUTF()).intern();
+			groupName = in.readNullUTF();
+			cardInfo = in.readUTF();
 			expirationMonth = in.readNullByte();
 			expirationYear = in.readNullShort();
-			providerUniqueId=in.readUTF();
-			firstName=in.readUTF();
-			lastName=in.readUTF();
-			companyName=in.readNullUTF();
-			email=Email.valueOf(in.readNullUTF());
-			phone=in.readNullUTF();
-			fax=in.readNullUTF();
+			providerUniqueId = in.readUTF();
+			firstName = in.readUTF();
+			lastName = in.readUTF();
+			companyName = in.readNullUTF();
+			email = Email.valueOf(in.readNullUTF());
+			phone = in.readNullUTF();
+			fax = in.readNullUTF();
 			customerId = in.readNullUTF();
-			customerTaxId=in.readNullUTF();
-			streetAddress1=in.readUTF();
-			streetAddress2=in.readNullUTF();
-			city=in.readUTF();
-			state=InternUtils.intern(in.readNullUTF());
+			customerTaxId = in.readNullUTF();
+			streetAddress1 = in.readUTF();
+			streetAddress2 = in.readNullUTF();
+			city = in.readUTF();
+			state = InternUtils.intern(in.readNullUTF());
 			postalCode=in.readNullUTF();
-			countryCode=in.readUTF().intern();
-			created = in.readUnmodifiableTimestamp();
+			countryCode = in.readUTF().intern();
+			created = SQLStreamables.readUnmodifiableTimestamp(in);
 			createdBy = User.Name.valueOf(in.readUTF()).intern();
-			principalName=in.readNullUTF();
-			useMonthly=in.readBoolean();
-			isActive=in.readBoolean();
-			deactivatedOn = in.readNullUnmodifiableTimestamp();
-			deactivateReason=in.readNullUTF();
-			description=in.readNullUTF();
-			encrypted_card_number=in.readNullUTF();
-			encryption_card_number_from=in.readCompressedInt();
-			encryption_card_number_recipient=in.readCompressedInt();
+			principalName = in.readNullUTF();
+			useMonthly = in.readBoolean();
+			isActive = in.readBoolean();
+			deactivatedOn = SQLStreamables.readNullUnmodifiableTimestamp(in);
+			deactivateReason = in.readNullUTF();
+			description = in.readNullUTF();
+			encrypted_card_number = in.readNullUTF();
+			encryption_card_number_from = in.readCompressedInt();
+			encryption_card_number_recipient = in.readCompressedInt();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -536,7 +537,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(created.getTime());
 		} else {
-			out.writeTimestamp(created);
+			SQLStreamables.writeTimestamp(created, out);
 		}
 		out.writeUTF(createdBy.toString());
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_29)>=0) out.writeNullUTF(principalName);
@@ -545,7 +546,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(deactivatedOn == null ? -1 : deactivatedOn.getTime());
 		} else {
-			out.writeNullTimestamp(deactivatedOn);
+			SQLStreamables.writeNullTimestamp(deactivatedOn, out);
 		}
 		out.writeNullUTF(deactivateReason);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_28)<=0) out.writeCompressedInt(Integer.MAX_VALUE - pkey);

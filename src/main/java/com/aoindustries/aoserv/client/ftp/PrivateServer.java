@@ -33,6 +33,7 @@ import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.Email;
+import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -151,13 +152,13 @@ final public class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
 	@Override
 	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
-			pkey=in.readCompressedInt();
+			pkey = in.readCompressedInt();
 			logfile = PosixPath.valueOf(in.readUTF());
-			hostname=DomainName.valueOf(in.readUTF());
-			email=Email.valueOf(in.readUTF());
-			created = in.readUnmodifiableTimestamp();
-			pub_linux_server_account=in.readCompressedInt();
-			allow_anonymous=in.readBoolean();
+			hostname = DomainName.valueOf(in.readUTF());
+			email = Email.valueOf(in.readUTF());
+			created = SQLStreamables.readUnmodifiableTimestamp(in);
+			pub_linux_server_account = in.readCompressedInt();
+			allow_anonymous = in.readBoolean();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -180,7 +181,7 @@ final public class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(created.getTime());
 		} else {
-			out.writeTimestamp(created);
+			SQLStreamables.writeTimestamp(created, out);
 		}
 		out.writeCompressedInt(pub_linux_server_account);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_38)<=0) out.writeCompressedInt(-1);
