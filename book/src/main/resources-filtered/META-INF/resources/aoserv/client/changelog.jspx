@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2020-09-15T04:09:01-05:00"
+		dateModified="2020-11-03T00:02:21-06:00"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -302,7 +302,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					Communication with older clients will still be millisecond precision.
 				</li>
 				<li>
-					Returning <code>UnmodifiableTimestamp</code> instead of <code>UnmodifiableTimestamp</code>,
+					Returning <code>UnmodifiableTimestamp</code> instead of <code>Timestamp</code>,
 					and removed <code>*_millis()</code> variants of time accessors.
 				</li>
 				<li>Added types <code>Identifier</code> (128-bit) and <code>SmallIdentifier</code> (64-bit).</li>
