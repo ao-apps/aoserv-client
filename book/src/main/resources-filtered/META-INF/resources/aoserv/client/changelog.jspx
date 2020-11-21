@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2020-11-12T23:15:41-06:00"
+		dateModified="2020-11-20T23:37:21-06:00"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -61,6 +61,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						the public API.
 					</li>
 					<li>Updated dependencies.</li>
+					<li>Added support for <ao:a href="https://www.postgresql.org/docs/13/index.html">PostgreSQL 13</ao:a>.</li>
 				</ul>
 				<!-- TODO:
 				<ul>

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2002-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -67,7 +67,8 @@ final public class Version extends GlobalObjectIntegerKey<Version> {
 		VERSION_9_6 = "9.6",
 		VERSION_10 = "10",
 		VERSION_11 = "11",
-		VERSION_12 = "12"
+		VERSION_12 = "12",
+		VERSION_13 = "13"
 	;
 
 	/**
@@ -80,6 +81,7 @@ final public class Version extends GlobalObjectIntegerKey<Version> {
 	 */
 	public static String[] getPreferredMinorVersions() {
 		return new String[] {
+			VERSION_13,
 			VERSION_12,
 			VERSION_11,
 			VERSION_10,
@@ -107,7 +109,10 @@ final public class Version extends GlobalObjectIntegerKey<Version> {
 			|| version.startsWith(VERSION_11 + '.')
 			|| version.startsWith(VERSION_11 + 'R')
 			|| version.startsWith(VERSION_12 + '.')
-			|| version.startsWith(VERSION_12 + 'R');
+			|| version.startsWith(VERSION_12 + 'R')
+			|| version.startsWith(VERSION_13 + '.')
+			|| version.startsWith(VERSION_13 + 'R')
+		;
 	}
 
 	@Override
