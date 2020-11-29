@@ -349,9 +349,6 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 			if(!result.isValid()) throw new ValidationException(result);
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
 		@Override
 		public Name intern() {
 			Name existing = interned.get(name);
