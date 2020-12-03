@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2005-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2005-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -23,9 +23,9 @@
 package com.aoindustries.aoserv.client.billing;
 
 import com.aoindustries.aoserv.client.GlobalObjectStringKey;
-import static com.aoindustries.aoserv.client.billing.ApplicationResources.accessor;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
+import com.aoindustries.i18n.Resources;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import java.io.IOException;
@@ -45,6 +45,8 @@ import java.sql.SQLException;
  * @author  AO Industries, Inc.
  */
 public final class TransactionType extends GlobalObjectStringKey<TransactionType> {
+
+	private static final Resources RESOURCES = Resources.getResources(TransactionType.class.getPackage());
 
 	static final int COLUMN_NAME=0;
 	static final String COLUMN_NAME_name = "name";
@@ -71,7 +73,7 @@ public final class TransactionType extends GlobalObjectStringKey<TransactionType
 	}
 
 	public String getDescription() {
-		return accessor.getMessage("TransactionType."+pkey+".description");
+		return RESOURCES.getMessage("TransactionType."+pkey+".description");
 	}
 
 	/**
@@ -87,7 +89,7 @@ public final class TransactionType extends GlobalObjectStringKey<TransactionType
 	}
 
 	public String getUnit() {
-		return accessor.getMessage("TransactionType."+pkey+".unit");
+		return RESOURCES.getMessage("TransactionType."+pkey+".unit");
 	}
 
 	@Override
@@ -108,7 +110,7 @@ public final class TransactionType extends GlobalObjectStringKey<TransactionType
 
 	@Override
 	public String toStringImpl() {
-		return accessor.getMessage("TransactionType."+pkey+".toString");
+		return RESOURCES.getMessage("TransactionType."+pkey+".toString");
 	}
 
 	@Override

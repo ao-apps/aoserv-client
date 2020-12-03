@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2010-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2010-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,8 +22,8 @@
  */
 package com.aoindustries.aoserv.client.mysql;
 
-import static com.aoindustries.aoserv.client.mysql.ApplicationResources.accessor;
 import com.aoindustries.dto.DtoFactory;
+import com.aoindustries.i18n.Resources;
 import com.aoindustries.validation.InvalidResult;
 import com.aoindustries.validation.ValidResult;
 import com.aoindustries.validation.ValidationException;
@@ -54,6 +54,8 @@ final public class Table_Name implements
 	DtoFactory<com.aoindustries.aoserv.client.dto.MySQLTableName>
 {
 
+	private static final Resources RESOURCES = Resources.getResources(Table_Name.class.getPackage());
+
 	private static final long serialVersionUID = -4427431696460618301L;
 
 	/**
@@ -66,10 +68,10 @@ final public class Table_Name implements
 	 */
 	// TODO: Add other characters allowed in Database.Name, such as space
 	public static ValidationResult validate(String name) {
-		if(name==null) return new InvalidResult(accessor, "Table.Name.validate.isNull");
+		if(name==null) return new InvalidResult(RESOURCES, "Table.Name.validate.isNull");
 		int len = name.length();
-		if(len==0) return new InvalidResult(accessor, "Table.Name.validate.isEmpty");
-		if(len > MAX_LENGTH) return new InvalidResult(accessor, "Table.Name.validate.tooLong", MAX_LENGTH, len);
+		if(len==0) return new InvalidResult(RESOURCES, "Table.Name.validate.isEmpty");
+		if(len > MAX_LENGTH) return new InvalidResult(RESOURCES, "Table.Name.validate.tooLong", MAX_LENGTH, len);
 
 		// The first character must be [a-z], [A-Z], [0-9], or _
 		char ch = name.charAt(0);
@@ -78,7 +80,7 @@ final public class Table_Name implements
 			&& (ch < 'A' || ch > 'Z')
 			&& (ch < '0' || ch > '9')
 			&& ch != '_'
-		) return new InvalidResult(accessor, "Table.Name.validate.badFirstCharacter");
+		) return new InvalidResult(RESOURCES, "Table.Name.validate.badFirstCharacter");
 
 		// The rest may have additional characters
 		for (int c = 1; c < len; c++) {
@@ -90,7 +92,7 @@ final public class Table_Name implements
 				&& ch != '_'
 				&& ch != '-'
 				&& ch != '$'
-			) return new InvalidResult(accessor, "Table.Name.validate.illegalCharacter");
+			) return new InvalidResult(RESOURCES, "Table.Name.validate.illegalCharacter");
 		}
 		return ValidResult.getInstance();
 	}

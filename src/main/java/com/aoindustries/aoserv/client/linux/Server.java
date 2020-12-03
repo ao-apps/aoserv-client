@@ -42,7 +42,6 @@ import com.aoindustries.aoserv.client.email.SmtpRelay;
 import com.aoindustries.aoserv.client.email.SystemAlias;
 import com.aoindustries.aoserv.client.ftp.GuestUser;
 import com.aoindustries.aoserv.client.ftp.PrivateServer;
-import static com.aoindustries.aoserv.client.linux.ApplicationResources.accessor;
 import com.aoindustries.aoserv.client.net.Bind;
 import com.aoindustries.aoserv.client.net.Device;
 import com.aoindustries.aoserv.client.net.DeviceId;
@@ -59,6 +58,7 @@ import com.aoindustries.aoserv.client.web.tomcat.SharedTomcat;
 import com.aoindustries.collections.AoCollections;
 import com.aoindustries.dto.DtoFactory;
 import com.aoindustries.exception.WrappedException;
+import com.aoindustries.i18n.Resources;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.lang.Strings;
@@ -97,6 +97,8 @@ final public class Server
 	extends CachedObjectIntegerKey<Server>
 	implements DtoFactory<com.aoindustries.aoserv.client.dto.LinuxServer>
 {
+
+	private static final Resources RESOURCES = Resources.getResources(Server.class.getPackage());
 
 	static final int COLUMN_SERVER = 0;
 	static final int COLUMN_HOSTNAME = 1;
@@ -1227,7 +1229,7 @@ final public class Server
 			List<String> values = Strings.split(line, '\t');
 			if(values.size() != 3) {
 				throw new ParseException(
-					accessor.getMessage(
+					RESOURCES.getMessage(
 						"Server.MdMismatchReport.ParseException.badColumnCount",
 						line
 					),
@@ -1239,7 +1241,7 @@ final public class Server
 			String device = values.get(0);
 			if(!device.startsWith("/dev/md")) {
 				throw new ParseException(
-					accessor.getMessage(
+					RESOURCES.getMessage(
 						"Server.MdMismatchReport.ParseException.badDeviceStart",
 						device
 					),
@@ -1257,7 +1259,7 @@ final public class Server
 				count = Long.parseLong(countString);
 			} catch(NumberFormatException e) {
 				ParseException parseException = new ParseException(
-					accessor.getMessage(
+					RESOURCES.getMessage(
 						"Server.MdMismatchReport.ParseException.countNotNumber",
 						countString
 					),
@@ -1432,7 +1434,7 @@ final public class Server
 			List<String> values = Strings.split(line, '\t');
 			if(values.size() != 7) {
 				throw new ParseException(
-					accessor.getMessage(
+					RESOURCES.getMessage(
 						"Server.DrbdReport.ParseException.badColumnCount",
 						line
 					),
@@ -1444,7 +1446,7 @@ final public class Server
 			String device = values.get(0);
 			if(!device.startsWith("/dev/drbd")) {
 				throw new ParseException(
-					accessor.getMessage(
+					RESOURCES.getMessage(
 						"Server.DrbdReport.ParseException.badDeviceStart",
 						device
 					),
@@ -1456,7 +1458,7 @@ final public class Server
 			String resource = values.get(1);
 			int dashPos = resource.lastIndexOf('-');
 			if(dashPos==-1) throw new ParseException(
-				accessor.getMessage(
+				RESOURCES.getMessage(
 					"Server.DrbdReport.ParseException.noDash",
 					resource
 				),
@@ -1472,7 +1474,7 @@ final public class Server
 				|| domUDevice.charAt(3)<'a'
 				|| domUDevice.charAt(3)>'z'
 			) throw new ParseException(
-				accessor.getMessage(
+				RESOURCES.getMessage(
 					"Server.DrbdReport.ParseException.unexpectedResourceEnding",
 					domUDevice
 				),
@@ -1499,7 +1501,7 @@ final public class Server
 			} else {
 				int dsSlashPos = ds.indexOf('/');
 				if(dsSlashPos==-1) throw new ParseException(
-					accessor.getMessage(
+					RESOURCES.getMessage(
 						"Server.DrbdReport.ParseException.noSlashInDiskStates",
 						ds
 					),
@@ -1522,7 +1524,7 @@ final public class Server
 			} else {
 				int slashPos = state.indexOf('/');
 				if(slashPos==-1) throw new ParseException(
-					accessor.getMessage(
+					RESOURCES.getMessage(
 						"Server.DrbdReport.ParseException.noSlashInState",
 						state
 					),
@@ -1589,7 +1591,7 @@ final public class Server
 					String line = lines.get(c);
 					List<String> fields = Strings.split(line, '\t');
 					if(fields.size()!=6) throw new ParseException(
-						accessor.getMessage(
+						RESOURCES.getMessage(
 							"Server.LvmReport.VolumeGroup.parseVgsReport.badColumnCount",
 							6,
 							fields.size()
@@ -1599,7 +1601,7 @@ final public class Server
 					String vgExtentSize = fields.get(1).trim();
 					if(!vgExtentSize.endsWith("B")) {
 						throw new ParseException(
-							accessor.getMessage(
+							RESOURCES.getMessage(
 								"Server.LvmReport.VolumeGroup.parseVgsReport.invalidateVgExtentSize",
 								vgExtentSize
 							),
@@ -1621,7 +1623,7 @@ final public class Server
 							)
 						)!=null
 					) throw new ParseException(
-						accessor.getMessage(
+						RESOURCES.getMessage(
 							"Server.LvmReport.VolumeGroup.parseVgsReport.vgNameFoundTwice",
 							vgName
 						),
@@ -1715,7 +1717,7 @@ final public class Server
 					String line = lines.get(c);
 					List<String> fields = Strings.split(line, '\t');
 					if(fields.size()!=5) throw new ParseException(
-						accessor.getMessage(
+						RESOURCES.getMessage(
 							"Server.LvmReport.PhysicalVolume.parsePvsReport.badColumnCount",
 							5,
 							fields.size()
@@ -1732,7 +1734,7 @@ final public class Server
 					VolumeGroup volumeGroup;
 					if(vgName.length()==0) {
 						if(pvPeCount!=0 || pvPeAllocCount!=0) throw new ParseException(
-							accessor.getMessage(
+							RESOURCES.getMessage(
 								"Server.LvmReport.PhysicalVolume.parsePvsReport.invalidValues",
 								pvPeCount,
 								pvPeAllocCount,
@@ -1743,7 +1745,7 @@ final public class Server
 						volumeGroup = null;
 					} else {
 						if(pvPeCount<1 && pvPeAllocCount<0 && pvPeAllocCount>pvPeCount) throw new ParseException(
-							accessor.getMessage(
+							RESOURCES.getMessage(
 								"Server.LvmReport.PhysicalVolume.parsePvsReport.invalidValues",
 								pvPeCount,
 								pvPeAllocCount,
@@ -1753,7 +1755,7 @@ final public class Server
 						);
 						volumeGroup = volumeGroups.get(vgName);
 						if(volumeGroup==null) throw new ParseException(
-							accessor.getMessage(
+							RESOURCES.getMessage(
 								"Server.LvmReport.PhysicalVolume.parsePvsReport.volumeGroupNotFound",
 								vgName
 							),
@@ -1788,7 +1790,7 @@ final public class Server
 							)
 						)!=null
 					) throw new ParseException(
-						accessor.getMessage(
+						RESOURCES.getMessage(
 							"Server.LvmReport.PhysicalVolume.parsePvsReport.pvNameFoundTwice",
 							pvName
 						),
@@ -1804,7 +1806,7 @@ final public class Server
 					Integer actualPvCountI = vgPhysicalVolumeCounts.get(vgName);
 					int actualPvCount = actualPvCountI==null ? 0 : actualPvCountI;
 					if(expectedPvCount!=actualPvCount) throw new ParseException(
-						accessor.getMessage(
+						RESOURCES.getMessage(
 							"Server.LvmReport.PhysicalVolume.parsePvsReport.mismatchPvCount",
 							vgName
 						),
@@ -1815,7 +1817,7 @@ final public class Server
 					Long actualVgExtentCountL = vgExtentCountTotals.get(vgName);
 					long actualVgExtentCount = actualVgExtentCountL==null ? 0 : actualVgExtentCountL;
 					if(expectedVgExtentCount!=actualVgExtentCount) throw new ParseException(
-						accessor.getMessage(
+						RESOURCES.getMessage(
 							"Server.LvmReport.PhysicalVolume.parsePvsReport.badVgExtentCount",
 							vgName
 						),
@@ -1826,7 +1828,7 @@ final public class Server
 					Long vgAllocCountTotalL = vgAllocCountTotals.get(vgName);
 					long actualVgFreeCount = vgAllocCountTotalL==null ? expectedVgExtentCount : (expectedVgExtentCount-vgAllocCountTotalL);
 					if(expectedVgFreeCount!=actualVgFreeCount) throw new ParseException(
-						accessor.getMessage(
+						RESOURCES.getMessage(
 							"Server.LvmReport.PhysicalVolume.parsePvsReport.badVgFreeCount",
 							vgName
 						),
@@ -1910,7 +1912,7 @@ final public class Server
 					final String line = lines.get(c);
 					final List<String> fields = Strings.split(line, '\t');
 					if(fields.size()!=7) throw new ParseException(
-						accessor.getMessage(
+						RESOURCES.getMessage(
 							"Server.LvmReport.LogicalVolume.parseLsvReport.badColumnCount",
 							7,
 							fields.size()
@@ -1928,7 +1930,7 @@ final public class Server
 					// Find the volume group
 					VolumeGroup volumeGroup = volumeGroups.get(vgName);
 					if(volumeGroup==null) throw new ParseException(
-						accessor.getMessage(
+						RESOURCES.getMessage(
 							"Server.LvmReport.LogicalVolume.parseLsvReport.volumeGroupNotFound",
 							vgName
 						),
@@ -1937,7 +1939,7 @@ final public class Server
 
 					// Find or add the logical volume
 					if(segCount<1) throw new ParseException(
-						accessor.getMessage(
+						RESOURCES.getMessage(
 							"Server.LvmReport.LogicalVolume.parseLsvReport.badSegCount",
 							segCount
 						),
@@ -1949,7 +1951,7 @@ final public class Server
 						volumeGroup.logicalVolumes.put(lvName, logicalVolume);
 					} else {
 						if(segCount!=logicalVolume.segCount) throw new ParseException(
-							accessor.getMessage(
+							RESOURCES.getMessage(
 								"Server.LvmReport.LogicalVolume.parseLsvReport.segCountChanged",
 								logicalVolume.segCount,
 								segCount
@@ -1960,14 +1962,14 @@ final public class Server
 
 					// Add the segment
 					if(stripeCount<1) throw new ParseException(
-						accessor.getMessage(
+						RESOURCES.getMessage(
 							"Server.LvmReport.LogicalVolume.parseLsvReport.badStripeCount",
 							stripeCount
 						),
 						lineNum
 					);
 					if(segPeRanges.size()!=stripeCount) throw new ParseException(
-						accessor.getMessage(
+						RESOURCES.getMessage(
 							"Server.LvmReport.LogicalVolume.parseLsvReport.mismatchStripeCount"
 						),
 						lineNum
@@ -1976,7 +1978,7 @@ final public class Server
 					// Check no overlap in segments
 					for(Segment existingSegment : logicalVolume.segments) {
 						if(newSegment.overlaps(existingSegment)) throw new ParseException(
-							accessor.getMessage(
+							RESOURCES.getMessage(
 								"Server.LvmReport.LogicalVolume.parseLsvReport.segmentOverlap",
 								existingSegment,
 								newSegment
@@ -1990,7 +1992,7 @@ final public class Server
 					for(String segPeRange : segPeRanges) {
 						int colonPos = segPeRange.indexOf(':');
 						if(colonPos==-1) throw new ParseException(
-							accessor.getMessage(
+							RESOURCES.getMessage(
 								"Server.LvmReport.LogicalVolume.parseLsvReport.segPeRangeNoColon",
 								segPeRange
 							),
@@ -1998,7 +2000,7 @@ final public class Server
 						);
 						int dashPos = segPeRange.indexOf('-', colonPos+1);
 						if(dashPos==-1) throw new ParseException(
-							accessor.getMessage(
+							RESOURCES.getMessage(
 								"Server.LvmReport.LogicalVolume.parseLsvReport.segPeRangeNoDash",
 								segPeRange
 							),
@@ -2007,7 +2009,7 @@ final public class Server
 						String stripeDevice = segPeRange.substring(0, colonPos).trim();
 						PhysicalVolume stripePv = physicalVolumes.get(stripeDevice);
 						if(stripePv==null) throw new ParseException(
-							accessor.getMessage(
+							RESOURCES.getMessage(
 								"Server.LvmReport.LogicalVolume.parseLsvReport.physicalVolumeNotFound",
 								stripeDevice
 							),
@@ -2024,7 +2026,7 @@ final public class Server
 								for(Segment existingSegment : existingLV.segments) {
 									for(Stripe existingStripe : existingSegment.stripes) {
 										if(newStripe.overlaps(existingStripe)) throw new ParseException(
-											accessor.getMessage(
+											RESOURCES.getMessage(
 												"Server.LvmReport.LogicalVolume.parseLsvReport.stripeOverlap",
 												existingStripe,
 												newStripe
@@ -2046,7 +2048,7 @@ final public class Server
 					int expectedLvCount = volumeGroup.getLvCount();
 					int actualLvCount = volumeGroup.logicalVolumes.size();
 					if(expectedLvCount!=actualLvCount) throw new ParseException(
-						accessor.getMessage(
+						RESOURCES.getMessage(
 							"Server.LvmReport.LogicalVolume.parseLsvReport.mismatchLvCount",
 							volumeGroup
 						),
@@ -2065,7 +2067,7 @@ final public class Server
 					long expectedFreeCount = volumeGroup.vgFreeCount;
 					long actualFreeCount = volumeGroup.vgExtentCount - totalLvExtents;
 					if(expectedFreeCount!=actualFreeCount) throw new ParseException(
-						accessor.getMessage(
+						RESOURCES.getMessage(
 							"Server.LvmReport.LogicalVolume.parseLsvReport.mismatchFreeCount",
 							volumeGroup
 						),
@@ -2372,7 +2374,7 @@ final public class Server
 			lineNum++;
 			int colonPos = line.indexOf(':');
 			if(colonPos==-1) throw new ParseException(
-				accessor.getMessage(
+				RESOURCES.getMessage(
 					"Server.getHddModelReport.ParseException.noColon",
 					line
 				),
@@ -2381,7 +2383,7 @@ final public class Server
 			String device = line.substring(0, colonPos).trim();
 			String model = line.substring(colonPos+1).trim();
 			if(results.put(device, model)!=null) throw new ParseException(
-				accessor.getMessage(
+				RESOURCES.getMessage(
 					"Server.getHddModelReport.ParseException.duplicateDevice",
 					device
 				),
@@ -2523,21 +2525,21 @@ final public class Server
 				case "ext3":
 					// Make sure extmaxmount is -1
 					if(!"-1".equals(extMaxMount)) {
-						return accessor.getMessage("Server.FilesystemReport.configMessage.extmaxmount.ext3", extMaxMount);
+						return RESOURCES.getMessage("Server.FilesystemReport.configMessage.extmaxmount.ext3", extMaxMount);
 					}
 					// Make sure extchkint is 0
 					if(!"0 (<none>)".equals(extCheckInterval)) {
-						return accessor.getMessage("Server.FilesystemReport.configMessage.extchkint.ext3", extCheckInterval);
+						return RESOURCES.getMessage("Server.FilesystemReport.configMessage.extchkint.ext3", extCheckInterval);
 					}
 					return null;
 				case "ext2":
 					// Make sure extmaxmount is never -1
 					if("-1".equals(extMaxMount)) {
-						return accessor.getMessage("Server.FilesystemReport.configMessage.extmaxmount.ext2", extMaxMount);
+						return RESOURCES.getMessage("Server.FilesystemReport.configMessage.extmaxmount.ext2", extMaxMount);
 					}
 					// Make sure extchkint is never 0
 					if("0 (<none>)".equals(extCheckInterval)) {
-						return accessor.getMessage("Server.FilesystemReport.configMessage.extchkint.ext2", extCheckInterval);
+						return RESOURCES.getMessage("Server.FilesystemReport.configMessage.extchkint.ext2", extCheckInterval);
 					}
 					return null;
 				default:

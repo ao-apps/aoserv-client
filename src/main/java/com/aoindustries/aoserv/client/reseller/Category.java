@@ -23,10 +23,10 @@
 package com.aoindustries.aoserv.client.reseller;
 
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
-import static com.aoindustries.aoserv.client.reseller.ApplicationResources.accessor;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.ticket.Ticket;
+import com.aoindustries.i18n.Resources;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import java.io.IOException;
@@ -40,6 +40,8 @@ import java.util.List;
  * @author  AO Industries, Inc.
  */
 final public class Category extends CachedObjectIntegerKey<Category> {
+
+	private static final Resources RESOURCES = Resources.getResources(Category.class.getPackage());
 
 	static final int
 		COLUMN_PKEY=0,
@@ -120,7 +122,7 @@ final public class Category extends CachedObjectIntegerKey<Category> {
 
 	@Override
 	public String toStringImpl() throws IOException, SQLException {
-		return accessor.getMessage("TicketCategory."+getDotPath()+".toString");
+		return RESOURCES.getMessage("TicketCategory."+getDotPath()+".toString");
 	}
 
 	@Override

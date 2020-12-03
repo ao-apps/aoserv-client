@@ -22,14 +22,15 @@
  */
 package com.aoindustries.aoserv.client;
 
-import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
 import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.collections.IntArrayList;
 import com.aoindustries.collections.IntList;
+import com.aoindustries.i18n.Resources;
 import com.aoindustries.io.AOPool;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
+import com.aoindustries.lang.LocalizedIllegalStateException;
 import com.aoindustries.lang.Throwables;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.HostAddress;
@@ -57,6 +58,8 @@ import javax.swing.SwingUtilities;
  * @author  AO Industries, Inc.
  */
 public class TCPConnector extends AOServConnector {
+
+	private static final Resources RESOURCES = Resources.getResources(TCPConnector.class.getPackage());
 
 	/**
 	 * Close cache monitor after 90 minutes of inactivity,
@@ -270,7 +273,7 @@ public class TCPConnector extends AOServConnector {
 	@Override
 	protected final SocketConnection getConnection(int maxConnections) throws InterruptedIOException, IOException {
 		if(SwingUtilities.isEventDispatchThread()) {
-			getLogger().log(Level.WARNING, null, new RuntimeException(accessor.getMessage("TCPConnector.getConnection.isEventDispatchThread")));
+			getLogger().log(Level.WARNING, null, new LocalizedIllegalStateException(RESOURCES, "TCPConnector.getConnection.isEventDispatchThread"));
 		}
 		startCacheMonitor();
 		SocketConnection conn = pool.getConnection(maxConnections);

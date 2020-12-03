@@ -25,7 +25,6 @@ package com.aoindustries.aoserv.client.account;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Disablable;
 import com.aoindustries.aoserv.client.Removable;
-import static com.aoindustries.aoserv.client.account.ApplicationResources.accessor;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.linux.Group;
 import com.aoindustries.aoserv.client.linux.PosixPath;
@@ -37,6 +36,7 @@ import com.aoindustries.aoserv.client.password.PasswordProtected;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.dto.DtoFactory;
+import com.aoindustries.i18n.Resources;
 import com.aoindustries.io.FastExternalizable;
 import com.aoindustries.io.FastObjectInput;
 import com.aoindustries.io.FastObjectOutput;
@@ -74,6 +74,8 @@ import java.util.concurrent.ConcurrentMap;
  * @author  AO Industries, Inc.
  */
 final public class User extends CachedObjectUserNameKey<User> implements PasswordProtected, Removable, Disablable {
+
+	private static final Resources RESOURCES = Resources.getResources(User.class.getPackage());
 
 	/**
 	 * Represents the most general form of a user name.  This is has the fewest constraints; other types of accounts
@@ -113,36 +115,36 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		 * Validates a {@link User} name.
 		 */
 		public static ValidationResult validate(String name) {
-			if(name==null) return new InvalidResult(accessor, "User.Name.validate.isNull");
+			if(name==null) return new InvalidResult(RESOURCES, "User.Name.validate.isNull");
 			int len = name.length();
-			if(len==0) return new InvalidResult(accessor, "User.Name.validate.isEmpty");
-			if(len > MAX_LENGTH) return new InvalidResult(accessor, "User.Name.validate.tooLong", MAX_LENGTH, len);
+			if(len==0) return new InvalidResult(RESOURCES, "User.Name.validate.isEmpty");
+			if(len > MAX_LENGTH) return new InvalidResult(RESOURCES, "User.Name.validate.tooLong", MAX_LENGTH, len);
 
 			// The first character must be [a-z]
 			char ch = name.charAt(0);
-			if(ch < 'a' || ch > 'z') return new InvalidResult(accessor, "User.Name.validate.startAToZ");
+			if(ch < 'a' || ch > 'z') return new InvalidResult(RESOURCES, "User.Name.validate.startAToZ");
 
 			// The rest may have additional characters
 			boolean hasAt = false;
 			for (int c = 1; c < len; c++) {
 				ch = name.charAt(c);
-				if(ch==' ') return new InvalidResult(accessor, "User.Name.validate.noSpace");
-				if(ch<=0x21 || ch>0x7f) return new InvalidResult(accessor, "User.Name.validate.specialCharacter");
-				if(ch>='A' && ch<='Z') return new InvalidResult(accessor, "User.Name.validate.noCapital");
+				if(ch==' ') return new InvalidResult(RESOURCES, "User.Name.validate.noSpace");
+				if(ch<=0x21 || ch>0x7f) return new InvalidResult(RESOURCES, "User.Name.validate.specialCharacter");
+				if(ch>='A' && ch<='Z') return new InvalidResult(RESOURCES, "User.Name.validate.noCapital");
 				switch(ch) {
-					case ',' : return new InvalidResult(accessor, "User.Name.validate.comma");
-					case ':' : return new InvalidResult(accessor, "User.Name.validate.colon");
-					case '(' : return new InvalidResult(accessor, "User.Name.validate.leftParen");
-					case ')' : return new InvalidResult(accessor, "User.Name.validate.rightParen");
-					case '[' : return new InvalidResult(accessor, "User.Name.validate.leftSquare");
-					case ']' : return new InvalidResult(accessor, "User.Name.validate.rightSquare");
-					case '\'' : return new InvalidResult(accessor, "User.Name.validate.apostrophe");
-					case '"' : return new InvalidResult(accessor, "User.Name.validate.quote");
-					case '|' : return new InvalidResult(accessor, "User.Name.validate.verticalBar");
-					case '&' : return new InvalidResult(accessor, "User.Name.validate.ampersand");
-					case ';' : return new InvalidResult(accessor, "User.Name.validate.semicolon");
-					case '\\' : return new InvalidResult(accessor, "User.Name.validate.backslash");
-					case '/' : return new InvalidResult(accessor, "User.Name.validate.slash");
+					case ',' : return new InvalidResult(RESOURCES, "User.Name.validate.comma");
+					case ':' : return new InvalidResult(RESOURCES, "User.Name.validate.colon");
+					case '(' : return new InvalidResult(RESOURCES, "User.Name.validate.leftParen");
+					case ')' : return new InvalidResult(RESOURCES, "User.Name.validate.rightParen");
+					case '[' : return new InvalidResult(RESOURCES, "User.Name.validate.leftSquare");
+					case ']' : return new InvalidResult(RESOURCES, "User.Name.validate.rightSquare");
+					case '\'' : return new InvalidResult(RESOURCES, "User.Name.validate.apostrophe");
+					case '"' : return new InvalidResult(RESOURCES, "User.Name.validate.quote");
+					case '|' : return new InvalidResult(RESOURCES, "User.Name.validate.verticalBar");
+					case '&' : return new InvalidResult(RESOURCES, "User.Name.validate.ampersand");
+					case ';' : return new InvalidResult(RESOURCES, "User.Name.validate.semicolon");
+					case '\\' : return new InvalidResult(RESOURCES, "User.Name.validate.backslash");
+					case '/' : return new InvalidResult(RESOURCES, "User.Name.validate.slash");
 					case '@' : hasAt = true; break;
 				}
 			}

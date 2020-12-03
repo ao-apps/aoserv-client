@@ -23,10 +23,10 @@
 package com.aoindustries.aoserv.client.net;
 
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
-import static com.aoindustries.aoserv.client.net.ApplicationResources.accessor;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.dto.DtoFactory;
+import com.aoindustries.i18n.Resources;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.util.InternUtils;
@@ -53,6 +53,8 @@ import java.util.concurrent.ConcurrentMap;
  * @author  AO Industries, Inc.
  */
 public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
+
+	private static final Resources RESOURCES = Resources.getResources(FirewallZone.class.getPackage());
 
 	/**
 	 * Represents a name that may be used for a {@link FirewallZone}.  Zones names must:
@@ -101,10 +103,10 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
 		 * Validates a {@link FirewallZone} name.
 		 */
 		public static ValidationResult validate(String name) {
-			if(name == null) return new InvalidResult(accessor, "FirewallZone.Name.validate.isNull");
+			if(name == null) return new InvalidResult(RESOURCES, "FirewallZone.Name.validate.isNull");
 			int len = name.length();
-			if(len == 0) return new InvalidResult(accessor, "FirewallZone.Name.validate.isEmpty");
-			if(len > MAX_LENGTH) return new InvalidResult(accessor, "FirewallZone.Name.validate.tooLong", MAX_LENGTH, len);
+			if(len == 0) return new InvalidResult(RESOURCES, "FirewallZone.Name.validate.isEmpty");
+			if(len > MAX_LENGTH) return new InvalidResult(RESOURCES, "FirewallZone.Name.validate.tooLong", MAX_LENGTH, len);
 
 			// Contain the characters [a-z], [A-Z], [0-9], underscore (_), hyphen (-), and slash (/)
 			for (int c = 0; c < len; c++) {
@@ -116,15 +118,15 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
 					&& ch != '_'
 					&& ch != '-'
 					&& ch != '/'
-				) return new InvalidResult(accessor, "FirewallZone.Name.validate.illegalCharacter");
+				) return new InvalidResult(RESOURCES, "FirewallZone.Name.validate.illegalCharacter");
 			}
 			// Not begin with a slash (/)
-			if(name.charAt(0) == '/') return new InvalidResult(accessor, "FirewallZone.Name.validate.startsWithSlash");
+			if(name.charAt(0) == '/') return new InvalidResult(RESOURCES, "FirewallZone.Name.validate.startsWithSlash");
 			// Not end with a slash (/)
-			if(name.charAt(len - 1) == '/') return new InvalidResult(accessor, "FirewallZone.Name.validate.endsWithSlash");
+			if(name.charAt(len - 1) == '/') return new InvalidResult(RESOURCES, "FirewallZone.Name.validate.endsWithSlash");
 			// Not contain more than one slash (/)
 			int slashPos = name.indexOf('/');
-			if(slashPos != -1 && name.indexOf('/', slashPos + 1) != -1) return new InvalidResult(accessor, "FirewallZone.Name.validate.moreThanOneSlash");
+			if(slashPos != -1 && name.indexOf('/', slashPos + 1) != -1) return new InvalidResult(RESOURCES, "FirewallZone.Name.validate.moreThanOneSlash");
 			return ValidResult.getInstance();
 		}
 

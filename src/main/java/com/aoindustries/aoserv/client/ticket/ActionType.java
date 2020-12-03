@@ -26,7 +26,7 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.GlobalObjectStringKey;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import static com.aoindustries.aoserv.client.ticket.ApplicationResources.accessor;
+import com.aoindustries.i18n.Resources;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import java.io.IOException;
@@ -43,6 +43,8 @@ import java.sql.SQLException;
  * @author  AO Industries, Inc.
  */
 final public class ActionType extends GlobalObjectStringKey<ActionType> {
+
+	private static final Resources RESOURCES = Resources.getResources(ActionType.class.getPackage());
 
 	static final int COLUMN_TYPE = 0;
 
@@ -97,7 +99,7 @@ final public class ActionType extends GlobalObjectStringKey<ActionType> {
 
 	@Override
 	public String toStringImpl() {
-		return accessor.getMessage("TicketActionType."+pkey+".toString");
+		return RESOURCES.getMessage("TicketActionType."+pkey+".toString");
 	}
 
 	@Override
@@ -111,11 +113,11 @@ final public class ActionType extends GlobalObjectStringKey<ActionType> {
 	 */
 	String generateSummary(AOServConnector connector, String oldValue, String newValue) throws IOException, SQLException {
 		if(oldValue==null) {
-			if(newValue==null) return accessor.getMessage("TicketActionType."+pkey+".generatedSummary.null.null");
-			return accessor.getMessage("TicketActionType."+pkey+".generatedSummary.null.notNull", newValue);
+			if(newValue==null) return RESOURCES.getMessage("TicketActionType."+pkey+".generatedSummary.null.null");
+			return RESOURCES.getMessage("TicketActionType."+pkey+".generatedSummary.null.notNull", newValue);
 		} else {
-			if(newValue==null) return accessor.getMessage("TicketActionType."+pkey+".generatedSummary.notNull.null", oldValue);
-			return accessor.getMessage("TicketActionType."+pkey+".generatedSummary.notNull.notNull", oldValue, newValue);
+			if(newValue==null) return RESOURCES.getMessage("TicketActionType."+pkey+".generatedSummary.notNull.null", oldValue);
+			return RESOURCES.getMessage("TicketActionType."+pkey+".generatedSummary.notNull.notNull", oldValue, newValue);
 		}
 	}
 }

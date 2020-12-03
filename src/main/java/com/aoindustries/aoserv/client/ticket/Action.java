@@ -29,7 +29,7 @@ import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.reseller.Category;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import static com.aoindustries.aoserv.client.ticket.ApplicationResources.accessor;
+import com.aoindustries.i18n.Resources;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.Email;
@@ -52,6 +52,8 @@ import java.util.Objects;
  * @author  AO Industries, Inc.
  */
 final public class Action extends CachedObjectIntegerKey<Action> {
+
+	private static final Resources RESOURCES = Resources.getResources(Action.class.getPackage());
 
 	static final int
 		COLUMN_PKEY=0,
@@ -299,8 +301,8 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 			case ActionType.ASSIGN:
 				Administrator oldAssignedTo = getOldAssignedTo();
 				Administrator newAssignedTo = getNewAssignedTo();
-				oldValue = oldAssignedTo!=null ? oldAssignedTo.getName() : old_assigned_to!=null ? accessor.getMessage("TicketAction.old_assigned_to.filtered") : null;
-				newValue = newAssignedTo!=null ? newAssignedTo.getName() : new_assigned_to!=null ? accessor.getMessage("TicketAction.new_assigned_to.filtered") : null;
+				oldValue = oldAssignedTo!=null ? oldAssignedTo.getName() : old_assigned_to!=null ? RESOURCES.getMessage("TicketAction.old_assigned_to.filtered") : null;
+				newValue = newAssignedTo!=null ? newAssignedTo.getName() : new_assigned_to!=null ? RESOURCES.getMessage("TicketAction.new_assigned_to.filtered") : null;
 				break;
 			case ActionType.SET_CATEGORY:
 				Category oldCategory = getOldCategory();

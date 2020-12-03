@@ -32,10 +32,10 @@ import com.aoindustries.aoserv.client.Removable;
 import com.aoindustries.aoserv.client.StreamHandler;
 import com.aoindustries.aoserv.client.net.Bind;
 import com.aoindustries.aoserv.client.net.IpAddress;
-import static com.aoindustries.aoserv.client.postgresql.ApplicationResources.accessor;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.dto.DtoFactory;
+import com.aoindustries.i18n.Resources;
 import com.aoindustries.io.ByteCountInputStream;
 import com.aoindustries.io.IoUtils;
 import com.aoindustries.io.stream.StreamableInput;
@@ -81,6 +81,8 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class Database extends CachedObjectIntegerKey<Database> implements Dumpable, Removable, JdbcProvider {
 
+	private static final Resources RESOURCES = Resources.getResources(Database.class.getPackage());
+
 	/**
 	 * Represents a name that may be used for a PostgreSQL database.  Database names must:
 	 * <ul>
@@ -113,10 +115,10 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 		 * Validates a PostgreSQL database name.
 		 */
 		public static ValidationResult validate(String name) {
-			if(name==null) return new InvalidResult(accessor, "Database.Name.validate.isNull");
+			if(name==null) return new InvalidResult(RESOURCES, "Database.Name.validate.isNull");
 			int len = name.length();
-			if(len==0) return new InvalidResult(accessor, "Database.Name.validate.isEmpty");
-			if(len > MAX_LENGTH) return new InvalidResult(accessor, "Database.Name.validate.tooLong", MAX_LENGTH, len);
+			if(len==0) return new InvalidResult(RESOURCES, "Database.Name.validate.isEmpty");
+			if(len > MAX_LENGTH) return new InvalidResult(RESOURCES, "Database.Name.validate.tooLong", MAX_LENGTH, len);
 
 			// Characters may contain [a-z,A-Z,0-9,_,-,.]
 			for (int c = 0; c < len; c++) {
@@ -129,7 +131,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 					&& ch != '-'
 					&& ch != '.'
 					&& ch != ' '
-				) return new InvalidResult(accessor, "Database.Name.validate.illegalCharacter");
+				) return new InvalidResult(RESOURCES, "Database.Name.validate.illegalCharacter");
 			}
 			return ValidResult.getInstance();
 		}

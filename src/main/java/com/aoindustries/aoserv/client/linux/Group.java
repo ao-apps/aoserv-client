@@ -26,10 +26,10 @@ import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Removable;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.billing.Package;
-import static com.aoindustries.aoserv.client.linux.ApplicationResources.accessor;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.dto.DtoFactory;
+import com.aoindustries.i18n.Resources;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.util.Internable;
@@ -58,6 +58,8 @@ import java.util.concurrent.ConcurrentMap;
  * @author  AO Industries, Inc.
  */
 final public class Group extends CachedObjectGroupNameKey<Group> implements Removable {
+
+	private static final Resources RESOURCES = Resources.getResources(Group.class.getPackage());
 
 	/**
 	 * Represents a group ID that may be used by certain types of groups.  Group ids must:
@@ -90,36 +92,36 @@ final public class Group extends CachedObjectGroupNameKey<Group> implements Remo
 		 * Validates a group name.
 		 */
 		public static ValidationResult validate(String name) {
-			if(name==null) return new InvalidResult(accessor, "Group.Name.validate.isNull");
+			if(name==null) return new InvalidResult(RESOURCES, "Group.Name.validate.isNull");
 			int len = name.length();
-			if(len==0) return new InvalidResult(accessor, "Group.Name.validate.isEmpty");
-			if(len > MAX_LENGTH) return new InvalidResult(accessor, "Group.Name.validate.tooLong", MAX_LENGTH, len);
+			if(len==0) return new InvalidResult(RESOURCES, "Group.Name.validate.isEmpty");
+			if(len > MAX_LENGTH) return new InvalidResult(RESOURCES, "Group.Name.validate.tooLong", MAX_LENGTH, len);
 
 			// The first character must be [a-z]
 			char ch = name.charAt(0);
-			if(ch < 'a' || ch > 'z') return new InvalidResult(accessor, "Group.Name.validate.startAToZ");
+			if(ch < 'a' || ch > 'z') return new InvalidResult(RESOURCES, "Group.Name.validate.startAToZ");
 
 			// The rest may have additional characters
 			for (int c = 1; c < len; c++) {
 				ch = name.charAt(c);
-				if(ch==' ') return new InvalidResult(accessor, "Group.Name.validate.noSpace");
-				if(ch<=0x21 || ch>0x7f) return new InvalidResult(accessor, "Group.Name.validate.specialCharacter");
-				if(ch>='A' && ch<='Z') return new InvalidResult(accessor, "Group.Name.validate.noCapital");
+				if(ch==' ') return new InvalidResult(RESOURCES, "Group.Name.validate.noSpace");
+				if(ch<=0x21 || ch>0x7f) return new InvalidResult(RESOURCES, "Group.Name.validate.specialCharacter");
+				if(ch>='A' && ch<='Z') return new InvalidResult(RESOURCES, "Group.Name.validate.noCapital");
 				switch(ch) {
-					case ',' : return new InvalidResult(accessor, "Group.Name.validate.comma");
-					case ':' : return new InvalidResult(accessor, "Group.Name.validate.colon");
-					case '(' : return new InvalidResult(accessor, "Group.Name.validate.leftParen");
-					case ')' : return new InvalidResult(accessor, "Group.Name.validate.rightParen");
-					case '[' : return new InvalidResult(accessor, "Group.Name.validate.leftSquare");
-					case ']' : return new InvalidResult(accessor, "Group.Name.validate.rightSquare");
-					case '\'' : return new InvalidResult(accessor, "Group.Name.validate.apostrophe");
-					case '"' : return new InvalidResult(accessor, "Group.Name.validate.quote");
-					case '|' : return new InvalidResult(accessor, "Group.Name.validate.verticalBar");
-					case '&' : return new InvalidResult(accessor, "Group.Name.validate.ampersand");
-					case ';' : return new InvalidResult(accessor, "Group.Name.validate.semicolon");
-					case '\\' : return new InvalidResult(accessor, "Group.Name.validate.backslash");
-					case '/' : return new InvalidResult(accessor, "Group.Name.validate.slash");
-					case '@' : return new InvalidResult(accessor, "Group.Name.validate.at");
+					case ',' : return new InvalidResult(RESOURCES, "Group.Name.validate.comma");
+					case ':' : return new InvalidResult(RESOURCES, "Group.Name.validate.colon");
+					case '(' : return new InvalidResult(RESOURCES, "Group.Name.validate.leftParen");
+					case ')' : return new InvalidResult(RESOURCES, "Group.Name.validate.rightParen");
+					case '[' : return new InvalidResult(RESOURCES, "Group.Name.validate.leftSquare");
+					case ']' : return new InvalidResult(RESOURCES, "Group.Name.validate.rightSquare");
+					case '\'' : return new InvalidResult(RESOURCES, "Group.Name.validate.apostrophe");
+					case '"' : return new InvalidResult(RESOURCES, "Group.Name.validate.quote");
+					case '|' : return new InvalidResult(RESOURCES, "Group.Name.validate.verticalBar");
+					case '&' : return new InvalidResult(RESOURCES, "Group.Name.validate.ampersand");
+					case ';' : return new InvalidResult(RESOURCES, "Group.Name.validate.semicolon");
+					case '\\' : return new InvalidResult(RESOURCES, "Group.Name.validate.backslash");
+					case '/' : return new InvalidResult(RESOURCES, "Group.Name.validate.slash");
+					case '@' : return new InvalidResult(RESOURCES, "Group.Name.validate.at");
 				}
 			}
 			return ValidResult.getInstance();

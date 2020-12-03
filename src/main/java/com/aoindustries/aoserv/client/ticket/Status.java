@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -25,7 +25,7 @@ package com.aoindustries.aoserv.client.ticket;
 import com.aoindustries.aoserv.client.GlobalObjectStringKey;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import static com.aoindustries.aoserv.client.ticket.ApplicationResources.accessor;
+import com.aoindustries.i18n.Resources;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import java.io.IOException;
@@ -41,6 +41,8 @@ import java.sql.SQLException;
  * @author  AO Industries, Inc.
  */
 final public class Status extends GlobalObjectStringKey<Status> implements Comparable<Status> {
+
+	private static final Resources RESOURCES = Resources.getResources(Status.class.getPackage());
 
 	static final int COLUMN_STATUS = 0;
 	static final int COLUMN_SORT_ORDER = 1;
@@ -102,14 +104,14 @@ final public class Status extends GlobalObjectStringKey<Status> implements Compa
 
 	@Override
 	public String toStringImpl() {
-		return accessor.getMessage("TicketStatus."+pkey+".toString");
+		return RESOURCES.getMessage("TicketStatus."+pkey+".toString");
 	}
 
 	/**
 	 * Localized description.
 	 */
 	public String getDescription() {
-		return accessor.getMessage("TicketStatus."+pkey+".description");
+		return RESOURCES.getMessage("TicketStatus."+pkey+".description");
 	}
 
 	@Override

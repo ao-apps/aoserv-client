@@ -23,7 +23,7 @@
 package com.aoindustries.aoserv.client.password;
 
 import com.aoindustries.aoserv.client.account.User;
-import static com.aoindustries.aoserv.client.password.ApplicationResources.accessor;
+import com.aoindustries.i18n.Resources;
 import com.aoindustries.io.IoUtils;
 import com.aoindustries.util.zip.CorrectedGZIPInputStream;
 import java.io.ByteArrayOutputStream;
@@ -39,6 +39,8 @@ import java.util.List;
  * @author  AO Industries, Inc.
  */
 final public class PasswordChecker {
+
+	private static final Resources RESOURCES = Resources.getResources(PasswordChecker.class.getPackage());
 
 	/**
 	 * The different ways months may be represented in the English
@@ -79,7 +81,7 @@ final public class PasswordChecker {
 
 		private Result(String category) {
 			this.category = category;
-			this.result = accessor.getMessage(GOOD_KEY);
+			this.result = RESOURCES.getMessage(GOOD_KEY);
 		}
 
 		public String getCategory() {
@@ -101,7 +103,7 @@ final public class PasswordChecker {
 	public static List<Result> getAllGoodResults() {
 		List<Result> results = new ArrayList<>(NUM_CATEGORIES);
 		for(int c=0;c<NUM_CATEGORIES;c++) {
-			results.add(new Result(accessor.getMessage(categoryKeys[c])));
+			results.add(new Result(RESOURCES.getMessage(categoryKeys[c])));
 		}
 		return results;
 	}
@@ -122,7 +124,7 @@ final public class PasswordChecker {
 			 *
 			 * Must be at least eight characters
 			 */
-			if (passwordLen < (strength==PasswordStrength.SUPER_LAX?6:8)) results.get(0).result = accessor.getMessage(strength==PasswordStrength.SUPER_LAX ? "PasswordChecker.length.atLeastSix" : "PasswordChecker.length.atLeastEight");
+			if (passwordLen < (strength==PasswordStrength.SUPER_LAX?6:8)) results.get(0).result = RESOURCES.getMessage(strength==PasswordStrength.SUPER_LAX ? "PasswordChecker.length.atLeastSix" : "PasswordChecker.length.atLeastEight");
 
 			/*
 			 * Gather password stats
@@ -146,9 +148,9 @@ final public class PasswordChecker {
 			 * 2) Must not be all numbers
 			 * 3) Must not contain a space
 			 */
-			if ((numbercount + specialcount) == passwordLen) results.get(1).result = accessor.getMessage("PasswordChecker.characters.notOnlyNumbers");
-			else if (strength!=PasswordStrength.SUPER_LAX && (lowercount + uppercount + specialcount) == passwordLen) results.get(1).result = accessor.getMessage("PasswordChecker.characters.numbersAndPunctuation");
-			else if (password.indexOf(' ')!=-1) results.get(1).result = accessor.getMessage("PasswordChecker.characters.notContainSpace");
+			if ((numbercount + specialcount) == passwordLen) results.get(1).result = RESOURCES.getMessage("PasswordChecker.characters.notOnlyNumbers");
+			else if (strength!=PasswordStrength.SUPER_LAX && (lowercount + uppercount + specialcount) == passwordLen) results.get(1).result = RESOURCES.getMessage("PasswordChecker.characters.numbersAndPunctuation");
+			else if (password.indexOf(' ')!=-1) results.get(1).result = RESOURCES.getMessage("PasswordChecker.characters.notContainSpace");
 
 			/*
 			 * Must use different cases
@@ -162,7 +164,7 @@ final public class PasswordChecker {
 					|| (uppercount > 1 && lowercount == 0)
 					|| (lowercount == 0 && uppercount == 0)
 				)
-			) results.get(2).result = accessor.getMessage("PasswordChecker.case.capitalAndLower");
+			) results.get(2).result = RESOURCES.getMessage("PasswordChecker.case.capitalAndLower");
 
 			/*
 			 * Generate the backwards version of the password
@@ -180,7 +182,7 @@ final public class PasswordChecker {
 			 * Must not be the same as your username
 			 */
 			if(username!=null && username.toString().equalsIgnoreCase(password)) {
-				results.get(4).result = accessor.getMessage("PasswordChecker.dictionary.notSameAsUsername");
+				results.get(4).result = RESOURCES.getMessage("PasswordChecker.dictionary.notSameAsUsername");
 			}
 
 			/*
@@ -202,9 +204,9 @@ final public class PasswordChecker {
 						break;
 					}
 				}
-				if (!goodb) results.get(3).result = accessor.getMessage("PasswordChecker.dates.noDate");
+				if (!goodb) results.get(3).result = RESOURCES.getMessage("PasswordChecker.dates.noDate");
 
-				if(results.get(4).result.equals(accessor.getMessage(GOOD_KEY))) {
+				if(results.get(4).result.equals(RESOURCES.getMessage(GOOD_KEY))) {
 					/*
 					 * Dictionary check
 					 *
@@ -250,11 +252,11 @@ final public class PasswordChecker {
 						}
 					}
 					if (longest.length() > 0) {
-						results.get(4).result = accessor.getMessage("PasswordChecker.dictionary.basedOnWord", longest);
+						results.get(4).result = RESOURCES.getMessage("PasswordChecker.dictionary.basedOnWord", longest);
 					}
 				}
 			}
-		} else results.get(0).result = accessor.getMessage("PasswordChecker.length.noPassword");
+		} else results.get(0).result = RESOURCES.getMessage("PasswordChecker.length.noPassword");
 		return results;
 	}
 /**
@@ -290,7 +292,7 @@ final public class PasswordChecker {
 
 	public static boolean hasResults(List<Result> results) {
 		if(results==null) return false;
-		String good = accessor.getMessage(GOOD_KEY);
+		String good = RESOURCES.getMessage(GOOD_KEY);
 		for(Result result : results) {
 			if(!result.result.equals(good)) return true;
 		}

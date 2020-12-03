@@ -23,9 +23,9 @@
 // TODO: Rename schema and package from "pki" to "crypto" since how contains more than just PKI.
 package com.aoindustries.aoserv.client.pki;
 
-import static com.aoindustries.aoserv.client.pki.ApplicationResources.accessor;
 import com.aoindustries.dto.DtoFactory;
 import com.aoindustries.exception.WrappedException;
+import com.aoindustries.i18n.Resources;
 import com.aoindustries.util.Base64Coder;
 import com.aoindustries.validation.InvalidResult;
 import com.aoindustries.validation.ValidResult;
@@ -58,6 +58,8 @@ final public class HashedPassword implements
 	DtoFactory<com.aoindustries.aoserv.client.dto.HashedPassword>
 {
 
+	private static final Resources RESOURCES = Resources.getResources(HashedPassword.class.getPackage());
+
 	private static final long serialVersionUID = 6198625525641344394L;
 
 	/**
@@ -67,17 +69,17 @@ final public class HashedPassword implements
 
 	public static ValidationResult validate(String hashedPassword) {
 		// May be null
-		if(hashedPassword==null) return new InvalidResult(accessor, "HashedPassword.validate.isNull");
+		if(hashedPassword==null) return new InvalidResult(RESOURCES, "HashedPassword.validate.isNull");
 		// Be non-empty
 		int len = hashedPassword.length();
-		if(len==0) return new InvalidResult(accessor, "HashedPassword.validate.empty");
+		if(len==0) return new InvalidResult(RESOURCES, "HashedPassword.validate.empty");
 		// May be *
 		if(!NO_PASSWORD.equals(hashedPassword)) {
 			// SHA1
 			if(len!=28) {
 				// Crypt
 				if(len!=13) {
-					return new InvalidResult(accessor, "HashedPassword.validate.wrongLength");
+					return new InvalidResult(RESOURCES, "HashedPassword.validate.wrongLength");
 				}
 			}
 		}

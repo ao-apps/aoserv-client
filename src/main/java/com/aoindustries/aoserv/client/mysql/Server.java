@@ -29,12 +29,12 @@ import com.aoindustries.aoserv.client.backup.MysqlReplication;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.distribution.SoftwareVersion;
 import com.aoindustries.aoserv.client.linux.PosixPath;
-import static com.aoindustries.aoserv.client.mysql.ApplicationResources.accessor;
 import com.aoindustries.aoserv.client.net.Bind;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.collections.AoCollections;
 import com.aoindustries.dto.DtoFactory;
+import com.aoindustries.i18n.Resources;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.Port;
@@ -72,6 +72,8 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class Server extends CachedObjectIntegerKey<Server> {
 
+	private static final Resources RESOURCES = Resources.getResources(Server.class.getPackage());
+
 	/**
 	 * Represents a name that may be used for a MySQL installation.  Names must:
 	 * <ul>
@@ -100,17 +102,17 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 		 * Validates a MySQL server name.
 		 */
 		public static ValidationResult validate(String name) {
-			if(name==null) return new InvalidResult(accessor, "Server.Name.validate.isNull");
+			if(name==null) return new InvalidResult(RESOURCES, "Server.Name.validate.isNull");
 			int len = name.length();
-			if(len==0) return new InvalidResult(accessor, "Server.Name.validate.isEmpty");
-			if(len > MAX_LENGTH) return new InvalidResult(accessor, "Server.Name.validate.tooLong", MAX_LENGTH, len);
+			if(len==0) return new InvalidResult(RESOURCES, "Server.Name.validate.isEmpty");
+			if(len > MAX_LENGTH) return new InvalidResult(RESOURCES, "Server.Name.validate.tooLong", MAX_LENGTH, len);
 
 			// The first character must be [a-z] or [0-9]
 			char ch = name.charAt(0);
 			if(
 				(ch < 'a' || ch > 'z')
 				&& (ch<'0' || ch>'9')
-			) return new InvalidResult(accessor, "Server.Name.validate.startAtoZor0to9");
+			) return new InvalidResult(RESOURCES, "Server.Name.validate.startAtoZor0to9");
 
 			// The rest may have additional characters
 			for (int c = 1; c < len; c++) {
@@ -121,7 +123,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 					&& ch!='.'
 					&& ch!='-'
 					&& ch!='_'
-				) return new InvalidResult(accessor, "Server.Name.validate.illegalCharacter");
+				) return new InvalidResult(RESOURCES, "Server.Name.validate.illegalCharacter");
 			}
 			return ValidResult.getInstance();
 		}

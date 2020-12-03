@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,8 +22,8 @@
  */
 package com.aoindustries.aoserv.client.linux;
 
-import static com.aoindustries.aoserv.client.linux.ApplicationResources.accessor;
 import com.aoindustries.dto.DtoFactory;
+import com.aoindustries.i18n.Resources;
 import com.aoindustries.validation.InvalidResult;
 import com.aoindustries.validation.ValidResult;
 import com.aoindustries.validation.ValidationException;
@@ -49,11 +49,13 @@ final public class LinuxId implements
 	DtoFactory<com.aoindustries.aoserv.client.dto.LinuxId>
 {
 
+	private static final Resources RESOURCES = Resources.getResources(LinuxId.class.getPackage());
+
 	private static final long serialVersionUID = -6222776271442175855L;
 
 	public static ValidationResult validate(int id) {
-		if(id<0) return new InvalidResult(accessor, "LinuxId.validate.lessThanZero", id);
-		if(id>65535) return new InvalidResult(accessor, "LinuxId.validate.greaterThan64k", id);
+		if(id<0) return new InvalidResult(RESOURCES, "LinuxId.validate.lessThanZero", id);
+		if(id>65535) return new InvalidResult(RESOURCES, "LinuxId.validate.greaterThan64k", id);
 		return ValidResult.getInstance();
 	}
 

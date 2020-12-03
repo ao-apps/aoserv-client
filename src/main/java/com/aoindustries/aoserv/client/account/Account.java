@@ -25,7 +25,6 @@ package com.aoindustries.aoserv.client.account;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.Disablable;
 import com.aoindustries.aoserv.client.SimpleAOClient;
-import static com.aoindustries.aoserv.client.account.ApplicationResources.accessor;
 import com.aoindustries.aoserv.client.billing.MonthlyCharge;
 import com.aoindustries.aoserv.client.billing.NoticeLog;
 import com.aoindustries.aoserv.client.billing.NoticeLogTable;
@@ -58,6 +57,7 @@ import com.aoindustries.aoserv.client.ticket.Ticket;
 import com.aoindustries.collections.AoCollections;
 import com.aoindustries.collections.IntList;
 import com.aoindustries.dto.DtoFactory;
+import com.aoindustries.i18n.Resources;
 import com.aoindustries.io.FastExternalizable;
 import com.aoindustries.io.FastObjectInput;
 import com.aoindustries.io.FastObjectOutput;
@@ -107,6 +107,8 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class Account extends CachedObjectAccountNameKey<Account> implements Disablable, Comparable<Account> {
 
+	private static final Resources RESOURCES = Resources.getResources(Account.class.getPackage());
+
 	/**
 	 * The unique, case-insensitive identifier for an {@link Account}.  Account names must:
 	 * <ul>
@@ -137,34 +139,34 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		 * Validates a name.
 		 */
 		public static ValidationResult validate(String name) {
-			if(name==null) return new InvalidResult(accessor, "Account.Name.validate.isNull");
+			if(name==null) return new InvalidResult(RESOURCES, "Account.Name.validate.isNull");
 			int len=name.length();
 
-			if(len<MIN_LENGTH) return new InvalidResult(accessor, "Account.Name.validate.tooShort", MIN_LENGTH, len);
-			if(len>MAX_LENGTH) return new InvalidResult(accessor, "Account.Name.validate.tooLong", MAX_LENGTH, len);
+			if(len<MIN_LENGTH) return new InvalidResult(RESOURCES, "Account.Name.validate.tooShort", MIN_LENGTH, len);
+			if(len>MAX_LENGTH) return new InvalidResult(RESOURCES, "Account.Name.validate.tooLong", MAX_LENGTH, len);
 
 			char ch=name.charAt(0);
 			if(
 				(ch<'A' || ch>'Z')
 				&& (ch<'a' || ch>'z')
-			) return new InvalidResult(accessor, "Account.Name.validate.mustStartAlpha");
+			) return new InvalidResult(RESOURCES, "Account.Name.validate.mustStartAlpha");
 
 			ch=name.charAt(len-1);
 			if(
 				(ch<'A' || ch>'Z')
 				&& (ch<'a' || ch>'z')
 				&& (ch<'0' || ch>'9')
-			) return new InvalidResult(accessor, "Account.Name.validate.mustEndAlphanumeric");
+			) return new InvalidResult(RESOURCES, "Account.Name.validate.mustEndAlphanumeric");
 
 			for(int pos=1;pos<(len-1);pos++) {
 				ch=name.charAt(pos);
 				if(ch=='_') {
-					if(name.charAt(pos-1)=='_') return new InvalidResult(accessor, "Account.Name.validate.consecutiveUnderscores", pos-1);
+					if(name.charAt(pos-1)=='_') return new InvalidResult(RESOURCES, "Account.Name.validate.consecutiveUnderscores", pos-1);
 				} else if(
 					(ch<'A' || ch>'Z')
 					&& (ch<'a' || ch>'z')
 					&& (ch<'0' || ch>'9')
-				) return new InvalidResult(accessor, "Account.Name.validate.invalidCharacter", ch, pos);
+				) return new InvalidResult(RESOURCES, "Account.Name.validate.invalidCharacter", ch, pos);
 			}
 			return ValidResult.getInstance();
 		}
