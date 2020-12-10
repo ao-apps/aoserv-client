@@ -41,7 +41,7 @@ import java.util.List;
  */
 final public class Category extends CachedObjectIntegerKey<Category> {
 
-	private static final Resources RESOURCES = Resources.getResources(Category.class.getPackage());
+	private static final Resources RESOURCES = Resources.getResources(Category.class);
 
 	static final int
 		COLUMN_PKEY=0,
@@ -122,7 +122,7 @@ final public class Category extends CachedObjectIntegerKey<Category> {
 
 	@Override
 	public String toStringImpl() throws IOException, SQLException {
-		return RESOURCES.getMessage("TicketCategory."+getDotPath()+".toString");
+		return RESOURCES.getMessage(getDotPath() + ".toString");
 	}
 
 	@Override

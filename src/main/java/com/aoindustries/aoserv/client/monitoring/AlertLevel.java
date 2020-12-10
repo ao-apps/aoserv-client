@@ -40,7 +40,7 @@ public enum AlertLevel {
 	CRITICAL,
 	UNKNOWN;
 
-	private static final Resources RESOURCES = Resources.getResources(AlertLevel.class.getPackage());
+	private static final Resources RESOURCES = Resources.getResources(AlertLevel.class);
 
 	private static final AlertLevel[] alertLevels = values();
 
@@ -54,6 +54,6 @@ public enum AlertLevel {
 
 	@Override
 	public String toString() {
-		return RESOURCES.getMessage("AlertLevel." + name() + ".toString");
+		return RESOURCES.getMessage(name() + ".toString");
 	}
 }

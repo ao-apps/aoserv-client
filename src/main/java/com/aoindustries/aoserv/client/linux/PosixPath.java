@@ -67,31 +67,31 @@ final public class PosixPath implements
 	Internable<PosixPath>
 {
 
-	private static final Resources RESOURCES = Resources.getResources(PosixPath.class.getPackage());
+	private static final Resources RESOURCES = Resources.getResources(PosixPath.class);
 
 	private static final long serialVersionUID = -4832121065303689152L;
 
 	public static ValidationResult validate(String path) {
 		// Be non-null
-		if(path==null) return new InvalidResult(RESOURCES, "PosixPath.validate.isNull");
+		if(path==null) return new InvalidResult(RESOURCES, "validate.isNull");
 		// Be non-empty
-		if(path.length()==0) return new InvalidResult(RESOURCES, "PosixPath.validate.empty");
+		if(path.length()==0) return new InvalidResult(RESOURCES, "validate.empty");
 		// Start with a /
 		char ch;
-		if((ch = path.charAt(0))!='/') return new InvalidResult(RESOURCES, "PosixPath.validate.startWithNonSlash", ch);
+		if((ch = path.charAt(0))!='/') return new InvalidResult(RESOURCES, "validate.startWithNonSlash", ch);
 		// Not contain any null characters
 		int i;
-		if((i = path.indexOf('\0'))!=-1) return new InvalidResult(RESOURCES, "PosixPath.validate.containsNullCharacter", i);
+		if((i = path.indexOf('\0'))!=-1) return new InvalidResult(RESOURCES, "validate.containsNullCharacter", i);
 		// Not contain any /../ or /./ path elements
-		if((i = path.indexOf("/../"))!=-1) return new InvalidResult(RESOURCES, "PosixPath.validate.containsDotDot", i);
-		if((i = path.indexOf("/./"))!=-1) return new InvalidResult(RESOURCES, "PosixPath.validate.containsDot", i);
+		if((i = path.indexOf("/../"))!=-1) return new InvalidResult(RESOURCES, "validate.containsDotDot", i);
+		if((i = path.indexOf("/./"))!=-1) return new InvalidResult(RESOURCES, "validate.containsDot", i);
 		// Not end with / unless "/"
-		if(path.length()>1 && path.endsWith("/")) return new InvalidResult(RESOURCES, "PosixPath.validate.endsSlash");
+		if(path.length()>1 && path.endsWith("/")) return new InvalidResult(RESOURCES, "validate.endsSlash");
 		// Not end with /.. or /.
-		if(path.endsWith("/.")) return new InvalidResult(RESOURCES, "PosixPath.validate.endsSlashDot");
-		if(path.endsWith("/..")) return new InvalidResult(RESOURCES, "PosixPath.validate.endsSlashDotDot");
+		if(path.endsWith("/.")) return new InvalidResult(RESOURCES, "validate.endsSlashDot");
+		if(path.endsWith("/..")) return new InvalidResult(RESOURCES, "validate.endsSlashDotDot");
 		// Not contain any // in the path
-		if((i = path.indexOf("//"))!=-1) return new InvalidResult(RESOURCES, "PosixPath.validate.containsDoubleSlash", i);
+		if((i = path.indexOf("//"))!=-1) return new InvalidResult(RESOURCES, "validate.containsDoubleSlash", i);
 		return ValidResult.getInstance();
 	}
 

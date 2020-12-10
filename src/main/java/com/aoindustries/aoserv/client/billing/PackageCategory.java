@@ -41,7 +41,7 @@ import java.sql.SQLException;
  */
 public final class PackageCategory extends GlobalObjectStringKey<PackageCategory> {
 
-	private static final Resources RESOURCES = Resources.getResources(PackageCategory.class.getPackage());
+	private static final Resources RESOURCES = Resources.getResources(PackageCategory.class);
 
 	static final int COLUMN_NAME=0;
 	static final String COLUMN_NAME_name = "name";
@@ -89,7 +89,7 @@ public final class PackageCategory extends GlobalObjectStringKey<PackageCategory
 
 	@Override
 	public String toStringImpl() {
-		return RESOURCES.getMessage("PackageCategory."+pkey+".toString");
+		return RESOURCES.getMessage(pkey + ".toString");
 	}
 
 	@Override

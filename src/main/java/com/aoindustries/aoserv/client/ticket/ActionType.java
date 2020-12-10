@@ -44,7 +44,7 @@ import java.sql.SQLException;
  */
 final public class ActionType extends GlobalObjectStringKey<ActionType> {
 
-	private static final Resources RESOURCES = Resources.getResources(ActionType.class.getPackage());
+	private static final Resources RESOURCES = Resources.getResources(ActionType.class);
 
 	static final int COLUMN_TYPE = 0;
 
@@ -99,7 +99,7 @@ final public class ActionType extends GlobalObjectStringKey<ActionType> {
 
 	@Override
 	public String toStringImpl() {
-		return RESOURCES.getMessage("TicketActionType."+pkey+".toString");
+		return RESOURCES.getMessage(pkey + ".toString");
 	}
 
 	@Override
@@ -113,11 +113,11 @@ final public class ActionType extends GlobalObjectStringKey<ActionType> {
 	 */
 	String generateSummary(AOServConnector connector, String oldValue, String newValue) throws IOException, SQLException {
 		if(oldValue==null) {
-			if(newValue==null) return RESOURCES.getMessage("TicketActionType."+pkey+".generatedSummary.null.null");
-			return RESOURCES.getMessage("TicketActionType."+pkey+".generatedSummary.null.notNull", newValue);
+			if(newValue == null) return RESOURCES.getMessage(pkey + ".generatedSummary.null.null");
+			return RESOURCES.getMessage(pkey + ".generatedSummary.null.notNull", newValue);
 		} else {
-			if(newValue==null) return RESOURCES.getMessage("TicketActionType."+pkey+".generatedSummary.notNull.null", oldValue);
-			return RESOURCES.getMessage("TicketActionType."+pkey+".generatedSummary.notNull.notNull", oldValue, newValue);
+			if(newValue == null) return RESOURCES.getMessage(pkey + ".generatedSummary.notNull.null", oldValue);
+			return RESOURCES.getMessage(pkey + ".generatedSummary.notNull.notNull", oldValue, newValue);
 		}
 	}
 }

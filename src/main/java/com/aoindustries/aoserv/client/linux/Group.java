@@ -59,7 +59,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class Group extends CachedObjectGroupNameKey<Group> implements Removable {
 
-	private static final Resources RESOURCES = Resources.getResources(Group.class.getPackage());
+	private static final Resources RESOURCES = Resources.getResources(Group.class);
 
 	/**
 	 * Represents a group ID that may be used by certain types of groups.  Group ids must:
@@ -92,36 +92,36 @@ final public class Group extends CachedObjectGroupNameKey<Group> implements Remo
 		 * Validates a group name.
 		 */
 		public static ValidationResult validate(String name) {
-			if(name==null) return new InvalidResult(RESOURCES, "Group.Name.validate.isNull");
+			if(name==null) return new InvalidResult(RESOURCES, "Name.validate.isNull");
 			int len = name.length();
-			if(len==0) return new InvalidResult(RESOURCES, "Group.Name.validate.isEmpty");
-			if(len > MAX_LENGTH) return new InvalidResult(RESOURCES, "Group.Name.validate.tooLong", MAX_LENGTH, len);
+			if(len==0) return new InvalidResult(RESOURCES, "Name.validate.isEmpty");
+			if(len > MAX_LENGTH) return new InvalidResult(RESOURCES, "Name.validate.tooLong", MAX_LENGTH, len);
 
 			// The first character must be [a-z]
 			char ch = name.charAt(0);
-			if(ch < 'a' || ch > 'z') return new InvalidResult(RESOURCES, "Group.Name.validate.startAToZ");
+			if(ch < 'a' || ch > 'z') return new InvalidResult(RESOURCES, "Name.validate.startAToZ");
 
 			// The rest may have additional characters
 			for (int c = 1; c < len; c++) {
 				ch = name.charAt(c);
-				if(ch==' ') return new InvalidResult(RESOURCES, "Group.Name.validate.noSpace");
-				if(ch<=0x21 || ch>0x7f) return new InvalidResult(RESOURCES, "Group.Name.validate.specialCharacter");
-				if(ch>='A' && ch<='Z') return new InvalidResult(RESOURCES, "Group.Name.validate.noCapital");
+				if(ch==' ') return new InvalidResult(RESOURCES, "Name.validate.noSpace");
+				if(ch<=0x21 || ch>0x7f) return new InvalidResult(RESOURCES, "Name.validate.specialCharacter");
+				if(ch>='A' && ch<='Z') return new InvalidResult(RESOURCES, "Name.validate.noCapital");
 				switch(ch) {
-					case ',' : return new InvalidResult(RESOURCES, "Group.Name.validate.comma");
-					case ':' : return new InvalidResult(RESOURCES, "Group.Name.validate.colon");
-					case '(' : return new InvalidResult(RESOURCES, "Group.Name.validate.leftParen");
-					case ')' : return new InvalidResult(RESOURCES, "Group.Name.validate.rightParen");
-					case '[' : return new InvalidResult(RESOURCES, "Group.Name.validate.leftSquare");
-					case ']' : return new InvalidResult(RESOURCES, "Group.Name.validate.rightSquare");
-					case '\'' : return new InvalidResult(RESOURCES, "Group.Name.validate.apostrophe");
-					case '"' : return new InvalidResult(RESOURCES, "Group.Name.validate.quote");
-					case '|' : return new InvalidResult(RESOURCES, "Group.Name.validate.verticalBar");
-					case '&' : return new InvalidResult(RESOURCES, "Group.Name.validate.ampersand");
-					case ';' : return new InvalidResult(RESOURCES, "Group.Name.validate.semicolon");
-					case '\\' : return new InvalidResult(RESOURCES, "Group.Name.validate.backslash");
-					case '/' : return new InvalidResult(RESOURCES, "Group.Name.validate.slash");
-					case '@' : return new InvalidResult(RESOURCES, "Group.Name.validate.at");
+					case ',' : return new InvalidResult(RESOURCES, "Name.validate.comma");
+					case ':' : return new InvalidResult(RESOURCES, "Name.validate.colon");
+					case '(' : return new InvalidResult(RESOURCES, "Name.validate.leftParen");
+					case ')' : return new InvalidResult(RESOURCES, "Name.validate.rightParen");
+					case '[' : return new InvalidResult(RESOURCES, "Name.validate.leftSquare");
+					case ']' : return new InvalidResult(RESOURCES, "Name.validate.rightSquare");
+					case '\'' : return new InvalidResult(RESOURCES, "Name.validate.apostrophe");
+					case '"' : return new InvalidResult(RESOURCES, "Name.validate.quote");
+					case '|' : return new InvalidResult(RESOURCES, "Name.validate.verticalBar");
+					case '&' : return new InvalidResult(RESOURCES, "Name.validate.ampersand");
+					case ';' : return new InvalidResult(RESOURCES, "Name.validate.semicolon");
+					case '\\' : return new InvalidResult(RESOURCES, "Name.validate.backslash");
+					case '/' : return new InvalidResult(RESOURCES, "Name.validate.slash");
+					case '@' : return new InvalidResult(RESOURCES, "Name.validate.at");
 				}
 			}
 			return ValidResult.getInstance();

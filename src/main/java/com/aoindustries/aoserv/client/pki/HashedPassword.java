@@ -58,7 +58,7 @@ final public class HashedPassword implements
 	DtoFactory<com.aoindustries.aoserv.client.dto.HashedPassword>
 {
 
-	private static final Resources RESOURCES = Resources.getResources(HashedPassword.class.getPackage());
+	private static final Resources RESOURCES = Resources.getResources(HashedPassword.class);
 
 	private static final long serialVersionUID = 6198625525641344394L;
 
@@ -69,17 +69,17 @@ final public class HashedPassword implements
 
 	public static ValidationResult validate(String hashedPassword) {
 		// May be null
-		if(hashedPassword==null) return new InvalidResult(RESOURCES, "HashedPassword.validate.isNull");
+		if(hashedPassword==null) return new InvalidResult(RESOURCES, "validate.isNull");
 		// Be non-empty
 		int len = hashedPassword.length();
-		if(len==0) return new InvalidResult(RESOURCES, "HashedPassword.validate.empty");
+		if(len==0) return new InvalidResult(RESOURCES, "validate.empty");
 		// May be *
 		if(!NO_PASSWORD.equals(hashedPassword)) {
 			// SHA1
 			if(len!=28) {
 				// Crypt
 				if(len!=13) {
-					return new InvalidResult(RESOURCES, "HashedPassword.validate.wrongLength");
+					return new InvalidResult(RESOURCES, "validate.wrongLength");
 				}
 			}
 		}

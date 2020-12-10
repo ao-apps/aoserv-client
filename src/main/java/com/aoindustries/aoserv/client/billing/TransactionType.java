@@ -46,7 +46,7 @@ import java.sql.SQLException;
  */
 public final class TransactionType extends GlobalObjectStringKey<TransactionType> {
 
-	private static final Resources RESOURCES = Resources.getResources(TransactionType.class.getPackage());
+	private static final Resources RESOURCES = Resources.getResources(TransactionType.class);
 
 	static final int COLUMN_NAME=0;
 	static final String COLUMN_NAME_name = "name";
@@ -73,7 +73,7 @@ public final class TransactionType extends GlobalObjectStringKey<TransactionType
 	}
 
 	public String getDescription() {
-		return RESOURCES.getMessage("TransactionType."+pkey+".description");
+		return RESOURCES.getMessage(pkey + ".description");
 	}
 
 	/**
@@ -89,7 +89,7 @@ public final class TransactionType extends GlobalObjectStringKey<TransactionType
 	}
 
 	public String getUnit() {
-		return RESOURCES.getMessage("TransactionType."+pkey+".unit");
+		return RESOURCES.getMessage(pkey + ".unit");
 	}
 
 	@Override
@@ -110,7 +110,7 @@ public final class TransactionType extends GlobalObjectStringKey<TransactionType
 
 	@Override
 	public String toStringImpl() {
-		return RESOURCES.getMessage("TransactionType."+pkey+".toString");
+		return RESOURCES.getMessage(pkey + ".toString");
 	}
 
 	@Override

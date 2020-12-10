@@ -39,7 +39,7 @@ import java.sql.SQLException;
  */
 final public class Permission extends GlobalObjectStringKey<Permission> {
 
-	private static final Resources RESOURCES = Resources.getResources(Permission.class.getPackage());
+	private static final Resources RESOURCES = Resources.getResources(Permission.class);
 
 	static final int COLUMN_NAME=0;
 	static final String COLUMN_SORT_ORDER_name = "sort_order";
@@ -90,7 +90,7 @@ final public class Permission extends GlobalObjectStringKey<Permission> {
 		 */
 		@Override
 		public String toString() {
-			return RESOURCES.getMessage("AOServPermission."+name()+".toString");
+			return RESOURCES.getMessage(name() + ".toString");
 		}
 	}
 
@@ -108,14 +108,14 @@ final public class Permission extends GlobalObjectStringKey<Permission> {
 
 	@Override
 	public String toStringImpl() {
-		return RESOURCES.getMessage("AOServPermission."+pkey+".toString");
+		return RESOURCES.getMessage(pkey + ".toString");
 	}
 
 	/**
 	 * Gets the locale-specific description of this permission.
 	 */
 	public String getDescription() {
-		return RESOURCES.getMessage("AOServPermission."+pkey+".description");
+		return RESOURCES.getMessage(pkey + ".description");
 	}
 
 	@Override

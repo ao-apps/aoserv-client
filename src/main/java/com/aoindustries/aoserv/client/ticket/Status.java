@@ -42,7 +42,7 @@ import java.sql.SQLException;
  */
 final public class Status extends GlobalObjectStringKey<Status> implements Comparable<Status> {
 
-	private static final Resources RESOURCES = Resources.getResources(Status.class.getPackage());
+	private static final Resources RESOURCES = Resources.getResources(Status.class);
 
 	static final int COLUMN_STATUS = 0;
 	static final int COLUMN_SORT_ORDER = 1;
@@ -104,14 +104,14 @@ final public class Status extends GlobalObjectStringKey<Status> implements Compa
 
 	@Override
 	public String toStringImpl() {
-		return RESOURCES.getMessage("TicketStatus."+pkey+".toString");
+		return RESOURCES.getMessage(pkey + ".toString");
 	}
 
 	/**
 	 * Localized description.
 	 */
 	public String getDescription() {
-		return RESOURCES.getMessage("TicketStatus."+pkey+".description");
+		return RESOURCES.getMessage(pkey + ".description");
 	}
 
 	@Override

@@ -59,7 +59,7 @@ import javax.swing.SwingUtilities;
  */
 public class TCPConnector extends AOServConnector {
 
-	private static final Resources RESOURCES = Resources.getResources(TCPConnector.class.getPackage());
+	private static final Resources RESOURCES = Resources.getResources(TCPConnector.class);
 
 	/**
 	 * Close cache monitor after 90 minutes of inactivity,
@@ -273,7 +273,7 @@ public class TCPConnector extends AOServConnector {
 	@Override
 	protected final SocketConnection getConnection(int maxConnections) throws InterruptedIOException, IOException {
 		if(SwingUtilities.isEventDispatchThread()) {
-			getLogger().log(Level.WARNING, null, new LocalizedIllegalStateException(RESOURCES, "TCPConnector.getConnection.isEventDispatchThread"));
+			getLogger().log(Level.WARNING, null, new LocalizedIllegalStateException(RESOURCES, "getConnection.isEventDispatchThread"));
 		}
 		startCacheMonitor();
 		SocketConnection conn = pool.getConnection(maxConnections);

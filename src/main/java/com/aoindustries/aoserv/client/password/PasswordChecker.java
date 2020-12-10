@@ -40,7 +40,7 @@ import java.util.List;
  */
 final public class PasswordChecker {
 
-	private static final Resources RESOURCES = Resources.getResources(PasswordChecker.class.getPackage());
+	private static final Resources RESOURCES = Resources.getResources(PasswordChecker.class);
 
 	/**
 	 * The different ways months may be represented in the English
@@ -59,17 +59,17 @@ final public class PasswordChecker {
 		"dec","december"
 	};
 
-	private static final String GOOD_KEY = "PasswordChecker.good";
+	private static final String GOOD_KEY = "good";
 
 	/**
 	 * The categories that are checked.
 	 */
 	private static final String[] categoryKeys={
-		"PasswordChecker.category.length",
-		"PasswordChecker.category.characters",
-		"PasswordChecker.category.case",
-		"PasswordChecker.category.dates",
-		"PasswordChecker.category.dictionary"
+		"category.length",
+		"category.characters",
+		"category.case",
+		"category.dates",
+		"category.dictionary"
 	};
 	public static final int NUM_CATEGORIES=categoryKeys.length;
 
@@ -124,7 +124,7 @@ final public class PasswordChecker {
 			 *
 			 * Must be at least eight characters
 			 */
-			if (passwordLen < (strength==PasswordStrength.SUPER_LAX?6:8)) results.get(0).result = RESOURCES.getMessage(strength==PasswordStrength.SUPER_LAX ? "PasswordChecker.length.atLeastSix" : "PasswordChecker.length.atLeastEight");
+			if (passwordLen < (strength==PasswordStrength.SUPER_LAX?6:8)) results.get(0).result = RESOURCES.getMessage(strength==PasswordStrength.SUPER_LAX ? "length.atLeastSix" : "length.atLeastEight");
 
 			/*
 			 * Gather password stats
@@ -148,9 +148,9 @@ final public class PasswordChecker {
 			 * 2) Must not be all numbers
 			 * 3) Must not contain a space
 			 */
-			if ((numbercount + specialcount) == passwordLen) results.get(1).result = RESOURCES.getMessage("PasswordChecker.characters.notOnlyNumbers");
-			else if (strength!=PasswordStrength.SUPER_LAX && (lowercount + uppercount + specialcount) == passwordLen) results.get(1).result = RESOURCES.getMessage("PasswordChecker.characters.numbersAndPunctuation");
-			else if (password.indexOf(' ')!=-1) results.get(1).result = RESOURCES.getMessage("PasswordChecker.characters.notContainSpace");
+			if ((numbercount + specialcount) == passwordLen) results.get(1).result = RESOURCES.getMessage("characters.notOnlyNumbers");
+			else if (strength!=PasswordStrength.SUPER_LAX && (lowercount + uppercount + specialcount) == passwordLen) results.get(1).result = RESOURCES.getMessage("characters.numbersAndPunctuation");
+			else if (password.indexOf(' ')!=-1) results.get(1).result = RESOURCES.getMessage("characters.notContainSpace");
 
 			/*
 			 * Must use different cases
@@ -164,7 +164,7 @@ final public class PasswordChecker {
 					|| (uppercount > 1 && lowercount == 0)
 					|| (lowercount == 0 && uppercount == 0)
 				)
-			) results.get(2).result = RESOURCES.getMessage("PasswordChecker.case.capitalAndLower");
+			) results.get(2).result = RESOURCES.getMessage("case.capitalAndLower");
 
 			/*
 			 * Generate the backwards version of the password
@@ -182,7 +182,7 @@ final public class PasswordChecker {
 			 * Must not be the same as your username
 			 */
 			if(username!=null && username.toString().equalsIgnoreCase(password)) {
-				results.get(4).result = RESOURCES.getMessage("PasswordChecker.dictionary.notSameAsUsername");
+				results.get(4).result = RESOURCES.getMessage("dictionary.notSameAsUsername");
 			}
 
 			/*
@@ -204,7 +204,7 @@ final public class PasswordChecker {
 						break;
 					}
 				}
-				if (!goodb) results.get(3).result = RESOURCES.getMessage("PasswordChecker.dates.noDate");
+				if (!goodb) results.get(3).result = RESOURCES.getMessage("dates.noDate");
 
 				if(results.get(4).result.equals(RESOURCES.getMessage(GOOD_KEY))) {
 					/*
@@ -252,11 +252,11 @@ final public class PasswordChecker {
 						}
 					}
 					if (longest.length() > 0) {
-						results.get(4).result = RESOURCES.getMessage("PasswordChecker.dictionary.basedOnWord", longest);
+						results.get(4).result = RESOURCES.getMessage("dictionary.basedOnWord", longest);
 					}
 				}
 			}
-		} else results.get(0).result = RESOURCES.getMessage("PasswordChecker.length.noPassword");
+		} else results.get(0).result = RESOURCES.getMessage("length.noPassword");
 		return results;
 	}
 /**

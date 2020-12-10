@@ -41,7 +41,7 @@ import java.sql.SQLException;
  */
 final public class TicketType extends GlobalObjectStringKey<TicketType> {
 
-	private static final Resources RESOURCES = Resources.getResources(TicketType.class.getPackage());
+	private static final Resources RESOURCES = Resources.getResources(TicketType.class);
 
 	static final int COLUMN_TYPE=0;
 	static final String COLUMN_TYPE_name = "type";
@@ -65,7 +65,7 @@ final public class TicketType extends GlobalObjectStringKey<TicketType> {
 
 	@Override
 	public String toStringImpl() {
-		return RESOURCES.getMessage("TicketType."+pkey+".toString");
+		return RESOURCES.getMessage(pkey + ".toString");
 	}
 
 	@Override

@@ -70,7 +70,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class User extends CachedObjectUserNameKey<User> implements PasswordProtected, Removable, Disablable {
 
-	private static final Resources RESOURCES = Resources.getResources(User.class.getPackage());
+	private static final Resources RESOURCES = Resources.getResources(User.class);
 
 	/**
 	 * Used for the various user-provided fields in the <code>/etc/passwd</code> file.
@@ -101,10 +101,10 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		 */
 		public static ValidationResult validate(String value) {
 			// Be non-null
-			if(value==null) return new InvalidResult(RESOURCES, "User.Gecos.validate.isNull");
+			if(value==null) return new InvalidResult(RESOURCES, "Gecos.validate.isNull");
 			int len = value.length();
-			if(len==0) return new InvalidResult(RESOURCES, "User.Gecos.validate.isEmpty");
-			if(len>MAX_LENGTH) return new InvalidResult(RESOURCES, "User.Gecos.validate.tooLong", MAX_LENGTH, len);
+			if(len==0) return new InvalidResult(RESOURCES, "Gecos.validate.isEmpty");
+			if(len>MAX_LENGTH) return new InvalidResult(RESOURCES, "Gecos.validate.tooLong", MAX_LENGTH, len);
 
 			for (int c = 0; c < len; c++) {
 				char ch = value.charAt(c);
@@ -130,7 +130,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 					&& ch != '?'
 					&& ch != '\''
 					&& ch != '+'
-				) return new InvalidResult(RESOURCES, "User.Gecos.validate.invalidCharacter", ch);
+				) return new InvalidResult(RESOURCES, "Gecos.validate.invalidCharacter", ch);
 			}
 			return ValidResult.getInstance();
 		}
@@ -277,36 +277,36 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		 * Validates a {@link User} name.
 		 */
 		public static ValidationResult validate(String name) {
-			if(name==null) return new InvalidResult(RESOURCES, "User.Name.validate.isNull");
+			if(name==null) return new InvalidResult(RESOURCES, "Name.validate.isNull");
 			int len = name.length();
-			if(len==0) return new InvalidResult(RESOURCES, "User.Name.validate.isEmpty");
-			if(len > LINUX_NAME_MAX_LENGTH) return new InvalidResult(RESOURCES, "User.Name.validate.tooLong", LINUX_NAME_MAX_LENGTH, len);
+			if(len==0) return new InvalidResult(RESOURCES, "Name.validate.isEmpty");
+			if(len > LINUX_NAME_MAX_LENGTH) return new InvalidResult(RESOURCES, "Name.validate.tooLong", LINUX_NAME_MAX_LENGTH, len);
 
 			// The first character must be [a-z]
 			char ch = name.charAt(0);
-			if(ch < 'a' || ch > 'z') return new InvalidResult(RESOURCES, "User.Name.validate.startAToZ");
+			if(ch < 'a' || ch > 'z') return new InvalidResult(RESOURCES, "Name.validate.startAToZ");
 
 			// The rest may have additional characters
 			boolean hasAt = false;
 			for (int c = 1; c < len; c++) {
 				ch = name.charAt(c);
-				if(ch==' ') return new InvalidResult(RESOURCES, "User.Name.validate.noSpace");
-				if(ch<=0x21 || ch>0x7f) return new InvalidResult(RESOURCES, "User.Name.validate.specialCharacter");
-				if(ch>='A' && ch<='Z') return new InvalidResult(RESOURCES, "User.Name.validate.noCapital");
+				if(ch==' ') return new InvalidResult(RESOURCES, "Name.validate.noSpace");
+				if(ch<=0x21 || ch>0x7f) return new InvalidResult(RESOURCES, "Name.validate.specialCharacter");
+				if(ch>='A' && ch<='Z') return new InvalidResult(RESOURCES, "Name.validate.noCapital");
 				switch(ch) {
-					case ',' : return new InvalidResult(RESOURCES, "User.Name.validate.comma");
-					case ':' : return new InvalidResult(RESOURCES, "User.Name.validate.colon");
-					case '(' : return new InvalidResult(RESOURCES, "User.Name.validate.leftParen");
-					case ')' : return new InvalidResult(RESOURCES, "User.Name.validate.rightParen");
-					case '[' : return new InvalidResult(RESOURCES, "User.Name.validate.leftSquare");
-					case ']' : return new InvalidResult(RESOURCES, "User.Name.validate.rightSquare");
-					case '\'' : return new InvalidResult(RESOURCES, "User.Name.validate.apostrophe");
-					case '"' : return new InvalidResult(RESOURCES, "User.Name.validate.quote");
-					case '|' : return new InvalidResult(RESOURCES, "User.Name.validate.verticalBar");
-					case '&' : return new InvalidResult(RESOURCES, "User.Name.validate.ampersand");
-					case ';' : return new InvalidResult(RESOURCES, "User.Name.validate.semicolon");
-					case '\\' : return new InvalidResult(RESOURCES, "User.Name.validate.backslash");
-					case '/' : return new InvalidResult(RESOURCES, "User.Name.validate.slash");
+					case ',' : return new InvalidResult(RESOURCES, "Name.validate.comma");
+					case ':' : return new InvalidResult(RESOURCES, "Name.validate.colon");
+					case '(' : return new InvalidResult(RESOURCES, "Name.validate.leftParen");
+					case ')' : return new InvalidResult(RESOURCES, "Name.validate.rightParen");
+					case '[' : return new InvalidResult(RESOURCES, "Name.validate.leftSquare");
+					case ']' : return new InvalidResult(RESOURCES, "Name.validate.rightSquare");
+					case '\'' : return new InvalidResult(RESOURCES, "Name.validate.apostrophe");
+					case '"' : return new InvalidResult(RESOURCES, "Name.validate.quote");
+					case '|' : return new InvalidResult(RESOURCES, "Name.validate.verticalBar");
+					case '&' : return new InvalidResult(RESOURCES, "Name.validate.ampersand");
+					case ';' : return new InvalidResult(RESOURCES, "Name.validate.semicolon");
+					case '\\' : return new InvalidResult(RESOURCES, "Name.validate.backslash");
+					case '/' : return new InvalidResult(RESOURCES, "Name.validate.slash");
 					case '@' : hasAt = true; break;
 				}
 			}
@@ -316,7 +316,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 				// Must also be a valid email address
 				ValidationResult result = Email.validate(name);
 				if(!result.isValid()) return result;
-				if(name.startsWith("cyrus@")) return new InvalidResult(RESOURCES, "User.Name.validate.startWithCyrusAt");
+				if(name.startsWith("cyrus@")) return new InvalidResult(RESOURCES, "Name.validate.startWithCyrusAt");
 			}
 			assert com.aoindustries.aoserv.client.account.User.Name.validate(name).isValid() : "A Linux User.Name is always a valid Account User.Name.";
 			return ValidResult.getInstance();

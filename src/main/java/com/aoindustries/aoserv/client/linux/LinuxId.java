@@ -49,13 +49,13 @@ final public class LinuxId implements
 	DtoFactory<com.aoindustries.aoserv.client.dto.LinuxId>
 {
 
-	private static final Resources RESOURCES = Resources.getResources(LinuxId.class.getPackage());
+	private static final Resources RESOURCES = Resources.getResources(LinuxId.class);
 
 	private static final long serialVersionUID = -6222776271442175855L;
 
 	public static ValidationResult validate(int id) {
-		if(id<0) return new InvalidResult(RESOURCES, "LinuxId.validate.lessThanZero", id);
-		if(id>65535) return new InvalidResult(RESOURCES, "LinuxId.validate.greaterThan64k", id);
+		if(id<0) return new InvalidResult(RESOURCES, "validate.lessThanZero", id);
+		if(id>65535) return new InvalidResult(RESOURCES, "validate.greaterThan64k", id);
 		return ValidResult.getInstance();
 	}
 

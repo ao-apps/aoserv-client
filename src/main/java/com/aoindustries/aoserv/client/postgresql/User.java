@@ -57,7 +57,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class User extends CachedObjectUserNameKey<User> implements Removable, PasswordProtected, Disablable {
 
-	private static final Resources RESOURCES = Resources.getResources(User.class.getPackage());
+	private static final Resources RESOURCES = Resources.getResources(User.class);
 
 	/**
 	 * Represents a PostgreSQL user ID.  PostgreSQL user ids must:
@@ -86,17 +86,17 @@ final public class User extends CachedObjectUserNameKey<User> implements Removab
 		 * Validates a PostgreSQL user id.
 		 */
 		public static ValidationResult validate(String id) {
-			if(id==null) return new InvalidResult(RESOURCES, "User.Name.validate.isNull");
+			if(id==null) return new InvalidResult(RESOURCES, "Name.validate.isNull");
 			int len = id.length();
-			if(len==0) return new InvalidResult(RESOURCES, "User.Name.validate.isEmpty");
-			if(len > POSTGRESQL_NAME_MAX_LENGTH) return new InvalidResult(RESOURCES, "User.Name.validate.tooLong", POSTGRESQL_NAME_MAX_LENGTH, len);
+			if(len==0) return new InvalidResult(RESOURCES, "Name.validate.isEmpty");
+			if(len > POSTGRESQL_NAME_MAX_LENGTH) return new InvalidResult(RESOURCES, "Name.validate.tooLong", POSTGRESQL_NAME_MAX_LENGTH, len);
 
 			// The first character must be [a-z] or [0-9]
 			char ch = id.charAt(0);
 			if(
 				(ch < 'a' || ch > 'z')
 				&& (ch<'0' || ch>'9')
-			) return new InvalidResult(RESOURCES, "User.Name.validate.startAtoZor0to9");
+			) return new InvalidResult(RESOURCES, "Name.validate.startAtoZor0to9");
 
 			// The rest may have additional characters
 			for (int c = 1; c < len; c++) {
@@ -105,7 +105,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Removab
 					(ch<'a' || ch>'z')
 					&& (ch<'0' || ch>'9')
 					&& ch!='_'
-				) return new InvalidResult(RESOURCES, "User.Name.validate.illegalCharacter");
+				) return new InvalidResult(RESOURCES, "Name.validate.illegalCharacter");
 			}
 			assert com.aoindustries.aoserv.client.linux.User.Name.validate(id).isValid() : "A PostgreSQL User.Name is always a valid Linux User.Name.";
 			return ValidResult.getInstance();

@@ -53,7 +53,7 @@ import java.util.Objects;
  */
 final public class Action extends CachedObjectIntegerKey<Action> {
 
-	private static final Resources RESOURCES = Resources.getResources(Action.class.getPackage());
+	private static final Resources RESOURCES = Resources.getResources(Action.class);
 
 	static final int
 		COLUMN_PKEY=0,
@@ -301,8 +301,8 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 			case ActionType.ASSIGN:
 				Administrator oldAssignedTo = getOldAssignedTo();
 				Administrator newAssignedTo = getNewAssignedTo();
-				oldValue = oldAssignedTo!=null ? oldAssignedTo.getName() : old_assigned_to!=null ? RESOURCES.getMessage("TicketAction.old_assigned_to.filtered") : null;
-				newValue = newAssignedTo!=null ? newAssignedTo.getName() : new_assigned_to!=null ? RESOURCES.getMessage("TicketAction.new_assigned_to.filtered") : null;
+				oldValue = oldAssignedTo!=null ? oldAssignedTo.getName() : old_assigned_to!=null ? RESOURCES.getMessage("old_assigned_to.filtered") : null;
+				newValue = newAssignedTo!=null ? newAssignedTo.getName() : new_assigned_to!=null ? RESOURCES.getMessage("new_assigned_to.filtered") : null;
 				break;
 			case ActionType.SET_CATEGORY:
 				Category oldCategory = getOldCategory();

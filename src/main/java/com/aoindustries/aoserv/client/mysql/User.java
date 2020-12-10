@@ -58,7 +58,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class User extends CachedObjectUserNameKey<User> implements PasswordProtected, Removable, Disablable {
 
-	private static final Resources RESOURCES = Resources.getResources(User.class.getPackage());
+	private static final Resources RESOURCES = Resources.getResources(User.class);
 
 	/**
 	 * Represents a MySQL user ID.  {@link User} ids must:
@@ -92,22 +92,22 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		 * Validates a {@link User} name.
 		 */
 		public static ValidationResult validate(String name) {
-			if(name==null) return new InvalidResult(RESOURCES, "User.Name.validate.isNull");
+			if(name==null) return new InvalidResult(RESOURCES, "Name.validate.isNull");
 			if(
 				// Allow specific system users that otherwise do not match our allowed username pattern
 				!"mysql.sys".equals(name)
 				&& !"mysql.session".equals(name)
 			) {
 				int len = name.length();
-				if(len==0) return new InvalidResult(RESOURCES, "User.Name.validate.isEmpty");
-				if(len > MYSQL_NAME_MAX_LENGTH) return new InvalidResult(RESOURCES, "User.Name.validate.tooLong", MYSQL_NAME_MAX_LENGTH, len);
+				if(len==0) return new InvalidResult(RESOURCES, "Name.validate.isEmpty");
+				if(len > MYSQL_NAME_MAX_LENGTH) return new InvalidResult(RESOURCES, "Name.validate.tooLong", MYSQL_NAME_MAX_LENGTH, len);
 
 				// The first character must be [a-z] or [0-9]
 				char ch = name.charAt(0);
 				if(
 					(ch < 'a' || ch > 'z')
 					&& (ch<'0' || ch>'9')
-				) return new InvalidResult(RESOURCES, "User.Name.validate.startAtoZor0to9");
+				) return new InvalidResult(RESOURCES, "Name.validate.startAtoZor0to9");
 
 				// The rest may have additional characters
 				for (int c = 1; c < len; c++) {
@@ -116,7 +116,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 						(ch<'a' || ch>'z')
 						&& (ch<'0' || ch>'9')
 						&& ch!='_'
-					) return new InvalidResult(RESOURCES, "User.Name.validate.illegalCharacter");
+					) return new InvalidResult(RESOURCES, "Name.validate.illegalCharacter");
 				}
 			}
 			assert com.aoindustries.aoserv.client.linux.User.Name.validate(name).isValid() : "A MySQL User.Name is always a valid Linux User.Name.";

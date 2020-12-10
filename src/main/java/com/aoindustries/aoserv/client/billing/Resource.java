@@ -44,7 +44,7 @@ import java.sql.SQLException;
  */
 final public class Resource extends GlobalObjectStringKey<Resource> {
 
-	private static final Resources RESOURCES = Resources.getResources(Resource.class.getPackage());
+	private static final Resources RESOURCES = Resources.getResources(Resource.class);
 
 	static final int COLUMN_NAME=0;
 	static final String COLUMN_NAME_name = "name";
@@ -97,12 +97,12 @@ final public class Resource extends GlobalObjectStringKey<Resource> {
 	}
 
 	public String getDisplayUnit(int quantity) {
-		if(quantity==1) return RESOURCES.getMessage("Resource."+pkey+".singularDisplayUnit", quantity);
-		else return RESOURCES.getMessage("Resource."+pkey+".pluralDisplayUnit", quantity);
+		if(quantity==1) return RESOURCES.getMessage(pkey + ".singularDisplayUnit", quantity);
+		else return RESOURCES.getMessage(pkey + ".pluralDisplayUnit", quantity);
 	}
 
 	public String getPerUnit(Object amount) {
-		return RESOURCES.getMessage("Resource."+pkey+".perUnit", amount);
+		return RESOURCES.getMessage(pkey + ".perUnit", amount);
 	}
 
 	@Override
@@ -117,17 +117,17 @@ final public class Resource extends GlobalObjectStringKey<Resource> {
 
 	@Override
 	public String toStringImpl() {
-		return RESOURCES.getMessage("Resource."+pkey+".toString");
+		return RESOURCES.getMessage(pkey + ".toString");
 	}
 
 	@Override
 	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_60)<=0) {
-			out.writeUTF(RESOURCES.getMessage("Resource."+pkey+".singularDisplayUnit", ""));
+			out.writeUTF(RESOURCES.getMessage(pkey + ".singularDisplayUnit", ""));
 		}
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_123)>=0 && protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_60)<=0) {
-			out.writeUTF(RESOURCES.getMessage("Resource."+pkey+".pluralDisplayUnit", ""));
+			out.writeUTF(RESOURCES.getMessage(pkey + ".pluralDisplayUnit", ""));
 			out.writeUTF(getPerUnit(""));
 		}
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_60)<=0) out.writeUTF(toString()); // description

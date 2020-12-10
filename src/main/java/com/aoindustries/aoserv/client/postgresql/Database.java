@@ -81,7 +81,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class Database extends CachedObjectIntegerKey<Database> implements Dumpable, Removable, JdbcProvider {
 
-	private static final Resources RESOURCES = Resources.getResources(Database.class.getPackage());
+	private static final Resources RESOURCES = Resources.getResources(Database.class);
 
 	/**
 	 * Represents a name that may be used for a PostgreSQL database.  Database names must:
@@ -115,10 +115,10 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 		 * Validates a PostgreSQL database name.
 		 */
 		public static ValidationResult validate(String name) {
-			if(name==null) return new InvalidResult(RESOURCES, "Database.Name.validate.isNull");
+			if(name==null) return new InvalidResult(RESOURCES, "Name.validate.isNull");
 			int len = name.length();
-			if(len==0) return new InvalidResult(RESOURCES, "Database.Name.validate.isEmpty");
-			if(len > MAX_LENGTH) return new InvalidResult(RESOURCES, "Database.Name.validate.tooLong", MAX_LENGTH, len);
+			if(len==0) return new InvalidResult(RESOURCES, "Name.validate.isEmpty");
+			if(len > MAX_LENGTH) return new InvalidResult(RESOURCES, "Name.validate.tooLong", MAX_LENGTH, len);
 
 			// Characters may contain [a-z,A-Z,0-9,_,-,.]
 			for (int c = 0; c < len; c++) {
@@ -131,7 +131,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 					&& ch != '-'
 					&& ch != '.'
 					&& ch != ' '
-				) return new InvalidResult(RESOURCES, "Database.Name.validate.illegalCharacter");
+				) return new InvalidResult(RESOURCES, "Name.validate.illegalCharacter");
 			}
 			return ValidResult.getInstance();
 		}

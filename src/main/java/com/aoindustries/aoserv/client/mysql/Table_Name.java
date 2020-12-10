@@ -54,7 +54,7 @@ final public class Table_Name implements
 	DtoFactory<com.aoindustries.aoserv.client.dto.MySQLTableName>
 {
 
-	private static final Resources RESOURCES = Resources.getResources(Table_Name.class.getPackage());
+	private static final Resources RESOURCES = Resources.getResources(Table_Name.class.getPackage(), null, "Table.Name.");
 
 	private static final long serialVersionUID = -4427431696460618301L;
 
@@ -68,10 +68,10 @@ final public class Table_Name implements
 	 */
 	// TODO: Add other characters allowed in Database.Name, such as space
 	public static ValidationResult validate(String name) {
-		if(name==null) return new InvalidResult(RESOURCES, "Table.Name.validate.isNull");
+		if(name==null) return new InvalidResult(RESOURCES, "validate.isNull");
 		int len = name.length();
-		if(len==0) return new InvalidResult(RESOURCES, "Table.Name.validate.isEmpty");
-		if(len > MAX_LENGTH) return new InvalidResult(RESOURCES, "Table.Name.validate.tooLong", MAX_LENGTH, len);
+		if(len==0) return new InvalidResult(RESOURCES, "validate.isEmpty");
+		if(len > MAX_LENGTH) return new InvalidResult(RESOURCES, "validate.tooLong", MAX_LENGTH, len);
 
 		// The first character must be [a-z], [A-Z], [0-9], or _
 		char ch = name.charAt(0);
@@ -80,7 +80,7 @@ final public class Table_Name implements
 			&& (ch < 'A' || ch > 'Z')
 			&& (ch < '0' || ch > '9')
 			&& ch != '_'
-		) return new InvalidResult(RESOURCES, "Table.Name.validate.badFirstCharacter");
+		) return new InvalidResult(RESOURCES, "validate.badFirstCharacter");
 
 		// The rest may have additional characters
 		for (int c = 1; c < len; c++) {
@@ -92,7 +92,7 @@ final public class Table_Name implements
 				&& ch != '_'
 				&& ch != '-'
 				&& ch != '$'
-			) return new InvalidResult(RESOURCES, "Table.Name.validate.illegalCharacter");
+			) return new InvalidResult(RESOURCES, "validate.illegalCharacter");
 		}
 		return ValidResult.getInstance();
 	}

@@ -66,7 +66,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class Server extends CachedObjectIntegerKey<Server> {
 
-	private static final Resources RESOURCES = Resources.getResources(Server.class.getPackage());
+	private static final Resources RESOURCES = Resources.getResources(Server.class);
 
 	/**
 	 * Represents a name that may be used for a PostgreSQL installation.  Names must:
@@ -96,17 +96,17 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 		 * Validates a PostgreSQL server name.
 		 */
 		public static ValidationResult validate(String name) {
-			if(name==null) return new InvalidResult(RESOURCES, "Server.Name.validate.isNull");
+			if(name==null) return new InvalidResult(RESOURCES, "Name.validate.isNull");
 			int len = name.length();
-			if(len==0) return new InvalidResult(RESOURCES, "Server.Name.validate.isEmpty");
-			if(len > MAX_LENGTH) return new InvalidResult(RESOURCES, "Server.Name.validate.tooLong", MAX_LENGTH, len);
+			if(len==0) return new InvalidResult(RESOURCES, "Name.validate.isEmpty");
+			if(len > MAX_LENGTH) return new InvalidResult(RESOURCES, "Name.validate.tooLong", MAX_LENGTH, len);
 
 			// The first character must be [a-z] or [0-9]
 			char ch = name.charAt(0);
 			if(
 				(ch < 'a' || ch > 'z')
 				&& (ch<'0' || ch>'9')
-			) return new InvalidResult(RESOURCES, "Server.Name.validate.startAtoZor0to9");
+			) return new InvalidResult(RESOURCES, "Name.validate.startAtoZor0to9");
 
 			// The rest may have additional characters
 			for (int c = 1; c < len; c++) {
@@ -117,7 +117,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 					&& ch!='.'
 					&& ch!='-'
 					&& ch!='_'
-				) return new InvalidResult(RESOURCES, "Server.Name.validate.illegalCharacter");
+				) return new InvalidResult(RESOURCES, "Name.validate.illegalCharacter");
 			}
 			return ValidResult.getInstance();
 		}

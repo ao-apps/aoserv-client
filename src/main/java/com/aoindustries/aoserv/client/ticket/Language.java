@@ -37,7 +37,7 @@ import java.sql.SQLException;
  */
 final public class Language extends GlobalObjectStringKey<Language> {
 
-	private static final Resources RESOURCES = Resources.getResources(Language.class.getPackage());
+	private static final Resources RESOURCES = Resources.getResources(Language.class);
 
 	static final int COLUMN_CODE = 0;
 	static final String COLUMN_CODE_name = "code";
@@ -57,7 +57,7 @@ final public class Language extends GlobalObjectStringKey<Language> {
 
 	@Override
 	public String toStringImpl() {
-		return RESOURCES.getMessage("Language."+pkey+".toString");
+		return RESOURCES.getMessage(pkey + ".toString");
 	}
 
 	public String getCode() {
