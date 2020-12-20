@@ -33,6 +33,7 @@ import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.security.Identifier;
+import com.aoindustries.security.SecurityStreamables;
 import com.aoindustries.security.SmallIdentifier;
 import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.UnmodifiableTimestamp;
@@ -205,8 +206,8 @@ public class Process extends AOServObject<SmallIdentifier,Process> implements Si
 	@Override
 	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
-			id = in.readSmallIdentifier();
-			connectorId = in.readNullIdentifier();
+			id = SecurityStreamables.readSmallIdentifier(in);
+			connectorId = SecurityStreamables.readNullIdentifier(in);
 			authenticated_user = InternUtils.intern(User.Name.valueOf(in.readNullUTF()));
 			effective_user = InternUtils.intern(User.Name.valueOf(in.readNullUTF()));
 			daemon_server = in.readCompressedInt();
@@ -302,8 +303,8 @@ public class Process extends AOServObject<SmallIdentifier,Process> implements Si
 			// Old clients had a 64-bit ID, just send them the low-order bits
 			out.writeLong(_connectorId == null ? -1 : _connectorId.getLo());
 		} else {
-			out.writeSmallIdentifier(_id);
-			out.writeNullIdentifier(_connectorId);
+			SecurityStreamables.writeSmallIdentifier(_id, out);
+			SecurityStreamables.writeNullIdentifier(_connectorId, out);
 		}
 		out.writeNullUTF(Objects.toString(_authenticated_user, null));
 		out.writeNullUTF(Objects.toString(_effective_user, null));

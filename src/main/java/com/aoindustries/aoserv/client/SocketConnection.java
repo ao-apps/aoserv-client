@@ -28,6 +28,7 @@ import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.lang.AutoCloseables;
 import com.aoindustries.lang.Throwables;
 import com.aoindustries.security.Identifier;
+import com.aoindustries.security.SecurityStreamables;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -98,11 +99,11 @@ final public class SocketConnection extends AOServConnection {
 				connectorId = connector.id;
 				if(connectorId == null) {
 					// Hold the idLock when need a connector ID
-					out.writeNullIdentifier(null);
+					SecurityStreamables.writeNullIdentifier(null, out);
 					out.flush();
 					if(Thread.interrupted()) throw new InterruptedIOException();
 					if(!in.readBoolean()) throw new IOException(in.readUTF());
-					connectorId = in.readIdentifier();
+					connectorId = SecurityStreamables.readIdentifier(in);
 					connector.id = connectorId;
 					hadConnectorId = false;
 				} else {
@@ -111,7 +112,7 @@ final public class SocketConnection extends AOServConnection {
 			}
 			if(hadConnectorId) {
 				// Finish connecting outside the idLock when already have a connector ID
-				out.writeNullIdentifier(connectorId);
+				SecurityStreamables.writeNullIdentifier(connectorId, out);
 				out.flush();
 				if(Thread.interrupted()) throw new InterruptedIOException();
 				if(!in.readBoolean()) throw new IOException(in.readUTF());
