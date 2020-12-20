@@ -55,7 +55,7 @@ import java.security.NoSuchAlgorithmException;
 final public class HashedPassword implements
 	Comparable<HashedPassword>,
 	Serializable,
-	ObjectInputValidation,
+	ObjectInputValidation, // TODO: Is ObjectInputValidation overkill when already validated in readObject?  Review all uses
 	DtoFactory<com.aoindustries.aoserv.client.dto.HashedPassword>
 {
 
