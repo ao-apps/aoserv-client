@@ -51,6 +51,7 @@ import java.security.NoSuchAlgorithmException;
  *
  * @author  AO Industries, Inc.
  */
+// TODO: Support new HashedPassword from ao-lang
 final public class HashedPassword implements
 	Comparable<HashedPassword>,
 	Serializable,
@@ -65,6 +66,7 @@ final public class HashedPassword implements
 	/**
 	 * Indicates that no password is set.
 	 */
+	// TODO: Use value from ao-lang:HashedPassword
 	public static final String NO_PASSWORD = "*";
 
 	public static ValidationResult validate(String hashedPassword) {
@@ -90,12 +92,15 @@ final public class HashedPassword implements
 	 * Performs a one-way hash of the plaintext value using SHA-1.
 	 *
 	 * @exception  WrappedException  if any problem occurs.
+	 *
+	 * @deprecated  SHA-1 along is insufficient for password storage, please use
+	 *              {@link com.aoindustries.security.HashedPassword}.
 	 */
+	@Deprecated
 	public static String hash(String plaintext) throws WrappedException {
 		try {
 			MessageDigest md = MessageDigest.getInstance("SHA-1");
-			md.update(plaintext.getBytes(StandardCharsets.UTF_8));
-			return new String(Base64Coder.encode(md.digest()));
+			return new String(Base64Coder.encode(md.digest(plaintext.getBytes(StandardCharsets.UTF_8))));
 		} catch(NoSuchAlgorithmException err) {
 			throw new WrappedException(err);
 		}
