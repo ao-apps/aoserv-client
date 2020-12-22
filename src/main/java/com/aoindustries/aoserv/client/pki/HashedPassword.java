@@ -51,7 +51,7 @@ import java.security.NoSuchAlgorithmException;
  *
  * @author  AO Industries, Inc.
  */
-// TODO: Support new HashedPassword from ao-lang
+// TODO: Extend new HashedPassword from ao-security
 final public class HashedPassword implements
 	Comparable<HashedPassword>,
 	Serializable,
@@ -65,9 +65,11 @@ final public class HashedPassword implements
 
 	/**
 	 * Indicates that no password is set.
+	 *
+	 * @deprecated  Please use {@link com.aoindustries.security.HashedPassword#NO_PASSWORD_VALUE}
 	 */
-	// TODO: Use value from ao-lang:HashedPassword
-	public static final String NO_PASSWORD = "*";
+	@Deprecated
+	public static final String NO_PASSWORD = com.aoindustries.security.HashedPassword.NO_PASSWORD_VALUE;
 
 	public static ValidationResult validate(String hashedPassword) {
 		// May be null
@@ -176,7 +178,7 @@ final public class HashedPassword implements
 	@SuppressWarnings("deprecation")
 	public boolean passwordMatches(String plaintext) {
 		if(hashedPassword.length()==28) return hash(plaintext).equals(hashedPassword);
-		if(hashedPassword.length()==13) return com.aoindustries.util.UnixCrypt.crypt(plaintext, hashedPassword.substring(0,2)).equals(hashedPassword);
+		if(hashedPassword.length()==13) return com.aoindustries.security.UnixCrypt.crypt(plaintext, hashedPassword.substring(0,2)).equals(hashedPassword);
 		return false;
 	}
 }

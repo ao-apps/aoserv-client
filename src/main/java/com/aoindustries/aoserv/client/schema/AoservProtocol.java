@@ -25,6 +25,7 @@ package com.aoindustries.aoserv.client.schema;
 import com.aoindustries.aoserv.client.GlobalObjectStringKey;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
+import com.aoindustries.security.HashedPassword;
 import java.io.EOFException;
 import java.io.IOException;
 import java.sql.Date;
@@ -609,7 +610,7 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
 	/**
 	 * Indicates that a field was filtered by the server.
 	 */
-	public static final String FILTERED="*";
+	public static final String FILTERED = HashedPassword.NO_PASSWORD_VALUE; // "*";
 
 	public static void checkResult(int code, StreamableInput in) throws IOException, SQLException {
 		if(in == null) throw new IllegalArgumentException("in is null");

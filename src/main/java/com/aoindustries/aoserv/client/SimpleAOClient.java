@@ -3283,7 +3283,7 @@ final public class SimpleAOClient {
 	@Deprecated
 	public static String crypt(String password, String salt) {
 		if(password==null || password.length()==0) return "*";
-		return salt==null || salt.length()==0?com.aoindustries.util.UnixCrypt.crypt(password):com.aoindustries.util.UnixCrypt.crypt(password, salt);
+		return salt==null || salt.length()==0?com.aoindustries.security.UnixCrypt.crypt(password):com.aoindustries.security.UnixCrypt.crypt(password, salt);
 	}
 
 	/**
