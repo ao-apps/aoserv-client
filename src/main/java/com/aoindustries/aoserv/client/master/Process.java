@@ -79,6 +79,8 @@ public class Process extends AOServObject<SmallIdentifier,Process> implements Si
 	protected int priority;
 	protected String state;
 	private String[] command;
+	// TODO: Add tracking of which daemon(s) is(are) currently connected to by the master process.
+	//       This would greatly aid in seeing when a daemon is stalling the system.
 	protected UnmodifiableTimestamp state_start_time;
 
 	private AOServTable<SmallIdentifier,Process> table;
