@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2021-01-02T14:19:55-06:00"
+		dateModified="2021-01-09T10:28:06-06:00"
 	>
 		<c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
 			<changelog:release
@@ -53,6 +53,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						sub-project is used only for development and is never deployed to artifact repositories.
 					</li>
 					<li>Updated dependencies.</li>
+					<li>Fixed NPE in <code>master_processes.command</code>.</li>
 				</ul>
 				<!-- TODO:
 				<ul>
