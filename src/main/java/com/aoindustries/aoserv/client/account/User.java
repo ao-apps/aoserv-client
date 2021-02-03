@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -51,7 +51,6 @@ import com.aoindustries.validation.ValidationResult;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInput;
-import java.io.ObjectInputValidation;
 import java.io.ObjectOutput;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -104,7 +103,6 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 	public static class Name implements
 		Comparable<Name>,
 		FastExternalizable,
-		ObjectInputValidation,
 		DtoFactory<com.aoindustries.aoserv.client.dto.UserName>,
 		Internable<Name>
 	{
@@ -177,6 +175,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 
 		protected String name;
 
+		@SuppressWarnings("OverridableMethodCallInConstructor")
 		protected Name(String name, boolean validate) throws ValidationException {
 			this.name = name;
 			if(validate) validate();
@@ -289,10 +288,6 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 			} finally {
 				fastIn.unwrap();
 			}
-		}
-
-		@Override
-		public void validateObject() throws InvalidObjectException {
 			try {
 				validate();
 			} catch(ValidationException err) {
@@ -310,8 +305,8 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 	;
 	static final String COLUMN_USERNAME_name = "username";
 
-	Account.Name packageName;
-	int disable_log;
+	private Account.Name packageName;
+	private int disable_log;
 
 	public void addAdministrator(
 		String name,

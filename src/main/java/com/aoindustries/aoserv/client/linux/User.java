@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -50,7 +50,6 @@ import com.aoindustries.validation.ValidationResult;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
-import java.io.ObjectInputValidation;
 import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -83,7 +82,6 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 	final public static class Gecos implements
 		Comparable<Gecos>,
 		Serializable,
-		ObjectInputValidation,
 		DtoFactory<com.aoindustries.aoserv.client.dto.Gecos>,
 		Internable<Gecos> {
 
@@ -173,11 +171,6 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		 */
 		private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
 			ois.defaultReadObject();
-			validateObject();
-		}
-
-		@Override
-		public void validateObject() throws InvalidObjectException {
 			try {
 				validate();
 			} catch(ValidationException err) {
@@ -260,8 +253,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 	// TODO: Update for IEEE Std 1003.1.2001 "3.426 User Name"? https://paulgorman.org/technical/presentations/linux_username_conventions.pdf
 	// TODO: Rename "LinuxName" and combined with "GroupName" as "PosixName" (and an associated "PosixPortableFilename")?
 	public static class Name extends com.aoindustries.aoserv.client.account.User.Name implements
-		FastExternalizable,
-		ObjectInputValidation
+		FastExternalizable
 	{
 
 		/**

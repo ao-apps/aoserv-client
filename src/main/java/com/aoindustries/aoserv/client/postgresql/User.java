@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -39,7 +39,6 @@ import com.aoindustries.validation.ValidResult;
 import com.aoindustries.validation.ValidationException;
 import com.aoindustries.validation.ValidationResult;
 import java.io.IOException;
-import java.io.ObjectInputValidation;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -73,8 +72,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Removab
 	 * @author  AO Industries, Inc.
 	 */
 	final static public class Name extends com.aoindustries.aoserv.client.linux.User.Name implements
-		FastExternalizable,
-		ObjectInputValidation
+		FastExternalizable
 	{
 
 		/**
