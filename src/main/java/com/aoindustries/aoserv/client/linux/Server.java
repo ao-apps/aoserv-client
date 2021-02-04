@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2003-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -48,7 +48,6 @@ import com.aoindustries.aoserv.client.net.DeviceId;
 import com.aoindustries.aoserv.client.net.Host;
 import com.aoindustries.aoserv.client.net.IpAddress;
 import com.aoindustries.aoserv.client.pki.Certificate;
-import com.aoindustries.aoserv.client.pki.HashedPassword;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.scm.CvsRepository;
@@ -68,6 +67,7 @@ import com.aoindustries.net.HostAddress;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.net.Port;
 import com.aoindustries.net.URIParameters;
+import com.aoindustries.security.HashedKey;
 import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.BufferManager;
@@ -106,7 +106,6 @@ final public class Server
 
 	private DomainName hostname;
 	private int daemon_bind;
-	private HashedPassword daemon_key;
 	private int pool_size;
 	private int distro_hour;
 	private UnmodifiableTimestamp last_distro_time;
@@ -131,34 +130,34 @@ final public class Server
 	private long sftp_umask;
 
 	@Override
+	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	protected Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_SERVER: return pkey;
 			case COLUMN_HOSTNAME: return hostname;
 			case 2: return daemon_bind==-1?null:daemon_bind;
-			case 3: return daemon_key;
-			case 4: return pool_size;
-			case 5: return distro_hour;
-			case 6: return last_distro_time;
-			case 7: return failover_server==-1?null:failover_server;
-			case 8: return daemonDeviceId;
-			case 9: return daemon_connect_bind==-1?null:daemon_connect_bind;
-			case 10: return time_zone;
-			case 11: return jilter_bind == -1 ? null : jilter_bind;
-			case 12: return restrict_outbound_email;
-			case 13: return daemon_connect_address;
-			case 14: return failover_batch_size;
-			case 15: return Float.isNaN(monitoring_load_low) ? null : monitoring_load_low;
-			case 16: return Float.isNaN(monitoring_load_medium) ? null : monitoring_load_medium;
-			case 17: return Float.isNaN(monitoring_load_high) ? null : monitoring_load_high;
-			case 18: return Float.isNaN(monitoring_load_critical) ? null : monitoring_load_critical;
-			case 19: return uidMin;
-			case 20: return gidMin;
-			case 21: return uidMax;
-			case 22: return gidMax;
-			case 23: return lastUid;
-			case 24: return lastGid;
-			case 25: return sftp_umask==-1 ? null : sftp_umask;
+			case 3: return pool_size;
+			case 4: return distro_hour;
+			case 5: return last_distro_time;
+			case 6: return failover_server==-1?null:failover_server;
+			case 7: return daemonDeviceId;
+			case 8: return daemon_connect_bind==-1?null:daemon_connect_bind;
+			case 9: return time_zone;
+			case 10: return jilter_bind == -1 ? null : jilter_bind;
+			case 11: return restrict_outbound_email;
+			case 12: return daemon_connect_address;
+			case 13: return failover_batch_size;
+			case 14: return Float.isNaN(monitoring_load_low) ? null : monitoring_load_low;
+			case 15: return Float.isNaN(monitoring_load_medium) ? null : monitoring_load_medium;
+			case 16: return Float.isNaN(monitoring_load_high) ? null : monitoring_load_high;
+			case 17: return Float.isNaN(monitoring_load_critical) ? null : monitoring_load_critical;
+			case 18: return uidMin;
+			case 19: return gidMin;
+			case 20: return uidMax;
+			case 21: return gidMax;
+			case 22: return lastUid;
+			case 23: return lastGid;
+			case 24: return sftp_umask==-1 ? null : sftp_umask;
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
@@ -191,10 +190,6 @@ final public class Server
 		if(daemon_bind == -1) return null;
 		// May be filtered
 		return table.getConnector().getNet().getBind().get(daemon_bind);
-	}
-
-	public HashedPassword getDaemonKey() {
-		return daemon_key;
 	}
 
 	public int getPoolSize() {
@@ -371,42 +366,40 @@ final public class Server
 	@Override
 	public void init(ResultSet result) throws SQLException {
 		try {
-			int pos = 1;
-			pkey=result.getInt(pos++);
-			hostname = DomainName.valueOf(result.getString(pos++));
-			daemon_bind=result.getInt(pos++);
-			if(result.wasNull()) daemon_bind=-1;
-			daemon_key=HashedPassword.valueOf(result.getString(pos++));
-			pool_size=result.getInt(pos++);
-			distro_hour=result.getInt(pos++);
-			last_distro_time = UnmodifiableTimestamp.valueOf(result.getTimestamp(pos++));
-			failover_server=result.getInt(pos++);
-			if(result.wasNull()) failover_server=-1;
-			daemonDeviceId = result.getString(pos++);
-			daemon_connect_bind=result.getInt(pos++);
-			time_zone=result.getString(pos++);
-			jilter_bind=result.getInt(pos++);
-			if(result.wasNull()) jilter_bind=-1;
-			restrict_outbound_email=result.getBoolean(pos++);
-			daemon_connect_address=HostAddress.valueOf(result.getString(pos++));
-			failover_batch_size=result.getInt(pos++);
-			monitoring_load_low = result.getFloat(pos++);
+			pkey = result.getInt("server");
+			hostname = DomainName.valueOf(result.getString("hostname"));
+			daemon_bind = result.getInt("daemon_bind");
+			if(result.wasNull()) daemon_bind = -1;
+			pool_size = result.getInt("pool_size");
+			distro_hour = result.getInt("distro_hour");
+			last_distro_time = UnmodifiableTimestamp.valueOf(result.getTimestamp("last_distro_time"));
+			failover_server = result.getInt("failover_server");
+			if(result.wasNull()) failover_server = -1;
+			daemonDeviceId = result.getString("daemonDeviceId");
+			daemon_connect_bind = result.getInt("daemon_connect_bind");
+			time_zone = result.getString("time_zone");
+			jilter_bind = result.getInt("jilter_bind");
+			if(result.wasNull()) jilter_bind = -1;
+			restrict_outbound_email = result.getBoolean("restrict_outbound_email");
+			daemon_connect_address = HostAddress.valueOf(result.getString("daemon_connect_address"));
+			failover_batch_size = result.getInt("failover_batch_size");
+			monitoring_load_low = result.getFloat("monitoring_load_low");
 			if(result.wasNull()) monitoring_load_low = Float.NaN;
-			monitoring_load_medium = result.getFloat(pos++);
+			monitoring_load_medium = result.getFloat("monitoring_load_medium");
 			if(result.wasNull()) monitoring_load_medium = Float.NaN;
-			monitoring_load_high = result.getFloat(pos++);
+			monitoring_load_high = result.getFloat("monitoring_load_high");
 			if(result.wasNull()) monitoring_load_high = Float.NaN;
-			monitoring_load_critical = result.getFloat(pos++);
+			monitoring_load_critical = result.getFloat("monitoring_load_critical");
 			if(result.wasNull()) monitoring_load_critical = Float.NaN;
-			uidMin = LinuxId.valueOf(result.getInt(pos++));
-			gidMin = LinuxId.valueOf(result.getInt(pos++));
-			uidMax = LinuxId.valueOf(result.getInt(pos++));
-			gidMax = LinuxId.valueOf(result.getInt(pos++));
-			int lastUidInt = result.getInt(pos++);
+			uidMin = LinuxId.valueOf(result.getInt("uidMin"));
+			gidMin = LinuxId.valueOf(result.getInt("gidMin"));
+			uidMax = LinuxId.valueOf(result.getInt("uidMax"));
+			gidMax = LinuxId.valueOf(result.getInt("gidMax"));
+			int lastUidInt = result.getInt("lastUid");
 			lastUid = result.wasNull() ? null : LinuxId.valueOf(lastUidInt);
-			int lastGidInt = result.getInt(pos++);
+			int lastGidInt = result.getInt("lastGid");
 			lastGid = result.wasNull() ? null : LinuxId.valueOf(lastGidInt);
-			sftp_umask = result.getLong(pos++);
+			sftp_umask = result.getLong("sftp_umask");
 			if(result.wasNull()) sftp_umask = -1;
 		} catch(ValidationException e) {
 			throw new SQLException(e);
@@ -419,7 +412,6 @@ final public class Server
 			pkey = in.readCompressedInt();
 			hostname = DomainName.valueOf(in.readUTF());
 			daemon_bind = in.readCompressedInt();
-			daemon_key = HashedPassword.valueOf(in.readUTF());
 			pool_size = in.readCompressedInt();
 			distro_hour = in.readCompressedInt();
 			last_distro_time = SQLStreamables.readNullUnmodifiableTimestamp(in);
@@ -471,7 +463,9 @@ final public class Server
 			out.writeUTF(hostname.toString());
 		}
 		out.writeCompressedInt(daemon_bind);
-		out.writeUTF(daemon_key.toString());
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_2) <= 0) {
+			out.writeUTF(HashedKey.NO_KEY_VALUE);
+		}
 		out.writeCompressedInt(pool_size);
 		out.writeCompressedInt(distro_hour);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
@@ -810,7 +804,9 @@ final public class Server
 		List<UserServer> lsa=getLinuxServerAccounts();
 		int len=lsa.size();
 		List<User> la=new ArrayList<>(len);
-		for(int c=0;c<len;c++) la.add(lsa.get(c).getLinuxAccount());
+		for(int c = 0; c < len; c++) {
+			la.add(lsa.get(c).getLinuxAccount());
+		}
 		return la;
 	}
 
@@ -818,7 +814,9 @@ final public class Server
 		List<GroupServer> lsg=getLinuxServerGroups();
 		int len=lsg.size();
 		List<Group> lg=new ArrayList<>(len);
-		for(int c=0;c<len;c++) lg.add(lsg.get(c).getLinuxGroup());
+		for(int c = 0; c < len; c++) {
+			lg.add(lsg.get(c).getLinuxGroup());
+		}
 		return lg;
 	}
 
@@ -2194,7 +2192,9 @@ final public class Server
 			 */
 			public long getSegEndPe() {
 				long segmentCount = 0;
-				for(Stripe stripe : stripes) segmentCount += stripe.getLastPe()-stripe.getFirstPe()+1;
+				for(Stripe stripe : stripes) {
+					segmentCount += stripe.getLastPe() - stripe.getFirstPe() + 1;
+				}
 				return segStartPe+segmentCount-1;
 			}
 
@@ -2296,6 +2296,7 @@ final public class Server
 			return physicalVolumes.get(pvName);
 		}
 
+		@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
 		public Map<String, PhysicalVolume> getPhysicalVolumes() {
 			return physicalVolumes;
 		}
@@ -2304,6 +2305,7 @@ final public class Server
 			return volumeGroups.get(vgName);
 		}
 
+		@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
 		public Map<String, VolumeGroup> getVolumeGroups() {
 			return volumeGroups;
 		}
@@ -2318,9 +2320,9 @@ final public class Server
 				true,
 				AoservProtocol.CommandID.GET_AO_SERVER_LVM_REPORT,
 				new AOServConnector.ResultRequest<LvmReport>() {
-					String vgs;
-					String pvs;
-					String lvs;
+					private String vgs;
+					private String pvs;
+					private String lvs;
 					@Override
 					public void writeRequest(StreamableOutput out) throws IOException {
 						out.writeCompressedInt(pkey);
@@ -2700,7 +2702,6 @@ final public class Server
 			getPkey(),
 			getDto(hostname),
 			daemon_bind==-1 ? null : daemon_bind,
-			getDto(daemon_key),
 			pool_size,
 			distro_hour,
 			last_distro_time == null ? null : last_distro_time.getTime(),

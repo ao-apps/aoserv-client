@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -98,7 +98,6 @@ import com.aoindustries.aoserv.client.payment.CreditCard;
 import com.aoindustries.aoserv.client.payment.PaymentType;
 import com.aoindustries.aoserv.client.payment.Processor;
 import com.aoindustries.aoserv.client.pki.Certificate;
-import com.aoindustries.aoserv.client.pki.HashedPassword;
 import com.aoindustries.aoserv.client.postgresql.Encoding;
 import com.aoindustries.aoserv.client.reseller.Category;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -130,6 +129,8 @@ import com.aoindustries.net.Email;
 import com.aoindustries.net.HostAddress;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.net.Port;
+import com.aoindustries.security.HashedPassword;
+import com.aoindustries.security.Password;
 import com.aoindustries.util.i18n.Money;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -3277,20 +3278,13 @@ final public class SimpleAOClient {
 	 * @param  salt  the two character salt for the encryption process, if {@code null},
 	 *					a random salt will be used
 	 *
-	 * @deprecated  Please use hash instead.
-	 * @see  #hash(String)
+	 * @deprecated  Please use {@link HashedPassword} instead.
+	 * @see  HashedPassword
 	 */
 	@Deprecated
 	public static String crypt(String password, String salt) {
-		if(password==null || password.length()==0) return "*";
-		return salt==null || salt.length()==0?com.aoindustries.security.UnixCrypt.crypt(password):com.aoindustries.security.UnixCrypt.crypt(password, salt);
-	}
-
-	/**
-	 * Hashes a password using SHA-1.
-	 */
-	public static String hash(String password) {
-		return HashedPassword.hash(password);
+		if(password == null || password.isEmpty()) return HashedPassword.NO_PASSWORD_VALUE;
+		return salt == null || salt.isEmpty() ? com.aoindustries.security.UnixCrypt.crypt(password) : com.aoindustries.security.UnixCrypt.crypt(password, salt);
 	}
 
 	/**

@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2021-02-03T02:47:32-06:00"
+		dateModified="2021-02-04T15:11:41-06:00"
 	>
 		<c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
 			<changelog:release
@@ -58,6 +58,14 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						Eliminated unnecessary uses of <code>java.io.ObjectInputValidation</code> where immediate
 						validation from <code>readObject(…)</code> or <code>readExternal(…)</code> is sufficient.
 					</li>
+					<li>New <code>"schema"."AoservProtocol"</code>: <code>1.84.13</code></li>
+					<li>New <code>"schema"."Type"</code>: <code>HashedKey</code></li>
+					<li>Removed <code>linux.Server.daemon_key</code>, now stored in <code>aoserv-daemon.properties</code></li>
+					<li>
+						Removed <code>com.aoindustries.aoserv.client.pki.HashedPassword</code>, using the newer
+						<code>com.aoindustries.security.HashedPassword</code> instead.
+					</li>
+					<li>Removed <code>SimpleAOClient.hash(String)</code>, which used the obsolete SHA-1 algorithm.</li>
 				</ul>
 				<!-- TODO:
 				<ul>

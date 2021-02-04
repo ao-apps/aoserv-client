@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2015, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -30,7 +30,6 @@ import com.aoindustries.aoserv.client.linux.Group;
 import com.aoindustries.aoserv.client.linux.LinuxId;
 import com.aoindustries.aoserv.client.linux.PosixPath;
 import com.aoindustries.aoserv.client.linux.User.Gecos;
-import com.aoindustries.aoserv.client.pki.HashedPassword;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.sql.SQLComparator;
@@ -51,6 +50,8 @@ import com.aoindustries.net.HostAddress;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.net.MacAddress;
 import com.aoindustries.net.Port;
+import com.aoindustries.security.HashedKey;
+import com.aoindustries.security.HashedPassword;
 import com.aoindustries.security.Identifier;
 import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.table.TableListener;
@@ -948,33 +949,34 @@ abstract public class AOServConnector implements SchemaParent {
 				out.write(bytes, 0, bytes.length);
 			}
 			// Self-validating types
-			else if(param instanceof Account.Name) out.writeUTF(param.toString());
-			else if(param instanceof Email) out.writeUTF(param.toString());
-			else if(param instanceof HostAddress) out.writeUTF(param.toString());
-			else if(param instanceof InetAddress) out.writeUTF(param.toString());
-			else if(param instanceof PosixPath) out.writeUTF(param.toString());
-			else if(param instanceof User.Name) out.writeUTF(param.toString());
-			else if(param instanceof DomainLabel) out.writeUTF(param.toString());
-			else if(param instanceof DomainLabels) out.writeUTF(param.toString());
-			else if(param instanceof DomainName) out.writeUTF(param.toString());
-			else if(param instanceof Gecos) out.writeUTF(param.toString());
-			else if(param instanceof Group.Name) out.writeUTF(param.toString());
-			else if(param instanceof HashedPassword) out.writeUTF(param.toString());
+			else if(param instanceof Account.Name) out.writeUTF(((Account.Name)param).toString());
+			else if(param instanceof Email) out.writeUTF(((Email)param).toString());
+			else if(param instanceof HostAddress) out.writeUTF(((HostAddress)param).toString());
+			else if(param instanceof InetAddress) out.writeUTF(((InetAddress)param).toString());
+			else if(param instanceof PosixPath) out.writeUTF(((PosixPath)param).toString());
+			else if(param instanceof User.Name) out.writeUTF(((User.Name)param).toString());
+			else if(param instanceof DomainLabel) out.writeUTF(((DomainLabel)param).toString());
+			else if(param instanceof DomainLabels) out.writeUTF(((DomainLabels)param).toString());
+			else if(param instanceof DomainName) out.writeUTF(((DomainName)param).toString());
+			else if(param instanceof Gecos) out.writeUTF(((Gecos)param).toString());
+			else if(param instanceof Group.Name) out.writeUTF(((Group.Name)param).toString());
+			else if(param instanceof HashedKey) out.writeUTF(((HashedKey)param).toString());
+			else if(param instanceof HashedPassword) out.writeUTF(((HashedPassword)param).toString());
 			else if(param instanceof LinuxId) out.writeCompressedInt(((LinuxId)param).getId());
-			else if(param instanceof com.aoindustries.aoserv.client.linux.User.Name) out.writeUTF(param.toString());
-			else if(param instanceof MacAddress) out.writeUTF(param.toString());
-			else if(param instanceof com.aoindustries.aoserv.client.mysql.Database.Name) out.writeUTF(param.toString());
-			else if(param instanceof com.aoindustries.aoserv.client.mysql.Server.Name) out.writeUTF(param.toString());
-			else if(param instanceof com.aoindustries.aoserv.client.mysql.Table_Name) out.writeUTF(param.toString());
-			else if(param instanceof com.aoindustries.aoserv.client.mysql.User.Name) out.writeUTF(param.toString());
+			else if(param instanceof com.aoindustries.aoserv.client.linux.User.Name) out.writeUTF(((com.aoindustries.aoserv.client.linux.User.Name)param).toString());
+			else if(param instanceof MacAddress) out.writeUTF(((MacAddress)param).toString());
+			else if(param instanceof com.aoindustries.aoserv.client.mysql.Database.Name) out.writeUTF(((com.aoindustries.aoserv.client.mysql.Database.Name)param).toString());
+			else if(param instanceof com.aoindustries.aoserv.client.mysql.Server.Name) out.writeUTF(((com.aoindustries.aoserv.client.mysql.Server.Name)param).toString());
+			else if(param instanceof com.aoindustries.aoserv.client.mysql.Table_Name) out.writeUTF(((com.aoindustries.aoserv.client.mysql.Table_Name)param).toString());
+			else if(param instanceof com.aoindustries.aoserv.client.mysql.User.Name) out.writeUTF(((com.aoindustries.aoserv.client.mysql.User.Name)param).toString());
 			else if(param instanceof Port) {
 				Port port = (Port)param;
 				out.writeCompressedInt(port.getPort());
 				out.writeEnum(port.getProtocol());
 			}
-			else if(param instanceof com.aoindustries.aoserv.client.postgresql.Database.Name) out.writeUTF(param.toString());
-			else if(param instanceof com.aoindustries.aoserv.client.postgresql.Server.Name) out.writeUTF(param.toString());
-			else if(param instanceof com.aoindustries.aoserv.client.postgresql.User.Name) out.writeUTF(param.toString());
+			else if(param instanceof com.aoindustries.aoserv.client.postgresql.Database.Name) out.writeUTF(((com.aoindustries.aoserv.client.postgresql.Database.Name)param).toString());
+			else if(param instanceof com.aoindustries.aoserv.client.postgresql.Server.Name) out.writeUTF(((com.aoindustries.aoserv.client.postgresql.Server.Name)param).toString());
+			else if(param instanceof com.aoindustries.aoserv.client.postgresql.User.Name) out.writeUTF(((com.aoindustries.aoserv.client.postgresql.User.Name)param).toString());
 			// Any other Writable
 			else if(param instanceof AOServWritable) ((AOServWritable)param).write(out, AoservProtocol.Version.CURRENT_VERSION);
 			else if(param instanceof StreamWritable) ((StreamWritable)param).write(out, AoservProtocol.Version.CURRENT_VERSION.getVersion());

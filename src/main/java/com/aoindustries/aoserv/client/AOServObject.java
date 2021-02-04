@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -27,7 +27,6 @@ import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.linux.Group;
 import com.aoindustries.aoserv.client.linux.PosixPath;
 import com.aoindustries.aoserv.client.linux.User.Gecos;
-import com.aoindustries.aoserv.client.pki.HashedPassword;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.schema.Type;
@@ -44,6 +43,8 @@ import com.aoindustries.net.Email;
 import com.aoindustries.net.HostAddress;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.net.MacAddress;
+import com.aoindustries.security.HashedKey;
+import com.aoindustries.security.HashedPassword;
 import com.aoindustries.table.Row;
 import com.aoindustries.util.ComparatorUtils;
 import com.aoindustries.validation.ValidationException;
@@ -136,6 +137,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	}
 
 	// TODO: Remove in AOServ 2
+	@SuppressWarnings("BroadCatchBlock")
 	final public int compareTo(AOServConnector conn, AOServObject<?,?> other, SQLExpression[] sortExpressions, boolean[] sortOrders) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
 		int len = sortExpressions.length;
 		for(int c = 0; c < len; c++) {
@@ -298,6 +300,14 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	protected static Group.Name getGroupId(com.aoindustries.aoserv.client.dto.LinuxGroupName gid) throws ValidationException {
 		if(gid==null) return null;
 		return Group.Name.valueOf(gid.getName());
+	}
+
+	/**
+	 * null-safe hashed key conversion.
+	 */
+	protected static HashedKey getHashedKey(com.aoindustries.aoserv.client.dto.HashedKey hashedKey) throws ValidationException {
+		if(hashedKey==null) return null;
+		return HashedKey.valueOf(hashedKey.getHashedKey());
 	}
 
 	/**
@@ -481,13 +491,17 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	final public List<Object> getColumns(AOServConnector connector) throws IOException, SQLException {
 		int len=getTableSchema(connector).getSchemaColumns(connector).size();
 		List<Object> buff=new ArrayList<>(len);
-		for(int c=0;c<len;c++) buff.add(getColumn(c));
+		for(int c = 0; c < len; c++) {
+			buff.add(getColumn(c));
+		}
 		return buff;
 	}
 
 	final public int getColumns(AOServConnector connector, List<Object> buff) throws IOException, SQLException {
 		int len=getTableSchema(connector).getSchemaColumns(connector).size();
-		for(int c=0;c<len;c++) buff.add(getColumn(c));
+		for(int c = 0; c < len; c++) {
+			buff.add(getColumn(c));
+		}
 		return len;
 	}
 

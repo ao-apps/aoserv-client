@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2009-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2009-2013, 2016, 2017, 2018, 2019, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -35,7 +35,6 @@ public class LinuxServer extends AOServObject {
 	private int server;
 	private DomainName hostname;
 	private Integer daemonBind;
-	private HashedPassword daemonKey;
 	private int poolSize;
 	private int distroHour;
 	private Long lastDistroTime;
@@ -66,7 +65,6 @@ public class LinuxServer extends AOServObject {
 		int server,
 		DomainName hostname,
 		Integer daemonBind,
-		HashedPassword daemonKey,
 		int poolSize,
 		int distroHour,
 		Long lastDistroTime,
@@ -93,7 +91,6 @@ public class LinuxServer extends AOServObject {
 		this.server = server;
 		this.hostname = hostname;
 		this.daemonBind = daemonBind;
-		this.daemonKey = daemonKey;
 		this.poolSize = poolSize;
 		this.distroHour = distroHour;
 		this.lastDistroTime = lastDistroTime;
@@ -140,14 +137,6 @@ public class LinuxServer extends AOServObject {
 
 	public void setDaemonBind(Integer daemonBind) {
 		this.daemonBind = daemonBind;
-	}
-
-	public HashedPassword getDaemonKey() {
-		return daemonKey;
-	}
-
-	public void setDaemonKey(HashedPassword daemonKey) {
-		this.daemonKey = daemonKey;
 	}
 
 	public int getPoolSize() {

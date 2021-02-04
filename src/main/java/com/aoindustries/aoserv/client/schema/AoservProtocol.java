@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -189,9 +189,10 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
 		VERSION_1_82_1("1.82.1"),
 		VERSION_1_83_0("1.83.0"),
 		VERSION_1_83_1("1.83.1"),
-		VERSION_1_83_2("1.83.2");
+		VERSION_1_83_2("1.83.2"),
+		VERSION_1_84_13("1.84.13");
 
-		public static final Version CURRENT_VERSION = VERSION_1_83_2;
+		public static final Version CURRENT_VERSION = VERSION_1_84_13;
 
 		private static final Map<String,Version> versionMap = new HashMap<>();
 		static {

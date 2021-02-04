@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2018, 2020  AO Industries, Inc.
+ * Copyright (C) 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -20,29 +20,27 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with aoserv-client.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.aoindustries.aoserv.client.pki;
-
-import com.aoindustries.util.i18n.EditableResourceBundle;
-import com.aoindustries.util.i18n.EditableResourceBundleSet;
-import java.io.File;
-import java.util.Locale;
+package com.aoindustries.aoserv.client.dto;
 
 /**
  * @author  AO Industries, Inc.
  */
-public final class ApplicationResources extends EditableResourceBundle {
+public class HashedKey {
 
-	static final EditableResourceBundleSet bundleSet = new EditableResourceBundleSet(
-		ApplicationResources.class,
-		Locale.ROOT,
-		Locale.JAPANESE
-	);
+	private String hashedKey;
 
-	static File getSourceFile(String filename) {
-		return new File(System.getProperty("user.home") + "/maven2/ao/aoserv/client/src/main/resources/com/aoindustries/aoserv/client/pki", filename);
+	public HashedKey() {
 	}
 
-	public ApplicationResources() {
-		super(Locale.ROOT, bundleSet, getSourceFile("ApplicationResources.properties"));
+	public HashedKey(String hashedKey) {
+		this.hashedKey = hashedKey;
+	}
+
+	public String getHashedKey() {
+		return hashedKey;
+	}
+
+	public void setHashedKey(String hashedKey) {
+		this.hashedKey = hashedKey;
 	}
 }

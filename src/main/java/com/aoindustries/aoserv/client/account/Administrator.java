@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -34,7 +34,6 @@ import com.aoindustries.aoserv.client.master.Permission;
 import com.aoindustries.aoserv.client.password.PasswordChecker;
 import com.aoindustries.aoserv.client.password.PasswordProtected;
 import com.aoindustries.aoserv.client.payment.CountryCode;
-import com.aoindustries.aoserv.client.pki.HashedPassword;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.ticket.Action;
@@ -44,6 +43,8 @@ import com.aoindustries.collections.IntList;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.Email;
+import com.aoindustries.security.HashedPassword;
+import com.aoindustries.security.SecurityStreamables;
 import com.aoindustries.sql.SQLStreamables;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.InternUtils;
@@ -54,7 +55,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * An {@link Administrator} is a username and password pair, usually
@@ -390,30 +390,35 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 	@Override
 	public void init(ResultSet result) throws SQLException {
 		try {
-			pkey = User.Name.valueOf(result.getString(1));
-			password = HashedPassword.valueOf(result.getString(2));
-			name = result.getString(3);
-			title = result.getString(4);
-			Date D=result.getDate(5);
+			pkey = User.Name.valueOf(result.getString("username"));
+			password = HashedPassword.valueOf(
+				HashedPassword.Algorithm.findAlgorithm(result.getString("password.algorithm")),
+				result.getBytes("password.salt"),
+				result.getInt  ("password.iterations"),
+				result.getBytes("password.hash")
+			);
+			name = result.getString("name");
+			title = result.getString("title");
+			Date D=result.getDate("birthday");
 			birthday = D==null?-1:D.getTime();
-			isPreferred = result.getBoolean(6);
-			isPrivate = result.getBoolean(7);
-			created = UnmodifiableTimestamp.valueOf(result.getTimestamp(8));
-			work_phone = result.getString(9);
-			home_phone = result.getString(10);
-			cell_phone = result.getString(11);
-			fax = result.getString(12);
-			email = USE_SQL_DATA ? result.getObject(13, Email.class) : Email.valueOf(result.getString(13));
-			address1 = result.getString(14);
-			address2 = result.getString(15);
-			city = result.getString(16);
-			state = result.getString(17);
-			country = result.getString(18);
-			zip = result.getString(19);
-			disable_log=result.getInt(20);
+			isPreferred = result.getBoolean("is_preferred");
+			isPrivate = result.getBoolean("private");
+			created = UnmodifiableTimestamp.valueOf(result.getTimestamp("created"));
+			work_phone = result.getString("work_phone");
+			home_phone = result.getString("home_phone");
+			cell_phone = result.getString("cell_phone");
+			fax = result.getString("fax");
+			email = USE_SQL_DATA ? result.getObject("email", Email.class) : Email.valueOf(result.getString("email"));
+			address1 = result.getString("address1");
+			address2 = result.getString("address2");
+			city = result.getString("city");
+			state = result.getString("state");
+			country = result.getString("country");
+			zip = result.getString("zip");
+			disable_log=result.getInt("disable_log");
 			if(result.wasNull()) disable_log=-1;
-			can_switch_users=result.getBoolean(21);
-			support_code = result.getString(22);
+			can_switch_users=result.getBoolean("can_switch_users");
+			support_code = result.getString("support_code");
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -423,26 +428,26 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey = User.Name.valueOf(in.readUTF()).intern();
-			password=HashedPassword.valueOf(in.readNullUTF());
-			name=in.readUTF();
-			title=in.readNullUTF();
-			birthday=in.readLong();
-			isPreferred=in.readBoolean();
-			isPrivate=in.readBoolean();
+			password = SecurityStreamables.readHashedPassword(in);
+			name = in.readUTF();
+			title = in.readNullUTF();
+			birthday = in.readLong();
+			isPreferred = in.readBoolean();
+			isPrivate = in.readBoolean();
 			created = SQLStreamables.readUnmodifiableTimestamp(in);
-			work_phone=in.readUTF();
-			home_phone=in.readNullUTF();
-			cell_phone=in.readNullUTF();
-			fax=in.readNullUTF();
-			email=Email.valueOf(in.readUTF());
-			address1=in.readNullUTF();
-			address2=in.readNullUTF();
-			city=in.readNullUTF();
-			state=InternUtils.intern(in.readNullUTF());
-			country=InternUtils.intern(in.readNullUTF());
-			zip=in.readNullUTF();
-			disable_log=in.readCompressedInt();
-			can_switch_users=in.readBoolean();
+			work_phone = in.readUTF();
+			home_phone = in.readNullUTF();
+			cell_phone = in.readNullUTF();
+			fax = in.readNullUTF();
+			email = Email.valueOf(in.readUTF());
+			address1 = in.readNullUTF();
+			address2 = in.readNullUTF();
+			city = in.readNullUTF();
+			state = InternUtils.intern(in.readNullUTF());
+			country = InternUtils.intern(in.readNullUTF());
+			zip = in.readNullUTF();
+			disable_log = in.readCompressedInt();
+			can_switch_users = in.readBoolean();
 			support_code = in.readNullUTF();
 		} catch(ValidationException e) {
 			throw new IOException(e);
@@ -573,10 +578,36 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey.toString());
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_68)<=0) out.writeUTF(password==null ? "*" : password.toString());
-		else out.writeNullUTF(Objects.toString(password, null));
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_68) <= 0) {
+			if(password == null) {
+				out.writeUTF(HashedPassword.NO_PASSWORD_VALUE);
+			} else {
+				HashedPassword.Algorithm algorithm = password.getAlgorithm();
+				if(algorithm == HashedPassword.Algorithm.CRYPT || algorithm == HashedPassword.Algorithm.SHA_1) {
+					out.writeUTF(password.toString());
+				} else {
+					// Newer algorithm unknown
+					out.writeUTF("*");
+				}
+			}
+		} else if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_2) <= 0) {
+			if(password == null) {
+				out.writeNullUTF(null);
+			} else {
+				HashedPassword.Algorithm algorithm = password.getAlgorithm();
+				if(algorithm == HashedPassword.Algorithm.CRYPT || algorithm == HashedPassword.Algorithm.SHA_1) {
+					out.writeNullUTF(password.toString());
+				} else {
+					// Newer algorithm unknown
+					out.writeNullUTF("*");
+				}
+			}
+		} else {
+			SecurityStreamables.writeHashedPassword(password, out);
+		}
 		out.writeUTF(name);
 		out.writeNullUTF(title);
 		out.writeLong(birthday);

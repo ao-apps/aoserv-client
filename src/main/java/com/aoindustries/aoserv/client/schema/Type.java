@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -30,7 +30,6 @@ import com.aoindustries.aoserv.client.linux.PosixPath;
 import com.aoindustries.aoserv.client.linux.User.Gecos;
 import com.aoindustries.aoserv.client.net.FirewallZone;
 import com.aoindustries.aoserv.client.net.IpAddress;
-import com.aoindustries.aoserv.client.pki.HashedPassword;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.lang.Strings;
@@ -42,6 +41,8 @@ import com.aoindustries.net.HostAddress;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.net.MacAddress;
 import com.aoindustries.net.Port;
+import com.aoindustries.security.HashedKey;
+import com.aoindustries.security.HashedPassword;
 import com.aoindustries.security.Identifier;
 import com.aoindustries.security.SmallIdentifier;
 import com.aoindustries.sql.SQLUtility;
@@ -247,7 +248,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	public static final int GROUP_ID = 36;
 
 	/**
-	 * @see com.aoindustries.aoserv.client.pki.HashedPassword
+	 * @see HashedPassword
 	 */
 	public static final int HASHED_PASSWORD = 37;
 
@@ -326,6 +327,11 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	 */
 	public static final int SMALL_IDENTIFIER = 52;
 
+	/**
+	 * @see HashedKey
+	 */
+	public static final int HASHED_KEY = 53;
+
 	private static final BigDecimal bigDecimalNegativeOne = BigDecimal.valueOf(-1);
 
 	private String name;
@@ -377,16 +383,16 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	 *                                                                            D       S       D L Q Y   D S G L I   L
 	 *                                                                          D O       H       A _ L S   A _ R L N   L
 	 *                                                                        B O M D     E   M   T S _ Q   T S E D U   _
-	 *                        A                       I   O                   I M A O     D   A   A E T L   A E S _ X I I
-	 *                        C     D D               P   C                   G A I M     _   C   B R A _   B R _ Z _ D D
-	 *                        C     E E         H   I _   T               U   _ I N A   G P L _   A V B U N A V U O U E E
-	 *                      T O B   C C         O   N A   A               S   D N _ I   R A I A   S E L S E S E S N S N N
-	 *                      O U O   I I D       S   T D   L         S     E   E _ L N   O S N D   E R E E T E R E E E T T
-	 *                        N O   M M O E   F T   E D   _     P S T     R   C L A _ G U S U D M _ _ _ R _ _ _ R _ R I I
-	 *                        T L D A A U M F L N   R R L L P P H H R T   N Z I A B N E P W X R O N N N N P N N N N N F F
-	 *                        I E A L L B A K O A I V E O O K A O O I I U A O M B E A C _ O _ E N A A A A O A A A A A I I
-	 *                        N A T _ _ L I E A M N A S N N E T N R N M R M N A E L M O I R I S E M M M M R M M M M M E E
-	 *               FROM     G N E 2 3 E L Y T E T L S G G Y H E T G E L E E L L S E S D D D S Y E E E E T E E E E E R R
+	 *                        A                       I   O                   I M A O     D   A   A E T L   A E S _ X I I H
+	 *                        C     D D               P   C                   G A I M     _   C   B R A _   B R _ Z _ D D A
+	 *                        C     E E         H   I _   T               U   _ I N A   G P L _   A V B U N A V U O U E E S
+	 *                      T O B   C C         O   N A   A               S   D N _ I   R A I A   S E L S E S E S N S N N H
+	 *                      O U O   I I D       S   T D   L         S     E   E _ L N   O S N D   E R E E T E R E E E T T E
+	 *                        N O   M M O E   F T   E D   _     P S T     R   C L A _ G U S U D M _ _ _ R _ _ _ R _ R I I D
+	 *                        T L D A A U M F L N   R R L L P P H H R T   N Z I A B N E P W X R O N N N N P N N N N N F F _
+	 *                        I E A L L B A K O A I V E O O K A O O I I U A O M B E A C _ O _ E N A A A A O A A A A A I I K
+	 *                        N A T _ _ L I E A M N A S N N E T N R N M R M N A E L M O I R I S E M M M M R M M M M M E E E
+	 *               FROM     G N E 2 3 E L Y T E T L S G G Y H E T G E L E E L L S E S D D D S Y E E E E T E E E E E R R Y
 	 *
 	 *             ACCOUNTING X                                     X
 	 *                BOOLEAN   X   X X X     X   X     X X       X X         X
@@ -407,7 +413,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	 *                   PATH                                 X     X
 	 *                  PHONE                                   X   X X
 	 *                  SHORT   X X X X X     X   X X   X X       X X         X
-	 *                 STRING X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X   X X X X X X X X X X X X
+	 *                 STRING X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X   X X X X X X X X X X X X X
 	 *                   TIME     X                     X X         X X
 	 *                    URL                   X             X     X   X   X       X
 	 *               USERNAME                                       X     X                             X       X   X
@@ -434,6 +440,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	 *         LINUX_USERNAME                                       X     X                             X       X   X
 	 *             IDENTIFIER                                       X         X                                       X
 	 *       SMALL_IDENTIFIER                           X X         X         X                                         X
+	 *             HASHED_KEY                                       X                                                     X
 	 * </pre>
 	 */
 	public Object cast(AOServConnector conn, Object value, Type castToType) throws IOException, SQLException {
@@ -531,7 +538,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 				case EMAIL:
 					switch(castToType.getId()) {
 						case HOSTNAME:       return value==null ? null : HostAddress.valueOf(((Email)value).getDomain());
-						case URL:            return value==null ? null : "mailto:" + value;
+						case URL:            return value==null ? null : "mailto:" + (Email)value;
 						case USERNAME:       return value==null ? null : com.aoindustries.aoserv.client.account.User.Name.valueOf(getUsernameForEmail((Email)value));
 						case ZONE:           return value==null ? null : getZoneForDomainName(conn, ((Email)value).getDomain());
 						case DOMAIN_NAME:    return value==null ? null : ((Email)value).getDomain();
@@ -680,9 +687,9 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 					break;
 				case USERNAME:
 					switch(castToType.getId()) {
-						case MYSQL_USERNAME: return value==null ? null : com.aoindustries.aoserv.client.mysql.User.Name.valueOf(value.toString());
-						case POSTGRES_USERNAME: return value==null ? null : com.aoindustries.aoserv.client.postgresql.User.Name.valueOf(value.toString());
-						case LINUX_USERNAME: return value==null ? null : com.aoindustries.aoserv.client.linux.User.Name.valueOf(value.toString());
+						case MYSQL_USERNAME: return value==null ? null : com.aoindustries.aoserv.client.mysql.User.Name.valueOf(((com.aoindustries.aoserv.client.account.User.Name)value).toString());
+						case POSTGRES_USERNAME: return value==null ? null : com.aoindustries.aoserv.client.postgresql.User.Name.valueOf(((com.aoindustries.aoserv.client.account.User.Name)value).toString());
+						case LINUX_USERNAME: return value==null ? null : com.aoindustries.aoserv.client.linux.User.Name.valueOf(((com.aoindustries.aoserv.client.account.User.Name)value).toString());
 					}
 					break;
 				case ZONE:
@@ -729,7 +736,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 				case DOMAIN_NAME:
 					switch(castToType.getId()) {
 						case HOSTNAME: return HostAddress.valueOf((DomainName)value);
-						case ZONE: return ((DomainName)value).toString()+'.';
+						case ZONE: return ((DomainName)value).toString() + '.';
 						case DOMAIN_LABELS: return DomainLabels.valueOf(((DomainName)value).toString());
 					}
 					break;
@@ -767,8 +774,8 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 					break;
 				case MYSQL_USERNAME:
 					switch(castToType.getId()) {
-						case USERNAME: return value==null ? null : com.aoindustries.aoserv.client.account.User.Name.valueOf(value.toString());
-						case LINUX_USERNAME: return value==null ? null : com.aoindustries.aoserv.client.linux.User.Name.valueOf(value.toString());
+						case USERNAME: return value==null ? null : com.aoindustries.aoserv.client.account.User.Name.valueOf(((com.aoindustries.aoserv.client.mysql.User.Name)value).toString());
+						case LINUX_USERNAME: return value==null ? null : com.aoindustries.aoserv.client.linux.User.Name.valueOf(((com.aoindustries.aoserv.client.mysql.User.Name)value).toString());
 					}
 					break;
 				case NET_PORT:
@@ -784,8 +791,8 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 					break;
 				case POSTGRES_USERNAME:
 					switch(castToType.getId()) {
-						case USERNAME: return value==null ? null : com.aoindustries.aoserv.client.account.User.Name.valueOf(value.toString());
-						case LINUX_USERNAME: return value==null ? null : com.aoindustries.aoserv.client.linux.User.Name.valueOf(value.toString());
+						case USERNAME: return value==null ? null : com.aoindustries.aoserv.client.account.User.Name.valueOf(((com.aoindustries.aoserv.client.postgresql.User.Name)value).toString());
+						case LINUX_USERNAME: return value==null ? null : com.aoindustries.aoserv.client.linux.User.Name.valueOf(((com.aoindustries.aoserv.client.postgresql.User.Name)value).toString());
 					}
 					break;
 				case FIREWALLD_ZONE_NAME:
@@ -793,9 +800,9 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 					break;
 				case LINUX_USERNAME:
 					switch(castToType.getId()) {
-						case USERNAME: return value==null ? null : com.aoindustries.aoserv.client.account.User.Name.valueOf(value.toString());
-						case MYSQL_USERNAME: return value==null ? null : com.aoindustries.aoserv.client.mysql.User.Name.valueOf(value.toString());
-						case POSTGRES_USERNAME: return value==null ? null : com.aoindustries.aoserv.client.postgresql.User.Name.valueOf(value.toString());
+						case USERNAME: return value==null ? null : com.aoindustries.aoserv.client.account.User.Name.valueOf(((com.aoindustries.aoserv.client.linux.User.Name)value).toString());
+						case MYSQL_USERNAME: return value==null ? null : com.aoindustries.aoserv.client.mysql.User.Name.valueOf(((com.aoindustries.aoserv.client.linux.User.Name)value).toString());
+						case POSTGRES_USERNAME: return value==null ? null : com.aoindustries.aoserv.client.postgresql.User.Name.valueOf(((com.aoindustries.aoserv.client.linux.User.Name)value).toString());
 					}
 					break;
 				case IDENTIFIER:
@@ -824,6 +831,9 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 						case BIG_DECIMAL:
 							return (value == null) ? null : new BigDecimal(new BigInteger(Long.toHexString(((SmallIdentifier)value).getValue()), 16));
 					}
+					break;
+				case HASHED_KEY:
+					// No special casts
 					break;
 			}
 			throw new IllegalArgumentException("Unable to cast from " + name + " to " + castToType.getName());
@@ -964,7 +974,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 				case GROUP_ID:
 					return ((com.aoindustries.aoserv.client.linux.Group.Name)value1).compareTo((com.aoindustries.aoserv.client.linux.Group.Name)value2);
 				case HASHED_PASSWORD:
-					return ((HashedPassword)value1).compareTo((HashedPassword)value2);
+					return ((HashedPassword)value1).toString().compareTo(((HashedPassword)value2).toString());
 				case LINUX_ID:
 					return ((LinuxId)value1).compareTo((LinuxId)value2);
 				case MAC_ADDRESS:
@@ -995,6 +1005,8 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 					return ((Identifier)value1).compareTo((Identifier)value2);
 				case SMALL_IDENTIFIER:
 					return ((SmallIdentifier)value1).compareTo((SmallIdentifier)value2);
+				case HASHED_KEY:
+					return ((HashedKey)value1).compareTo((HashedKey)value2);
 				default: throw new IllegalArgumentException("Unknown type: " + id);
 			}
 		}
@@ -1150,25 +1162,25 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	public static String getString(Object value, int precision, int type) throws IllegalArgumentException {
 		if(value == null) return null;
 		switch(type) {
-			case ACCOUNTING: return value.toString();
-			case BOOLEAN: return value.toString();
+			case ACCOUNTING: return ((Account.Name)value).toString();
+			case BOOLEAN: return ((Boolean)value).toString();
 			case DATE: return SQLUtility.formatDate((java.sql.Date)value, DATE_TIME_ZONE);
 			case DECIMAL_2: return SQLUtility.formatDecimal2(((Integer)value));
 			case DECIMAL_3: return SQLUtility.formatDecimal3(((Integer)value));
-			case DOUBLE: return value.toString();
-			case EMAIL: return value.toString();
-			case FKEY: return value.toString();
-			case FLOAT: return value.toString();
-			case HOSTNAME: return value.toString();
-			case INT: return value.toString();
+			case DOUBLE: return ((Double)value).toString();
+			case EMAIL: return ((Email)value).toString();
+			case FKEY: return ((Integer)value).toString();
+			case FLOAT: return ((Float)value).toString();
+			case HOSTNAME: return ((HostAddress)value).toString();
+			case INT: return ((Integer)value).toString();
 			case INTERVAL: return Strings.getDecimalTimeLengthString(((Long)value));
-			case IP_ADDRESS: return value.toString();
-			case LONG: return value.toString();
+			case IP_ADDRESS: return ((InetAddress)value).toString();
+			case LONG: return ((Long)value).toString();
 			case OCTAL_LONG: return Long.toOctalString(((Long)value));
-			case PATH: return value.toString();
+			case PATH: return ((PosixPath)value).toString();
 			case PHONE: return (String)value;
-			case PKEY: return value.toString();
-			case SHORT: return value.toString();
+			case PKEY: return ((Integer)value).toString();
+			case SHORT: return ((Short)value).toString();
 			case STRING: return (String)value;
 			case TIME: {
 				Timestamp ts = (Timestamp)value;
@@ -1211,30 +1223,31 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 				return formatted.toString();
 			}
 			case URL: return (String)value;
-			case USERNAME: return value.toString();
+			case USERNAME: return ((com.aoindustries.aoserv.client.account.User.Name)value).toString();
 			case ZONE: return (String)value; // TODO: com.aoindustries.net.DomainName (once no longer ends with ".")
-			case BIG_DECIMAL: return value.toString();
-			case DOMAIN_LABEL: return value.toString();
-			case DOMAIN_LABELS: return value.toString();
-			case DOMAIN_NAME: return value.toString();
-			case GECOS: return value.toString();
-			case GROUP_ID: return value.toString();
-			case HASHED_PASSWORD: return value.toString();
-			case LINUX_ID: return value.toString();
-			case MAC_ADDRESS: return value.toString();
-			case MONEY: return value.toString();
-			case MYSQL_DATABASE_NAME: return value.toString();
-			case MYSQL_SERVER_NAME: return value.toString();
-			case MYSQL_TABLE_NAME: return value.toString();
-			case MYSQL_USERNAME: return value.toString();
-			case NET_PORT: return value.toString();
-			case POSTGRES_DATABASE_NAME: return value.toString();
-			case POSTGRES_SERVER_NAME: return value.toString();
-			case POSTGRES_USERNAME: return value.toString();
-			case FIREWALLD_ZONE_NAME: return value.toString();
-			case LINUX_USERNAME: return value.toString();
-			case IDENTIFIER: return value.toString();
-			case SMALL_IDENTIFIER: return value.toString();
+			case BIG_DECIMAL: return ((BigDecimal)value).toString();
+			case DOMAIN_LABEL: return ((DomainLabel)value).toString();
+			case DOMAIN_LABELS: return ((DomainLabels)value).toString();
+			case DOMAIN_NAME: return ((DomainName)value).toString();
+			case GECOS: return ((Gecos)value).toString();
+			case GROUP_ID: return ((com.aoindustries.aoserv.client.linux.Group.Name)value).toString();
+			case HASHED_PASSWORD: return ((HashedPassword)value).toString();
+			case LINUX_ID: return ((LinuxId)value).toString();
+			case MAC_ADDRESS: return ((MacAddress)value).toString();
+			case MONEY: return ((Money)value).toString();
+			case MYSQL_DATABASE_NAME: return ((com.aoindustries.aoserv.client.mysql.Database.Name)value).toString();
+			case MYSQL_SERVER_NAME: return ((com.aoindustries.aoserv.client.mysql.Server.Name)value).toString();
+			case MYSQL_TABLE_NAME: return ((com.aoindustries.aoserv.client.mysql.Table_Name)value).toString();
+			case MYSQL_USERNAME: return ((com.aoindustries.aoserv.client.mysql.User.Name)value).toString();
+			case NET_PORT: return ((Port)value).toString();
+			case POSTGRES_DATABASE_NAME: return ((com.aoindustries.aoserv.client.postgresql.Database.Name)value).toString();
+			case POSTGRES_SERVER_NAME: return ((com.aoindustries.aoserv.client.postgresql.Server.Name)value).toString();
+			case POSTGRES_USERNAME: return ((com.aoindustries.aoserv.client.postgresql.User.Name)value).toString();
+			case FIREWALLD_ZONE_NAME: return ((FirewallZone.Name)value).toString();
+			case LINUX_USERNAME: return ((com.aoindustries.aoserv.client.linux.User.Name)value).toString();
+			case IDENTIFIER: return ((Identifier)value).toString();
+			case SMALL_IDENTIFIER: return ((SmallIdentifier)value).toString();
+			case HASHED_KEY: return ((HashedKey)value).toString();
 			default: throw new IllegalArgumentException("Unknown SchemaType: " + type);
 		}
 	}
@@ -1353,6 +1366,8 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 					return new Identifier(S);
 				case SMALL_IDENTIFIER:
 					return new Identifier(S);
+				case HASHED_KEY:
+					return HashedKey.valueOf(S);
 				default:
 					throw new IllegalArgumentException("Unknown SchemaType: " + id);
 			}
