@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2021-02-04T15:11:41-06:00"
+		dateModified="2021-02-05T14:34:41-06:00"
 	>
 		<c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
 			<changelog:release
@@ -47,26 +47,6 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 				artifactId="@{documented.artifactId}"
 				scmUrl="@{project.scm.url}"
 			>
-				<ul>
-					<li>
-						Split development-only classes into a new sub-project in <code>devel/</code>.  This
-						sub-project is used only for development and is never deployed to artifact repositories.
-					</li>
-					<li>Updated dependencies.</li>
-					<li>Fixed NPE in <code>master_processes.command</code>.</li>
-					<li>
-						Eliminated unnecessary uses of <code>java.io.ObjectInputValidation</code> where immediate
-						validation from <code>readObject(…)</code> or <code>readExternal(…)</code> is sufficient.
-					</li>
-					<li>New <code>"schema"."AoservProtocol"</code>: <code>1.84.13</code></li>
-					<li>New <code>"schema"."Type"</code>: <code>HashedKey</code></li>
-					<li>Removed <code>linux.Server.daemon_key</code>, now stored in <code>aoserv-daemon.properties</code></li>
-					<li>
-						Removed <code>com.aoindustries.aoserv.client.pki.HashedPassword</code>, using the newer
-						<code>com.aoindustries.security.HashedPassword</code> instead.
-					</li>
-					<li>Removed <code>SimpleAOClient.hash(String)</code>, which used the obsolete SHA-1 algorithm.</li>
-				</ul>
 				<!-- TODO:
 				<ul>
 					<li>Added schemas (where some object can exist without schema, such as "int"?)</li>
@@ -98,6 +78,36 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 				-->
 			</changelog:release>
 		</c:if>
+
+		<changelog:release
+			projectName="@{documented.name}"
+			version="1.84.13"
+			datePublished="2021-02-05T14:34:41-06:00"
+			groupId="@{project.groupId}"
+			artifactId="@{documented.artifactId}"
+			scmUrl="@{project.scm.url}"
+		>
+			<ul>
+				<li>
+					Split development-only classes into a new sub-project in <code>devel/</code>.  This
+					sub-project is used only for development and is never deployed to artifact repositories.
+				</li>
+				<li>Updated dependencies.</li>
+				<li>Fixed NPE in <code>master_processes.command</code>.</li>
+				<li>
+					Eliminated unnecessary uses of <code>java.io.ObjectInputValidation</code> where immediate
+					validation from <code>readObject(…)</code> or <code>readExternal(…)</code> is sufficient.
+				</li>
+				<li>New <code>"schema"."AoservProtocol"</code>: <code>1.84.13</code></li>
+				<li>New <code>"schema"."Type"</code>: <code>HashedKey</code></li>
+				<li>Removed <code>linux.Server.daemon_key</code>, now stored in <code>aoserv-daemon.properties</code></li>
+				<li>
+					Removed <code>com.aoindustries.aoserv.client.pki.HashedPassword</code>, using the newer
+					<code>com.aoindustries.security.HashedPassword</code> instead.
+				</li>
+				<li>Removed <code>SimpleAOClient.hash(String)</code>, which used the obsolete SHA-1 algorithm.</li>
+			</ul>
+		</changelog:release>
 
 		<changelog:release
 			projectName="@{documented.name}"
