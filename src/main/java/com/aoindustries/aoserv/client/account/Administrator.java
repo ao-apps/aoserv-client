@@ -143,6 +143,7 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 	 * Validates a password and returns a description of the problem.  If the
 	 * password is valid, then {@code null} is returned.
 	 */
+	// TODO: Variant that accepts UnprotectedPassword
 	public static List<PasswordChecker.Result> checkPassword(User.Name username, String password) throws IOException {
 		return PasswordChecker.checkPassword(username, password, PasswordChecker.PasswordStrength.STRICT);
 	}
