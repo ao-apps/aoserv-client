@@ -274,7 +274,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 				<groupId>org.hamcrest</groupId><artifactId>hamcrest-core</artifactId><version>2.2</version>
 			</dependency>
 			<dependency>
-				<groupId>com.google.protobuf</groupId><artifactId>protobuf-java</artifactId><version>3.14.0</version>
+				<groupId>com.google.protobuf</groupId><artifactId>protobuf-java</artifactId><version>3.15.0</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
