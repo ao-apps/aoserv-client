@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2003-2013, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -55,7 +55,7 @@ import java.util.List;
  */
 // TODO: Is this worth maintaining?
 // TODO: Build on persistent collections instead?
-public abstract class FilesystemCachedTable<K,V extends FilesystemCachedObject<K,V>> extends AOServTable<K,V> implements FileListObjectFactory<V> {
+public abstract class FilesystemCachedTable<K, V extends FilesystemCachedObject<K, V>> extends AOServTable<K, V> implements FileListObjectFactory<V> {
 
 	/**
 	 * The last time that the data was loaded, or
@@ -249,7 +249,7 @@ public abstract class FilesystemCachedTable<K,V extends FilesystemCachedObject<K
 	@Override
 	public V createInstance() throws IOException {
 		V obj = getNewObject();
-		if(obj instanceof SingleTableObject<?,?>) ((SingleTableObject<K,V>)obj).setTable(this);
+		if(obj instanceof SingleTableObject<?, ?>) ((SingleTableObject<K, V>)obj).setTable(this);
 		return obj;
 	}
 }

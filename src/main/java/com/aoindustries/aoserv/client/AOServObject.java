@@ -68,7 +68,7 @@ import java.util.List;
  *
  * @see  AOServTable
  */
-abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row, AOServStreamable {
+abstract public class AOServObject<K, T extends AOServObject<K, T>> implements Row, AOServStreamable {
 
 	/**
 	 * Enables the use of {@link SQLData}.  This currently requires our forked PostgreSQL JDBC driver to
@@ -138,7 +138,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 
 	// TODO: Remove in AOServ 2
 	@SuppressWarnings("BroadCatchBlock")
-	final public int compareTo(AOServConnector conn, AOServObject<?,?> other, SQLExpression[] sortExpressions, boolean[] sortOrders) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
+	final public int compareTo(AOServConnector conn, AOServObject<?, ?> other, SQLExpression[] sortExpressions, boolean[] sortOrders) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
 		int len = sortExpressions.length;
 		for(int c = 0; c < len; c++) {
 			SQLExpression expr = sortExpressions[c];

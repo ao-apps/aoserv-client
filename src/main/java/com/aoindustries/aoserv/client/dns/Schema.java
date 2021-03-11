@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2018, 2020  AO Industries, Inc.
+ * Copyright (C) 2018, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -48,12 +48,12 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 	private final ZoneTable Zone;
 	public ZoneTable getZone() {return Zone;}
 
-	private final List<? extends AOServTable<?,?>> tables;
+	private final List<? extends AOServTable<?, ?>> tables;
 
 	public Schema(AOServConnector connector) {
 		super(connector);
 
-		ArrayList<AOServTable<?,?>> newTables = new ArrayList<>();
+		ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
 		newTables.add(ForbiddenZone = new ForbiddenZoneTable(connector));
 		newTables.add(Record = new RecordTable(connector));
 		newTables.add(RecordType = new RecordTypeTable(connector));
@@ -65,7 +65,7 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 
 	@Override
 	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
-	public List<? extends AOServTable<?,?>> getTables() {
+	public List<? extends AOServTable<?, ?>> getTables() {
 		return tables;
 	}
 

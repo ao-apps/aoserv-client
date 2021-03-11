@@ -93,7 +93,7 @@ final public class PosixPath implements
 		return ValidResult.getInstance();
 	}
 
-	private static final ConcurrentMap<String,PosixPath> interned = new ConcurrentHashMap<>();
+	private static final ConcurrentMap<String, PosixPath> interned = new ConcurrentHashMap<>();
 
 	/**
 	 * @param path  when {@code null}, returns {@code null}

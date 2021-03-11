@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2002-2009, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -44,7 +44,7 @@ final public class SQLColumnJoin implements SQLExpression {
 	final private int keyIndex;
 	final private Column valueColumn;
 	final private Type type;
-	final private AOServTable<?,?> table;
+	final private AOServTable<?, ?> table;
 	final private int valueIndex;
 
 	public SQLColumnJoin(
@@ -73,10 +73,10 @@ final public class SQLColumnJoin implements SQLExpression {
 	}
 
 	@Override
-	public Object evaluate(AOServConnector conn, AOServObject<?,?> obj) throws IOException, SQLException {
+	public Object evaluate(AOServConnector conn, AOServObject<?, ?> obj) throws IOException, SQLException {
 		Object keyValue=expression.evaluate(conn, obj);
 		if(keyValue!=null) {
-			AOServObject<?,?> row=table.getUniqueRow(keyIndex, keyValue);
+			AOServObject<?, ?> row=table.getUniqueRow(keyIndex, keyValue);
 			if(row!=null) return row.getColumn(valueIndex);
 		}
 		return null;

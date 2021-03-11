@@ -194,7 +194,7 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
 
 		public static final Version CURRENT_VERSION = VERSION_1_84_13;
 
-		private static final Map<String,Version> versionMap = new HashMap<>();
+		private static final Map<String, Version> versionMap = new HashMap<>();
 		static {
 			for(Version version : values()) {
 				versionMap.put(version.getVersion(), version);

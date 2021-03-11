@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -73,7 +73,7 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 		return getUniqueRow(MonthlyCharge.COLUMN_PKEY, pkey);
 	}
 
-	private static <K> void addCount(Map<K,Integer> map, K key, int count) {
+	private static <K> void addCount(Map<K, Integer> map, K key, int count) {
 		map.put(key, NullMath.add(map.get(key), count));
 	}
 
@@ -125,13 +125,13 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 		if(userResource == null) throw new AssertionError("userResource is null");
 
 		// Preprocess resources counts
-		Map<Package,Integer> emailsPerPackage = new HashMap<>();
-		Map<Package,Integer> usersPerPackage = new HashMap<>();
+		Map<Package, Integer> emailsPerPackage = new HashMap<>();
+		Map<Package, Integer> usersPerPackage = new HashMap<>();
 		{
 			for(UserServer lsa : connector.getLinux().getUserServer().getRows()) {
 				com.aoindustries.aoserv.client.linux.User.Name username=lsa.getLinuxAccount_username_id();
 				if(!username.equals(com.aoindustries.aoserv.client.linux.User.MAIL)) {
-					Map<Package,Integer> map;
+					Map<Package, Integer> map;
 					com.aoindustries.aoserv.client.linux.User la=lsa.getLinuxAccount();
 					if(la.getType().getName().equals(UserType.EMAIL)) map=emailsPerPackage;
 					else map=usersPerPackage;
@@ -140,7 +140,7 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 				}
 			}
 		}
-		Map<Package,Integer> javavmsPerPackage=new HashMap<>();
+		Map<Package, Integer> javavmsPerPackage=new HashMap<>();
 		{
 			// HttpdSharedTomcats
 			for(SharedTomcat hst : connector.getWeb_tomcat().getSharedTomcat().getRows()) {

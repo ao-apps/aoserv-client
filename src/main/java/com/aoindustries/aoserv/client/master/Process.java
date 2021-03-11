@@ -51,7 +51,7 @@ import java.util.Objects;
  *
  * @author  AO Industries, Inc.
  */
-public class Process extends AOServObject<SmallIdentifier,Process> implements SingleTableObject<SmallIdentifier,Process> {
+public class Process extends AOServObject<SmallIdentifier, Process> implements SingleTableObject<SmallIdentifier, Process> {
 
 	static final int COLUMN_ID = 0;
 
@@ -83,7 +83,7 @@ public class Process extends AOServObject<SmallIdentifier,Process> implements Si
 	//       This would greatly aid in seeing when a daemon is stalling the system.
 	protected UnmodifiableTimestamp state_start_time;
 
-	private AOServTable<SmallIdentifier,Process> table;
+	private AOServTable<SmallIdentifier, Process> table;
 
 	public Process() {
 	}
@@ -191,7 +191,7 @@ public class Process extends AOServObject<SmallIdentifier,Process> implements Si
 	}
 
 	@Override
-	public AOServTable<SmallIdentifier,Process> getTable() {
+	public AOServTable<SmallIdentifier, Process> getTable() {
 		return table;
 	}
 
@@ -257,7 +257,7 @@ public class Process extends AOServObject<SmallIdentifier,Process> implements Si
 	}
 
 	@Override
-	public void setTable(AOServTable<SmallIdentifier,Process> table) {
+	public void setTable(AOServTable<SmallIdentifier, Process> table) {
 		if(this.table != null) throw new IllegalStateException("table already set");
 		this.table = table;
 	}

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -242,7 +242,7 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 				}
 			}
 
-			AOServTable<?,?> aoServTable = schemaTable.getAOServTable(connector);
+			AOServTable<?, ?> aoServTable = schemaTable.getAOServTable(connector);
 
 			// Parse any order by clause
 			List<SQLExpression> orderExpressions = new ArrayList<>();
@@ -337,7 +337,7 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 					// Stop searching if all max precisions have been found
 					int precisionsNotMaxedCount = supportsAnyPrecisionCount;
 					ROWS :
-					for(AOServObject<?,?> row : rows) {
+					for(AOServObject<?, ?> row : rows) {
 						for(int col = 0; col < numExpressions; col++) {
 							Type type = valueTypes[col];
 							// Skip evaluation when precision not supported
@@ -387,7 +387,7 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 							public String[] next() {
 								try {
 									// Convert the results to strings
-									AOServObject<?,?> row = finalRows.get(index++);
+									AOServObject<?, ?> row = finalRows.get(index++);
 									String[] strings = new String[numExpressions];
 									for(int col = 0; col < numExpressions; col++) {
 										strings[col] = valueTypes[col].getString(

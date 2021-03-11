@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018, 2020  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -54,7 +54,7 @@ final public class ColumnTable extends GlobalTableIntegerKey<Column> {
 	/**
 	 * The nameToColumns are cached for faster lookups.
 	 */
-	private static final List<Map<String,Column>> nameToColumns=new ArrayList<>(numTables);
+	private static final List<Map<String, Column>> nameToColumns=new ArrayList<>(numTables);
 	static {
 		for(int c=0;c<numTables;c++) {
 			nameToColumns.add(null);
@@ -79,7 +79,7 @@ final public class ColumnTable extends GlobalTableIntegerKey<Column> {
 	Column getSchemaColumn(Table table, String columnName) throws IOException, SQLException {
 		int tableID=table.getId();
 		synchronized(nameToColumns) {
-			Map<String,Column> map=nameToColumns.get(tableID);
+			Map<String, Column> map=nameToColumns.get(tableID);
 			if(map==null || map.isEmpty()) {
 				List<Column> cols=getSchemaColumns(table);
 				int len=cols.size();
@@ -132,7 +132,7 @@ final public class ColumnTable extends GlobalTableIntegerKey<Column> {
 					tableColumns.set(c, null);
 				}
 				synchronized(nameToColumns) {
-					Map<String,Column> map=nameToColumns.get(c);
+					Map<String, Column> map=nameToColumns.get(c);
 					if(map!=null) map.clear();
 				}
 			}

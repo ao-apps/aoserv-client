@@ -134,7 +134,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 			return ValidResult.getInstance();
 		}
 
-		private static final ConcurrentMap<String,Name> interned = new ConcurrentHashMap<>();
+		private static final ConcurrentMap<String, Name> interned = new ConcurrentHashMap<>();
 
 		/**
 		 * @param name  when {@code null}, returns {@code null}

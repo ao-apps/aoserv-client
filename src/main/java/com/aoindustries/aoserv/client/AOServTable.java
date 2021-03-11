@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -63,7 +63,7 @@ import java.util.logging.Level;
  *
  * @see  AOServObject
  */
-abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iterable<V>, com.aoindustries.table.Table<V> {
+abstract public class AOServTable<K, V extends AOServObject<K, V>> implements Iterable<V>, com.aoindustries.table.Table<V> {
 
 	final protected AOServConnector connector;
 	//final SimpleAOClient client;
@@ -410,7 +410,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 						obj.read(in, AoservProtocol.Version.CURRENT_VERSION);
 						if(obj instanceof SingleTableObject) {
 							@SuppressWarnings("unchecked")
-							SingleTableObject<K,V> sto = (SingleTableObject)obj;
+							SingleTableObject<K, V> sto = (SingleTableObject)obj;
 							sto.setTable(AOServTable.this);
 						}
 						result = obj;
@@ -525,7 +525,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 									obj.read(in, AoservProtocol.Version.CURRENT_VERSION);
 									if(obj instanceof SingleTableObject) {
 										@SuppressWarnings("unchecked")
-										SingleTableObject<K,V> sto = (SingleTableObject)obj;
+										SingleTableObject<K, V> sto = (SingleTableObject)obj;
 										sto.setTable(AOServTable.this);
 									}
 
@@ -895,7 +895,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 				@Override
 				public String[] next() {
 					// Convert the results to strings
-					AOServObject<?,?> row = rows.get(index++);
+					AOServObject<?, ?> row = rows.get(index++);
 					String[] strings = new String[numCols];
 					for(int col = 0; col < numCols; col++) {
 						strings[col] = types[col].getString(row.getColumn(col), precisions[col]);
@@ -1049,7 +1049,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 	 * Gets a Map-compatible view of this table.
 	 */
 	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
-	public Map<K,V> getMap() {
+	public Map<K, V> getMap() {
 		return map;
 	}
 
@@ -1064,7 +1064,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 	@Deprecated
 	abstract public V get(Object key) throws IOException, SQLException;
 
-	private final Map<K,V> map = new Map<K,V>() {
+	private final Map<K, V> map = new Map<K, V>() {
 		// Map methods
 		@Override
 		public V get(Object key) {
@@ -1076,7 +1076,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 		}
 
 		@Override
-		public Set<Entry<K,V>> entrySet() {
+		public Set<Entry<K, V>> entrySet() {
 			try {
 				return new EntrySet<>(getRows());
 			} catch(IOException | SQLException err) {

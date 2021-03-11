@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2006-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -62,9 +62,9 @@ public class MySQLTODO extends TestCase {
 	private com.aoindustries.aoserv.client.account.User username;
 	private User mysqlUser;
 	private final List<UserServer> mysqlServerUsers=new ArrayList<>();
-	private final Map<UserServer,String> mysqlServerUserPasswords=new HashMap<>();
+	private final Map<UserServer, String> mysqlServerUserPasswords=new HashMap<>();
 	private final List<Database> mysqlDatabases=new ArrayList<>();
-	private final Map<Database,Integer> dumpSizes=new HashMap<>();
+	private final Map<Database, Integer> dumpSizes=new HashMap<>();
 
 	public MySQLTODO(String testName) {
 		super(testName);

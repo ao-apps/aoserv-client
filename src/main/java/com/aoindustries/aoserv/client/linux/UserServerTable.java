@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2015, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -155,7 +155,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 	}
 
 	private boolean nameHashBuilt=false;
-	private final Map<Integer,Map<User.Name,UserServer>> nameHash=new HashMap<>();
+	private final Map<Integer, Map<User.Name, UserServer>> nameHash=new HashMap<>();
 
 	UserServer getLinuxServerAccount(Server aoServer, User.Name username) throws IOException, SQLException {
 		synchronized(nameHash) {
@@ -167,13 +167,13 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 				for(int c=0; c<len; c++) {
 					UserServer lsa=list.get(c);
 					Integer I=lsa.getServer().getPkey();
-					Map<User.Name,UserServer> serverHash=nameHash.get(I);
+					Map<User.Name, UserServer> serverHash=nameHash.get(I);
 					if(serverHash==null) nameHash.put(I, serverHash=new HashMap<>());
 					if(serverHash.put(lsa.getLinuxAccount_username_id(), lsa)!=null) throw new SQLException("LinuxServerAccount username exists more than once on server: "+lsa.getLinuxAccount_username_id()+" on "+I);
 				}
 				nameHashBuilt=true;
 			}
-			Map<User.Name,UserServer> serverHash=nameHash.get(aoServer.getPkey());
+			Map<User.Name, UserServer> serverHash=nameHash.get(aoServer.getPkey());
 			if(serverHash==null) return null;
 			return serverHash.get(username);
 		}
@@ -266,7 +266,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 	}
 
 	private boolean uidHashBuilt=false;
-	private final Map<Integer,Map<LinuxId,UserServer>> uidHash=new HashMap<>();
+	private final Map<Integer, Map<LinuxId, UserServer>> uidHash=new HashMap<>();
 
 	UserServer getLinuxServerAccount(Server aoServer, LinuxId uid) throws IOException, SQLException {
 		synchronized(uidHash) {
@@ -281,7 +281,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 					// Only hash the root user for uid of 0
 					if(lsaUID.getId() != UserServer.ROOT_UID || lsa.getLinuxAccount_username_id().equals(User.ROOT)) {
 						Integer aoI=lsa.getServer().getPkey();
-						Map<LinuxId,UserServer> serverHash=uidHash.get(aoI);
+						Map<LinuxId, UserServer> serverHash=uidHash.get(aoI);
 						if(serverHash==null) uidHash.put(aoI, serverHash=new HashMap<>());
 						LinuxId I=lsaUID;
 						if(!serverHash.containsKey(I)) serverHash.put(I, lsa);
@@ -289,7 +289,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 				}
 				uidHashBuilt=true;
 			}
-			Map<LinuxId,UserServer> serverHash=uidHash.get(aoServer.getPkey());
+			Map<LinuxId, UserServer> serverHash=uidHash.get(aoServer.getPkey());
 			if(serverHash==null) return null;
 			return serverHash.get(uid);
 		}

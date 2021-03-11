@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2014, 2016, 2017, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2014, 2016, 2017, 2019, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -29,20 +29,20 @@ package com.aoindustries.aoserv.client;
  *
  * @author  AO Industries, Inc.
  */
-public abstract class CachedObject<K,T extends CachedObject<K,T>> extends AOServObject<K,T> implements SingleTableObject<K,T> {
+public abstract class CachedObject<K, T extends CachedObject<K, T>> extends AOServObject<K, T> implements SingleTableObject<K, T> {
 
-	protected AOServTable<K,T> table;
+	protected AOServTable<K, T> table;
 
 	protected CachedObject() {
 	}
 
 	@Override
-	final public AOServTable<K,T> getTable() {
+	final public AOServTable<K, T> getTable() {
 		return table;
 	}
 
 	@Override
-	final public void setTable(AOServTable<K,T> table) {
+	final public void setTable(AOServTable<K, T> table) {
 		if(this.table!=null) throw new IllegalStateException("table already set");
 		this.table=table;
 	}

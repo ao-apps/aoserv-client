@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2003-2013, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -43,7 +43,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class BackupReport extends AOServObject<Integer,BackupReport> implements SingleTableObject<Integer,BackupReport> {
+final public class BackupReport extends AOServObject<Integer, BackupReport> implements SingleTableObject<Integer, BackupReport> {
 
 	static final int COLUMN_PKEY=0;
 	static final String COLUMN_DATE_name = "date";
@@ -72,7 +72,7 @@ final public class BackupReport extends AOServObject<Integer,BackupReport> imple
 	private int file_count;
 	private long disk_size;
 
-	private AOServTable<Integer,BackupReport> table;
+	private AOServTable<Integer, BackupReport> table;
 
 	@Override
 	public boolean equals(Object O) {
@@ -137,7 +137,7 @@ final public class BackupReport extends AOServObject<Integer,BackupReport> imple
 	}
 
 	@Override
-	public AOServTable<Integer,BackupReport> getTable() {
+	public AOServTable<Integer, BackupReport> getTable() {
 		return table;
 	}
 
@@ -172,7 +172,7 @@ final public class BackupReport extends AOServObject<Integer,BackupReport> imple
 	}
 
 	@Override
-	public void setTable(AOServTable<Integer,BackupReport> table) {
+	public void setTable(AOServTable<Integer, BackupReport> table) {
 		if(this.table!=null) throw new IllegalStateException("table already set");
 		this.table=table;
 	}

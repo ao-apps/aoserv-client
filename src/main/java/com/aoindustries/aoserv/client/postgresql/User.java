@@ -109,7 +109,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Removab
 			return ValidResult.getInstance();
 		}
 
-		private static final ConcurrentMap<String,Name> interned = new ConcurrentHashMap<>();
+		private static final ConcurrentMap<String, Name> interned = new ConcurrentHashMap<>();
 
 		/**
 		 * @param id  when {@code null}, returns {@code null}

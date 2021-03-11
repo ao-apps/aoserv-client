@@ -374,7 +374,7 @@ final public class Table extends GlobalObjectIntegerKey<Table> {
 		return name;
 	}
 
-	public AOServTable<?,? extends AOServObject<?,?>> getAOServTable(AOServConnector connector) {
+	public AOServTable<?, ? extends AOServObject<?, ?>> getAOServTable(AOServConnector connector) {
 		return connector.getTable(pkey);
 	}
 

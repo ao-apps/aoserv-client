@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -129,7 +129,7 @@ public class TCPConnector extends AOServConnector {
 										} else if(timeSince >= MAX_IDLE_LISTEN_CACHES) {
 											// Must also not have any invalidate listeners
 											boolean foundListener = false;
-											for(AOServTable<?,?> table : getTables()) {
+											for(AOServTable<?, ?> table : getTables()) {
 												if(table.hasAnyTableListener()) {
 													foundListener = true;
 													break;

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2002-2009, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -42,7 +42,7 @@ public interface SQLExpression {
 	/**
 	 * Evaluates the expression on the given connector and object.
 	 */
-	Object evaluate(AOServConnector conn, AOServObject<?,?> obj) throws IOException, SQLException;
+	Object evaluate(AOServConnector conn, AOServObject<?, ?> obj) throws IOException, SQLException;
 
 	Type getType();
 

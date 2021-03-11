@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2007-2009, 2016, 2017, 2018, 2020  AO Industries, Inc.
+ * Copyright (C) 2007-2009, 2016, 2017, 2018, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -73,7 +73,7 @@ final public class AdministratorPermissionTable extends CachedTableIntegerKey<Ad
 	/**
 	 * Caches the permission lookups for speed.
 	 */
-	private Map<User.Name,SortedSet<String>> cachedPermissions;
+	private Map<User.Name, SortedSet<String>> cachedPermissions;
 
 	@Override
 	public void clearCache() {
@@ -86,7 +86,7 @@ final public class AdministratorPermissionTable extends CachedTableIntegerKey<Ad
 	public boolean hasPermission(Administrator ba, String permission) throws IOException, SQLException {
 		synchronized(this) {
 			if(cachedPermissions==null) {
-				Map<User.Name,SortedSet<String>> newCachedPermissions = new HashMap<>();
+				Map<User.Name, SortedSet<String>> newCachedPermissions = new HashMap<>();
 				List<AdministratorPermission> baps = getRows();
 				for(AdministratorPermission bap : baps) {
 					User.Name bapUsername = bap.getAdministrator_username();

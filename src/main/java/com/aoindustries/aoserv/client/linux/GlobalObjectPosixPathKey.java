@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2017, 2018, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -29,7 +29,7 @@ import com.aoindustries.aoserv.client.GlobalObject;
  *
  * @author  AO Industries, Inc.
  */
-public abstract class GlobalObjectPosixPathKey<T extends GlobalObjectPosixPathKey<T>> extends GlobalObject<PosixPath,T> {
+public abstract class GlobalObjectPosixPathKey<T extends GlobalObjectPosixPathKey<T>> extends GlobalObject<PosixPath, T> {
 
 	protected PosixPath pkey;
 

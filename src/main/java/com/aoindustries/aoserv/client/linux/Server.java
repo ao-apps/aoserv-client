@@ -848,7 +848,7 @@ final public class Server
 		return table.getConnector().getEmail().getMajordomoServer().getMajordomoServers(this);
 	}
 
-	private static final Map<Integer,Object> mrtgLocks = new HashMap<>();
+	private static final Map<Integer, Object> mrtgLocks = new HashMap<>();
 
 	public void getMrtgFile(final String filename, final OutputStream out) throws IOException, SQLException {
 		// Only one MRTG graph per server at a time, if don't get the lock in 15 seconds, return an error
@@ -1580,10 +1580,10 @@ final public class Server
 			/**
 			 * Parses the output of vgs --noheadings --separator=$'\t' --units=b -o vg_name,vg_extent_size,vg_extent_count,vg_free_count,pv_count,lv_count
 			 */
-			private static Map<String,VolumeGroup> parseVgsReport(String vgs) throws ParseException {
+			private static Map<String, VolumeGroup> parseVgsReport(String vgs) throws ParseException {
 				List<String> lines = Strings.splitLines(vgs);
 				int size = lines.size();
-				Map<String,VolumeGroup> volumeGroups = AoCollections.newHashMap(size);
+				Map<String, VolumeGroup> volumeGroups = AoCollections.newHashMap(size);
 				for(int c=0;c<size;c++) {
 					final int lineNum = c+1;
 					String line = lines.get(c);
@@ -1637,8 +1637,8 @@ final public class Server
 			private final long vgFreeCount;
 			private final int pvCount;
 			private final int lvCount;
-			private final Map<String,LogicalVolume> logicalVolumes = new HashMap<>();
-			private final Map<String,LogicalVolume> unmodifiableLogicalVolumes = Collections.unmodifiableMap(logicalVolumes);
+			private final Map<String, LogicalVolume> logicalVolumes = new HashMap<>();
+			private final Map<String, LogicalVolume> unmodifiableLogicalVolumes = Collections.unmodifiableMap(logicalVolumes);
 
 			private VolumeGroup(String vgName, int vgExtentSize, long vgExtentCount, long vgFreeCount, int pvCount, int lvCount) {
 				this.vgName = vgName;
@@ -1693,7 +1693,7 @@ final public class Server
 				return logicalVolumes.get(lvName);
 			}
 
-			public Map<String,LogicalVolume> getLogicalVolumes() {
+			public Map<String, LogicalVolume> getLogicalVolumes() {
 				return unmodifiableLogicalVolumes;
 			}
 		}
@@ -1703,13 +1703,13 @@ final public class Server
 			/**
 			 * Parses the output of pvs --noheadings --separator=$'\t' --units=b -o pv_name,pv_pe_count,pv_pe_alloc_count,pv_size,vg_name
 			 */
-			private static Map<String,PhysicalVolume> parsePvsReport(String pvs, Map<String,VolumeGroup> volumeGroups) throws ParseException {
+			private static Map<String, PhysicalVolume> parsePvsReport(String pvs, Map<String, VolumeGroup> volumeGroups) throws ParseException {
 				List<String> lines = Strings.splitLines(pvs);
 				int size = lines.size();
-				Map<String,PhysicalVolume> physicalVolumes = AoCollections.newHashMap(size);
-				Map<String,Integer> vgPhysicalVolumeCounts = AoCollections.newHashMap(volumeGroups.size());
-				Map<String,Long> vgExtentCountTotals = AoCollections.newHashMap(volumeGroups.size());
-				Map<String,Long> vgAllocCountTotals = AoCollections.newHashMap(volumeGroups.size());
+				Map<String, PhysicalVolume> physicalVolumes = AoCollections.newHashMap(size);
+				Map<String, Integer> vgPhysicalVolumeCounts = AoCollections.newHashMap(volumeGroups.size());
+				Map<String, Long> vgExtentCountTotals = AoCollections.newHashMap(volumeGroups.size());
+				Map<String, Long> vgAllocCountTotals = AoCollections.newHashMap(volumeGroups.size());
 				for(int c=0;c<size;c++) {
 					final int lineNum = c+1;
 					String line = lines.get(c);
@@ -1795,7 +1795,7 @@ final public class Server
 						lineNum
 					);
 				}
-				for(Map.Entry<String,VolumeGroup> entry : volumeGroups.entrySet()) {
+				for(Map.Entry<String, VolumeGroup> entry : volumeGroups.entrySet()) {
 					// Make sure counts match vgs report
 					VolumeGroup volumeGroup = entry.getValue();
 					String vgName = entry.getKey();
@@ -1902,7 +1902,7 @@ final public class Server
 			/**
 			 * Parses the output from lvs --noheadings --separator=$'\t' -o vg_name,lv_name,seg_count,segtype,stripes,seg_start_pe,seg_pe_ranges
 			 */
-			private static void parseLvsReport(String lvs, Map<String,VolumeGroup> volumeGroups, Map<String,PhysicalVolume> physicalVolumes) throws ParseException {
+			private static void parseLvsReport(String lvs, Map<String, VolumeGroup> volumeGroups, Map<String, PhysicalVolume> physicalVolumes) throws ParseException {
 				final List<String> lines = Strings.splitLines(lvs);
 				final int size = lines.size();
 				for(int c=0;c<size;c++) {
@@ -2283,8 +2283,8 @@ final public class Server
 			}
 		}
 
-		private final Map<String,VolumeGroup> volumeGroups;
-		private final Map<String,PhysicalVolume> physicalVolumes;
+		private final Map<String, VolumeGroup> volumeGroups;
+		private final Map<String, PhysicalVolume> physicalVolumes;
 
 		private LvmReport(String vgs, String pvs, String lvs) throws ParseException {
 			this.volumeGroups = VolumeGroup.parseVgsReport(vgs);
@@ -2367,11 +2367,11 @@ final public class Server
 	 * Gets the model of each hard drive on the server.  The key
 	 * is the device name and the value is the model name.
 	 */
-	public Map<String,String> getHddModelReport() throws IOException, SQLException, ParseException {
+	public Map<String, String> getHddModelReport() throws IOException, SQLException, ParseException {
 		String report = table.getConnector().requestStringQuery(true, AoservProtocol.CommandID.GET_AO_SERVER_HDD_MODEL_REPORT, pkey);
 		List<String> lines = Strings.splitLines(report);
 		int lineNum = 0;
-		Map<String,String> results = AoCollections.newHashMap(lines.size());
+		Map<String, String> results = AoCollections.newHashMap(lines.size());
 		for(String line : lines) {
 			lineNum++;
 			int colonPos = line.indexOf(':');
@@ -2580,8 +2580,8 @@ final public class Server
 		return Long.parseLong(value);
 	}
 
-	public Map<String,FilesystemReport> getFilesystemsReport() throws IOException, SQLException {
-		Map<String,FilesystemReport> reports = new LinkedHashMap<>();
+	public Map<String, FilesystemReport> getFilesystemsReport() throws IOException, SQLException {
+		Map<String, FilesystemReport> reports = new LinkedHashMap<>();
 		// Extremely simple CSV parser, but sufficient for the known format of the source data
 		List<String> lines = Strings.splitLines(getFilesystemsCsvReport());
 		if(lines.isEmpty()) throw new IOException("No lines from report");

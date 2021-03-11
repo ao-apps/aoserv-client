@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -65,9 +65,9 @@ import java.util.TreeMap;
  */
 final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 
-	final private Map<Account.Name,Monies> accountBalances = new HashMap<>();
-	final private Map<Account.Name,Monies> confirmedAccountBalances = new HashMap<>();
-	final private Map<Transaction,Monies> transactionBalances = new HashMap<>();
+	final private Map<Account.Name, Monies> accountBalances = new HashMap<>();
+	final private Map<Account.Name, Monies> confirmedAccountBalances = new HashMap<>();
+	final private Map<Transaction, Monies> transactionBalances = new HashMap<>();
 
 	TransactionTable(AOServConnector connector) {
 		super(connector, Transaction.class);
@@ -188,15 +188,15 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 		}
 	}
 
-	private static void addBalance(SortedMap<java.util.Currency,BigDecimal> accountBalances, Money amount) {
+	private static void addBalance(SortedMap<java.util.Currency, BigDecimal> accountBalances, Money amount) {
 		java.util.Currency currency = amount.getCurrency();
 		BigDecimal total = accountBalances.get(currency);
 		total = (total == null) ? amount.getValue() : total.add(amount.getValue());
 		accountBalances.put(currency, total);
 	}
 
-	private static void addAccountBalance(Map<Account.Name,SortedMap<java.util.Currency,BigDecimal>> balances, Account.Name account, Money amount) {
-		SortedMap<java.util.Currency,BigDecimal> accountBalances = balances.get(account);
+	private static void addAccountBalance(Map<Account.Name, SortedMap<java.util.Currency, BigDecimal>> balances, Account.Name account, Money amount) {
+		SortedMap<java.util.Currency, BigDecimal> accountBalances = balances.get(account);
 		if(accountBalances == null) {
 			accountBalances = new TreeMap<>(CurrencyComparator.getInstance());
 			balances.put(account, accountBalances);
@@ -204,9 +204,9 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 		addBalance(accountBalances, amount);
 	}
 
-	private static Monies toMonies(SortedMap<java.util.Currency,BigDecimal> balances) {
+	private static Monies toMonies(SortedMap<java.util.Currency, BigDecimal> balances) {
 		List<Money> monies = MinimalList.emptyList();
-		for(Map.Entry<java.util.Currency,BigDecimal> moneyEntry : balances.entrySet()) {
+		for(Map.Entry<java.util.Currency, BigDecimal> moneyEntry : balances.entrySet()) {
 			monies = MinimalList.add(
 				monies,
 				new Money(moneyEntry.getKey(), moneyEntry.getValue())
@@ -220,14 +220,14 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 		synchronized(accountBalances) {
 			if(accountBalances.isEmpty()) {
 				// Compute all balances now
-				Map<Account.Name,SortedMap<java.util.Currency,BigDecimal>> balances = new HashMap<>();
+				Map<Account.Name, SortedMap<java.util.Currency, BigDecimal>> balances = new HashMap<>();
 				for(Transaction transaction : getRows()) {
 					if(transaction.getPaymentConfirmed() != Transaction.NOT_CONFIRMED) {
 						addAccountBalance(balances, transaction.getAccount_name(), transaction.getAmount());
 					}
 				}
 				// Wrap totals into unmodified lists
-				for(Map.Entry<Account.Name,SortedMap<java.util.Currency,BigDecimal>> entry : balances.entrySet()) {
+				for(Map.Entry<Account.Name, SortedMap<java.util.Currency, BigDecimal>> entry : balances.entrySet()) {
 					accountBalances.put(entry.getKey(), toMonies(entry.getValue()));
 				}
 			}
@@ -335,7 +335,7 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 
 	public Monies getAccountBalance(Account account, Timestamp before) throws IOException, SQLException {
 		if(account == null) return Monies.of();
-		SortedMap<java.util.Currency,BigDecimal> balances = new TreeMap<>(CurrencyComparator.getInstance());
+		SortedMap<java.util.Currency, BigDecimal> balances = new TreeMap<>(CurrencyComparator.getInstance());
 		for(Transaction transaction : getTransactions(account)) {
 			if(
 				transaction.getPaymentConfirmed() != Transaction.NOT_CONFIRMED
@@ -352,14 +352,14 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 		synchronized(confirmedAccountBalances) {
 			if(confirmedAccountBalances.isEmpty()) {
 				// Compute all balances now
-				Map<Account.Name,SortedMap<java.util.Currency,BigDecimal>> balances = new HashMap<>();
+				Map<Account.Name, SortedMap<java.util.Currency, BigDecimal>> balances = new HashMap<>();
 				for(Transaction transaction : getRows()) {
 					if(transaction.getPaymentConfirmed() == Transaction.CONFIRMED) {
 						addAccountBalance(balances, transaction.getAccount_name(), transaction.getAmount());
 					}
 				}
 				// Wrap totals into unmodified lists
-				for(Map.Entry<Account.Name,SortedMap<java.util.Currency,BigDecimal>> entry : balances.entrySet()) {
+				for(Map.Entry<Account.Name, SortedMap<java.util.Currency, BigDecimal>> entry : balances.entrySet()) {
 					confirmedAccountBalances.put(entry.getKey(), toMonies(entry.getValue()));
 				}
 			}
@@ -370,7 +370,7 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 
 	public Monies getConfirmedAccountBalance(Account account, Timestamp before) throws IOException, SQLException {
 		if(account == null) return Monies.of();
-		SortedMap<java.util.Currency,BigDecimal> balances = new TreeMap<>(CurrencyComparator.getInstance());
+		SortedMap<java.util.Currency, BigDecimal> balances = new TreeMap<>(CurrencyComparator.getInstance());
 		for(Transaction transaction : getTransactions(account)) {
 			if(
 				transaction.getPaymentConfirmed() == Transaction.CONFIRMED
@@ -386,7 +386,7 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 		synchronized(transactionBalances) {
 			if(transactionBalances.isEmpty()) {
 				// Compute all balances now
-				Map<Account.Name,Monies> accountBalance = new HashMap<>();
+				Map<Account.Name, Monies> accountBalance = new HashMap<>();
 				for(Transaction trans : getRows()) {
 					Account.Name account = trans.getAccount_name();
 					Monies balance = accountBalance.get(account);

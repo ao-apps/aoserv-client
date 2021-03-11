@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -49,14 +49,14 @@ import java.util.Map;
 final public class GroupUserTable extends CachedTableIntegerKey<GroupUser> {
 
 	private boolean hashBuilt = false;
-	private final Map<Tuple2<Group.Name,User.Name>,List<GroupUser>> hash = new HashMap<>();
+	private final Map<Tuple2<Group.Name, User.Name>, List<GroupUser>> hash = new HashMap<>();
 
 	/**
 	 * The group name of the primary group is hashed on first use for fast
 	 * lookups.
 	 */
 	private boolean primaryHashBuilt = false;
-	private final Map<User.Name,Group.Name> primaryHash = new HashMap<>();
+	private final Map<User.Name, Group.Name> primaryHash = new HashMap<>();
 
 	GroupUserTable(AOServConnector connector) {
 		super(connector, GroupUser.class);
@@ -99,13 +99,13 @@ final public class GroupUserTable extends CachedTableIntegerKey<GroupUser> {
 			if(!hashBuilt) {
 				hash.clear();
 				for(GroupUser lga : getRows()) {
-					Tuple2<Group.Name,User.Name> key = new Tuple2<>(lga.getGroup_name(), lga.getUser_username());
+					Tuple2<Group.Name, User.Name> key = new Tuple2<>(lga.getGroup_name(), lga.getUser_username());
 					List<GroupUser> list = hash.get(key);
 					if(list == null) hash.put(key, list = new ArrayList<>());
 					list.add(lga);
 				}
 				// Make entries unmodifiable
-				for(Map.Entry<Tuple2<Group.Name,User.Name>,List<GroupUser>> entry : hash.entrySet()) {
+				for(Map.Entry<Tuple2<Group.Name, User.Name>, List<GroupUser>> entry : hash.entrySet()) {
 					entry.setValue(
 						AoCollections.optimalUnmodifiableList(entry.getValue())
 					);

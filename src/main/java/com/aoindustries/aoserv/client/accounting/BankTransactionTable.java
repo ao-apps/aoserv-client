@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -37,7 +37,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class BankTransactionTable extends AOServTable<Integer,BankTransaction> {
+final public class BankTransactionTable extends AOServTable<Integer, BankTransaction> {
 
 	BankTransactionTable(AOServConnector connector) {
 		super(connector, BankTransaction.class);

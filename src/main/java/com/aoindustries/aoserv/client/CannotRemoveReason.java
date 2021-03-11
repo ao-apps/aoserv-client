@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2004-2009, 2016, 2017, 2020  AO Industries, Inc.
+ * Copyright (C) 2004-2009, 2016, 2017, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -32,7 +32,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-public final class CannotRemoveReason<T extends AOServObject<?,? extends T>> {
+public final class CannotRemoveReason<T extends AOServObject<?, ? extends T>> {
 
 	private final String reason;
 	private final List<T> dependentObjects;

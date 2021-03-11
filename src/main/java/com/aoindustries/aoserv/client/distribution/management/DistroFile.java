@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -43,7 +43,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile> {
+final public class DistroFile extends FilesystemCachedObject<Integer, DistroFile> {
 
 	static final int COLUMN_PKEY=0;
 	public static final int COLUMN_OPERATING_SYSTEM_VERSION=1;

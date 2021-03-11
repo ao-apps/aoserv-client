@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -43,7 +43,7 @@ import java.util.Map;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServTable<K,V> {
+abstract public class GlobalTable<K, V extends GlobalObject<K, V>> extends AOServTable<K, V> {
 
 	private static final int numTables = Table.TableID.values().length;
 
@@ -73,7 +73,7 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 	 * column number.
 	 */
 	@SuppressWarnings("rawtypes")
-	private static final List<List<Map<Object,GlobalObject>>> tableHashes=new ArrayList<>(numTables);
+	private static final List<List<Map<Object, GlobalObject>>> tableHashes=new ArrayList<>(numTables);
 	static {
 		for(int c=0;c<numTables;c++) {
 			tableHashes.add(null);
@@ -88,7 +88,7 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 	 * a <code>ArrayList</code> or <code>AOServObject[]</code>.
 	 * All of the List<GlobalObject> stored here are unmodifiable.
 	 */
-	private static final List<List<Map<Object,List<GlobalObject<?,?>>>>> indexHashes=new ArrayList<>(numTables);
+	private static final List<List<Map<Object, List<GlobalObject<?, ?>>>>> indexHashes=new ArrayList<>(numTables);
 	static {
 		for(int c=0;c<numTables;c++) {
 			indexHashes.add(null);
@@ -100,7 +100,7 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 	 * The internal objects are stored in this list.  Each of the contained
 	 * List<GlobalObject> is unmodifiable.
 	 */
-	private static final List<List<GlobalObject<?,?>>> tableObjs=new ArrayList<>(numTables);
+	private static final List<List<GlobalObject<?, ?>>> tableObjs=new ArrayList<>(numTables);
 	static {
 		for(int c=0;c<numTables;c++) {
 			tableObjs.add(null);
@@ -118,7 +118,7 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 	@SuppressWarnings("NestedSynchronizedStatement")
 	public final int getGlobalRowCount() {
 		int ordinal = getTableID().ordinal();
-		List<GlobalObject<?,?>> objs;
+		List<GlobalObject<?, ?>> objs;
 		synchronized(locks[ordinal]) {
 			synchronized(tableObjs) {
 				objs=tableObjs.get(ordinal);
@@ -139,7 +139,7 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 			if(tableLoadeds==null) indexLoadeds[ordinal]=tableLoadeds=new BitSet(col+1);
 			boolean isHashed=tableLoadeds.get(col);
 
-			List<Map<Object,List<GlobalObject<?,?>>>> tableValues;
+			List<Map<Object, List<GlobalObject<?, ?>>>> tableValues;
 			synchronized(indexHashes) {
 				tableValues = indexHashes.get(ordinal);
 				if(tableValues==null) indexHashes.set(ordinal, tableValues=new ArrayList<>(col+1));
@@ -147,15 +147,15 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 			while(tableValues.size()<=col) {
 				tableValues.add(null);
 			}
-			Map<Object,List<GlobalObject<?,?>>> colIndexes=tableValues.get(col);
+			Map<Object, List<GlobalObject<?, ?>>> colIndexes=tableValues.get(col);
 			if(colIndexes==null) tableValues.set(col, colIndexes=new HashMap<>());
 
 			if(!isHashed) {
 				// Build the modifiable lists in a temporary Map
-				Map<Object,List<GlobalObject<?,?>>> modifiableIndexes=new HashMap<>();
-				for(GlobalObject<K,V> O : getRows()) {
+				Map<Object, List<GlobalObject<?, ?>>> modifiableIndexes=new HashMap<>();
+				for(GlobalObject<K, V> O : getRows()) {
 					Object cvalue=O.getColumn(col);
-					List<GlobalObject<?,?>> list=modifiableIndexes.get(cvalue);
+					List<GlobalObject<?, ?>> list=modifiableIndexes.get(cvalue);
 					if(list==null) modifiableIndexes.put(cvalue, list=new ArrayList<>());
 					list.add(O);
 				}
@@ -164,12 +164,12 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 				Iterator<Object> keys=modifiableIndexes.keySet().iterator();
 				while(keys.hasNext()) {
 					Object key=keys.next();
-					List<GlobalObject<?,?>> list=modifiableIndexes.get(key);
+					List<GlobalObject<?, ?>> list=modifiableIndexes.get(key);
 					colIndexes.put(key, Collections.unmodifiableList(list));
 				}
 				tableLoadeds.set(col);
 			}
-			// This returns unmodifable lists.
+			// This returns unmodifiable lists.
 			@SuppressWarnings("unchecked")
 			List<V> list=(List<V>)colIndexes.get(value);
 			if(list==null) return Collections.emptyList();
@@ -192,23 +192,23 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 			List<V> table=getRows();
 			int size=table.size();
 
-			final List<Map<Object,V>> tableValues;
+			final List<Map<Object, V>> tableValues;
 			synchronized(tableHashes) {
 				@SuppressWarnings("unchecked")
-				List<Map<Object,V>> existing = (List)tableHashes.get(ordinal);
+				List<Map<Object, V>> existing = (List)tableHashes.get(ordinal);
 				if(existing != null) {
 					tableValues = existing;
 				} else {
 					tableValues = new ArrayList<>(col+1);
 					@SuppressWarnings({"unchecked", "rawtypes"})
-					List<Map<Object,GlobalObject>> toCache = (List)tableValues;
+					List<Map<Object, GlobalObject>> toCache = (List)tableValues;
 					tableHashes.set(ordinal, toCache);
 				}
 			}
 			while(tableValues.size()<=col) {
 				tableValues.add(null);
 			}
-			Map<Object,V> colValues=tableValues.get(col);
+			Map<Object, V> colValues=tableValues.get(col);
 			// Allow 25% growth before rehash
 			if(colValues == null) tableValues.set(col, colValues = AoCollections.newHashMap((size * 5) >> 2));
 
@@ -302,7 +302,7 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 			long currentTime=System.currentTimeMillis();
 			long lastLoaded=lastLoadeds[ordinal];
 			if(lastLoaded==-1) {
-				List<GlobalObject<?,?>> list=(List)getObjects(true, AoservProtocol.CommandID.GET_TABLE, ordinal);
+				List<GlobalObject<?, ?>> list=(List)getObjects(true, AoservProtocol.CommandID.GET_TABLE, ordinal);
 				synchronized(tableObjs) {
 					tableObjs.set(ordinal, Collections.unmodifiableList(list));
 				}

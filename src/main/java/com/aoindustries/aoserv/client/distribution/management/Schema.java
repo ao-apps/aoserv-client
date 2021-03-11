@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2018, 2020  AO Industries, Inc.
+ * Copyright (C) 2018, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -42,12 +42,12 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 	private final DistroReportTypeTable DistroReportType;
 	public DistroReportTypeTable getDistroReportType() {return DistroReportType;}
 
-	private final List<? extends AOServTable<?,?>> tables;
+	private final List<? extends AOServTable<?, ?>> tables;
 
 	public Schema(AOServConnector connector) {
 		super(connector);
 
-		ArrayList<AOServTable<?,?>> newTables = new ArrayList<>();
+		ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
 		newTables.add(DistroFile = new DistroFileTable(connector));
 		newTables.add(DistroFileType = new DistroFileTypeTable(connector));
 		newTables.add(DistroReportType = new DistroReportTypeTable(connector));
@@ -57,7 +57,7 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 
 	@Override
 	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
-	public List<? extends AOServTable<?,?>> getTables() {
+	public List<? extends AOServTable<?, ?>> getTables() {
 		return tables;
 	}
 

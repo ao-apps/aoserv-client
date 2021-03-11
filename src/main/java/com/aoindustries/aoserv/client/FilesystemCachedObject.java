@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2009, 2016, 2017, 2019  AO Industries, Inc.
+ * Copyright (C) 2003-2009, 2016, 2017, 2019, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -35,9 +35,9 @@ import java.io.IOException;
  * @author  AO Industries, Inc.
  */
 // TODO: Is this worth maintaining?
-public abstract class FilesystemCachedObject<K,T extends FilesystemCachedObject<K,T>> extends AOServObject<K,T> implements SingleTableObject<K,T>, FileListObject {
+public abstract class FilesystemCachedObject<K, T extends FilesystemCachedObject<K, T>> extends AOServObject<K, T> implements SingleTableObject<K, T>, FileListObject {
 
-	protected AOServTable<K,T> table;
+	protected AOServTable<K, T> table;
 
 	protected FilesystemCachedObject() {
 	}
@@ -50,12 +50,12 @@ public abstract class FilesystemCachedObject<K,T extends FilesystemCachedObject<
 	 */
 
 	@Override
-	final public AOServTable<K,T> getTable() {
+	final public AOServTable<K, T> getTable() {
 		return table;
 	}
 
 	@Override
-	final public void setTable(AOServTable<K,T> table) {
+	final public void setTable(AOServTable<K, T> table) {
 		if(this.table!=null) throw new IllegalStateException("table already set");
 		this.table=table;
 	}

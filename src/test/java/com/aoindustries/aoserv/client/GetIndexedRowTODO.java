@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2006-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -91,7 +91,7 @@ public class GetIndexedRowTODO extends TestCase {
 				if(rows.isEmpty()) System.out.println("Empty table, cannot test");
 				else {
 					List<Column> columns=table.getTableSchema().getSchemaColumns(conn);
-					Map<Object,List<AOServObject>> expectedLists=new HashMap<>();
+					Map<Object, List<AOServObject>> expectedLists=new HashMap<>();
 					for(Column column : columns) {
 						boolean supported=true;
 						String columnName=column.getName();

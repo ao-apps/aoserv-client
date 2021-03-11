@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -45,13 +45,13 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class BankTransaction extends AOServObject<Integer,BankTransaction> implements SingleTableObject<Integer,BankTransaction> {
+final public class BankTransaction extends AOServObject<Integer, BankTransaction> implements SingleTableObject<Integer, BankTransaction> {
 
 	static final int COLUMN_ID = 0;
 	static final String COLUMN_ID_name = "id";
 	static final String COLUMN_TIME_name = "time";
 
-	private AOServTable<Integer,BankTransaction> table;
+	private AOServTable<Integer, BankTransaction> table;
 	private int id;
 	private UnmodifiableTimestamp time;
 	private String
@@ -144,7 +144,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	}
 
 	@Override
-	public AOServTable<Integer,BankTransaction> getTable() {
+	public AOServTable<Integer, BankTransaction> getTable() {
 		return table;
 	}
 
@@ -211,7 +211,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	}
 
 	@Override
-	public void setTable(AOServTable<Integer,BankTransaction> table) {
+	public void setTable(AOServTable<Integer, BankTransaction> table) {
 		if(this.table!=null) throw new IllegalStateException("table already set");
 		this.table=table;
 	}

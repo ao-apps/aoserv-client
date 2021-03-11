@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2020  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -45,7 +45,7 @@ final public class CommandTable extends GlobalTableStringKey<Command> {
 
 	private static final String GLOBAL_COMMANDS="[[GLOBAL]]";
 
-	private final Map<String,List<Command>> tableCommands=new HashMap<>();
+	private final Map<String, List<Command>> tableCommands=new HashMap<>();
 
 	CommandTable(AOServConnector connector) {
 		super(connector, Command.class);

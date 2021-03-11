@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2020  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -44,7 +44,7 @@ public interface TableLoadListener {
 	 * The object returned is stored and will be the parameter provided in the next call.
 	 * </p>
 	 */
-	Object onTableLoadStarted(AOServTable<?,?> table, Object param);
+	Object onTableLoadStarted(AOServTable<?, ?> table, Object param);
 
 	/**
 	 * Called once the number of rows that will be loaded is known or known to be unknown.
@@ -64,7 +64,7 @@ public interface TableLoadListener {
 	 *
 	 * @see  ProgressListener
 	 */
-	Object onTableLoadRowCount(AOServTable<?,?> table, Object param, Long rowCount);
+	Object onTableLoadRowCount(AOServTable<?, ?> table, Object param, Long rowCount);
 
 	/**
 	 * Called as each row is loaded.
@@ -74,7 +74,7 @@ public interface TableLoadListener {
 	 *
 	 * @param  rowNumber  The row number loaded, started at zero.
 	 */
-	Object onTableRowLoaded(AOServTable<?,?> table, Object param, long rowNumber, AOServObject<?,?> object);
+	Object onTableRowLoaded(AOServTable<?, ?> table, Object param, long rowNumber, AOServObject<?, ?> object);
 
 	/**
 	 * Called when the table load has failed.
@@ -82,7 +82,7 @@ public interface TableLoadListener {
 	 * The object returned is stored and will be the parameter provided in the next call.
 	 * </p>
 	 */
-	Object onTableLoadFailed(AOServTable<?,?> table, Object param, Throwable cause);
+	Object onTableLoadFailed(AOServTable<?, ?> table, Object param, Throwable cause);
 
 	/**
 	 * Called when the table is completely loaded.
@@ -90,5 +90,5 @@ public interface TableLoadListener {
 	 * The object returned is stored and will be the parameter provided in the next call.
 	 * </p>
 	 */
-	Object onTableLoadCompleted(AOServTable<?,?> table, Object param);
+	Object onTableLoadCompleted(AOServTable<?, ?> table, Object param);
 }

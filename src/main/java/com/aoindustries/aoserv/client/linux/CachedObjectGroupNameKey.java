@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017, 2018, 2020  AO Industries, Inc.
+ * Copyright (C) 2017, 2018, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -29,7 +29,7 @@ import com.aoindustries.aoserv.client.CachedObject;
  *
  * @author  AO Industries, Inc.
  */
-public abstract class CachedObjectGroupNameKey<V extends CachedObjectGroupNameKey<V>> extends CachedObject<Group.Name,V> {
+public abstract class CachedObjectGroupNameKey<V extends CachedObjectGroupNameKey<V>> extends CachedObject<Group.Name, V> {
 
 	protected Group.Name pkey;
 

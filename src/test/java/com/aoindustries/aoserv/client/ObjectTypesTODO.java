@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2006-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2006-2013, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -84,10 +84,10 @@ public class ObjectTypesTODO extends TestCase {
 					c==Table.TableID.DISTRO_FILES.ordinal()
 					|| c==Table.TableID.WhoisHistory.ordinal() // TODO: Just exclude output/error columns?
 				) continue;
-				AOServTable<?,?> table=conn.getTable(c);
+				AOServTable<?, ?> table=conn.getTable(c);
 				String tableName=table.getTableName();
 				System.out.print("        "+tableName+": ");
-				List<? extends AOServObject<?,?>> rows=table.getRows();
+				List<? extends AOServObject<?, ?>> rows=table.getRows();
 				if(rows.isEmpty()) System.out.println('E');
 				else {
 					List<Column> columns=table.getTableSchema().getSchemaColumns(conn);
@@ -96,7 +96,7 @@ public class ObjectTypesTODO extends TestCase {
 						Type type = column.getType(conn);
 						int typeNum=type.getId();
 						char tested='N';
-						for(AOServObject<?,?> row : rows) {
+						for(AOServObject<?, ?> row : rows) {
 							// Cast to proper type if not null
 							Object value=row.getColumn(column.getIndex());
 							if(value!=null) {

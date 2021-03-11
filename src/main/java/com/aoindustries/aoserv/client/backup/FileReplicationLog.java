@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -42,13 +42,13 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class FileReplicationLog extends AOServObject<Integer,FileReplicationLog> implements SingleTableObject<Integer,FileReplicationLog> {
+final public class FileReplicationLog extends AOServObject<Integer, FileReplicationLog> implements SingleTableObject<Integer, FileReplicationLog> {
 
 	static final int COLUMN_PKEY = 0;
 	static final String COLUMN_REPLICATION_name = "replication";
 	static final String COLUMN_END_TIME_name = "end_time";
 
-	private AOServTable<Integer,FileReplicationLog> table;
+	private AOServTable<Integer, FileReplicationLog> table;
 
 	private int pkey;
 	private int replication;
@@ -117,7 +117,7 @@ final public class FileReplicationLog extends AOServObject<Integer,FileReplicati
 	}
 
 	@Override
-	public AOServTable<Integer,FileReplicationLog> getTable() {
+	public AOServTable<Integer, FileReplicationLog> getTable() {
 		return table;
 	}
 
@@ -164,7 +164,7 @@ final public class FileReplicationLog extends AOServObject<Integer,FileReplicati
 	}
 
 	@Override
-	public void setTable(AOServTable<Integer,FileReplicationLog> table) {
+	public void setTable(AOServTable<Integer, FileReplicationLog> table) {
 		if(this.table!=null) throw new IllegalStateException("table already set");
 		this.table=table;
 	}

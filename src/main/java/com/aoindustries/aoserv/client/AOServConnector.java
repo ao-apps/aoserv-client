@@ -293,7 +293,7 @@ abstract public class AOServConnector implements SchemaParent {
 	 *
 	 * @see  Table.TableID#ordinal()
 	 */
-	private final List<? extends AOServTable<?,?>> tables;
+	private final List<? extends AOServTable<?, ?>> tables;
 
 	private final SimpleAOClient simpleAOClient;
 	public SimpleAOClient getSimpleAOClient() {return simpleAOClient;}
@@ -349,7 +349,7 @@ abstract public class AOServConnector implements SchemaParent {
 		schemas = Collections.unmodifiableList(newSchemas);
 
 		// These must match the table IDs in SchemaTable
-		ArrayList<AOServTable<?,?>> newTables = new ArrayList<>();
+		ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
 		newTables.add(linux.getDaemonAcl());
 		newTables.add(linux.getServer());
 		newTables.add(master.getPermission());
@@ -562,7 +562,7 @@ abstract public class AOServConnector implements SchemaParent {
 	 * Clears all caches used by this connector.
 	 */
 	public void clearCaches() {
-		for(AOServTable<?,?> table : tables) {
+		for(AOServTable<?, ?> table : tables) {
 			table.clearCache();
 		}
 	}
@@ -796,7 +796,7 @@ abstract public class AOServConnector implements SchemaParent {
 	 *
 	 * @see  Table
 	 */
-	final public AOServTable<?,?> getTable(int tableID) throws IllegalArgumentException {
+	final public AOServTable<?, ?> getTable(int tableID) throws IllegalArgumentException {
 		if(tableID>=0 && tableID<tables.size()) return tables.get(tableID);
 		throw new IllegalArgumentException("Table not found for ID="+tableID);
 	}
@@ -811,7 +811,7 @@ abstract public class AOServConnector implements SchemaParent {
 	 * @see  Table
 	 */
 	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
-	final public List<? extends AOServTable<?,?>> getTables() {
+	final public List<? extends AOServTable<?, ?>> getTables() {
 		return tables;
 	}
 
@@ -924,7 +924,7 @@ abstract public class AOServConnector implements SchemaParent {
 	protected abstract void release(AOServConnection connection) throws IOException;
 
 	final public void removeFromAllTables(TableListener listener) {
-		for(AOServTable<?,?> table : tables) {
+		for(AOServTable<?, ?> table : tables) {
 			table.removeTableListener(listener);
 		}
 	}
@@ -1717,7 +1717,7 @@ abstract public class AOServConnector implements SchemaParent {
 		);
 	}
 
-	public <K,T extends AOServObject<K,T>> void sort(
+	public <K, T extends AOServObject<K, T>> void sort(
 		ComparisonSortAlgorithm<? super T> sortAlgorithm,
 		T[] list,
 		SQLExpression[] sortExpressions,
@@ -1733,7 +1733,7 @@ abstract public class AOServConnector implements SchemaParent {
 		);
 	}
 
-	public <K,T extends AOServObject<K,T>> void sort(
+	public <K, T extends AOServObject<K, T>> void sort(
 		ComparisonSortAlgorithm<? super T> sortAlgorithm,
 		List<T> list,
 		SQLExpression[] sortExpressions,

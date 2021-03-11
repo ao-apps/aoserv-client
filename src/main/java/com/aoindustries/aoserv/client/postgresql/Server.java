@@ -120,7 +120,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 			return ValidResult.getInstance();
 		}
 
-		private static final ConcurrentMap<String,Name> interned = new ConcurrentHashMap<>();
+		private static final ConcurrentMap<String, Name> interned = new ConcurrentHashMap<>();
 
 		/**
 		 * @param name  when {@code null}, returns {@code null}

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -198,7 +198,7 @@ public class Parser {
 	}
 
 	// TODO: Unit tests
-	public static SQLExpression parseSQLExpression(AOServTable<?,?> table, String expr) throws SQLException, IOException {
+	public static SQLExpression parseSQLExpression(AOServTable<?, ?> table, String expr) throws SQLException, IOException {
 		AOServConnector connector = table.getConnector();
 		int joinPos = indexOfNotQuoted(expr, '.');
 		if(joinPos == -1) joinPos = expr.length();

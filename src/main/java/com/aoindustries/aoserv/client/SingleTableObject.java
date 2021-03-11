@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -27,14 +27,14 @@ package com.aoindustries.aoserv.client;
  *
  * @author  AO Industries, Inc.
  */
-public interface SingleTableObject<K,V extends AOServObject<K,V>> {
+public interface SingleTableObject<K, V extends AOServObject<K, V>> {
 
 	/**
 	 * Gets the <code>AOServTable</code> that contains this <code>AOServObject</code>.
 	 *
 	 * @return  the <code>AOServTable</code>.
 	 */
-	AOServTable<K,V> getTable();
+	AOServTable<K, V> getTable();
 
-	void setTable(AOServTable<K,V> table);
+	void setTable(AOServTable<K, V> table);
 }

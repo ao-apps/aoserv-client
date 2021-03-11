@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2003-2013, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -44,7 +44,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class SpamMessage extends AOServObject<Integer,SpamMessage> implements SingleTableObject<Integer,SpamMessage> {
+final public class SpamMessage extends AOServObject<Integer, SpamMessage> implements SingleTableObject<Integer, SpamMessage> {
 
 	static final int
 		COLUMN_PKEY=0,
@@ -52,7 +52,7 @@ final public class SpamMessage extends AOServObject<Integer,SpamMessage> impleme
 	;
 	static final String COLUMN_PKEY_name = "pkey";
 
-	private AOServTable<Integer,SpamMessage> table;
+	private AOServTable<Integer, SpamMessage> table;
 
 	private int pkey;
 	private int email_relay;
@@ -104,7 +104,7 @@ final public class SpamMessage extends AOServObject<Integer,SpamMessage> impleme
 	}
 
 	@Override
-	public AOServTable<Integer,SpamMessage> getTable() {
+	public AOServTable<Integer, SpamMessage> getTable() {
 		return table;
 	}
 
@@ -135,7 +135,7 @@ final public class SpamMessage extends AOServObject<Integer,SpamMessage> impleme
 	}
 
 	@Override
-	public void setTable(AOServTable<Integer,SpamMessage> table) {
+	public void setTable(AOServTable<Integer, SpamMessage> table) {
 		if(this.table!=null) throw new IllegalStateException("table already set");
 		this.table=table;
 	}

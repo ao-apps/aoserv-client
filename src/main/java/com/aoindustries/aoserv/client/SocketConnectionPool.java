@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -38,7 +38,7 @@ import java.util.logging.Logger;
  *
  * @author  AO Industries, Inc.
  */
-final class SocketConnectionPool extends AOPool<SocketConnection,IOException,InterruptedIOException> {
+final class SocketConnectionPool extends AOPool<SocketConnection, IOException, InterruptedIOException> {
 
 	public static final int DELAY_TIME=3*60*1000;
 	public static final int MAX_IDLE_TIME=15*60*1000;
@@ -98,12 +98,12 @@ final class SocketConnectionPool extends AOPool<SocketConnection,IOException,Int
 			int totalHashed=0;
 			int totalIndexed=0;
 			int totalRows=0;
-			for(AOServTable<?,?> table : connector.getTables()) {
+			for(AOServTable<?, ?> table : connector.getTables()) {
 				totalLoaded++;
-				if(table instanceof CachedTable<?,?>) {
+				if(table instanceof CachedTable<?, ?>) {
 					totalCaches++;
 					int columnCount=table.getTableSchema().getSchemaColumns(connector).size();
-					CachedTable<?,?> cached=(CachedTable<?,?>)table;
+					CachedTable<?, ?> cached=(CachedTable<?, ?>)table;
 					if(cached.isLoaded()) {
 						totalActive++;
 						for(int d=0;d<columnCount;d++) {
@@ -112,10 +112,10 @@ final class SocketConnectionPool extends AOPool<SocketConnection,IOException,Int
 						}
 						totalRows+=cached.size();
 					}
-				} else if(table instanceof GlobalTable<?,?>) {
+				} else if(table instanceof GlobalTable<?, ?>) {
 					totalCaches++;
 					int columnCount=table.getTableSchema().getSchemaColumns(connector).size();
-					GlobalTable<?,?> global=(GlobalTable<?,?>)table;
+					GlobalTable<?, ?> global=(GlobalTable<?, ?>)table;
 					if(global.isLoaded()) {
 						totalActive++;
 						for(int d=0;d<columnCount;d++) {

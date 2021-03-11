@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -119,7 +119,7 @@ final public class GroupServerTable extends CachedTableIntegerKey<GroupServer> {
 	}
 
 	private boolean nameHashBuilt=false;
-	private final Map<Integer,Map<Group.Name,GroupServer>> nameHash=new HashMap<>();
+	private final Map<Integer, Map<Group.Name, GroupServer>> nameHash=new HashMap<>();
 
 	public GroupServer getLinuxServerGroup(Server aoServer, Group.Name group_name) throws IOException, SQLException {
 		synchronized(nameHash) {
@@ -131,21 +131,21 @@ final public class GroupServerTable extends CachedTableIntegerKey<GroupServer> {
 				for(int c=0; c<len; c++) {
 					GroupServer lsg=list.get(c);
 					Integer I=lsg.getServer_host_id();
-					Map<Group.Name,GroupServer> serverHash=nameHash.get(I);
+					Map<Group.Name, GroupServer> serverHash=nameHash.get(I);
 					if(serverHash==null) nameHash.put(I, serverHash=new HashMap<>());
 					if(serverHash.put(lsg.getLinuxGroup_name(), lsg)!=null) throw new SQLException("LinuxServerGroup name exists more than once on server: "+lsg.getLinuxGroup_name()+" on "+I);
 
 				}
 				nameHashBuilt=true;
 			}
-			Map<Group.Name,GroupServer> serverHash=nameHash.get(aoServer.getPkey());
+			Map<Group.Name, GroupServer> serverHash=nameHash.get(aoServer.getPkey());
 			if(serverHash==null) return null;
 			return serverHash.get(group_name);
 		}
 	}
 
 	private boolean gidHashBuilt=false;
-	private final Map<Integer,Map<LinuxId,GroupServer>> gidHash=new HashMap<>();
+	private final Map<Integer, Map<LinuxId, GroupServer>> gidHash=new HashMap<>();
 
 	public GroupServer getLinuxServerGroup(Server aoServer, LinuxId gid) throws IOException, SQLException {
 		synchronized(gidHash) {
@@ -157,14 +157,14 @@ final public class GroupServerTable extends CachedTableIntegerKey<GroupServer> {
 				for(int c=0; c<len; c++) {
 					GroupServer lsg=list.get(c);
 					Integer serverI=lsg.getServer_host_id();
-					Map<LinuxId,GroupServer> serverHash = gidHash.get(serverI);
+					Map<LinuxId, GroupServer> serverHash = gidHash.get(serverI);
 					if(serverHash==null) gidHash.put(serverI, serverHash=new HashMap<>());
 					LinuxId gidI=lsg.getGid();
 					if(serverHash.put(gidI, lsg)!=null) throw new SQLException("GID exists more than once on server: "+gidI+" on "+serverI);
 				}
 				gidHashBuilt=true;
 			}
-			Map<LinuxId,GroupServer> serverHash=gidHash.get(aoServer.getPkey());
+			Map<LinuxId, GroupServer> serverHash=gidHash.get(aoServer.getPkey());
 			if(serverHash==null) return null;
 			return serverHash.get(gid);
 		}

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -75,7 +75,7 @@ final public class IpAddress extends CachedObjectIntegerKey<IpAddress> {
 	;
 
 	// TODO: Should have an upper bound to this cache to avoid memory leak
-	private static final ConcurrentMap<String,Integer> intForIPAddressCache = new ConcurrentHashMap<>();
+	private static final ConcurrentMap<String, Integer> intForIPAddressCache = new ConcurrentHashMap<>();
 
 	public static Integer getIntForIPAddress(String ipAddress) throws IllegalArgumentException {
 		Integer result = intForIPAddressCache.get(ipAddress);
@@ -123,7 +123,7 @@ final public class IpAddress extends CachedObjectIntegerKey<IpAddress> {
 		;
 	}
 
-	//private static final ConcurrentMap<String,String> getReverseDnsQueryCache = new ConcurrentHashMap<String,String>();
+	//private static final ConcurrentMap<String, String> getReverseDnsQueryCache = new ConcurrentHashMap<String, String>();
 
 	/**
 	 * Gets the arpa address to be used for reverse DNS queries.

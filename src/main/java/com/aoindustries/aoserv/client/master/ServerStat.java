@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2015, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -40,7 +40,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class ServerStat extends AOServObject<String,ServerStat> implements SingleTableObject<String,ServerStat> {
+final public class ServerStat extends AOServObject<String, ServerStat> implements SingleTableObject<String, ServerStat> {
 
 	public static final String
 		BYTE_ARRAY_CACHE_CREATES = "byte_array_cache_creates",
@@ -91,7 +91,7 @@ final public class ServerStat extends AOServObject<String,ServerStat> implements
 	private String name;
 	private String value;
 	private String description;
-	private AOServTable<String,ServerStat> table;
+	private AOServTable<String, ServerStat> table;
 
 	public ServerStat() {
 	}
@@ -126,7 +126,7 @@ final public class ServerStat extends AOServObject<String,ServerStat> implements
 	}
 
 	@Override
-	public AOServTable<String,ServerStat> getTable() {
+	public AOServTable<String, ServerStat> getTable() {
 		return table;
 	}
 
@@ -152,7 +152,7 @@ final public class ServerStat extends AOServObject<String,ServerStat> implements
 	}
 
 	@Override
-	public void setTable(AOServTable<String,ServerStat> table) {
+	public void setTable(AOServTable<String, ServerStat> table) {
 		if(this.table!=null) throw new IllegalStateException("table already set");
 		this.table=table;
 	}

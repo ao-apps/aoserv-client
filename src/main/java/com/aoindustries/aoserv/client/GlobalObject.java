@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -29,7 +29,7 @@ package com.aoindustries.aoserv.client;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class GlobalObject<K,T extends GlobalObject<K,T>> extends AOServObject<K,T> {
+abstract public class GlobalObject<K, T extends GlobalObject<K, T>> extends AOServObject<K, T> {
 
 	protected GlobalObject() {
 	}

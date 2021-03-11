@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2007-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2007-2013, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -117,7 +117,7 @@ final public class RequestTable extends CachedTableIntegerKey<Request> {
 		String billing_state,
 		String billing_zip,
 		// options
-		final Map<String,String> options
+		final Map<String, String> options
 	) throws IOException, SQLException {
 		// Validate the encrypted parameters
 		if(ba_password==null) throw new NullPointerException("ba_password is null");

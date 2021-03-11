@@ -128,7 +128,7 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
 			return ValidResult.getInstance();
 		}
 
-		private static final ConcurrentMap<String,Name> interned = new ConcurrentHashMap<>();
+		private static final ConcurrentMap<String, Name> interned = new ConcurrentHashMap<>();
 
 		/**
 		 * @param name  when {@code null}, returns {@code null}

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2006-2009, 2015, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2015, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -82,7 +82,7 @@ public class GetTableSizesTODO extends TestCase {
 				System.out.print("        Pass"+(d<9?"  ":" ")+(d+1)+" of "+PASSES+": ");
 				for(int c=0;c<numTables;c++) {
 					System.out.print('.');
-					AOServTable<?,?> table=conn.getTable(c);
+					AOServTable<?, ?> table=conn.getTable(c);
 					String tableName=table.getTableName();
 					int size=table.size();
 					if(size<0) fail("Table size < 0 for table "+tableName+": "+size);
@@ -103,7 +103,7 @@ public class GetTableSizesTODO extends TestCase {
 					if(
 						d!=Table.TableID.MASTER_PROCESSES.ordinal()
 					) {
-						AOServTable<?,?> table=conn.getTable(d);
+						AOServTable<?, ?> table=conn.getTable(d);
 						String tableName=table.getTableName();
 						assertEquals("Mismatched counts from different passes on table "+tableName+": ", counts[0][d], counts[c][d]);
 					}

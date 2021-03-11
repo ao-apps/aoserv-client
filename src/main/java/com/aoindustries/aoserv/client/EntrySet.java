@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2006-2009, 2016, 2017, 2019  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2016, 2017, 2019, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -33,7 +33,7 @@ import java.util.NoSuchElementException;
  *
  * @author  AO Industries, Inc.
  */
-final class EntrySet<K,V extends AOServObject<K,V>> extends AbstractSet<Map.Entry<K,V>> {
+final class EntrySet<K, V extends AOServObject<K, V>> extends AbstractSet<Map.Entry<K, V>> {
 
 	private final List<V> objs;
 
@@ -47,8 +47,8 @@ final class EntrySet<K,V extends AOServObject<K,V>> extends AbstractSet<Map.Entr
 	}
 
 	@Override
-	public Iterator<Map.Entry<K,V>> iterator() {
-		return new Iterator<Map.Entry<K,V>>() {
+	public Iterator<Map.Entry<K, V>> iterator() {
+		return new Iterator<Map.Entry<K, V>>() {
 
 			private int cursor=0;
 
@@ -65,11 +65,11 @@ final class EntrySet<K,V extends AOServObject<K,V>> extends AbstractSet<Map.Entr
 			}
 
 			@Override
-			public Map.Entry<K,V> next() {
+			public Map.Entry<K, V> next() {
 				try {
 					final V value=objs.get(cursor);
 					final K key=value.getKey();
-					Map.Entry<K,V> next = new Map.Entry<K,V>() {
+					Map.Entry<K, V> next = new Map.Entry<K, V>() {
 						@Override
 						public V setValue(V value) {
 							throw new UnsupportedOperationException();

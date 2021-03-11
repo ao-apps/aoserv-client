@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -197,7 +197,7 @@ final public class AOSH extends ShellInterpreter {
 						}
 					}
 					if(aoshCommand!=null) {
-						AOServTable<?,?> table = aoshCommand.getTable(connector).getAOServTable(connector);
+						AOServTable<?, ?> table = aoshCommand.getTable(connector).getAOServTable(connector);
 						done=table.handleCommand(args, in, out, err, isInteractive());
 						if(!done) throw new RuntimeException("AOSHCommand found, but command not processed.  command='"+command+"', table='"+table.getTableName()+'\'');
 					}

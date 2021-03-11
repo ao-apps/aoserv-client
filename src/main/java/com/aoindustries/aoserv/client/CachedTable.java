@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -44,7 +44,7 @@ import java.util.Map;
  *
  * @author  AO Industries, Inc.
  */
-public abstract class CachedTable<K,V extends CachedObject<K,V>> extends AOServTable<K,V> {
+public abstract class CachedTable<K, V extends CachedObject<K, V>> extends AOServTable<K, V> {
 
 	/**
 	 * The last time that the data was loaded, or
@@ -56,14 +56,14 @@ public abstract class CachedTable<K,V extends CachedObject<K,V>> extends AOServT
 	 * The internal objects are stored in <code>HashMaps</code>
 	 * based on unique columns.
 	 */
-	private List<Map<Object,V>> columnHashes;
+	private List<Map<Object, V>> columnHashes;
 	private BitSet columnsHashed;
 
 	/**
 	 * The internal objects are stored in <code>HashMaps</code> of <code>CachedObject[]</code>
 	 * based on indexed columns.  Each of the contained List<T> are unmodifiable.
 	 */
-	private List<Map<Object,List<V>>> indexHashes;
+	private List<Map<Object, List<V>>> indexHashes;
 	private BitSet indexesHashed;
 
 	/**
@@ -88,11 +88,11 @@ public abstract class CachedTable<K,V extends CachedObject<K,V>> extends AOServT
 			while(indexHashes.size()<minLength) {
 				indexHashes.add(null);
 			}
-			Map<Object,List<V>> map=indexHashes.get(col);
+			Map<Object, List<V>> map=indexHashes.get(col);
 			if(map==null) indexHashes.set(col, map=new HashMap<>());
 			if(!indexesHashed.get(col)) {
 				// Build the modifiable lists in a temporary Map
-				Map<Object,List<V>> modifiableIndexes=new HashMap<>();
+				Map<Object, List<V>> modifiableIndexes=new HashMap<>();
 				for(V obj : tableData) {
 					Object cvalue=obj.getColumn(col);
 					List<V> list=modifiableIndexes.get(cvalue);
@@ -129,7 +129,7 @@ public abstract class CachedTable<K,V extends CachedObject<K,V>> extends AOServT
 			while(columnHashes.size()<minLength) {
 				columnHashes.add(null);
 			}
-			Map<Object,V> map=columnHashes.get(col);
+			Map<Object, V> map=columnHashes.get(col);
 			if(!columnsHashed.get(col)) {
 				List<V> table=tableData;
 				int size=table.size();
@@ -204,7 +204,7 @@ public abstract class CachedTable<K,V extends CachedObject<K,V>> extends AOServT
 			if(columnHashes!=null) {
 				int len=columnHashes.size();
 				for(int c=0;c<len;c++) {
-					Map<Object,V> map = columnHashes.get(c);
+					Map<Object, V> map = columnHashes.get(c);
 					if(map!=null) map.clear();
 				}
 			}
@@ -212,7 +212,7 @@ public abstract class CachedTable<K,V extends CachedObject<K,V>> extends AOServT
 			if(indexHashes!=null) {
 				int len=indexHashes.size();
 				for(int c=0;c<len;c++) {
-					Map<Object,List<V>> map=indexHashes.get(c);
+					Map<Object, List<V>> map=indexHashes.get(c);
 					if(map!=null) map.clear();
 				}
 			}
@@ -236,7 +236,7 @@ public abstract class CachedTable<K,V extends CachedObject<K,V>> extends AOServT
 			if(columnHashes!=null) {
 				int len=columnHashes.size();
 				for(int c=0;c<len;c++) {
-					Map<Object,V> map = columnHashes.get(c);
+					Map<Object, V> map = columnHashes.get(c);
 					if(map!=null) map.clear();
 				}
 			}
@@ -244,7 +244,7 @@ public abstract class CachedTable<K,V extends CachedObject<K,V>> extends AOServT
 			if(indexHashes!=null) {
 				int len=indexHashes.size();
 				for(int c=0;c<len;c++) {
-					Map<Object,List<V>> map=indexHashes.get(c);
+					Map<Object, List<V>> map=indexHashes.get(c);
 					if(map!=null) map.clear();
 				}
 			}

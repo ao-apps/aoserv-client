@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018, 2020  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -39,9 +39,9 @@ import java.util.Map;
  */
 final public class ForeignKeyTable extends GlobalTableIntegerKey<ForeignKey> {
 
-	private static final Map<String,List<ForeignKey>> tableKeys=new HashMap<>();
-	private static final Map<Integer,List<ForeignKey>> referencesHash=new HashMap<>();
-	private static final Map<Integer,List<ForeignKey>> referencedByHash=new HashMap<>();
+	private static final Map<String, List<ForeignKey>> tableKeys=new HashMap<>();
+	private static final Map<Integer, List<ForeignKey>> referencesHash=new HashMap<>();
+	private static final Map<Integer, List<ForeignKey>> referencedByHash=new HashMap<>();
 
 	ForeignKeyTable(AOServConnector connector) {
 		super(connector, ForeignKey.class);

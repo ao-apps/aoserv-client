@@ -169,7 +169,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 			return ValidResult.getInstance();
 		}
 
-		private static final ConcurrentMap<String,Name> interned = new ConcurrentHashMap<>();
+		private static final ConcurrentMap<String, Name> interned = new ConcurrentHashMap<>();
 
 		/**
 		 * @param name  when {@code null}, returns {@code null}
@@ -1518,10 +1518,10 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	/**
 	 * Gets all active package definitions for this business.
 	 */
-	public Map<PackageCategory,List<PackageDefinition>> getActivePackageDefinitions() throws IOException, SQLException {
+	public Map<PackageCategory, List<PackageDefinition>> getActivePackageDefinitions() throws IOException, SQLException {
 		// Determine the active packages per category
 		List<PackageCategory> allCategories = table.getConnector().getBilling().getPackageCategory().getRows();
-		Map<PackageCategory,List<PackageDefinition>> categories = AoCollections.newLinkedHashMap(allCategories.size());
+		Map<PackageCategory, List<PackageDefinition>> categories = AoCollections.newLinkedHashMap(allCategories.size());
 		for(PackageCategory category : allCategories) {
 			List<PackageDefinition> allDefinitions = getPackageDefinitions(category);
 			List<PackageDefinition> definitions = new ArrayList<>(allDefinitions.size());

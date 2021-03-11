@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2009, 2016, 2017, 2018, 2020  AO Industries, Inc.
+ * Copyright (C) 2002-2009, 2016, 2017, 2018, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -54,9 +54,9 @@ final public class SQLComparator<T> implements Comparator<T> {
 	public int compare(T O1, T O2) {
 		try {
 			if(O1 instanceof AOServObject) {
-				AOServObject<?,?> AO1=(AOServObject)O1;
+				AOServObject<?, ?> AO1=(AOServObject)O1;
 				if(O2 instanceof AOServObject) {
-					AOServObject<?,?> AO2=(AOServObject)O2;
+					AOServObject<?, ?> AO2=(AOServObject)O2;
 					return AO1.compareTo(connector, AO2, exprs, sortOrders);
 				} else if(O2 instanceof Object[]) {
 					return AO1.compareTo(connector, (Object[])O2, exprs, sortOrders);
@@ -67,7 +67,7 @@ final public class SQLComparator<T> implements Comparator<T> {
 				@SuppressWarnings({"unchecked"})
 				T[] OA1=(T[])O1;
 				if(O2 instanceof AOServObject) {
-					AOServObject<?,?> AO2=(AOServObject)O2;
+					AOServObject<?, ?> AO2=(AOServObject)O2;
 					return -AO2.compareTo(connector, OA1, exprs, sortOrders);
 				} else if(O2 instanceof Object[]) {
 					@SuppressWarnings({"unchecked"})
@@ -80,7 +80,7 @@ final public class SQLComparator<T> implements Comparator<T> {
 				@SuppressWarnings({"unchecked"})
 				Comparable<Object> C1=(Comparable)O1;
 				if(O2 instanceof AOServObject) {
-					AOServObject<?,?> AO2=(AOServObject)O2;
+					AOServObject<?, ?> AO2=(AOServObject)O2;
 					return -AO2.compareTo(connector, C1, exprs, sortOrders);
 				} else if(O2 instanceof Object[]) {
 					throw new IllegalArgumentException("Comparing of Comparable and Object[] not supported.");

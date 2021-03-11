@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2018, 2020  AO Industries, Inc.
+ * Copyright (C) 2018, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -55,7 +55,7 @@ abstract public class Schema implements SchemaParent {
 	/**
 	 * Gets an unmodifiable list of all of the tables in the schema.
 	 */
-	abstract public List<? extends AOServTable<?,?>> getTables();
+	abstract public List<? extends AOServTable<?, ?>> getTables();
 
 	/**
 	 * Gets the unique name of the schema.

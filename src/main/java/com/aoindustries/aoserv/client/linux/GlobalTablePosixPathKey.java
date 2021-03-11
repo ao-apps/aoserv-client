@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2017, 2018, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -32,7 +32,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-public abstract class GlobalTablePosixPathKey<V extends GlobalObjectPosixPathKey<V>> extends GlobalTable<PosixPath,V> {
+public abstract class GlobalTablePosixPathKey<V extends GlobalObjectPosixPathKey<V>> extends GlobalTable<PosixPath, V> {
 
 	protected GlobalTablePosixPathKey(AOServConnector connector, Class<V> clazz) {
 		super(connector, clazz);
