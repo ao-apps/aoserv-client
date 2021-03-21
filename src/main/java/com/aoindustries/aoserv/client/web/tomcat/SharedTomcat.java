@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -78,7 +78,7 @@ final public class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
 
 	public static final int MAX_NAME_LENGTH = 32;
 
-	public static final String DEFAULT_TOMCAT_VERSION_PREFIX = Version.VERSION_9_0_PREFIX;
+	public static final String DEFAULT_TOMCAT_VERSION_PREFIX = Version.VERSION_10_0_PREFIX;
 
 	private String name;
 	private int ao_server;
