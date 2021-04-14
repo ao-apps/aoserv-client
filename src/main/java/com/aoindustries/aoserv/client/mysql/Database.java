@@ -246,8 +246,6 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	 * The classname of the JDBC driver used for the <code>MySQLDatabase</code>.
 	 */
 	public static final String
-		REDHAT_JDBC_DRIVER="com.mysql.jdbc.Driver",
-		MANDRAKE_JDBC_DRIVER="com.mysql.jdbc.Driver",
 		CENTOS_JDBC_DRIVER="com.mysql.jdbc.Driver",
 		CENTOS_7_JDBC_DRIVER="com.mysql.cj.jdbc.Driver"
 	;
@@ -256,8 +254,6 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	 * The URL for MySQL JDBC documentation.
 	 */
 	public static final String
-		REDHAT_JDBC_DOCUMENTATION_URL="https://dev.mysql.com/doc/connector-j/5.1/en/",
-		MANDRAKE_JDBC_DOCUMENTATION_URL="https://dev.mysql.com/doc/connector-j/5.1/en/",
 		CENTOS_JDBC_DOCUMENTATION_URL="https://dev.mysql.com/doc/connector-j/5.1/en/",
 		CENTOS_7_JDBC_DOCUMENTATION_URL="https://dev.mysql.com/doc/connector-j/8.0/en/"
 	;
@@ -462,10 +458,6 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	public String getJdbcDriver() throws SQLException, IOException {
 		int osv = getMySQLServer().getLinuxServer().getHost().getOperatingSystemVersion_id();
 		switch(osv) {
-			case OperatingSystemVersion.MANDRIVA_2006_0_I586 :
-				return MANDRAKE_JDBC_DRIVER;
-			case OperatingSystemVersion.REDHAT_ES_4_X86_64 :
-				return REDHAT_JDBC_DRIVER;
 			case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64:
 				return CENTOS_JDBC_DRIVER;
 			case OperatingSystemVersion.CENTOS_7_X86_64:
@@ -514,10 +506,6 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	public String getJdbcDocumentationUrl() throws SQLException, IOException {
 		int osv = getMySQLServer().getLinuxServer().getHost().getOperatingSystemVersion_id();
 		switch(osv) {
-			case OperatingSystemVersion.MANDRIVA_2006_0_I586 :
-				return MANDRAKE_JDBC_DOCUMENTATION_URL;
-			case OperatingSystemVersion.REDHAT_ES_4_X86_64 :
-				return REDHAT_JDBC_DOCUMENTATION_URL;
 			case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64 :
 				return CENTOS_JDBC_DOCUMENTATION_URL;
 			case OperatingSystemVersion.CENTOS_7_X86_64 :

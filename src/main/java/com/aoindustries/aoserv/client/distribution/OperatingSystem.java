@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2003-2009, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -48,14 +48,16 @@ final public class OperatingSystem extends GlobalObjectStringKey<OperatingSystem
 	public static final String
 		CENTOS="centos",
 		DEBIAN="debian",
-		GENTOO="gentoo",
-		MANDRAKE="mandrake",
-		MANDRIVA="mandriva",
-		REDHAT="redhat",
 		WINDOWS="windows"
 	;
 
-	public static final String DEFAULT_OPERATING_SYSTEM=MANDRAKE;
+	/**
+	 * @deprecated  What is this used for?
+	 *
+	 * @see  OperatingSystemVersion#DEFAULT_OPERATING_SYSTEM_VERSION
+	 */
+	@Deprecated
+	public static final String DEFAULT_OPERATING_SYSTEM = CENTOS;
 
 	private String display;
 	private boolean is_unix;

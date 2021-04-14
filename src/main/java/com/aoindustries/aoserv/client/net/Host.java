@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -244,7 +244,7 @@ final public class Host extends CachedObjectIntegerKey<Host> implements Comparab
 			out.writeLong(-1); // last_backup_time
 		}
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30)<=0) {
-			out.writeCompressedInt(operating_system_version==-1 ? OperatingSystemVersion.MANDRIVA_2006_0_I586 : operating_system_version);
+			out.writeCompressedInt(operating_system_version==-1 ? OperatingSystemVersion.CENTOS_7_X86_64 : operating_system_version);
 		} else {
 			out.writeCompressedInt(operating_system_version);
 		}

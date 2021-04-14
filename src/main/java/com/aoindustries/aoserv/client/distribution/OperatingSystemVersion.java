@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2003-2009, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -60,35 +60,20 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 	;
 
 	/**
-	 * @deprecated  Mandrake 10.1 no longer used.
-	 */
-	@Deprecated
-	public static final String VERSION_10_1="10.1";
-
-	/**
 	 * @deprecated  What is this used for?
+	 *
+	 * @see  OperatingSystem#DEFAULT_OPERATING_SYSTEM
 	 */
 	@Deprecated
-	public static final String DEFAULT_OPERATING_SYSTEM_VERSION=VERSION_2006_0;
+	public static final String DEFAULT_OPERATING_SYSTEM_VERSION = VERSION_7;
 
 	public static final int
 		CENTOS_5_DOM0_X86_64 = 63,
 		CENTOS_5_DOM0_I686 = 64,
 		CENTOS_5_I686_AND_X86_64 = 67,
 		CENTOS_7_DOM0_X86_64 = 69,
-		CENTOS_7_X86_64 = 70,
-		//GENTOO_1_4_I686=5,
-		//MANDRAKE_9_2_I586=12,
-		//REDHAT_7_2_I686=27
-		MANDRIVA_2006_0_I586=45,
-		REDHAT_ES_4_X86_64=47
+		CENTOS_7_X86_64 = 70
 	;
-
-	/**
-	 * @deprecated  Mandrake 10.1 no longer used.
-	 */
-	@Deprecated
-	public static final int MANDRAKE_10_1_I586=14;
 
 	private String operating_system;
 	private String version_number;
@@ -217,8 +202,6 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 	 */
 	public static PosixPath getHttpdSitesDirectory(int osv) {
 		switch(osv) {
-			case MANDRIVA_2006_0_I586 :
-			case REDHAT_ES_4_X86_64 :
 			case CENTOS_5_I686_AND_X86_64 :
 				return WWW;
 			case CENTOS_7_X86_64 :
@@ -256,8 +239,6 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 	 */
 	public static PosixPath getHttpdSharedTomcatsDirectory(int osv) {
 		switch(osv) {
-			case MANDRIVA_2006_0_I586 :
-			case REDHAT_ES_4_X86_64 :
 			case CENTOS_5_I686_AND_X86_64 :
 				return WWWGROUP;
 			case CENTOS_7_X86_64 :
@@ -295,8 +276,6 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 	 */
 	public static PosixPath getHttpdSiteLogsDirectory(int osv) {
 		switch(osv) {
-			case MANDRIVA_2006_0_I586 :
-			case REDHAT_ES_4_X86_64 :
 			case CENTOS_5_I686_AND_X86_64 :
 				return LOGS;
 			case CENTOS_7_X86_64 :

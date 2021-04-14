@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -186,8 +186,6 @@ final public class List extends CachedObjectIntegerKey<List> implements Removabl
 	 */
 	public static PosixPath getListPath(String name, int osv) throws ValidationException {
 		switch(osv) {
-			case OperatingSystemVersion.MANDRIVA_2006_0_I586 :
-			case OperatingSystemVersion.REDHAT_ES_4_X86_64 :
 			case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64 :
 				if(name.length() > 1) {
 					return PosixPath.valueOf(
@@ -262,8 +260,6 @@ final public class List extends CachedObjectIntegerKey<List> implements Removabl
 		if(!pathStr.startsWith(LIST_DIRECTORY + '/')) return false;
 		pathStr = pathStr.substring(LIST_DIRECTORY.length() + 1);
 		switch(osv) {
-			case OperatingSystemVersion.MANDRIVA_2006_0_I586 :
-			case OperatingSystemVersion.REDHAT_ES_4_X86_64 :
 			case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64 : {
 				if(pathStr.length() < 2) return false;
 				char firstChar = pathStr.charAt(0);

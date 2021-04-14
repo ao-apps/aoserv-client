@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2021-03-21T06:20:52-05:00"
+		dateModified="2021-04-14T18:55:31-05:00"
 	>
 		<c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
 			<changelog:release
@@ -76,6 +76,9 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					<li>Look into jOOQ: https://www.jooq.org/</li>
 				</ul>
 				-->
+				<ul>
+					<li>Removed unsupported operating systems Gentoo, Mandrake, Mandriva, and RedHat.</li>
+				</ul>
 			</changelog:release>
 		</c:if>
 
