@@ -263,7 +263,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 				<groupId>junit</groupId><artifactId>junit</artifactId><version>4.13.2</version>
 			</dependency>
 			<dependency>
-				<groupId>mysql</groupId><artifactId>mysql-connector-java</artifactId><version>8.0.24</version>
+				<groupId>mysql</groupId><artifactId>mysql-connector-java</artifactId><version>8.0.25</version>
 			</dependency>
 			<!-- Test Transitive -->
 			<dependency>
@@ -274,7 +274,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 				<groupId>org.hamcrest</groupId><artifactId>hamcrest-core</artifactId><version>2.2</version>
 			</dependency>
 			<dependency>
-				<groupId>com.google.protobuf</groupId><artifactId>protobuf-java</artifactId><version>3.15.8</version>
+				<groupId>com.google.protobuf</groupId><artifactId>protobuf-java</artifactId><version>3.16.0</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
