@@ -22,7 +22,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 -->
 <jsp:root
-	xmlns:ao="https://aoindustries.com/ao-taglib/"
+	xmlns:ao="https://oss.aoapps.com/taglib/"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:changelog="https://semanticcms.com/changelog/taglib/"
 	xmlns:core="https://semanticcms.com/core/taglib/"
@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-05:00"
-		dateModified="2021-05-22T13:07:02-05:00"
+		dateModified="2021-05-31T08:58:51-05:00"
 	>
 		<c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
 			<changelog:release
@@ -45,6 +45,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 				version="@{project.version}"
 				groupId="@{project.groupId}"
 				artifactId="@{documented.artifactId}"
+				repository="https://oss.sonatype.org/content/repositories/snapshots/"
 				scmUrl="@{project.scm.url}"
 			>
 				<!-- TODO:
@@ -333,7 +334,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					Changed from <code>Calendar.getInstance()</code> to <code>new GregorianCalendar()</code>
 					to work correctly independent of locale settings.
 				</li>
-				<li>Updated for compatibility with <core:link book="/aocode-public" page="/changelog.jspx" element="release-notes-3.1.0">aocode-public-3.1.0</core:link>.</li>
+				<li>Updated for compatibility with <ao:a href="https://oss.aoapps.com/hodgepodge/changelog#release-notes-3.1.0">aocode-public-3.1.0</ao:a>.</li>
 				<li>Specific management of time zones:
 					<ol>
 						<li><code>DATE</code> type always managed in GMT time zone.</li>
@@ -1231,7 +1232,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 				</li>
 				<li>
 					<ao:a href="https://wikipedia.org/wiki/Top-level_domain">Top-level domains</ao:a> change frequently these days.
-					Top reduce code maintenance, using new <core:link book="/ao-tlds" page="/index.jspx" />
+					Top reduce code maintenance, using new <ao:a href="https://oss.aoapps.com/tlds/">AO TLDs</ao:a>
 					project to have a self-updating list of top-level domains.
 				</li>
 				<li>
@@ -1266,7 +1267,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						<li>Servers that are upgraded retain compatibility links at the old paths.</li>
 					</ol>
 				</li>
-				<li>Moved the following classes to the new <core:link book="/ao-lang" page="/index.jspx" /> project:
+				<li>Moved the following classes to the new <ao:a href="https://oss.aoapps.com/lang/">AO Lang</ao:a> project:
 					<ol>
 						<li><code>com.aoindustries.aoserv.client.DtoFactory</code></li>
 						<li><code>com.aoindustries.aoserv.client.validator.InvalidResult</code></li>
@@ -1275,7 +1276,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						<li><code>com.aoindustries.aoserv.client.validator.ValidResult</code></li>
 					</ol>
 				</li>
-				<li>Moved the following classes to the new <core:link book="/ao-net-types" page="/index.jspx" /> project:
+				<li>Moved the following classes to the new <ao:a href="https://oss.aoapps.com/net-types/">AO Net Types</ao:a> project:
 					<ol>
 						<li><code>com.aoindustries.aoserv.client.dto.DomainLabel</code></li>
 						<li><code>com.aoindustries.aoserv.client.dto.DomainLabels</code></li>
@@ -1492,7 +1493,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 			scmUrl="@{project.scm.url}"
 		>
 			<ul>
-				<li>New <core:link book="/ao-oss-parent" page="/index.jspx" /> POM to simplify <code>pom.xml</code> files.</li>
+				<li>New <ao:a href="https://oss.aoapps.com/parent/">AO OSS Parent</ao:a> POM to simplify <code>pom.xml</code> files.</li>
 				<li>Project documentation moved to per-project book in <ao:a href="https://semanticcms.com/">SemanticCMS</ao:a> format.</li>
 				<li>Added changelog as top-level project link.</li>
 				<li>Default DNS zone TTL changed from 43200 (12 hours) to 3600 (1 hour).</li>
