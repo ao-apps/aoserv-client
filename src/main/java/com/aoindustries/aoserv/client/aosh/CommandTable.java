@@ -22,11 +22,11 @@
  */
 package com.aoindustries.aoserv.client.aosh;
 
+import com.aoapps.hodgepodge.io.TerminalWriter;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.GlobalTableStringKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.schema.TableTable;
-import com.aoindustries.io.TerminalWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;

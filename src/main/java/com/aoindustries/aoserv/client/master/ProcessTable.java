@@ -22,11 +22,11 @@
  */
 package com.aoindustries.aoserv.client.master;
 
+import com.aoapps.security.SmallIdentifier;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServTable;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.security.SmallIdentifier;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;

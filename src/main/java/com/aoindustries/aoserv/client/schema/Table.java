@@ -22,17 +22,17 @@
  */
 package com.aoindustries.aoserv.client.schema;
 
+import com.aoapps.hodgepodge.io.TerminalWriter;
+import com.aoapps.hodgepodge.io.stream.StreamableInput;
+import com.aoapps.hodgepodge.io.stream.StreamableOutput;
+import com.aoapps.lang.util.InternUtils;
+import com.aoapps.sql.SQLUtility;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServObject;
 import com.aoindustries.aoserv.client.AOServTable;
 import com.aoindustries.aoserv.client.GlobalObjectIntegerKey;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.sql.Parser;
-import com.aoindustries.io.TerminalWriter;
-import com.aoindustries.io.stream.StreamableInput;
-import com.aoindustries.io.stream.StreamableOutput;
-import com.aoindustries.sql.SQLUtility;
-import com.aoindustries.util.InternUtils;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;

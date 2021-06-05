@@ -22,7 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.io.FileListObject;
+import com.aoapps.hodgepodge.io.FileListObject;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;

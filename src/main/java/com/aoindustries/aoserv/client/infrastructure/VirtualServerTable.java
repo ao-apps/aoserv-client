@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2008-2012, 2014, 2016, 2017, 2018, 2020  AO Industries, Inc.
+ * Copyright (C) 2008-2012, 2014, 2016, 2017, 2018, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.client.infrastructure;
 
+import com.aoapps.hodgepodge.io.TerminalWriter;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.aosh.AOSH;
@@ -29,7 +30,6 @@ import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.net.Host;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.io.TerminalWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;

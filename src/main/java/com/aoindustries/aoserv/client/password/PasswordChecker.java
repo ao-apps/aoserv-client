@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,10 +22,10 @@
  */
 package com.aoindustries.aoserv.client.password;
 
+import com.aoapps.lang.i18n.Resources;
+import com.aoapps.lang.io.IoUtils;
+import com.aoapps.lang.zip.CorrectedGZIPInputStream;
 import com.aoindustries.aoserv.client.account.User;
-import com.aoindustries.i18n.Resources;
-import com.aoindustries.io.IoUtils;
-import com.aoindustries.util.zip.CorrectedGZIPInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -345,9 +345,9 @@ final public class PasswordChecker {
 			+ "      <tbody>\n");
 		for(Result result : results) {
 			out.append("        <tr><td style=\"white-space:nowrap\">");
-			com.aoindustries.util.EncodingUtils.encodeHtml(result.getCategory(), out, isXhtml);
+			com.aoapps.hodgepodge.util.EncodingUtils.encodeHtml(result.getCategory(), out, isXhtml);
 			out.append(":</td><td style=\"white-space:nowrap\">");
-			com.aoindustries.util.EncodingUtils.encodeHtml(result.getResult(), out, isXhtml);
+			com.aoapps.hodgepodge.util.EncodingUtils.encodeHtml(result.getResult(), out, isXhtml);
 			out.append("</td></tr>\n");
 		}
 		out.append("      </tbody>\n"

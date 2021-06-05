@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2014, 2016, 2017, 2018, 2020  AO Industries, Inc.
+ * Copyright (C) 2014, 2016, 2017, 2018, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,7 +22,7 @@
  */
 package com.aoindustries.aoserv.client.monitoring;
 
-import com.aoindustries.i18n.Resources;
+import com.aoapps.lang.i18n.Resources;
 
 /**
  * The different alert levels in the system.

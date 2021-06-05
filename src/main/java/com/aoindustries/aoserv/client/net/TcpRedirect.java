@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2004-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2004-2013, 2016, 2017, 2018, 2019, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,14 +22,14 @@
  */
 package com.aoindustries.aoserv.client.net;
 
+import com.aoapps.hodgepodge.io.stream.StreamableInput;
+import com.aoapps.hodgepodge.io.stream.StreamableOutput;
+import com.aoapps.lang.validation.ValidationException;
+import com.aoapps.net.HostAddress;
+import com.aoapps.net.Port;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.io.stream.StreamableInput;
-import com.aoindustries.io.stream.StreamableOutput;
-import com.aoindustries.net.HostAddress;
-import com.aoindustries.net.Port;
-import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -97,7 +97,7 @@ public final class TcpRedirect extends CachedObjectIntegerKey<TcpRedirect> {
 			destination_host=HostAddress.valueOf(result.getString(4));
 			destination_port = Port.valueOf(
 				result.getInt(5),
-				com.aoindustries.net.Protocol.TCP
+				com.aoapps.net.Protocol.TCP
 			);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
@@ -113,7 +113,7 @@ public final class TcpRedirect extends CachedObjectIntegerKey<TcpRedirect> {
 			destination_host=HostAddress.valueOf(in.readUTF()).intern();
 			destination_port = Port.valueOf(
 				in.readCompressedInt(),
-				com.aoindustries.net.Protocol.TCP
+				com.aoapps.net.Protocol.TCP
 			);
 		} catch(ValidationException e) {
 			throw new IOException(e);

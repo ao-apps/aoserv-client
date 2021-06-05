@@ -22,6 +22,9 @@
  */
 package com.aoindustries.aoserv.client.linux;
 
+import com.aoapps.hodgepodge.io.TerminalWriter;
+import com.aoapps.net.DomainName;
+import com.aoapps.sql.SQLUtility;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.account.DisableLog;
@@ -32,9 +35,6 @@ import com.aoindustries.aoserv.client.email.Domain;
 import com.aoindustries.aoserv.client.email.InboxAttributes;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.io.TerminalWriter;
-import com.aoindustries.net.DomainName;
-import com.aoindustries.sql.SQLUtility;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;

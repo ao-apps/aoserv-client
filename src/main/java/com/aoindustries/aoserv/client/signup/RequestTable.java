@@ -22,6 +22,11 @@
  */
 package com.aoindustries.aoserv.client.signup;
 
+import com.aoapps.collections.IntList;
+import com.aoapps.hodgepodge.io.stream.StreamableInput;
+import com.aoapps.hodgepodge.io.stream.StreamableOutput;
+import com.aoapps.net.Email;
+import com.aoapps.net.InetAddress;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.account.User;
@@ -31,11 +36,6 @@ import com.aoindustries.aoserv.client.pki.EncryptionKey;
 import com.aoindustries.aoserv.client.reseller.Brand;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.collections.IntList;
-import com.aoindustries.io.stream.StreamableInput;
-import com.aoindustries.io.stream.StreamableOutput;
-import com.aoindustries.net.Email;
-import com.aoindustries.net.InetAddress;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Map;

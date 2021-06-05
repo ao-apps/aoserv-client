@@ -22,6 +22,18 @@
  */
 package com.aoindustries.aoserv.client.net;
 
+import com.aoapps.collections.AoCollections;
+import com.aoapps.collections.IntList;
+import com.aoapps.hodgepodge.io.stream.StreamableInput;
+import com.aoapps.hodgepodge.io.stream.StreamableOutput;
+import com.aoapps.lang.validation.ValidationException;
+import com.aoapps.net.DomainName;
+import com.aoapps.net.EmptyURIParameters;
+import com.aoapps.net.Port;
+import com.aoapps.net.URIParameters;
+import com.aoapps.net.URIParametersMap;
+import com.aoapps.net.URIParametersUtils;
+import com.aoapps.net.UnmodifiableURIParameters;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
@@ -45,18 +57,6 @@ import com.aoindustries.aoserv.client.web.tomcat.PrivateTomcatSite;
 import com.aoindustries.aoserv.client.web.tomcat.SharedTomcat;
 import com.aoindustries.aoserv.client.web.tomcat.SharedTomcatSite;
 import com.aoindustries.aoserv.client.web.tomcat.Worker;
-import com.aoindustries.collections.AoCollections;
-import com.aoindustries.collections.IntList;
-import com.aoindustries.io.stream.StreamableInput;
-import com.aoindustries.io.stream.StreamableOutput;
-import com.aoindustries.net.DomainName;
-import com.aoindustries.net.EmptyURIParameters;
-import com.aoindustries.net.Port;
-import com.aoindustries.net.URIParameters;
-import com.aoindustries.net.URIParametersMap;
-import com.aoindustries.net.URIParametersUtils;
-import com.aoindustries.net.UnmodifiableURIParameters;
-import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -194,7 +194,7 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 			ipAddress = result.getInt(4);
 			port = Port.valueOf(
 				result.getInt(5),
-				com.aoindustries.net.Protocol.valueOf(result.getString(6))
+				com.aoapps.net.Protocol.valueOf(result.getString(6))
 			);
 			app_protocol = result.getString(7);
 			monitoring_enabled = result.getBoolean(8);
@@ -214,7 +214,7 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 			ipAddress = in.readCompressedInt();
 			port = Port.valueOf(
 				in.readCompressedInt(),
-				in.readEnum(com.aoindustries.net.Protocol.class)
+				in.readEnum(com.aoapps.net.Protocol.class)
 			);
 			app_protocol = in.readUTF().intern();
 			monitoring_enabled = in.readBoolean();

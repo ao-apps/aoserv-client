@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,16 +22,16 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoapps.hodgepodge.io.AOPool;
+import com.aoapps.lang.Strings;
+import com.aoapps.lang.exception.ConfigurationException;
+import com.aoapps.lang.util.PropertiesUtils;
+import com.aoapps.lang.validation.ValidationException;
+import com.aoapps.net.DomainName;
+import com.aoapps.net.HostAddress;
+import com.aoapps.net.InetAddress;
+import com.aoapps.net.Port;
 import com.aoindustries.aoserv.client.account.User;
-import com.aoindustries.exception.ConfigurationException;
-import com.aoindustries.io.AOPool;
-import com.aoindustries.lang.Strings;
-import com.aoindustries.net.DomainName;
-import com.aoindustries.net.HostAddress;
-import com.aoindustries.net.InetAddress;
-import com.aoindustries.net.Port;
-import com.aoindustries.util.PropertiesUtils;
-import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
@@ -102,7 +102,7 @@ final public class AOServClientConfiguration {
 		try {
 			return Port.valueOf(
 				Integer.parseInt(getProperty("aoserv.client.tcp.port")),
-				com.aoindustries.net.Protocol.TCP
+				com.aoapps.net.Protocol.TCP
 			);
 		} catch(ValidationException e) {
 			throw new ConfigurationException(e);
@@ -158,7 +158,7 @@ final public class AOServClientConfiguration {
 		try {
 			return Port.valueOf(
 				Integer.parseInt(getProperty("aoserv.client.ssl.port")),
-				com.aoindustries.net.Protocol.TCP
+				com.aoapps.net.Protocol.TCP
 			);
 		} catch(ValidationException e) {
 			throw new ConfigurationException(e);

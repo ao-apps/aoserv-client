@@ -22,7 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.net.DomainName;
+import com.aoapps.net.DomainName;
 
 /**
  * An object that is cached and uses a DomainName as its primary key,

@@ -22,21 +22,21 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoapps.hodgepodge.io.TerminalWriter;
+import com.aoapps.hodgepodge.io.stream.StreamableInput;
+import com.aoapps.hodgepodge.io.stream.StreamableOutput;
+import com.aoapps.hodgepodge.sort.ComparisonSortAlgorithm;
+import com.aoapps.hodgepodge.sort.JavaSort;
+import com.aoapps.hodgepodge.table.TableListener;
+import com.aoapps.lang.Throwables;
+import com.aoapps.lang.exception.WrappedException;
+import com.aoapps.sql.SQLUtility;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Column;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.schema.Type;
 import com.aoindustries.aoserv.client.sql.Parser;
 import com.aoindustries.aoserv.client.sql.SQLExpression;
-import com.aoindustries.exception.WrappedException;
-import com.aoindustries.io.TerminalWriter;
-import com.aoindustries.io.stream.StreamableInput;
-import com.aoindustries.io.stream.StreamableOutput;
-import com.aoindustries.lang.Throwables;
-import com.aoindustries.sql.SQLUtility;
-import com.aoindustries.table.TableListener;
-import com.aoindustries.util.sort.ComparisonSortAlgorithm;
-import com.aoindustries.util.sort.JavaSort;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
@@ -63,7 +63,7 @@ import java.util.logging.Level;
  *
  * @see  AOServObject
  */
-abstract public class AOServTable<K, V extends AOServObject<K, V>> implements Iterable<V>, com.aoindustries.table.Table<V> {
+abstract public class AOServTable<K, V extends AOServObject<K, V>> implements Iterable<V>, com.aoapps.hodgepodge.table.Table<V> {
 
 	final protected AOServConnector connector;
 	//final SimpleAOClient client;

@@ -22,10 +22,10 @@
  */
 package com.aoindustries.aoserv.client.schema;
 
+import com.aoapps.hodgepodge.io.stream.StreamableInput;
+import com.aoapps.hodgepodge.io.stream.StreamableOutput;
+import com.aoapps.security.HashedPassword;
 import com.aoindustries.aoserv.client.GlobalObjectStringKey;
-import com.aoindustries.io.stream.StreamableInput;
-import com.aoindustries.io.stream.StreamableOutput;
-import com.aoindustries.security.HashedPassword;
 import java.io.EOFException;
 import java.io.IOException;
 import java.sql.Date;

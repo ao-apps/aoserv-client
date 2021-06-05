@@ -22,9 +22,9 @@
  */
 package com.aoindustries.aoserv.client.sql;
 
+import com.aoapps.lang.exception.WrappedException;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServObject;
-import com.aoindustries.exception.WrappedException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Comparator;

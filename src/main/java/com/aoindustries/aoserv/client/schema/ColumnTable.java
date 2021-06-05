@@ -22,9 +22,9 @@
  */
 package com.aoindustries.aoserv.client.schema;
 
+import com.aoapps.collections.AoCollections;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.GlobalTableIntegerKey;
-import com.aoindustries.collections.AoCollections;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;

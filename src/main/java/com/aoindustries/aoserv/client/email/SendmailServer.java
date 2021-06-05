@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2017, 2018, 2019, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,6 +22,11 @@
  */
 package com.aoindustries.aoserv.client.email;
 
+import com.aoapps.hodgepodge.io.stream.StreamableInput;
+import com.aoapps.hodgepodge.io.stream.StreamableOutput;
+import com.aoapps.lang.validation.ValidationException;
+import com.aoapps.net.DomainName;
+import com.aoapps.net.InetAddress;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.linux.Server;
@@ -30,11 +35,6 @@ import com.aoindustries.aoserv.client.pki.Certificate;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.util.SystemdUtil;
-import com.aoindustries.io.stream.StreamableInput;
-import com.aoindustries.io.stream.StreamableOutput;
-import com.aoindustries.net.DomainName;
-import com.aoindustries.net.InetAddress;
-import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -440,8 +440,8 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 		IpAddress obj = table.getConnector().getNet().getIpAddress().get(clientAddrInet);
 		if(obj == null) throw new SQLException("Unable to find IPAddress: " + clientAddrInet);
 		InetAddress address = obj.getInetAddress();
-		com.aoindustries.net.AddressFamily family = address.getAddressFamily();
-		if(family != com.aoindustries.net.AddressFamily.INET) throw new SQLException("Unexpected address family for clientAddrInet #" + clientAddrInet + ": " + family);
+		com.aoapps.net.AddressFamily family = address.getAddressFamily();
+		if(family != com.aoapps.net.AddressFamily.INET) throw new SQLException("Unexpected address family for clientAddrInet #" + clientAddrInet + ": " + family);
 		if(address.isUnspecified()) throw new SQLException("May not use unspecified address for clientAddrInet #" + clientAddrInet);
 		if(!getLinuxServer().getHost().equals(obj.getDevice().getHost())) throw new SQLException("IPAddress is not on this server for clientAddrInet #" + clientAddrInet);
 		return obj;
@@ -460,8 +460,8 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 		IpAddress obj = table.getConnector().getNet().getIpAddress().get(clientAddrInet6);
 		if(obj == null) throw new SQLException("Unable to find IPAddress: " + clientAddrInet6);
 		InetAddress address = obj.getInetAddress();
-		com.aoindustries.net.AddressFamily family = address.getAddressFamily();
-		if(family != com.aoindustries.net.AddressFamily.INET6) throw new SQLException("Unexpected address family for clientAddrInet6 #" + clientAddrInet6 + ": " + family);
+		com.aoapps.net.AddressFamily family = address.getAddressFamily();
+		if(family != com.aoapps.net.AddressFamily.INET6) throw new SQLException("Unexpected address family for clientAddrInet6 #" + clientAddrInet6 + ": " + family);
 		if(address.isUnspecified()) throw new SQLException("May not use unspecified address for clientAddrInet6 #" + clientAddrInet6);
 		if(!getLinuxServer().getHost().equals(obj.getDevice().getHost())) throw new SQLException("IPAddress is not on this server for clientAddrInet6 #" + clientAddrInet6);
 		return obj;

@@ -22,19 +22,19 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoapps.collections.IntArrayList;
+import com.aoapps.collections.IntList;
+import com.aoapps.hodgepodge.io.AOPool;
+import com.aoapps.hodgepodge.io.stream.StreamableInput;
+import com.aoapps.hodgepodge.io.stream.StreamableOutput;
+import com.aoapps.lang.LocalizedIllegalStateException;
+import com.aoapps.lang.Throwables;
+import com.aoapps.lang.i18n.Resources;
+import com.aoapps.net.DomainName;
+import com.aoapps.net.HostAddress;
+import com.aoapps.net.Port;
 import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
-import com.aoindustries.collections.IntArrayList;
-import com.aoindustries.collections.IntList;
-import com.aoindustries.i18n.Resources;
-import com.aoindustries.io.AOPool;
-import com.aoindustries.io.stream.StreamableInput;
-import com.aoindustries.io.stream.StreamableOutput;
-import com.aoindustries.lang.LocalizedIllegalStateException;
-import com.aoindustries.lang.Throwables;
-import com.aoindustries.net.DomainName;
-import com.aoindustries.net.HostAddress;
-import com.aoindustries.net.Port;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InterruptedIOException;
@@ -66,7 +66,7 @@ public class TCPConnector extends AOServConnector {
 	 * when there is some sort of non-global-cached data.
 	 * <p>
 	 * The cache monitor is only shutdown when there are no registered
-	 * {@linkplain AOServTable#addTableListener(com.aoindustries.table.TableListener) table listeners}.
+	 * {@linkplain AOServTable#addTableListener(com.aoapps.hodgepodge.table.TableListener) table listeners}.
 	 * </p>
 	 */
 	private static final long MAX_IDLE_LISTEN_CACHES = 90L * 60 * 1000;
@@ -82,7 +82,7 @@ public class TCPConnector extends AOServConnector {
 	 * </p>
 	 * <p>
 	 * The cache monitor is only shutdown when there are no registered
-	 * {@linkplain AOServTable#addTableListener(com.aoindustries.table.TableListener) table listeners}.
+	 * {@linkplain AOServTable#addTableListener(com.aoapps.hodgepodge.table.TableListener) table listeners}.
 	 * </p>
 	 */
 	// TODO: Use this value, somehow, in a meaningful way.
@@ -245,7 +245,7 @@ public class TCPConnector extends AOServConnector {
 
 	protected TCPConnector(
 		HostAddress hostname,
-		com.aoindustries.net.InetAddress local_ip,
+		com.aoapps.net.InetAddress local_ip,
 		Port port,
 		User.Name connectAs,
 		User.Name authenticateAs,
@@ -255,7 +255,7 @@ public class TCPConnector extends AOServConnector {
 		long maxConnectionAge
 	) {
 		super(hostname, local_ip, port, connectAs, authenticateAs, password, daemonServer);
-		if(port.getProtocol() != com.aoindustries.net.Protocol.TCP) throw new IllegalArgumentException("Only TCP supported: " + port);
+		if(port.getProtocol() != com.aoapps.net.Protocol.TCP) throw new IllegalArgumentException("Only TCP supported: " + port);
 		this.poolSize = poolSize;
 		this.maxConnectionAge = maxConnectionAge;
 		this.pool = new SocketConnectionPool(this, getLogger());
@@ -299,7 +299,7 @@ public class TCPConnector extends AOServConnector {
 
 	public static synchronized TCPConnector getTCPConnector(
 		HostAddress hostname,
-		com.aoindustries.net.InetAddress local_ip,
+		com.aoapps.net.InetAddress local_ip,
 		Port port,
 		User.Name connectAs,
 		User.Name authenticateAs,

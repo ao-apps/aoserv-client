@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2020  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,10 +22,10 @@
  */
 package com.aoindustries.aoserv.client.dns;
 
+import com.aoapps.net.DomainName;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.GlobalTableDomainNameKey;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.net.DomainName;
 import java.io.IOException;
 import java.sql.SQLException;
 

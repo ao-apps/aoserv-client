@@ -22,6 +22,11 @@
  */
 package com.aoindustries.aoserv.client.schema;
 
+import com.aoapps.hodgepodge.io.TerminalWriter;
+import com.aoapps.hodgepodge.sort.JavaSort;
+import com.aoapps.lang.Throwables;
+import com.aoapps.lang.exception.WrappedException;
+import com.aoapps.sql.SQLUtility;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServObject;
 import com.aoindustries.aoserv.client.AOServTable;
@@ -30,11 +35,6 @@ import com.aoindustries.aoserv.client.aosh.AOSH;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.sql.Parser;
 import com.aoindustries.aoserv.client.sql.SQLExpression;
-import com.aoindustries.exception.WrappedException;
-import com.aoindustries.io.TerminalWriter;
-import com.aoindustries.lang.Throwables;
-import com.aoindustries.sql.SQLUtility;
-import com.aoindustries.util.sort.JavaSort;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;

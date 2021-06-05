@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2014, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2014, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,6 +22,10 @@
  */
 package com.aoindustries.aoserv.client.dns;
 
+import com.aoapps.hodgepodge.io.stream.StreamableInput;
+import com.aoapps.hodgepodge.io.stream.StreamableOutput;
+import com.aoapps.lang.validation.ValidationException;
+import com.aoapps.net.InetAddress;
 import com.aoindustries.aoserv.client.CachedObjectStringKey;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Dumpable;
@@ -31,10 +35,6 @@ import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.schema.Type;
-import com.aoindustries.io.stream.StreamableInput;
-import com.aoindustries.io.stream.StreamableOutput;
-import com.aoindustries.net.InetAddress;
-import com.aoindustries.validation.ValidationException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -132,7 +132,7 @@ final public class Zone extends CachedObjectStringKey<Zone> implements Removable
 
 	public static String getArpaZoneForIPAddress(InetAddress ip, String netmask) throws IllegalArgumentException {
 		@SuppressWarnings("deprecation")
-		com.aoindustries.net.AddressFamily addressFamily = ip.getAddressFamily();
+		com.aoapps.net.AddressFamily addressFamily = ip.getAddressFamily();
 		switch(addressFamily) {
 			case INET : {
 				String ipStr = ip.toString();

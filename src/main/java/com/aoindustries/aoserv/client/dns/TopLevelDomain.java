@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,13 +22,13 @@
  */
 package com.aoindustries.aoserv.client.dns;
 
+import com.aoapps.hodgepodge.io.stream.StreamableInput;
+import com.aoapps.hodgepodge.io.stream.StreamableOutput;
+import com.aoapps.lang.validation.ValidationException;
+import com.aoapps.net.DomainName;
 import com.aoindustries.aoserv.client.GlobalObjectDomainNameKey;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.io.stream.StreamableInput;
-import com.aoindustries.io.stream.StreamableOutput;
-import com.aoindustries.net.DomainName;
-import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -46,7 +46,7 @@ import java.sql.SQLException;
  * <p>
  * Also, this is a list of effective top-level domains, for the purposes of
  * domain allocation.  This means it includes things like <code>com.au</code>,
- * whereas the {@link com.aoindustries.tlds.TopLevelDomain} only includes <code>au</code>.
+ * whereas the {@link com.aoapps.tlds.TopLevelDomain} only includes <code>au</code>.
  * </p>
  *
  * @see  Zone

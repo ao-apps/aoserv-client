@@ -22,6 +22,17 @@
  */
 package com.aoindustries.aoserv.client.mysql;
 
+import com.aoapps.collections.AoCollections;
+import com.aoapps.hodgepodge.io.stream.StreamableInput;
+import com.aoapps.hodgepodge.io.stream.StreamableOutput;
+import com.aoapps.lang.dto.DtoFactory;
+import com.aoapps.lang.i18n.Resources;
+import com.aoapps.lang.util.Internable;
+import com.aoapps.lang.validation.InvalidResult;
+import com.aoapps.lang.validation.ValidResult;
+import com.aoapps.lang.validation.ValidationException;
+import com.aoapps.lang.validation.ValidationResult;
+import com.aoapps.net.Port;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
@@ -32,17 +43,6 @@ import com.aoindustries.aoserv.client.linux.PosixPath;
 import com.aoindustries.aoserv.client.net.Bind;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.collections.AoCollections;
-import com.aoindustries.dto.DtoFactory;
-import com.aoindustries.i18n.Resources;
-import com.aoindustries.io.stream.StreamableInput;
-import com.aoindustries.io.stream.StreamableOutput;
-import com.aoindustries.net.Port;
-import com.aoindustries.util.Internable;
-import com.aoindustries.validation.InvalidResult;
-import com.aoindustries.validation.ValidResult;
-import com.aoindustries.validation.ValidationException;
-import com.aoindustries.validation.ValidationResult;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -228,7 +228,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 	public static final Port DEFAULT_PORT;
 	static {
 		try {
-			DEFAULT_PORT = Port.valueOf(3306, com.aoindustries.net.Protocol.TCP);
+			DEFAULT_PORT = Port.valueOf(3306, com.aoapps.net.Protocol.TCP);
 		} catch(ValidationException e) {
 			throw new AssertionError("These hard-coded values are valid", e);
 		}

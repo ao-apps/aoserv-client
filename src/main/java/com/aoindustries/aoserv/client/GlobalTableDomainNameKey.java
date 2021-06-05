@@ -22,7 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.net.DomainName;
+import com.aoapps.net.DomainName;
 import java.io.IOException;
 import java.sql.SQLException;
 

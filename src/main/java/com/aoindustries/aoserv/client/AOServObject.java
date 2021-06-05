@@ -22,6 +22,23 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoapps.hodgepodge.io.stream.Streamable;
+import com.aoapps.hodgepodge.io.stream.StreamableInput;
+import com.aoapps.hodgepodge.io.stream.StreamableOutput;
+import com.aoapps.hodgepodge.table.Row;
+import com.aoapps.lang.dto.DtoFactory;
+import com.aoapps.lang.exception.WrappedException;
+import com.aoapps.lang.util.ComparatorUtils;
+import com.aoapps.lang.validation.ValidationException;
+import com.aoapps.net.DomainLabel;
+import com.aoapps.net.DomainLabels;
+import com.aoapps.net.DomainName;
+import com.aoapps.net.Email;
+import com.aoapps.net.HostAddress;
+import com.aoapps.net.InetAddress;
+import com.aoapps.net.MacAddress;
+import com.aoapps.security.HashedKey;
+import com.aoapps.security.HashedPassword;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.linux.Group;
@@ -31,23 +48,6 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.schema.Type;
 import com.aoindustries.aoserv.client.sql.SQLExpression;
-import com.aoindustries.dto.DtoFactory;
-import com.aoindustries.exception.WrappedException;
-import com.aoindustries.io.stream.Streamable;
-import com.aoindustries.io.stream.StreamableInput;
-import com.aoindustries.io.stream.StreamableOutput;
-import com.aoindustries.net.DomainLabel;
-import com.aoindustries.net.DomainLabels;
-import com.aoindustries.net.DomainName;
-import com.aoindustries.net.Email;
-import com.aoindustries.net.HostAddress;
-import com.aoindustries.net.InetAddress;
-import com.aoindustries.net.MacAddress;
-import com.aoindustries.security.HashedKey;
-import com.aoindustries.security.HashedPassword;
-import com.aoindustries.table.Row;
-import com.aoindustries.util.ComparatorUtils;
-import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.sql.ResultSet;
@@ -247,7 +247,7 @@ abstract public class AOServObject<K, T extends AOServObject<K, T>> implements R
 	/**
 	 * null-safe domain label conversion.
 	 */
-	protected static DomainLabel getDomainLabel(com.aoindustries.net.dto.DomainLabel domainLabel) throws ValidationException {
+	protected static DomainLabel getDomainLabel(com.aoapps.net.dto.DomainLabel domainLabel) throws ValidationException {
 		if(domainLabel==null) return null;
 		return DomainLabel.valueOf(domainLabel.getLabel());
 	}
@@ -265,7 +265,7 @@ abstract public class AOServObject<K, T extends AOServObject<K, T>> implements R
 	/**
 	 * null-safe domain labels conversion.
 	 */
-	protected static DomainLabels getDomainLabels(com.aoindustries.net.dto.DomainLabels domainLabels) throws ValidationException {
+	protected static DomainLabels getDomainLabels(com.aoapps.net.dto.DomainLabels domainLabels) throws ValidationException {
 		if(domainLabels==null) return null;
 		return DomainLabels.valueOf(domainLabels.getLabels());
 	}
@@ -273,7 +273,7 @@ abstract public class AOServObject<K, T extends AOServObject<K, T>> implements R
 	/**
 	 * null-safe domain name conversion.
 	 */
-	protected static DomainName getDomainName(com.aoindustries.net.dto.DomainName domainName) throws ValidationException {
+	protected static DomainName getDomainName(com.aoapps.net.dto.DomainName domainName) throws ValidationException {
 		if(domainName==null) return null;
 		return DomainName.valueOf(domainName.getDomain());
 	}
@@ -281,7 +281,7 @@ abstract public class AOServObject<K, T extends AOServObject<K, T>> implements R
 	/**
 	 * null-safe email conversion.
 	 */
-	protected static Email getEmail(com.aoindustries.net.dto.Email email) throws ValidationException {
+	protected static Email getEmail(com.aoapps.net.dto.Email email) throws ValidationException {
 		if(email==null) return null;
 		return Email.valueOf(email.getLocalPart(), DomainName.valueOf(email.getDomain().getDomain()));
 	}
@@ -321,7 +321,7 @@ abstract public class AOServObject<K, T extends AOServObject<K, T>> implements R
 	/**
 	 * null-safe hostname conversion.
 	 */
-	protected static HostAddress getHostname(com.aoindustries.net.dto.HostAddress hostname) throws ValidationException {
+	protected static HostAddress getHostname(com.aoapps.net.dto.HostAddress hostname) throws ValidationException {
 		if(hostname==null) return null;
 		return HostAddress.valueOf(hostname.getAddress());
 	}
@@ -329,7 +329,7 @@ abstract public class AOServObject<K, T extends AOServObject<K, T>> implements R
 	/**
 	 * null-safe inet address conversion.
 	 */
-	protected static InetAddress getInetAddress(com.aoindustries.net.dto.InetAddress inetAddress) throws ValidationException {
+	protected static InetAddress getInetAddress(com.aoapps.net.dto.InetAddress inetAddress) throws ValidationException {
 		if(inetAddress==null) return null;
 		return InetAddress.valueOf(inetAddress.getAddress());
 	}
@@ -354,7 +354,7 @@ abstract public class AOServObject<K, T extends AOServObject<K, T>> implements R
 	/**
 	 * null-safe MAC address conversion.
 	 */
-	protected static MacAddress getMacAddress(com.aoindustries.net.dto.MacAddress macAddress) throws ValidationException {
+	protected static MacAddress getMacAddress(com.aoapps.net.dto.MacAddress macAddress) throws ValidationException {
 		if(macAddress==null) return null;
 		return MacAddress.valueOf(macAddress.getAddress());
 	}
@@ -387,11 +387,11 @@ abstract public class AOServObject<K, T extends AOServObject<K, T>> implements R
 	/**
 	 * null-safe port conversion.
 	 */
-	protected static com.aoindustries.net.Port getPort(com.aoindustries.net.dto.Port port) throws ValidationException {
+	protected static com.aoapps.net.Port getPort(com.aoapps.net.dto.Port port) throws ValidationException {
 		if(port == null) return null;
-		return com.aoindustries.net.Port.valueOf(
+		return com.aoapps.net.Port.valueOf(
 			port.getPort(),
-			com.aoindustries.net.Protocol.valueOf(port.getProtocol())
+			com.aoapps.net.Protocol.valueOf(port.getProtocol())
 		);
 	}
 

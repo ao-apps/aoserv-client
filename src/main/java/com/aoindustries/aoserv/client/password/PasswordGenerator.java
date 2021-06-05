@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2011, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2001-2011, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,10 +22,10 @@
  */
 package com.aoindustries.aoserv.client.password;
 
+import com.aoapps.lang.Strings;
+import com.aoapps.security.Identifier;
+import com.aoapps.security.SmallIdentifier;
 import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.lang.Strings;
-import com.aoindustries.security.Identifier;
-import com.aoindustries.security.SmallIdentifier;
 import java.io.IOException;
 import java.security.SecureRandom;
 

@@ -22,6 +22,26 @@
  */
 package com.aoindustries.aoserv.client.schema;
 
+import com.aoapps.hodgepodge.io.stream.StreamableInput;
+import com.aoapps.hodgepodge.io.stream.StreamableOutput;
+import com.aoapps.lang.Strings;
+import com.aoapps.lang.i18n.Money;
+import com.aoapps.lang.util.InternUtils;
+import com.aoapps.lang.validation.ValidationException;
+import com.aoapps.net.DomainLabel;
+import com.aoapps.net.DomainLabels;
+import com.aoapps.net.DomainName;
+import com.aoapps.net.Email;
+import com.aoapps.net.HostAddress;
+import com.aoapps.net.InetAddress;
+import com.aoapps.net.MacAddress;
+import com.aoapps.net.Port;
+import com.aoapps.security.HashedKey;
+import com.aoapps.security.HashedPassword;
+import com.aoapps.security.Identifier;
+import com.aoapps.security.SmallIdentifier;
+import com.aoapps.sql.SQLUtility;
+import com.aoapps.sql.UnmodifiableTimestamp;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.GlobalObjectIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
@@ -30,26 +50,6 @@ import com.aoindustries.aoserv.client.linux.PosixPath;
 import com.aoindustries.aoserv.client.linux.User.Gecos;
 import com.aoindustries.aoserv.client.net.FirewallZone;
 import com.aoindustries.aoserv.client.net.IpAddress;
-import com.aoindustries.io.stream.StreamableInput;
-import com.aoindustries.io.stream.StreamableOutput;
-import com.aoindustries.lang.Strings;
-import com.aoindustries.net.DomainLabel;
-import com.aoindustries.net.DomainLabels;
-import com.aoindustries.net.DomainName;
-import com.aoindustries.net.Email;
-import com.aoindustries.net.HostAddress;
-import com.aoindustries.net.InetAddress;
-import com.aoindustries.net.MacAddress;
-import com.aoindustries.net.Port;
-import com.aoindustries.security.HashedKey;
-import com.aoindustries.security.HashedPassword;
-import com.aoindustries.security.Identifier;
-import com.aoindustries.security.SmallIdentifier;
-import com.aoindustries.sql.SQLUtility;
-import com.aoindustries.sql.UnmodifiableTimestamp;
-import com.aoindustries.util.InternUtils;
-import com.aoindustries.util.i18n.Money;
-import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -120,7 +120,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	public static final int DOUBLE =  8;
 
 	/**
-	 * @see com.aoindustries.net.Email
+	 * @see com.aoapps.net.Email
 	 */
 	public static final int EMAIL =  9;
 
@@ -135,7 +135,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	public static final int FLOAT = 11;
 
 	/**
-	 * @see com.aoindustries.net.HostAddress
+	 * @see com.aoapps.net.HostAddress
 	 */
 	public static final int HOSTNAME = 12;
 
@@ -150,7 +150,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	public static final int INTERVAL = 14;
 
 	/**
-	 * @see com.aoindustries.net.InetAddress
+	 * @see com.aoapps.net.InetAddress
 	 */
 	public static final int IP_ADDRESS = 15;
 
@@ -223,17 +223,17 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	public static final int BIG_DECIMAL = 31;
 
 	/**
-	 * @see com.aoindustries.net.DomainLabel
+	 * @see com.aoapps.net.DomainLabel
 	 */
 	public static final int DOMAIN_LABEL = 32;
 
 	/**
-	 * @see com.aoindustries.net.DomainLabels
+	 * @see com.aoapps.net.DomainLabels
 	 */
 	public static final int DOMAIN_LABELS = 33;
 
 	/**
-	 * @see com.aoindustries.net.DomainName
+	 * @see com.aoapps.net.DomainName
 	 */
 	public static final int DOMAIN_NAME = 34;
 
@@ -258,12 +258,12 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	public static final int LINUX_ID = 38;
 
 	/**
-	 * @see com.aoindustries.net.MacAddress
+	 * @see com.aoapps.net.MacAddress
 	 */
 	public static final int MAC_ADDRESS = 39;
 
 	/**
-	 * @see com.aoindustries.util.i18n.Money
+	 * @see com.aoapps.lang.i18n.Money
 	 */
 	public static final int MONEY = 40;
 
@@ -288,7 +288,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	public static final int MYSQL_USERNAME = 44;
 
 	/**
-	 * @see com.aoindustries.net.Port
+	 * @see com.aoapps.net.Port
 	 */
 	public static final int NET_PORT = 45;
 
@@ -693,7 +693,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 					}
 					break;
 				case ZONE:
-					// TODO: com.aoindustries.net.DomainName (once no longer ends with ".")
+					// TODO: com.aoapps.net.DomainName (once no longer ends with ".")
 					switch(castToType.getId()) {
 						case HOSTNAME: {
 							String hname = (String)value;
@@ -949,7 +949,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 				case HOSTNAME:
 					return ((HostAddress)value1).compareTo((HostAddress)value2);
 				case ZONE:
-					// TODO: com.aoindustries.net.DomainName (once no longer ends with ".")
+					// TODO: com.aoapps.net.DomainName (once no longer ends with ".")
 					return DomainName.compareLabels((String)value1, (String)value2);
 				case INTERVAL:
 				case LONG:
@@ -1224,7 +1224,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 			}
 			case URL: return (String)value;
 			case USERNAME: return ((com.aoindustries.aoserv.client.account.User.Name)value).toString();
-			case ZONE: return (String)value; // TODO: com.aoindustries.net.DomainName (once no longer ends with ".")
+			case ZONE: return (String)value; // TODO: com.aoapps.net.DomainName (once no longer ends with ".")
 			case BIG_DECIMAL: return ((BigDecimal)value).toString();
 			case DOMAIN_LABEL: return ((DomainLabel)value).toString();
 			case DOMAIN_LABELS: return ((DomainLabels)value).toString();
@@ -1267,7 +1267,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 				case PHONE:
 				case STRING:
 				case URL:
-				case ZONE: // TODO: com.aoindustries.net.DomainName (once no longer ends with ".")
+				case ZONE: // TODO: com.aoapps.net.DomainName (once no longer ends with ".")
 					return S;
 				case USERNAME:
 					return com.aoindustries.aoserv.client.account.User.Name.valueOf(S);
@@ -1349,7 +1349,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 						if(slashPos == -1) throw new IllegalArgumentException("Slash (/) not found for Port: " + S);
 						return Port.valueOf(
 							Integer.parseInt(S.substring(0, slashPos)),
-							com.aoindustries.net.Protocol.valueOf(S.substring(slashPos + 1).toUpperCase(Locale.ROOT))
+							com.aoapps.net.Protocol.valueOf(S.substring(slashPos + 1).toUpperCase(Locale.ROOT))
 						);
 					}
 				case POSTGRES_DATABASE_NAME:

@@ -22,9 +22,9 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoapps.hodgepodge.io.AOPool;
+import com.aoapps.lang.Throwables;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.io.AOPool;
-import com.aoindustries.lang.Throwables;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.sql.SQLException;
@@ -149,14 +149,14 @@ final class SocketConnectionPool extends AOPool<SocketConnection, IOException, I
 					+ "  </thead>\n");
 			super.printConnectionStats(out, isXhtml);
 			out.append("    <tr><td>Host:</td><td>");
-			com.aoindustries.util.EncodingUtils.encodeHtml(connector.hostname, out, isXhtml);
+			com.aoapps.hodgepodge.util.EncodingUtils.encodeHtml(connector.hostname, out, isXhtml);
 			out.append("</td></tr>\n"
 					+ "    <tr><td>Port:</td><td>").append(Integer.toString(connector.port.getPort())).append("</td></tr>\n"
 					+ "    <tr><td>Connected As:</td><td>");
-			com.aoindustries.util.EncodingUtils.encodeHtml(connector.connectAs, out, isXhtml);
+			com.aoapps.hodgepodge.util.EncodingUtils.encodeHtml(connector.connectAs, out, isXhtml);
 			out.append("</td></tr>\n"
 					+ "    <tr><td>Authenticated As:</td><td>");
-			com.aoindustries.util.EncodingUtils.encodeHtml(connector.authenticateAs, out, isXhtml);
+			com.aoapps.hodgepodge.util.EncodingUtils.encodeHtml(connector.authenticateAs, out, isXhtml);
 			out.append("</td></tr>\n"
 					+ "    <tr><td>Password:</td><td>");
 			String password=connector.password;

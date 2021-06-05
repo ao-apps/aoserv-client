@@ -22,8 +22,8 @@
  */
 package com.aoindustries.aoserv.client.dto;
 
-import com.aoindustries.net.dto.DomainName;
-import com.aoindustries.net.dto.HostAddress;
+import com.aoapps.net.dto.DomainName;
+import com.aoapps.net.dto.HostAddress;
 import java.util.Calendar;
 import java.util.TimeZone;
 

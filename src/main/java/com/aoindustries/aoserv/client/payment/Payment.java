@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2007-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2007-2013, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,6 +22,16 @@
  */
 package com.aoindustries.aoserv.client.payment;
 
+import com.aoapps.collections.IntList;
+import com.aoapps.hodgepodge.io.stream.StreamableInput;
+import com.aoapps.hodgepodge.io.stream.StreamableOutput;
+import com.aoapps.lang.i18n.Money;
+import com.aoapps.lang.math.SafeMath;
+import com.aoapps.lang.util.InternUtils;
+import com.aoapps.lang.validation.ValidationException;
+import com.aoapps.net.Email;
+import com.aoapps.sql.SQLStreamables;
+import com.aoapps.sql.UnmodifiableTimestamp;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
@@ -30,16 +40,6 @@ import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.billing.MoneyUtil;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.collections.IntList;
-import com.aoindustries.io.stream.StreamableInput;
-import com.aoindustries.io.stream.StreamableOutput;
-import com.aoindustries.math.SafeMath;
-import com.aoindustries.net.Email;
-import com.aoindustries.sql.SQLStreamables;
-import com.aoindustries.sql.UnmodifiableTimestamp;
-import com.aoindustries.util.InternUtils;
-import com.aoindustries.util.i18n.Money;
-import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -113,10 +113,10 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 	private UnmodifiableTimestamp authorizationTime;
 	private User.Name authorizationUsername;
 	private String authorizationPrincipalName;
-	// TODO: enum com.aoindustries.creditcards.TransactionResult.CommunicationResult
+	// TODO: enum com.aoapps.payments.TransactionResult.CommunicationResult
 	private String authorizationCommunicationResult;
 	private String authorizationProviderErrorCode;
-	// TODO: enum com.aoindustries.creditcards.TransactionResult.ErrorCode
+	// TODO: enum com.aoapps.payments.TransactionResult.ErrorCode
 	private String authorizationErrorCode;
 	private String authorizationProviderErrorMessage;
 	private String authorizationProviderUniqueId;
@@ -126,42 +126,42 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 	private Byte authorizationResult_replacementExpirationMonth;
 	private Short authorizationResult_replacementExpirationYear;
 	private String authorizationProviderApprovalResult;
-	// TODO: enum com.aoindustries.creditcards.AuthorizationResult.ApprovalResult
+	// TODO: enum com.aoapps.payments.AuthorizationResult.ApprovalResult
 	private String authorizationApprovalResult;
 	private String authorizationProviderDeclineReason;
-	// TODO: enum com.aoindustries.creditcards.AuthorizationResult.DeclineReason
+	// TODO: enum com.aoapps.payments.AuthorizationResult.DeclineReason
 	private String authorizationDeclineReason;
 	private String authorizationProviderReviewReason;
-	// TODO: enum com.aoindustries.creditcards.AuthorizationResult.ReviewReason
+	// TODO: enum com.aoapps.payments.AuthorizationResult.ReviewReason
 	private String authorizationReviewReason;
 	private String authorizationProviderCvvResult;
-	// TODO: enum com.aoindustries.creditcards.AuthorizationResult.CvvResult
+	// TODO: enum com.aoapps.payments.AuthorizationResult.CvvResult
 	private String authorizationCvvResult;
 	private String authorizationProviderAvsResult;
-	// TODO: enum com.aoindustries.creditcards.AuthorizationResult.AvsResult
+	// TODO: enum com.aoapps.payments.AuthorizationResult.AvsResult
 	private String authorizationAvsResult;
 	private String authorizationApprovalCode;
 	private UnmodifiableTimestamp captureTime;
 	private User.Name captureUsername;
 	private String capturePrincipalName;
-	// TODO: enum com.aoindustries.creditcards.TransactionResult.CommunicationResult
+	// TODO: enum com.aoapps.payments.TransactionResult.CommunicationResult
 	private String captureCommunicationResult;
 	private String captureProviderErrorCode;
-	// TODO: enum com.aoindustries.creditcards.TransactionResult.ErrorCode
+	// TODO: enum com.aoapps.payments.TransactionResult.ErrorCode
 	private String captureErrorCode;
 	private String captureProviderErrorMessage;
 	private String captureProviderUniqueId;
 	private UnmodifiableTimestamp voidTime;
 	private User.Name voidUsername;
 	private String voidPrincipalName;
-	// TODO: enum com.aoindustries.creditcards.TransactionResult.CommunicationResult
+	// TODO: enum com.aoapps.payments.TransactionResult.CommunicationResult
 	private String voidCommunicationResult;
 	private String voidProviderErrorCode;
-	// TODO: enum com.aoindustries.creditcards.TransactionResult.ErrorCode
+	// TODO: enum com.aoapps.payments.TransactionResult.ErrorCode
 	private String voidErrorCode;
 	private String voidProviderErrorMessage;
 	private String voidProviderUniqueId;
-	// TODO: enum com.aoindustries.creditcards.Transaction.Status
+	// TODO: enum com.aoapps.payments.Transaction.Status
 	// TODO: Use enum directly?  Wait until we have modular aoserv-client by schema, then pick it up as a dependency of aoserv-client-payment only?
 	private String status;
 

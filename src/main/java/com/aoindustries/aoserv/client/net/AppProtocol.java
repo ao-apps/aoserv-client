@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,15 +22,15 @@
  */
 package com.aoindustries.aoserv.client.net;
 
+import com.aoapps.hodgepodge.io.stream.StreamableInput;
+import com.aoapps.hodgepodge.io.stream.StreamableOutput;
+import com.aoapps.lang.validation.ValidationException;
+import com.aoapps.net.Port;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.GlobalObjectStringKey;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.web.tomcat.JkProtocol;
-import com.aoindustries.io.stream.StreamableInput;
-import com.aoindustries.io.stream.StreamableOutput;
-import com.aoindustries.net.Port;
-import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -143,7 +143,7 @@ final public class AppProtocol extends GlobalObjectStringKey<AppProtocol> {
 			is_user_service = result.getBoolean(4);
 			port = Port.valueOf(
 				portNum,
-				com.aoindustries.net.Protocol.valueOf(result.getString(5).toUpperCase(Locale.ROOT))
+				com.aoapps.net.Protocol.valueOf(result.getString(5).toUpperCase(Locale.ROOT))
 			);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
@@ -159,7 +159,7 @@ final public class AppProtocol extends GlobalObjectStringKey<AppProtocol> {
 			is_user_service = in.readBoolean();
 			port = Port.valueOf(
 				portNum,
-				in.readEnum(com.aoindustries.net.Protocol.class)
+				in.readEnum(com.aoapps.net.Protocol.class)
 			);
 		} catch(ValidationException e) {
 			throw new IOException(e);

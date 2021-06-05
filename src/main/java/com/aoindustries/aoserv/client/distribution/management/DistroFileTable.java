@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.client.distribution.management;
 
+import com.aoapps.hodgepodge.io.TerminalWriter;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.FilesystemCachedTable;
 import com.aoindustries.aoserv.client.aosh.AOSH;
@@ -29,7 +30,6 @@ import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.io.TerminalWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;

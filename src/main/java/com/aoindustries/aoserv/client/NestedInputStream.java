@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2002-2009, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,9 +22,9 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoapps.hodgepodge.io.stream.StreamableInput;
+import com.aoapps.lang.util.BufferManager;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
-import com.aoindustries.io.stream.StreamableInput;
-import com.aoindustries.util.BufferManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;

@@ -22,6 +22,17 @@
  */
 package com.aoindustries.aoserv.client.aosh;
 
+import com.aoapps.hodgepodge.io.TerminalWriter;
+import com.aoapps.hodgepodge.util.ShellInterpreter;
+import com.aoapps.lang.SysExits;
+import com.aoapps.lang.exception.ConfigurationException;
+import com.aoapps.lang.validation.ValidationException;
+import com.aoapps.net.DomainName;
+import com.aoapps.net.Email;
+import com.aoapps.net.HostAddress;
+import com.aoapps.net.InetAddress;
+import com.aoapps.net.Port;
+import com.aoapps.sql.SQLUtility;
 import com.aoindustries.aoserv.client.AOServClientConfiguration;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServTable;
@@ -34,17 +45,6 @@ import com.aoindustries.aoserv.client.net.FirewallZone;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.schema.TableTable;
 import com.aoindustries.aoserv.client.schema.Type;
-import com.aoindustries.exception.ConfigurationException;
-import com.aoindustries.io.TerminalWriter;
-import com.aoindustries.lang.SysExits;
-import com.aoindustries.net.DomainName;
-import com.aoindustries.net.Email;
-import com.aoindustries.net.HostAddress;
-import com.aoindustries.net.InetAddress;
-import com.aoindustries.net.Port;
-import com.aoindustries.sql.SQLUtility;
-import com.aoindustries.util.ShellInterpreter;
-import com.aoindustries.validation.ValidationException;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.CharArrayReader;
@@ -530,9 +530,9 @@ final public class AOSH extends ShellInterpreter {
 		String protocolField
 	) {
 		int portInt = parseInt(port, portField);
-		com.aoindustries.net.Protocol protocolObj;
+		com.aoapps.net.Protocol protocolObj;
 		try {
-			protocolObj = com.aoindustries.net.Protocol.valueOf(protocol.toUpperCase(Locale.ROOT));
+			protocolObj = com.aoapps.net.Protocol.valueOf(protocol.toUpperCase(Locale.ROOT));
 		} catch(IllegalArgumentException e) {
 			throw new IllegalArgumentException("Invalid argument for protocol ("+protocolField+"): "+protocol, e);
 		}

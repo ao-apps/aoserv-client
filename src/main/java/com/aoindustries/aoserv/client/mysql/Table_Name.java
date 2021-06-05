@@ -22,12 +22,12 @@
  */
 package com.aoindustries.aoserv.client.mysql;
 
-import com.aoindustries.dto.DtoFactory;
-import com.aoindustries.i18n.Resources;
-import com.aoindustries.validation.InvalidResult;
-import com.aoindustries.validation.ValidResult;
-import com.aoindustries.validation.ValidationException;
-import com.aoindustries.validation.ValidationResult;
+import com.aoapps.lang.dto.DtoFactory;
+import com.aoapps.lang.i18n.Resources;
+import com.aoapps.lang.validation.InvalidResult;
+import com.aoapps.lang.validation.ValidResult;
+import com.aoapps.lang.validation.ValidationException;
+import com.aoapps.lang.validation.ValidationResult;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;

@@ -22,6 +22,19 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoapps.collections.SortedArrayList;
+import com.aoapps.hodgepodge.io.TerminalWriter;
+import com.aoapps.lang.Strings;
+import com.aoapps.lang.Throwables;
+import com.aoapps.lang.exception.WrappedException;
+import com.aoapps.lang.i18n.Money;
+import com.aoapps.lang.validation.ValidationException;
+import com.aoapps.net.DomainName;
+import com.aoapps.net.Email;
+import com.aoapps.net.HostAddress;
+import com.aoapps.net.InetAddress;
+import com.aoapps.net.Port;
+import com.aoapps.security.HashedPassword;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.AccountHost;
 import com.aoindustries.aoserv.client.account.AccountTable;
@@ -119,20 +132,6 @@ import com.aoindustries.aoserv.client.web.tomcat.PrivateTomcatSite;
 import com.aoindustries.aoserv.client.web.tomcat.SharedTomcat;
 import com.aoindustries.aoserv.client.web.tomcat.SharedTomcatSite;
 import com.aoindustries.aoserv.client.web.tomcat.SharedTomcatTable;
-import com.aoindustries.collections.SortedArrayList;
-import com.aoindustries.exception.WrappedException;
-import com.aoindustries.io.TerminalWriter;
-import com.aoindustries.lang.Strings;
-import com.aoindustries.lang.Throwables;
-import com.aoindustries.net.DomainName;
-import com.aoindustries.net.Email;
-import com.aoindustries.net.HostAddress;
-import com.aoindustries.net.InetAddress;
-import com.aoindustries.net.Port;
-import com.aoindustries.security.HashedPassword;
-import com.aoindustries.security.Password;
-import com.aoindustries.util.i18n.Money;
-import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -763,7 +762,7 @@ final public class SimpleAOClient {
 	 *
 	 * @see  Zone#addDNSRecord
 	 * @see  Record
-	 * @see  #addDNSZone(com.aoindustries.aoserv.client.account.Account.Name, java.lang.String, com.aoindustries.net.InetAddress, int)
+	 * @see  #addDNSZone(com.aoindustries.aoserv.client.account.Account.Name, java.lang.String, com.aoapps.net.InetAddress, int)
 	 * @see  RecordType#checkDestination
 	 */
 	public int addDNSRecord(
@@ -866,7 +865,7 @@ final public class SimpleAOClient {
 	 *					violation occurs
 	 * @exception  IllegalArgumentException  if unable find the {@link Domain}
 	 *
-	 * @see  Address#addEmailForwarding(com.aoindustries.net.Email)
+	 * @see  Address#addEmailForwarding(com.aoapps.net.Email)
 	 * @see  Domain
 	 */
 	public int addEmailForwarding(
@@ -2241,7 +2240,7 @@ final public class SimpleAOClient {
 	 * @exception  IllegalArgumentException  if unable to find the {@link Account},
 	 *					{@link NoticeType}, or {@link Transaction}.
 	 *
-	 * @see  NoticeLogTable#addNoticeLog(com.aoindustries.aoserv.client.account.Account, java.lang.String, com.aoindustries.net.Email, com.aoindustries.aoserv.client.billing.NoticeType, com.aoindustries.aoserv.client.billing.Transaction)
+	 * @see  NoticeLogTable#addNoticeLog(com.aoindustries.aoserv.client.account.Account, java.lang.String, com.aoapps.net.Email, com.aoindustries.aoserv.client.billing.NoticeType, com.aoindustries.aoserv.client.billing.Transaction)
 	 * @see  NoticeType
 	 * @see  Account
 	 * @see  Transaction
@@ -3284,7 +3283,7 @@ final public class SimpleAOClient {
 	@Deprecated
 	public static String crypt(String password, String salt) {
 		if(password == null || password.isEmpty()) return HashedPassword.NO_PASSWORD_VALUE;
-		return salt == null || salt.isEmpty() ? com.aoindustries.security.UnixCrypt.crypt(password) : com.aoindustries.security.UnixCrypt.crypt(password, salt);
+		return salt == null || salt.isEmpty() ? com.aoapps.security.UnixCrypt.crypt(password) : com.aoapps.security.UnixCrypt.crypt(password, salt);
 	}
 
 	/**
@@ -5719,10 +5718,10 @@ final public class SimpleAOClient {
 	 *					{@link Address}
 	 *
 	 * @see  Address#remove()
-	 * @see  #addEmailForwarding(java.lang.String, com.aoindustries.net.DomainName, java.lang.String, com.aoindustries.net.Email)
-	 * @see  #addEmailListAddress(java.lang.String, com.aoindustries.net.DomainName, com.aoindustries.aoserv.client.linux.PosixPath, java.lang.String)
-	 * @see  #addEmailPipeAddress(java.lang.String, com.aoindustries.net.DomainName, int)
-	 * @see  #addLinuxAccAddress(java.lang.String, com.aoindustries.net.DomainName, java.lang.String, com.aoindustries.aoserv.client.linux.User.Name)
+	 * @see  #addEmailForwarding(java.lang.String, com.aoapps.net.DomainName, java.lang.String, com.aoapps.net.Email)
+	 * @see  #addEmailListAddress(java.lang.String, com.aoapps.net.DomainName, com.aoindustries.aoserv.client.linux.PosixPath, java.lang.String)
+	 * @see  #addEmailPipeAddress(java.lang.String, com.aoapps.net.DomainName, int)
+	 * @see  #addLinuxAccAddress(java.lang.String, com.aoapps.net.DomainName, java.lang.String, com.aoindustries.aoserv.client.linux.User.Name)
 	 */
 	public void removeEmailAddress(
 		String address,
@@ -5800,7 +5799,7 @@ final public class SimpleAOClient {
 	 *                                  {@link ListAddress}
 	 *
 	 * @see  ListAddress#remove()
-	 * @see  #addEmailListAddress(java.lang.String, com.aoindustries.net.DomainName, com.aoindustries.aoserv.client.linux.PosixPath, java.lang.String)
+	 * @see  #addEmailListAddress(java.lang.String, com.aoapps.net.DomainName, com.aoindustries.aoserv.client.linux.PosixPath, java.lang.String)
 	 */
 	public void removeEmailListAddress(
 		String address,
@@ -5853,7 +5852,7 @@ final public class SimpleAOClient {
 	 *                                  {@link PipeAddress}
 	 *
 	 * @see  PipeAddress#remove()
-	 * @see  #addEmailPipeAddress(java.lang.String, com.aoindustries.net.DomainName, int)
+	 * @see  #addEmailPipeAddress(java.lang.String, com.aoapps.net.DomainName, int)
 	 */
 	public void removeEmailPipeAddress(
 		String address,
@@ -6032,7 +6031,7 @@ final public class SimpleAOClient {
 	 *                                  {@link com.aoindustries.aoserv.client.linux.User}, or {@link InboxAddress}
 	 *
 	 * @see  InboxAddress#remove()
-	 * @see  #addLinuxAccAddress(java.lang.String, com.aoindustries.net.DomainName, java.lang.String, com.aoindustries.aoserv.client.linux.User.Name)
+	 * @see  #addLinuxAccAddress(java.lang.String, com.aoapps.net.DomainName, java.lang.String, com.aoindustries.aoserv.client.linux.User.Name)
 	 */
 	public void removeLinuxAccAddress(
 		String address,
@@ -6657,7 +6656,7 @@ final public class SimpleAOClient {
 	 *					violation occurs
 	 * @exception  IllegalArgumentException  if unable to find the {@link Administrator}
 	 *
-	 * @see  Administrator#setProfile(java.lang.String, java.lang.String, java.sql.Date, boolean, java.lang.String, java.lang.String, java.lang.String, java.lang.String, com.aoindustries.net.Email, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 * @see  Administrator#setProfile(java.lang.String, java.lang.String, java.sql.Date, boolean, java.lang.String, java.lang.String, java.lang.String, java.lang.String, com.aoapps.net.Email, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 * @see  #addAdministrator
 	 */
 	public void setAdministratorProfile(
