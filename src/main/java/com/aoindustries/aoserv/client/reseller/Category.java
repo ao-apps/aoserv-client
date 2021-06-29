@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * @see  Ticket
@@ -41,7 +42,7 @@ import java.util.List;
  */
 final public class Category extends CachedObjectIntegerKey<Category> {
 
-	private static final Resources RESOURCES = Resources.getResources(Category.class);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Category.class);
 
 	static final int
 		COLUMN_PKEY=0,

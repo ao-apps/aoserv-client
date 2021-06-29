@@ -45,6 +45,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -58,7 +59,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class Group extends CachedObjectGroupNameKey<Group> implements Removable {
 
-	private static final Resources RESOURCES = Resources.getResources(Group.class);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Group.class);
 
 	/**
 	 * Represents a group ID that may be used by certain types of groups.  Group ids must:

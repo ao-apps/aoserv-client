@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Objects;
+import java.util.ResourceBundle;
 
 /**
  * <code>TicketAction</code>s represent a complete history of the changes that have been made to a ticket.
@@ -53,7 +54,7 @@ import java.util.Objects;
  */
 final public class Action extends CachedObjectIntegerKey<Action> {
 
-	private static final Resources RESOURCES = Resources.getResources(Action.class);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Action.class);
 
 	static final int
 		COLUMN_PKEY=0,

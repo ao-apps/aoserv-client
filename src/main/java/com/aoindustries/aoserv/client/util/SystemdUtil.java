@@ -62,7 +62,11 @@ public class SystemdUtil {
 			} else {
 				if(b == 0) throw new IllegalStateException("Illegal null character in systemd encoding");
 				// All others
-				escaped.append('\\').append('x').append(Strings.getHexChar(b >>> 4)).append(Strings.getHexChar(b));
+				@SuppressWarnings("deprecation")
+				char ch1 = Strings.getHexChar(b >>> 4);
+				@SuppressWarnings("deprecation")
+				char ch2 = Strings.getHexChar(b);
+				escaped.append('\\').append('x').append(ch1).append(ch2);
 			}
 		}
 		return escaped.toString();

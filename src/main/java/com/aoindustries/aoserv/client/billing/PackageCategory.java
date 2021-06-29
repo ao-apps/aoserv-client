@@ -31,6 +31,7 @@ import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ResourceBundle;
 
 /**
  * A <code>PackageCategory</code> represents one type of service
@@ -41,7 +42,7 @@ import java.sql.SQLException;
  */
 public final class PackageCategory extends GlobalObjectStringKey<PackageCategory> {
 
-	private static final Resources RESOURCES = Resources.getResources(PackageCategory.class);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, PackageCategory.class);
 
 	static final int COLUMN_NAME=0;
 	static final String COLUMN_NAME_name = "name";

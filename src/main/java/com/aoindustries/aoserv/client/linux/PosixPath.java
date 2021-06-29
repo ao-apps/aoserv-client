@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -65,7 +66,7 @@ final public class PosixPath implements
 	Internable<PosixPath>
 {
 
-	private static final Resources RESOURCES = Resources.getResources(PosixPath.class);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, PosixPath.class);
 
 	private static final long serialVersionUID = -4832121065303689152L;
 

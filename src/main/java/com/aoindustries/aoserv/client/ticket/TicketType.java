@@ -31,6 +31,7 @@ import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ResourceBundle;
 
 /**
  * Each <code>Ticket</code> is of a specific <code>TicketType</code>.
@@ -41,7 +42,7 @@ import java.sql.SQLException;
  */
 final public class TicketType extends GlobalObjectStringKey<TicketType> {
 
-	private static final Resources RESOURCES = Resources.getResources(TicketType.class);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, TicketType.class);
 
 	static final int COLUMN_TYPE=0;
 	static final String COLUMN_TYPE_name = "type";

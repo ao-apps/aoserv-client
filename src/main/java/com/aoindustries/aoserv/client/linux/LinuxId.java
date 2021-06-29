@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 
 /**
@@ -47,7 +48,7 @@ final public class LinuxId implements
 	DtoFactory<com.aoindustries.aoserv.client.dto.LinuxId>
 {
 
-	private static final Resources RESOURCES = Resources.getResources(LinuxId.class);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, LinuxId.class);
 
 	private static final long serialVersionUID = -6222776271442175855L;
 

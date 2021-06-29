@@ -31,6 +31,7 @@ import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ResourceBundle;
 
 /**
  * A <code>TransactionType</code> is one type that may be used
@@ -46,7 +47,7 @@ import java.sql.SQLException;
  */
 public final class TransactionType extends GlobalObjectStringKey<TransactionType> {
 
-	private static final Resources RESOURCES = Resources.getResources(TransactionType.class);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, TransactionType.class);
 
 	static final int COLUMN_NAME=0;
 	static final String COLUMN_NAME_name = "name";

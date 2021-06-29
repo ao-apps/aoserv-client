@@ -53,7 +53,12 @@ final public class AOServClientConfiguration {
 	private static String getProperty(String name) throws ConfigurationException {
 		try {
 			synchronized (propsLock) {
-				if (props == null) props = PropertiesUtils.loadFromResource(AOServClientConfiguration.class, "aoserv-client.properties");
+				if (props == null) {
+					props = PropertiesUtils.loadFromResource(
+						AOServClientConfiguration.class,
+						"/com/aoindustries/aoserv/client/aoserv-client.properties"
+					);
+				}
 				return props.getProperty(name);
 			}
 		} catch(IOException e) {

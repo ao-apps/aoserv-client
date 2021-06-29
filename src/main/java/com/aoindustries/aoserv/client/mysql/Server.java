@@ -54,6 +54,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -71,7 +72,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class Server extends CachedObjectIntegerKey<Server> {
 
-	private static final Resources RESOURCES = Resources.getResources(Server.class);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Server.class);
 
 	/**
 	 * Represents a name that may be used for a MySQL installation.  Names must:

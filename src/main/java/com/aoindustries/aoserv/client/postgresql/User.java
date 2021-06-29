@@ -43,6 +43,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -56,7 +57,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class User extends CachedObjectUserNameKey<User> implements Removable, PasswordProtected, Disablable {
 
-	private static final Resources RESOURCES = Resources.getResources(User.class);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, User.class);
 
 	/**
 	 * Represents a PostgreSQL user ID.  PostgreSQL user ids must:

@@ -32,6 +32,7 @@ import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ResourceBundle;
 
 /**
  * All of the types of ticket changes are represented by these
@@ -44,7 +45,7 @@ import java.sql.SQLException;
  */
 final public class ActionType extends GlobalObjectStringKey<ActionType> {
 
-	private static final Resources RESOURCES = Resources.getResources(ActionType.class);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, ActionType.class);
 
 	static final int COLUMN_TYPE = 0;
 

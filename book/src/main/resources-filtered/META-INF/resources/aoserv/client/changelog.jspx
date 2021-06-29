@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-05:00"
-		dateModified="2021-06-01T03:18:06-05:00"
+		dateModified="2021-06-27T16:13:41-05:00"
 	>
 		<c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
 			<changelog:release
@@ -79,6 +79,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 				-->
 				<ul>
 					<li>Updated to <ao:a rel="nofollow" href="https://www.oracle.com/java/technologies/javaee/javaeetechnologies.html#javaee7">Java™ EE 7 Web Profile</ao:a> (Servlet 3.1, JSP 2.3, EL 3.0, and JSTL 1.2).</li>
+					<li>Now supports Java 9+ modules with included <code>module-info.class</code>.</li>
 				</ul>
 			</changelog:release>
 		</c:if>
@@ -660,7 +661,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 								and are 100% confident <code>/META-INF</code> and <code>/WEB-INF</code> are mapped to
 								<ao:a href="http://tomcat.apache.org/">Tomcat</ao:a>.  Just leave this on; it's only two
 								<ao:a href="https://httpd.apache.org/docs/2.4/mod/core.html#location">Location</ao:a>
-								directives for each <ao:a href="apidocs/com/aoindustries/aoserv/client/HttpdTomcatContext.html">HttpdTomcatContext</ao:a>.
+								directives for each <ao:a href="apidocs/com.aoindustries.aoserv.client/com/aoindustries/aoserv/client/HttpdTomcatContext.html">HttpdTomcatContext</ao:a>.
 							</p>
 							<p>
 								May be configured with the <code>set_httpd_tomcat_site_block_webinf</code> AOSH command.
@@ -1121,8 +1122,8 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 				<li>Restructured into package names matching recently introduced master server schemas.</li>
 				<li>Renamed classes to match new table names.</li>
 				<li>
-					<ao:a href="apidocs/com/aoindustries/aoserv/client/ProgressListener.html">ProgressListener</ao:a> and
-					<ao:a href="apidocs/com/aoindustries/aoserv/client/TableLoadListener.html">TableLoadListener</ao:a>
+					<ao:a href="apidocs/com.aoindustries.aoserv.client/com/aoindustries/aoserv/client/ProgressListener.html">ProgressListener</ao:a> and
+					<ao:a href="apidocs/com.aoindustries.aoserv.client/com/aoindustries/aoserv/client/TableLoadListener.html">TableLoadListener</ao:a>
 					now notified of row counts using a 64-bit integer to handle results with more than
 					<code>StreamableOutput.MAX_COMPRESSED_INT_VALUE</code><!-- TODO: SemanticCMS 2: link -->
 					rows.

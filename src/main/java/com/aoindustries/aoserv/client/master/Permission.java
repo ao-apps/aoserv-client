@@ -31,6 +31,7 @@ import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ResourceBundle;
 
 /**
  * All of the permissions within the system.
@@ -39,7 +40,7 @@ import java.sql.SQLException;
  */
 final public class Permission extends GlobalObjectStringKey<Permission> {
 
-	private static final Resources RESOURCES = Resources.getResources(Permission.class);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Permission.class);
 
 	static final int COLUMN_NAME=0;
 	static final String COLUMN_SORT_ORDER_name = "sort_order";

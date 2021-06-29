@@ -72,6 +72,7 @@ import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -87,7 +88,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class Database extends CachedObjectIntegerKey<Database> implements Removable, Dumpable, JdbcProvider {
 
-	private static final Resources RESOURCES = Resources.getResources(Database.class);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Database.class);
 
 	/**
 	 * Represents a name that may be used for a {@link Database}.  Database names must:

@@ -43,6 +43,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -53,7 +54,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
 
-	private static final Resources RESOURCES = Resources.getResources(FirewallZone.class);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, FirewallZone.class);
 
 	/**
 	 * Represents a name that may be used for a {@link FirewallZone}.  Zones names must:

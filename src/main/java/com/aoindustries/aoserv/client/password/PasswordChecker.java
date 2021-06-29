@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * Performs password checking for all password protected
@@ -40,7 +41,7 @@ import java.util.List;
  */
 final public class PasswordChecker {
 
-	private static final Resources RESOURCES = Resources.getResources(PasswordChecker.class);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, PasswordChecker.class);
 
 	/**
 	 * The different ways months may be represented in the English

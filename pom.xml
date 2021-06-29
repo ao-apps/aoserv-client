@@ -33,6 +33,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 	<packaging>bundle</packaging>
 
 	<properties>
+		<module.name>com.aoindustries.aoserv.client</module.name>
 		<!-- Java 1.8 -->
 		<javase.version>1.8</javase.version>
 		<javase.release>8</javase.release>
@@ -107,6 +108,46 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId><artifactId>maven-dependency-plugin</artifactId>
+				<configuration>
+					<usedDependencies>
+						<!-- Runtime Direct -->
+						<dependency>com.aoapps:ao-style</dependency>
+						<dependency>com.aoapps:ao-tlds</dependency><!-- Required for module-info.java -->
+					</usedDependencies>
+				</configuration>
+			</plugin>
+			<!-- Java 1.8: see https://maven.apache.org/plugins/maven-compiler-plugin/examples/module-info.html -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId>
+				<executions>
+					<!-- compile everything to ensure module-info contains right entries -->
+					<execution>
+						<id>default-compile</id>
+						<configuration>
+							<release>9</release>
+						</configuration>
+					</execution>
+					<!-- recompile everything for target VM except the module-info.java -->
+					<execution>
+						<id>base-compile</id><goals><goal>compile</goal></goals>
+						<configuration>
+							<excludes>
+								<exclude>module-info.java</exclude>
+							</excludes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId><artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<!-- Java 1.8: generate future-proof modular javadocs -->
+					<source>11</source>
+					<release>11</release>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId><artifactId>maven-enforcer-plugin</artifactId>
 				<executions>
 					<execution>
@@ -123,15 +164,6 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId><artifactId>maven-dependency-plugin</artifactId>
-				<configuration>
-					<usedDependencies>
-						<!-- Runtime Direct -->
-						<dependency>com.aoapps:ao-style</dependency>
-					</usedDependencies>
-				</configuration>
 			</plugin>
 			<!--
 				Allows running AOSH directly from Maven.
@@ -200,6 +232,11 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 											<includes>element-list, package-list</includes>
 											<outputDirectory>${project.build.directory}/offlineLinks/com.aoapps/ao-sql</outputDirectory>
 										</artifactItem>
+										<artifactItem>
+											<groupId>com.aoapps</groupId><artifactId>ao-tlds</artifactId><classifier>javadoc</classifier>
+											<includes>element-list, package-list</includes>
+											<outputDirectory>${project.build.directory}/offlineLinks/com.aoapps/ao-tlds</outputDirectory>
+										</artifactItem>
 										<!-- Test Direct -->
 										<artifactItem>
 											<groupId>junit</groupId><artifactId>junit</artifactId><classifier>javadoc</classifier>
@@ -241,6 +278,10 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 									<url>https://oss.aoapps.com/sql/apidocs/</url>
 									<location>${project.build.directory}/offlineLinks/com.aoapps/ao-sql</location>
 								</offlineLink>
+								<offlineLink>
+									<url>https://oss.aoapps.com/tlds/apidocs/</url>
+									<location>${project.build.directory}/offlineLinks/com.aoapps/ao-tlds</location>
+								</offlineLink>
 								<!-- Test Direct -->
 								<offlineLink>
 									<url>https://junit.org/junit4/javadoc/latest/</url>
@@ -281,12 +322,12 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 			<dependency>
 				<groupId>com.aoapps</groupId><artifactId>ao-sql</artifactId><version>2.0.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
 			</dependency>
+			<dependency>
+				<groupId>com.aoapps</groupId><artifactId>ao-tlds</artifactId><version>2.0.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
+			</dependency>
 			<!-- Transitive -->
 			<dependency>
 				<groupId>com.aoapps</groupId><artifactId>ao-tempfiles</artifactId><version>3.0.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
-			</dependency>
-			<dependency>
-				<groupId>com.aoapps</groupId><artifactId>ao-tlds</artifactId><version>2.0.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
 			</dependency>
 			<!-- Runtime Direct -->
 			<dependency>
@@ -339,6 +380,9 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		</dependency>
 		<dependency>
 			<groupId>com.aoapps</groupId><artifactId>ao-sql</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.aoapps</groupId><artifactId>ao-tlds</artifactId>
 		</dependency>
 		<!-- Runtime Direct -->
 		<dependency>

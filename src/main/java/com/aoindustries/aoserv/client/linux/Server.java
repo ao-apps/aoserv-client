@@ -87,6 +87,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.ResourceBundle;
 
 /**
  * A {@link Server} stores the details about a server that runs the AOServ distribution.
@@ -98,7 +99,7 @@ final public class Server
 	implements DtoFactory<com.aoindustries.aoserv.client.dto.LinuxServer>
 {
 
-	private static final Resources RESOURCES = Resources.getResources(Server.class);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Server.class);
 
 	static final int COLUMN_SERVER = 0;
 	static final int COLUMN_HOSTNAME = 1;

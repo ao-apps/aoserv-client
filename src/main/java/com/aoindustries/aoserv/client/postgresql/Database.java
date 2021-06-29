@@ -64,6 +64,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -80,7 +81,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class Database extends CachedObjectIntegerKey<Database> implements Dumpable, Removable, JdbcProvider {
 
-	private static final Resources RESOURCES = Resources.getResources(Database.class);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Database.class);
 
 	/**
 	 * Represents a name that may be used for a PostgreSQL database.  Database names must:

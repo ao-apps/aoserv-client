@@ -31,6 +31,7 @@ import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ResourceBundle;
 
 /**
  * The <code>TicketStatus</code> of a <code>Ticket</code> changes
@@ -42,7 +43,7 @@ import java.sql.SQLException;
  */
 final public class Status extends GlobalObjectStringKey<Status> implements Comparable<Status> {
 
-	private static final Resources RESOURCES = Resources.getResources(Status.class);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Status.class);
 
 	static final int COLUMN_STATUS = 0;
 	static final int COLUMN_SORT_ORDER = 1;

@@ -57,6 +57,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -74,7 +75,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class User extends CachedObjectUserNameKey<User> implements PasswordProtected, Removable, Disablable {
 
-	private static final Resources RESOURCES = Resources.getResources(User.class);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, User.class);
 
 	/**
 	 * Represents the most general form of a user name.  This is has the fewest constraints; other types of accounts

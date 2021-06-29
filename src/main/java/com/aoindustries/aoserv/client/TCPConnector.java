@@ -46,6 +46,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import javax.swing.SwingUtilities;
 
@@ -59,7 +60,7 @@ import javax.swing.SwingUtilities;
  */
 public class TCPConnector extends AOServConnector {
 
-	private static final Resources RESOURCES = Resources.getResources(TCPConnector.class);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, TCPConnector.class);
 
 	/**
 	 * Close cache monitor after 90 minutes of inactivity,

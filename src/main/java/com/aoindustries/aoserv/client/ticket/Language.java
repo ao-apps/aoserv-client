@@ -31,13 +31,14 @@ import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ResourceBundle;
 
 /**
  * @author  AO Industries, Inc.
  */
 final public class Language extends GlobalObjectStringKey<Language> {
 
-	private static final Resources RESOURCES = Resources.getResources(Language.class);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Language.class);
 
 	static final int COLUMN_CODE = 0;
 	static final String COLUMN_CODE_name = "code";

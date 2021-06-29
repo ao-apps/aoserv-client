@@ -32,6 +32,7 @@ import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ResourceBundle;
 
 /**
  * A <code>Resource</code> is a measurable hardware resource.  A <code>Package</code>
@@ -44,7 +45,7 @@ import java.sql.SQLException;
  */
 final public class Resource extends GlobalObjectStringKey<Resource> {
 
-	private static final Resources RESOURCES = Resources.getResources(Resource.class);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Resource.class);
 
 	static final int COLUMN_NAME=0;
 	static final String COLUMN_NAME_name = "name";

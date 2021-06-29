@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client.monitoring;
 
 import com.aoapps.lang.i18n.Resources;
+import java.util.ResourceBundle;
 
 /**
  * The different alert levels in the system.
@@ -40,7 +41,7 @@ public enum AlertLevel {
 	CRITICAL,
 	UNKNOWN;
 
-	private static final Resources RESOURCES = Resources.getResources(AlertLevel.class);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, AlertLevel.class);
 
 	private static final AlertLevel[] alertLevels = values();
 

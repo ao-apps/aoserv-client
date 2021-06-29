@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.util.ResourceBundle;
 
 /**
  * Represents a name that may be used for a MySQL table.  Table names must:
@@ -52,7 +53,8 @@ final public class Table_Name implements
 	DtoFactory<com.aoindustries.aoserv.client.dto.MySQLTableName>
 {
 
-	private static final Resources RESOURCES = Resources.getResources(Table_Name.class.getPackage(), null, "Table.Name.");
+	private static final Resources RESOURCES =
+		Resources.getResources(ResourceBundle::getBundle, Table_Name.class.getPackage(), null, "Table.Name.");
 
 	private static final long serialVersionUID = -4427431696460618301L;
 

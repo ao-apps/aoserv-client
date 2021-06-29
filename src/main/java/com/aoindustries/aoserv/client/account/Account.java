@@ -92,6 +92,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -106,7 +107,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class Account extends CachedObjectAccountNameKey<Account> implements Disablable, Comparable<Account> {
 
-	private static final Resources RESOURCES = Resources.getResources(Account.class);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Account.class);
 
 	/**
 	 * The unique, case-insensitive identifier for an {@link Account}.  Account names must:
