@@ -128,8 +128,8 @@ final public class Reseller extends CachedObjectAccountNameKey<Reseller> {
 	}
 
 	/**
-	 * The children of the resller are any resellers that have their closest parent
-	 * business (that is a reseller) equal to this one.
+	 * The children of the reseller are any resellers that have their closest parent
+	 * account (that is a reseller) equal to this one.
 	 */
 	public List<Reseller> getChildResellers() throws IOException, SQLException {
 		List<Reseller> children = new ArrayList<>();

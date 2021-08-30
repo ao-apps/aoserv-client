@@ -25,6 +25,7 @@ package com.aoindustries.aoserv.client.dns;
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.lang.validation.ValidationException;
+import com.aoapps.lang.validation.ValidationResult;
 import com.aoapps.net.DomainName;
 import com.aoapps.net.InetAddress;
 import com.aoindustries.aoserv.client.GlobalObjectStringKey;
@@ -55,6 +56,7 @@ final public class RecordType extends GlobalObjectStringKey<RecordType> {
 		A     = "A",
 		AAAA  = "AAAA",
 		CNAME = "CNAME",
+		CAA   = "CAA",
 		MX    = "MX",
 		NS    = "NS",
 		PTR   = "PTR",
@@ -67,17 +69,19 @@ final public class RecordType extends GlobalObjectStringKey<RecordType> {
 		has_priority,
 		has_weight,
 		has_port,
+		has_flag,
+		has_tag,
 		param_ip
 	;
 
-	public void checkDestination(String destination) throws IllegalArgumentException {
-		checkDestination(pkey, destination);
+	public void checkDestination(String tag, String destination) throws IllegalArgumentException {
+		checkDestination(pkey, tag, destination);
 	}
 
 	@SuppressWarnings("deprecation")
-	public static void checkDestination(String type, String destination) throws IllegalArgumentException {
-		String origDest=destination;
-		if(destination.length()==0) throw new IllegalArgumentException("Destination may not by empty");
+	public static void checkDestination(String type, String tag, String destination) throws IllegalArgumentException {
+		String origDest = destination;
+		if(destination.isEmpty()) throw new IllegalArgumentException("Destination may not by empty");
 
 		if(type.equals(A)) {
 			try {
@@ -93,6 +97,20 @@ final public class RecordType extends GlobalObjectStringKey<RecordType> {
 			} catch(ValidationException e) {
 				throw new IllegalArgumentException(e.getLocalizedMessage(), e);
 			}
+		} else if(type.equals(CAA)) {
+			if(tag == null) throw new IllegalArgumentException("tag required for type = " + CAA);
+			if(Record.CAA_TAG_ISSUE.equals(tag) || Record.CAA_TAG_ISSUEWILD.equals(tag)) {
+				int semicolon = destination.indexOf(';');
+				String issuerDomainName = (semicolon == -1) ? destination : destination.substring(0, semicolon);
+				// May be empty to match none
+				if(!issuerDomainName.isEmpty()) {
+					// Or may be a valid domain name
+					ValidationResult result = DomainName.validate(issuerDomainName);
+					if(!result.isValid()) throw new IllegalArgumentException("Invalid issuer domain: " + result.toString());
+				}
+				// TODO: Could also verify name=value formatting for that following ";"
+			}
+			// TODO: Checks by tag
 		} else if(type.equals(TXT)) {
 			// Pretty much anything goes?
 			// TODO: What are the rules for what is allowed in TXT?  Where do we enforce this currently?
@@ -114,7 +132,9 @@ final public class RecordType extends GlobalObjectStringKey<RecordType> {
 			case 2 : return has_priority;
 			case 3 : return has_weight;
 			case 4 : return has_port;
-			case 5 : return param_ip;
+			case 5 : return has_flag;
+			case 6 : return has_tag;
+			case 7 : return param_ip;
 			default : throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
@@ -134,12 +154,14 @@ final public class RecordType extends GlobalObjectStringKey<RecordType> {
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey         = result.getString(1);
-		description  = result.getString(2);
-		has_priority = result.getBoolean(3);
-		has_weight   = result.getBoolean(4);
-		has_port     = result.getBoolean(5);
-		param_ip     = result.getBoolean(6);
+		pkey         = result.getString("type");
+		description  = result.getString("description");
+		has_priority = result.getBoolean("has_priority");
+		has_weight   = result.getBoolean("has_weight");
+		has_port     = result.getBoolean("has_port");
+		has_flag     = result.getBoolean("has_flag");
+		has_tag      = result.getBoolean("has_tag");
+		param_ip     = result.getBoolean("param_ip");
 	}
 
 	public boolean hasPriority() {
@@ -154,6 +176,14 @@ final public class RecordType extends GlobalObjectStringKey<RecordType> {
 		return has_port;
 	}
 
+	public boolean hasFlag() {
+		return has_flag;
+	}
+
+	public boolean hasTag() {
+		return has_tag;
+	}
+
 	public boolean isParamIP() {
 		return param_ip;
 	}
@@ -165,6 +195,8 @@ final public class RecordType extends GlobalObjectStringKey<RecordType> {
 		has_priority = in.readBoolean();
 		has_weight   = in.readBoolean();
 		has_port     = in.readBoolean();
+		has_flag     = in.readBoolean();
+		has_tag      = in.readBoolean();
 		param_ip     = in.readBoolean();
 	}
 
@@ -181,6 +213,10 @@ final public class RecordType extends GlobalObjectStringKey<RecordType> {
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_72) >= 0) {
 			out.writeBoolean(has_weight);
 			out.writeBoolean(has_port);
+		}
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_86_0) >= 0) {
+			out.writeBoolean(has_flag);
+			out.writeBoolean(has_tag);
 		}
 		out.writeBoolean(param_ip);
 	}

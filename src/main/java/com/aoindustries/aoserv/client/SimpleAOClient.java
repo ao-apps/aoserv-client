@@ -772,6 +772,8 @@ final public class SimpleAOClient {
 		int priority,
 		int weight,
 		int port,
+		short flag,
+		String tag,
 		String destination,
 		int ttl
 	) throws IllegalArgumentException, IOException, SQLException {
@@ -805,8 +807,23 @@ final public class SimpleAOClient {
 			if(port!=Record.NO_PORT) throw new IllegalArgumentException("No port allowed for type="+type);
 		}
 
+		// Must have appropriate flag
+		if(nt.hasFlag()) {
+			if(flag == Record.NO_FLAG) throw new IllegalArgumentException("flag required for type=" + type);
+			else if(flag < 0 || flag > 0xFF) throw new IllegalArgumentException("Invalid flag: " + flag);
+		} else {
+			if(flag != Record.NO_FLAG) throw new IllegalArgumentException("No flag allowed for type=" + type);
+		}
+
+		// Must have appropriate tag
+		if(nt.hasTag()) {
+			if(tag == null) throw new IllegalArgumentException("tag required for type=" + type);
+		} else {
+			if(tag != null) throw new IllegalArgumentException("No tag allowed for type=" + type);
+		}
+
 		// Must have a valid destination type
-		nt.checkDestination(destination);
+		nt.checkDestination(tag, destination);
 
 		return nz.addDNSRecord(
 			domain,
@@ -814,6 +831,8 @@ final public class SimpleAOClient {
 			priority,
 			weight,
 			port,
+			flag,
+			tag,
 			destination,
 			ttl
 		);
@@ -5641,6 +5660,7 @@ final public class SimpleAOClient {
 		String zone,
 		String domain,
 		String type,
+		String tag,
 		String destination
 	) throws IllegalArgumentException, IOException, SQLException {
 		Zone nz=getZone(zone);
@@ -5649,17 +5669,20 @@ final public class SimpleAOClient {
 		RecordType nt=connector.getDns().getRecordType().get(type);
 		if(nt==null) throw new IllegalArgumentException("Unable to find RecordType: "+type);
 		// Must have a valid destination type
-		nt.checkDestination(destination);
+		nt.checkDestination(tag, destination);
 
 		// Find the record matching all four fields, should be one and *only* one
 		Record found = null;
 		for(Record record : nz.getDNSRecords(domain, nt)) {
-			if(record.getDestination().equals(destination)) {
-				if(found != null) throw new AssertionError("Duplicate DNSRecord: (" + zone + ", " + domain + ", " + type + ", " + destination + ")");
+			if(
+				Objects.equals(record.getTag(), tag)
+				&& record.getDestination().equals(destination)
+			) {
+				if(found != null) throw new AssertionError("Duplicate DNSRecord: (" + zone + ", " + domain + ", " + type + ", " + tag + ", " + destination + ")");
 				found = record;
 			}
 		}
-		if(found == null) throw new AssertionError("Unable to find DNSRecord: (" + zone + ", " + domain + ", " + type + ", " + destination + ")");
+		if(found == null) throw new AssertionError("Unable to find DNSRecord: (" + zone + ", " + domain + ", " + type + ", " + tag + ", " + destination + ")");
 		found.remove();
 	}
 

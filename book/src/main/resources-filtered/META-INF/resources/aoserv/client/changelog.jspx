@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-05:00"
-		dateModified="2021-07-24T08:24:43-05:00"
+		dateModified="2021-08-27T18:56:19-05:00"
 	>
 		<c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
 			<changelog:release
@@ -48,6 +48,10 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 				repository="@{nexusUrl}content/repositories/snapshots/"
 				scmUrl="@{project.scm.url}"
 			>
+				<ul>
+					<!-- TODO: Link to our page once we have one -->
+					<li>Added support for <ao:a href="https://tools.ietf.org/html/rfc6844">DNS Certification Authority Authorization (CAA) Resource Records</ao:a>.</li>
+				</ul>
 				<!-- TODO:
 				<ul>
 					<li>Added schemas (where some object can exist without schema, such as "int"?)</li>

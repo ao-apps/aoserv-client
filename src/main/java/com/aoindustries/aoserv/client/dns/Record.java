@@ -24,6 +24,7 @@ package com.aoindustries.aoserv.client.dns;
 
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
+import com.aoapps.lang.util.InternUtils;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Removable;
@@ -57,10 +58,17 @@ final public class Record extends CachedObjectIntegerKey<Record> implements Remo
 	static final String COLUMN_WEIGHT_name      = "weight";
 	static final String COLUMN_DESTINATION_name = "destination";
 
-	public static final int NO_PRIORITY = -1;
-	public static final int NO_WEIGHT   = -1;
-	public static final int NO_PORT     = -1;
-	public static final int NO_TTL      = -1;
+	public static final int   NO_PRIORITY = -1;
+	public static final int   NO_WEIGHT   = -1;
+	public static final int   NO_PORT     = -1;
+	public static final short NO_FLAG     = -1;
+	public static final int   NO_TTL      = -1;
+
+	public static final String CAA_TAG_ISSUE        = "issue";
+	public static final String CAA_TAG_ISSUEWILD    = "issuewild";
+	public static final String CAA_TAG_IODEF        = "iodef";
+	public static final String CAA_TAG_CONTACTEMAIL = "contactemail";
+	public static final String CAA_TAG_CONTACTPHONE = "contactphone";
 
 	private String zone;
 	private String domain;
@@ -68,6 +76,8 @@ final public class Record extends CachedObjectIntegerKey<Record> implements Remo
 	private int priority;
 	private int weight;
 	private int port;
+	private short flag;
+	private String tag;
 	private String destination;
 	private int dhcpAddress;
 	private int ttl;
@@ -79,12 +89,14 @@ final public class Record extends CachedObjectIntegerKey<Record> implements Remo
 			case COLUMN_ZONE: return zone;
 			case 2: return domain;
 			case 3: return type;
-			case 4: return priority==NO_PRIORITY ? null : priority;
-			case 5: return weight==NO_WEIGHT     ? null : weight;
-			case 6: return port==NO_PORT         ? null : port;
-			case 7: return destination;
-			case 8: return dhcpAddress==-1       ? null : dhcpAddress;
-			case 9: return ttl==NO_TTL           ? null : ttl;
+			case 4: return priority == NO_PRIORITY ? null : priority;
+			case 5: return weight == NO_WEIGHT     ? null : weight;
+			case 6: return port == NO_PORT         ? null : port;
+			case 7: return flag == NO_FLAG         ? null : flag;
+			case 8: return tag;
+			case 9: return destination;
+			case 10: return dhcpAddress == -1      ? null : dhcpAddress;
+			case 11: return ttl == NO_TTL          ? null : ttl;
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
@@ -129,6 +141,25 @@ final public class Record extends CachedObjectIntegerKey<Record> implements Remo
 		return port;
 	}
 
+	/**
+	 * Verifies a flag is either {@link #NO_FLAG} or between 0 and 0xFF.
+	 */
+	public static boolean isValidFlag(short flag) {
+		return flag == NO_FLAG || (flag >= 0 && flag <= 0xFF);
+	}
+
+	/**
+	 * @return  {@link #NO_FLAG} when none, or a value between 0 and 0xFF.
+	 */
+	public short getFlag() {
+		assert isValidFlag(flag);
+		return flag;
+	}
+
+	public String getTag() {
+		return tag;
+	}
+
 	public String getDestination() {
 		return destination;
 	}
@@ -150,22 +181,25 @@ final public class Record extends CachedObjectIntegerKey<Record> implements Remo
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		int pos = 1;
-		pkey        = result.getInt(pos++);
-		zone        = result.getString(pos++);
-		domain      = result.getString(pos++);
-		type        = result.getString(pos++);
-		priority    = result.getInt(pos++);
-		if(result.wasNull()) priority    = NO_PRIORITY;
-		weight      = result.getInt(pos++);
-		if(result.wasNull()) weight      = NO_WEIGHT;
-		port        = result.getInt(pos++);
-		if(result.wasNull()) port        = NO_PORT;
-		destination = result.getString(pos++);
-		dhcpAddress = result.getInt(pos++);
+		pkey        = result.getInt("id");
+		zone        = result.getString("zone");
+		domain      = result.getString("domain");
+		type        = result.getString("type");
+		priority    = result.getInt("priority");
+		if(result.wasNull()) priority = NO_PRIORITY;
+		weight      = result.getInt("weight");
+		if(result.wasNull()) weight = NO_WEIGHT;
+		port        = result.getInt("port");
+		if(result.wasNull()) port = NO_PORT;
+		flag        = result.getShort("flag");
+		if(result.wasNull()) flag = NO_FLAG;
+		if(!isValidFlag(flag)) throw new SQLException("Invalid flag: " + flag);
+		tag         = result.getString("tag");
+		destination = result.getString("destination");
+		dhcpAddress = result.getInt("dhcpAddress");
 		if(result.wasNull()) dhcpAddress = -1;
-		ttl         = result.getInt(pos++);
-		if(result.wasNull()) ttl=NO_TTL;
+		ttl         = result.getInt("ttl");
+		if(result.wasNull()) ttl = NO_TTL;
 	}
 
 	@Override
@@ -177,6 +211,9 @@ final public class Record extends CachedObjectIntegerKey<Record> implements Remo
 		priority    = in.readCompressedInt();
 		weight      = in.readCompressedInt();
 		port        = in.readCompressedInt();
+		flag        = in.readShort();
+		if(!isValidFlag(flag)) throw new IOException("Invalid flag: " + flag);
+		tag         = InternUtils.intern(in.readNullUTF());
 		destination = in.readUTF().intern();
 		dhcpAddress = in.readCompressedInt();
 		ttl         = in.readCompressedInt();
@@ -193,6 +230,11 @@ final public class Record extends CachedObjectIntegerKey<Record> implements Remo
 			out.writeCompressedInt(weight);
 			out.writeCompressedInt(port);
 		}
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_86_0) >= 0) {
+			assert isValidFlag(flag);
+			out.writeShort(flag);
+			out.writeNullUTF(tag);
+		}
 		out.writeUTF(destination);
 		out.writeCompressedInt(dhcpAddress);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_127)>=0) {
@@ -206,11 +248,11 @@ final public class Record extends CachedObjectIntegerKey<Record> implements Remo
 	public String getAbsoluteDomain() {
 		if(domain.equals("@")) return zone;
 		if(domain.endsWith(".")) return domain;
-		return domain+'.'+zone;
+		return domain + '.' + zone;
 	}
 
 	/**
-	 * Strips a destination of characters not allowed in TXT records.
+	 * Strips a destination of characters not allowed in CAA or TXT records.
 	 * Removes any double quotes, anything below space <code>' '</code>,
 	 * or anything <code>&gt;= (char)0x7f</code>.  Also trims the entry after
 	 * characters are escaped.
@@ -298,6 +340,8 @@ final public class Record extends CachedObjectIntegerKey<Record> implements Remo
 		if(priority != NO_PRIORITY) SB.append(' ').append(priority);
 		if(weight   != NO_WEIGHT)   SB.append(' ').append(weight);
 		if(port     != NO_PORT)     SB.append(' ').append(port);
+		if(flag     != NO_FLAG)     SB.append(' ').append(flag);
+		if(tag      != null)        SB.append(' ').append(tag);
 		SB.append(' ').append(destination);
 		return SB.toString();
 	}

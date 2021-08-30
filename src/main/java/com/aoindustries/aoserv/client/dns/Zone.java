@@ -85,6 +85,21 @@ final public class Zone extends CachedObjectStringKey<Zone> implements Removable
 	 */
 	public static final int DEFAULT_MX_PRIORITY = 10;
 
+	/**
+	 * The default flag for new CAA records.
+	 */
+	public static final short DEFAULT_CAA_FLAG = 0;
+
+	/**
+	 * The default tag for new CAA records.
+	 */
+	public static final String DEFAULT_CAA_TAG = Record.CAA_TAG_ISSUE;
+
+	/**
+	 * The default value for new CAA records.
+	 */
+	public static final String DEFAULT_CAA_VALUE = ";";
+
 	private String file;
 	private Account.Name packageName;
 	private String hostmaster;
@@ -97,10 +112,12 @@ final public class Zone extends CachedObjectStringKey<Zone> implements Removable
 		int priority,
 		int weight,
 		int port,
+		short flag,
+		String tag,
 		String destination,
 		int ttl
 	) throws IOException, SQLException {
-		return table.getConnector().getDns().getRecord().addDNSRecord(this, domain, type, priority, weight, port, destination, ttl);
+		return table.getConnector().getDns().getRecord().addDNSRecord(this, domain, type, priority, weight, port, flag, tag, destination, ttl);
 	}
 
 	@Override
@@ -120,6 +137,7 @@ final public class Zone extends CachedObjectStringKey<Zone> implements Removable
 			RecordType[] types={
 				tt.get(RecordType.A),
 				tt.get(RecordType.AAAA),
+				tt.get(RecordType.CAA),
 				tt.get(RecordType.CNAME),
 				tt.get(RecordType.MX),
 				tt.get(RecordType.NS),
@@ -260,7 +278,21 @@ final public class Zone extends CachedObjectStringKey<Zone> implements Removable
 		line.setLength(0);
 	}
 
-	private static void printRecord(String linePrefix, StringBuilder line, PrintWriter out, String domain, int ttl, int recordTtl, String type, int priority, int weight, int port, String destination) {
+	private static void printRecord(
+		String linePrefix,
+		StringBuilder line,
+		PrintWriter out,
+		String domain,
+		int ttl,
+		int recordTtl,
+		String type,
+		int priority,
+		int weight,
+		int port,
+		short flag,
+		String tag,
+		String destination
+	) {
 		line.append(linePrefix);
 		line.append(domain);
 		int count=Math.max(1, 24-domain.length());
@@ -285,20 +317,28 @@ final public class Zone extends CachedObjectStringKey<Zone> implements Removable
 		for(int d=0;d<count;d++) {
 			line.append(' ');
 		}
-		if(priority!=Record.NO_PRIORITY) {
+		if(priority != Record.NO_PRIORITY) {
 			line.append(priority);
 			line.append(' ');
 		}
-		if(weight!=Record.NO_WEIGHT) {
+		if(weight != Record.NO_WEIGHT) {
 			line.append(weight);
 			line.append(' ');
 		}
-		if(port!=Record.NO_PORT) {
+		if(port != Record.NO_PORT) {
 			line.append(port);
 			line.append(' ');
 		}
-		if(type.equals(RecordType.TXT)) {
-			// Clean the TXT type
+		if(flag != Record.NO_FLAG) {
+			line.append(flag);
+			line.append(' ');
+		}
+		if(tag != null) {
+			line.append(tag);
+			line.append(' ');
+		}
+		if(type.equals(RecordType.CAA) || type.equals(RecordType.TXT)) {
+			// Clean the CAA or TXT type
 			String txt = Record.cleanTxt(destination);
 			int oneLineLength = line.length() + 1 + txt.length() + 1;
 			if(oneLineLength <= MAX_LINE_LENGTH) {
@@ -368,11 +408,10 @@ final public class Zone extends CachedObjectStringKey<Zone> implements Removable
 			// Add the default nameservers because named will refuse to start without them
 			line.append("; No name servers configured, using the defaults");
 			printLine(line, out);
-			// TODO: These defaults should be pulled from Brands, but beware of which reseller values are made visible in the process
-			printRecord("", line, out, "@", ttl, Record.NO_TTL, RecordType.NS, Record.NO_PRIORITY, Record.NO_WEIGHT, Record.NO_PORT, "ns1.aoindustries.com.");
-			printRecord("", line, out, "@", ttl, Record.NO_TTL, RecordType.NS, Record.NO_PRIORITY, Record.NO_WEIGHT, Record.NO_PORT, "ns2.aoindustries.com.");
-			printRecord("", line, out, "@", ttl, Record.NO_TTL, RecordType.NS, Record.NO_PRIORITY, Record.NO_WEIGHT, Record.NO_PORT, "ns3.aoindustries.com.");
-			printRecord("", line, out, "@", ttl, Record.NO_TTL, RecordType.NS, Record.NO_PRIORITY, Record.NO_WEIGHT, Record.NO_PORT, "ns4.aoindustries.com.");
+			printRecord("", line, out, "@", ttl, Record.NO_TTL, RecordType.NS, Record.NO_PRIORITY, Record.NO_WEIGHT, Record.NO_PORT, Record.NO_FLAG, null, "ns1.aoindustries.com.");
+			printRecord("", line, out, "@", ttl, Record.NO_TTL, RecordType.NS, Record.NO_PRIORITY, Record.NO_WEIGHT, Record.NO_PORT, Record.NO_FLAG, null, "ns2.aoindustries.com.");
+			printRecord("", line, out, "@", ttl, Record.NO_TTL, RecordType.NS, Record.NO_PRIORITY, Record.NO_WEIGHT, Record.NO_PORT, Record.NO_FLAG, null, "ns3.aoindustries.com.");
+			printRecord("", line, out, "@", ttl, Record.NO_TTL, RecordType.NS, Record.NO_PRIORITY, Record.NO_WEIGHT, Record.NO_PORT, Record.NO_FLAG, null, "ns4.aoindustries.com.");
 		}
 		int len=records.size();
 		for(int c=0;c<len;c++) {
@@ -395,6 +434,8 @@ final public class Zone extends CachedObjectStringKey<Zone> implements Removable
 				record.getPriority(),
 				record.getWeight(),
 				record.getPort(),
+				record.getFlag(),
+				record.getTag(),
 				record.getDestination()
 			);
 			// Allow the first one when there is a conflict
