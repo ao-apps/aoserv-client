@@ -52,6 +52,7 @@ final public class RecordTable extends CachedTableIntegerKey<Record> {
 		new OrderBy(Record.COLUMN_TYPE_name, ASCENDING),
 		new OrderBy(Record.COLUMN_PRIORITY_name, ASCENDING),
 		new OrderBy(Record.COLUMN_WEIGHT_name, ASCENDING),
+		new OrderBy(Record.COLUMN_TAG_name, ASCENDING),
 		new OrderBy(Record.COLUMN_DESTINATION_name, ASCENDING)
 	};
 	@Override

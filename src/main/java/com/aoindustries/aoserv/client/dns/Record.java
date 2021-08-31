@@ -56,6 +56,7 @@ final public class Record extends CachedObjectIntegerKey<Record> implements Remo
 	static final String COLUMN_TYPE_name        = "type";
 	static final String COLUMN_PRIORITY_name    = "priority";
 	static final String COLUMN_WEIGHT_name      = "weight";
+	static final String COLUMN_TAG_name         = "tag";
 	static final String COLUMN_DESTINATION_name = "destination";
 
 	public static final int   NO_PRIORITY = -1;
