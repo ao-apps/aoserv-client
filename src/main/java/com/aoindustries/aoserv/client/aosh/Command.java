@@ -511,20 +511,25 @@ final public class Command extends GlobalObjectStringKey<Command> {
 	}
 
 	public void printCommandHelp(TerminalWriter out) throws IOException {
+		final String INDENT = "       ";
 		out.println();
 		out.boldOn();
 		out.println("NAME");
 		out.attributesOff();
-		out.print("       "); out.print(pkey); out.print(" - "); printNoHTML(out, description); out.println();
+		out.print(INDENT); out.print(pkey); out.print(" - "); printNoHTML(out, description); out.println();
 		out.println();
 		out.boldOn();
 		out.println("SYNOPSIS");
 		out.attributesOff();
-		out.print("       "); out.print(pkey); if(syntax.length() > 0) out.print(' '); printNoHTML(out, syntax); out.println();
+		out.print(INDENT); out.print(pkey); if(syntax.length() > 0) out.print(' '); printNoHTML(out, syntax, INDENT.length() + pkey.length() + 1); out.println();
 		out.println();
 	}
 
 	public static void printNoHTML(TerminalWriter out, String S) {
+		printNoHTML(out, S, 0);
+	}
+
+	public static void printNoHTML(TerminalWriter out, String S, int newlineIndent) {
 		if(S == null) out.print("null");
 		else {
 			int len = S.length();
@@ -553,7 +558,14 @@ final public class Command extends GlobalObjectStringKey<Command> {
 						) out.print('<');
 						pos++;
 					}
-				} else out.print(ch);
+				} else {
+					out.print(ch);
+					if(ch == '\n') {
+						for(int i = 0; i < newlineIndent; i++) {
+							out.print(' ');
+						}
+					}
+				}
 			}
 		}
 	}
