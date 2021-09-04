@@ -126,6 +126,11 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	private int email_relay_burst;
 	private float email_relay_rate;
 
+	@Override
+	public String toStringImpl() {
+		return name.toString();
+	}
+
 	public void addDNSZone(String zone, InetAddress ip, int ttl) throws IOException, SQLException {
 		table.getConnector().getDns().getZone().addDNSZone(this, zone, ip, ttl);
 	}
