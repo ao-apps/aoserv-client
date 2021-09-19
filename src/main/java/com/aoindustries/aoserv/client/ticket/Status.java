@@ -43,7 +43,7 @@ import java.util.ResourceBundle;
  */
 final public class Status extends GlobalObjectStringKey<Status> implements Comparable<Status> {
 
-	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Status.class);
+	private static final Resources RESOURCES = Resources.getResources(Status.class, ResourceBundle::getBundle);
 
 	static final int COLUMN_STATUS = 0;
 	static final int COLUMN_SORT_ORDER = 1;

@@ -66,7 +66,7 @@ final public class PosixPath implements
 	Internable<PosixPath>
 {
 
-	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, PosixPath.class);
+	private static final Resources RESOURCES = Resources.getResources(PosixPath.class, ResourceBundle::getBundle);
 
 	private static final long serialVersionUID = -4832121065303689152L;
 

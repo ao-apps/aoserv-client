@@ -42,7 +42,7 @@ import java.util.ResourceBundle;
  */
 public final class PackageCategory extends GlobalObjectStringKey<PackageCategory> {
 
-	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, PackageCategory.class);
+	private static final Resources RESOURCES = Resources.getResources(PackageCategory.class, ResourceBundle::getBundle);
 
 	static final int COLUMN_NAME=0;
 	static final String COLUMN_NAME_name = "name";

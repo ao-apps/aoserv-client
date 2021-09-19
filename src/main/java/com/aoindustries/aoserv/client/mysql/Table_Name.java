@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client.mysql;
 
 import com.aoapps.lang.dto.DtoFactory;
+import com.aoapps.lang.function.Suppliers;
 import com.aoapps.lang.i18n.Resources;
 import com.aoapps.lang.validation.InvalidResult;
 import com.aoapps.lang.validation.ValidResult;
@@ -53,8 +54,17 @@ final public class Table_Name implements
 	DtoFactory<com.aoindustries.aoserv.client.dto.MySQLTableName>
 {
 
-	private static final Resources RESOURCES =
-		Resources.getResources(ResourceBundle::getBundle, Table_Name.class.getPackage(), null, "Table.Name.");
+	@SuppressWarnings("unchecked")
+	private static final Resources RESOURCES = Resources.getResources(
+		Suppliers.coalesce(
+			Table_Name.class::getClassLoader,
+			ClassLoader::getSystemClassLoader
+		).get(),
+		ResourceBundle::getBundle,
+		Table_Name.class.getPackage(),
+		null,
+		"Table.Name."
+	);
 
 	private static final long serialVersionUID = -4427431696460618301L;
 

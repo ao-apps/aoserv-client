@@ -54,7 +54,7 @@ import java.util.ResourceBundle;
  */
 final public class Action extends CachedObjectIntegerKey<Action> {
 
-	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Action.class);
+	private static final Resources RESOURCES = Resources.getResources(Action.class, ResourceBundle::getBundle);
 
 	static final int
 		COLUMN_PKEY=0,

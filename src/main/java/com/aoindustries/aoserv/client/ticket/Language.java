@@ -38,7 +38,7 @@ import java.util.ResourceBundle;
  */
 final public class Language extends GlobalObjectStringKey<Language> {
 
-	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Language.class);
+	private static final Resources RESOURCES = Resources.getResources(Language.class, ResourceBundle::getBundle);
 
 	static final int COLUMN_CODE = 0;
 	static final String COLUMN_CODE_name = "code";

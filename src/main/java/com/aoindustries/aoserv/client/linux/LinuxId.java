@@ -48,7 +48,7 @@ final public class LinuxId implements
 	DtoFactory<com.aoindustries.aoserv.client.dto.LinuxId>
 {
 
-	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, LinuxId.class);
+	private static final Resources RESOURCES = Resources.getResources(LinuxId.class, ResourceBundle::getBundle);
 
 	private static final long serialVersionUID = -6222776271442175855L;
 

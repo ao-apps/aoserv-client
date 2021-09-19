@@ -40,7 +40,7 @@ import java.util.ResourceBundle;
  */
 final public class Permission extends GlobalObjectStringKey<Permission> {
 
-	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Permission.class);
+	private static final Resources RESOURCES = Resources.getResources(Permission.class, ResourceBundle::getBundle);
 
 	static final int COLUMN_NAME=0;
 	static final String COLUMN_SORT_ORDER_name = "sort_order";

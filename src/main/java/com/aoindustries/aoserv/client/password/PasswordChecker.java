@@ -41,7 +41,7 @@ import java.util.ResourceBundle;
  */
 final public class PasswordChecker {
 
-	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, PasswordChecker.class);
+	private static final Resources RESOURCES = Resources.getResources(PasswordChecker.class, ResourceBundle::getBundle);
 
 	/**
 	 * The different ways months may be represented in the English

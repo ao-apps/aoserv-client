@@ -107,7 +107,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class Account extends CachedObjectAccountNameKey<Account> implements Disablable, Comparable<Account> {
 
-	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Account.class);
+	private static final Resources RESOURCES = Resources.getResources(Account.class, ResourceBundle::getBundle);
 
 	/**
 	 * The unique, case-insensitive identifier for an {@link Account}.  Account names must:
