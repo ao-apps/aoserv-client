@@ -72,7 +72,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class Server extends CachedObjectIntegerKey<Server> {
 
-	private static final Resources RESOURCES = Resources.getResources(Server.class, ResourceBundle::getBundle);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Server.class);
 
 	/**
 	 * Represents a name that may be used for a MySQL installation.  Names must:

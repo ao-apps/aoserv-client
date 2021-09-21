@@ -81,7 +81,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class Database extends CachedObjectIntegerKey<Database> implements Dumpable, Removable, JdbcProvider {
 
-	private static final Resources RESOURCES = Resources.getResources(Database.class, ResourceBundle::getBundle);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Database.class);
 
 	/**
 	 * Represents a name that may be used for a PostgreSQL database.  Database names must:

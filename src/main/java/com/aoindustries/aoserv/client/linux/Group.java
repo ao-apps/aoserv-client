@@ -59,7 +59,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class Group extends CachedObjectGroupNameKey<Group> implements Removable {
 
-	private static final Resources RESOURCES = Resources.getResources(Group.class, ResourceBundle::getBundle);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Group.class);
 
 	/**
 	 * Represents a group ID that may be used by certain types of groups.  Group ids must:

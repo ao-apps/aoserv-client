@@ -42,7 +42,7 @@ import java.util.ResourceBundle;
  */
 final public class Category extends CachedObjectIntegerKey<Category> {
 
-	private static final Resources RESOURCES = Resources.getResources(Category.class, ResourceBundle::getBundle);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Category.class);
 
 	static final int
 		COLUMN_PKEY=0,

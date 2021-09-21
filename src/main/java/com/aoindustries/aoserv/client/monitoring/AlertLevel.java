@@ -41,7 +41,7 @@ public enum AlertLevel {
 	CRITICAL,
 	UNKNOWN;
 
-	private static final Resources RESOURCES = Resources.getResources(AlertLevel.class, ResourceBundle::getBundle);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, AlertLevel.class);
 
 	private static final AlertLevel[] alertLevels = values();
 

@@ -58,7 +58,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class User extends CachedObjectUserNameKey<User> implements PasswordProtected, Removable, Disablable {
 
-	private static final Resources RESOURCES = Resources.getResources(User.class, ResourceBundle::getBundle);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, User.class);
 
 	/**
 	 * Represents a MySQL user ID.  {@link User} ids must:

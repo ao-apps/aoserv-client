@@ -70,7 +70,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class User extends CachedObjectUserNameKey<User> implements PasswordProtected, Removable, Disablable {
 
-	private static final Resources RESOURCES = Resources.getResources(User.class, ResourceBundle::getBundle);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, User.class);
 
 	/**
 	 * Used for the various user-provided fields in the <code>/etc/passwd</code> file.

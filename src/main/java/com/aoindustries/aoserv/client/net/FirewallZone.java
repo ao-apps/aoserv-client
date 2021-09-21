@@ -54,7 +54,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
 
-	private static final Resources RESOURCES = Resources.getResources(FirewallZone.class, ResourceBundle::getBundle);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, FirewallZone.class);
 
 	/**
 	 * Represents a name that may be used for a {@link FirewallZone}.  Zones names must:

@@ -60,7 +60,7 @@ import javax.swing.SwingUtilities;
  */
 public class TCPConnector extends AOServConnector {
 
-	private static final Resources RESOURCES = Resources.getResources(TCPConnector.class, ResourceBundle::getBundle);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, TCPConnector.class);
 
 	/**
 	 * Close cache monitor after 90 minutes of inactivity,

@@ -45,7 +45,7 @@ import java.util.ResourceBundle;
  */
 final public class ActionType extends GlobalObjectStringKey<ActionType> {
 
-	private static final Resources RESOURCES = Resources.getResources(ActionType.class, ResourceBundle::getBundle);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, ActionType.class);
 
 	static final int COLUMN_TYPE = 0;
 

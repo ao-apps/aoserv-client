@@ -75,7 +75,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class User extends CachedObjectUserNameKey<User> implements PasswordProtected, Removable, Disablable {
 
-	private static final Resources RESOURCES = Resources.getResources(User.class, ResourceBundle::getBundle);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, User.class);
 
 	/**
 	 * Represents the most general form of a user name.  This is has the fewest constraints; other types of accounts

@@ -47,7 +47,7 @@ import java.util.ResourceBundle;
  */
 public final class TransactionType extends GlobalObjectStringKey<TransactionType> {
 
-	private static final Resources RESOURCES = Resources.getResources(TransactionType.class, ResourceBundle::getBundle);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, TransactionType.class);
 
 	static final int COLUMN_NAME=0;
 	static final String COLUMN_NAME_name = "name";

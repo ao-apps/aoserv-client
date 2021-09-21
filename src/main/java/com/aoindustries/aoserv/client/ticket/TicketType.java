@@ -42,7 +42,7 @@ import java.util.ResourceBundle;
  */
 final public class TicketType extends GlobalObjectStringKey<TicketType> {
 
-	private static final Resources RESOURCES = Resources.getResources(TicketType.class, ResourceBundle::getBundle);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, TicketType.class);
 
 	static final int COLUMN_TYPE=0;
 	static final String COLUMN_TYPE_name = "type";

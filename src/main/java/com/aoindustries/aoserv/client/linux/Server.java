@@ -99,7 +99,7 @@ final public class Server
 	implements DtoFactory<com.aoindustries.aoserv.client.dto.LinuxServer>
 {
 
-	private static final Resources RESOURCES = Resources.getResources(Server.class, ResourceBundle::getBundle);
+	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Server.class);
 
 	static final int COLUMN_SERVER = 0;
 	static final int COLUMN_HOSTNAME = 1;
