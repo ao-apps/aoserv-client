@@ -35,4 +35,6 @@ module com.aoindustries.aoserv.client.devel {
 	exports com.aoindustries.aoserv.client.ticket.i18n;
 	// Direct
 	requires com.aoapps.hodgepodge; // <groupId>com.aoapps</groupId><artifactId>ao-hodgepodge</artifactId>
+	// Java SE
+	requires java.logging;
 }
