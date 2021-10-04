@@ -45,7 +45,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class FileReplicationSettingTable extends CachedTableIntegerKey<FileReplicationSetting> {
+public final class FileReplicationSettingTable extends CachedTableIntegerKey<FileReplicationSetting> {
 
 	FileReplicationSettingTable(AOServConnector connector) {
 		super(connector, FileReplicationSetting.class);

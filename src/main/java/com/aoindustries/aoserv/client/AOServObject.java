@@ -68,7 +68,7 @@ import java.util.List;
  *
  * @see  AOServTable
  */
-abstract public class AOServObject<K, T extends AOServObject<K, T>> implements Row, AOServStreamable {
+public abstract class AOServObject<K, T extends AOServObject<K, T>> implements Row, AOServStreamable {
 
 	/**
 	 * Enables the use of {@link SQLData}.  This currently requires our forked PostgreSQL JDBC driver to
@@ -138,7 +138,7 @@ abstract public class AOServObject<K, T extends AOServObject<K, T>> implements R
 
 	// TODO: Remove in AOServ 2
 	@SuppressWarnings("BroadCatchBlock")
-	final public int compareTo(AOServConnector conn, AOServObject<?, ?> other, SQLExpression[] sortExpressions, boolean[] sortOrders) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
+	public final int compareTo(AOServConnector conn, AOServObject<?, ?> other, SQLExpression[] sortExpressions, boolean[] sortOrders) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
 		int len = sortExpressions.length;
 		for(int c = 0; c < len; c++) {
 			SQLExpression expr = sortExpressions[c];
@@ -196,7 +196,7 @@ abstract public class AOServObject<K, T extends AOServObject<K, T>> implements R
 	}
 
 	// TODO: Remove in AOServ 2
-	final public int compareTo(AOServConnector conn, Comparable<?> value, SQLExpression[] sortExpressions, boolean[] sortOrders) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
+	public final int compareTo(AOServConnector conn, Comparable<?> value, SQLExpression[] sortExpressions, boolean[] sortOrders) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
 		int len=sortExpressions.length;
 		for(int c=0;c<len;c++) {
 			SQLExpression expr=sortExpressions[c];
@@ -211,7 +211,7 @@ abstract public class AOServObject<K, T extends AOServObject<K, T>> implements R
 	}
 
 	// TODO: Remove in AOServ 2
-	final public int compareTo(AOServConnector conn, Object[] OA, SQLExpression[] sortExpressions, boolean[] sortOrders) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
+	public final int compareTo(AOServConnector conn, Object[] OA, SQLExpression[] sortExpressions, boolean[] sortOrders) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
 		int len=sortExpressions.length;
 		if(len!=OA.length) throw new IllegalArgumentException("Array length mismatch when comparing AOServObject to Object[]: sortExpressions.length="+len+", OA.length="+OA.length);
 
@@ -478,7 +478,7 @@ abstract public class AOServObject<K, T extends AOServObject<K, T>> implements R
 	// TODO: 'tis a shame we have this duality just to catch exceptions.
 	// TODO: Would it be better to allow exceptions through the interface this implements?
 	// TODO: It could be generic exceptions, like we've done other places (a bit tricky but works, except doesn't interact well with lambdas).
-	final public Object getColumn(int i) {
+	public final Object getColumn(int i) {
 		try {
 			return getColumnImpl(i);
 		} catch(IOException | SQLException err) {
@@ -486,9 +486,9 @@ abstract public class AOServObject<K, T extends AOServObject<K, T>> implements R
 		}
 	}
 
-	abstract protected Object getColumnImpl(int i) throws IOException, SQLException;
+	protected abstract Object getColumnImpl(int i) throws IOException, SQLException;
 
-	final public List<Object> getColumns(AOServConnector connector) throws IOException, SQLException {
+	public final List<Object> getColumns(AOServConnector connector) throws IOException, SQLException {
 		int len=getTableSchema(connector).getSchemaColumns(connector).size();
 		List<Object> buff=new ArrayList<>(len);
 		for(int c = 0; c < len; c++) {
@@ -497,7 +497,7 @@ abstract public class AOServObject<K, T extends AOServObject<K, T>> implements R
 		return buff;
 	}
 
-	final public int getColumns(AOServConnector connector, List<Object> buff) throws IOException, SQLException {
+	public final int getColumns(AOServConnector connector, List<Object> buff) throws IOException, SQLException {
 		int len=getTableSchema(connector).getSchemaColumns(connector).size();
 		for(int c = 0; c < len; c++) {
 			buff.add(getColumn(c));
@@ -509,7 +509,7 @@ abstract public class AOServObject<K, T extends AOServObject<K, T>> implements R
 
 	public abstract Table.TableID getTableID();
 
-	final public Table getTableSchema(AOServConnector connector) throws IOException, SQLException {
+	public final Table getTableSchema(AOServConnector connector) throws IOException, SQLException {
 		return connector.getSchema().getTable().get(getTableID());
 	}
 
@@ -542,7 +542,7 @@ abstract public class AOServObject<K, T extends AOServObject<K, T>> implements R
 	 */
 	@Deprecated
 	@Override
-	final public void read(StreamableInput in, String protocolVersion) throws IOException {
+	public final void read(StreamableInput in, String protocolVersion) throws IOException {
 		read(in, AoservProtocol.Version.getVersion(protocolVersion));
 	}
 
@@ -562,7 +562,7 @@ abstract public class AOServObject<K, T extends AOServObject<K, T>> implements R
 	 * @throws  WrappedException when {@link #toStringImpl()} throws an exception
 	 */
 	@Override
-	final public String toString() {
+	public final String toString() {
 		try {
 			return toStringImpl();
 		} catch(IOException | SQLException err) {
@@ -591,7 +591,7 @@ abstract public class AOServObject<K, T extends AOServObject<K, T>> implements R
 	 */
 	@Deprecated
 	@Override
-	final public void write(StreamableOutput out, String protocolVersion) throws IOException {
+	public final void write(StreamableOutput out, String protocolVersion) throws IOException {
 		write(out, AoservProtocol.Version.getVersion(protocolVersion));
 	}
 

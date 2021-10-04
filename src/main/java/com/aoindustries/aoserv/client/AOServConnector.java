@@ -77,7 +77,7 @@ import java.util.logging.Logger;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class AOServConnector implements SchemaParent {
+public abstract class AOServConnector implements SchemaParent {
 
 	/**
 	 * The maximum size of the master entropy pool in bytes.
@@ -151,7 +151,7 @@ abstract public class AOServConnector implements SchemaParent {
 	 * One thread pool is shared by all instances.
 	 */
 	// TODO: Use ao-concurrent per connector instance, stopping when connector is idle (when it stops cache listener due to inactivity)
-	final static ExecutorService executorService = Executors.newCachedThreadPool();
+	static final ExecutorService executorService = Executors.newCachedThreadPool();
 
 	/*private static final String[] profileTitles={
 		"Method",
@@ -542,7 +542,7 @@ abstract public class AOServConnector implements SchemaParent {
 	 * object.
 	 */
 	@Override
-	final public boolean equals(Object O) {
+	public final boolean equals(Object O) {
 		if(O==null) return false;
 		return
 			(O instanceof AOServConnector) && // This is just to get rid of the NetBeans 6.5 warning about not checking type of parameter
@@ -554,7 +554,7 @@ abstract public class AOServConnector implements SchemaParent {
 	 * Uses equivalence hashCode like {@link Object#hashCode()}.
 	 */
 	@Override
-	final public int hashCode() {
+	public final int hashCode() {
 		return super.hashCode();
 	}
 
@@ -585,7 +585,7 @@ abstract public class AOServConnector implements SchemaParent {
 	/**
 	 * Gets the logger for this connector.
 	 */
-	final protected Logger getLogger() {
+	protected final Logger getLogger() {
 		return logger;
 	}
 
@@ -727,7 +727,7 @@ abstract public class AOServConnector implements SchemaParent {
 	 * @return  the globally unique identifier or {@code null} if
 	 *          the identifier has not yet been assigned
 	 */
-	final public Identifier getConnectorId() {
+	public final Identifier getConnectorId() {
 		synchronized(idLock) {
 			return id;
 		}
@@ -736,28 +736,28 @@ abstract public class AOServConnector implements SchemaParent {
 	/**
 	 * Gets the hostname of the server that is connected to.
 	 */
-	final public HostAddress getHostname() {
+	public final HostAddress getHostname() {
 		return hostname;
 	}
 
 	/**
 	 * Gets the optional local IP address that connections are made from.
 	 */
-	final public InetAddress getLocalIp() {
+	public final InetAddress getLocalIp() {
 		return local_ip;
 	}
 
 	/**
 	 * Gets the server port that is connected to.
 	 */
-	final public Port getPort() {
+	public final Port getPort() {
 		return port;
 	}
 
 	/**
 	 * Gets the communication protocol being used.
 	 */
-	abstract public String getProtocol();
+	public abstract String getProtocol();
 
 	/**
 	 * A single random number generator is shared by all connector resources to provide better randomness.
@@ -780,7 +780,7 @@ abstract public class AOServConnector implements SchemaParent {
 	 */
 	@Override
 	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
-	final public List<? extends Schema> getSchemas() {
+	public final List<? extends Schema> getSchemas() {
 		return schemas;
 	}
 
@@ -796,7 +796,7 @@ abstract public class AOServConnector implements SchemaParent {
 	 *
 	 * @see  Table
 	 */
-	final public AOServTable<?, ?> getTable(int tableID) throws IllegalArgumentException {
+	public final AOServTable<?, ?> getTable(int tableID) throws IllegalArgumentException {
 		if(tableID>=0 && tableID<tables.size()) return tables.get(tableID);
 		throw new IllegalArgumentException("Table not found for ID="+tableID);
 	}
@@ -811,7 +811,7 @@ abstract public class AOServConnector implements SchemaParent {
 	 * @see  Table
 	 */
 	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
-	final public List<? extends AOServTable<?, ?>> getTables() {
+	public final List<? extends AOServTable<?, ?>> getTables() {
 		return tables;
 	}
 
@@ -829,7 +829,7 @@ abstract public class AOServConnector implements SchemaParent {
 	 *                           {@link Administrator} was not
 	 *                           found
 	 */
-	final public Administrator getCurrentAdministrator() throws SQLException, IOException {
+	public final Administrator getCurrentAdministrator() throws SQLException, IOException {
 		Administrator obj = account.getAdministrator().get(connectAs);
 		if(obj == null) throw new SQLException("Unable to find Administrator: " + connectAs);
 		return obj;
@@ -890,7 +890,7 @@ abstract public class AOServConnector implements SchemaParent {
 	 * @exception  IOException  if unable to determine if the connection
 	 *                          is secure
 	 */
-	abstract public boolean isSecure() throws IOException;
+	public abstract boolean isSecure() throws IOException;
 
 	/**
 	 * Times how long it takes to make one request with the server.
@@ -898,7 +898,7 @@ abstract public class AOServConnector implements SchemaParent {
 	 *
 	 * @return  the connection latency in milliseconds
 	 */
-	final public int ping() throws IOException, SQLException {
+	public final int ping() throws IOException, SQLException {
 		long startTime=System.currentTimeMillis();
 		requestUpdate(false, AoservProtocol.CommandID.PING);
 		long timeSpan=System.currentTimeMillis()-startTime;
@@ -906,7 +906,7 @@ abstract public class AOServConnector implements SchemaParent {
 		return (int)timeSpan;
 	}
 
-	abstract public void printConnectionStatsHTML(Appendable out, boolean isXhtml) throws IOException;
+	public abstract void printConnectionStatsHTML(Appendable out, boolean isXhtml) throws IOException;
 
 	/**
 	 * Releases a connection to the server.  This will either close the
@@ -923,7 +923,7 @@ abstract public class AOServConnector implements SchemaParent {
 	 */
 	protected abstract void release(AOServConnection connection) throws IOException;
 
-	final public void removeFromAllTables(TableListener listener) {
+	public final void removeFromAllTables(TableListener listener) {
 		for(AOServTable<?, ?> table : tables) {
 			table.removeTableListener(listener);
 		}
@@ -1011,7 +1011,7 @@ abstract public class AOServConnector implements SchemaParent {
 	}
 
 	@SuppressWarnings("SleepWhileInLoop")
-	final public <T> T requestResult(
+	public final <T> T requestResult(
 		boolean allowRetry,
 		AoservProtocol.CommandID commID,
 		ResultRequest<T> resultRequest
@@ -1048,7 +1048,7 @@ abstract public class AOServConnector implements SchemaParent {
 	}
 
 	@SuppressWarnings("SleepWhileInLoop")
-	final public boolean requestBooleanQuery(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+	public final boolean requestBooleanQuery(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
 		while(!Thread.interrupted()) {
@@ -1084,7 +1084,7 @@ abstract public class AOServConnector implements SchemaParent {
 	}
 
 	@SuppressWarnings("SleepWhileInLoop")
-	final public boolean requestBooleanQueryIL(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+	public final boolean requestBooleanQueryIL(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
 		while(!Thread.interrupted()) {
@@ -1128,7 +1128,7 @@ abstract public class AOServConnector implements SchemaParent {
 	}
 
 	@SuppressWarnings("SleepWhileInLoop")
-	final public int requestIntQuery(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+	public final int requestIntQuery(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
 		while(!Thread.interrupted()) {
@@ -1164,7 +1164,7 @@ abstract public class AOServConnector implements SchemaParent {
 	}
 
 	@SuppressWarnings("SleepWhileInLoop")
-	final public int requestIntQueryIL(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+	public final int requestIntQueryIL(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
 		while(!Thread.interrupted()) {
@@ -1208,7 +1208,7 @@ abstract public class AOServConnector implements SchemaParent {
 	}
 
 	@SuppressWarnings("SleepWhileInLoop")
-	final public long requestLongQuery(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+	public final long requestLongQuery(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
 		while(!Thread.interrupted()) {
@@ -1244,7 +1244,7 @@ abstract public class AOServConnector implements SchemaParent {
 	}
 
 	@SuppressWarnings("SleepWhileInLoop")
-	final public short requestShortQuery(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+	public final short requestShortQuery(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
 		while(!Thread.interrupted()) {
@@ -1280,7 +1280,7 @@ abstract public class AOServConnector implements SchemaParent {
 	}
 
 	@SuppressWarnings("SleepWhileInLoop")
-	final public short requestShortQueryIL(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+	public final short requestShortQueryIL(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
 		while(!Thread.interrupted()) {
@@ -1324,7 +1324,7 @@ abstract public class AOServConnector implements SchemaParent {
 	}
 
 	@SuppressWarnings("SleepWhileInLoop")
-	final public String requestStringQuery(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+	public final String requestStringQuery(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
 		while(!Thread.interrupted()) {
@@ -1363,7 +1363,7 @@ abstract public class AOServConnector implements SchemaParent {
 	 * Performs a query returning a String of any length (not limited to size &lt;= 64k like requestStringQuery).
 	 */
 	@SuppressWarnings("SleepWhileInLoop")
-	final public String requestLongStringQuery(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+	public final String requestLongStringQuery(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
 		while(!Thread.interrupted()) {
@@ -1403,7 +1403,7 @@ abstract public class AOServConnector implements SchemaParent {
 	 * Supports nulls.
 	 */
 	@SuppressWarnings("SleepWhileInLoop")
-	final public String requestNullLongStringQuery(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+	public final String requestNullLongStringQuery(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
 		while(!Thread.interrupted()) {
@@ -1463,7 +1463,7 @@ abstract public class AOServConnector implements SchemaParent {
 	}
 
 	@SuppressWarnings("SleepWhileInLoop")
-	final public void requestUpdate(
+	public final void requestUpdate(
 		boolean allowRetry,
 		AoservProtocol.CommandID commID,
 		UpdateRequest updateRequest
@@ -1501,7 +1501,7 @@ abstract public class AOServConnector implements SchemaParent {
 	}
 
 	@SuppressWarnings("SleepWhileInLoop")
-	final public void requestUpdate(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+	public final void requestUpdate(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
 		while(!Thread.interrupted()) {
@@ -1536,7 +1536,7 @@ abstract public class AOServConnector implements SchemaParent {
 	}
 
 	@SuppressWarnings("SleepWhileInLoop")
-	final public void requestUpdateIL(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+	public final void requestUpdateIL(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
 		while(!Thread.interrupted()) {
@@ -1578,7 +1578,7 @@ abstract public class AOServConnector implements SchemaParent {
 
 	public abstract AOServConnector switchUsers(User.Name username) throws IOException;
 
-	final public void tablesUpdated(IntList invalidateList) {
+	public final void tablesUpdated(IntList invalidateList) {
 		if(invalidateList!=null) {
 			int size=invalidateList.size();
 
@@ -1604,7 +1604,7 @@ abstract public class AOServConnector implements SchemaParent {
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 */
-	final public void testConnect() throws IOException, SQLException {
+	public final void testConnect() throws IOException, SQLException {
 		synchronized(testConnectLock) {
 			requestUpdate(
 				true,
@@ -1630,7 +1630,7 @@ abstract public class AOServConnector implements SchemaParent {
 	}
 
 	@Override
-	final public String toString() {
+	public final String toString() {
 		return getClass().getName()+"?protocol="+getProtocol()+"&hostname="+hostname+"&local_ip="+local_ip+"&port="+port+"&connectAs="+connectAs+"&authenticateAs="+authenticateAs;
 	}
 

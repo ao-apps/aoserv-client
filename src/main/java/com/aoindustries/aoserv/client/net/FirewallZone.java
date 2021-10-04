@@ -84,7 +84,7 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
 	 *
 	 * @author  AO Industries, Inc.
 	 */
-	final static public class Name implements
+	public static final class Name implements
 		Comparable<Name>,
 		Serializable,
 		DtoFactory<com.aoindustries.aoserv.client.dto.FirewallZoneName>,
@@ -141,7 +141,7 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
 			return new Name(name, true);
 		}
 
-		final private String name;
+		private final String name;
 
 		private Name(String name, boolean validate) throws ValidationException {
 			this.name = name;

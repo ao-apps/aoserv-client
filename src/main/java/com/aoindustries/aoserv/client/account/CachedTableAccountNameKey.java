@@ -52,5 +52,5 @@ public abstract class CachedTableAccountNameKey<V extends CachedObjectAccountNam
 	/**
 	 * @see  #get(java.lang.Object)
 	 */
-	abstract public V get(Account.Name pkey) throws IOException, SQLException;
+	public abstract V get(Account.Name pkey) throws IOException, SQLException;
 }

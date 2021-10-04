@@ -36,7 +36,7 @@ import java.util.ResourceBundle;
 /**
  * @author  AO Industries, Inc.
  */
-final public class Language extends GlobalObjectStringKey<Language> {
+public final class Language extends GlobalObjectStringKey<Language> {
 
 	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Language.class);
 

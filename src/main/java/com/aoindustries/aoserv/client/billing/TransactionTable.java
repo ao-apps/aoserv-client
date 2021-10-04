@@ -63,11 +63,11 @@ import java.util.TreeMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
+public final class TransactionTable extends CachedTableIntegerKey<Transaction> {
 
-	final private Map<Account.Name, Monies> accountBalances = new HashMap<>();
-	final private Map<Account.Name, Monies> confirmedAccountBalances = new HashMap<>();
-	final private Map<Transaction, Monies> transactionBalances = new HashMap<>();
+	private final Map<Account.Name, Monies> accountBalances = new HashMap<>();
+	private final Map<Account.Name, Monies> confirmedAccountBalances = new HashMap<>();
+	private final Map<Transaction, Monies> transactionBalances = new HashMap<>();
 
 	TransactionTable(AOServConnector connector) {
 		super(connector, Transaction.class);

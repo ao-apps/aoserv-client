@@ -57,5 +57,5 @@ public abstract class CachedTableIntegerKey<V extends CachedObjectIntegerKey<V>>
 	/**
 	 * @see  #get(java.lang.Object)
 	 */
-	abstract public V get(int pkey) throws IOException, SQLException;
+	public abstract V get(int pkey) throws IOException, SQLException;
 }

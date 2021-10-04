@@ -40,7 +40,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class HttpdServerTable extends CachedTableIntegerKey<HttpdServer> {
+public final class HttpdServerTable extends CachedTableIntegerKey<HttpdServer> {
 
 	HttpdServerTable(AOServConnector connector) {
 		super(connector, HttpdServer.class);

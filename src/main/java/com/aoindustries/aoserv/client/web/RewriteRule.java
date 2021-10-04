@@ -40,7 +40,7 @@ import java.util.Locale;
  *
  * @author  AO Industries, Inc.
  */
-final public class RewriteRule extends CachedObjectIntegerKey<RewriteRule> {
+public final class RewriteRule extends CachedObjectIntegerKey<RewriteRule> {
 
 	static final int
 		COLUMN_id = 0,

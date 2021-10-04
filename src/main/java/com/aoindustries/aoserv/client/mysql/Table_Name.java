@@ -47,7 +47,7 @@ import java.util.ResourceBundle;
  * @author  AO Industries, Inc.
  */
 // TODO: PostgreSQL type will be "Table.Name" - move to inner class of Table to match, once there is a "Table" class.
-final public class Table_Name implements
+public final class Table_Name implements
 	Comparable<Table_Name>,
 	Serializable,
 	DtoFactory<com.aoindustries.aoserv.client.dto.MySQLTableName>
@@ -105,7 +105,7 @@ final public class Table_Name implements
 		return new Table_Name(name);
 	}
 
-	final private String name;
+	private final String name;
 
 	private Table_Name(String name) throws ValidationException {
 		this.name = name;

@@ -39,7 +39,7 @@ import java.util.ResourceBundle;
  *
  * @author  AO Industries, Inc.
  */
-final public class PasswordChecker {
+public final class PasswordChecker {
 
 	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, PasswordChecker.class);
 
@@ -278,7 +278,7 @@ final public class PasswordChecker {
 */
 
 	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	private synchronized static byte[] getDictionary() throws IOException {
+	private static synchronized byte[] getDictionary() throws IOException {
 		if(cachedWords==null) {
 			try (
 				InputStream in = new CorrectedGZIPInputStream(PasswordChecker.class.getResourceAsStream("linux.words.gz"));

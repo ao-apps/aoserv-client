@@ -41,7 +41,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class CountryCode extends GlobalObjectStringKey<CountryCode> {
+public final class CountryCode extends GlobalObjectStringKey<CountryCode> {
 
 	static final int COLUMN_CODE=0;
 	static final String COLUMN_NAME_name = "name";

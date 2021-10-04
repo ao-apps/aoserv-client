@@ -51,7 +51,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class UserServer extends CachedObjectIntegerKey<UserServer> implements Removable, PasswordProtected, Disablable {
+public final class UserServer extends CachedObjectIntegerKey<UserServer> implements Removable, PasswordProtected, Disablable {
 
 	static final int
 		COLUMN_PKEY=0,

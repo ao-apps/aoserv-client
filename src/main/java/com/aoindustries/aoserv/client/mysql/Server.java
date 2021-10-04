@@ -70,7 +70,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class Server extends CachedObjectIntegerKey<Server> {
+public final class Server extends CachedObjectIntegerKey<Server> {
 
 	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Server.class);
 
@@ -86,7 +86,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 	 *
 	 * @author  AO Industries, Inc.
 	 */
-	final static public class Name implements
+	public static final class Name implements
 		Comparable<Name>,
 		Serializable,
 		DtoFactory<com.aoindustries.aoserv.client.dto.MySQLServerName>,
@@ -139,7 +139,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 			return new Name(name, true);
 		}
 
-		final private String name;
+		private final String name;
 
 		private Name(String name, boolean validate) throws ValidationException {
 			this.name = name;
@@ -746,10 +746,10 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 		return name+" on "+getLinuxServer().getHostname();
 	}
 
-	final public static class MasterStatus {
+	public static final class MasterStatus {
 
-		final private String file;
-		final private String position;
+		private final String file;
+		private final String position;
 
 		public MasterStatus(
 			String file,

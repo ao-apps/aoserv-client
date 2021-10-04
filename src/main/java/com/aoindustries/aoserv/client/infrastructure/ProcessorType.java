@@ -36,7 +36,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class ProcessorType extends GlobalObjectStringKey<ProcessorType> {
+public final class ProcessorType extends GlobalObjectStringKey<ProcessorType> {
 
 	static final int COLUMN_TYPE = 0;
 	static final int COLUMN_SORT_ORDER = 1;

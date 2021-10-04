@@ -38,7 +38,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class BackupReportTable extends AOServTable<Integer, BackupReport> {
+public final class BackupReportTable extends AOServTable<Integer, BackupReport> {
 
 	BackupReportTable(AOServConnector connector) {
 		super(connector, BackupReport.class);

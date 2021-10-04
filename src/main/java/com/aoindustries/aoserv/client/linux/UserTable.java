@@ -47,7 +47,7 @@ import java.util.Objects;
  *
  * @author  AO Industries, Inc.
  */
-final public class UserTable extends CachedTableUserNameKey<User> {
+public final class UserTable extends CachedTableUserNameKey<User> {
 
 	UserTable(AOServConnector connector) {
 		super(connector, User.class);

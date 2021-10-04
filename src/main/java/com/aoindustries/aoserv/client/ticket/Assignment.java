@@ -41,7 +41,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Assignment extends CachedObjectIntegerKey<Assignment> {
+public final class Assignment extends CachedObjectIntegerKey<Assignment> {
 
 	static final int
 		COLUMN_PKEY=0,

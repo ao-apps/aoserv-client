@@ -39,7 +39,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Host extends CachedObjectLongKey<Host> {
+public final class Host extends CachedObjectLongKey<Host> {
 
 	static final int
 		COLUMN_PKEY = 0,

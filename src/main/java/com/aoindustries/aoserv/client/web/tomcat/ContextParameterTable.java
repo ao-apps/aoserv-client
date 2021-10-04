@@ -40,7 +40,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class ContextParameterTable extends CachedTableIntegerKey<ContextParameter> {
+public final class ContextParameterTable extends CachedTableIntegerKey<ContextParameter> {
 
 	ContextParameterTable(AOServConnector connector) {
 		super(connector, ContextParameter.class);

@@ -37,7 +37,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class SoftwareVersionTable extends GlobalTableIntegerKey<SoftwareVersion> {
+public final class SoftwareVersionTable extends GlobalTableIntegerKey<SoftwareVersion> {
 
 	/**
 	 * Fields used in an <code>order by</code> search.

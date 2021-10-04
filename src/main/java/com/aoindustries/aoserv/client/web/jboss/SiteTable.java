@@ -49,7 +49,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class SiteTable extends CachedTableIntegerKey<Site> {
+public final class SiteTable extends CachedTableIntegerKey<Site> {
 
 	SiteTable(AOServConnector connector) {
 		super(connector, Site.class);

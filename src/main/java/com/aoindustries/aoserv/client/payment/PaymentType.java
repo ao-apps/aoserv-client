@@ -39,7 +39,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class PaymentType extends GlobalObjectStringKey<PaymentType> {
+public final class PaymentType extends GlobalObjectStringKey<PaymentType> {
 
 	static final int COLUMN_NAME=0;
 	static final String COLUMN_NAME_name = "name";

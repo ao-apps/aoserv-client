@@ -40,7 +40,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class ContextDataSourceTable extends CachedTableIntegerKey<ContextDataSource> {
+public final class ContextDataSourceTable extends CachedTableIntegerKey<ContextDataSource> {
 
 	ContextDataSourceTable(AOServConnector connector) {
 		super(connector, ContextDataSource.class);

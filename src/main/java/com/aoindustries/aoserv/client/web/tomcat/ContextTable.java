@@ -45,7 +45,7 @@ import java.util.Objects;
  *
  * @author  AO Industries, Inc.
  */
-final public class ContextTable extends CachedTableIntegerKey<Context> {
+public final class ContextTable extends CachedTableIntegerKey<Context> {
 
 	ContextTable(AOServConnector connector) {
 		super(connector, Context.class);

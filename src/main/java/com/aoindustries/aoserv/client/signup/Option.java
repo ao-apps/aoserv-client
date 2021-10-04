@@ -36,7 +36,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Option extends CachedObjectIntegerKey<Option> {
+public final class Option extends CachedObjectIntegerKey<Option> {
 
 	static final int
 		COLUMN_PKEY=0,

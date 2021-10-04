@@ -40,7 +40,7 @@ import java.util.ResourceBundle;
  *
  * @author  AO Industries, Inc.
  */
-final public class TicketType extends GlobalObjectStringKey<TicketType> {
+public final class TicketType extends GlobalObjectStringKey<TicketType> {
 
 	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, TicketType.class);
 

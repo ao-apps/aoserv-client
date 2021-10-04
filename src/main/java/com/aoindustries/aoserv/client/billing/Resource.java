@@ -43,7 +43,7 @@ import java.util.ResourceBundle;
  *
  * @author  AO Industries, Inc.
  */
-final public class Resource extends GlobalObjectStringKey<Resource> {
+public final class Resource extends GlobalObjectStringKey<Resource> {
 
 	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Resource.class);
 

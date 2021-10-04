@@ -39,7 +39,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class DistroFileTable extends FilesystemCachedTable<Integer, DistroFile> {
+public final class DistroFileTable extends FilesystemCachedTable<Integer, DistroFile> {
 
 	DistroFileTable(AOServConnector connector) {
 		super(connector, DistroFile.class);

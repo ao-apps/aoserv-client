@@ -47,7 +47,7 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * @author  AO Industries, Inc.
  */
-final public class SocketConnection extends AOServConnection {
+public final class SocketConnection extends AOServConnection {
 
 	/**
 	 * Keeps a flag of the connection status.

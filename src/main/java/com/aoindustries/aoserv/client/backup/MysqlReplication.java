@@ -40,7 +40,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class MysqlReplication extends CachedObjectIntegerKey<MysqlReplication> {
+public final class MysqlReplication extends CachedObjectIntegerKey<MysqlReplication> {
 
 	static final int
 		COLUMN_PKEY=0,
@@ -191,22 +191,22 @@ final public class MysqlReplication extends CachedObjectIntegerKey<MysqlReplicat
 		}
 	}
 
-	final public static class SlaveStatus {
+	public static final class SlaveStatus {
 
-		final private String slaveIOState;
-		final private String masterLogFile;
-		final private String readMasterLogPos;
-		final private String relayLogFile;
-		final private String relayLogPos;
-		final private String relayMasterLogFile;
-		final private String slaveIORunning;
-		final private String slaveSQLRunning;
-		final private String lastErrno;
-		final private String lastError;
-		final private String skipCounter;
-		final private String execMasterLogPos;
-		final private String relayLogSpace;
-		final private String secondsBehindMaster;
+		private final String slaveIOState;
+		private final String masterLogFile;
+		private final String readMasterLogPos;
+		private final String relayLogFile;
+		private final String relayLogPos;
+		private final String relayMasterLogFile;
+		private final String slaveIORunning;
+		private final String slaveSQLRunning;
+		private final String lastErrno;
+		private final String lastError;
+		private final String skipCounter;
+		private final String execMasterLogPos;
+		private final String relayLogSpace;
+		private final String secondsBehindMaster;
 
 		public SlaveStatus(
 			String slaveIOState,

@@ -47,7 +47,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
+public final class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 
 	static final int
 		COLUMN_PKEY = 0,

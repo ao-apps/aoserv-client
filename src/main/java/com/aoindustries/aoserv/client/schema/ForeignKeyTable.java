@@ -37,7 +37,7 @@ import java.util.Map;
  *
  * @author  AO Industries, Inc.
  */
-final public class ForeignKeyTable extends GlobalTableIntegerKey<ForeignKey> {
+public final class ForeignKeyTable extends GlobalTableIntegerKey<ForeignKey> {
 
 	private static final Map<String, List<ForeignKey>> tableKeys=new HashMap<>();
 	private static final Map<Integer, List<ForeignKey>> referencesHash=new HashMap<>();

@@ -56,7 +56,7 @@ import java.util.Objects;
  *
  * @author  AO Industries, Inc.
  */
-final public class CreditCard extends CachedObjectIntegerKey<CreditCard> implements Removable {
+public final class CreditCard extends CachedObjectIntegerKey<CreditCard> implements Removable {
 
 	static final int
 		COLUMN_PKEY=0,
@@ -146,8 +146,8 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	private int encryption_card_number_recipient;
 
 	// These are not pulled from the database, but are decrypted by GPG
-	transient private String decryptCardNumberPassphrase;
-	transient private String card_number;
+	private transient String decryptCardNumberPassphrase;
+	private transient String card_number;
 
 	@Override
 	public List<CannotRemoveReason<?>> getCannotRemoveReasons() {
@@ -696,7 +696,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	/**
 	 * Gets the card number or {@code null} if not stored.
 	 */
-	synchronized public String getCardNumber(String passphrase) throws IOException, SQLException {
+	public synchronized String getCardNumber(String passphrase) throws IOException, SQLException {
 		// If a different passphrase is provided, don't use the cached values, clear, and re-decrypt
 		if(decryptCardNumberPassphrase==null || !passphrase.equals(decryptCardNumberPassphrase)) {
 			// Clear first just in case there is a problem in part of the decryption

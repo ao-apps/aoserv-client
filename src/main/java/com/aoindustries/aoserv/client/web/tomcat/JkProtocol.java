@@ -44,7 +44,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class JkProtocol extends GlobalObjectStringKey<JkProtocol> {
+public final class JkProtocol extends GlobalObjectStringKey<JkProtocol> {
 
 	static final int COLUMN_PROTOCOL=0;
 	static final String COLUMN_PROTOCOL_name = "protocol";

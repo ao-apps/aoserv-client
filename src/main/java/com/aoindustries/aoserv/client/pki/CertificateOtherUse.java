@@ -34,7 +34,7 @@ import java.sql.SQLException;
 /**
  * @author  AO Industries, Inc.
  */
-final public class CertificateOtherUse extends CachedObjectIntegerKey<CertificateOtherUse> {
+public final class CertificateOtherUse extends CachedObjectIntegerKey<CertificateOtherUse> {
 
 	static final int
 		COLUMN_PKEY = 0,

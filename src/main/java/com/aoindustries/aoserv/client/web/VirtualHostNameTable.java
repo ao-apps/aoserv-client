@@ -45,7 +45,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class VirtualHostNameTable extends CachedTableIntegerKey<VirtualHostName> {
+public final class VirtualHostNameTable extends CachedTableIntegerKey<VirtualHostName> {
 
 	VirtualHostNameTable(AOServConnector connector) {
 		super(connector, VirtualHostName.class);

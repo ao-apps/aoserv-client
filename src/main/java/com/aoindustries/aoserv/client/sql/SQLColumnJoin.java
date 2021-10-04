@@ -37,15 +37,15 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class SQLColumnJoin implements SQLExpression {
+public final class SQLColumnJoin implements SQLExpression {
 
-	final private SQLExpression expression;
-	final private Column keyColumn;
-	final private int keyIndex;
-	final private Column valueColumn;
-	final private Type type;
-	final private AOServTable<?, ?> table;
-	final private int valueIndex;
+	private final SQLExpression expression;
+	private final Column keyColumn;
+	private final int keyIndex;
+	private final Column valueColumn;
+	private final Type type;
+	private final AOServTable<?, ?> table;
+	private final int valueIndex;
 
 	public SQLColumnJoin(
 		AOServConnector conn,

@@ -43,7 +43,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class AddressTable extends CachedTableIntegerKey<Address> {
+public final class AddressTable extends CachedTableIntegerKey<Address> {
 
 	AddressTable(AOServConnector connector) {
 		super(connector, Address.class);

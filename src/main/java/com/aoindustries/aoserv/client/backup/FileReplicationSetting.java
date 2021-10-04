@@ -40,7 +40,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class FileReplicationSetting extends CachedObjectIntegerKey<FileReplicationSetting> implements Removable {
+public final class FileReplicationSetting extends CachedObjectIntegerKey<FileReplicationSetting> implements Removable {
 
 	static final int
 		COLUMN_PKEY=0,

@@ -49,7 +49,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class Profile extends CachedObjectIntegerKey<Profile> {
+public final class Profile extends CachedObjectIntegerKey<Profile> {
 
 	static final int
 		COLUMN_PKEY=0,

@@ -38,7 +38,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class SmtpSmartHostDomain extends CachedObjectIntegerKey<SmtpSmartHostDomain> {
+public final class SmtpSmartHostDomain extends CachedObjectIntegerKey<SmtpSmartHostDomain> {
 
 	static final int
 		COLUMN_PKEY = 0,

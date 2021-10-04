@@ -38,7 +38,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class Limiter extends CachedObjectIntegerKey<Limiter> {
+public final class Limiter extends CachedObjectIntegerKey<Limiter> {
 
 	static final int
 		COLUMN_PKEY=0,

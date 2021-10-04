@@ -50,7 +50,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class InboxAddress extends CachedObjectIntegerKey<InboxAddress> implements Removable {
+public final class InboxAddress extends CachedObjectIntegerKey<InboxAddress> implements Removable {
 
 	static final int
 		COLUMN_PKEY=0,

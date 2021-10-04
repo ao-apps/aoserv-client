@@ -37,7 +37,7 @@ import java.util.Map;
  *
  * @author  AO Industries, Inc.
  */
-final public class ColumnTable extends GlobalTableIntegerKey<Column> {
+public final class ColumnTable extends GlobalTableIntegerKey<Column> {
 
 	/** Avoid repeated copies. */
 	private static final int numTables = Table.TableID.values().length;

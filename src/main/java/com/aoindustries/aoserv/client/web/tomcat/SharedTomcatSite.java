@@ -40,7 +40,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class SharedTomcatSite extends CachedObjectIntegerKey<SharedTomcatSite> {
+public final class SharedTomcatSite extends CachedObjectIntegerKey<SharedTomcatSite> {
 
 	static final int
 		COLUMN_TOMCAT_SITE=0,

@@ -45,7 +45,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class ForwardingTable extends CachedTableIntegerKey<Forwarding> {
+public final class ForwardingTable extends CachedTableIntegerKey<Forwarding> {
 
 	ForwardingTable(AOServConnector connector) {
 		super(connector, Forwarding.class);

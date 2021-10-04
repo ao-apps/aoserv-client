@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017, 2018, 2020  AO Industries, Inc.
+ * Copyright (C) 2017, 2018, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -38,7 +38,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class RewriteRuleTable extends CachedTableIntegerKey<RewriteRule> {
+public final class RewriteRuleTable extends CachedTableIntegerKey<RewriteRule> {
 
 	RewriteRuleTable(AOServConnector connector) {
 		super(connector, RewriteRule.class);

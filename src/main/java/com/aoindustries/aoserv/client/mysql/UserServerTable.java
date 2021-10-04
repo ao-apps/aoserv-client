@@ -42,7 +42,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
+public final class UserServerTable extends CachedTableIntegerKey<UserServer> {
 
 	UserServerTable(AOServConnector connector) {
 		super(connector, UserServer.class);

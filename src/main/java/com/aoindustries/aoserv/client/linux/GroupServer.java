@@ -55,7 +55,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class GroupServer extends CachedObjectIntegerKey<GroupServer> implements Removable {
+public final class GroupServer extends CachedObjectIntegerKey<GroupServer> implements Removable {
 
 	static final int
 		COLUMN_PKEY=0,

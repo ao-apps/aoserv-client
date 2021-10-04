@@ -42,7 +42,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class AccountHostTable extends CachedTableIntegerKey<AccountHost> {
+public final class AccountHostTable extends CachedTableIntegerKey<AccountHost> {
 
 	AccountHostTable(AOServConnector connector) {
 		super(connector, AccountHost.class);

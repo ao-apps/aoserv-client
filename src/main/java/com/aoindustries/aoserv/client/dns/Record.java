@@ -45,7 +45,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class Record extends CachedObjectIntegerKey<Record> implements Removable {
+public final class Record extends CachedObjectIntegerKey<Record> implements Removable {
 
 	static final int
 		COLUMN_ID = 0,

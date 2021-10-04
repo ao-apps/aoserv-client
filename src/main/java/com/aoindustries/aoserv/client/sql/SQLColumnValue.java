@@ -36,10 +36,10 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class SQLColumnValue implements SQLExpression {
+public final class SQLColumnValue implements SQLExpression {
 
-	final private Column column;
-	final private Type columnType;
+	private final Column column;
+	private final Type columnType;
 
 	public SQLColumnValue(AOServConnector conn, Column column) throws SQLException, IOException {
 		if(column == null) throw new NullPointerException("column is null");

@@ -51,7 +51,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
+public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 
 	static final int
 		COLUMN_PKEY = 0,

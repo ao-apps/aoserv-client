@@ -41,7 +41,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class IpAddressMonitoringTable extends CachedTableIntegerKey<IpAddressMonitoring> {
+public final class IpAddressMonitoringTable extends CachedTableIntegerKey<IpAddressMonitoring> {
 
 	IpAddressMonitoringTable(AOServConnector connector) {
 		super(connector, IpAddressMonitoring.class);

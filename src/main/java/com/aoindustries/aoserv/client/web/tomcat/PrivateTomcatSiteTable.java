@@ -49,7 +49,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class PrivateTomcatSiteTable extends CachedTableIntegerKey<PrivateTomcatSite> {
+public final class PrivateTomcatSiteTable extends CachedTableIntegerKey<PrivateTomcatSite> {
 
 	PrivateTomcatSiteTable(AOServConnector connector) {
 		super(connector, PrivateTomcatSite.class);

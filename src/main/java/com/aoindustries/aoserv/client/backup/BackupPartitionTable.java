@@ -39,7 +39,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class BackupPartitionTable extends CachedTableIntegerKey<BackupPartition> {
+public final class BackupPartitionTable extends CachedTableIntegerKey<BackupPartition> {
 
 	BackupPartitionTable(AOServConnector connector) {
 		super(connector, BackupPartition.class);

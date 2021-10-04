@@ -37,7 +37,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class SetTable extends CachedTableIntegerKey<Set> {
+public final class SetTable extends CachedTableIntegerKey<Set> {
 
 	SetTable(AOServConnector connector) {
 		super(connector, Set.class);

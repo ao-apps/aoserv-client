@@ -49,7 +49,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class Host extends CachedObjectIntegerKey<Host> implements Comparable<Host> {
+public final class Host extends CachedObjectIntegerKey<Host> implements Comparable<Host> {
 
 	static final int
 		COLUMN_PKEY=0,

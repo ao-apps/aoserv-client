@@ -105,7 +105,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class Account extends CachedObjectAccountNameKey<Account> implements Disablable, Comparable<Account> {
+public final class Account extends CachedObjectAccountNameKey<Account> implements Disablable, Comparable<Account> {
 
 	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Account.class);
 
@@ -123,7 +123,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	 *
 	 * @author  AO Industries, Inc.
 	 */
-	final static public class Name implements
+	public static final class Name implements
 		Comparable<Name>,
 		FastExternalizable,
 		DtoFactory<com.aoindustries.aoserv.client.dto.AccountName>,

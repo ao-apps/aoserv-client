@@ -37,10 +37,10 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class InboxAttributes implements AOServStreamable {
+public final class InboxAttributes implements AOServStreamable {
 
-	final private AOServConnector connector;
-	final private int linuxServerAccount;
+	private final AOServConnector connector;
+	private final int linuxServerAccount;
 	private long systemTime;
 	private long fileSize;
 	private long lastModified;

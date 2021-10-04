@@ -40,7 +40,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class SystemAlias extends CachedObjectIntegerKey<SystemAlias> {
+public final class SystemAlias extends CachedObjectIntegerKey<SystemAlias> {
 
 	static final int
 		COLUMN_PKEY=0,

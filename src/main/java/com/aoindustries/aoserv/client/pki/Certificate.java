@@ -49,7 +49,7 @@ import java.util.Objects;
 /**
  * @author  AO Industries, Inc.
  */
-final public class Certificate extends CachedObjectIntegerKey<Certificate> {
+public final class Certificate extends CachedObjectIntegerKey<Certificate> {
 
 	static final int
 		COLUMN_PKEY = 0,

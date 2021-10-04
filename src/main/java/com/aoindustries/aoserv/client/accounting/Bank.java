@@ -36,7 +36,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Bank extends CachedObjectStringKey<Bank> {
+public final class Bank extends CachedObjectStringKey<Bank> {
 
 	static final int COLUMN_NAME=0;
 	static final String COLUMN_NAME_name = "name";

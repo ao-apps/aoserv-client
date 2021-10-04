@@ -46,7 +46,7 @@ import java.util.Objects;
  *
  * @author  AO Industries, Inc.
  */
-final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
+public final class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
 
 	CreditCardTable(AOServConnector connector) {
 		super(connector, CreditCard.class);

@@ -48,7 +48,7 @@ import java.util.Objects;
  *
  * @author  AO Industries, Inc.
  */
-final public class VirtualHost extends CachedObjectIntegerKey<VirtualHost> implements Disablable {
+public final class VirtualHost extends CachedObjectIntegerKey<VirtualHost> implements Disablable {
 
 	static final int
 		COLUMN_PKEY = 0,

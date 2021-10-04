@@ -36,7 +36,7 @@ import java.io.IOException;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class AOServConnection implements Closeable {
+public abstract class AOServConnection implements Closeable {
 
 	/**
 	 * The connector that this connection is part of.

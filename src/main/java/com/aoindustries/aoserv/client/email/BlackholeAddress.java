@@ -44,7 +44,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class BlackholeAddress extends CachedObjectIntegerKey<BlackholeAddress> implements Removable {
+public final class BlackholeAddress extends CachedObjectIntegerKey<BlackholeAddress> implements Removable {
 
 	static final int COLUMN_EMAIL_ADDRESS=0;
 	static final String COLUMN_EMAIL_ADDRESS_name = "email_address";

@@ -40,7 +40,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class BrandTable extends CachedTableAccountNameKey<Brand> {
+public final class BrandTable extends CachedTableAccountNameKey<Brand> {
 
 	BrandTable(AOServConnector connector) {
 		super(connector, Brand.class);

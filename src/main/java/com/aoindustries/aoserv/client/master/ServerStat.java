@@ -40,7 +40,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class ServerStat extends AOServObject<String, ServerStat> implements SingleTableObject<String, ServerStat> {
+public final class ServerStat extends AOServObject<String, ServerStat> implements SingleTableObject<String, ServerStat> {
 
 	public static final String
 		BYTE_ARRAY_CACHE_CREATES = "byte_array_cache_creates",

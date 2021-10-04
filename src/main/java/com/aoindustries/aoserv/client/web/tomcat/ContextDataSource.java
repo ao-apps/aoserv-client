@@ -42,7 +42,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class ContextDataSource extends CachedObjectIntegerKey<ContextDataSource> implements Removable {
+public final class ContextDataSource extends CachedObjectIntegerKey<ContextDataSource> implements Removable {
 
 	static final int
 		COLUMN_PKEY=0,

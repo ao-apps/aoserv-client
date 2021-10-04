@@ -50,7 +50,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class Pipe extends CachedObjectIntegerKey<Pipe> implements Removable, Disablable {
+public final class Pipe extends CachedObjectIntegerKey<Pipe> implements Removable, Disablable {
 
 	static final int
 		COLUMN_PKEY=0,

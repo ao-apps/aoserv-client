@@ -40,7 +40,7 @@ import java.util.TreeSet;
  *
  * @author  AO Industries, Inc.
  */
-final public class AdministratorPermissionTable extends CachedTableIntegerKey<AdministratorPermission> {
+public final class AdministratorPermissionTable extends CachedTableIntegerKey<AdministratorPermission> {
 
 	AdministratorPermissionTable(AOServConnector connector) {
 		super(connector, AdministratorPermission.class);

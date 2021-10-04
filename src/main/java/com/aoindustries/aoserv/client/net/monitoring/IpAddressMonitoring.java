@@ -38,7 +38,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class IpAddressMonitoring extends CachedObjectIntegerKey<IpAddressMonitoring> {
+public final class IpAddressMonitoring extends CachedObjectIntegerKey<IpAddressMonitoring> {
 
 	static final int COLUMN_ID = 0;
 	static final String COLUMN_ID_name = "id";

@@ -60,7 +60,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class Ticket extends CachedObjectIntegerKey<Ticket> {
+public final class Ticket extends CachedObjectIntegerKey<Ticket> {
 
 	// <editor-fold desc="Fields">
 	private Account.Name brand;
@@ -335,7 +335,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 		return summary;
 	}
 
-	synchronized public String getDetails() throws IOException, SQLException {
+	public synchronized String getDetails() throws IOException, SQLException {
 		if(!detailsLoaded) {
 			details = table.getConnector().requestNullLongStringQuery(true, AoservProtocol.CommandID.GET_TICKET_DETAILS, pkey);
 			detailsLoaded = true;
@@ -343,7 +343,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 		return details;
 	}
 
-	synchronized public String getRawEmail() throws IOException, SQLException {
+	public synchronized String getRawEmail() throws IOException, SQLException {
 		if(!rawEmailLoaded) {
 			raw_email = table.getConnector().requestNullLongStringQuery(true, AoservProtocol.CommandID.GET_TICKET_RAW_EMAIL, pkey);
 			rawEmailLoaded = true;
@@ -389,7 +389,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 		return contact_phone_numbers;
 	}
 
-	synchronized public String getInternalNotes() throws IOException, SQLException {
+	public synchronized String getInternalNotes() throws IOException, SQLException {
 		if(!internalNotesLoaded) {
 			internal_notes = table.getConnector().requestLongStringQuery(true, AoservProtocol.CommandID.GET_TICKET_INTERNAL_NOTES, pkey);
 			internalNotesLoaded = true;

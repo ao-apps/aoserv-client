@@ -42,7 +42,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class OperatingSystemVersion extends GlobalObjectIntegerKey<OperatingSystemVersion> {
+public final class OperatingSystemVersion extends GlobalObjectIntegerKey<OperatingSystemVersion> {
 
 	static final int COLUMN_PKEY=0;
 	static final String COLUMN_SORT_ORDER_name = "sort_order";

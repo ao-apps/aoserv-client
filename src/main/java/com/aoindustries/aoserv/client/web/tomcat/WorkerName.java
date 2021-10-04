@@ -40,7 +40,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class WorkerName extends GlobalObjectStringKey<WorkerName> {
+public final class WorkerName extends GlobalObjectStringKey<WorkerName> {
 
 	static final int COLUMN_CODE=0;
 	static final String COLUMN_CODE_name = "code";

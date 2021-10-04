@@ -66,7 +66,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class Administrator extends CachedObjectUserNameKey<Administrator> implements PasswordProtected, Removable, Disablable, Comparable<Administrator> {
+public final class Administrator extends CachedObjectUserNameKey<Administrator> implements PasswordProtected, Removable, Disablable, Comparable<Administrator> {
 
 	static final int COLUMN_USERNAME=0;
 	static final String COLUMN_USERNAME_name = "username";

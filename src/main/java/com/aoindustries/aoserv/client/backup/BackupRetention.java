@@ -36,7 +36,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class BackupRetention extends GlobalObject<Short, BackupRetention> {
+public final class BackupRetention extends GlobalObject<Short, BackupRetention> {
 
 	static final int COLUMN_DAYS=0;
 	static final String COLUMN_DAYS_name = "days";

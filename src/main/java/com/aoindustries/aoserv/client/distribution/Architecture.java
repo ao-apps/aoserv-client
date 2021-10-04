@@ -40,7 +40,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Architecture extends GlobalObjectStringKey<Architecture> {
+public final class Architecture extends GlobalObjectStringKey<Architecture> {
 
 	static final int COLUMN_NAME=0;
 	static final String COLUMN_NAME_name = "name";

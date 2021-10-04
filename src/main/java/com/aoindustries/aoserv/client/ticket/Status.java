@@ -41,7 +41,7 @@ import java.util.ResourceBundle;
  *
  * @author  AO Industries, Inc.
  */
-final public class Status extends GlobalObjectStringKey<Status> implements Comparable<Status> {
+public final class Status extends GlobalObjectStringKey<Status> implements Comparable<Status> {
 
 	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Status.class);
 

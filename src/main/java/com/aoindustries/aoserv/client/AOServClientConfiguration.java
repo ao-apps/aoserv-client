@@ -44,7 +44,7 @@ import java.util.Properties;
  *
  * @author  AO Industries, Inc.
  */
-final public class AOServClientConfiguration {
+public final class AOServClientConfiguration {
 
 	private static class PropsLock {}
 	private static final PropsLock propsLock = new PropsLock();

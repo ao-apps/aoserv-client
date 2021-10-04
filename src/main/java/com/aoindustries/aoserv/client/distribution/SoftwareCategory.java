@@ -39,7 +39,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class SoftwareCategory extends GlobalObjectStringKey<SoftwareCategory> {
+public final class SoftwareCategory extends GlobalObjectStringKey<SoftwareCategory> {
 
 	static final int COLUMN_NAME=0;
 	static final String COLUMN_NAME_name = "name";

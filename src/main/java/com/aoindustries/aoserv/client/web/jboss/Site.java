@@ -43,7 +43,7 @@ import java.sql.SQLException;
  * @author  AO Industries, Inc.
  */
 
-final public class Site extends CachedObjectIntegerKey<Site> {
+public final class Site extends CachedObjectIntegerKey<Site> {
 
 	static final int COLUMN_TOMCAT_SITE = 0;
 	static final int COLUMN_JNP_BIND = 2;

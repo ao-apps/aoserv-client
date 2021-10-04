@@ -46,7 +46,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
+public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 
 	static final int COLUMN_SERVER=0;
 

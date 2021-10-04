@@ -39,7 +39,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class NoticeLogBalance extends CachedObjectIntegerKey<NoticeLogBalance> {
+public final class NoticeLogBalance extends CachedObjectIntegerKey<NoticeLogBalance> {
 
 	static final int
 		COLUMN_id = 0,

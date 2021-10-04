@@ -64,7 +64,7 @@ import java.sql.SQLException;
 // https://publicsuffix.org/list/
 // https://publicsuffix.org/list/public_suffix_list.dat
 
-final public class TopLevelDomain extends GlobalObjectDomainNameKey<TopLevelDomain> {
+public final class TopLevelDomain extends GlobalObjectDomainNameKey<TopLevelDomain> {
 
 	static final int COLUMN_DOMAIN=0;
 	static final String COLUMN_DOMAIN_name = "domain";

@@ -50,12 +50,12 @@ public abstract class FilesystemCachedObject<K, T extends FilesystemCachedObject
 	 */
 
 	@Override
-	final public AOServTable<K, T> getTable() {
+	public final AOServTable<K, T> getTable() {
 		return table;
 	}
 
 	@Override
-	final public void setTable(AOServTable<K, T> table) {
+	public final void setTable(AOServTable<K, T> table) {
 		if(this.table!=null) throw new IllegalStateException("table already set");
 		this.table=table;
 	}

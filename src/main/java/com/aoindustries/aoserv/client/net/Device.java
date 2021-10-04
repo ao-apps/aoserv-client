@@ -45,7 +45,7 @@ import java.util.Objects;
  *
  * @author  AO Industries, Inc.
  */
-final public class Device extends CachedObjectIntegerKey<Device> {
+public final class Device extends CachedObjectIntegerKey<Device> {
 
 	static final int
 		COLUMN_ID = 0,

@@ -55,7 +55,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class Zone extends CachedObjectStringKey<Zone> implements Removable, Dumpable {
+public final class Zone extends CachedObjectStringKey<Zone> implements Removable, Dumpable {
 
 	static final int
 		COLUMN_ZONE=0,

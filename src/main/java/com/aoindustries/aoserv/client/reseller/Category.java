@@ -40,7 +40,7 @@ import java.util.ResourceBundle;
  *
  * @author  AO Industries, Inc.
  */
-final public class Category extends CachedObjectIntegerKey<Category> {
+public final class Category extends CachedObjectIntegerKey<Category> {
 
 	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Category.class);
 
@@ -110,13 +110,13 @@ final public class Category extends CachedObjectIntegerKey<Category> {
 	}
 
 	private String slashPath = null;
-	synchronized public String getSlashPath() throws IOException, SQLException {
+	public synchronized String getSlashPath() throws IOException, SQLException {
 		if(slashPath==null) slashPath = parent==-1 ? name : (getParent().getSlashPath()+'/'+name);
 		return slashPath;
 	}
 
 	private String dotPath = null;
-	synchronized public String getDotPath() throws IOException, SQLException {
+	public synchronized String getDotPath() throws IOException, SQLException {
 		if(dotPath==null) dotPath = parent==-1 ? name : (getParent().getDotPath()+'.'+name);
 		return dotPath;
 	}

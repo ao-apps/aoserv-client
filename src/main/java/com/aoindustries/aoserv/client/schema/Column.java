@@ -43,7 +43,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class Column extends GlobalObjectIntegerKey<Column> {
+public final class Column extends GlobalObjectIntegerKey<Column> {
 
 	static final int COLUMN_ID = 0;
 

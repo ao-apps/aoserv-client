@@ -59,7 +59,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class IpAddress extends CachedObjectIntegerKey<IpAddress> {
+public final class IpAddress extends CachedObjectIntegerKey<IpAddress> {
 
 	static final int
 		COLUMN_ID = 0,

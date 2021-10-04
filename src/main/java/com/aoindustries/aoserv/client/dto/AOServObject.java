@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2010, 2011, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2010, 2011, 2016, 2017, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -25,7 +25,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-abstract public class AOServObject {
+public abstract class AOServObject {
 
 	public AOServObject() {
 	}

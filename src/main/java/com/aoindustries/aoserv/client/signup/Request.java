@@ -51,7 +51,7 @@ import java.util.Objects;
  *
  * @author  AO Industries, Inc.
  */
-final public class Request extends CachedObjectIntegerKey<Request> {
+public final class Request extends CachedObjectIntegerKey<Request> {
 
 	static final int
 		COLUMN_PKEY=0,
@@ -98,16 +98,16 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 	private UnmodifiableTimestamp completed_time;
 
 	// These are not pulled from the database, but are decrypted from encrypted_data by GPG
-	transient private String decryptPassphrase;
-	transient private String ba_password;
-	transient private String billing_cardholder_name;
-	transient private String billing_card_number;
-	transient private String billing_expiration_month;
-	transient private String billing_expiration_year;
-	transient private String billing_street_address;
-	transient private String billing_city;
-	transient private String billing_state;
-	transient private String billing_zip;
+	private transient String decryptPassphrase;
+	private transient String ba_password;
+	private transient String billing_cardholder_name;
+	private transient String billing_card_number;
+	private transient String billing_expiration_month;
+	private transient String billing_expiration_year;
+	private transient String billing_street_address;
+	private transient String billing_city;
+	private transient String billing_state;
+	private transient String billing_zip;
 
 	@Override
 	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
@@ -451,52 +451,52 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 		return completed_time;
 	}
 
-	synchronized public String getBaPassword(String passphrase) throws IOException, SQLException {
+	public synchronized String getBaPassword(String passphrase) throws IOException, SQLException {
 		decrypt(passphrase);
 		return ba_password;
 	}
 
-	synchronized public String getBillingCardholderName(String passphrase) throws IOException, SQLException {
+	public synchronized String getBillingCardholderName(String passphrase) throws IOException, SQLException {
 		decrypt(passphrase);
 		return billing_cardholder_name;
 	}
 
-	synchronized public String getBillingCardNumber(String passphrase) throws IOException, SQLException {
+	public synchronized String getBillingCardNumber(String passphrase) throws IOException, SQLException {
 		decrypt(passphrase);
 		return billing_card_number;
 	}
 
-	synchronized public String getBillingExpirationMonth(String passphrase) throws IOException, SQLException {
+	public synchronized String getBillingExpirationMonth(String passphrase) throws IOException, SQLException {
 		decrypt(passphrase);
 		return billing_expiration_month;
 	}
 
-	synchronized public String getBillingExpirationYear(String passphrase) throws IOException, SQLException {
+	public synchronized String getBillingExpirationYear(String passphrase) throws IOException, SQLException {
 		decrypt(passphrase);
 		return billing_expiration_year;
 	}
 
-	synchronized public String getBillingStreetAddress(String passphrase) throws IOException, SQLException {
+	public synchronized String getBillingStreetAddress(String passphrase) throws IOException, SQLException {
 		decrypt(passphrase);
 		return billing_street_address;
 	}
 
-	synchronized public String getBillingCity(String passphrase) throws IOException, SQLException {
+	public synchronized String getBillingCity(String passphrase) throws IOException, SQLException {
 		decrypt(passphrase);
 		return billing_city;
 	}
 
-	synchronized public String getBillingState(String passphrase) throws IOException, SQLException {
+	public synchronized String getBillingState(String passphrase) throws IOException, SQLException {
 		decrypt(passphrase);
 		return billing_state;
 	}
 
-	synchronized public String getBillingZip(String passphrase) throws IOException, SQLException {
+	public synchronized String getBillingZip(String passphrase) throws IOException, SQLException {
 		decrypt(passphrase);
 		return billing_zip;
 	}
 
-	synchronized private void decrypt(String passphrase) throws IOException, SQLException {
+	private synchronized void decrypt(String passphrase) throws IOException, SQLException {
 		// If a different passphrase is provided, don't use the cached values, clear, and re-decrypt
 		if(decryptPassphrase==null || !passphrase.equals(decryptPassphrase)) {
 			// Clear first just in case there is a problem in part of the decryption

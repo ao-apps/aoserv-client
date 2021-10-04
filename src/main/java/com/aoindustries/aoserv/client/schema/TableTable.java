@@ -49,7 +49,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class TableTable extends GlobalTableIntegerKey<Table> {
+public final class TableTable extends GlobalTableIntegerKey<Table> {
 
 	TableTable(AOServConnector connector) {
 		super(connector, Table.class);

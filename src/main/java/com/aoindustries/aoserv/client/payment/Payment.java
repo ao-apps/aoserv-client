@@ -52,7 +52,7 @@ import java.util.Objects;
  *
  * @author  AO Industries, Inc.
  */
-final public class Payment extends CachedObjectIntegerKey<Payment> {
+public final class Payment extends CachedObjectIntegerKey<Payment> {
 
 	static final int
 		COLUMN_PKEY = 0,

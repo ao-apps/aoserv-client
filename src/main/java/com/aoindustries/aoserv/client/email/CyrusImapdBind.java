@@ -46,7 +46,7 @@ import java.util.Objects;
  *
  * @author  AO Industries, Inc.
  */
-final public class CyrusImapdBind extends CachedObjectIntegerKey<CyrusImapdBind> {
+public final class CyrusImapdBind extends CachedObjectIntegerKey<CyrusImapdBind> {
 
 	static final int
 		COLUMN_NET_BIND = 0,

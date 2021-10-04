@@ -46,7 +46,7 @@ import java.util.Map;
  *
  * @author  AO Industries, Inc.
  */
-final public class GroupUserTable extends CachedTableIntegerKey<GroupUser> {
+public final class GroupUserTable extends CachedTableIntegerKey<GroupUser> {
 
 	private boolean hashBuilt = false;
 	private final Map<Tuple2<Group.Name, User.Name>, List<GroupUser>> hash = new HashMap<>();

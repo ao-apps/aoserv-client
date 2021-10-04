@@ -46,7 +46,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class DatabaseTable extends CachedTableIntegerKey<Database> {
+public final class DatabaseTable extends CachedTableIntegerKey<Database> {
 
 	DatabaseTable(AOServConnector connector) {
 		super(connector, Database.class);

@@ -162,7 +162,7 @@ import java.util.Set;
 // TODO: This 8700 line monstrosity should be split into appropriate structure
 // TODO: as it is used primarily by AOSH.  Either do this directly in AOSH,
 // TODO: or have an aoserv-client-simple project that is used by AOSH.
-final public class SimpleAOClient {
+public final class SimpleAOClient {
 
 	final AOServConnector connector;
 

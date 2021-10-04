@@ -55,7 +55,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> implements Disablable, Removable {
+public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> implements Disablable, Removable {
 
 	static final int
 		COLUMN_PKEY = 0,

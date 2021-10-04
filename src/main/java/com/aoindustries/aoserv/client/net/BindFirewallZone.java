@@ -37,7 +37,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class BindFirewallZone extends CachedObjectIntegerKey<BindFirewallZone> {
+public final class BindFirewallZone extends CachedObjectIntegerKey<BindFirewallZone> {
 
 	static final int
 		COLUMN_PKEY = 0,

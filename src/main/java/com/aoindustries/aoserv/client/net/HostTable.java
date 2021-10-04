@@ -50,7 +50,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class HostTable extends CachedTableIntegerKey<Host> {
+public final class HostTable extends CachedTableIntegerKey<Host> {
 
 	HostTable(AOServConnector connector) {
 		super(connector, Host.class);

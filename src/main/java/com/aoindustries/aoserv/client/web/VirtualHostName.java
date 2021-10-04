@@ -53,7 +53,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class VirtualHostName extends CachedObjectIntegerKey<VirtualHostName> implements Removable {
+public final class VirtualHostName extends CachedObjectIntegerKey<VirtualHostName> implements Removable {
 
 	static final int
 		COLUMN_PKEY=0,

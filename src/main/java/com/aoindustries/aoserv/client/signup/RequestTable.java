@@ -45,7 +45,7 @@ import java.util.Map;
  *
  * @author  AO Industries, Inc.
  */
-final public class RequestTable extends CachedTableIntegerKey<Request> {
+public final class RequestTable extends CachedTableIntegerKey<Request> {
 
 	RequestTable(AOServConnector connector) {
 		super(connector, Request.class);

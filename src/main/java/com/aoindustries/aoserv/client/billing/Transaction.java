@@ -57,7 +57,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Transaction extends CachedObjectIntegerKey<Transaction> {
+public final class Transaction extends CachedObjectIntegerKey<Transaction> {
 
 	static final int
 		COLUMN_TRANSID = 1,

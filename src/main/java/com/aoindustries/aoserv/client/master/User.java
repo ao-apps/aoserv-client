@@ -45,7 +45,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class User extends CachedObjectUserNameKey<User> {
+public final class User extends CachedObjectUserNameKey<User> {
 
 	static final int COLUMN_USERNAME=0;
 	static final String COLUMN_USERNAME_name = "username";

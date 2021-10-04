@@ -69,7 +69,7 @@ import java.util.TimeZone;
  *
  * @author  AO Industries, Inc.
  */
-final public class Type extends GlobalObjectIntegerKey<Type> {
+public final class Type extends GlobalObjectIntegerKey<Type> {
 
 	/**
 	 * The time zone used for all <code>{@link #DATE}</code> to/from String conversions.

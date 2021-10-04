@@ -45,7 +45,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class DatabaseUser extends CachedObjectIntegerKey<DatabaseUser> implements Removable {
+public final class DatabaseUser extends CachedObjectIntegerKey<DatabaseUser> implements Removable {
 
 	static final int
 		COLUMN_PKEY=0,

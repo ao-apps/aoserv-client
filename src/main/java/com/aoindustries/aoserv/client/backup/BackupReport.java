@@ -43,7 +43,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class BackupReport extends AOServObject<Integer, BackupReport> implements SingleTableObject<Integer, BackupReport> {
+public final class BackupReport extends AOServObject<Integer, BackupReport> implements SingleTableObject<Integer, BackupReport> {
 
 	static final int COLUMN_PKEY=0;
 	static final String COLUMN_DATE_name = "date";

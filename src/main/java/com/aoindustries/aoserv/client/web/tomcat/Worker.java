@@ -45,7 +45,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Worker extends CachedObjectIntegerKey<Worker> {
+public final class Worker extends CachedObjectIntegerKey<Worker> {
 
 	static final int
 		COLUMN_BIND = 0,

@@ -50,7 +50,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class SharedTomcatTable extends CachedTableIntegerKey<SharedTomcat> {
+public final class SharedTomcatTable extends CachedTableIntegerKey<SharedTomcat> {
 
 	SharedTomcatTable(AOServConnector connector) {
 		super(connector, SharedTomcat.class);

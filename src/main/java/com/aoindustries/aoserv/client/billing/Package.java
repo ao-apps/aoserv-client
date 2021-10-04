@@ -73,7 +73,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class Package extends CachedObjectIntegerKey<Package> implements Disablable, Comparable<Package> {
+public final class Package extends CachedObjectIntegerKey<Package> implements Disablable, Comparable<Package> {
 
 	static final int
 		COLUMN_PKEY = 0,

@@ -39,7 +39,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class BrandCategory extends CachedObjectIntegerKey<BrandCategory> {
+public final class BrandCategory extends CachedObjectIntegerKey<BrandCategory> {
 
 	static final int
 		COLUMN_PKEY=0,

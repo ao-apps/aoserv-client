@@ -48,7 +48,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class GuestUser extends CachedObjectUserNameKey<GuestUser> implements Removable {
+public final class GuestUser extends CachedObjectUserNameKey<GuestUser> implements Removable {
 
 	static final int COLUMN_USERNAME=0;
 	static final String COLUMN_USERNAME_name = "username";

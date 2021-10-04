@@ -79,7 +79,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class Database extends CachedObjectIntegerKey<Database> implements Dumpable, Removable, JdbcProvider {
+public final class Database extends CachedObjectIntegerKey<Database> implements Dumpable, Removable, JdbcProvider {
 
 	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Database.class);
 
@@ -94,7 +94,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	 *
 	 * @author  AO Industries, Inc.
 	 */
-	final static public class Name implements
+	public static final class Name implements
 		Comparable<Name>,
 		Serializable,
 		DtoFactory<com.aoindustries.aoserv.client.dto.PostgresDatabaseName>,
@@ -147,7 +147,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 			return new Name(name, true);
 		}
 
-		final private String name;
+		private final String name;
 
 		private Name(String name, boolean validate) throws ValidationException {
 			this.name = name;

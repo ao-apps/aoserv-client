@@ -49,7 +49,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class BindTable extends CachedTableIntegerKey<Bind> {
+public final class BindTable extends CachedTableIntegerKey<Bind> {
 
 	BindTable(AOServConnector connector) {
 		super(connector, Bind.class);

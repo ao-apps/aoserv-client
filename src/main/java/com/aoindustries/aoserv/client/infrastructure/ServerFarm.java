@@ -38,7 +38,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class ServerFarm extends CachedObjectStringKey<ServerFarm> {
+public final class ServerFarm extends CachedObjectStringKey<ServerFarm> {
 
 	static final int COLUMN_NAME=0;
 	static final String COLUMN_NAME_name = "name";

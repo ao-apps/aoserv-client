@@ -39,7 +39,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Priority extends GlobalObjectStringKey<Priority> implements Comparable<Priority> {
+public final class Priority extends GlobalObjectStringKey<Priority> implements Comparable<Priority> {
 
 	static final int COLUMN_PRIORITY=0;
 	static final String COLUMN_PRIORITY_name = "priority";

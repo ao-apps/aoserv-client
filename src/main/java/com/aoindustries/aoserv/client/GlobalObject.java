@@ -29,7 +29,7 @@ package com.aoindustries.aoserv.client;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class GlobalObject<K, T extends GlobalObject<K, T>> extends AOServObject<K, T> {
+public abstract class GlobalObject<K, T extends GlobalObject<K, T>> extends AOServObject<K, T> {
 
 	protected GlobalObject() {
 	}

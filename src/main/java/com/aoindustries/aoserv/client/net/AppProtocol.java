@@ -45,7 +45,7 @@ import java.util.Locale;
  *
  * @author  AO Industries, Inc.
  */
-final public class AppProtocol extends GlobalObjectStringKey<AppProtocol> {
+public final class AppProtocol extends GlobalObjectStringKey<AppProtocol> {
 
 	static final int COLUMN_PROTOCOL = 0;
 	static final String COLUMN_PORT_name = "port";

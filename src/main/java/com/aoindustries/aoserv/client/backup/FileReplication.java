@@ -49,7 +49,7 @@ import java.util.Objects;
  *
  * @author  AO Industries, Inc.
  */
-final public class FileReplication extends CachedObjectIntegerKey<FileReplication> implements BitRateProvider {
+public final class FileReplication extends CachedObjectIntegerKey<FileReplication> implements BitRateProvider {
 
 	static final int COLUMN_PKEY=0;
 	static final int COLUMN_SERVER=1;

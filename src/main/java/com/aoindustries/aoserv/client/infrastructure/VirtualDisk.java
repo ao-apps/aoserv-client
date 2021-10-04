@@ -38,7 +38,7 @@ import java.util.Calendar;
  *
  * @author  AO Industries, Inc.
  */
-final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
+public final class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
 
 	static final int COLUMN_PKEY = 0;
 	static final int COLUMN_VIRTUAL_SERVER = 1;

@@ -78,7 +78,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class Bind extends CachedObjectIntegerKey<Bind> implements Removable {
+public final class Bind extends CachedObjectIntegerKey<Bind> implements Removable {
 
 	static final int
 		COLUMN_ID = 0,

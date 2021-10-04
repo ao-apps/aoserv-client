@@ -48,7 +48,7 @@ import java.util.Objects;
  *
  * @author  AO Industries, Inc.
  */
-final public class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdServer> {
+public final class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdServer> {
 
 	static final int
 		COLUMN_AO_SERVER = 0,

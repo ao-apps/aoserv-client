@@ -57,5 +57,5 @@ public abstract class CachedTableLongKey<V extends CachedObjectLongKey<V>> exten
 	/**
 	 * @see  #get(java.lang.Object)
 	 */
-	abstract public V get(long pkey) throws IOException, SQLException;
+	public abstract V get(long pkey) throws IOException, SQLException;
 }

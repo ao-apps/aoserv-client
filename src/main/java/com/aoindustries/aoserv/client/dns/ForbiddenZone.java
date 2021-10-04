@@ -40,7 +40,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class ForbiddenZone extends GlobalObjectStringKey<ForbiddenZone> {
+public final class ForbiddenZone extends GlobalObjectStringKey<ForbiddenZone> {
 
 	static final int COLUMN_ZONE=0;
 	static final String COLUMN_ZONE_name = "zone";

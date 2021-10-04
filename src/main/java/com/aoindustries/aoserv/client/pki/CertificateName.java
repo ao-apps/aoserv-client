@@ -36,7 +36,7 @@ import java.sql.SQLException;
 /**
  * @author  AO Industries, Inc.
  */
-final public class CertificateName extends CachedObjectIntegerKey<CertificateName> {
+public final class CertificateName extends CachedObjectIntegerKey<CertificateName> {
 
 	public static final String WILDCARD_PREFIX = "*.";
 

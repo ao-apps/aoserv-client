@@ -52,5 +52,5 @@ public abstract class GlobalTablePosixPathKey<V extends GlobalObjectPosixPathKey
 	/**
 	 * @see  #get(java.lang.Object)
 	 */
-	abstract public V get(PosixPath pkey) throws IOException, SQLException;
+	public abstract V get(PosixPath pkey) throws IOException, SQLException;
 }

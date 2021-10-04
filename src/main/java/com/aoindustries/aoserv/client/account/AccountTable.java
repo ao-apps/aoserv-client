@@ -49,7 +49,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class AccountTable extends CachedTableAccountNameKey<Account> {
+public final class AccountTable extends CachedTableAccountNameKey<Account> {
 
 	private Account.Name rootAccounting;
 
@@ -157,7 +157,7 @@ final public class AccountTable extends CachedTableAccountNameKey<Account> {
 		return matches;
 	}
 
-	synchronized public Account.Name getRootAccount_name() throws IOException, SQLException {
+	public synchronized Account.Name getRootAccount_name() throws IOException, SQLException {
 		if(rootAccounting==null) {
 			try {
 			   rootAccounting=Account.Name.valueOf(connector.requestStringQuery(true, AoservProtocol.CommandID.GET_ROOT_BUSINESS));

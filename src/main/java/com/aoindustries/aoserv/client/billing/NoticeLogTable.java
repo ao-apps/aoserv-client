@@ -41,7 +41,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
+public final class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
 
 	NoticeLogTable(AOServConnector connector) {
 		super(connector, NoticeLog.class);

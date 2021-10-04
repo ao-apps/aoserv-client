@@ -41,7 +41,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class IpAddressTable extends CachedTableIntegerKey<IpAddress> {
+public final class IpAddressTable extends CachedTableIntegerKey<IpAddress> {
 
 	IpAddressTable(AOServConnector connector) {
 		super(connector, IpAddress.class);

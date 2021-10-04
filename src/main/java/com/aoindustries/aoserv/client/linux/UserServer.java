@@ -65,7 +65,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class UserServer extends CachedObjectIntegerKey<UserServer> implements Removable, PasswordProtected, Disablable {
+public final class UserServer extends CachedObjectIntegerKey<UserServer> implements Removable, PasswordProtected, Disablable {
 
 	/**
 	 * The UID of the root user.

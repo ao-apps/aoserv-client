@@ -50,7 +50,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServer> implements Removable {
+public final class MajordomoServer extends CachedObjectIntegerKey<MajordomoServer> implements Removable {
 
 	static final int COLUMN_DOMAIN=0;
 	static final String COLUMN_DOMAIN_name = "domain";

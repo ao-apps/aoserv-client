@@ -57,7 +57,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class Group extends CachedObjectGroupNameKey<Group> implements Removable {
+public final class Group extends CachedObjectGroupNameKey<Group> implements Removable {
 
 	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Group.class);
 
@@ -76,7 +76,7 @@ final public class Group extends CachedObjectGroupNameKey<Group> implements Remo
 	 */
 	// TODO: Update for IEEE Std 1003.1.2001 "3.426 User Name"? https://paulgorman.org/technical/presentations/linux_username_conventions.pdf
 	// TODO: Combined with "UserName" as "PosixName" (and an associated "PosixPortableFilename")?
-	final static public class Name implements
+	public static final class Name implements
 		Comparable<Name>,
 		Serializable,
 		DtoFactory<com.aoindustries.aoserv.client.dto.LinuxGroupName>,
@@ -138,7 +138,7 @@ final public class Group extends CachedObjectGroupNameKey<Group> implements Remo
 			return new Name(name, true);
 		}
 
-		final private String name;
+		private final String name;
 
 		private Name(String name, boolean validate) throws ValidationException {
 			this.name = name;

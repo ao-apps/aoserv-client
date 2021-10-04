@@ -39,7 +39,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
+public final class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 
 	static final int COLUMN_PKEY=0;
 	static final String COLUMN_TIME_name = "time";

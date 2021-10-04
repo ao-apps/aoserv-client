@@ -39,7 +39,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class BackupPartition extends CachedObjectIntegerKey<BackupPartition> {
+public final class BackupPartition extends CachedObjectIntegerKey<BackupPartition> {
 
 	static final int
 		COLUMN_PKEY=0,

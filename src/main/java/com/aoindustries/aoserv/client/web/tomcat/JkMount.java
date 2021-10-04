@@ -42,7 +42,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class JkMount extends CachedObjectIntegerKey<JkMount> implements Removable {
+public final class JkMount extends CachedObjectIntegerKey<JkMount> implements Removable {
 
 	static final int
 		COLUMN_PKEY = 0,

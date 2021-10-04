@@ -36,7 +36,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class DistroFileType extends GlobalObjectStringKey<DistroFileType> {
+public final class DistroFileType extends GlobalObjectStringKey<DistroFileType> {
 
 	static final int COLUMN_TYPE=0;
 	static final String COLUMN_TYPE_name = "type";

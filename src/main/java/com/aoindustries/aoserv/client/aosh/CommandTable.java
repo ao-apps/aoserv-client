@@ -41,7 +41,7 @@ import java.util.Map;
  *
  * @author  AO Industries, Inc.
  */
-final public class CommandTable extends GlobalTableStringKey<Command> {
+public final class CommandTable extends GlobalTableStringKey<Command> {
 
 	private static final String GLOBAL_COMMANDS="[[GLOBAL]]";
 

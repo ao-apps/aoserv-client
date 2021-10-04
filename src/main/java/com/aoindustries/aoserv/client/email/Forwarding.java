@@ -46,7 +46,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class Forwarding extends CachedObjectIntegerKey<Forwarding> implements Removable {
+public final class Forwarding extends CachedObjectIntegerKey<Forwarding> implements Removable {
 
 	static final int
 		COLUMN_PKEY=0,

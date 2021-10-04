@@ -50,7 +50,7 @@ import java.util.ArrayList;
  *
  * @author  AO Industries, Inc.
  */
-final public class Address extends CachedObjectIntegerKey<Address> implements Removable {
+public final class Address extends CachedObjectIntegerKey<Address> implements Removable {
 
 	static final int
 		COLUMN_PKEY=0,

@@ -39,7 +39,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class AdministratorPermission extends CachedObjectIntegerKey<AdministratorPermission> {
+public final class AdministratorPermission extends CachedObjectIntegerKey<AdministratorPermission> {
 
 	static final int
 		COLUMN_PKEY=0,

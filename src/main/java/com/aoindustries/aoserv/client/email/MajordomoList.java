@@ -39,7 +39,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
+public final class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
 
 	static final int
 		COLUMN_EMAIL_LIST=0,

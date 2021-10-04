@@ -44,7 +44,7 @@ import java.util.Objects;
  *
  * @author  AO Industries, Inc.
  */
-final public class PaymentTable extends CachedTableIntegerKey<Payment> {
+public final class PaymentTable extends CachedTableIntegerKey<Payment> {
 
 	PaymentTable(AOServConnector connector) {
 		super(connector, Payment.class);

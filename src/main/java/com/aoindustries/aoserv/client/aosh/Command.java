@@ -42,7 +42,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Command extends GlobalObjectStringKey<Command> {
+public final class Command extends GlobalObjectStringKey<Command> {
 
 	static final int COLUMN_COMMAND = 0;
 	static final String COLUMN_COMMAND_name = "command";

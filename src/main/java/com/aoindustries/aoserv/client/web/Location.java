@@ -44,7 +44,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class Location extends CachedObjectIntegerKey<Location> implements Removable {
+public final class Location extends CachedObjectIntegerKey<Location> implements Removable {
 
 	static final int
 		COLUMN_PKEY=0,

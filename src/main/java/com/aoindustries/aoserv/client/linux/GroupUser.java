@@ -50,7 +50,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class GroupUser extends CachedObjectIntegerKey<GroupUser> implements Removable {
+public final class GroupUser extends CachedObjectIntegerKey<GroupUser> implements Removable {
 
 	static final int COLUMN_ID = 0;
 	static final String COLUMN_GROUP_name = "group";

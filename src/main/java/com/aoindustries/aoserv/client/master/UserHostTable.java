@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018, 2020  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -35,7 +35,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class UserHostTable extends CachedTableIntegerKey<UserHost> {
+public final class UserHostTable extends CachedTableIntegerKey<UserHost> {
 
 	UserHostTable(AOServConnector connector) {
 		super(connector, UserHost.class);

@@ -40,7 +40,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class GroupTable extends CachedTableGroupNameKey<Group> {
+public final class GroupTable extends CachedTableGroupNameKey<Group> {
 
 	GroupTable(AOServConnector connector) {
 		super(connector, Group.class);

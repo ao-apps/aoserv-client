@@ -43,7 +43,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class JkMountTable extends CachedTableIntegerKey<JkMount> {
+public final class JkMountTable extends CachedTableIntegerKey<JkMount> {
 
 	JkMountTable(AOServConnector connector) {
 		super(connector, JkMount.class);

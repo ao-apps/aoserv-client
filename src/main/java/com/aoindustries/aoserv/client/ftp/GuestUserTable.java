@@ -42,7 +42,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class GuestUserTable extends CachedTableUserNameKey<GuestUser> {
+public final class GuestUserTable extends CachedTableUserNameKey<GuestUser> {
 
 	GuestUserTable(AOServConnector connector) {
 		super(connector, GuestUser.class);

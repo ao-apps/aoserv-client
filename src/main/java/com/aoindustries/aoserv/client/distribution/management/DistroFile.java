@@ -43,7 +43,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class DistroFile extends FilesystemCachedObject<Integer, DistroFile> {
+public final class DistroFile extends FilesystemCachedObject<Integer, DistroFile> {
 
 	static final int COLUMN_PKEY=0;
 	public static final int COLUMN_OPERATING_SYSTEM_VERSION=1;

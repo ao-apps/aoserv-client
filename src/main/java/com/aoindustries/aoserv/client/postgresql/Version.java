@@ -43,7 +43,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class Version extends GlobalObjectIntegerKey<Version> {
+public final class Version extends GlobalObjectIntegerKey<Version> {
 
 	static final int COLUMN_VERSION = 0;
 	static final String COLUMN_MINOR_VERSION_name = "minor_version";

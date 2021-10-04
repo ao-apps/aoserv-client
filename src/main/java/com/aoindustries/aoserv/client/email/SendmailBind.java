@@ -43,7 +43,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class SendmailBind extends CachedObjectIntegerKey<SendmailBind> {
+public final class SendmailBind extends CachedObjectIntegerKey<SendmailBind> {
 
 	static final int
 		COLUMN_NET_BIND = 0,

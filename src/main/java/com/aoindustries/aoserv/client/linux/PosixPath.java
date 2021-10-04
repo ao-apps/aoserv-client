@@ -59,7 +59,7 @@ import java.util.concurrent.ConcurrentMap;
  * @author  AO Industries, Inc.
  */
 // TODO: Move to an ao-posix-types package, similar to ao-net-types
-final public class PosixPath implements
+public final class PosixPath implements
 	Comparable<PosixPath>,
 	Serializable,
 	DtoFactory<com.aoindustries.aoserv.client.dto.PosixPath>,
@@ -106,7 +106,7 @@ final public class PosixPath implements
 		return new PosixPath(path, true);
 	}
 
-	final private String path;
+	private final String path;
 
 	private PosixPath(String path, boolean validate) throws ValidationException {
 		this.path = path;

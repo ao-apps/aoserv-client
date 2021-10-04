@@ -45,7 +45,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class AdministratorTable extends CachedTableUserNameKey<Administrator> {
+public final class AdministratorTable extends CachedTableUserNameKey<Administrator> {
 
 	AdministratorTable(AOServConnector connector) {
 		super(connector, Administrator.class);

@@ -71,13 +71,13 @@ import java.util.logging.Logger;
  *
  * @author  AO Industries, Inc.
  */
-final public class AOSH extends ShellInterpreter {
+public final class AOSH extends ShellInterpreter {
 
 	private static final Logger logger = Logger.getLogger(AOSH.class.getName());
 
 	private static final Reader nullInput=new CharArrayReader(new char[0]);
 
-	final private AOServConnector connector;
+	private final AOServConnector connector;
 
 	public AOSH(AOServConnector connector, Reader in, TerminalWriter out, TerminalWriter err) {
 		super(in, out, err);

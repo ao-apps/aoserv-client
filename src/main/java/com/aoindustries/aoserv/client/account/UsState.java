@@ -42,7 +42,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class UsState extends GlobalObjectStringKey<UsState> {
+public final class UsState extends GlobalObjectStringKey<UsState> {
 
 	static final int COLUMN_CODE=0;
 	static final String COLUMN_NAME_name = "name";

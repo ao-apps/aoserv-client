@@ -43,7 +43,7 @@ import java.util.Map;
  *
  * @author  AO Industries, Inc.
  */
-final public class GroupServerTable extends CachedTableIntegerKey<GroupServer> {
+public final class GroupServerTable extends CachedTableIntegerKey<GroupServer> {
 
 	GroupServerTable(AOServConnector connector) {
 		super(connector, GroupServer.class);

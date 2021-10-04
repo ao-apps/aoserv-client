@@ -73,7 +73,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class User extends CachedObjectUserNameKey<User> implements PasswordProtected, Removable, Disablable {
+public final class User extends CachedObjectUserNameKey<User> implements PasswordProtected, Removable, Disablable {
 
 	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, User.class);
 
@@ -197,7 +197,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		}
 
 		@Override
-		final public boolean equals(Object O) {
+		public final boolean equals(Object O) {
 			return
 				O!=null // TODO: These nulls checks are unnecessary given instanceof that follows
 				&& O instanceof Name
@@ -206,17 +206,17 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		}
 
 		@Override
-		final public int hashCode() {
+		public final int hashCode() {
 			return name.hashCode();
 		}
 
 		@Override
-		final public int compareTo(Name other) {
+		public final int compareTo(Name other) {
 			return this==other ? 0 : name.compareTo(other.name);
 		}
 
 		@Override
-		final public String toString() {
+		public final String toString() {
 			return name;
 		}
 

@@ -56,7 +56,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class User extends CachedObjectUserNameKey<User> implements PasswordProtected, Removable, Disablable {
+public final class User extends CachedObjectUserNameKey<User> implements PasswordProtected, Removable, Disablable {
 
 	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, User.class);
 
@@ -74,7 +74,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 	 *
 	 * @author  AO Industries, Inc.
 	 */
-	final static public class Name extends com.aoindustries.aoserv.client.linux.User.Name implements
+	public static final class Name extends com.aoindustries.aoserv.client.linux.User.Name implements
 		FastExternalizable
 	{
 

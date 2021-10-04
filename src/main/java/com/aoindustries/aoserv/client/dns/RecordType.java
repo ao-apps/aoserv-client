@@ -44,7 +44,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class RecordType extends GlobalObjectStringKey<RecordType> {
+public final class RecordType extends GlobalObjectStringKey<RecordType> {
 
 	static final int COLUMN_TYPE=0;
 	static final String COLUMN_DESCRIPTION_name = "description";

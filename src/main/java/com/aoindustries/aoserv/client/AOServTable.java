@@ -63,9 +63,9 @@ import java.util.logging.Level;
  *
  * @see  AOServObject
  */
-abstract public class AOServTable<K, V extends AOServObject<K, V>> implements Iterable<V>, com.aoapps.hodgepodge.table.Table<V> {
+public abstract class AOServTable<K, V extends AOServObject<K, V>> implements Iterable<V>, com.aoapps.hodgepodge.table.Table<V> {
 
-	final protected AOServConnector connector;
+	protected final AOServConnector connector;
 	//final SimpleAOClient client;
 	final Class<V> clazz;
 
@@ -76,7 +76,7 @@ abstract public class AOServTable<K, V extends AOServObject<K, V>> implements It
 		}
 	};
 
-	final private static class TableListenerEntry {
+	private static final class TableListenerEntry {
 
 		private final TableListener listener;
 		private final long delay;
@@ -107,7 +107,7 @@ abstract public class AOServTable<K, V extends AOServObject<K, V>> implements It
 	}
 	final EventLock eventLock=new EventLock();
 
-	final private class TableEventThread extends Thread {
+	private final class TableEventThread extends Thread {
 
 		private TableEventThread() {
 			setName("TableEventThread #" + getId() + " ("+AOServTable.this.getTableID()+") - "+AOServTable.this.getClass().getName());
@@ -188,7 +188,7 @@ abstract public class AOServTable<K, V extends AOServObject<K, V>> implements It
 	 */
 	final List<ProgressListener> progressListeners = new ArrayList<>();
 
-	final private static class TableLoadListenerEntry {
+	private static final class TableLoadListenerEntry {
 
 		private final TableLoadListener listener;
 		private Object param;
@@ -210,7 +210,7 @@ abstract public class AOServTable<K, V extends AOServObject<K, V>> implements It
 		this.clazz=clazz;
 	}
 
-	final public void addProgressListener(ProgressListener listener) {
+	public final void addProgressListener(ProgressListener listener) {
 		synchronized(progressListeners) {
 			progressListeners.add(listener);
 		}
@@ -219,13 +219,13 @@ abstract public class AOServTable<K, V extends AOServObject<K, V>> implements It
 	/**
 	 * Checks if this table has at least one listener.
 	 */
-	final public boolean hasAnyTableListener() {
+	public final boolean hasAnyTableListener() {
 		synchronized(tableListenersLock) {
 			return tableListeners!=null && !tableListeners.isEmpty();
 		}
 	}
 
-	final public boolean hasTableListener(TableListener listener) {
+	public final boolean hasTableListener(TableListener listener) {
 		synchronized(tableListenersLock) {
 			if(tableListeners==null) return false;
 			for(TableListenerEntry tableListenerEntry : tableListeners) {
@@ -243,7 +243,7 @@ abstract public class AOServTable<K, V extends AOServObject<K, V>> implements It
 	 * @see  #addTableListener(TableListener,long)
 	 */
 	@Override
-	final public void addTableListener(TableListener listener) {
+	public final void addTableListener(TableListener listener) {
 		addTableListener(listener, 1000);
 	}
 
@@ -260,7 +260,7 @@ abstract public class AOServTable<K, V extends AOServObject<K, V>> implements It
 	 * and may potentially slow down the responsiveness of the server.
 	 */
 	@Override
-	final public void addTableListener(TableListener listener, long batchTime) {
+	public final void addTableListener(TableListener listener, long batchTime) {
 		if(batchTime<0) throw new IllegalArgumentException("batchTime<0: "+batchTime);
 
 		synchronized(tableListenersLock) {
@@ -279,7 +279,7 @@ abstract public class AOServTable<K, V extends AOServObject<K, V>> implements It
 		connector.addingTableListener();
 	}
 
-	final public void addTableLoadListener(TableLoadListener listener, Object param) {
+	public final void addTableLoadListener(TableLoadListener listener, Object param) {
 		synchronized(_loadListeners) {
 			_loadListeners.add(new TableLoadListenerEntry(listener, param));
 		}
@@ -293,14 +293,14 @@ abstract public class AOServTable<K, V extends AOServObject<K, V>> implements It
 	public void clearCache() {
 	}
 
-	final public AOServConnector getConnector() {
+	public final AOServConnector getConnector() {
 		return connector;
 	}
 
 	/*
 	 * Commented-out because I'm not sure if this handles the references like ao_server.server.farm.name
 	 *  - Dan 2008-04-18
-	final public SchemaColumn[] getDefaultSortSchemaColumns() {
+	public final SchemaColumn[] getDefaultSortSchemaColumns() {
 		OrderBy[] orderBys=getDefaultOrderBy();
 		if(orderBys==null) return null;
 		int len=orderBys.length;
@@ -326,8 +326,8 @@ abstract public class AOServTable<K, V extends AOServObject<K, V>> implements It
 	public static final boolean DESCENDING=false;
 
 	public static class OrderBy {
-		final private String expression;
-		final private boolean order;
+		private final String expression;
+		private final boolean order;
 
 		public OrderBy(String expression, boolean order) {
 			this.expression = expression;
@@ -354,10 +354,10 @@ abstract public class AOServTable<K, V extends AOServObject<K, V>> implements It
 	 *
 	 * @return  {@code null} if the sorting is performed by the server or the array of column names
 	 */
-	abstract protected OrderBy[] getDefaultOrderBy();
+	protected abstract OrderBy[] getDefaultOrderBy();
 
 	// TODO: Make AOServObject Comparable like in AOServ 2.0, and let them sort themselves out
-	final public SQLExpression[] getDefaultOrderBySQLExpressions() throws SQLException, IOException {
+	public final SQLExpression[] getDefaultOrderBySQLExpressions() throws SQLException, IOException {
 		OrderBy[] orderBys = getDefaultOrderBy();
 		if(orderBys == null) return null;
 		int len = orderBys.length;
@@ -726,7 +726,7 @@ abstract public class AOServTable<K, V extends AOServObject<K, V>> implements It
 	 * @see  #getRows()
 	 * @see  #getSortAlgorithm()
 	 */
-	abstract public List<V> getRowsCopy() throws IOException, SQLException;
+	public abstract List<V> getRowsCopy() throws IOException, SQLException;
 
 	/**
 	 * Gets the unique identifier for this table.  Each
@@ -747,12 +747,12 @@ abstract public class AOServTable<K, V extends AOServObject<K, V>> implements It
 		}
 	}
 
-	final public Table getTableSchema() throws IOException, SQLException {
+	public final Table getTableSchema() throws IOException, SQLException {
 		return connector.getSchema().getTable().get(getTableID());
 	}
 
 	@Override
-	final public String getTableName() throws IOException, SQLException {
+	public final String getTableName() throws IOException, SQLException {
 		return getTableSchema().getName();
 	}
 
@@ -761,7 +761,7 @@ abstract public class AOServTable<K, V extends AOServObject<K, V>> implements It
 	 *
 	 * @exception UnsupportedOperationException if not supported by the specific table implementation
 	 */
-	final public List<V> getIndexedRows(int col, int value) throws IOException, SQLException {
+	public final List<V> getIndexedRows(int col, int value) throws IOException, SQLException {
 		return getIndexedRows(col, Integer.valueOf(value));
 	}
 
@@ -779,22 +779,22 @@ abstract public class AOServTable<K, V extends AOServObject<K, V>> implements It
 	}
 
 	// TODO: Why do these exist as final?  Seems they should not exist at all since there's no way to implement primitive optimizations in subclasses
-	final public V getUniqueRow(int col, int value) throws IOException, SQLException {
+	public final V getUniqueRow(int col, int value) throws IOException, SQLException {
 		return getUniqueRowImpl(col, value);
 	}
 
 	// TODO: Why do these exist as final?  Seems they should not exist at all since there's no way to implement primitive optimizations in subclasses
-	final public V getUniqueRow(int col, long value) throws IOException, SQLException {
+	public final V getUniqueRow(int col, long value) throws IOException, SQLException {
 		return getUniqueRowImpl(col, value);
 	}
 
-	final public V getUniqueRow(int col, Object value) throws IOException, SQLException {
+	public final V getUniqueRow(int col, Object value) throws IOException, SQLException {
 		if(value == null) return null;
 		return getUniqueRowImpl(col, value);
 	}
 
 	// TODO: Why do these exist as final?  Seems they should not exist at all since there's no way to implement primitive optimizations in subclasses
-	final public V getUniqueRow(int col, short value) throws IOException, SQLException {
+	public final V getUniqueRow(int col, short value) throws IOException, SQLException {
 		return getUniqueRowImpl(col, value);
 	}
 
@@ -822,7 +822,7 @@ abstract public class AOServTable<K, V extends AOServObject<K, V>> implements It
 	/**
 	 * Prints the contents of this table.
 	 */
-	final public void printTable(AOServConnector conn, PrintWriter out, boolean isInteractive) throws IOException, SQLException {
+	public final void printTable(AOServConnector conn, PrintWriter out, boolean isInteractive) throws IOException, SQLException {
 		Table schemaTable = getTableSchema();
 		List<Column> columns = schemaTable.getSchemaColumns(conn);
 		final int numCols = columns.size();
@@ -918,7 +918,7 @@ abstract public class AOServTable<K, V extends AOServObject<K, V>> implements It
 	 * Removes a {@link ProgressListener} from the list of
 	 * objects being notified as this table is being loaded.
 	 */
-	final public void removeProgressListener(ProgressListener listener) {
+	public final void removeProgressListener(ProgressListener listener) {
 		synchronized(progressListeners) {
 			for(int i = progressListeners.size() - 1; i >= 0; i--) {
 				Object O = progressListeners.get(i);
@@ -935,7 +935,7 @@ abstract public class AOServTable<K, V extends AOServObject<K, V>> implements It
 	 * objects being notified when the data is updated.
 	 */
 	@Override
-	final public void removeTableListener(TableListener listener) {
+	public final void removeTableListener(TableListener listener) {
 		// Get thread reference and release eventLock to avoid deadlock
 		Thread myThread;
 		synchronized(eventLock) {
@@ -981,7 +981,7 @@ abstract public class AOServTable<K, V extends AOServObject<K, V>> implements It
 	 * Removes a <code>TableLoadListener</code> from the list of
 	 * objects being notified when the table is being loaded.
 	 */
-	final public void removeTableLoadListener(TableLoadListener listener) {
+	public final void removeTableLoadListener(TableLoadListener listener) {
 		synchronized(_loadListeners) {
 			int size=_loadListeners.size();
 			for(int c=0;c<size;c++) {
@@ -1027,7 +1027,7 @@ abstract public class AOServTable<K, V extends AOServObject<K, V>> implements It
 	}
 
 	@Override
-	final public String toString() {
+	public final String toString() {
 		try {
 			return getTableSchema().getDisplay();
 		} catch(IOException | SQLException err) {
@@ -1062,7 +1062,7 @@ abstract public class AOServTable<K, V extends AOServObject<K, V>> implements It
 	 * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
 	 */
 	@Deprecated
-	abstract public V get(Object key) throws IOException, SQLException;
+	public abstract V get(Object key) throws IOException, SQLException;
 
 	private final Map<K, V> map = new Map<K, V>() {
 		// Map methods
@@ -1171,7 +1171,7 @@ abstract public class AOServTable<K, V extends AOServObject<K, V>> implements It
 	/**
 	 * This is size for JavaBeans compatibility.
 	 */
-	final public int getSize() throws IOException, SQLException {
+	public final int getSize() throws IOException, SQLException {
 		return size();
 	}
 }

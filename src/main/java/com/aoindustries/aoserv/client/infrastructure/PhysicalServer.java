@@ -39,7 +39,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer> {
+public final class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer> {
 
 	static final int COLUMN_SERVER = 0;
 

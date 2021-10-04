@@ -43,7 +43,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class MajordomoVersion extends GlobalObjectStringKey<MajordomoVersion> {
+public final class MajordomoVersion extends GlobalObjectStringKey<MajordomoVersion> {
 
 	static final int COLUMN_VERSION=0;
 	static final String COLUMN_VERSION_name = "version";

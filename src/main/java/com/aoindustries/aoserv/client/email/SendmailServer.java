@@ -48,7 +48,7 @@ import java.util.Objects;
  *
  * @author  AO Industries, Inc.
  */
-final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer> {
+public final class SendmailServer extends CachedObjectIntegerKey<SendmailServer> {
 
 	static final int
 		COLUMN_ID = 0,

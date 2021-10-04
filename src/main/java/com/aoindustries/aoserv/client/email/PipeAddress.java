@@ -45,7 +45,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class PipeAddress extends CachedObjectIntegerKey<PipeAddress> implements Removable {
+public final class PipeAddress extends CachedObjectIntegerKey<PipeAddress> implements Removable {
 
 	static final int
 		COLUMN_PKEY=0,

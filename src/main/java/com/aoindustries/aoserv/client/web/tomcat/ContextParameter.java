@@ -42,7 +42,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class ContextParameter extends CachedObjectIntegerKey<ContextParameter> implements Removable {
+public final class ContextParameter extends CachedObjectIntegerKey<ContextParameter> implements Removable {
 
 	static final int
 		COLUMN_PKEY=0,

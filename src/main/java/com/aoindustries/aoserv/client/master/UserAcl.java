@@ -42,7 +42,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class UserAcl extends CachedObjectIntegerKey<UserAcl> {
+public final class UserAcl extends CachedObjectIntegerKey<UserAcl> {
 
 	static final int COLUMN_PKEY=0;
 	static final String COLUMN_USERNAME_name = "username";

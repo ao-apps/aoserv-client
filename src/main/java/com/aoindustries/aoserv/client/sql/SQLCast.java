@@ -35,7 +35,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class SQLCast implements SQLExpression {
+public final class SQLCast implements SQLExpression {
 
 	private final SQLExpression expression;
 	private final Type castToType;

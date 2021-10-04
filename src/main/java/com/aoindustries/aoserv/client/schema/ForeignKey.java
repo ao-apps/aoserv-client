@@ -40,7 +40,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class ForeignKey extends GlobalObjectIntegerKey<ForeignKey> {
+public final class ForeignKey extends GlobalObjectIntegerKey<ForeignKey> {
 
 	static final int COLUMN_ID = 0;
 	static final String COLUMN_ID_name = "id";

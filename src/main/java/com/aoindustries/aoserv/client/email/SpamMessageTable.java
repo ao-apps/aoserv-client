@@ -41,7 +41,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class SpamMessageTable extends AOServTable<Integer, SpamMessage> {
+public final class SpamMessageTable extends AOServTable<Integer, SpamMessage> {
 
 	SpamMessageTable(AOServConnector connector) {
 		super(connector, SpamMessage.class);

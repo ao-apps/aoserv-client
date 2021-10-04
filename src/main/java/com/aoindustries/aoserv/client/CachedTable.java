@@ -117,7 +117,7 @@ public abstract class CachedTable<K, V extends CachedObject<K, V>> extends AOSer
 	}
 
 	@Override
-	final protected V getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
+	protected final V getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
 		if(value == null) return null;
 		synchronized(this) {
 			validateCache();
@@ -188,7 +188,7 @@ public abstract class CachedTable<K, V extends CachedObject<K, V>> extends AOSer
 	}
 
 	@Override
-	final public boolean isLoaded() {
+	public final boolean isLoaded() {
 		return lastLoaded!=-1;
 	}
 

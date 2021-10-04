@@ -40,7 +40,7 @@ import java.util.List;
 /**
  * @author  AO Industries, Inc.
  */
-final public class CertificateTable extends CachedTableIntegerKey<Certificate> {
+public final class CertificateTable extends CachedTableIntegerKey<Certificate> {
 
 	CertificateTable(AOServConnector connector) {
 		super(connector, Certificate.class);

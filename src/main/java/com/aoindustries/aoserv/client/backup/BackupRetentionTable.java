@@ -33,7 +33,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class BackupRetentionTable extends GlobalTable<Short, BackupRetention> {
+public final class BackupRetentionTable extends GlobalTable<Short, BackupRetention> {
 
 	BackupRetentionTable(AOServConnector connector) {
 		super(connector, BackupRetention.class);

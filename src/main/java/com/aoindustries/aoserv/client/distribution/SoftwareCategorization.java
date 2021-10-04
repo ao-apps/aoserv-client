@@ -41,7 +41,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class SoftwareCategorization extends GlobalObjectIntegerKey<SoftwareCategorization> {
+public final class SoftwareCategorization extends GlobalObjectIntegerKey<SoftwareCategorization> {
 
 	static final int COLUMN_PKEY=0;
 	static final int COLUMN_NAME=1;

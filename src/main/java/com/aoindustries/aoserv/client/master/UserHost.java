@@ -46,7 +46,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class UserHost extends CachedObjectIntegerKey<UserHost> {
+public final class UserHost extends CachedObjectIntegerKey<UserHost> {
 
 	static final int COLUMN_PKEY=0;
 	static final String COLUMN_USERNAME_name = "username";

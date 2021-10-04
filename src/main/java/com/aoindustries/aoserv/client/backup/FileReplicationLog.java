@@ -42,7 +42,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class FileReplicationLog extends AOServObject<Integer, FileReplicationLog> implements SingleTableObject<Integer, FileReplicationLog> {
+public final class FileReplicationLog extends AOServObject<Integer, FileReplicationLog> implements SingleTableObject<Integer, FileReplicationLog> {
 
 	static final int COLUMN_PKEY = 0;
 	static final String COLUMN_REPLICATION_name = "replication";

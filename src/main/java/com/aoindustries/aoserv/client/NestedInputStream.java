@@ -40,7 +40,7 @@ import java.sql.SQLException;
  */
 public final class NestedInputStream extends InputStream {
 
-	final private StreamableInput in;
+	private final StreamableInput in;
 	private boolean isDone=false;
 	private byte[] buffer=BufferManager.getBytes();
 	private int bufferFilled=0;
@@ -51,7 +51,7 @@ public final class NestedInputStream extends InputStream {
 	}
 
 	@Override
-	synchronized public int available() {
+	public synchronized int available() {
 		return bufferRead-bufferFilled;
 	}
 
@@ -76,7 +76,7 @@ public final class NestedInputStream extends InputStream {
 	}
 
 	@Override
-	synchronized public void close() throws IOException {
+	public synchronized void close() throws IOException {
 		if(!isDone) {
 			// Read the rest of the underlying stream
 			int code;
@@ -102,7 +102,7 @@ public final class NestedInputStream extends InputStream {
 	}
 
 	@Override
-	synchronized public int read() throws IOException {
+	public synchronized int read() throws IOException {
 		if(isDone) return -1;
 		loadNextBlock();
 		if(isDone) return -1;
@@ -110,7 +110,7 @@ public final class NestedInputStream extends InputStream {
 	}
 
 	@Override
-	synchronized public int read(byte[] b, int off, int len) throws IOException {
+	public synchronized int read(byte[] b, int off, int len) throws IOException {
 		if(isDone) return -1;
 		loadNextBlock();
 		if(isDone) return -1;
@@ -122,7 +122,7 @@ public final class NestedInputStream extends InputStream {
 	}
 
 	@Override
-	synchronized public long skip(long n) throws IOException {
+	public synchronized long skip(long n) throws IOException {
 		if(isDone) return -1;
 		loadNextBlock();
 		if(isDone) return -1;

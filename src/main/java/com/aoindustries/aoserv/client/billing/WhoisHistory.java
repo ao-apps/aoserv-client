@@ -43,7 +43,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
+public final class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 
 	static final int
 		COLUMN_id = 0,

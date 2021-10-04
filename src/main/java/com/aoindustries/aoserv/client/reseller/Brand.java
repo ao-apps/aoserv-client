@@ -53,7 +53,7 @@ import java.util.Objects;
  *
  * @author  AO Industries, Inc.
  */
-final public class Brand extends CachedObjectAccountNameKey<Brand> {
+public final class Brand extends CachedObjectAccountNameKey<Brand> {
 
 	static final int COLUMN_ACCOUNTING = 0;
 	static final String COLUMN_ACCOUNTING_name = "accounting";

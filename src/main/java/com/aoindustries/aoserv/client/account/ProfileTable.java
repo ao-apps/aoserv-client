@@ -45,7 +45,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class ProfileTable extends CachedTableIntegerKey<Profile> {
+public final class ProfileTable extends CachedTableIntegerKey<Profile> {
 
 	ProfileTable(AOServConnector connector) {
 		super(connector, Profile.class);

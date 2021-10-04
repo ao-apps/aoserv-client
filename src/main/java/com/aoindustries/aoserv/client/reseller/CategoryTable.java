@@ -41,7 +41,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class CategoryTable extends CachedTableIntegerKey<Category> {
+public final class CategoryTable extends CachedTableIntegerKey<Category> {
 
 	CategoryTable(AOServConnector connector) {
 		super(connector, Category.class);

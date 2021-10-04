@@ -45,7 +45,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersion> {
+public final class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersion> {
 
 	static final int COLUMN_PKEY = 0;
 	public static final String COLUMN_VERSION_name = "version";

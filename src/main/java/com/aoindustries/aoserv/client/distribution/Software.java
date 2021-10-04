@@ -39,7 +39,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class Software extends GlobalObjectStringKey<Software> {
+public final class Software extends GlobalObjectStringKey<Software> {
 
 	static final int COLUMN_NAME = 0;
 	static final String COLUMN_NAME_name = "name";

@@ -38,7 +38,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class WhoisHistoryAccount extends CachedObjectIntegerKey<WhoisHistoryAccount> {
+public final class WhoisHistoryAccount extends CachedObjectIntegerKey<WhoisHistoryAccount> {
 
 	static final int
 		COLUMN_id = 0,

@@ -52,7 +52,7 @@ import java.util.TreeSet;
  *
  * @author  AO Industries, Inc.
  */
-final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepository> {
+public final class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepository> {
 
 	CvsRepositoryTable(AOServConnector connector) {
 		super(connector, CvsRepository.class);

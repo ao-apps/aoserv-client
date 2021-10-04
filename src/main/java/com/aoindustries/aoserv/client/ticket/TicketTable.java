@@ -45,7 +45,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class TicketTable extends CachedTableIntegerKey<Ticket> {
+public final class TicketTable extends CachedTableIntegerKey<Ticket> {
 
 	TicketTable(AOServConnector connector) {
 		super(connector, Ticket.class);

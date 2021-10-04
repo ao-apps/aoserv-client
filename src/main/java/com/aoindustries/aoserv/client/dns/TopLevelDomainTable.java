@@ -34,7 +34,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class TopLevelDomainTable extends GlobalTableDomainNameKey<TopLevelDomain> {
+public final class TopLevelDomainTable extends GlobalTableDomainNameKey<TopLevelDomain> {
 
 	TopLevelDomainTable(AOServConnector connector) {
 		super(connector, TopLevelDomain.class);

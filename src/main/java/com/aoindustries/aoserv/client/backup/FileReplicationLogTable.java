@@ -39,7 +39,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class FileReplicationLogTable extends AOServTable<Integer, FileReplicationLog> {
+public final class FileReplicationLogTable extends AOServTable<Integer, FileReplicationLog> {
 
 	FileReplicationLogTable(AOServConnector connector) {
 		super(connector, FileReplicationLog.class);

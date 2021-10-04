@@ -36,7 +36,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class ServerStatTable extends AOServTable<String, ServerStat> {
+public final class ServerStatTable extends AOServTable<String, ServerStat> {
 
 	ServerStatTable(AOServConnector connector) {
 		super(connector, ServerStat.class);

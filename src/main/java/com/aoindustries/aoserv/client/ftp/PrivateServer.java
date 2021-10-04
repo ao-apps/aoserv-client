@@ -49,7 +49,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
+public final class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
 
 	static final int COLUMN_NET_BIND=0;
 	static final String COLUMN_NET_BIND_name = "net_bind";

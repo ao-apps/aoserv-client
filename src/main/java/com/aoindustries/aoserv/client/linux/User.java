@@ -68,7 +68,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class User extends CachedObjectUserNameKey<User> implements PasswordProtected, Removable, Disablable {
+public final class User extends CachedObjectUserNameKey<User> implements PasswordProtected, Removable, Disablable {
 
 	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, User.class);
 
@@ -80,7 +80,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 	 *
 	 * @author  AO Industries, Inc.
 	 */
-	final public static class Gecos implements
+	public static final class Gecos implements
 		Comparable<Gecos>,
 		Serializable,
 		DtoFactory<com.aoindustries.aoserv.client.dto.Gecos>,
@@ -146,7 +146,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 			return new Gecos(value, true);
 		}
 
-		final private String value;
+		private final String value;
 
 		private Gecos(String value, boolean validate) throws ValidationException {
 			this.value = value;

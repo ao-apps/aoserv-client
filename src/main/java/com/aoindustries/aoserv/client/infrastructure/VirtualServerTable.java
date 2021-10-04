@@ -39,7 +39,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class VirtualServerTable extends CachedTableIntegerKey<VirtualServer> {
+public final class VirtualServerTable extends CachedTableIntegerKey<VirtualServer> {
 
 	VirtualServerTable(AOServConnector connector) {
 		super(connector, VirtualServer.class);

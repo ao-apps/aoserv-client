@@ -37,7 +37,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class BankTransactionTable extends AOServTable<Integer, BankTransaction> {
+public final class BankTransactionTable extends AOServTable<Integer, BankTransaction> {
 
 	BankTransactionTable(AOServConnector connector) {
 		super(connector, BankTransaction.class);

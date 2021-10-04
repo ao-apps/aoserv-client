@@ -34,7 +34,7 @@ import java.util.Comparator;
  *
  * @author  AO Industries, Inc.
  */
-final public class SQLComparator<T> implements Comparator<T> {
+public final class SQLComparator<T> implements Comparator<T> {
 
 	private final AOServConnector connector;
 	private final SQLExpression[] exprs;

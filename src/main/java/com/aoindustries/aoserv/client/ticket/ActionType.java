@@ -43,7 +43,7 @@ import java.util.ResourceBundle;
  *
  * @author  AO Industries, Inc.
  */
-final public class ActionType extends GlobalObjectStringKey<ActionType> {
+public final class ActionType extends GlobalObjectStringKey<ActionType> {
 
 	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, ActionType.class);
 

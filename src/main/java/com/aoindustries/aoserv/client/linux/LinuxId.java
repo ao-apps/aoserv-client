@@ -42,7 +42,7 @@ import java.util.concurrent.atomic.AtomicReferenceArray;
  *
  * @author  AO Industries, Inc.
  */
-final public class LinuxId implements
+public final class LinuxId implements
 	Comparable<LinuxId>,
 	Serializable,
 	DtoFactory<com.aoindustries.aoserv.client.dto.LinuxId>
@@ -71,7 +71,7 @@ final public class LinuxId implements
 		return linuxId;
 	}
 
-	final private int id;
+	private final int id;
 
 	/**
 	 * @param  id  Does not validate, should only be used with a known valid value.

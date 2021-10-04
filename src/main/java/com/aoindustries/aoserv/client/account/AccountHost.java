@@ -59,7 +59,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class AccountHost extends CachedObjectIntegerKey<AccountHost> implements Removable {
+public final class AccountHost extends CachedObjectIntegerKey<AccountHost> implements Removable {
 
 	static final int
 		COLUMN_PKEY=0,

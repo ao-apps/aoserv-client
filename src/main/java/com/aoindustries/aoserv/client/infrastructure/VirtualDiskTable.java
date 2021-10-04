@@ -41,7 +41,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class VirtualDiskTable extends CachedTableIntegerKey<VirtualDisk> {
+public final class VirtualDiskTable extends CachedTableIntegerKey<VirtualDisk> {
 
 	VirtualDiskTable(AOServConnector connector) {
 		super(connector, VirtualDisk.class);

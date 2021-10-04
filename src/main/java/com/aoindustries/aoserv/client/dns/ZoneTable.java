@@ -45,7 +45,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class ZoneTable extends CachedTableStringKey<Zone> {
+public final class ZoneTable extends CachedTableStringKey<Zone> {
 
 	ZoneTable(AOServConnector connector) {
 		super(connector, Zone.class);

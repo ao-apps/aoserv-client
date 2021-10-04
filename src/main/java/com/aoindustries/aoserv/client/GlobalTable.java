@@ -43,7 +43,7 @@ import java.util.Map;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class GlobalTable<K, V extends GlobalObject<K, V>> extends AOServTable<K, V> {
+public abstract class GlobalTable<K, V extends GlobalObject<K, V>> extends AOServTable<K, V> {
 
 	private static final int numTables = Table.TableID.values().length;
 
@@ -129,7 +129,7 @@ abstract public class GlobalTable<K, V extends GlobalObject<K, V>> extends AOSer
 	}
 
 	@Override
-	final public List<V> getIndexedRows(int col, Object value) throws IOException, SQLException {
+	public final List<V> getIndexedRows(int col, Object value) throws IOException, SQLException {
 		Table.TableID tableID=getTableID();
 		int ordinal = tableID.ordinal();
 		synchronized(locks[ordinal]) {
@@ -178,7 +178,7 @@ abstract public class GlobalTable<K, V extends GlobalObject<K, V>> extends AOSer
 	}
 
 	@Override
-	final protected V getUniqueRowImpl(int col, Object value) throws SQLException, IOException {
+	protected final V getUniqueRowImpl(int col, Object value) throws SQLException, IOException {
 		if(value == null) return null;
 		Table.TableID tableID=getTableID();
 		int ordinal = tableID.ordinal();
@@ -273,7 +273,7 @@ abstract public class GlobalTable<K, V extends GlobalObject<K, V>> extends AOSer
 	}
 
 	@Override
-	final public boolean isLoaded() {
+	public final boolean isLoaded() {
 		Table.TableID tableID=getTableID();
 		int ordinal = tableID.ordinal();
 		synchronized(locks[ordinal]) {

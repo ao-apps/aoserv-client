@@ -37,7 +37,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class FileReplicationSchedule extends CachedObjectIntegerKey<FileReplicationSchedule> {
+public final class FileReplicationSchedule extends CachedObjectIntegerKey<FileReplicationSchedule> {
 
 	static final int
 		COLUMN_PKEY=0,

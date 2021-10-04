@@ -41,7 +41,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class LocationTable extends CachedTableIntegerKey<Location> {
+public final class LocationTable extends CachedTableIntegerKey<Location> {
 
 	LocationTable(AOServConnector connector) {
 		super(connector, Location.class);

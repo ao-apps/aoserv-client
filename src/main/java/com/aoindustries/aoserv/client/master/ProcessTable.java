@@ -37,7 +37,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class ProcessTable extends AOServTable<SmallIdentifier, Process> {
+public final class ProcessTable extends AOServTable<SmallIdentifier, Process> {
 
 	ProcessTable(AOServConnector connector) {
 		super(connector, Process.class);

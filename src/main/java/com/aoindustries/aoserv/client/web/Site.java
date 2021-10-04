@@ -75,7 +75,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class Site extends CachedObjectIntegerKey<Site> implements Disablable, Removable {
+public final class Site extends CachedObjectIntegerKey<Site> implements Disablable, Removable {
 
 	static final int
 		COLUMN_ID = 0,

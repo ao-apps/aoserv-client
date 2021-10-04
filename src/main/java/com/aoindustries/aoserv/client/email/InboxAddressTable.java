@@ -42,7 +42,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class InboxAddressTable extends CachedTableIntegerKey<InboxAddress> {
+public final class InboxAddressTable extends CachedTableIntegerKey<InboxAddress> {
 
 	InboxAddressTable(AOServConnector connector) {
 		super(connector, InboxAddress.class);

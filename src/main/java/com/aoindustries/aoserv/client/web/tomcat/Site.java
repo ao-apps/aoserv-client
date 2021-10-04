@@ -45,7 +45,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class Site extends CachedObjectIntegerKey<Site> {
+public final class Site extends CachedObjectIntegerKey<Site> {
 
 	static final int COLUMN_HTTPD_SITE=0;
 	public static final String COLUMN_HTTPD_SITE_name = "httpd_site";

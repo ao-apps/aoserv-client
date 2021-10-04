@@ -44,7 +44,7 @@ import java.util.ArrayList;
  *
  * @author  AO Industries, Inc.
  */
-final public class ListAddress extends CachedObjectIntegerKey<ListAddress> implements Removable {
+public final class ListAddress extends CachedObjectIntegerKey<ListAddress> implements Removable {
 
 	static final int
 		COLUMN_PKEY=0,

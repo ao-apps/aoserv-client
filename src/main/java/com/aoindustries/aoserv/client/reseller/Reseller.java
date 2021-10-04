@@ -44,7 +44,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class Reseller extends CachedObjectAccountNameKey<Reseller> {
+public final class Reseller extends CachedObjectAccountNameKey<Reseller> {
 
 	static final int COLUMN_ACCOUNTING = 0;
 	static final String COLUMN_ACCOUNTING_name = "accounting";

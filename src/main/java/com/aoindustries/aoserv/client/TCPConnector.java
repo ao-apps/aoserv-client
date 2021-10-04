@@ -240,7 +240,7 @@ public class TCPConnector extends AOServConnector {
 	final long maxConnectionAge;
 
 	private static class CacheMonitorLock {}
-	final private CacheMonitorLock cacheMonitorLock=new CacheMonitorLock();
+	private final CacheMonitorLock cacheMonitorLock=new CacheMonitorLock();
 	private long connectionLastUsed;
 	private CacheMonitor cacheMonitor;
 
@@ -375,7 +375,7 @@ public class TCPConnector extends AOServConnector {
 	}
 
 	@Override
-	final public void printConnectionStatsHTML(Appendable out, boolean isXhtml) throws IOException {
+	public final void printConnectionStatsHTML(Appendable out, boolean isXhtml) throws IOException {
 		pool.printStatisticsHTML(out, isXhtml);
 	}
 

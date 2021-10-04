@@ -40,7 +40,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class ResellerTable extends CachedTableAccountNameKey<Reseller> {
+public final class ResellerTable extends CachedTableAccountNameKey<Reseller> {
 
 	ResellerTable(AOServConnector connector) {
 		super(connector, Reseller.class);

@@ -40,7 +40,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Shell extends GlobalObjectPosixPathKey<Shell> {
+public final class Shell extends GlobalObjectPosixPathKey<Shell> {
 
 	static final int COLUMN_PATH=0;
 	static final String COLUMN_PATH_name = "path";

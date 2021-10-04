@@ -52,7 +52,7 @@ import java.util.ResourceBundle;
  *
  * @author  AO Industries, Inc.
  */
-final public class Action extends CachedObjectIntegerKey<Action> {
+public final class Action extends CachedObjectIntegerKey<Action> {
 
 	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Action.class);
 
@@ -234,7 +234,7 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 		return tc;
 	}
 
-	synchronized public String getOldValue() throws IOException, SQLException {
+	public synchronized String getOldValue() throws IOException, SQLException {
 		if(!oldValueLoaded) {
 			// Only perform the query for action types that have old values
 			if(
@@ -252,7 +252,7 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 		return old_value;
 	}
 
-	synchronized public String getNewValue() throws IOException, SQLException {
+	public synchronized String getNewValue() throws IOException, SQLException {
 		if(!newValueLoaded) {
 			// Only perform the query for action types that have new values
 			if(
@@ -326,7 +326,7 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 		return getTicketActionType().generateSummary(table.getConnector(), oldValue, newValue);
 	}
 
-	synchronized public String getDetails() throws IOException, SQLException {
+	public synchronized String getDetails() throws IOException, SQLException {
 		if(!detailsLoaded) {
 			// Only perform the query for action types that have details
 			if(action_type.equals(ActionType.ADD_ANNOTATION)) {
@@ -339,7 +339,7 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 		return details;
 	}
 
-	synchronized public String getRawEmail() throws IOException, SQLException {
+	public synchronized String getRawEmail() throws IOException, SQLException {
 		if(!rawEmailLoaded) {
 			// Only perform the query for action types that may have raw email
 			if(action_type.equals(ActionType.ADD_ANNOTATION)) {

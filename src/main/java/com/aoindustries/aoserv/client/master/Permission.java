@@ -38,7 +38,7 @@ import java.util.ResourceBundle;
  *
  * @author  AO Industries, Inc.
  */
-final public class Permission extends GlobalObjectStringKey<Permission> {
+public final class Permission extends GlobalObjectStringKey<Permission> {
 
 	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Permission.class);
 

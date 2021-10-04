@@ -43,7 +43,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomcatSite> {
+public final class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomcatSite> {
 
 	static final int COLUMN_TOMCAT_SITE = 0;
 	static final int COLUMN_TOMCAT4_SHUTDOWN_PORT = 1;

@@ -47,7 +47,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class Set extends CachedObjectIntegerKey<Set> {
+public final class Set extends CachedObjectIntegerKey<Set> {
 
 	static final int
 		COLUMN_PKEY=0,
@@ -332,7 +332,7 @@ final public class Set extends CachedObjectIntegerKey<Set> {
 		}
 	}
 
-	public final static class AddReputation {
+	public static final class AddReputation {
 		final int host;
 		final ConfidenceType confidence;
 		final ReputationType reputationType;

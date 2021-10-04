@@ -37,7 +37,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class BankAccount extends CachedObjectStringKey<BankAccount> {
+public final class BankAccount extends CachedObjectStringKey<BankAccount> {
 
 	static final int COLUMN_NAME=0;
 	static final String COLUMN_NAME_name = "name";

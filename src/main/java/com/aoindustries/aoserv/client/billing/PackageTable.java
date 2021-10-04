@@ -41,7 +41,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class PackageTable extends CachedTableIntegerKey<Package> {
+public final class PackageTable extends CachedTableIntegerKey<Package> {
 
 	PackageTable(AOServConnector connector) {
 		super(connector, Package.class);

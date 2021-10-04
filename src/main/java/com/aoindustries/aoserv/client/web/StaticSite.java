@@ -39,7 +39,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class StaticSite extends CachedObjectIntegerKey<StaticSite> {
+public final class StaticSite extends CachedObjectIntegerKey<StaticSite> {
 
 	static final int COLUMN_HTTPD_SITE=0;
 	static final String COLUMN_HTTPD_SITE_name = "httpd_site";

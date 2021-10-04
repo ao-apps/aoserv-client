@@ -36,7 +36,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class LimiterSet extends CachedObjectIntegerKey<LimiterSet> {
+public final class LimiterSet extends CachedObjectIntegerKey<LimiterSet> {
 
 	static final int
 		COLUMN_PKEY    = 0,

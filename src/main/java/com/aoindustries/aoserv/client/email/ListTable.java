@@ -45,7 +45,7 @@ import java.util.ArrayList;
  *
  * @author  AO Industries, Inc.
  */
-final public class ListTable extends CachedTableIntegerKey<List> {
+public final class ListTable extends CachedTableIntegerKey<List> {
 
 	ListTable(AOServConnector connector) {
 		super(connector, List.class);

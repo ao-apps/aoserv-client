@@ -42,7 +42,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class HttpdBind extends CachedObjectIntegerKey<HttpdBind> {
+public final class HttpdBind extends CachedObjectIntegerKey<HttpdBind> {
 
 	static final int
 		COLUMN_NET_BIND=0,

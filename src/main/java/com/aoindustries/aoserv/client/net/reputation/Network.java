@@ -38,7 +38,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Network extends CachedObjectLongKey<Network> {
+public final class Network extends CachedObjectLongKey<Network> {
 
 	static final int
 		COLUMN_PKEY = 0,

@@ -37,7 +37,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class DisableLogTable extends CachedTableIntegerKey<DisableLog> {
+public final class DisableLogTable extends CachedTableIntegerKey<DisableLog> {
 
 	DisableLogTable(AOServConnector connector) {
 		super(connector, DisableLog.class);

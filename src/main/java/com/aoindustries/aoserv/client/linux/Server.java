@@ -94,7 +94,7 @@ import java.util.ResourceBundle;
  *
  * @author  AO Industries, Inc.
  */
-final public class Server
+public final class Server
 	extends CachedObjectIntegerKey<Server>
 	implements DtoFactory<com.aoindustries.aoserv.client.dto.LinuxServer>
 {
@@ -1173,9 +1173,9 @@ final public class Server
 	 */
 	public static class MdMismatchReport {
 
-		final private String device;
-		final private RaidLevel level;
-		final private long count;
+		private final String device;
+		private final RaidLevel level;
+		private final long count;
 
 		MdMismatchReport(
 			String device,
@@ -1330,16 +1330,16 @@ final public class Server
 			UpToDate,
 		}
 
-		final private String device;
-		final private String resourceHostname;
-		final private String resourceDevice;
-		final private ConnectionState connectionState;
-		final private DiskState localDiskState;
-		final private DiskState remoteDiskState;
-		final private Role localRole;
-		final private Role remoteRole;
-		final private Long lastVerified;
-		final private Long outOfSync;
+		private final String device;
+		private final String resourceHostname;
+		private final String resourceDevice;
+		private final ConnectionState connectionState;
+		private final DiskState localDiskState;
+		private final DiskState remoteDiskState;
+		private final Role localRole;
+		private final Role remoteRole;
+		private final Long lastVerified;
+		private final Long outOfSync;
 
 		DrbdReport(
 			String device,

@@ -48,7 +48,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> implements Removable, Disablable {
+public final class CvsRepository extends CachedObjectIntegerKey<CvsRepository> implements Removable, Disablable {
 
 	static final int
 		COLUMN_PKEY=0,

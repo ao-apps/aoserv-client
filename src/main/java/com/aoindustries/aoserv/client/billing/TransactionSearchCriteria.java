@@ -52,7 +52,7 @@ import java.util.Objects;
  *
  * @author  AO Industries, Inc.
  */
-final public class TransactionSearchCriteria implements AOServStreamable {
+public final class TransactionSearchCriteria implements AOServStreamable {
 
 	/**
 	 * Value representing any in a search.

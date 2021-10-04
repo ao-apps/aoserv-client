@@ -45,7 +45,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class GroupType extends GlobalObjectStringKey<GroupType> {
+public final class GroupType extends GlobalObjectStringKey<GroupType> {
 
 	static final int COLUMN_NAME=0;
 	static final String COLUMN_DESCRIPTION_name = "description";

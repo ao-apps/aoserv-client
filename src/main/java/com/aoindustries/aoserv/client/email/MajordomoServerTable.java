@@ -43,7 +43,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class MajordomoServerTable extends CachedTableIntegerKey<MajordomoServer> {
+public final class MajordomoServerTable extends CachedTableIntegerKey<MajordomoServer> {
 
 	MajordomoServerTable(AOServConnector connector) {
 		super(connector, MajordomoServer.class);

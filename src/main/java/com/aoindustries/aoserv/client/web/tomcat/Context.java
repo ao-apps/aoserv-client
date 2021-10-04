@@ -47,7 +47,7 @@ import java.util.Objects;
  *
  * @author  AO Industries, Inc.
  */
-final public class Context extends CachedObjectIntegerKey<Context> implements Removable {
+public final class Context extends CachedObjectIntegerKey<Context> implements Removable {
 
 	static final int
 		COLUMN_PKEY=0,

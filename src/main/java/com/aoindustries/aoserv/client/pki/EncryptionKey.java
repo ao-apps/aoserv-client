@@ -47,7 +47,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
+public final class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 
 	static final int
 		COLUMN_PKEY=0,

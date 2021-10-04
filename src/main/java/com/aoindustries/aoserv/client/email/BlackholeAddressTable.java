@@ -40,7 +40,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class BlackholeAddressTable extends CachedTableIntegerKey<BlackholeAddress> {
+public final class BlackholeAddressTable extends CachedTableIntegerKey<BlackholeAddress> {
 
 	BlackholeAddressTable(AOServConnector connector) {
 		super(connector, BlackholeAddress.class);

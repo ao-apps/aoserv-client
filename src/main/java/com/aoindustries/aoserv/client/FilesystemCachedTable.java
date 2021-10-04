@@ -86,7 +86,7 @@ public abstract class FilesystemCachedTable<K, V extends FilesystemCachedObject<
 		super(connector, clazz);
 	}
 
-	abstract protected int getRecordLength();
+	protected abstract int getRecordLength();
 
 	/**
 	 * Clears the cache, freeing up memory.  The data will be reloaded upon
@@ -180,7 +180,7 @@ public abstract class FilesystemCachedTable<K, V extends FilesystemCachedObject<
 	}
 
 	@Override
-	final protected V getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
+	protected final V getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
 		if(value == null) return null;
 		Table schemaTable=getTableSchema();
 		Column schemaColumn=schemaTable.getSchemaColumn(connector, col);
@@ -242,7 +242,7 @@ public abstract class FilesystemCachedTable<K, V extends FilesystemCachedObject<
 	}
 
 	@Override
-	final public boolean isLoaded() {
+	public final boolean isLoaded() {
 		return lastLoaded!=-1;
 	}
 

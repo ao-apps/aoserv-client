@@ -41,7 +41,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class PipeTable extends CachedTableIntegerKey<Pipe> {
+public final class PipeTable extends CachedTableIntegerKey<Pipe> {
 
 	PipeTable(AOServConnector connector) {
 		super(connector, Pipe.class);

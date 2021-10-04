@@ -41,7 +41,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Encoding extends GlobalObjectIntegerKey<Encoding> {
+public final class Encoding extends GlobalObjectIntegerKey<Encoding> {
 
 	static final int
 		COLUMN_PKEY=0,

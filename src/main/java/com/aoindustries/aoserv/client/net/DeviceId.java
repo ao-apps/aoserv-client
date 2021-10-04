@@ -39,7 +39,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class DeviceId extends GlobalObjectStringKey<DeviceId> implements Comparable<DeviceId> {
+public final class DeviceId extends GlobalObjectStringKey<DeviceId> implements Comparable<DeviceId> {
 
 	static final int COLUMN_NAME=0;
 	static final String COLUMN_NAME_name = "name";

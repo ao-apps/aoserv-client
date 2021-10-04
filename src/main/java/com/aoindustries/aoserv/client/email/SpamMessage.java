@@ -44,7 +44,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class SpamMessage extends AOServObject<Integer, SpamMessage> implements SingleTableObject<Integer, SpamMessage> {
+public final class SpamMessage extends AOServObject<Integer, SpamMessage> implements SingleTableObject<Integer, SpamMessage> {
 
 	static final int
 		COLUMN_PKEY=0,

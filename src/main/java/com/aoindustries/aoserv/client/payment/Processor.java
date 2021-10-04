@@ -40,7 +40,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class Processor extends CachedObjectStringKey<Processor> {
+public final class Processor extends CachedObjectStringKey<Processor> {
 
 	static final int
 		COLUMN_PROVIDER_ID=0,

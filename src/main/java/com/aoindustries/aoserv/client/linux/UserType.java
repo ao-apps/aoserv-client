@@ -48,7 +48,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class UserType extends GlobalObjectStringKey<UserType> {
+public final class UserType extends GlobalObjectStringKey<UserType> {
 
 	static final int COLUMN_NAME=0;
 	static final String COLUMN_DESCRIPTION_name = "description";

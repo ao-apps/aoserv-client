@@ -45,7 +45,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class BankTransaction extends AOServObject<Integer, BankTransaction> implements SingleTableObject<Integer, BankTransaction> {
+public final class BankTransaction extends AOServObject<Integer, BankTransaction> implements SingleTableObject<Integer, BankTransaction> {
 
 	static final int COLUMN_ID = 0;
 	static final String COLUMN_ID_name = "id";

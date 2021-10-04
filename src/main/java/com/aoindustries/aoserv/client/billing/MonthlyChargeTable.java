@@ -50,7 +50,7 @@ import java.util.Map;
  *
  * @author  AO Industries, Inc.
  */
-final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharge> {
+public final class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharge> {
 
 	MonthlyChargeTable(AOServConnector connector) {
 		super(connector, MonthlyCharge.class);

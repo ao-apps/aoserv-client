@@ -50,5 +50,5 @@ public abstract class CachedTableStringKey<V extends CachedObjectStringKey<V>> e
 	/**
 	 * @see  #get(java.lang.Object)
 	 */
-	abstract public V get(String pkey) throws IOException, SQLException;
+	public abstract V get(String pkey) throws IOException, SQLException;
 }

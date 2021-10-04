@@ -40,7 +40,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Header extends CachedObjectIntegerKey<Header> {
+public final class Header extends CachedObjectIntegerKey<Header> {
 
 	static final int
 		COLUMN_PKEY = 0,

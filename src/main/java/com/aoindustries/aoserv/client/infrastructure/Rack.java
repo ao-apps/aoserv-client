@@ -36,7 +36,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Rack extends CachedObjectIntegerKey<Rack> {
+public final class Rack extends CachedObjectIntegerKey<Rack> {
 
 	static final int
 		COLUMN_PKEY=0,

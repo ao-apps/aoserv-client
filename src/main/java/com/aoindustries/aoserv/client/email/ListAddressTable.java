@@ -40,7 +40,7 @@ import java.util.ArrayList;
  *
  * @author  AO Industries, Inc.
  */
-final public class ListAddressTable extends CachedTableIntegerKey<ListAddress> {
+public final class ListAddressTable extends CachedTableIntegerKey<ListAddress> {
 
 	ListAddressTable(AOServConnector connector) {
 		super(connector, ListAddress.class);

@@ -41,7 +41,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class FileReplicationScheduleTable extends CachedTableIntegerKey<FileReplicationSchedule> {
+public final class FileReplicationScheduleTable extends CachedTableIntegerKey<FileReplicationSchedule> {
 
 	FileReplicationScheduleTable(AOServConnector connector) {
 		super(connector, FileReplicationSchedule.class);

@@ -40,7 +40,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class RecordTable extends CachedTableIntegerKey<Record> {
+public final class RecordTable extends CachedTableIntegerKey<Record> {
 
 	RecordTable(AOServConnector connector) {
 		super(connector, Record.class);
