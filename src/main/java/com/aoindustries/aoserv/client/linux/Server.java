@@ -1080,7 +1080,7 @@ public final class Server
 	}
 
 	public void startXfs() throws IOException, SQLException {
-		table.getConnector().requestUpdate(false,AoservProtocol.CommandID.START_XFS, pkey);
+		table.getConnector().requestUpdate(false, AoservProtocol.CommandID.START_XFS, pkey);
 	}
 
 	public void startXvfb() throws IOException, SQLException {

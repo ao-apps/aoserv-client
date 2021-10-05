@@ -47,17 +47,17 @@ public final class PasswordChecker {
 	 * The different ways months may be represented in the English
 	 */
 	private static final String[] months={
-		"jan","january",
-		"feb","february",
-		"mar","march",
-		"apr","april",
+		"jan", "january",
+		"feb", "february",
+		"mar", "march",
+		"apr", "april",
 		"may",
-		"jun","june",
-		"jul","july",
-		"aug","august",
-		"sep","september",
-		"nov","november",
-		"dec","december"
+		"jun", "june",
+		"jul", "july",
+		"aug", "august",
+		"sep", "september",
+		"nov", "november",
+		"dec", "december"
 	};
 
 	private static final String GOOD_KEY = "good";
@@ -300,7 +300,7 @@ public final class PasswordChecker {
 		return false;
 	}
 
-	public static int indexOfIgnoreCase(String string,byte[] buffer,int wordstart,int wordlen) {
+	public static int indexOfIgnoreCase(String string, byte[] buffer, int wordstart, int wordlen) {
 		int endpos=string.length()-wordlen;
 		int wordend=wordstart+wordlen;
 		Loop:

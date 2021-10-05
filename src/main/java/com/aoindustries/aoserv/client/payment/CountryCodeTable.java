@@ -63,7 +63,7 @@ public final class CountryCodeTable extends GlobalTableStringKey<CountryCode> {
 	}
 
 	public List<CountryCode> getCountryCodesByPriority(int prioritySize, int[] priorityCounter) throws IOException, SQLException {
-		Map<String,int[]> counts = new HashMap<>();
+		Map<String, int[]> counts = new HashMap<>();
 
 		// Add the business_profiles
 		Set<Account.Name> finishedAccounts=new HashSet<>();
