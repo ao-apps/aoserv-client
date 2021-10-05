@@ -69,20 +69,20 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 	</developers>
 
 	<scm>
-		<connection>scm:git:git://github.com/aoindustries/aoserv-client.git</connection>
-		<developerConnection>scm:git:git@github.com:aoindustries/aoserv-client.git</developerConnection>
-		<url>https://github.com/aoindustries/aoserv-client</url>
+		<connection>scm:git:git://github.com/ao-apps/aoserv-client.git</connection>
+		<developerConnection>scm:git:git@github.com:ao-apps/aoserv-client.git</developerConnection>
+		<url>https://github.com/ao-apps/aoserv-client</url>
 		<tag>HEAD</tag>
 	</scm>
 
 	<issueManagement>
 		<system>GitHub Issues</system>
-		<url>https://github.com/aoindustries/aoserv-client/issues</url>
+		<url>https://github.com/ao-apps/aoserv-client/issues</url>
 	</issueManagement>
 
 	<ciManagement>
 		<system>GitHub Actions</system>
-		<url>https://github.com/aoindustries/aoserv-client/actions</url>
+		<url>https://github.com/ao-apps/aoserv-client/actions</url>
 	</ciManagement>
 
 	<repositories>
