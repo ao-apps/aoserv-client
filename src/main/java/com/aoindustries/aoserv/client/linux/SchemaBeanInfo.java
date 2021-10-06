@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2018, 2020  AO Industries, Inc.
+ * Copyright (C) 2018, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -30,33 +30,31 @@ import java.beans.SimpleBeanInfo;
 
 public class SchemaBeanInfo extends SimpleBeanInfo {
 
-	@SuppressWarnings("VolatileArrayField")
-	private static volatile PropertyDescriptor[] properties;
+	private static final PropertyDescriptor[] properties;
+	static {
+		try {
+			properties = new PropertyDescriptor[] {
+				new PropertyDescriptor("DaemonAcl",   Schema.class, "getDaemonAcl",   null),
+				new PropertyDescriptor("Group",       Schema.class, "getGroup",       null),
+				new PropertyDescriptor("GroupServer", Schema.class, "getGroupServer", null),
+				new PropertyDescriptor("GroupType",   Schema.class, "getGroupType",   null),
+				new PropertyDescriptor("GroupUser",   Schema.class, "getGroupUser",   null),
+				new PropertyDescriptor("Server",      Schema.class, "getServer",      null),
+				new PropertyDescriptor("Shell",       Schema.class, "getShell",       null),
+				new PropertyDescriptor("TimeZone",    Schema.class, "getTimeZone",    null),
+				new PropertyDescriptor("User",        Schema.class, "getUser",        null),
+				new PropertyDescriptor("UserServer",  Schema.class, "getUserServer",  null),
+				new PropertyDescriptor("UserType",    Schema.class, "getUserType",    null),
+			};
+		} catch(IntrospectionException err) {
+			throw new ExceptionInInitializerError(err);
+		}
+	}
 
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Not copying array for performance
 	public PropertyDescriptor[] getPropertyDescriptors () {
-		try {
-			PropertyDescriptor[] props = properties;
-			if(props == null) {
-				props = new PropertyDescriptor[] {
-					new PropertyDescriptor("DaemonAcl", Schema.class, "getDaemonAcl", null),
-					new PropertyDescriptor("Group", Schema.class, "getGroup", null),
-					new PropertyDescriptor("GroupServer", Schema.class, "getGroupServer", null),
-					new PropertyDescriptor("GroupType", Schema.class, "getGroupType", null),
-					new PropertyDescriptor("GroupUser", Schema.class, "getGroupUser", null),
-					new PropertyDescriptor("Server", Schema.class, "getServer", null),
-					new PropertyDescriptor("Shell", Schema.class, "getShell", null),
-					new PropertyDescriptor("TimeZone", Schema.class, "getTimeZone", null),
-					new PropertyDescriptor("User", Schema.class, "getUser", null),
-					new PropertyDescriptor("UserServer", Schema.class, "getUserServer", null),
-					new PropertyDescriptor("UserType", Schema.class, "getUserType", null),
-				};
-				properties = props;
-			}
-			return props; // Not copying array for performance
-		} catch(IntrospectionException err) {
-			throw new AssertionError(err);
-		}
+		return properties;
 	}
 
 	/**

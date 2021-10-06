@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2018, 2020  AO Industries, Inc.
+ * Copyright (C) 2018, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -30,30 +30,28 @@ import java.beans.SimpleBeanInfo;
 
 public class SchemaBeanInfo extends SimpleBeanInfo {
 
-	@SuppressWarnings("VolatileArrayField")
-	private static volatile PropertyDescriptor[] properties;
+	private static final PropertyDescriptor[] properties;
+	static {
+		try {
+			properties = new PropertyDescriptor[] {
+				new PropertyDescriptor("Action",     Schema.class, "getAction",     null),
+				new PropertyDescriptor("ActionType", Schema.class, "getActionType", null),
+				new PropertyDescriptor("Assignment", Schema.class, "getAssignment", null),
+				new PropertyDescriptor("Language",   Schema.class, "getLanguage",   null),
+				new PropertyDescriptor("Priority",   Schema.class, "getPriority",   null),
+				new PropertyDescriptor("Status",     Schema.class, "getStatus",     null),
+				new PropertyDescriptor("Ticket",     Schema.class, "getTicket",     null),
+				new PropertyDescriptor("TicketType", Schema.class, "getTicketType", null),
+			};
+		} catch(IntrospectionException err) {
+			throw new ExceptionInInitializerError(err);
+		}
+	}
 
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Not copying array for performance
 	public PropertyDescriptor[] getPropertyDescriptors () {
-		try {
-			PropertyDescriptor[] props = properties;
-			if(props == null) {
-				props = new PropertyDescriptor[] {
-					new PropertyDescriptor("Action", Schema.class, "getAction", null),
-					new PropertyDescriptor("ActionType", Schema.class, "getActionType", null),
-					new PropertyDescriptor("Assignment", Schema.class, "getAssignment", null),
-					new PropertyDescriptor("Language", Schema.class, "getLanguage", null),
-					new PropertyDescriptor("Priority", Schema.class, "getPriority", null),
-					new PropertyDescriptor("Status", Schema.class, "getStatus", null),
-					new PropertyDescriptor("Ticket", Schema.class, "getTicket", null),
-					new PropertyDescriptor("TicketType", Schema.class, "getTicketType", null),
-				};
-				properties = props;
-			}
-			return props; // Not copying array for performance
-		} catch(IntrospectionException err) {
-			throw new AssertionError(err);
-		}
+		return properties;
 	}
 
 	/**

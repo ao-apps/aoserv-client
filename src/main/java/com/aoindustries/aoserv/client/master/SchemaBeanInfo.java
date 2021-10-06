@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2018, 2020  AO Industries, Inc.
+ * Copyright (C) 2018, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -30,29 +30,27 @@ import java.beans.SimpleBeanInfo;
 
 public class SchemaBeanInfo extends SimpleBeanInfo {
 
-	@SuppressWarnings("VolatileArrayField")
-	private static volatile PropertyDescriptor[] properties;
+	private static final PropertyDescriptor[] properties;
+	static {
+		try {
+			properties = new PropertyDescriptor[] {
+				new PropertyDescriptor("AdministratorPermission", Schema.class, "getAdministratorPermission", null),
+				new PropertyDescriptor("Process",                 Schema.class, "getProcess",                 null),
+				new PropertyDescriptor("ServerStat",              Schema.class, "getServerStat",              null),
+				new PropertyDescriptor("Permission",              Schema.class, "getPermission",              null),
+				new PropertyDescriptor("User",                    Schema.class, "getUser",                    null),
+				new PropertyDescriptor("UserAcl",                 Schema.class, "getUserAcl",                 null),
+				new PropertyDescriptor("UserHost",                Schema.class, "getUserHost",                null),
+			};
+		} catch(IntrospectionException err) {
+			throw new ExceptionInInitializerError(err);
+		}
+	}
 
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Not copying array for performance
 	public PropertyDescriptor[] getPropertyDescriptors () {
-		try {
-			PropertyDescriptor[] props = properties;
-			if(props == null) {
-				props = new PropertyDescriptor[] {
-					new PropertyDescriptor("AdministratorPermission", Schema.class, "getAdministratorPermission", null),
-					new PropertyDescriptor("Process", Schema.class, "getProcess", null),
-					new PropertyDescriptor("ServerStat", Schema.class, "getServerStat", null),
-					new PropertyDescriptor("Permission", Schema.class, "getPermission", null),
-					new PropertyDescriptor("User", Schema.class, "getUser", null),
-					new PropertyDescriptor("UserAcl", Schema.class, "getUserAcl", null),
-					new PropertyDescriptor("UserHost", Schema.class, "getUserHost", null),
-				};
-				properties = props;
-			}
-			return props; // Not copying array for performance
-		} catch(IntrospectionException err) {
-			throw new AssertionError(err);
-		}
+		return properties;
 	}
 
 	/**

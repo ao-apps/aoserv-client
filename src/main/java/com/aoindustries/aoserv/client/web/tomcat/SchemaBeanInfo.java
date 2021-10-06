@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2018, 2020  AO Industries, Inc.
+ * Copyright (C) 2018, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -30,34 +30,32 @@ import java.beans.SimpleBeanInfo;
 
 public class SchemaBeanInfo extends SimpleBeanInfo {
 
-	@SuppressWarnings("VolatileArrayField")
-	private static volatile PropertyDescriptor[] properties;
+	private static final PropertyDescriptor[] properties;
+	static {
+		try {
+			properties = new PropertyDescriptor[] {
+				new PropertyDescriptor("Context",           Schema.class, "getContext",           null),
+				new PropertyDescriptor("ContextDataSource", Schema.class, "getContextDataSource", null),
+				new PropertyDescriptor("ContextParameter",  Schema.class, "getContextParameter",  null),
+				new PropertyDescriptor("JkMount",           Schema.class, "getJkMount",           null),
+				new PropertyDescriptor("JkProtocol",        Schema.class, "getJkProtocol",        null),
+				new PropertyDescriptor("PrivateTomcatSite", Schema.class, "getPrivateTomcatSite", null),
+				new PropertyDescriptor("SharedTomcat",      Schema.class, "getSharedTomcat",      null),
+				new PropertyDescriptor("SharedTomcatSite",  Schema.class, "getSharedTomcatSite",  null),
+				new PropertyDescriptor("Site",              Schema.class, "getSite",              null),
+				new PropertyDescriptor("Version",           Schema.class, "getVersion",           null),
+				new PropertyDescriptor("Worker",            Schema.class, "getWorker",            null),
+				new PropertyDescriptor("WorkerName",        Schema.class, "getWorkerName",        null),
+			};
+		} catch(IntrospectionException err) {
+			throw new ExceptionInInitializerError(err);
+		}
+	}
 
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Not copying array for performance
 	public PropertyDescriptor[] getPropertyDescriptors () {
-		try {
-			PropertyDescriptor[] props = properties;
-			if(props == null) {
-				props = new PropertyDescriptor[] {
-					new PropertyDescriptor("Context", Schema.class, "getContext", null),
-					new PropertyDescriptor("ContextDataSource", Schema.class, "getContextDataSource", null),
-					new PropertyDescriptor("ContextParameter", Schema.class, "getContextParameter", null),
-					new PropertyDescriptor("JkMount", Schema.class, "getJkMount", null),
-					new PropertyDescriptor("JkProtocol", Schema.class, "getJkProtocol", null),
-					new PropertyDescriptor("PrivateTomcatSite", Schema.class, "getPrivateTomcatSite", null),
-					new PropertyDescriptor("SharedTomcat", Schema.class, "getSharedTomcat", null),
-					new PropertyDescriptor("SharedTomcatSite", Schema.class, "getSharedTomcatSite", null),
-					new PropertyDescriptor("Site", Schema.class, "getSite", null),
-					new PropertyDescriptor("Version", Schema.class, "getVersion", null),
-					new PropertyDescriptor("Worker", Schema.class, "getWorker", null),
-					new PropertyDescriptor("WorkerName", Schema.class, "getWorkerName", null),
-				};
-				properties = props;
-			}
-			return props; // Not copying array for performance
-		} catch(IntrospectionException err) {
-			throw new AssertionError(err);
-		}
+		return properties;
 	}
 
 	/**

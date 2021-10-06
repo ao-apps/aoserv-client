@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -30,36 +30,34 @@ import java.beans.SimpleBeanInfo;
 
 public class SchemaBeanInfo extends SimpleBeanInfo {
 
-	@SuppressWarnings("VolatileArrayField")
-	private static volatile PropertyDescriptor[] properties;
+	private static final PropertyDescriptor[] properties;
+	static {
+		try {
+			properties = new PropertyDescriptor[] {
+				new PropertyDescriptor("Currency",               Schema.class, "getCurrency",               null),
+				new PropertyDescriptor("MonthlyCharge",          Schema.class, "getMonthlyCharge",          null),
+				new PropertyDescriptor("NoticeLog",              Schema.class, "getNoticeLog",              null),
+				new PropertyDescriptor("NoticeLog.balance",      Schema.class, "getNoticeLogBalance",       null),
+				new PropertyDescriptor("NoticeType",             Schema.class, "getNoticeType",             null),
+				new PropertyDescriptor("Package",                Schema.class, "getPackage",                null),
+				new PropertyDescriptor("PackageCategory",        Schema.class, "getPackageCategory",        null),
+				new PropertyDescriptor("PackageDefinition",      Schema.class, "getPackageDefinition",      null),
+				new PropertyDescriptor("PackageDefinitionLimit", Schema.class, "getPackageDefinitionLimit", null),
+				new PropertyDescriptor("Resource",               Schema.class, "getResource",               null),
+				new PropertyDescriptor("Transaction",            Schema.class, "getTransaction",            null),
+				new PropertyDescriptor("TransactionType",        Schema.class, "getTransactionType",        null),
+				new PropertyDescriptor("WhoisHistory",           Schema.class, "getWhoisHistory",           null),
+				new PropertyDescriptor("WhoisHistoryAccount",    Schema.class, "getWhoisHistoryAccount",    null),
+			};
+		} catch(IntrospectionException err) {
+			throw new ExceptionInInitializerError(err);
+		}
+	}
 
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Not copying array for performance
 	public PropertyDescriptor[] getPropertyDescriptors () {
-		try {
-			PropertyDescriptor[] props = properties;
-			if(props == null) {
-				props = new PropertyDescriptor[] {
-					new PropertyDescriptor("Currency", Schema.class, "getCurrency", null),
-					new PropertyDescriptor("MonthlyCharge", Schema.class, "getMonthlyCharge", null),
-					new PropertyDescriptor("NoticeLog", Schema.class, "getNoticeLog", null),
-					new PropertyDescriptor("NoticeLog.balance", Schema.class, "getNoticeLogBalance", null),
-					new PropertyDescriptor("NoticeType", Schema.class, "getNoticeType", null),
-					new PropertyDescriptor("Package", Schema.class, "getPackage", null),
-					new PropertyDescriptor("PackageCategory", Schema.class, "getPackageCategory", null),
-					new PropertyDescriptor("PackageDefinition", Schema.class, "getPackageDefinition", null),
-					new PropertyDescriptor("PackageDefinitionLimit", Schema.class, "getPackageDefinitionLimit", null),
-					new PropertyDescriptor("Resource", Schema.class, "getResource", null),
-					new PropertyDescriptor("Transaction", Schema.class, "getTransaction", null),
-					new PropertyDescriptor("TransactionType", Schema.class, "getTransactionType", null),
-					new PropertyDescriptor("WhoisHistory", Schema.class, "getWhoisHistory", null),
-					new PropertyDescriptor("WhoisHistoryAccount", Schema.class, "getWhoisHistoryAccount", null),
-				};
-				properties = props;
-			}
-			return props; // Not copying array for performance
-		} catch(IntrospectionException err) {
-			throw new AssertionError(err);
-		}
+		return properties;
 	}
 
 	/**

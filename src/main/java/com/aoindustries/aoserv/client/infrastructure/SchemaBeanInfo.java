@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2018, 2020  AO Industries, Inc.
+ * Copyright (C) 2018, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -30,28 +30,26 @@ import java.beans.SimpleBeanInfo;
 
 public class SchemaBeanInfo extends SimpleBeanInfo {
 
-	@SuppressWarnings("VolatileArrayField")
-	private static volatile PropertyDescriptor[] properties;
+	private static final PropertyDescriptor[] properties;
+	static {
+		try {
+			properties = new PropertyDescriptor[] {
+				new PropertyDescriptor("PhysicalServer", Schema.class, "getPhysicalServer", null),
+				new PropertyDescriptor("ProcessorType",  Schema.class, "getProcessorType",  null),
+				new PropertyDescriptor("Rack",           Schema.class, "getRack",           null),
+				new PropertyDescriptor("ServerFarm",     Schema.class, "getServerFarm",     null),
+				new PropertyDescriptor("VirtualDisk",    Schema.class, "getVirtualDisk",    null),
+				new PropertyDescriptor("VirtualServer",  Schema.class, "getVirtualServer",  null),
+			};
+		} catch(IntrospectionException err) {
+			throw new ExceptionInInitializerError(err);
+		}
+	}
 
 	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Not copying array for performance
 	public PropertyDescriptor[] getPropertyDescriptors () {
-		try {
-			PropertyDescriptor[] props = properties;
-			if(props == null) {
-				props = new PropertyDescriptor[] {
-					new PropertyDescriptor("PhysicalServer", Schema.class, "getPhysicalServer", null),
-					new PropertyDescriptor("ProcessorType", Schema.class, "getProcessorType", null),
-					new PropertyDescriptor("Rack", Schema.class, "getRack", null),
-					new PropertyDescriptor("ServerFarm", Schema.class, "getServerFarm", null),
-					new PropertyDescriptor("VirtualDisk", Schema.class, "getVirtualDisk", null),
-					new PropertyDescriptor("VirtualServer", Schema.class, "getVirtualServer", null),
-				};
-				properties = props;
-			}
-			return props; // Not copying array for performance
-		} catch(IntrospectionException err) {
-			throw new AssertionError(err);
-		}
+		return properties;
 	}
 
 	/**
