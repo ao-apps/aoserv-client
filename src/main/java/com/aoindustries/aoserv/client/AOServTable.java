@@ -518,7 +518,7 @@ public abstract class AOServTable<K, V extends AOServObject<K, V>> implements It
 										size == -1 ? null : size
 									);
 								}
-								
+
 								long objCount = 0;
 								while((code = in.readByte()) == AoservProtocol.NEXT) {
 									V obj = getNewObject();
@@ -1021,7 +1021,7 @@ public abstract class AOServTable<K, V extends AOServObject<K, V>> implements It
 						modified = true;
 					}
 				}
-				if(modified) eventLock.notify();
+				if(modified) eventLock.notifyAll();
 			}
 		}
 	}
