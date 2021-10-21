@@ -882,8 +882,8 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
 	 */
 	private static String getUsernameForEmail(Email email) {
 		String localPart = email.getLocalPart();
-        int plusPos = localPart.indexOf('+', 1);
-        if(plusPos==-1) return localPart;
+		int plusPos = localPart.indexOf('+', 1);
+		if(plusPos==-1) return localPart;
 		return localPart.substring(0, plusPos);
 	}
 

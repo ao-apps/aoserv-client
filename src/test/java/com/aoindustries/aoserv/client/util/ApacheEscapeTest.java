@@ -33,157 +33,157 @@ import org.junit.Test;
 public class ApacheEscapeTest {
 
 	@Test
-    public void testEmptyIsQuoted() {
+	public void testEmptyIsQuoted() {
 		assertEquals("\"\"", escape(null, ""));
-    }
+	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testNullNotAllowedInsideVariable() {
 		escape(DEFAULT_DOLLAR_VARIABLE, "${test\0}");
-    }
+	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testNullNotAllowedOutsideVariable() {
 		escape(DEFAULT_DOLLAR_VARIABLE, "${test}\0");
-    }
+	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testBackspaceNotAllowedBeginning() {
 		escape(null, "\bTest");
-    }
+	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testBackspaceNotAllowedMiddle() {
 		escape(null, "Test\btest");
-    }
+	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testBackspaceNotAllowedEnd() {
 		escape(null, "Test\b");
-    }
+	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testFormFeedNotAllowedBeginning() {
 		escape(null, "\fTest");
-    }
+	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testFormFeedNotAllowedMiddle() {
 		escape(null, "Test\ftest");
-    }
+	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testFormFeedNotAllowedEnd() {
 		escape(null, "Test\f");
-    }
+	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testNewlineNotAllowedBeginning() {
 		escape(null, "\nTest");
-    }
+	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testNewlineNotAllowedMiddle() {
 		escape(null, "Test\ntest");
-    }
+	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testNewlineNotAllowedEnd() {
 		escape(null, "Test\n");
-    }
+	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testCarriageReturnNotAllowedBeginning() {
 		escape(null, "\rTest");
-    }
+	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testCarriageReturnNotAllowedMiddle() {
 		escape(null, "Test\rtest");
-    }
+	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testCarriageReturnNotAllowedEnd() {
 		escape(null, "Test\r");
-    }
+	}
 
 	@Test
-    public void testSpaceBeginning() {
+	public void testSpaceBeginning() {
 		assertEquals("\" Test\"", escape(null, " Test"));
-    }
+	}
 
 	@Test
-    public void testSpaceMiddle() {
+	public void testSpaceMiddle() {
 		assertEquals("\"Test test\"", escape(null, "Test test"));
-    }
+	}
 
 	@Test
-    public void testSpaceEnd() {
+	public void testSpaceEnd() {
 		assertEquals("\"Test \"", escape(null, "Test "));
-    }
+	}
 
 	@Test
-    public void testTabBeginning() {
+	public void testTabBeginning() {
 		assertEquals("\"\tTest\"", escape(null, "\tTest"));
-    }
+	}
 
 	@Test
-    public void testTabMiddle() {
+	public void testTabMiddle() {
 		assertEquals("\"Test\ttest\"", escape(null, "Test\ttest"));
-    }
+	}
 
 	@Test
-    public void testTabEnd() {
+	public void testTabEnd() {
 		assertEquals("\"Test\t\"", escape(null, "Test\t"));
-    }
+	}
 
 	@Test
-    public void testSingleQuoteBeginning() {
+	public void testSingleQuoteBeginning() {
 		assertEquals("\"'Test\"", escape(null, "'Test"));
-    }
+	}
 
 	@Test
-    public void testSingleQuoteMiddle() {
+	public void testSingleQuoteMiddle() {
 		assertEquals("\"Test'test\"", escape(null, "Test\'test"));
-    }
+	}
 
 	@Test
-    public void testSingleQuoteEnd() {
+	public void testSingleQuoteEnd() {
 		assertEquals("\"Test'\"", escape(null, "Test'"));
-    }
+	}
 
 	@Test
-    public void testLessThanBeginning() {
+	public void testLessThanBeginning() {
 		assertEquals("\"<Test\"", escape(null, "<Test"));
-    }
+	}
 
 	@Test
-    public void testLessThanMiddle() {
+	public void testLessThanMiddle() {
 		assertEquals("\"Test<test\"", escape(null, "Test<test"));
-    }
+	}
 
 	@Test
-    public void testLessThanEnd() {
+	public void testLessThanEnd() {
 		assertEquals("\"Test<\"", escape(null, "Test<"));
-    }
+	}
 
 	@Test
-    public void testGreaterThanBeginning() {
+	public void testGreaterThanBeginning() {
 		assertEquals("\">Test\"", escape(null, ">Test"));
-    }
+	}
 
 	@Test
-    public void testGreaterThanMiddle() {
+	public void testGreaterThanMiddle() {
 		assertEquals("\"Test>test\"", escape(null, "Test>test"));
-    }
+	}
 
 	@Test
-    public void testGreaterThanEnd() {
+	public void testGreaterThanEnd() {
 		assertEquals("\"Test>\"", escape(null, "Test>"));
-    }
+	}
 
 	@Test
-    public void testTabOnlyControlCharacterAllowed() {
+	public void testTabOnlyControlCharacterAllowed() {
 		for(char ch = 0; ch < ' '; ch++) {
 			if(ch != '\t') {
 				try {
@@ -206,207 +206,207 @@ public class ApacheEscapeTest {
 				}
 			}
 		}
-    }
+	}
 
 	@Test
-    public void testNoEscapeDollarOnly() {
+	public void testNoEscapeDollarOnly() {
 		assertEquals("$", escape(DEFAULT_DOLLAR_VARIABLE, "$"));
-    }
+	}
 
 	@Test
-    public void testNoEscapeDollarOnlyNoDollarVariable() {
+	public void testNoEscapeDollarOnlyNoDollarVariable() {
 		assertEquals("$", escape(null, "$"));
-    }
+	}
 
 	@Test
-    public void testNoEscapeIncompleteStart() {
+	public void testNoEscapeIncompleteStart() {
 		assertEquals("${", escape(DEFAULT_DOLLAR_VARIABLE, "${"));
-    }
+	}
 
 	@Test
-    public void testNoEscapeIncompleteStartNoDollarVariable() {
+	public void testNoEscapeIncompleteStartNoDollarVariable() {
 		assertEquals("${", escape(null, "${"));
-    }
+	}
 
 	@Test
-    public void testNoEscapeIncompleteVariable() {
+	public void testNoEscapeIncompleteVariable() {
 		assertEquals("${test", escape(DEFAULT_DOLLAR_VARIABLE, "${test"));
-    }
+	}
 
 	@Test
-    public void testNoEscapeIncompleteVariableNoDollarVariable() {
+	public void testNoEscapeIncompleteVariableNoDollarVariable() {
 		assertEquals("${test", escape(null, "${test"));
-    }
+	}
 
 	@Test
-    public void testNoEscapeIncompleteVariableColon() {
+	public void testNoEscapeIncompleteVariableColon() {
 		assertEquals("${test:", escape(DEFAULT_DOLLAR_VARIABLE, "${test:"));
-    }
+	}
 
 	@Test
-    public void testNoEscapeIncompleteVariableColonNoDollarVariable() {
+	public void testNoEscapeIncompleteVariableColonNoDollarVariable() {
 		assertEquals("${test:", escape(null, "${test:"));
-    }
+	}
 
 	@Test
-    public void testNoEscapeIncompleteVariableColonMore() {
+	public void testNoEscapeIncompleteVariableColonMore() {
 		assertEquals("${test:more", escape(DEFAULT_DOLLAR_VARIABLE, "${test:more"));
-    }
+	}
 
 	@Test
-    public void testNoEscapeIncompleteVariableColonMoreNoDollarVariable() {
+	public void testNoEscapeIncompleteVariableColonMoreNoDollarVariable() {
 		assertEquals("${test:more", escape(null, "${test:more"));
-    }
+	}
 
 	@Test
-    public void testNoEscapeEmptyVariable() {
+	public void testNoEscapeEmptyVariable() {
 		assertEquals("${}", escape(DEFAULT_DOLLAR_VARIABLE, "${}"));
-    }
+	}
 
 	@Test
-    public void testNoEscapeEmptyVariableNoDollarVariable() {
+	public void testNoEscapeEmptyVariableNoDollarVariable() {
 		assertEquals("${}", escape(null, "${}"));
-    }
+	}
 
 	@Test
-    public void testNoEscapeColon() {
+	public void testNoEscapeColon() {
 		assertEquals("${:}", escape(DEFAULT_DOLLAR_VARIABLE, "${:}"));
-    }
+	}
 
 	@Test
-    public void testNoEscapeColonNoDollarVariable() {
+	public void testNoEscapeColonNoDollarVariable() {
 		assertEquals("${:}", escape(null, "${:}"));
-    }
+	}
 
 	@Test
-    public void testNoEscapeVariableColon() {
+	public void testNoEscapeVariableColon() {
 		assertEquals("${test:}", escape(DEFAULT_DOLLAR_VARIABLE, "${test:}"));
-    }
+	}
 
 	@Test
-    public void testNoEscapeVariableColonNoDollarVariable() {
+	public void testNoEscapeVariableColonNoDollarVariable() {
 		assertEquals("${test:}", escape(null, "${test:}"));
-    }
+	}
 
 	@Test
-    public void testNoEscapeColonVariable() {
+	public void testNoEscapeColonVariable() {
 		assertEquals("${:test}", escape(DEFAULT_DOLLAR_VARIABLE, "${:test}"));
-    }
+	}
 
 	@Test
-    public void testNoEscapeColonVariableNoDollarVariable() {
+	public void testNoEscapeColonVariableNoDollarVariable() {
 		assertEquals("${:test}", escape(null, "${:test}"));
-    }
+	}
 
 	@Test
-    public void testNoEscapeWithColonVariable() {
+	public void testNoEscapeWithColonVariable() {
 		assertEquals("${test:test}", escape(DEFAULT_DOLLAR_VARIABLE, "${test:test}"));
-    }
+	}
 
 	@Test
-    public void testNoEscapeWithColonVariableNoDollarVariable() {
+	public void testNoEscapeWithColonVariableNoDollarVariable() {
 		assertEquals("${test:test}", escape(null, "${test:test}"));
-    }
+	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testNoDollarEscapeSupported() {
 		escape(null, "${test}");
-    }
+	}
 
 	@Test
-    public void testDoubleQuoteBeginning() {
+	public void testDoubleQuoteBeginning() {
 		assertEquals("\"\\\"Test\"", escape(null, "\"Test"));
-    }
+	}
 
 	@Test
-    public void testDoubleQuoteMiddle() {
+	public void testDoubleQuoteMiddle() {
 		assertEquals("\"Test\\\"test\"", escape(null, "Test\"test"));
-    }
+	}
 
 	@Test
-    public void testDoubleQuoteEnd() {
+	public void testDoubleQuoteEnd() {
 		assertEquals("\"Test\\\"\"", escape(null, "Test\""));
-    }
+	}
 
 	@Test
-    public void testBackslashAlone() {
+	public void testBackslashAlone() {
 		assertEquals("\"\\\\\"", escape(null, "\\"));
-    }
+	}
 
 	@Test
-    public void testBackslashBeginning() {
+	public void testBackslashBeginning() {
 		assertEquals("\\Test", escape(null, "\\Test"));
-    }
+	}
 
 	@Test
-    public void testBackslashMiddle() {
+	public void testBackslashMiddle() {
 		assertEquals("Test\\test", escape(null, "Test\\test"));
-    }
+	}
 
 	@Test
-    public void testBackslashEnd() {
+	public void testBackslashEnd() {
 		// Careful to avoid accidental line contiuation by double-quoting ending with backslash
 		assertEquals("\"Test\\\\\"", escape(null, "Test\\"));
-    }
+	}
 
 	@Test
-    public void testDoubleBackslashAlone() {
+	public void testDoubleBackslashAlone() {
 		assertEquals("\"\\\\\\\\\"", escape(null, "\\\\"));
-    }
+	}
 
 	@Test
-    public void testDoubleBackslashBeginning() {
+	public void testDoubleBackslashBeginning() {
 		assertEquals("\\\\\\Test", escape(null, "\\\\Test"));
-    }
+	}
 
 	@Test
-    public void testDoubleBackslashMiddle() {
+	public void testDoubleBackslashMiddle() {
 		assertEquals("Test\\\\\\test", escape(null, "Test\\\\test"));
-    }
+	}
 
 	@Test
-    public void testDoubleBackslashEnd() {
+	public void testDoubleBackslashEnd() {
 		// Careful to avoid accidental line contiuation by double-quoting ending with backslash
 		assertEquals("\"Test\\\\\\\\\"", escape(null, "Test\\\\"));
-    }
+	}
 
 	@Test
-    public void testBackslashDoubleQuoteAlone() {
+	public void testBackslashDoubleQuoteAlone() {
 		assertEquals("\"\\\\\\\"\"", escape(null, "\\\""));
-    }
+	}
 
 	@Test
-    public void testBackslashDoubleQuoteBeginning() {
+	public void testBackslashDoubleQuoteBeginning() {
 		assertEquals("\"\\\\\\\"Test\"", escape(null, "\\\"Test"));
-    }
+	}
 
 	@Test
-    public void testBackslashDoubleQuoteMiddle() {
+	public void testBackslashDoubleQuoteMiddle() {
 		assertEquals("\"Test\\\\\\\"test\"", escape(null, "Test\\\"test"));
-    }
+	}
 
 	@Test
-    public void testBackslashDoubleQuoteEnd() {
+	public void testBackslashDoubleQuoteEnd() {
 		assertEquals("\"Test\\\\\\\"\"", escape(null, "Test\\\""));
-    }
+	}
 
 	@Test
-    public void testBackslashSingleQuoteAlone() {
+	public void testBackslashSingleQuoteAlone() {
 		assertEquals("\"\\'\"", escape(null, "\\'"));
-    }
+	}
 
 	@Test
-    public void testBackslashSingleQuoteBeginning() {
+	public void testBackslashSingleQuoteBeginning() {
 		assertEquals("\"\\'Test\"", escape(null, "\\'Test"));
-    }
+	}
 
 	@Test
-    public void testBackslashSingleQuoteMiddle() {
+	public void testBackslashSingleQuoteMiddle() {
 		assertEquals("\"Test\\'test\"", escape(null, "Test\\'test"));
-    }
+	}
 
 	@Test
-    public void testBackslashSingleQuoteEnd() {
+	public void testBackslashSingleQuoteEnd() {
 		assertEquals("\"Test\\'\"", escape(null, "Test\\'"));
-    }
+	}
 }
