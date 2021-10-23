@@ -187,16 +187,20 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
 	public static final Name
 		/** Super user */
 		POSTGRES,
-		/** System roles, PostgreSQL 10+ */
+		/** Default roles, PostgreSQL 10+ - https://www.postgresql.org/docs/10/default-roles.html */
 		PG_MONITOR,
 		PG_READ_ALL_SETTINGS,
 		PG_READ_ALL_STATS,
 		PG_SIGNAL_BACKEND,
 		PG_STAT_SCAN_TABLES,
-		/** System roles, PostgreSQL 11+ */
+		/** Default roles, PostgreSQL 11+ - https://www.postgresql.org/docs/11/default-roles.html */
 		PG_EXECUTE_SERVER_PROGRAM,
 		PG_READ_SERVER_FILES,
 		PG_WRITE_SERVER_FILES,
+		// Predefined roles, PostgreSQL 14+ - https://www.postgresql.org/docs/14/predefined-roles.html
+		PG_READ_ALL_DATA,
+		PG_WRITE_ALL_DATA,
+		PG_DATABASE_OWNER,
 		/** Monitoring */
 		POSTGRESMON,
 		/** AO Admin */
@@ -209,16 +213,20 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
 		try {
 			// Super user
 			POSTGRES = Name.valueOf("postgres");
-			// System roles, PostgreSQL 10+
+			// Default roles, PostgreSQL 10+ - https://www.postgresql.org/docs/10/default-roles.html
 			PG_MONITOR = Name.valueOf("pg_monitor");
 			PG_READ_ALL_SETTINGS = Name.valueOf("pg_read_all_settings");
 			PG_READ_ALL_STATS = Name.valueOf("pg_read_all_stats");
 			PG_SIGNAL_BACKEND = Name.valueOf("pg_signal_backend");
 			PG_STAT_SCAN_TABLES = Name.valueOf("pg_stat_scan_tables");
-			// System roles, PostgreSQL 11+
+			// Default roles, PostgreSQL 11+ - https://www.postgresql.org/docs/11/default-roles.html
 			PG_EXECUTE_SERVER_PROGRAM = Name.valueOf("pg_execute_server_program");
 			PG_READ_SERVER_FILES = Name.valueOf("pg_read_server_files");
 			PG_WRITE_SERVER_FILES = Name.valueOf("pg_write_server_files");
+			// Predefined roles, PostgreSQL 14+ - https://www.postgresql.org/docs/14/predefined-roles.html
+			PG_READ_ALL_DATA = Name.valueOf("pg_read_all_data");
+			PG_WRITE_ALL_DATA = Name.valueOf("pg_write_all_data");
+			PG_DATABASE_OWNER = Name.valueOf("pg_database_owner");
 			// Monitoring
 			POSTGRESMON = Name.valueOf("postgresmon");
 			// AO Admin
@@ -238,16 +246,20 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
 		return
 			// Super user
 			username.equals(POSTGRES)
-			// System roles, PostgreSQL 10+
+			// Default roles, PostgreSQL 10+ - https://www.postgresql.org/docs/10/default-roles.html
 			|| username.equals(PG_MONITOR)
 			|| username.equals(PG_READ_ALL_SETTINGS)
 			|| username.equals(PG_READ_ALL_STATS)
 			|| username.equals(PG_SIGNAL_BACKEND)
 			|| username.equals(PG_STAT_SCAN_TABLES)
-			// System roles, PostgreSQL 11+
+			// Default roles, PostgreSQL 11+ - https://www.postgresql.org/docs/11/default-roles.html
 			|| username.equals(PG_EXECUTE_SERVER_PROGRAM)
 			|| username.equals(PG_READ_SERVER_FILES)
 			|| username.equals(PG_WRITE_SERVER_FILES)
+			// Predefined roles, PostgreSQL 14+ - https://www.postgresql.org/docs/14/predefined-roles.html
+			|| username.equals(PG_READ_ALL_DATA)
+			|| username.equals(PG_WRITE_ALL_DATA)
+			|| username.equals(PG_DATABASE_OWNER)
 			// Monitoring
 			|| username.equals(POSTGRESMON)
 			// AO Admin
