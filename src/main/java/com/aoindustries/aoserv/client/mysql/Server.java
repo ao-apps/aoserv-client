@@ -175,11 +175,10 @@ public final class Server extends CachedObjectIntegerKey<Server> {
 		}
 
 		@Override
-		public boolean equals(Object O) {
+		public boolean equals(Object obj) {
 			return
-				O!=null
-				&& O instanceof Name
-				&& name.equals(((Name)O).name)
+				(obj instanceof Name)
+				&& name.equals(((Name)obj).name)
 			;
 		}
 

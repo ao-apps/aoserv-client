@@ -112,11 +112,10 @@ public final class LinuxId implements
 	}
 
 	@Override
-	public boolean equals(Object O) {
+	public boolean equals(Object obj) {
 		return
-			O!=null
-			&& O instanceof LinuxId
-			&& ((LinuxId)O).id==id
+			(obj instanceof LinuxId)
+			&& ((LinuxId)obj).id==id
 		;
 	}
 

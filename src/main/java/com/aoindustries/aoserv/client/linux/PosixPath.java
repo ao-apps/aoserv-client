@@ -142,11 +142,10 @@ public final class PosixPath implements
 	}
 
 	@Override
-	public boolean equals(Object O) {
+	public boolean equals(Object obj) {
 		return
-			O!=null
-			&& O instanceof PosixPath
-			&& path.equals(((PosixPath)O).path)
+			(obj instanceof PosixPath)
+			&& path.equals(((PosixPath)obj).path)
 		;
 	}
 

@@ -174,11 +174,10 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
 		}
 
 		@Override
-		public boolean equals(Object O) {
+		public boolean equals(Object obj) {
 			return
-				O!=null
-				&& O instanceof Name
-				&& name.equals(((Name)O).name)
+				(obj instanceof Name)
+				&& name.equals(((Name)obj).name)
 			;
 		}
 

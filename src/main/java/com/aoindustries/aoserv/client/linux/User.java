@@ -182,11 +182,10 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
 		}
 
 		@Override
-		public boolean equals(Object O) {
+		public boolean equals(Object obj) {
 			return
-				O!=null
-				&& O instanceof Gecos
-				&& value.equals(((Gecos)O).value)
+				(obj instanceof Gecos)
+				&& value.equals(((Gecos)obj).value)
 			;
 		}
 

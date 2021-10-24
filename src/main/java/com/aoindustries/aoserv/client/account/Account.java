@@ -215,11 +215,10 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
 		}
 
 		@Override
-		public boolean equals(Object O) {
+		public boolean equals(Object obj) {
 			return
-				O!=null
-				&& O instanceof Name
-				&& upperName.equals(((Name)O).upperName)
+				(obj instanceof Name)
+				&& upperName.equals(((Name)obj).upperName)
 			;
 		}
 

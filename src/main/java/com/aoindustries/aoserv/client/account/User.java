@@ -197,11 +197,10 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
 		}
 
 		@Override
-		public final boolean equals(Object O) {
+		public final boolean equals(Object obj) {
 			return
-				O!=null // TODO: These nulls checks are unnecessary given instanceof that follows
-				&& O instanceof Name
-				&& name.equals(((Name)O).name)
+				obj instanceof Name
+				&& name.equals(((Name)obj).name)
 			;
 		}
 

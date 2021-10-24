@@ -132,11 +132,10 @@ public final class Table_Name implements
 	}
 
 	@Override
-	public boolean equals(Object O) {
+	public boolean equals(Object obj) {
 		return
-			O!=null
-			&& O instanceof Table_Name
-			&& name.equals(((Table_Name)O).name)
+			(obj instanceof Table_Name)
+			&& name.equals(((Table_Name)obj).name)
 		;
 	}
 
