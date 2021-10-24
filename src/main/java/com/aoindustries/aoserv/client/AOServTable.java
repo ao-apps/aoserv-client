@@ -921,8 +921,8 @@ public abstract class AOServTable<K, V extends AOServObject<K, V>> implements It
 	public final void removeProgressListener(ProgressListener listener) {
 		synchronized(progressListeners) {
 			for(int i = progressListeners.size() - 1; i >= 0; i--) {
-				Object O = progressListeners.get(i);
-				if(O == listener) {
+				ProgressListener pl = progressListeners.get(i);
+				if(pl == listener) {
 					progressListeners.remove(i);
 					break;
 				}
@@ -1001,10 +1001,10 @@ public abstract class AOServTable<K, V extends AOServObject<K, V>> implements It
 		}
 		if(tableListenersSnapshot!=null) {
 			// Notify all immediate listeners
-			Iterator<TableListenerEntry> I=tableListenersSnapshot.iterator();
-			while(I.hasNext()) {
-				final TableListenerEntry entry=I.next();
-				if(entry.delay<=0) {
+			Iterator<TableListenerEntry> iter = tableListenersSnapshot.iterator();
+			while(iter.hasNext()) {
+				final TableListenerEntry entry = iter.next();
+				if(entry.delay <= 0) {
 					// Run in a different thread to avoid deadlock and increase concurrency responding to table update events.
 					AOServConnector.executorService.submit(() -> entry.listener.tableUpdated(AOServTable.this));
 				}

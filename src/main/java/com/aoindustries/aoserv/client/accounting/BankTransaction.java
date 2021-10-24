@@ -68,10 +68,10 @@ public final class BankTransaction extends AOServObject<Integer, BankTransaction
 	private boolean confirmed;
 
 	@Override
-	public boolean equals(Object O) {
+	public boolean equals(Object obj) {
 		return
-			O instanceof BankTransaction
-			&& ((BankTransaction)O).id == id
+			(obj instanceof BankTransaction)
+			&& ((BankTransaction)obj).id == id
 		;
 	}
 

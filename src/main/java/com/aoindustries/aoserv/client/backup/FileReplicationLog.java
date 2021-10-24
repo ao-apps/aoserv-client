@@ -60,10 +60,10 @@ public final class FileReplicationLog extends AOServObject<Integer, FileReplicat
 	private boolean is_successful;
 
 	@Override
-	public boolean equals(Object O) {
+	public boolean equals(Object obj) {
 		return
-			O instanceof FileReplicationLog
-			&& ((FileReplicationLog)O).pkey==pkey
+			(obj instanceof FileReplicationLog)
+			&& ((FileReplicationLog)obj).pkey == pkey
 		;
 	}
 

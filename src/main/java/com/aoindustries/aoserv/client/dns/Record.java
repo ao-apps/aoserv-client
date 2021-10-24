@@ -334,16 +334,16 @@ public final class Record extends CachedObjectIntegerKey<Record> implements Remo
 
 	@Override
 	public String toStringImpl() {
-		StringBuilder SB=new StringBuilder();
-		SB.append(zone).append(": ").append(domain);
-		if(ttl != NO_TTL) SB.append(' ').append(ttl);
-		SB.append(" IN ").append(type);
-		if(priority != NO_PRIORITY) SB.append(' ').append(priority);
-		if(weight   != NO_WEIGHT)   SB.append(' ').append(weight);
-		if(port     != NO_PORT)     SB.append(' ').append(port);
-		if(flag     != NO_FLAG)     SB.append(' ').append(flag);
-		if(tag      != null)        SB.append(' ').append(tag);
-		SB.append(' ').append(destination);
-		return SB.toString();
+		StringBuilder sb = new StringBuilder();
+		sb.append(zone).append(": ").append(domain);
+		if(ttl != NO_TTL) sb.append(' ').append(ttl);
+		sb.append(" IN ").append(type);
+		if(priority != NO_PRIORITY) sb.append(' ').append(priority);
+		if(weight   != NO_WEIGHT)   sb.append(' ').append(weight);
+		if(port     != NO_PORT)     sb.append(' ').append(port);
+		if(flag     != NO_FLAG)     sb.append(' ').append(flag);
+		if(tag      != null)        sb.append(' ').append(tag);
+		sb.append(' ').append(destination);
+		return sb.toString();
 	}
 }

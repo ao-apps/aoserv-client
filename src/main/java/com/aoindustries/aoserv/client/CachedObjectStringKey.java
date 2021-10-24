@@ -32,11 +32,11 @@ public abstract class CachedObjectStringKey<V extends CachedObjectStringKey<V>> 
 	protected String pkey;
 
 	@Override
-	public boolean equals(Object O) {
+	public boolean equals(Object obj) {
 		return
-			O!=null
-			&& O.getClass()==getClass()
-			&& ((CachedObjectStringKey)O).pkey.equals(pkey)
+			obj != null
+			&& obj.getClass() == getClass()
+			&& ((CachedObjectStringKey)obj).pkey.equals(pkey)
 		;
 	}
 

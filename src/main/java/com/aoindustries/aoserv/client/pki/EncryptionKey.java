@@ -87,18 +87,15 @@ public final class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 			"--default-key", '='+signer,
 			"--recipient", '='+recipient
 		};
-		Process P = Runtime.getRuntime().exec(command);
+		Process p = Runtime.getRuntime().exec(command);
 		try {
-			Writer out = new OutputStreamWriter(P.getOutputStream());
-			try {
+			try (Writer out = new OutputStreamWriter(p.getOutputStream())) {
 				out.write(plaintext);
-			} finally {
 				out.flush();
-				out.close();
 			}
 
 			// Read the encrypted form
-			try(Reader in = new InputStreamReader(P.getInputStream())) {
+			try(Reader in = new InputStreamReader(p.getInputStream())) {
 				StringBuilder sb = new StringBuilder();
 				char[] buff = new char[4096];
 				int count;
@@ -110,7 +107,7 @@ public final class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 		} finally {
 			// Read the standard error
 			CharArrayWriter cout = new CharArrayWriter();
-			try (Reader errIn = new InputStreamReader(P.getErrorStream())) {
+			try (Reader errIn = new InputStreamReader(p.getErrorStream())) {
 				char[] buff = new char[4096];
 				int ret;
 				while((ret=errIn.read(buff, 0, 4096))!=-1) {
@@ -118,8 +115,12 @@ public final class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 				}
 			}
 			try {
-				int retCode = P.waitFor();
-				if(retCode!=0) throw new IOException("Non-zero exit value from gpg: "+retCode+", standard error was: "+cout.toString());
+				int retCode = p.waitFor();
+				if(retCode != 0) {
+					throw new IOException(
+						"Non-zero exit value from gpg: " + retCode + ", standard error was: " + cout.toString()
+					);
+				}
 			} catch(InterruptedException err) {
 				InterruptedIOException ioErr = new InterruptedIOException("Interrupted while waiting for gpg");
 				ioErr.initCause(err);
@@ -140,19 +141,16 @@ public final class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 			"--armor",
 			"--passphrase-fd", "0"
 		};
-		Process P = Runtime.getRuntime().exec(command);
+		Process p = Runtime.getRuntime().exec(command);
 		try {
-			Writer out = new OutputStreamWriter(P.getOutputStream());
-			try {
+			try (Writer out = new OutputStreamWriter(p.getOutputStream())) {
 				out.write(passphrase);
 				out.write(ciphertext);
-			} finally {
 				out.flush();
-				out.close();
 			}
 
 			// Read the decrypted form
-			try (Reader in = new InputStreamReader(P.getInputStream())) {
+			try (Reader in = new InputStreamReader(p.getInputStream())) {
 				StringBuilder sb = new StringBuilder();
 				char[] buff = new char[4096];
 				int count;
@@ -163,8 +161,10 @@ public final class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 			}
 		} finally {
 			try {
-				int retCode = P.waitFor();
-				if(retCode!=0) throw new IOException("Non-zero exit value from gpg: "+retCode);
+				int retCode = p.waitFor();
+				if(retCode != 0) {
+					throw new IOException("Non-zero exit value from gpg: " + retCode);
+				}
 			} catch(InterruptedException err) {
 				InterruptedIOException ioErr = new InterruptedIOException("Interrupted while waiting for gpg");
 				ioErr.initCause(err);

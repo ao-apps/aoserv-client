@@ -75,10 +75,10 @@ public final class BackupReport extends AOServObject<Integer, BackupReport> impl
 	private AOServTable<Integer, BackupReport> table;
 
 	@Override
-	public boolean equals(Object O) {
+	public boolean equals(Object obj) {
 		return
-			O instanceof BackupReport
-			&& ((BackupReport)O).pkey==pkey
+			(obj instanceof BackupReport)
+			&& ((BackupReport)obj).pkey == pkey
 		;
 	}
 

@@ -47,10 +47,10 @@ public final class BackupRetention extends GlobalObject<Short, BackupRetention> 
 	private String display;
 
 	@Override
-	public boolean equals(Object O) {
+	public boolean equals(Object obj) {
 		return
-			O instanceof BackupRetention
-			&& ((BackupRetention)O).days==days
+			(obj instanceof BackupRetention)
+			&& ((BackupRetention)obj).days == days
 		;
 	}
 

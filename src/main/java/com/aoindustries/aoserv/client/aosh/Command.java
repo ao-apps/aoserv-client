@@ -525,21 +525,21 @@ public final class Command extends GlobalObjectStringKey<Command> {
 		out.println();
 	}
 
-	public static void printNoHTML(TerminalWriter out, String S) {
-		printNoHTML(out, S, 0);
+	public static void printNoHTML(TerminalWriter out, String s) {
+		printNoHTML(out, s, 0);
 	}
 
-	public static void printNoHTML(TerminalWriter out, String S, int newlineIndent) {
-		if(S == null) out.print("null");
+	public static void printNoHTML(TerminalWriter out, String s, int newlineIndent) {
+		if(s == null) out.print("null");
 		else {
-			int len = S.length();
+			int len = s.length();
 			int pos = 0;
 			while(pos < len) {
 				char ch;
-				if((ch = S.charAt(pos++)) == '<') {
-					if((ch = S.charAt(pos++)) == '/') {
+				if((ch = s.charAt(pos++)) == '<') {
+					if((ch = s.charAt(pos++)) == '/') {
 						if(
-							(ch = S.charAt(pos++))=='b'
+							(ch = s.charAt(pos++))=='b'
 							|| ch == 'B'
 						) out.print('"');
 						else if(

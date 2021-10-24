@@ -137,11 +137,16 @@ public abstract class CachedTable<K, V extends CachedObject<K, V>> extends AOSer
 				if(map == null) columnHashes.set(col, map = AoCollections.newHashMap((size * 5) >> 2));
 				else map.clear();
 				for(int c=0;c<size;c++) {
-					V O=table.get(c);
-					Object cvalue=O.getColumn(col);
-					if(cvalue!=null) {
-						Object old=map.put(cvalue, O);
-						if(old!=null) throw new SQLException("Duplicate unique entry for table #"+getTableID()+" ("+getTableName()+"), column "+col+": "+cvalue);
+					V row = table.get(c);
+					Object cvalue = row.getColumn(col);
+					if(cvalue != null) {
+						Object old = map.put(cvalue, row);
+						if(old != null) {
+							throw new SQLException(
+								"Duplicate unique entry for table #" + getTableID() + " (" + getTableName()
+								+ "), column " + col + ": " + cvalue
+							);
+						}
 					}
 				}
 				columnsHashed.set(col);

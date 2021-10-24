@@ -84,10 +84,10 @@ public final class DistroFile extends FilesystemCachedObject<Integer, DistroFile
 	private String symlink_target;
 
 	@Override
-	public boolean equals(Object O) {
+	public boolean equals(Object obj) {
 		return
-			O instanceof DistroFile
-			&& ((DistroFile)O).pkey==pkey
+			(obj instanceof DistroFile)
+			&& ((DistroFile)obj).pkey == pkey
 		;
 	}
 

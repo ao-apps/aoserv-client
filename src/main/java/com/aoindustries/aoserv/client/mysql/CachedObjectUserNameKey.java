@@ -34,11 +34,11 @@ public abstract class CachedObjectUserNameKey<V extends CachedObjectUserNameKey<
 	protected User.Name pkey;
 
 	@Override
-	public boolean equals(Object O) {
+	public boolean equals(Object obj) {
 		return
-			O!=null
-			&& O.getClass()==getClass()
-			&& ((CachedObjectUserNameKey<?>)O).pkey.equals(pkey)
+			obj != null
+			&& obj.getClass() == getClass()
+			&& ((CachedObjectUserNameKey<?>)obj).pkey.equals(pkey)
 		;
 	}
 

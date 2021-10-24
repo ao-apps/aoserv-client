@@ -680,9 +680,9 @@ public final class Server extends CachedObjectIntegerKey<Server> {
 		if(pos==-1) return techVersion;
 		int pos2=techVersion.indexOf('.', pos+1);
 		if(pos2==-1) return techVersion;
-		String S = techVersion.substring(0, pos2);
-		if(techVersion.endsWith("-max")) return S+"-max";
-		return S;
+		String s = techVersion.substring(0, pos2);
+		if(techVersion.endsWith("-max")) return s + "-max";
+		return s;
 	}
 
 	public Database getMySQLDatabase(Database.Name name) throws IOException, SQLException {

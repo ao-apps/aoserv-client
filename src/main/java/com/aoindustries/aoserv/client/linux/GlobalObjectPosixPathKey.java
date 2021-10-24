@@ -34,11 +34,11 @@ public abstract class GlobalObjectPosixPathKey<T extends GlobalObjectPosixPathKe
 	protected PosixPath pkey;
 
 	@Override
-	public boolean equals(Object O) {
+	public boolean equals(Object obj) {
 		return
-			O!=null
-			&& O.getClass()==getClass()
-			&& ((GlobalObjectPosixPathKey)O).pkey.equals(pkey)
+			obj != null
+			&& obj.getClass() == getClass()
+			&& ((GlobalObjectPosixPathKey)obj).pkey.equals(pkey)
 		;
 	}
 

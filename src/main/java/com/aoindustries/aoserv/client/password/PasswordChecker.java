@@ -260,20 +260,20 @@ public final class PasswordChecker {
 		} else results.get(0).result = RESOURCES.getMessage("length.noPassword");
 		return results;
 	}
-/**
+/*
  * TODO: Need to pull the values from ApplicationResources here based on locales.
  *
 	public static String checkPasswordDescribe(String username, String password, boolean strict, boolean superLax) {
 	String[] results=checkPassword(username, password, strict, superLax);
-	StringBuilder SB=new StringBuilder();
+	StringBuilder sb = new StringBuilder();
 	for(int c=0;c<NUM_CATEGORIES;c++) {
 			String desc=results[c];
 			if(desc!=null) {
-				if(SB.length()>0) SB.append('\n');
-				SB.append(categories[c]).append(": ").append(desc);
+				if(sb.length()>0) sb.append('\n');
+				sb.append(categories[c]).append(": ").append(desc);
 			}
 	}
-	return SB.length()==0?null:SB.toString();
+	return sb.length() == 0 ? null : sb.toString();
 	}
 */
 
@@ -368,14 +368,14 @@ public final class PasswordChecker {
 	 * Gets the results as a String.
 	 */
 	public static String getResultsString(List<Result> results) {
-		StringBuilder SB = new StringBuilder();
+		StringBuilder sb = new StringBuilder();
 		for(Result result : results) {
-			SB
+			sb
 				.append(result.getCategory())
 				.append(": ")
 				.append(result.getResult())
 				.append('\n');
 		}
-		return SB.toString();
+		return sb.toString();
 	}
 }

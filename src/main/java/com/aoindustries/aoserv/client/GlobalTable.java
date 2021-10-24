@@ -215,11 +215,16 @@ public abstract class GlobalTable<K, V extends GlobalObject<K, V>> extends AOSer
 			if(!isHashed) {
 				colValues.clear();
 				for(int c=0;c<size;c++) {
-					V O=table.get(c);
-					Object cvalue=O.getColumn(col);
-					if(cvalue!=null) {
-						V old=colValues.put(cvalue, O);
-						if(old!=null) throw new SQLException("Duplicate pkey entry for table "+getTableID()+" ("+getTableName()+"), column #"+col+": "+cvalue);
+					V row = table.get(c);
+					Object cvalue = row.getColumn(col);
+					if(cvalue != null) {
+						V old = colValues.put(cvalue, row);
+						if(old != null) {
+							throw new SQLException(
+								"Duplicate pkey entry for table " + getTableID() + " (" + getTableName() + "), column #"
+								+ col + ": " + cvalue
+							);
+						}
 					}
 				}
 

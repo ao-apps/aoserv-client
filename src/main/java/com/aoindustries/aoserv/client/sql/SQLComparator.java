@@ -51,41 +51,41 @@ public final class SQLComparator<T> implements Comparator<T> {
 	}
 
 	@Override
-	public int compare(T O1, T O2) {
+	public int compare(T o1, T o2) {
 		try {
-			if(O1 instanceof AOServObject) {
-				AOServObject<?, ?> AO1=(AOServObject)O1;
-				if(O2 instanceof AOServObject) {
-					AOServObject<?, ?> AO2=(AOServObject)O2;
-					return AO1.compareTo(connector, AO2, exprs, sortOrders);
-				} else if(O2 instanceof Object[]) {
-					return AO1.compareTo(connector, (Object[])O2, exprs, sortOrders);
-				} else if(O2 instanceof Comparable) {
-					return AO1.compareTo(connector, (Comparable)O2, exprs, sortOrders);
+			if(o1 instanceof AOServObject) {
+				AOServObject<?, ?> ao1 = (AOServObject)o1;
+				if(o2 instanceof AOServObject) {
+					AOServObject<?, ?> ao2 = (AOServObject)o2;
+					return ao1.compareTo(connector, ao2, exprs, sortOrders);
+				} else if(o2 instanceof Object[]) {
+					return ao1.compareTo(connector, (Object[])o2, exprs, sortOrders);
+				} else if(o2 instanceof Comparable) {
+					return ao1.compareTo(connector, (Comparable)o2, exprs, sortOrders);
 				} else throw new IllegalArgumentException("O2 must be either AOServObject, Object[], or Comparable");
-			} else if(O1 instanceof Object[]) {
+			} else if(o1 instanceof Object[]) {
 				@SuppressWarnings({"unchecked"})
-				T[] OA1=(T[])O1;
-				if(O2 instanceof AOServObject) {
-					AOServObject<?, ?> AO2=(AOServObject)O2;
-					return -AO2.compareTo(connector, OA1, exprs, sortOrders);
-				} else if(O2 instanceof Object[]) {
+				T[] oa1 = (T[])o1;
+				if(o2 instanceof AOServObject) {
+					AOServObject<?, ?> ao2 = (AOServObject)o2;
+					return -ao2.compareTo(connector, oa1, exprs, sortOrders);
+				} else if(o2 instanceof Object[]) {
 					@SuppressWarnings({"unchecked"})
-					T[] OA2=(T[])O2;
-					return compare(OA1, OA2);
-				} else if(O2 instanceof Comparable) {
+					T[] oa2 = (T[])o2;
+					return compare(oa1, oa2);
+				} else if(o2 instanceof Comparable) {
 					throw new IllegalArgumentException("Comparing of Object[] and Comparable not supported.");
 				} else throw new IllegalArgumentException("O2 must be either AOServObject, Object[], or Comparable");
-			} else if(O1 instanceof Comparable) {
+			} else if(o1 instanceof Comparable) {
 				@SuppressWarnings({"unchecked"})
-				Comparable<Object> C1=(Comparable)O1;
-				if(O2 instanceof AOServObject) {
-					AOServObject<?, ?> AO2=(AOServObject)O2;
-					return -AO2.compareTo(connector, C1, exprs, sortOrders);
-				} else if(O2 instanceof Object[]) {
+				Comparable<Object> c1 = (Comparable)o1;
+				if(o2 instanceof AOServObject) {
+					AOServObject<?, ?> ao2 = (AOServObject)o2;
+					return -ao2.compareTo(connector, c1, exprs, sortOrders);
+				} else if(o2 instanceof Object[]) {
 					throw new IllegalArgumentException("Comparing of Comparable and Object[] not supported.");
-				} else if(O2 instanceof Comparable) {
-					return C1.compareTo(O2);
+				} else if(o2 instanceof Comparable) {
+					return c1.compareTo(o2);
 				} else throw new IllegalArgumentException("O2 must be either AOServObject or Comparable");
 			} else throw new IllegalArgumentException("O1 must be either AOServObject or Comparable");
 		} catch(IOException | SQLException err) {
@@ -93,13 +93,13 @@ public final class SQLComparator<T> implements Comparator<T> {
 		}
 	}
 
-	public int compare(T[] OA1, T[] OA2) {
-		int OA1Len=OA1.length;
-		int OA2Len=OA2.length;
-		if(OA1Len!=OA2Len) throw new IllegalArgumentException("Mismatched array lengths when comparing two Object[]s: OA1.length="+OA1Len+", OA2.length="+OA2Len);
-		for(int c=0;c<OA1Len;c++) {
-			int diff=compare(OA1[c], OA2[c]);
-			if(diff!=0) return diff;
+	public int compare(T[] oa1, T[] oa2) {
+		int oa1Len = oa1.length;
+		int oa2Len = oa2.length;
+		if(oa1Len != oa2Len) throw new IllegalArgumentException("Mismatched array lengths when comparing two Object[]s: OA1.length=" + oa1Len + ", OA2.length=" + oa2Len);
+		for(int c = 0; c < oa1Len; c++) {
+			int diff = compare(oa1[c], oa2[c]);
+			if(diff != 0) return diff;
 		}
 		return 0;
 	}

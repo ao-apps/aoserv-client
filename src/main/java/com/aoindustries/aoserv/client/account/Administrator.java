@@ -400,8 +400,8 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
 			);
 			name = result.getString("name");
 			title = result.getString("title");
-			Date D=result.getDate("birthday");
-			birthday = D==null?-1:D.getTime();
+			Date d = result.getDate("birthday");
+			birthday = (d == null) ? -1 : d.getTime();
 			isPreferred = result.getBoolean("is_preferred");
 			isPrivate = result.getBoolean("private");
 			created = UnmodifiableTimestamp.valueOf(result.getTimestamp("created"));

@@ -107,15 +107,15 @@ public final class FileReplicationSchedule extends CachedObjectIntegerKey<FileRe
 
 	@Override
 	public String toStringImpl() throws SQLException, IOException {
-		StringBuilder SB = new StringBuilder();
-		SB.append(getFailoverFileReplication().toStringImpl());
-		SB.append('@');
-		if(hour<10) SB.append('0');
-		SB.append(hour);
-		SB.append(':');
-		if(minute<10) SB.append('0');
-		SB.append(minute);
-		return SB.toString();
+		StringBuilder sb = new StringBuilder();
+		sb.append(getFailoverFileReplication().toStringImpl());
+		sb.append('@');
+		if(hour < 10) sb.append('0');
+		sb.append(hour);
+		sb.append(':');
+		if(minute < 10) sb.append('0');
+		sb.append(minute);
+		return sb.toString();
 	}
 
 	@Override

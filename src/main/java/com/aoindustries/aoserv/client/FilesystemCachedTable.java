@@ -182,9 +182,9 @@ public abstract class FilesystemCachedTable<K, V extends FilesystemCachedObject<
 	@Override
 	protected final V getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
 		if(value == null) return null;
-		Table schemaTable=getTableSchema();
-		Column schemaColumn=schemaTable.getSchemaColumn(connector, col);
-		SQLComparator<V> Vcomparator=new SQLComparator<>(
+		Table schemaTable = getTableSchema();
+		Column schemaColumn = schemaTable.getSchemaColumn(connector, col);
+		SQLComparator<V> vComparator = new SQLComparator<>(
 			connector,
 			new SQLExpression[] {
 				new SQLColumnValue(connector, schemaColumn)
@@ -192,7 +192,7 @@ public abstract class FilesystemCachedTable<K, V extends FilesystemCachedObject<
 			new boolean[] {ASCENDING}
 		);
 
-		SQLComparator<Object> Ocomparator=new SQLComparator<>(
+		SQLComparator<Object> oComparator = new SQLComparator<>(
 			connector,
 			new SQLExpression[] {
 				new SQLColumnValue(connector, schemaColumn)
@@ -220,11 +220,11 @@ public abstract class FilesystemCachedTable<K, V extends FilesystemCachedObject<
 					tableList.getObjectFactory()
 				);
 				sortedFileList.addAll(tableList);
-				getSortAlgorithm().sort(sortedFileList, Vcomparator);
+				getSortAlgorithm().sort(sortedFileList, vComparator);
 				unmodifiableSortedList=Collections.unmodifiableList(sortedFileList);
 				columnLists.set(col, unmodifiableSortedList);
 			}
-			int index=Collections.binarySearch(unmodifiableSortedList, value, Ocomparator);
+			int index = Collections.binarySearch(unmodifiableSortedList, value, oComparator);
 			// TODO: Assertion to ensure unique, reading the record before and after to make sure has a different value?
 			return index<0?null:unmodifiableSortedList.get(index);
 		}

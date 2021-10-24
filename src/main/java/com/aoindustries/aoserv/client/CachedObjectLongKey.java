@@ -35,11 +35,11 @@ public abstract class CachedObjectLongKey<V extends CachedObjectLongKey<V>> exte
 	protected long pkey;
 
 	@Override
-	public boolean equals(Object O) {
+	public boolean equals(Object obj) {
 		return
-			O!=null
-			&& O.getClass()==getClass()
-			&& ((CachedObjectLongKey<?>)O).pkey==pkey
+			obj != null
+			&& obj.getClass() == getClass()
+			&& ((CachedObjectLongKey<?>)obj).pkey == pkey
 		;
 	}
 

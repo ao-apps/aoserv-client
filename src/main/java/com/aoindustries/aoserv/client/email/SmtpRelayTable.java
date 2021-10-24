@@ -160,14 +160,14 @@ public final class SmtpRelayTable extends CachedTableIntegerKey<SmtpRelay> {
 		String command=args[0];
 		if(command.equalsIgnoreCase(Command.ADD_EMAIL_SMTP_RELAY)) {
 			if(AOSH.checkParamCount(Command.ADD_EMAIL_SMTP_RELAY, args, 5, err)) {
-				String S=args[5].trim();
+				String s = args[5].trim();
 				out.println(
 					connector.getSimpleAOClient().addEmailSmtpRelay(
 						AOSH.parseAccountingCode(args[1], "package"),
 						args[2],
 						AOSH.parseHostAddress(args[3], "host"),
 						args[4],
-						S.length()==0?-1:AOSH.parseLong(S, "duration")
+						s.length() == 0 ? -1 : AOSH.parseLong(s, "duration")
 					)
 				);
 				out.flush();

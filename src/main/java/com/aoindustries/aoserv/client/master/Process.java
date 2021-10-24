@@ -239,17 +239,17 @@ public class Process extends AOServObject<SmallIdentifier, Process> implements S
 
 	public static String combineCommand(String[] command) {
 		if(command == null) return null;
-		StringBuilder SB = new StringBuilder();
+		StringBuilder sb = new StringBuilder();
 		for(int c = 0, len = command.length; c < len; c++) {
-			if(c > 0) SB.append(' ');
+			if(c > 0) sb.append(' ');
 			String com = command[c];
 			if(com == null) {
-				SB.append("''");
+				sb.append("''");
 			} else {
-				SB.append(com);
+				sb.append(com);
 			}
 		}
-		return SB.toString();
+		return sb.toString();
 	}
 
 	public String[] getCommand() {

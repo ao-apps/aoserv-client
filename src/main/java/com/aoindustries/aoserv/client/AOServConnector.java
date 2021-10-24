@@ -122,19 +122,19 @@ public abstract class AOServConnector implements SchemaParent {
 	/**
 	 * Certain errors will not be retried.
 	 */
-	static boolean isImmediateFail(Throwable T) {
+	static boolean isImmediateFail(Throwable t) {
 		if(
-			T instanceof ThreadDeath
-			|| T instanceof InterruptedIOException
-			|| T instanceof InterruptedException
-			|| T instanceof ConfigurationException
+			t instanceof ThreadDeath
+			|| t instanceof InterruptedIOException
+			|| t instanceof InterruptedException
+			|| t instanceof ConfigurationException
 		) {
 			return true;
 		} else {
-			assert T != null;
-			String message = T.getMessage();
+			assert t != null;
+			String message = t.getMessage();
 			return
-				(T instanceof IOException)
+				(t instanceof IOException)
 				&& message != null
 				&& (
 					message.equals("Connection attempted with invalid password")
@@ -542,12 +542,9 @@ public abstract class AOServConnector implements SchemaParent {
 	 * object.
 	 */
 	@Override
-	public final boolean equals(Object O) {
-		if(O==null) return false;
-		return
-			(O instanceof AOServConnector) && // This is just to get rid of the NetBeans 6.5 warning about not checking type of parameter
-			this==O
-		;
+	@SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
+	public final boolean equals(Object obj) {
+		return this == obj;
 	}
 
 	/**

@@ -461,14 +461,14 @@ public abstract class AOServObject<K, T extends AOServObject<K, T>> implements R
 	 * </p>
 	 */
 	@Override
-	public boolean equals(Object O) {
-		if(O == null) return false;
-		Class<?> class1=getClass();
-		Class<?> class2=O.getClass();
-		if(class1==class2) {
+	public boolean equals(Object obj) {
+		if(obj == null) return false;
+		Class<?> class1 = getClass();
+		Class<?> class2 = obj.getClass();
+		if(class1 == class2) {
 			K pkey1=getKey();
-			Object pkey2=((AOServObject)O).getKey();
-			if(pkey1==null || pkey2==null) throw new NullPointerException("No primary key available.");
+			Object pkey2 = ((AOServObject)obj).getKey();
+			if(pkey1 == null || pkey2 == null) throw new NullPointerException("No primary key available.");
 			return pkey1.equals(pkey2);
 		}
 		return false;

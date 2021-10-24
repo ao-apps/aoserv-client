@@ -80,9 +80,9 @@ public final class CountryCodeTable extends GlobalTableStringKey<CountryCode> {
 
 		// Find the biggest ones
 		List<String> biggest = new ArrayList<>(prioritySize);
-		Iterator<String> I = counts.keySet().iterator();
-		while(I.hasNext()) {
-			String code = I.next();
+		Iterator<String> iter = counts.keySet().iterator();
+		while(iter.hasNext()) {
+			String code = iter.next();
 			int count = counts.get(code)[0];
 			int c=0;
 			for(; c<biggest.size(); c++) {

@@ -1252,122 +1252,122 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
 		}
 	}
 
-	public Object parseString(String S) throws IllegalArgumentException {
-		return parseString(S, pkey);
+	public Object parseString(String s) throws IllegalArgumentException {
+		return parseString(s, pkey);
 	}
 
-	public static Object parseString(String S, int id) throws IllegalArgumentException {
+	public static Object parseString(String s, int id) throws IllegalArgumentException {
 		try {
-			if(S == null) return null;
+			if(s == null) return null;
 			switch(id) {
 				case ACCOUNTING:
-					return Account.Name.valueOf(S);
+					return Account.Name.valueOf(s);
 				case EMAIL:
-					return Email.valueOf(S);
+					return Email.valueOf(s);
 				case PHONE:
 				case STRING:
 				case URL:
 				case ZONE: // TODO: com.aoapps.net.DomainName (once no longer ends with ".")
-					return S;
+					return s;
 				case USERNAME:
-					return com.aoindustries.aoserv.client.account.User.Name.valueOf(S);
+					return com.aoindustries.aoserv.client.account.User.Name.valueOf(s);
 				case PATH:
-					return PosixPath.valueOf(S);
+					return PosixPath.valueOf(s);
 				case HOSTNAME:
-					return HostAddress.valueOf(S);
+					return HostAddress.valueOf(s);
 				case IP_ADDRESS:
-					return InetAddress.valueOf(S);
+					return InetAddress.valueOf(s);
 				case BOOLEAN:
 					if(
-						S.equalsIgnoreCase("y")
-						|| S.equalsIgnoreCase("yes")
-						|| S.equalsIgnoreCase("t")
-						|| S.equalsIgnoreCase("true")
+						s.equalsIgnoreCase("y")
+						|| s.equalsIgnoreCase("yes")
+						|| s.equalsIgnoreCase("t")
+						|| s.equalsIgnoreCase("true")
 					) return Boolean.TRUE;
 					if(
-						S.equalsIgnoreCase("n")
-						|| S.equalsIgnoreCase("no")
-						|| S.equalsIgnoreCase("f")
-						|| S.equalsIgnoreCase("false")
+						s.equalsIgnoreCase("n")
+						|| s.equalsIgnoreCase("no")
+						|| s.equalsIgnoreCase("f")
+						|| s.equalsIgnoreCase("false")
 					) return Boolean.FALSE;
-					throw new IllegalArgumentException("Unable to parse boolean: "+S);
+					throw new IllegalArgumentException("Unable to parse boolean: " + s);
 				case DATE:
-					return SQLUtility.parseDate(S, DATE_TIME_ZONE);
+					return SQLUtility.parseDate(s, DATE_TIME_ZONE);
 				case DECIMAL_2:
-					return SQLUtility.parseDecimal2(S);
+					return SQLUtility.parseDecimal2(s);
 				case DECIMAL_3:
-					return SQLUtility.parseDecimal3(S);
+					return SQLUtility.parseDecimal3(s);
 				case DOUBLE:
-					return Double.parseDouble(S);
+					return Double.parseDouble(s);
 				case FKEY:
 				case INT:
 				case PKEY:
-					return Integer.parseInt(S);
+					return Integer.parseInt(s);
 				case FLOAT:
-					return Float.valueOf(S);
+					return Float.valueOf(s);
 				case INTERVAL:
 					throw new UnsupportedOperationException("Interval parsing not yet supported");
 				case LONG:
-					return Long.valueOf(S);
+					return Long.valueOf(s);
 				case OCTAL_LONG:
-					return Long.parseLong(S, 8);
+					return Long.parseLong(s, 8);
 				case SHORT:
-					return Short.valueOf(S);
+					return Short.valueOf(s);
 				case TIME:
-					return SQLUtility.parseDateTime(S);
+					return SQLUtility.parseDateTime(s);
 				case BIG_DECIMAL:
-					return new BigDecimal(S);
+					return new BigDecimal(s);
 				case DOMAIN_LABEL:
-					return DomainLabel.valueOf(S);
+					return DomainLabel.valueOf(s);
 				case DOMAIN_LABELS:
-					return DomainLabels.valueOf(S);
+					return DomainLabels.valueOf(s);
 				case DOMAIN_NAME:
-					return DomainName.valueOf(S);
+					return DomainName.valueOf(s);
 				case GECOS:
-					return Gecos.valueOf(S);
+					return Gecos.valueOf(s);
 				case GROUP_ID:
-					return com.aoindustries.aoserv.client.linux.Group.Name.valueOf(S);
+					return com.aoindustries.aoserv.client.linux.Group.Name.valueOf(s);
 				case HASHED_PASSWORD:
-					return HashedPassword.valueOf(S);
+					return HashedPassword.valueOf(s);
 				case LINUX_ID:
-					return LinuxId.valueOf(Integer.parseInt(S));
+					return LinuxId.valueOf(Integer.parseInt(s));
 				case MAC_ADDRESS:
-					return MacAddress.valueOf(S);
+					return MacAddress.valueOf(s);
 				case MONEY:
 					throw new IllegalArgumentException("Parsing from String to Money is not supported.");
 				case MYSQL_DATABASE_NAME:
-					return com.aoindustries.aoserv.client.mysql.Database.Name.valueOf(S);
+					return com.aoindustries.aoserv.client.mysql.Database.Name.valueOf(s);
 				case MYSQL_SERVER_NAME:
-					return com.aoindustries.aoserv.client.mysql.Server.Name.valueOf(S);
+					return com.aoindustries.aoserv.client.mysql.Server.Name.valueOf(s);
 				case MYSQL_TABLE_NAME:
-					return com.aoindustries.aoserv.client.mysql.Table_Name.valueOf(S);
+					return com.aoindustries.aoserv.client.mysql.Table_Name.valueOf(s);
 				case MYSQL_USERNAME:
-					return com.aoindustries.aoserv.client.mysql.User.Name.valueOf(S);
+					return com.aoindustries.aoserv.client.mysql.User.Name.valueOf(s);
 				case NET_PORT:
 					{
-						int slashPos = S.indexOf('/');
-						if(slashPos == -1) throw new IllegalArgumentException("Slash (/) not found for Port: " + S);
+						int slashPos = s.indexOf('/');
+						if(slashPos == -1) throw new IllegalArgumentException("Slash (/) not found for Port: " + s);
 						return Port.valueOf(
-							Integer.parseInt(S.substring(0, slashPos)),
-							com.aoapps.net.Protocol.valueOf(S.substring(slashPos + 1).toUpperCase(Locale.ROOT))
+							Integer.parseInt(s.substring(0, slashPos)),
+							com.aoapps.net.Protocol.valueOf(s.substring(slashPos + 1).toUpperCase(Locale.ROOT))
 						);
 					}
 				case POSTGRES_DATABASE_NAME:
-					return com.aoindustries.aoserv.client.postgresql.Database.Name.valueOf(S);
+					return com.aoindustries.aoserv.client.postgresql.Database.Name.valueOf(s);
 				case POSTGRES_SERVER_NAME:
-					return com.aoindustries.aoserv.client.postgresql.Server.Name.valueOf(S);
+					return com.aoindustries.aoserv.client.postgresql.Server.Name.valueOf(s);
 				case POSTGRES_USERNAME:
-					return com.aoindustries.aoserv.client.postgresql.User.Name.valueOf(S);
+					return com.aoindustries.aoserv.client.postgresql.User.Name.valueOf(s);
 				case FIREWALLD_ZONE_NAME:
-					return FirewallZone.Name.valueOf(S);
+					return FirewallZone.Name.valueOf(s);
 				case LINUX_USERNAME:
-					return com.aoindustries.aoserv.client.linux.User.Name.valueOf(S);
+					return com.aoindustries.aoserv.client.linux.User.Name.valueOf(s);
 				case IDENTIFIER:
-					return new Identifier(S);
+					return new Identifier(s);
 				case SMALL_IDENTIFIER:
-					return new Identifier(S);
+					return new Identifier(s);
 				case HASHED_KEY:
-					return HashedKey.valueOf(S);
+					return HashedKey.valueOf(s);
 				default:
 					throw new IllegalArgumentException("Unknown SchemaType: " + id);
 			}

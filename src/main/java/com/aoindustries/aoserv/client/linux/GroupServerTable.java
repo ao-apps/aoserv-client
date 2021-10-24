@@ -130,10 +130,15 @@ public final class GroupServerTable extends CachedTableIntegerKey<GroupServer> {
 				int len=list.size();
 				for(int c=0; c<len; c++) {
 					GroupServer lsg=list.get(c);
-					Integer I=lsg.getServer_host_id();
-					Map<Group.Name, GroupServer> serverHash=nameHash.get(I);
-					if(serverHash==null) nameHash.put(I, serverHash=new HashMap<>());
-					if(serverHash.put(lsg.getLinuxGroup_name(), lsg)!=null) throw new SQLException("LinuxServerGroup name exists more than once on server: "+lsg.getLinuxGroup_name()+" on "+I);
+					Integer i = lsg.getServer_host_id();
+					Map<Group.Name, GroupServer> serverHash = nameHash.get(i);
+					if(serverHash == null) nameHash.put(i, serverHash = new HashMap<>());
+					if(serverHash.put(lsg.getLinuxGroup_name(), lsg) != null) {
+						throw new SQLException(
+							"LinuxServerGroup name exists more than once on server: " + lsg.getLinuxGroup_name()
+							+ " on " + i
+						);
+					}
 
 				}
 				nameHashBuilt=true;

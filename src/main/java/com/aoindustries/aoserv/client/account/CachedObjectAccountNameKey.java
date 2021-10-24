@@ -34,11 +34,11 @@ public abstract class CachedObjectAccountNameKey<V extends CachedObjectAccountNa
 	protected Account.Name pkey;
 
 	@Override
-	public boolean equals(Object O) {
+	public boolean equals(Object obj) {
 		return
-			O!=null
-			&& O.getClass()==getClass()
-			&& ((CachedObjectAccountNameKey<?>)O).pkey.equals(pkey)
+			obj != null
+			&& obj.getClass() == getClass()
+			&& ((CachedObjectAccountNameKey<?>)obj).pkey.equals(pkey)
 		;
 	}
 

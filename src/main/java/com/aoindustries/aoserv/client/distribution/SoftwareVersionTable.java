@@ -156,16 +156,16 @@ public final class SoftwareVersionTable extends GlobalTableIntegerKey<SoftwareVe
 		List<SoftwareVersion> matches=new ArrayList<>();
 		int tableSize=table.size();
 		for(int c=0;c<tableSize;c++) {
-			SoftwareVersion TV=table.get(c);
+			SoftwareVersion tv = table.get(c);
 
 			// Check the osv
-			if(osv==null || osv.equals(TV.getOperatingSystemVersion(connector))) {
+			if(osv == null || osv.equals(tv.getOperatingSystemVersion(connector))) {
 				// Check the name
-				boolean found=true;
-				if(nameWords!=null) {
-					String S=TV.getTechnologyName_name().toLowerCase();
+				boolean found = true;
+				if(nameWords != null) {
+					String s = tv.getTechnologyName_name().toLowerCase();
 					for (String nameWord : nameWords) {
-						if (!S.contains(nameWord)) {
+						if (!s.contains(nameWord)) {
 							found=false;
 							break;
 						}
@@ -174,9 +174,9 @@ public final class SoftwareVersionTable extends GlobalTableIntegerKey<SoftwareVe
 				if(found) {
 					// Check the version
 					if(versionWords!=null) {
-						String S=TV.getVersion().toLowerCase();
+						String s = tv.getVersion().toLowerCase();
 						for (String versionWord : versionWords) {
-							if (!S.contains(versionWord)) {
+							if (!s.contains(versionWord)) {
 								found=false;
 								break;
 							}
@@ -185,7 +185,7 @@ public final class SoftwareVersionTable extends GlobalTableIntegerKey<SoftwareVe
 					if(found) {
 						// Check the classes
 						if(classes.size()>0) {
-							List<SoftwareCategorization> rowClasses=TV.getTechnologyName(connector).getTechnologies(connector);
+							List<SoftwareCategorization> rowClasses = tv.getTechnologyName(connector).getTechnologies(connector);
 							found=false;
 						Loop:
 							for (SoftwareCategory matchClass : classes) {
@@ -206,14 +206,14 @@ public final class SoftwareVersionTable extends GlobalTableIntegerKey<SoftwareVe
 							for(int d=0;d<len && addAt==-1;d++) {
 								SoftwareVersion compVersion=matches.get(d);
 								if (orderBy == NAME) {
-									if(TV.getTechnologyName_name().compareToIgnoreCase(compVersion.getTechnologyName_name())<0) addAt=d;
+									if(tv.getTechnologyName_name().compareToIgnoreCase(compVersion.getTechnologyName_name()) < 0) addAt = d;
 								} else if (orderBy == VERSION) {
-									if(TV.getVersion().compareToIgnoreCase(compVersion.getVersion())<0) addAt=d;
+									if(tv.getVersion().compareToIgnoreCase(compVersion.getVersion()) < 0) addAt = d;
 								} else if (orderBy == UPDATED) {
-									if(TV.getUpdated().compareTo(compVersion.getUpdated()) > 0) addAt=d;
+									if(tv.getUpdated().compareTo(compVersion.getUpdated()) > 0) addAt = d;
 								} else throw new IllegalArgumentException("Invalid value for orderBy: " + orderBy);
 							}
-							matches.add(addAt==-1?len:addAt, TV);
+							matches.add(addAt == -1 ? len : addAt, tv);
 						}
 					}
 				}

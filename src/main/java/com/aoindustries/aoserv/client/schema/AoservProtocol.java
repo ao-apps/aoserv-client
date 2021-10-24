@@ -667,8 +667,8 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
 		pkey = result.getString(1);
 		created = result.getDate(2).getTime();
 		comments = result.getString(3);
-		Date D = result.getDate(4);
-		lastUsed = D == null ? -1 : D.getTime();
+		Date d = result.getDate(4);
+		lastUsed = d == null ? -1 : d.getTime();
 	}
 
 	@Override

@@ -60,10 +60,10 @@ public final class SpamMessage extends AOServObject<Integer, SpamMessage> implem
 	private String message;
 
 	@Override
-	public boolean equals(Object O) {
+	public boolean equals(Object obj) {
 		return
-			O instanceof SpamMessage
-			&& ((SpamMessage)O).getPkey()==pkey
+			(obj instanceof SpamMessage)
+			&& ((SpamMessage)obj).getPkey() == pkey
 		;
 	}
 

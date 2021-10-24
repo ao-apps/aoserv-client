@@ -268,10 +268,10 @@ public final class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 				{
 					PackageDefinitionLimit limit=packageDefinition.getLimit(javavmResource);
 					if(limit==null || limit.getSoftLimit()!=PackageDefinitionLimit.UNLIMITED) {
-						Integer I=javavmsPerPackage.get(pack);
-						if(I!=null) {
-							int javavmCount=I;
-							if(javavmCount>0) {
+						Integer i = javavmsPerPackage.get(pack);
+						if(i != null) {
+							int javavmCount = i;
+							if(javavmCount > 0) {
 								if(limit==null) throw new SQLException("Java virtual machines exist, but no limit defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
 								if(javavmCount>limit.getSoftLimit()) {
 									Money addRate = limit.getAdditionalRate();
@@ -331,10 +331,10 @@ public final class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 				{
 					PackageDefinitionLimit limit=packageDefinition.getLimit(emailResource);
 					if(limit==null || limit.getSoftLimit()!=PackageDefinitionLimit.UNLIMITED) {
-						Integer I=emailsPerPackage.get(pack);
-						if(I!=null) {
-							int emailCount=I;
-							if(emailCount>0) {
+						Integer i = emailsPerPackage.get(pack);
+						if(i != null) {
+							int emailCount = i;
+							if(emailCount > 0) {
 								if(limit==null) throw new SQLException("Email inboxes exist, but no limit defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
 								if(emailCount>limit.getSoftLimit()) {
 									Money addRate = limit.getAdditionalRate();
@@ -398,10 +398,10 @@ public final class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 				{
 					PackageDefinitionLimit limit=packageDefinition.getLimit(userResource);
 					if(limit==null || limit.getSoftLimit()!=PackageDefinitionLimit.UNLIMITED) {
-						Integer I=usersPerPackage.get(pack);
-						if(I!=null) {
-							int userCount=I;
-							if(userCount>0) {
+						Integer i = usersPerPackage.get(pack);
+						if(i != null) {
+							int userCount = i;
+							if(userCount > 0) {
 								if(limit==null) throw new SQLException("Shell accounts exist, but no limit defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
 								if(userCount>limit.getSoftLimit()) {
 									Money addRate = limit.getAdditionalRate();

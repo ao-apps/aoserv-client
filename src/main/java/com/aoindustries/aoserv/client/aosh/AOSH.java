@@ -241,6 +241,7 @@ public final class AOSH extends ShellInterpreter {
 		}
 	}
 
+	@SuppressWarnings({"UseOfSystemOutOrSystemErr", "UseSpecificCatch", "BroadCatchBlock", "TooBroadCatch"})
 	public static void main(String[] args) {
 		TerminalWriter out=new TerminalWriter(new BufferedWriter(new OutputStreamWriter(System.out)));
 		TerminalWriter err=System.out==System.err ? out : new TerminalWriter(new BufferedWriter(new OutputStreamWriter(System.err)));
@@ -310,216 +311,216 @@ public final class AOSH extends ShellInterpreter {
 		return new AOSH(connector, in, out, err, args);
 	}
 
-	public static Account.Name parseAccountingCode(String S, String field) {
+	public static Account.Name parseAccountingCode(String s, String field) {
 		try {
-			return Account.Name.valueOf(S);
+			return Account.Name.valueOf(s);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for accounting (" + field + "): " + S, err);
+			throw new IllegalArgumentException("Invalid argument for accounting (" + field + "): " + s, err);
 		}
 	}
 
-	public static BigDecimal parseBigDecimal(String S, String field) {
+	public static BigDecimal parseBigDecimal(String s, String field) {
 		try {
-			return new BigDecimal(S);
+			return new BigDecimal(s);
 		} catch(NumberFormatException err) {
-			throw new IllegalArgumentException("Invalid argument for big_decimal (" + field + "): " + S, err);
+			throw new IllegalArgumentException("Invalid argument for big_decimal (" + field + "): " + s, err);
 		}
 	}
 
-	public static boolean parseBoolean(String S, String field) {
+	public static boolean parseBoolean(String s, String field) {
 		if(
-			S.equalsIgnoreCase("true")
-			|| S.equalsIgnoreCase("t")
-			|| S.equalsIgnoreCase("yes")
-			|| S.equalsIgnoreCase("y")
-			|| S.equalsIgnoreCase("vang")
-			|| S.equalsIgnoreCase("da")
-			|| S.equalsIgnoreCase("si")
-			|| S.equalsIgnoreCase("oui")
-			|| S.equalsIgnoreCase("ja")
-			|| S.equalsIgnoreCase("nam")
+			s.equalsIgnoreCase("true")
+			|| s.equalsIgnoreCase("t")
+			|| s.equalsIgnoreCase("yes")
+			|| s.equalsIgnoreCase("y")
+			|| s.equalsIgnoreCase("vang")
+			|| s.equalsIgnoreCase("da")
+			|| s.equalsIgnoreCase("si")
+			|| s.equalsIgnoreCase("oui")
+			|| s.equalsIgnoreCase("ja")
+			|| s.equalsIgnoreCase("nam")
 		) return true;
 		else if(
-			S.equalsIgnoreCase("false")
-			|| S.equalsIgnoreCase("f")
-			|| S.equalsIgnoreCase("no")
-			|| S.equalsIgnoreCase("n")
-			|| S.equalsIgnoreCase("khong")
-			|| S.equalsIgnoreCase("nyet")
-			|| S.equalsIgnoreCase("non")
-			|| S.equalsIgnoreCase("nien")
-			|| S.equalsIgnoreCase("la")
+			s.equalsIgnoreCase("false")
+			|| s.equalsIgnoreCase("f")
+			|| s.equalsIgnoreCase("no")
+			|| s.equalsIgnoreCase("n")
+			|| s.equalsIgnoreCase("khong")
+			|| s.equalsIgnoreCase("nyet")
+			|| s.equalsIgnoreCase("non")
+			|| s.equalsIgnoreCase("nien")
+			|| s.equalsIgnoreCase("la")
 		) return false;
-		else throw new IllegalArgumentException("Invalid argument for boolean (" + field + "): " + S);
+		else throw new IllegalArgumentException("Invalid argument for boolean (" + field + "): " + s);
 	}
 
 	/**
 	 * @see  SQLUtility#parseDate(java.lang.String, java.util.TimeZone)
 	 * @see  Type#DATE_TIME_ZONE
 	 */
-	public static Date parseDate(String S, String field) {
+	public static Date parseDate(String s, String field) {
 		try {
-			return SQLUtility.parseDate(S, Type.DATE_TIME_ZONE);
+			return SQLUtility.parseDate(s, Type.DATE_TIME_ZONE);
 		} catch(NumberFormatException err) {
-			throw new IllegalArgumentException("Invalid argument for date (" + field + "): " + S, err);
+			throw new IllegalArgumentException("Invalid argument for date (" + field + "): " + s, err);
 		}
 	}
 
-	public static FirewallZone.Name parseFirewalldZoneName(String S, String field) {
+	public static FirewallZone.Name parseFirewalldZoneName(String s, String field) {
 		try {
-			return FirewallZone.Name.valueOf(S);
+			return FirewallZone.Name.valueOf(s);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for firewalld zone (" + field + "): " + S, err);
+			throw new IllegalArgumentException("Invalid argument for firewalld zone (" + field + "): " + s, err);
 		}
 	}
 
-	public static HostAddress parseHostAddress(String S, String field) {
+	public static HostAddress parseHostAddress(String s, String field) {
 		try {
-			return HostAddress.valueOf(S);
+			return HostAddress.valueOf(s);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for host address (" + field + "): " + S, err);
+			throw new IllegalArgumentException("Invalid argument for host address (" + field + "): " + s, err);
 		}
 	}
 
-	public static int parseInt(String S, String field) {
+	public static int parseInt(String s, String field) {
 		try {
-			return Integer.parseInt(S);
+			return Integer.parseInt(s);
 		} catch(NumberFormatException err) {
-			throw new IllegalArgumentException("Invalid argument for int (" + field + "): " + S, err);
+			throw new IllegalArgumentException("Invalid argument for int (" + field + "): " + s, err);
 		}
 	}
 
-	public static float parseFloat(String S, String field) {
+	public static float parseFloat(String s, String field) {
 		try {
-			return Float.parseFloat(S);
+			return Float.parseFloat(s);
 		} catch(NumberFormatException err) {
-			throw new IllegalArgumentException("Invalid argument for float (" + field + "): " + S, err);
+			throw new IllegalArgumentException("Invalid argument for float (" + field + "): " + s, err);
 		}
 	}
 
-	public static long parseLong(String S, String field) {
+	public static long parseLong(String s, String field) {
 		try {
-			return Long.parseLong(S);
+			return Long.parseLong(s);
 		} catch(NumberFormatException err) {
-			throw new IllegalArgumentException("Invalid argument for long (" + field + "): " + S, err);
+			throw new IllegalArgumentException("Invalid argument for long (" + field + "): " + s, err);
 		}
 	}
 
 	/**
 	 * @see  SQLUtility#parseDecimal3(java.lang.String)
 	 */
-	public static int parseDecimal3(String S, String field) {
+	public static int parseDecimal3(String s, String field) {
 		try {
-			return SQLUtility.parseDecimal3(S);
+			return SQLUtility.parseDecimal3(s);
 		} catch(NumberFormatException err) {
-			throw new IllegalArgumentException("Invalid argument for decimal (" + field + "): " + S, err);
+			throw new IllegalArgumentException("Invalid argument for decimal (" + field + "): " + s, err);
 		}
 	}
 
-	public static int parseOctalInt(String S, String field) {
+	public static int parseOctalInt(String s, String field) {
 		try {
-			return Integer.parseInt(S, 8);
+			return Integer.parseInt(s, 8);
 		} catch(NumberFormatException err) {
-			throw new IllegalArgumentException("Invalid argument for octal int (" + field + "): " + S, err);
+			throw new IllegalArgumentException("Invalid argument for octal int (" + field + "): " + s, err);
 		}
 	}
 
-	public static long parseOctalLong(String S, String field) {
+	public static long parseOctalLong(String s, String field) {
 		try {
-			return Long.parseLong(S, 8);
+			return Long.parseLong(s, 8);
 		} catch(NumberFormatException err) {
-			throw new IllegalArgumentException("Invalid argument for octal long (" + field + "): " + S, err);
+			throw new IllegalArgumentException("Invalid argument for octal long (" + field + "): " + s, err);
 		}
 	}
 
 	/**
 	 * @see  SQLUtility#parseDecimal2(java.lang.String)
 	 */
-	public static int parseDecimal2(String S, String field) {
+	public static int parseDecimal2(String s, String field) {
 		try {
-			return SQLUtility.parseDecimal2(S);
+			return SQLUtility.parseDecimal2(s);
 		} catch(NumberFormatException err) {
-			throw new IllegalArgumentException("Invalid argument for decimal (" + field + "): " + S, err);
+			throw new IllegalArgumentException("Invalid argument for decimal (" + field + "): " + s, err);
 		}
 	}
 
-	public static short parseShort(String S, String field) {
+	public static short parseShort(String s, String field) {
 		try {
-			return Short.parseShort(S);
+			return Short.parseShort(s);
 		} catch(NumberFormatException err) {
-			throw new IllegalArgumentException("Invalid argument for short (" + field + "): " + S, err);
+			throw new IllegalArgumentException("Invalid argument for short (" + field + "): " + s, err);
 		}
 	}
 
-	public static DomainName parseDomainName(String S, String field) {
+	public static DomainName parseDomainName(String s, String field) {
 		try {
-			return DomainName.valueOf(S);
+			return DomainName.valueOf(s);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for domain_name (" + field + "): " + S, err);
+			throw new IllegalArgumentException("Invalid argument for domain_name (" + field + "): " + s, err);
 		}
 	}
 
-	public static Email parseEmail(String S, String field) {
+	public static Email parseEmail(String s, String field) {
 		try {
-			return Email.valueOf(S);
+			return Email.valueOf(s);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for email address (" + field + "): " + S, err);
+			throw new IllegalArgumentException("Invalid argument for email address (" + field + "): " + s, err);
 		}
 	}
 
-	public static Gecos parseGecos(String S, String field) {
+	public static Gecos parseGecos(String s, String field) {
 		try {
-			return Gecos.valueOf(S);
+			return Gecos.valueOf(s);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for gecos (" + field + "): " + S, err);
+			throw new IllegalArgumentException("Invalid argument for gecos (" + field + "): " + s, err);
 		}
 	}
 
-	public static Group.Name parseGroupName(String S, String field) {
+	public static Group.Name parseGroupName(String s, String field) {
 		try {
-			return Group.Name.valueOf(S);
+			return Group.Name.valueOf(s);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for group (" + field + "): " + S, err);
+			throw new IllegalArgumentException("Invalid argument for group (" + field + "): " + s, err);
 		}
 	}
 
-	public static InetAddress parseInetAddress(String S, String field) {
+	public static InetAddress parseInetAddress(String s, String field) {
 		try {
-			return InetAddress.valueOf(S);
+			return InetAddress.valueOf(s);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for ip_address (" + field + "): " + S, err);
+			throw new IllegalArgumentException("Invalid argument for ip_address (" + field + "): " + s, err);
 		}
 	}
 
-	public static com.aoindustries.aoserv.client.linux.User.Name parseLinuxUserName(String S, String field) {
+	public static com.aoindustries.aoserv.client.linux.User.Name parseLinuxUserName(String s, String field) {
 		try {
-			return com.aoindustries.aoserv.client.linux.User.Name.valueOf(S);
+			return com.aoindustries.aoserv.client.linux.User.Name.valueOf(s);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for Linux username (" + field + "): " + S, err);
+			throw new IllegalArgumentException("Invalid argument for Linux username (" + field + "): " + s, err);
 		}
 	}
 
-	public static com.aoindustries.aoserv.client.mysql.Database.Name parseMySQLDatabaseName(String S, String field) {
+	public static com.aoindustries.aoserv.client.mysql.Database.Name parseMySQLDatabaseName(String s, String field) {
 		try {
-			return com.aoindustries.aoserv.client.mysql.Database.Name.valueOf(S);
+			return com.aoindustries.aoserv.client.mysql.Database.Name.valueOf(s);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for MySQL database name (" + field + "): " + S, err);
+			throw new IllegalArgumentException("Invalid argument for MySQL database name (" + field + "): " + s, err);
 		}
 	}
 
-	public static com.aoindustries.aoserv.client.mysql.Server.Name parseMySQLServerName(String S, String field) {
+	public static com.aoindustries.aoserv.client.mysql.Server.Name parseMySQLServerName(String s, String field) {
 		try {
-			return com.aoindustries.aoserv.client.mysql.Server.Name.valueOf(S);
+			return com.aoindustries.aoserv.client.mysql.Server.Name.valueOf(s);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for MySQL server name (" + field + "): " + S, err);
+			throw new IllegalArgumentException("Invalid argument for MySQL server name (" + field + "): " + s, err);
 		}
 	}
 
-	public static com.aoindustries.aoserv.client.mysql.User.Name parseMySQLUserName(String S, String field) {
+	public static com.aoindustries.aoserv.client.mysql.User.Name parseMySQLUserName(String s, String field) {
 		try {
-			return com.aoindustries.aoserv.client.mysql.User.Name.valueOf(S);
+			return com.aoindustries.aoserv.client.mysql.User.Name.valueOf(s);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for MySQL username (" + field + "): " + S, err);
+			throw new IllegalArgumentException("Invalid argument for MySQL username (" + field + "): " + s, err);
 		}
 	}
 
@@ -546,43 +547,43 @@ public final class AOSH extends ShellInterpreter {
 		}
 	}
 
-	public static com.aoindustries.aoserv.client.postgresql.Database.Name parsePostgresDatabaseName(String S, String field) {
+	public static com.aoindustries.aoserv.client.postgresql.Database.Name parsePostgresDatabaseName(String s, String field) {
 		try {
-			return com.aoindustries.aoserv.client.postgresql.Database.Name.valueOf(S);
+			return com.aoindustries.aoserv.client.postgresql.Database.Name.valueOf(s);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for PostgreSQL database name (" + field + "): " + S, err);
+			throw new IllegalArgumentException("Invalid argument for PostgreSQL database name (" + field + "): " + s, err);
 		}
 	}
 
-	public static com.aoindustries.aoserv.client.postgresql.Server.Name parsePostgresServerName(String S, String field) {
+	public static com.aoindustries.aoserv.client.postgresql.Server.Name parsePostgresServerName(String s, String field) {
 		try {
-			return com.aoindustries.aoserv.client.postgresql.Server.Name.valueOf(S);
+			return com.aoindustries.aoserv.client.postgresql.Server.Name.valueOf(s);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for PostgreSQL server name (" + field + "): " + S, err);
+			throw new IllegalArgumentException("Invalid argument for PostgreSQL server name (" + field + "): " + s, err);
 		}
 	}
 
-	public static com.aoindustries.aoserv.client.postgresql.User.Name parsePostgresUserName(String S, String field) {
+	public static com.aoindustries.aoserv.client.postgresql.User.Name parsePostgresUserName(String s, String field) {
 		try {
-			return com.aoindustries.aoserv.client.postgresql.User.Name.valueOf(S);
+			return com.aoindustries.aoserv.client.postgresql.User.Name.valueOf(s);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for PostgreSQL username (" + field + "): " + S, err);
+			throw new IllegalArgumentException("Invalid argument for PostgreSQL username (" + field + "): " + s, err);
 		}
 	}
 
-	public static PosixPath parseUnixPath(String S, String field) {
+	public static PosixPath parseUnixPath(String s, String field) {
 		try {
-			return PosixPath.valueOf(S);
+			return PosixPath.valueOf(s);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for POSIX path (" + field + "): " + S, err);
+			throw new IllegalArgumentException("Invalid argument for POSIX path (" + field + "): " + s, err);
 		}
 	}
 
-	public static User.Name parseUserName(String S, String field) {
+	public static User.Name parseUserName(String s, String field) {
 		try {
-			return User.Name.valueOf(S);
+			return User.Name.valueOf(s);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for username (" + field + "): " + S, err);
+			throw new IllegalArgumentException("Invalid argument for username (" + field + "): " + s, err);
 		}
 	}
 
@@ -595,67 +596,72 @@ public final class AOSH extends ShellInterpreter {
 	}
 
 	public static String readLine(InputStream in) throws IOException {
-		StringBuilder SB=new StringBuilder();
-		readLine(in, SB);
-		return SB.toString();
+		StringBuilder sb = new StringBuilder();
+		readLine(in, sb);
+		return sb.toString();
 	}
 
-	public static void readLine(InputStream in, StringBuilder SB) throws IOException {
-		SB.setLength(0);
+	public static void readLine(InputStream in, StringBuilder sb) throws IOException {
+		sb.setLength(0);
 		int ch;
-		while((ch=in.read())!=-1 && ch!='\n') if(ch!='\r') SB.append((char)ch);
+		while((ch = in.read()) != -1 && ch != '\n') {
+			if(ch != '\r') sb.append((char)ch);
+		}
 	}
 
 	private void repeat(String[] args) throws IOException, SQLException {
-		int argCount=args.length;
-		if(argCount>2) {
+		int argCount = args.length;
+		if(argCount > 2) {
 			try {
-				int count=Integer.parseInt(args[1]);
-				if(count>=0) {
-					String[] newArgs=new String[argCount-2];
-					System.arraycopy(args, 2, newArgs, 0, argCount-2);
+				int count = Integer.parseInt(args[1]);
+				if(count >= 0) {
+					String[] newArgs = new String[argCount-2];
+					System.arraycopy(args, 2, newArgs, 0, argCount - 2);
 
-					for(int c=0;c<count;c++) handleCommand(newArgs);
+					for(int c = 0; c < count; c++) {
+						handleCommand(newArgs);
+					}
 				} else {
-					err.print("aosh: "+Command.REPEAT+": invalid loop count: ");
+					err.print("aosh: " + Command.REPEAT + ": invalid loop count: ");
 					err.println(count);
 					err.flush();
 				}
 			} catch(NumberFormatException nfe) {
-				err.print("aosh: "+Command.REPEAT+": invalid loop count: ");
+				err.print("aosh: " + Command.REPEAT + ": invalid loop count: ");
 				err.println(args[1]);
 				err.flush();
 			}
 		} else {
-			err.println("aosh: "+Command.REPEAT+": not enough parameters");
+			err.println("aosh: " + Command.REPEAT + ": not enough parameters");
 			err.flush();
 		}
 	}
 
+	@SuppressWarnings("SleepWhileInLoop")
 	private void sleep(String[] args) {
-		if(args.length>1) {
+		if(args.length > 1) {
 			try {
-				for(int c=1;c<args.length;c++) {
+				for(int c = 1; c < args.length; c++) {
 					try {
-						long time=1000*Integer.parseInt(args[c]);
-						if(time<0) {
-							err.println("aosh: "+Command.SLEEP+": invalid time interval: "+args[c]);
+						long time = 1000L * Integer.parseInt(args[c]);
+						if(time < 0) {
+							err.println("aosh: " + Command.SLEEP + ": invalid time interval: " + args[c]);
 							err.flush();
 						} else {
 							Thread.sleep(time);
 						}
 					} catch(NumberFormatException nfe) {
-						err.println("aosh: "+Command.SLEEP+": invalid time interval: "+args[c]);
+						err.println("aosh: " + Command.SLEEP + ": invalid time interval: " + args[c]);
 						err.flush();
 					}
 				}
 			} catch(InterruptedException ie) {
-				status="Interrupted";
-				err.println("aosh: "+Command.SLEEP+": interrupted");
+				status = "Interrupted";
+				err.println("aosh: " + Command.SLEEP + ": interrupted");
 				err.flush();
 			}
 		} else {
-			err.println("aosh: "+Command.SLEEP+": too few arguments");
+			err.println("aosh: " + Command.SLEEP + ": too few arguments");
 			err.flush();
 		}
 	}

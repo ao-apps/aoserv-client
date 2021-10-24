@@ -166,10 +166,15 @@ public final class UserServerTable extends CachedTableIntegerKey<UserServer> {
 				int len=list.size();
 				for(int c=0; c<len; c++) {
 					UserServer lsa=list.get(c);
-					Integer I=lsa.getServer().getPkey();
-					Map<User.Name, UserServer> serverHash=nameHash.get(I);
-					if(serverHash==null) nameHash.put(I, serverHash=new HashMap<>());
-					if(serverHash.put(lsa.getLinuxAccount_username_id(), lsa)!=null) throw new SQLException("LinuxServerAccount username exists more than once on server: "+lsa.getLinuxAccount_username_id()+" on "+I);
+					Integer i = lsa.getServer().getPkey();
+					Map<User.Name, UserServer> serverHash = nameHash.get(i);
+					if(serverHash == null) nameHash.put(i, serverHash = new HashMap<>());
+					if(serverHash.put(lsa.getLinuxAccount_username_id(), lsa) != null) {
+						throw new SQLException(
+							"LinuxServerAccount username exists more than once on server: "
+							+ lsa.getLinuxAccount_username_id() + " on " + i
+						);
+					}
 				}
 				nameHashBuilt=true;
 			}
@@ -283,8 +288,8 @@ public final class UserServerTable extends CachedTableIntegerKey<UserServer> {
 						Integer aoI=lsa.getServer().getPkey();
 						Map<LinuxId, UserServer> serverHash=uidHash.get(aoI);
 						if(serverHash==null) uidHash.put(aoI, serverHash=new HashMap<>());
-						LinuxId I=lsaUID;
-						if(!serverHash.containsKey(I)) serverHash.put(I, lsa);
+						LinuxId i = lsaUID;
+						if(!serverHash.containsKey(i)) serverHash.put(i, lsa);
 					}
 				}
 				uidHashBuilt=true;

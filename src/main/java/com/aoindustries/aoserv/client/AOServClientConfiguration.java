@@ -88,13 +88,13 @@ public final class AOServClientConfiguration {
 	 * Gets the non-SSL local IP to connect from or {@code null} if not configured.
 	 */
 	static InetAddress getTcpLocalIp() throws ConfigurationException {
-		String S = getProperty("aoserv.client.tcp.local_ip");
+		String s = getProperty("aoserv.client.tcp.local_ip");
 		if(
-			S==null
-			|| (S=S.trim()).length()==0
+			s == null
+			|| (s = s.trim()).length() == 0
 		) return null;
 		try {
-			return InetAddress.valueOf(S);
+			return InetAddress.valueOf(s);
 		} catch(ValidationException e) {
 			throw new ConfigurationException(e);
 		}
@@ -125,8 +125,8 @@ public final class AOServClientConfiguration {
 	 * Gets the non-SSL connection max age in milliseconds.
 	 */
 	static long getTcpConnectionMaxAge() throws ConfigurationException {
-		String S = getProperty("aoserv.client.tcp.connection.max_age");
-		return S==null || S.length()==0 ? AOPool.DEFAULT_MAX_CONNECTION_AGE : Long.parseLong(S);
+		String s = getProperty("aoserv.client.tcp.connection.max_age");
+		return s == null || s.length() == 0 ? AOPool.DEFAULT_MAX_CONNECTION_AGE : Long.parseLong(s);
 	}
 
 	/**
@@ -144,13 +144,13 @@ public final class AOServClientConfiguration {
 	 * Gets the SSL local IP to connect from or {@code null} if not configured.
 	 */
 	static InetAddress getSslLocalIp() throws ConfigurationException {
-		String S = getProperty("aoserv.client.ssl.local_ip");
+		String s = getProperty("aoserv.client.ssl.local_ip");
 		if(
-			S==null
-			|| (S=S.trim()).length()==0
+			s == null
+			|| (s = s.trim()).length() == 0
 		) return null;
 		try {
-			return InetAddress.valueOf(S);
+			return InetAddress.valueOf(s);
 		} catch(ValidationException e) {
 			throw new ConfigurationException(e);
 		}
@@ -181,8 +181,8 @@ public final class AOServClientConfiguration {
 	 * Gets the SSL connection max age in milliseconds.
 	 */
 	static long getSslConnectionMaxAge() throws ConfigurationException {
-		String S = getProperty("aoserv.client.ssl.connection.max_age");
-		return S==null || S.length()==0 ? AOPool.DEFAULT_MAX_CONNECTION_AGE : Long.parseLong(S);
+		String s = getProperty("aoserv.client.ssl.connection.max_age");
+		return s == null || s.length() == 0 ? AOPool.DEFAULT_MAX_CONNECTION_AGE : Long.parseLong(s);
 	}
 
 	/**

@@ -32,11 +32,11 @@ public abstract class GlobalObjectIntegerKey<T extends GlobalObjectIntegerKey<T>
 	protected int pkey;
 
 	@Override
-	public boolean equals(Object O) {
+	public boolean equals(Object obj) {
 		return
-			O!=null
-			&& O.getClass()==getClass()
-			&& ((GlobalObjectIntegerKey)O).pkey==pkey
+			obj != null
+			&& obj.getClass() == getClass()
+			&& ((GlobalObjectIntegerKey)obj).pkey == pkey
 		;
 	}
 

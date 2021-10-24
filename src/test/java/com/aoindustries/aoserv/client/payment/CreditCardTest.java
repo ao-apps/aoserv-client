@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2008, 2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2008, 2009, 2016, 2017, 2018, 2019, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -61,11 +61,11 @@ public class CreditCardTest extends TestCase {
 	 * @see CreditCard#derandomize(java.lang.String)
 	 */
 	public void testRandomizeDerandomize() {
-		StringBuilder SB = new StringBuilder();
-		for(int c=0;c<100;c++) {
+		StringBuilder sb = new StringBuilder();
+		for(int c = 0; c < 100; c++) {
 			int len = secureRandom.nextInt(50);
-			SB.setLength(0);
-			for(int d=0;d<len;d++) {
+			sb.setLength(0);
+			for(int d = 0; d < len; d++) {
 				int randVal = secureRandom.nextInt(13);
 				char randCh;
 				if(randVal<10) randCh = (char)('0'+randVal);
@@ -73,9 +73,9 @@ public class CreditCardTest extends TestCase {
 				else if(randVal==11) randCh = '-';
 				else if(randVal==12) randCh = '/';
 				else throw new AssertionError("Unexpected value for randVal: "+randVal);
-				SB.append(randCh);
+				sb.append(randCh);
 			}
-			String original = SB.toString();
+			String original = sb.toString();
 			//System.out.println(original);
 			String randomized = CreditCard.randomize(original);
 			//System.out.println(randomized);
