@@ -1015,7 +1015,7 @@ public abstract class AOServConnector implements SchemaParent {
 	) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
-		while(!Thread.interrupted()) {
+		while(!Thread.currentThread().isInterrupted()) {
 			try {
 				try (AOServConnection connection = getConnection(1)) {
 					try {
@@ -1030,17 +1030,20 @@ public abstract class AOServConnector implements SchemaParent {
 				}
 				return resultRequest.afterRelease();
 			} catch(Error | RuntimeException | IOException | SQLException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
+				if(Thread.currentThread().isInterrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
 				Thread.sleep(retryAttemptDelays[attempt-1]);
 			} catch(InterruptedException err) {
+				// Restore the interrupted status
+				Thread.currentThread().interrupt();
 				InterruptedIOException ioErr = new InterruptedIOException();
 				ioErr.initCause(err);
 				throw ioErr;
 			}
 			attempt++;
 		}
+		assert Thread.currentThread().isInterrupted();
 		throw new InterruptedIOException();
 	}
 
@@ -1048,7 +1051,7 @@ public abstract class AOServConnector implements SchemaParent {
 	public final boolean requestBooleanQuery(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
-		while(!Thread.interrupted()) {
+		while(!Thread.currentThread().isInterrupted()) {
 			try {
 				try (AOServConnection connection = getConnection(1)) {
 					try {
@@ -1066,17 +1069,20 @@ public abstract class AOServConnector implements SchemaParent {
 					}
 				}
 			} catch(Error | RuntimeException | IOException | SQLException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
+				if(Thread.currentThread().isInterrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
 				Thread.sleep(retryAttemptDelays[attempt-1]);
 			} catch(InterruptedException err) {
+				// Restore the interrupted status
+				Thread.currentThread().interrupt();
 				InterruptedIOException ioErr = new InterruptedIOException();
 				ioErr.initCause(err);
 				throw ioErr;
 			}
 			attempt++;
 		}
+		assert Thread.currentThread().isInterrupted();
 		throw new InterruptedIOException();
 	}
 
@@ -1084,7 +1090,7 @@ public abstract class AOServConnector implements SchemaParent {
 	public final boolean requestBooleanQueryIL(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
-		while(!Thread.interrupted()) {
+		while(!Thread.currentThread().isInterrupted()) {
 			try {
 				boolean result;
 				IntList invalidateList;
@@ -1110,17 +1116,20 @@ public abstract class AOServConnector implements SchemaParent {
 				tablesUpdated(invalidateList);
 				return result;
 			} catch(Error | RuntimeException | IOException | SQLException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
+				if(Thread.currentThread().isInterrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
 				Thread.sleep(retryAttemptDelays[attempt-1]);
 			} catch(InterruptedException err) {
+				// Restore the interrupted status
+				Thread.currentThread().interrupt();
 				InterruptedIOException ioErr = new InterruptedIOException();
 				ioErr.initCause(err);
 				throw ioErr;
 			}
 			attempt++;
 		}
+		assert Thread.currentThread().isInterrupted();
 		throw new InterruptedIOException();
 	}
 
@@ -1128,7 +1137,7 @@ public abstract class AOServConnector implements SchemaParent {
 	public final int requestIntQuery(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
-		while(!Thread.interrupted()) {
+		while(!Thread.currentThread().isInterrupted()) {
 			try {
 				try (AOServConnection connection = getConnection(1)) {
 					try {
@@ -1146,17 +1155,20 @@ public abstract class AOServConnector implements SchemaParent {
 					}
 				}
 			} catch(Error | RuntimeException | IOException | SQLException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
+				if(Thread.currentThread().isInterrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
 				Thread.sleep(retryAttemptDelays[attempt-1]);
 			} catch(InterruptedException err) {
+				// Restore the interrupted status
+				Thread.currentThread().interrupt();
 				InterruptedIOException ioErr = new InterruptedIOException();
 				ioErr.initCause(err);
 				throw ioErr;
 			}
 			attempt++;
 		}
+		assert Thread.currentThread().isInterrupted();
 		throw new InterruptedIOException();
 	}
 
@@ -1164,7 +1176,7 @@ public abstract class AOServConnector implements SchemaParent {
 	public final int requestIntQueryIL(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
-		while(!Thread.interrupted()) {
+		while(!Thread.currentThread().isInterrupted()) {
 			try {
 				int result;
 				IntList invalidateList;
@@ -1190,17 +1202,20 @@ public abstract class AOServConnector implements SchemaParent {
 				tablesUpdated(invalidateList);
 				return result;
 			} catch(Error | RuntimeException | IOException | SQLException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
+				if(Thread.currentThread().isInterrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
 				Thread.sleep(retryAttemptDelays[attempt-1]);
 			} catch(InterruptedException err) {
+				// Restore the interrupted status
+				Thread.currentThread().interrupt();
 				InterruptedIOException ioErr = new InterruptedIOException();
 				ioErr.initCause(err);
 				throw ioErr;
 			}
 			attempt++;
 		}
+		assert Thread.currentThread().isInterrupted();
 		throw new InterruptedIOException();
 	}
 
@@ -1208,7 +1223,7 @@ public abstract class AOServConnector implements SchemaParent {
 	public final long requestLongQuery(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
-		while(!Thread.interrupted()) {
+		while(!Thread.currentThread().isInterrupted()) {
 			try {
 				try (AOServConnection connection = getConnection(1)) {
 					try {
@@ -1226,17 +1241,20 @@ public abstract class AOServConnector implements SchemaParent {
 					}
 				}
 			} catch(Error | RuntimeException | IOException | SQLException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
+				if(Thread.currentThread().isInterrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
 				Thread.sleep(retryAttemptDelays[attempt-1]);
 			} catch(InterruptedException err) {
+				// Restore the interrupted status
+				Thread.currentThread().interrupt();
 				InterruptedIOException ioErr = new InterruptedIOException();
 				ioErr.initCause(err);
 				throw ioErr;
 			}
 			attempt++;
 		}
+		assert Thread.currentThread().isInterrupted();
 		throw new InterruptedIOException();
 	}
 
@@ -1244,7 +1262,7 @@ public abstract class AOServConnector implements SchemaParent {
 	public final short requestShortQuery(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
-		while(!Thread.interrupted()) {
+		while(!Thread.currentThread().isInterrupted()) {
 			try {
 				try (AOServConnection connection = getConnection(1)) {
 					try {
@@ -1262,17 +1280,20 @@ public abstract class AOServConnector implements SchemaParent {
 					}
 				}
 			} catch(Error | RuntimeException | IOException | SQLException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
+				if(Thread.currentThread().isInterrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
 				Thread.sleep(retryAttemptDelays[attempt-1]);
 			} catch(InterruptedException err) {
+				// Restore the interrupted status
+				Thread.currentThread().interrupt();
 				InterruptedIOException ioErr = new InterruptedIOException();
 				ioErr.initCause(err);
 				throw ioErr;
 			}
 			attempt++;
 		}
+		assert Thread.currentThread().isInterrupted();
 		throw new InterruptedIOException();
 	}
 
@@ -1280,7 +1301,7 @@ public abstract class AOServConnector implements SchemaParent {
 	public final short requestShortQueryIL(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
-		while(!Thread.interrupted()) {
+		while(!Thread.currentThread().isInterrupted()) {
 			try {
 				short result;
 				IntList invalidateList;
@@ -1306,17 +1327,20 @@ public abstract class AOServConnector implements SchemaParent {
 				tablesUpdated(invalidateList);
 				return result;
 			} catch(Error | RuntimeException | IOException | SQLException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
+				if(Thread.currentThread().isInterrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
 				Thread.sleep(retryAttemptDelays[attempt-1]);
 			} catch(InterruptedException err) {
+				// Restore the interrupted status
+				Thread.currentThread().interrupt();
 				InterruptedIOException ioErr = new InterruptedIOException();
 				ioErr.initCause(err);
 				throw ioErr;
 			}
 			attempt++;
 		}
+		assert Thread.currentThread().isInterrupted();
 		throw new InterruptedIOException();
 	}
 
@@ -1324,7 +1348,7 @@ public abstract class AOServConnector implements SchemaParent {
 	public final String requestStringQuery(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
-		while(!Thread.interrupted()) {
+		while(!Thread.currentThread().isInterrupted()) {
 			try {
 				try (AOServConnection connection = getConnection(1)) {
 					try {
@@ -1342,17 +1366,20 @@ public abstract class AOServConnector implements SchemaParent {
 					}
 				}
 			} catch(Error | RuntimeException | IOException | SQLException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
+				if(Thread.currentThread().isInterrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
 				Thread.sleep(retryAttemptDelays[attempt-1]);
 			} catch(InterruptedException err) {
+				// Restore the interrupted status
+				Thread.currentThread().interrupt();
 				InterruptedIOException ioErr = new InterruptedIOException();
 				ioErr.initCause(err);
 				throw ioErr;
 			}
 			attempt++;
 		}
+		assert Thread.currentThread().isInterrupted();
 		throw new InterruptedIOException();
 	}
 
@@ -1363,7 +1390,7 @@ public abstract class AOServConnector implements SchemaParent {
 	public final String requestLongStringQuery(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
-		while(!Thread.interrupted()) {
+		while(!Thread.currentThread().isInterrupted()) {
 			try {
 				try (AOServConnection connection = getConnection(1)) {
 					try {
@@ -1381,17 +1408,20 @@ public abstract class AOServConnector implements SchemaParent {
 					}
 				}
 			} catch(Error | RuntimeException | IOException | SQLException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
+				if(Thread.currentThread().isInterrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
 				Thread.sleep(retryAttemptDelays[attempt-1]);
 			} catch(InterruptedException err) {
+				// Restore the interrupted status
+				Thread.currentThread().interrupt();
 				InterruptedIOException ioErr = new InterruptedIOException();
 				ioErr.initCause(err);
 				throw ioErr;
 			}
 			attempt++;
 		}
+		assert Thread.currentThread().isInterrupted();
 		throw new InterruptedIOException();
 	}
 
@@ -1403,7 +1433,7 @@ public abstract class AOServConnector implements SchemaParent {
 	public final String requestNullLongStringQuery(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
-		while(!Thread.interrupted()) {
+		while(!Thread.currentThread().isInterrupted()) {
 			try {
 				try (AOServConnection connection = getConnection(1)) {
 					try {
@@ -1421,17 +1451,20 @@ public abstract class AOServConnector implements SchemaParent {
 					}
 				}
 			} catch(Error | RuntimeException | IOException | SQLException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
+				if(Thread.currentThread().isInterrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
 				Thread.sleep(retryAttemptDelays[attempt-1]);
 			} catch(InterruptedException err) {
+				// Restore the interrupted status
+				Thread.currentThread().interrupt();
 				InterruptedIOException ioErr = new InterruptedIOException();
 				ioErr.initCause(err);
 				throw ioErr;
 			}
 			attempt++;
 		}
+		assert Thread.currentThread().isInterrupted();
 		throw new InterruptedIOException();
 	}
 
@@ -1467,7 +1500,7 @@ public abstract class AOServConnector implements SchemaParent {
 	) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
-		while(!Thread.interrupted()) {
+		while(!Thread.currentThread().isInterrupted()) {
 			try {
 				try (AOServConnection connection = getConnection(1)) {
 					try {
@@ -1483,17 +1516,20 @@ public abstract class AOServConnector implements SchemaParent {
 				updateRequest.afterRelease();
 				return;
 			} catch(Error | RuntimeException | IOException | SQLException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
+				if(Thread.currentThread().isInterrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
 				Thread.sleep(retryAttemptDelays[attempt-1]);
 			} catch(InterruptedException err) {
+				// Restore the interrupted status
+				Thread.currentThread().interrupt();
 				InterruptedIOException ioErr = new InterruptedIOException();
 				ioErr.initCause(err);
 				throw ioErr;
 			}
 			attempt++;
 		}
+		assert Thread.currentThread().isInterrupted();
 		throw new InterruptedIOException();
 	}
 
@@ -1501,7 +1537,7 @@ public abstract class AOServConnector implements SchemaParent {
 	public final void requestUpdate(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
-		while(!Thread.interrupted()) {
+		while(!Thread.currentThread().isInterrupted()) {
 			try {
 				try (AOServConnection connection = getConnection(1)) {
 					try {
@@ -1518,17 +1554,20 @@ public abstract class AOServConnector implements SchemaParent {
 				}
 				return;
 			} catch(Error | RuntimeException | IOException | SQLException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
+				if(Thread.currentThread().isInterrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
 				Thread.sleep(retryAttemptDelays[attempt-1]);
 			} catch(InterruptedException err) {
+				// Restore the interrupted status
+				Thread.currentThread().interrupt();
 				InterruptedIOException ioErr = new InterruptedIOException();
 				ioErr.initCause(err);
 				throw ioErr;
 			}
 			attempt++;
 		}
+		assert Thread.currentThread().isInterrupted();
 		throw new InterruptedIOException();
 	}
 
@@ -1536,7 +1575,7 @@ public abstract class AOServConnector implements SchemaParent {
 	public final void requestUpdateIL(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
-		while(!Thread.interrupted()) {
+		while(!Thread.currentThread().isInterrupted()) {
 			try {
 				IntList invalidateList;
 				try (AOServConnection connection = getConnection(1)) {
@@ -1559,17 +1598,20 @@ public abstract class AOServConnector implements SchemaParent {
 				tablesUpdated(invalidateList);
 				return;
 			} catch(Error | RuntimeException | IOException | SQLException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
+				if(Thread.currentThread().isInterrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
 				Thread.sleep(retryAttemptDelays[attempt-1]);
 			} catch(InterruptedException err) {
+				// Restore the interrupted status
+				Thread.currentThread().interrupt();
 				InterruptedIOException ioErr = new InterruptedIOException();
 				ioErr.initCause(err);
 				throw ioErr;
 			}
 			attempt++;
 		}
+		assert Thread.currentThread().isInterrupted();
 		throw new InterruptedIOException();
 	}
 

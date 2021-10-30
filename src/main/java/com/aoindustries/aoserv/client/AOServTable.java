@@ -118,10 +118,10 @@ public abstract class AOServTable<K, V extends AOServObject<K, V>> implements It
 		@SuppressWarnings({"NestedSynchronizedStatement", "UseSpecificCatch", "TooBroadCatch"})
 		public void run() {
 			OUTER_LOOP :
-			while(true) {
+			while(!Thread.currentThread().isInterrupted()) {
 				try {
 					synchronized(eventLock) {
-						while(true) {
+						while(!Thread.currentThread().isInterrupted()) {
 							if(thread != this) break OUTER_LOOP;
 							long time = System.currentTimeMillis();
 							// Run anything that should be ran, calculating the minimum sleep time
@@ -170,6 +170,10 @@ public abstract class AOServTable<K, V extends AOServObject<K, V>> implements It
 					}
 				} catch (ThreadDeath td) {
 					throw td;
+				} catch (InterruptedException e) {
+					connector.getLogger().log(Level.WARNING, null, e);
+					// Restore the interrupted status
+					Thread.currentThread().interrupt();
 				} catch (Throwable t) {
 					connector.getLogger().log(Level.SEVERE, null, t);
 				}

@@ -124,6 +124,8 @@ public final class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 			} catch(InterruptedException err) {
 				InterruptedIOException ioErr = new InterruptedIOException("Interrupted while waiting for gpg");
 				ioErr.initCause(err);
+				// Restore the interrupted status
+				Thread.currentThread().interrupt();
 				throw ioErr;
 			}
 		}
@@ -168,6 +170,8 @@ public final class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 			} catch(InterruptedException err) {
 				InterruptedIOException ioErr = new InterruptedIOException("Interrupted while waiting for gpg");
 				ioErr.initCause(err);
+				// Restore the interrupted status
+				Thread.currentThread().interrupt();
 				throw ioErr;
 			}
 		}

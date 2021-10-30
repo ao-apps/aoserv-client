@@ -659,6 +659,8 @@ public final class AOSH extends ShellInterpreter {
 				status = "Interrupted";
 				err.println("aosh: " + Command.SLEEP + ": interrupted");
 				err.flush();
+				// Restore the interrupted status
+				Thread.currentThread().interrupt();
 			}
 		} else {
 			err.println("aosh: " + Command.SLEEP + ": too few arguments");

@@ -162,6 +162,7 @@ import java.util.Set;
 // TODO: This 8700 line monstrosity should be split into appropriate structure
 // TODO: as it is used primarily by AOSH.  Either do this directly in AOSH,
 // TODO: or have an aoserv-client-simple project that is used by AOSH.
+@SuppressWarnings({"BroadCatchBlock", "TooBroadCatch", "UseSpecificCatch"})
 public final class SimpleAOClient {
 
 	final AOServConnector connector;
@@ -906,10 +907,12 @@ public final class SimpleAOClient {
 			try {
 				if(added && !ea.isUsed()) ea.remove();
 			} catch(ThreadDeath td) {
+				@SuppressWarnings("ThrowableResultIgnored")
 				Throwable t = Throwables.addSuppressed(td, e);
 				assert t == td;
 				throw td;
 			} catch(Throwable t) {
+				@SuppressWarnings("ThrowableResultIgnored")
 				Throwable t2 = Throwables.addSuppressed(e, t);
 				assert t2 == e;
 			}
@@ -1006,10 +1009,12 @@ public final class SimpleAOClient {
 			try {
 				if(added && !ea.isUsed()) ea.remove();
 			} catch(ThreadDeath td) {
+				@SuppressWarnings("ThrowableResultIgnored")
 				Throwable t = Throwables.addSuppressed(td, e);
 				assert t == td;
 				throw td;
 			} catch(Throwable t) {
+				@SuppressWarnings("ThrowableResultIgnored")
 				Throwable t2 = Throwables.addSuppressed(e, t);
 				assert t2 == e;
 			}
@@ -1090,10 +1095,12 @@ public final class SimpleAOClient {
 			try {
 				if(added && !ea.isUsed()) ea.remove();
 			} catch(ThreadDeath td) {
+				@SuppressWarnings("ThrowableResultIgnored")
 				Throwable t = Throwables.addSuppressed(td, e);
 				assert t == td;
 				throw td;
 			} catch(Throwable t) {
+				@SuppressWarnings("ThrowableResultIgnored")
 				Throwable t2 = Throwables.addSuppressed(e, t);
 				assert t2 == e;
 			}
@@ -1781,10 +1788,12 @@ public final class SimpleAOClient {
 			try {
 				if(added && !ea.isUsed()) ea.remove();
 			} catch(ThreadDeath td) {
+				@SuppressWarnings("ThrowableResultIgnored")
 				Throwable t = Throwables.addSuppressed(td, e);
 				assert t == td;
 				throw td;
 			} catch(Throwable t) {
+				@SuppressWarnings("ThrowableResultIgnored")
 				Throwable t2 = Throwables.addSuppressed(e, t);
 				assert t2 == e;
 			}

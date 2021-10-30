@@ -101,7 +101,7 @@ public final class SocketConnection extends AOServConnection {
 					// Hold the idLock when need a connector ID
 					SecurityStreamables.writeNullIdentifier(null, out);
 					out.flush();
-					if(Thread.interrupted()) throw new InterruptedIOException();
+					if(Thread.currentThread().isInterrupted()) throw new InterruptedIOException();
 					if(!in.readBoolean()) throw new IOException(in.readUTF());
 					connectorId = SecurityStreamables.readIdentifier(in);
 					connector.id = connectorId;
@@ -114,7 +114,7 @@ public final class SocketConnection extends AOServConnection {
 				// Finish connecting outside the idLock when already have a connector ID
 				SecurityStreamables.writeNullIdentifier(connectorId, out);
 				out.flush();
-				if(Thread.interrupted()) throw new InterruptedIOException();
+				if(Thread.currentThread().isInterrupted()) throw new InterruptedIOException();
 				if(!in.readBoolean()) throw new IOException(in.readUTF());
 			}
 			final long startSeq = in.readLong();

@@ -102,7 +102,7 @@ public class TCPConnector extends AOServConnector {
 			try {
 				//System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Starting");
 				boolean runMore=true;
-				while(runMore) {
+				while(runMore && !Thread.currentThread().isInterrupted()) {
 					try {
 						try (SocketConnection conn = getConnection(1)) {
 							try {
@@ -120,7 +120,7 @@ public class TCPConnector extends AOServConnector {
 
 								StreamableInput in = conn.getResponseIn();
 								IntList tableList=new IntArrayList();
-								while(runMore) {
+								while(runMore && !Thread.currentThread().isInterrupted()) {
 									synchronized(cacheMonitorLock) {
 										long currentTime = System.currentTimeMillis();
 										long timeSince = currentTime - connectionLastUsed;
@@ -186,6 +186,8 @@ public class TCPConnector extends AOServConnector {
 								sleep(getFastRandom().nextInt(50000)+10000); // Wait between 10 and 60 seconds
 							} catch(InterruptedException err2) {
 								getLogger().log(Level.WARNING, null, err2);
+								// Restore the interrupted status
+								Thread.currentThread().interrupt();
 							}
 						}
 					} catch(ThreadDeath td) {
@@ -199,6 +201,8 @@ public class TCPConnector extends AOServConnector {
 								sleep(getFastRandom().nextInt(50000)+10000); // Wait between 10 and 60 seconds
 							} catch(InterruptedException err2) {
 								getLogger().log(Level.WARNING, null, err2);
+								// Restore the interrupted status
+								Thread.currentThread().interrupt();
 							}
 						}
 					} finally {
@@ -288,7 +292,7 @@ public class TCPConnector extends AOServConnector {
 	}
 
 	Socket getSocket() throws InterruptedIOException, IOException {
-		if(Thread.interrupted()) throw new InterruptedIOException();
+		if(Thread.currentThread().isInterrupted()) throw new InterruptedIOException();
 		Socket socket=new Socket();
 		socket.setKeepAlive(true);
 		socket.setSoLinger(true, AOPool.DEFAULT_SOCKET_SO_LINGER);

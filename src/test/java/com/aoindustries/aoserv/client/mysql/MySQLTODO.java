@@ -307,6 +307,8 @@ public class MySQLTODO extends TestCase {
 				//    Thread.sleep(30000);
 				//} catch(InterruptedException err) {
 				//    logger...
+				//    // Restore the interrupted status
+				//    Thread.currentThread().interrupt();
 				//}
 				fail("Should not be able to connect to database until MySQLDBUser added: "+md);
 			}
