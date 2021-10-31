@@ -82,7 +82,7 @@ public abstract class AOServConnector implements SchemaParent {
 	/**
 	 * The maximum size of the master entropy pool in bytes.
 	 */
-	public static final long MASTER_ENTROPY_POOL_SIZE=(long)64*1024*1024;
+	public static final long MASTER_ENTROPY_POOL_SIZE = 64L * 1024 * 1024;
 
 	/**
 	 * The delay for each retry attempt.

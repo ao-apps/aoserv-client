@@ -476,8 +476,8 @@ public final class Server
 		}
 		out.writeCompressedInt(failover_server);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30)<=0) {
-			out.writeCompressedInt(60*1000);
-			out.writeCompressedInt(5*60*1000);
+			out.writeCompressedInt(60 * 1000);
+			out.writeCompressedInt(5 * 60 * 1000);
 			out.writeBoolean(false);
 		}
 		out.writeNullUTF(daemonDeviceId);

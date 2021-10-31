@@ -845,7 +845,7 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
 	/**
 	 * The number of milliseconds in a day.
 	 */
-	public static final long MILLIS_PER_DAY = 24*60*60*1000;
+	public static final long MILLIS_PER_DAY = 24L * 60 * 60 * 1000;
 
 	/**
 	 * Gets the number of days from epoch in GMT.

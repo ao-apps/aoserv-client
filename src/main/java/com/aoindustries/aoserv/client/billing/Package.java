@@ -497,9 +497,9 @@ public final class Package extends CachedObjectIntegerKey<Package> implements Di
 		}
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30)<=0) {
 			out.writeCompressedInt(256);
-			out.writeLong(64*1024*1024);
+			out.writeLong(64L * 1024 * 1024);
 			out.writeCompressedInt(256);
-			out.writeLong(64*1024*1024);
+			out.writeLong(64L * 1024 * 1024);
 		}
 		out.writeCompressedInt(disable_log);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_24)>=0) {

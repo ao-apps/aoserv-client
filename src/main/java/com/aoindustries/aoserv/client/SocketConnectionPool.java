@@ -40,8 +40,8 @@ import java.util.logging.Logger;
  */
 final class SocketConnectionPool extends AOPool<SocketConnection, IOException, InterruptedIOException> {
 
-	public static final int DELAY_TIME=3*60*1000;
-	public static final int MAX_IDLE_TIME=15*60*1000;
+	public static final int DELAY_TIME = 3 * 60 * 1000;
+	public static final int MAX_IDLE_TIME = 15 * 60 * 1000;
 
 	private final TCPConnector connector;
 

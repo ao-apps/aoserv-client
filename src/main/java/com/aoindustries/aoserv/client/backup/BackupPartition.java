@@ -142,8 +142,8 @@ public final class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30)<=0) out.writeUTF(path.toString());
 		out.writeUTF(path.toString());
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30)<=0) {
-			out.writeLong((long)512*1024*1024); // min free space
-			out.writeLong((long)1024*1024*1024); // desired free space
+			out.writeLong(512L * 1024 * 1024); // min free space
+			out.writeLong(1024L * 1024 * 1024); // desired free space
 		}
 		out.writeBoolean(enabled);
 		if(
