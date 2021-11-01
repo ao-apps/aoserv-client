@@ -54,17 +54,12 @@ final class KeySet<K, V extends AOServObject<K, V>> extends AbstractSet<K> {
 			private int lastRet=-1;
 
 			@Override
-			public void remove() {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
 			public boolean hasNext() {
 				return cursor < objs.size();
 			}
 
 			@Override
-			public K next() {
+			public K next() throws NoSuchElementException {
 				try {
 					V value=objs.get(cursor);
 					K next=value.getKey();

@@ -43,6 +43,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * @see  Table
@@ -384,7 +385,7 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
 							}
 
 							@Override
-							public String[] next() {
+							public String[] next() throws NoSuchElementException {
 								try {
 									// Convert the results to strings
 									AOServObject<?, ?> row = finalRows.get(index++);
@@ -396,14 +397,13 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
 										);
 									}
 									return strings;
+								} catch(IndexOutOfBoundsException e) {
+									NoSuchElementException nse = new NoSuchElementException();
+									nse.initCause(e);
+									throw nse;
 								} catch(IOException | SQLException e) {
 									throw new WrappedException(e);
 								}
-							}
-
-							@Override
-							public void remove() {
-								throw new UnsupportedOperationException();
 							}
 						},
 						out,

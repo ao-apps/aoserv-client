@@ -50,6 +50,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -897,19 +898,20 @@ public abstract class AOServTable<K, V extends AOServObject<K, V>> implements It
 				}
 
 				@Override
-				public String[] next() {
-					// Convert the results to strings
-					AOServObject<?, ?> row = rows.get(index++);
-					String[] strings = new String[numCols];
-					for(int col = 0; col < numCols; col++) {
-						strings[col] = types[col].getString(row.getColumn(col), precisions[col]);
+				public String[] next() throws NoSuchElementException {
+					try {
+						// Convert the results to strings
+						AOServObject<?, ?> row = rows.get(index++);
+						String[] strings = new String[numCols];
+						for(int col = 0; col < numCols; col++) {
+							strings[col] = types[col].getString(row.getColumn(col), precisions[col]);
+						}
+						return strings;
+					} catch(IndexOutOfBoundsException e) {
+						NoSuchElementException nse = new NoSuchElementException();
+						nse.initCause(e);
+						throw nse;
 					}
-					return strings;
-				}
-
-				@Override
-				public void remove() {
-					throw new UnsupportedOperationException();
 				}
 			},
 			out,

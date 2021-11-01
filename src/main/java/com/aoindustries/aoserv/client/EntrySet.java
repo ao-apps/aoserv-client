@@ -55,17 +55,12 @@ final class EntrySet<K, V extends AOServObject<K, V>> extends AbstractSet<Map.En
 			private int lastRet=-1;
 
 			@Override
-			public void remove() {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
 			public boolean hasNext() {
 				return cursor < objs.size();
 			}
 
 			@Override
-			public Map.Entry<K, V> next() {
+			public Map.Entry<K, V> next() throws NoSuchElementException {
 				try {
 					final V value=objs.get(cursor);
 					final K key=value.getKey();
