@@ -899,19 +899,15 @@ public abstract class AOServTable<K, V extends AOServObject<K, V>> implements It
 
 				@Override
 				public String[] next() throws NoSuchElementException {
-					try {
-						// Convert the results to strings
-						AOServObject<?, ?> row = rows.get(index++);
-						String[] strings = new String[numCols];
-						for(int col = 0; col < numCols; col++) {
-							strings[col] = types[col].getString(row.getColumn(col), precisions[col]);
-						}
-						return strings;
-					} catch(IndexOutOfBoundsException e) {
-						NoSuchElementException nse = new NoSuchElementException();
-						nse.initCause(e);
-						throw nse;
+					if(index >= rows.size()) throw new NoSuchElementException();
+					// Convert the results to strings
+					AOServObject<?, ?> row = rows.get(index);
+					String[] strings = new String[numCols];
+					for(int col = 0; col < numCols; col++) {
+						strings[col] = types[col].getString(row.getColumn(col), precisions[col]);
 					}
+					index++;
+					return strings;
 				}
 			},
 			out,

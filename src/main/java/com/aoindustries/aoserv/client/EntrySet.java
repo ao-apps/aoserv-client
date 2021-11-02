@@ -38,7 +38,7 @@ final class EntrySet<K, V extends AOServObject<K, V>> extends AbstractSet<Map.En
 	private final List<V> objs;
 
 	EntrySet(List<V> objs) {
-		this.objs=objs;
+		this.objs = objs;
 	}
 
 	@Override
@@ -50,9 +50,7 @@ final class EntrySet<K, V extends AOServObject<K, V>> extends AbstractSet<Map.En
 	public Iterator<Map.Entry<K, V>> iterator() {
 		return new Iterator<Map.Entry<K, V>>() {
 
-			private int cursor=0;
-
-			private int lastRet=-1;
+			private int cursor = 0;
 
 			@Override
 			public boolean hasNext() {
@@ -61,28 +59,28 @@ final class EntrySet<K, V extends AOServObject<K, V>> extends AbstractSet<Map.En
 
 			@Override
 			public Map.Entry<K, V> next() throws NoSuchElementException {
-				try {
-					final V value=objs.get(cursor);
-					final K key=value.getKey();
-					Map.Entry<K, V> next = new Map.Entry<K, V>() {
-						@Override
-						public V setValue(V value) {
-							throw new UnsupportedOperationException();
-						}
-						@Override
-						public V getValue() {
-							return value;
-						}
-						@Override
-						public K getKey() {
-							return key;
-						}
-					};
-					lastRet = cursor++;
-					return next;
-				} catch(IndexOutOfBoundsException e) {
-					throw new NoSuchElementException();
-				}
+				if(cursor >= objs.size()) throw new NoSuchElementException();
+				final V value = objs.get(cursor);
+				final K key = value.getKey();
+				Map.Entry<K, V> next = new Map.Entry<K, V>() {
+
+					@Override
+					public V setValue(V value) {
+						throw new UnsupportedOperationException();
+					}
+
+					@Override
+					public V getValue() {
+						return value;
+					}
+
+					@Override
+					public K getKey() {
+						return key;
+					}
+				};
+				cursor++;
+				return next;
 			}
 		};
 	}

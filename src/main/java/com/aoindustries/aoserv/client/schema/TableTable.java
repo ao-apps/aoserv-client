@@ -386,9 +386,10 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
 
 							@Override
 							public String[] next() throws NoSuchElementException {
+								if(index >= numRows) throw new NoSuchElementException();
 								try {
 									// Convert the results to strings
-									AOServObject<?, ?> row = finalRows.get(index++);
+									AOServObject<?, ?> row = finalRows.get(index);
 									String[] strings = new String[numExpressions];
 									for(int col = 0; col < numExpressions; col++) {
 										strings[col] = valueTypes[col].getString(
@@ -396,11 +397,8 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
 											precisions[col]
 										);
 									}
+									index++;
 									return strings;
-								} catch(IndexOutOfBoundsException e) {
-									NoSuchElementException nse = new NoSuchElementException();
-									nse.initCause(e);
-									throw nse;
 								} catch(IOException | SQLException e) {
 									throw new WrappedException(e);
 								}

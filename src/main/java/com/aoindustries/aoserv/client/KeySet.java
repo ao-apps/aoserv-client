@@ -37,7 +37,7 @@ final class KeySet<K, V extends AOServObject<K, V>> extends AbstractSet<K> {
 	private final List<V> objs;
 
 	KeySet(List<V> objs) {
-		this.objs=objs;
+		this.objs = objs;
 	}
 
 	@Override
@@ -49,9 +49,7 @@ final class KeySet<K, V extends AOServObject<K, V>> extends AbstractSet<K> {
 	public Iterator<K> iterator() {
 		return new Iterator<K>() {
 
-			private int cursor=0;
-
-			private int lastRet=-1;
+			private int cursor = 0;
 
 			@Override
 			public boolean hasNext() {
@@ -60,14 +58,11 @@ final class KeySet<K, V extends AOServObject<K, V>> extends AbstractSet<K> {
 
 			@Override
 			public K next() throws NoSuchElementException {
-				try {
-					V value=objs.get(cursor);
-					K next=value.getKey();
-					lastRet = cursor++;
-					return next;
-				} catch(IndexOutOfBoundsException e) {
-					throw new NoSuchElementException();
-				}
+				if(cursor >= objs.size()) throw new NoSuchElementException();
+				V value = objs.get(cursor);
+				K next = value.getKey();
+				cursor++;
+				return next;
 			}
 		};
 	}
