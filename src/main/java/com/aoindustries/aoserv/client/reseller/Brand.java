@@ -499,12 +499,11 @@ public final class Brand extends CachedObjectAccountNameKey<Brand> {
 	 * Gets the immediate parent of this brand or {@code null} if none available.
 	 */
 	public Brand getParentBrand() throws IOException, SQLException {
-		Account bu = getAccount();
-		if(bu==null) return null;
-		Account parent = bu.getParent();
-		while(parent!=null) {
+		Account account = getAccount();
+		Account parent = account.getParent();
+		while(parent != null) {
 			Brand parentBrand = parent.getBrand();
-			if(parentBrand!=null) return parentBrand;
+			if(parentBrand != null) return parentBrand;
 		}
 		return null;
 	}
