@@ -27,6 +27,7 @@ import com.aoapps.collections.IntList;
 import com.aoapps.hodgepodge.io.AOPool;
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
+import com.aoapps.lang.AutoCloseables;
 import com.aoapps.lang.LocalizedIllegalStateException;
 import com.aoapps.lang.Throwables;
 import com.aoapps.lang.i18n.Resources;
@@ -291,15 +292,20 @@ public class TCPConnector extends AOServConnector {
 		return TCP_PROTOCOL;
 	}
 
+	@SuppressWarnings({"BroadCatchBlock", "TooBroadCatch", "UseSpecificCatch"})
 	Socket getSocket() throws InterruptedIOException, IOException {
 		if(Thread.currentThread().isInterrupted()) throw new InterruptedIOException();
-		Socket socket=new Socket();
-		socket.setKeepAlive(true);
-		socket.setSoLinger(true, AOPool.DEFAULT_SOCKET_SO_LINGER);
-		socket.setTcpNoDelay(true);
-		if(local_ip != null && !local_ip.isUnspecified()) socket.bind(new InetSocketAddress(local_ip.toString(), 0));
-		socket.connect(new InetSocketAddress(hostname.toString(), port.getPort()), AOPool.DEFAULT_CONNECT_TIMEOUT);
-		return socket;
+		Socket socket = new Socket();
+		try {
+			socket.setKeepAlive(true);
+			socket.setSoLinger(true, AOPool.DEFAULT_SOCKET_SO_LINGER);
+			socket.setTcpNoDelay(true);
+			if(local_ip != null && !local_ip.isUnspecified()) socket.bind(new InetSocketAddress(local_ip.toString(), 0));
+			socket.connect(new InetSocketAddress(hostname.toString(), port.getPort()), AOPool.DEFAULT_CONNECT_TIMEOUT);
+			return socket;
+		} catch(Throwable t) {
+			throw AutoCloseables.closeAndWrap(t, IOException.class, IOException::new, socket);
+		}
 	}
 
 	public static synchronized TCPConnector getTCPConnector(

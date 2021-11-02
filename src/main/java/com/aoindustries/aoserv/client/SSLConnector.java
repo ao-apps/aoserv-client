@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoapps.hodgepodge.io.AOPool;
+import com.aoapps.lang.AutoCloseables;
 import com.aoapps.net.DomainName;
 import com.aoapps.net.HostAddress;
 import com.aoapps.net.InetAddress;
@@ -107,6 +108,7 @@ public class SSLConnector extends TCPConnector {
 	}
 
 	@Override
+	@SuppressWarnings({"UseSpecificCatch", "BroadCatchBlock", "TooBroadCatch"})
 	Socket getSocket() throws IOException {
 		if(trustStorePath!=null && trustStorePath.length()>0) {
 			System.setProperty("javax.net.ssl.trustStore", trustStorePath);
@@ -115,14 +117,18 @@ public class SSLConnector extends TCPConnector {
 			System.setProperty("javax.net.ssl.trustStorePassword", trustStorePassword);
 		}
 
-		SSLSocketFactory sslFact=(SSLSocketFactory)SSLSocketFactory.getDefault();
-		Socket regSocket = new Socket();
-		regSocket.setKeepAlive(true);
-		regSocket.setSoLinger(true, AOPool.DEFAULT_SOCKET_SO_LINGER);
-		regSocket.setTcpNoDelay(true);
-		if(local_ip != null && !local_ip.isUnspecified()) regSocket.bind(new InetSocketAddress(local_ip.toString(), 0));
-		regSocket.connect(new InetSocketAddress(hostname.toString(), port.getPort()), AOPool.DEFAULT_CONNECT_TIMEOUT);
-		return sslFact.createSocket(regSocket, hostname.toString(), port.getPort(), true);
+		SSLSocketFactory sslFact = (SSLSocketFactory)SSLSocketFactory.getDefault();
+		Socket socket = new Socket();
+		try {
+			socket.setKeepAlive(true);
+			socket.setSoLinger(true, AOPool.DEFAULT_SOCKET_SO_LINGER);
+			socket.setTcpNoDelay(true);
+			if(local_ip != null && !local_ip.isUnspecified()) socket.bind(new InetSocketAddress(local_ip.toString(), 0));
+			socket.connect(new InetSocketAddress(hostname.toString(), port.getPort()), AOPool.DEFAULT_CONNECT_TIMEOUT);
+			return sslFact.createSocket(socket, hostname.toString(), port.getPort(), true);
+		} catch(Throwable t) {
+			throw AutoCloseables.closeAndWrap(t, IOException.class, IOException::new, socket);
+		}
 	}
 
 	public static synchronized SSLConnector getSSLConnector(
