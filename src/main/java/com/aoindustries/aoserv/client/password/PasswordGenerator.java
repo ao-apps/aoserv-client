@@ -87,13 +87,13 @@ public class PasswordGenerator {
 		"l",	"lch",  "ld",	"lf",	"lk",	"lm",	"lp",   "lsh",  "lt",	"lth",  "lve",    "ll",
 		"m",	"mp",
 		"n",	"nd",	"ng",	"nk",	"nt",
-		"p",																
+		"p",
 		"r",	"rch", "rd",	"rf",	"rg",	"rk",	"rm",	"rn",	"rp",	"rsh",  "rt",	"rth",  "rve",
 		"sk",	"sp",	"ss",	"st",
 		"sh",
 		"t",	"tt",
 		"th",
-		"ve",																
+		"ve",
 		"x",
 		"z",    "zz",
 	};
@@ -115,10 +115,17 @@ public class PasswordGenerator {
 		"y"
 	};
 
+	/**
+	 * Generates a password using a default {@link SecureRandom} instance, which is not a
+	 * {@linkplain SecureRandom#getInstanceStrong() strong instance} to avoid blocking.
+	 */
 	public static String generatePassword() throws IOException {
 		return generatePassword(AOServConnector.getSecureRandom());
 	}
 
+	/**
+	 * Generates a password using the provided {@link SecureRandom} source.
+	 */
 	public static String generatePassword(SecureRandom secureRandom) throws IOException {
 		StringBuilder pw = new StringBuilder();
 		String password;

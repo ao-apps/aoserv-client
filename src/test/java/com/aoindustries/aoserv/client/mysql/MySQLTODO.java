@@ -122,19 +122,19 @@ public class MySQLTODO extends TestCase {
 		System.out.println("Done");
 
 		System.out.print("    Generating random username: ");
-		Random random=AOServConnector.getFastRandom();
+		Random fastRandom = AOServConnector.getFastRandom();
 		User.Name randomUsername=null;
 		while(randomUsername==null) {
 			User.Name temp = User.Name.valueOf(
 				"test_"
-				+(char)('0'+random.nextInt(10))
-				+(char)('0'+random.nextInt(10))
-				+(char)('0'+random.nextInt(10))
-				+(char)('0'+random.nextInt(10))
-				+(char)('0'+random.nextInt(10))
-				+(char)('0'+random.nextInt(10))
-				+(char)('0'+random.nextInt(10))
-				+(char)('0'+random.nextInt(10))
+				+(char)('0'+fastRandom.nextInt(10))
+				+(char)('0'+fastRandom.nextInt(10))
+				+(char)('0'+fastRandom.nextInt(10))
+				+(char)('0'+fastRandom.nextInt(10))
+				+(char)('0'+fastRandom.nextInt(10))
+				+(char)('0'+fastRandom.nextInt(10))
+				+(char)('0'+fastRandom.nextInt(10))
+				+(char)('0'+fastRandom.nextInt(10))
 			);
 			if(conn.getAccount().getUser().isUsernameAvailable(temp)) randomUsername=temp;
 		}
@@ -205,21 +205,21 @@ public class MySQLTODO extends TestCase {
 	private void addMySQLDatabases() throws Exception {
 		System.out.println("Testing adding MySQLDatabase to each MySQLServer");
 
-		Random random=AOServConnector.getFastRandom();
+		Random fastRandom = AOServConnector.getFastRandom();
 		for(Server mysqlServer : conn.getMysql().getServer()) {
 			System.out.print("    Generating random database name on "+mysqlServer+": ");
 			Database.Name randomName=null;
 			while(randomName==null) {
 				Database.Name temp=Database.Name.valueOf(
 					"test_"
-					+(char)('0'+random.nextInt(10))
-					+(char)('0'+random.nextInt(10))
-					+(char)('0'+random.nextInt(10))
-					+(char)('0'+random.nextInt(10))
-					+(char)('0'+random.nextInt(10))
-					+(char)('0'+random.nextInt(10))
-					+(char)('0'+random.nextInt(10))
-					+(char)('0'+random.nextInt(10))
+					+(char)('0'+fastRandom.nextInt(10))
+					+(char)('0'+fastRandom.nextInt(10))
+					+(char)('0'+fastRandom.nextInt(10))
+					+(char)('0'+fastRandom.nextInt(10))
+					+(char)('0'+fastRandom.nextInt(10))
+					+(char)('0'+fastRandom.nextInt(10))
+					+(char)('0'+fastRandom.nextInt(10))
+					+(char)('0'+fastRandom.nextInt(10))
 				);
 				boolean found=false;
 				if(mysqlServer.isMySQLDatabaseNameAvailable(temp)) randomName=temp;
@@ -340,9 +340,9 @@ public class MySQLTODO extends TestCase {
 			try (Connection connection = getConnection(md)) {
 				Statement stmt=connection.createStatement();
 				stmt.executeUpdate("create table test (test integer not null)");
-				Random random=AOServConnector.getFastRandom();
+				Random fastRandom = AOServConnector.getFastRandom();
 				for(int c=0;c<1000;c++) {
-					stmt.executeUpdate("insert into test values("+random.nextInt()+")");
+					stmt.executeUpdate("insert into test values("+fastRandom.nextInt()+")");
 				}
 			}
 		}

@@ -22,8 +22,9 @@
  */
 package com.aoindustries.aoserv.client.payment;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoapps.lang.io.IoUtils;
 import java.security.SecureRandom;
+import java.util.Random;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -35,20 +36,13 @@ import junit.framework.TestSuite;
  */
 public class CreditCardTest extends TestCase {
 
-	private SecureRandom secureRandom;
+	/**
+	 * A fast pseudo-random number generator for non-cryptographic purposes.
+	 */
+	private static final Random fastRandom = new Random(IoUtils.bufferToLong(new SecureRandom().generateSeed(Long.BYTES)));
 
 	public CreditCardTest(String testName) {
 		super(testName);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		secureRandom = AOServConnector.getSecureRandom();
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		secureRandom = null;
 	}
 
 	public static Test suite() {
@@ -63,10 +57,10 @@ public class CreditCardTest extends TestCase {
 	public void testRandomizeDerandomize() {
 		StringBuilder sb = new StringBuilder();
 		for(int c = 0; c < 100; c++) {
-			int len = secureRandom.nextInt(50);
+			int len = fastRandom.nextInt(50);
 			sb.setLength(0);
 			for(int d = 0; d < len; d++) {
-				int randVal = secureRandom.nextInt(13);
+				int randVal = fastRandom.nextInt(13);
 				char randCh;
 				if(randVal<10) randCh = (char)('0'+randVal);
 				else if(randVal==10) randCh = ' ';
