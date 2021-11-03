@@ -173,6 +173,7 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 		return table.getConnector().requestResult(
 			false,
 			AoservProtocol.CommandID.COPY_HOME_DIRECTORY,
+			// Java 9: new AOServConnector.ResultRequest<>
 			new AOServConnector.ResultRequest<Long>() {
 				private long result;
 				@Override
@@ -323,6 +324,7 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 		return table.getConnector().requestResult(
 			true,
 			AoservProtocol.CommandID.GET_INBOX_ATTRIBUTES,
+			// Java 9: new AOServConnector.ResultRequest<>
 			new AOServConnector.ResultRequest<InboxAttributes>() {
 
 				private InboxAttributes result;

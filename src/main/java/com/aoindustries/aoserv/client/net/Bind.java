@@ -648,7 +648,7 @@ public final class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 		AOServConnector conn=table.getConnector();
 
 		// Must be able to access package
-		if(getPackage()==null) reasons.add(new CannotRemoveReason<Package>("Unable to access package: "+packageName));
+		if(getPackage() == null) reasons.add(new CannotRemoveReason<>("Unable to access package: " + packageName));
 
 		// ao_servers
 		for(Server ao : conn.getLinux().getServer().getRows()) {

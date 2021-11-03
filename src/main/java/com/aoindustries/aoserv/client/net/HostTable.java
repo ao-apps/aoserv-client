@@ -82,6 +82,7 @@ public final class HostTable extends CachedTableIntegerKey<Host> {
 		return connector.requestResult(
 			true,
 			AoservProtocol.CommandID.ADD_BACKUP_SERVER,
+			// Java 9: new AOServConnector.ResultRequest<>
 			new AOServConnector.ResultRequest<Integer>() {
 				private int pkey;
 				private IntList invalidateList;

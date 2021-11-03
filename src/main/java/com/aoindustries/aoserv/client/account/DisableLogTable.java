@@ -61,9 +61,10 @@ public final class DisableLogTable extends CachedTableIntegerKey<DisableLog> {
 		return connector.requestResult(
 			true,
 			AoservProtocol.CommandID.ADD,
+			// Java 9: new AOServConnector.ResultRequest<>
 			new AOServConnector.ResultRequest<Integer>() {
-				IntList invalidateList;
-				int result;
+				private IntList invalidateList;
+				private int result;
 
 				@Override
 				public void writeRequest(StreamableOutput out) throws IOException {

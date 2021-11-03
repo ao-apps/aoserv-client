@@ -293,6 +293,7 @@ public final class FileReplication extends CachedObjectIntegerKey<FileReplicatio
 		return table.getConnector().requestResult(
 			true,
 			AoservProtocol.CommandID.REQUEST_REPLICATION_DAEMON_ACCESS,
+			// Java 9: new AOServConnector.ResultRequest<>
 			new AOServConnector.ResultRequest<Server.DaemonAccess>() {
 				private Server.DaemonAccess daemonAccess;
 
@@ -360,6 +361,7 @@ public final class FileReplication extends CachedObjectIntegerKey<FileReplicatio
 		return table.getConnector().requestResult(
 			true,
 			AoservProtocol.CommandID.GET_FAILOVER_FILE_REPLICATION_ACTIVITY,
+			// Java 9: new AOServConnector.ResultRequest<>
 			new AOServConnector.ResultRequest<Activity>() {
 				private Activity activity;
 

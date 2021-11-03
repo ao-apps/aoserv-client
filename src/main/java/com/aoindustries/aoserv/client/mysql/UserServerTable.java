@@ -64,6 +64,7 @@ public final class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		return connector.requestResult(
 			true,
 			AoservProtocol.CommandID.ADD,
+			// Java 9: new AOServConnector.ResultRequest<>
 			new AOServConnector.ResultRequest<Integer>() {
 				private int pkey;
 				private IntList invalidateList;

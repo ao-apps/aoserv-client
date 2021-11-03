@@ -77,6 +77,7 @@ public final class SharedTomcatTable extends CachedTableIntegerKey<SharedTomcat>
 		return connector.requestResult(
 			true,
 			AoservProtocol.CommandID.ADD,
+			// Java 9: new AOServConnector.ResultRequest<>
 			new AOServConnector.ResultRequest<Integer>() {
 				private int pkey;
 				private IntList invalidateList;

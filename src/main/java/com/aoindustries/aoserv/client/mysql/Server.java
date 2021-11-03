@@ -775,6 +775,7 @@ public final class Server extends CachedObjectIntegerKey<Server> {
 		return table.getConnector().requestResult(
 			true,
 			AoservProtocol.CommandID.GET_MYSQL_MASTER_STATUS,
+			// Java 9: new AOServConnector.ResultRequest<>
 			new AOServConnector.ResultRequest<MasterStatus>() {
 				private MasterStatus result;
 

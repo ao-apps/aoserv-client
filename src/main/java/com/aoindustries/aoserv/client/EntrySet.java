@@ -48,6 +48,7 @@ final class EntrySet<K, V extends AOServObject<K, V>> extends AbstractSet<Map.En
 
 	@Override
 	public Iterator<Map.Entry<K, V>> iterator() {
+		// Java 9: new Iterator<>
 		return new Iterator<Map.Entry<K, V>>() {
 
 			private int cursor = 0;
@@ -62,6 +63,7 @@ final class EntrySet<K, V extends AOServObject<K, V>> extends AbstractSet<Map.En
 				if(cursor >= objs.size()) throw new NoSuchElementException();
 				final V value = objs.get(cursor);
 				final K key = value.getKey();
+				// Java 9: new Map.Entry<>
 				Map.Entry<K, V> next = new Map.Entry<K, V>() {
 
 					@Override

@@ -570,6 +570,7 @@ public final class Ticket extends CachedObjectIntegerKey<Ticket> {
 		return table.getConnector().requestResult(
 			true,
 			AoservProtocol.CommandID.SET_TICKET_INTERNAL_NOTES,
+			// Java 9: new AOServConnector.ResultRequest<>
 			new AOServConnector.ResultRequest<Boolean>() {
 				private boolean result;
 				private IntList invalidateList;

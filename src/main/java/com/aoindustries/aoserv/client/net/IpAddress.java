@@ -123,7 +123,7 @@ public final class IpAddress extends CachedObjectIntegerKey<IpAddress> {
 		;
 	}
 
-	//private static final ConcurrentMap<String, String> getReverseDnsQueryCache = new ConcurrentHashMap<String, String>();
+	//private static final ConcurrentMap<String, String> getReverseDnsQueryCache = new ConcurrentHashMap<>();
 
 	/**
 	 * Gets the arpa address to be used for reverse DNS queries.

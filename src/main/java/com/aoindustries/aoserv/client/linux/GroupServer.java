@@ -192,7 +192,7 @@ public final class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
 		}
 
 		/*for(PrivateFTPServer pfs : ao.getPrivateFTPServers()) {
-			if(pfs.pub_linux_server_group==pkey) reasons.add(new CannotRemoveReason<PrivateFTPServer>("Used by private FTP server "+pfs.getRoot()+" on "+pfs.getLinuxServerGroup().getServer().getHostname(), pfs));
+			if(pfs.pub_linux_server_group==pkey) reasons.add(new CannotRemoveReason<>("Used by private FTP server "+pfs.getRoot()+" on "+pfs.getLinuxServerGroup().getServer().getHostname(), pfs));
 		}*/
 
 		return reasons;

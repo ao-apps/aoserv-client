@@ -219,6 +219,7 @@ public final class Site extends CachedObjectIntegerKey<Site> {
 		return table.getConnector().requestResult(
 			false,
 			AoservProtocol.CommandID.START_JVM,
+			// Java 9: new AOServConnector.ResultRequest<>
 			new AOServConnector.ResultRequest<String>() {
 				private String result;
 				@Override
@@ -249,6 +250,7 @@ public final class Site extends CachedObjectIntegerKey<Site> {
 		return table.getConnector().requestResult(
 			false,
 			AoservProtocol.CommandID.STOP_JVM,
+			// Java 9: new AOServConnector.ResultRequest<>
 			new AOServConnector.ResultRequest<String>() {
 				private String result;
 				@Override

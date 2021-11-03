@@ -117,6 +117,7 @@ public final class TransactionTable extends CachedTableIntegerKey<Transaction> {
 		return connector.requestResult(
 			false,
 			AoservProtocol.CommandID.ADD,
+			// Java 9: new AOServConnector.ResultRequest<>
 			new AOServConnector.ResultRequest<Integer>() {
 				private int transid;
 				private IntList invalidateList;

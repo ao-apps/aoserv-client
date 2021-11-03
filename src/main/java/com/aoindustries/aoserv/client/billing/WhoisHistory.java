@@ -111,6 +111,7 @@ public final class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 			table.getConnector().requestResult(
 				true,
 				AoservProtocol.CommandID.GET_WHOIS_HISTORY_WHOIS_OUTPUT,
+				// Java 9: new AOServConnector.ResultRequest<>
 				new AOServConnector.ResultRequest<Void>() {
 					@Override
 					public void writeRequest(StreamableOutput out) throws IOException {

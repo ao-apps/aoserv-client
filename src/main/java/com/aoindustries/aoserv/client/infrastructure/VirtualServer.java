@@ -312,6 +312,7 @@ public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 		return table.getConnector().requestResult(
 			true,
 			AoservProtocol.CommandID.REQUEST_VNC_CONSOLE_DAEMON_ACCESS,
+			// Java 9: new AOServConnector.ResultRequest<>
 			new AOServConnector.ResultRequest<Server.DaemonAccess>() {
 				private Server.DaemonAccess daemonAccess;
 				@Override

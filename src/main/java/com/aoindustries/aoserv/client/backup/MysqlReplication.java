@@ -305,6 +305,7 @@ public final class MysqlReplication extends CachedObjectIntegerKey<MysqlReplicat
 		return table.getConnector().requestResult(
 			true,
 			AoservProtocol.CommandID.GET_MYSQL_SLAVE_STATUS,
+			// Java 9: new AOServConnector.ResultRequest<>
 			new AOServConnector.ResultRequest<SlaveStatus>() {
 				private SlaveStatus result;
 

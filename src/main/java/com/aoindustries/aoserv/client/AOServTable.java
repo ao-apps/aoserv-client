@@ -399,6 +399,7 @@ public abstract class AOServTable<K, V extends AOServObject<K, V>> implements It
 	protected V getObject(boolean allowRetry, final AoservProtocol.CommandID commID, final Object ... params) throws IOException, SQLException {
 		return connector.requestResult(allowRetry,
 			commID,
+			// Java 9: new AOServConnector.ResultRequest<>
 			new AOServConnector.ResultRequest<V>() {
 				private V result;
 
@@ -889,6 +890,7 @@ public abstract class AOServTable<K, V extends AOServObject<K, V>> implements It
 		// Print the results
 		SQLUtility.printTable(
 			titles,
+			// Java 9: new Iterator<>
 			(Iterable<String[]>)() -> new Iterator<String[]>() {
 				private int index = 0;
 
@@ -1066,6 +1068,7 @@ public abstract class AOServTable<K, V extends AOServObject<K, V>> implements It
 	@Deprecated
 	public abstract V get(Object key) throws IOException, SQLException;
 
+	// Java 9: new Map<>
 	private final Map<K, V> map = new Map<K, V>() {
 		// Map methods
 		@Override

@@ -47,6 +47,7 @@ final class KeySet<K, V extends AOServObject<K, V>> extends AbstractSet<K> {
 
 	@Override
 	public Iterator<K> iterator() {
+		// Java 9: new Iterator<>
 		return new Iterator<K>() {
 
 			private int cursor = 0;

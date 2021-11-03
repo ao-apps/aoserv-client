@@ -2322,6 +2322,7 @@ public final class Server
 			return table.getConnector().requestResult(
 				true,
 				AoservProtocol.CommandID.GET_AO_SERVER_LVM_REPORT,
+				// Java 9: new AOServConnector.ResultRequest<>
 				new AOServConnector.ResultRequest<LvmReport>() {
 					private String vgs;
 					private String pvs;

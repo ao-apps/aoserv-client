@@ -84,15 +84,13 @@ public class TicketLoggingHandler extends QueuedHandler {
 	private static ExecutorService getExecutor() {
 		synchronized(handlers) {
 			if(executor == null) {
-				executor = Executors.newSingleThreadExecutor(
-					(Runnable r) -> {
-						Thread thread = new Thread(r);
-						thread.setName("Ticket Logger");
-						thread.setDaemon(true);
-						thread.setPriority(Thread.NORM_PRIORITY - 1);
-						return thread;
-					}
-				);
+				executor = Executors.newSingleThreadExecutor(r -> {
+					Thread thread = new Thread(r);
+					thread.setName("Ticket Logger");
+					thread.setDaemon(true);
+					thread.setPriority(Thread.NORM_PRIORITY - 1);
+					return thread;
+				});
 			}
 			return executor;
 		}

@@ -1692,6 +1692,7 @@ public abstract class AOServConnector implements SchemaParent {
 		return requestResult(
 			true,
 			AoservProtocol.CommandID.GET_MASTER_ENTROPY,
+			// Java 9: new ResultRequest<>
 			new ResultRequest<Integer>() {
 				private int numObtained;
 
@@ -1736,6 +1737,7 @@ public abstract class AOServConnector implements SchemaParent {
 		return requestResult(
 			true,
 			AoservProtocol.CommandID.ADD_MASTER_ENTROPY,
+			// Java 9: new ResultRequest<>
 			new ResultRequest<Long>() {
 				private long entropyNeeded;
 				@Override

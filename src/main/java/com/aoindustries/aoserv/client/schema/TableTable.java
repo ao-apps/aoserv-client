@@ -376,6 +376,7 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
 				try {
 					SQLUtility.printTable(
 						cnames,
+						// Java 9: new Iterator<>
 						(Iterable<String[]>)() -> new Iterator<String[]>() {
 							private int index = 0;
 
