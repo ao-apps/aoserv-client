@@ -106,7 +106,7 @@ public final class NestedInputStream extends InputStream {
 		if(isDone) return -1;
 		loadNextBlock();
 		if(isDone) return -1;
-		return ((int)buffer[bufferRead++])&0xff;
+		return buffer[bufferRead++] & 0xff;
 	}
 
 	@Override

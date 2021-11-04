@@ -538,7 +538,7 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
 				case EMAIL:
 					switch(castToType.getId()) {
 						case HOSTNAME:       return value==null ? null : HostAddress.valueOf(((Email)value).getDomain());
-						case URL:            return value==null ? null : "mailto:" + (Email)value;
+						case URL:            return value==null ? null : "mailto:" + value;
 						case USERNAME:       return value==null ? null : com.aoindustries.aoserv.client.account.User.Name.valueOf(getUsernameForEmail((Email)value));
 						case ZONE:           return value==null ? null : getZoneForDomainName(conn, ((Email)value).getDomain());
 						case DOMAIN_NAME:    return value==null ? null : ((Email)value).getDomain();

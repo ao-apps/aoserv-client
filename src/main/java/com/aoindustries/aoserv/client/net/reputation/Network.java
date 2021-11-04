@@ -114,7 +114,7 @@ public final class Network extends CachedObjectLongKey<Network> {
 		return InetAddress.valueOf(
 			LongLong.valueOf(
 				0,
-				((long)network) & 0x00000000ffffffffL
+				network & 0x00000000ffffffffL
 			)
 		);
 	}

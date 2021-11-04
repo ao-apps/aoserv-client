@@ -120,7 +120,7 @@ public final class Host extends CachedObjectLongKey<Host> {
 		return InetAddress.valueOf(
 			LongLong.valueOf(
 				0,
-				((long)host) & 0x00000000ffffffffL
+				host & 0x00000000ffffffffL
 			)
 		);
 	}
