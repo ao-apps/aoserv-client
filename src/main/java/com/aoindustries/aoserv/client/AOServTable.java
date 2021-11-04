@@ -75,7 +75,7 @@ public abstract class AOServTable<K, V extends AOServObject<K, V>> implements It
 		public String toString() {
 			return "tableListenersLock - "+getTableID();
 		}
-	};
+	}
 
 	private static final class TableListenerEntry {
 
