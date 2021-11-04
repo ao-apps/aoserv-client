@@ -521,7 +521,12 @@ public final class Command extends GlobalObjectStringKey<Command> {
 		out.boldOn();
 		out.println("SYNOPSIS");
 		out.attributesOff();
-		out.print(INDENT); out.print(pkey); if(syntax.length() > 0) out.print(' '); printNoHTML(out, syntax, INDENT.length() + pkey.length() + 1); out.println();
+		out.print(INDENT); out.print(pkey);
+		if(!syntax.isEmpty()) {
+			out.print(' ');
+			printNoHTML(out, syntax, INDENT.length() + pkey.length() + 1);
+		}
+		out.println();
 		out.println();
 	}
 
