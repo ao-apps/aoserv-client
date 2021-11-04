@@ -146,8 +146,8 @@ public final class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	private int encryption_card_number_recipient;
 
 	// These are not pulled from the database, but are decrypted by GPG
-	private transient String decryptCardNumberPassphrase;
-	private transient String card_number;
+	private /*transient*/ String decryptCardNumberPassphrase;
+	private /*transient*/ String card_number;
 
 	@Override
 	public List<CannotRemoveReason<?>> getCannotRemoveReasons() {

@@ -98,16 +98,16 @@ public final class Request extends CachedObjectIntegerKey<Request> {
 	private UnmodifiableTimestamp completed_time;
 
 	// These are not pulled from the database, but are decrypted from encrypted_data by GPG
-	private transient String decryptPassphrase;
-	private transient String ba_password;
-	private transient String billing_cardholder_name;
-	private transient String billing_card_number;
-	private transient String billing_expiration_month;
-	private transient String billing_expiration_year;
-	private transient String billing_street_address;
-	private transient String billing_city;
-	private transient String billing_state;
-	private transient String billing_zip;
+	private /*transient*/ String decryptPassphrase;
+	private /*transient*/ String ba_password;
+	private /*transient*/ String billing_cardholder_name;
+	private /*transient*/ String billing_card_number;
+	private /*transient*/ String billing_expiration_month;
+	private /*transient*/ String billing_expiration_year;
+	private /*transient*/ String billing_street_address;
+	private /*transient*/ String billing_city;
+	private /*transient*/ String billing_state;
+	private /*transient*/ String billing_zip;
 
 	@Override
 	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
