@@ -266,7 +266,7 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
 										orderBy = orderBy.substring(commaPos + 1);
 									}
 									if(
-										orderExpressions.size() > 0
+										!orderExpressions.isEmpty()
 										&& (
 											expr.equalsIgnoreCase("asc")
 											|| expr.equalsIgnoreCase("ascending")
@@ -274,7 +274,7 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
 									) {
 										sortOrders.set(sortOrders.size() - 1, AOServTable.ASCENDING);
 									} else if(
-										orderExpressions.size() > 0
+										!orderExpressions.isEmpty()
 										&& (
 											expr.equalsIgnoreCase("desc")
 											|| expr.equalsIgnoreCase("descending")
@@ -314,7 +314,7 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
 			Throwable t0 = null;
 			try {
 				// Sort if needed
-				if(orderExpressions.size() > 0) {
+				if(!orderExpressions.isEmpty()) {
 					SQLExpression[] exprs = orderExpressions.toArray(new SQLExpression[orderExpressions.size()]);
 					boolean[] orders = new boolean[exprs.length];
 					for(int d = 0; d < orders.length; d++) {

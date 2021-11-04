@@ -184,7 +184,7 @@ public final class SoftwareVersionTable extends GlobalTableIntegerKey<SoftwareVe
 					}
 					if(found) {
 						// Check the classes
-						if(classes.size()>0) {
+						if(!classes.isEmpty()) {
 							List<SoftwareCategorization> rowClasses = tv.getTechnologyName(connector).getTechnologies(connector);
 							found=false;
 						Loop:
