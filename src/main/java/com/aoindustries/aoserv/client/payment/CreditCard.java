@@ -223,16 +223,18 @@ public final class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	 */
 	@Deprecated
 	public static String getCardInfo(String cardNumber) {
-		String nums = "";
+		final int MAX_LEN = 4;
 		int len = cardNumber.length();
-		for (int c = (len - 1); c >= 0; c--) {
+		StringBuilder nums = new StringBuilder(Math.min(len, MAX_LEN));
+		for (
+			int c = (len - 1);
+			c >= 0 && nums.length() < MAX_LEN;
+			c--
+		) {
 			char ch = cardNumber.charAt(c);
-			if (ch >= '0' && ch <= '9') {
-				nums = ch + nums;
-				if (nums.length() >= 4) return nums;
-			}
+			if (ch >= '0' && ch <= '9') nums.insert(0, ch);
 		}
-		return nums;
+		return nums.toString();
 	}
 
 	@Override
