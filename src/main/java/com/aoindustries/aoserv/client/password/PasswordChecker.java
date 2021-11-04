@@ -223,7 +223,6 @@ public final class PasswordChecker {
 					int pos = 0;
 					String longest = "";
 					boolean longest_forwards = true;
-				Loop :
 					while (pos < wordslen) {
 						// Find the beginning of the next word
 						while (pos < wordslen && words[pos] <= ' ') {
