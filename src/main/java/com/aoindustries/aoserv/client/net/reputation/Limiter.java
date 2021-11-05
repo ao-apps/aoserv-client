@@ -52,6 +52,17 @@ public final class Limiter extends CachedObjectIntegerKey<Limiter> {
 	private String identifier;
 	private String description;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public Limiter() {
+		// Do nothing
+	}
+
 	@Override
 	public Table.TableID getTableID() {
 		return Table.TableID.IP_REPUTATION_LIMITERS;

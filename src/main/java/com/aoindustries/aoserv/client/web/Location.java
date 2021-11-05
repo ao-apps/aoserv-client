@@ -56,7 +56,10 @@ public final class Location extends CachedObjectIntegerKey<Location> implements 
 	 * The set of expected handlers.  This is not an enum because others may be
 	 * added at any time while older clients are still running.
 	 */
-	public static final class Handler {
+	public abstract static class Handler {
+
+		/** Make no instances. */
+		private Handler() {throw new AssertionError();}
 
 		/**
 		 * Enables <a href="https://httpd.apache.org/docs/2.4/mod/mod_status.html#enable">Apache Status Support</a>.
@@ -68,8 +71,6 @@ public final class Location extends CachedObjectIntegerKey<Location> implements 
 		 * the handler.
 		 */
 		public static final String CURRENT = "*";
-
-		private Handler() {}
 	}
 
 	private static String validateNonQuoteAscii(String s, String label) {
@@ -114,6 +115,17 @@ public final class Location extends CachedObjectIntegerKey<Location> implements 
 	private PosixPath auth_user_file;
 	private String require;
 	private String handler;
+
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public Location() {
+		// Do nothing
+	}
 
 	@Override
 	public List<CannotRemoveReason<?>> getCannotRemoveReasons() {

@@ -260,6 +260,17 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
 	private String description;
 	private boolean fail2ban;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public FirewallZone() {
+		// Do nothing
+	}
+
 	@Override
 	protected Object getColumnImpl(int i) {
 		switch(i) {

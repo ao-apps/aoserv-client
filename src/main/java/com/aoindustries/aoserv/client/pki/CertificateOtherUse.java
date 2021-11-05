@@ -48,6 +48,17 @@ public final class CertificateOtherUse extends CachedObjectIntegerKey<Certificat
 	private int count;
 	private String display;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public CertificateOtherUse() {
+		// Do nothing
+	}
+
 	@Override
 	public String toStringImpl() {
 		return count + " " + display;

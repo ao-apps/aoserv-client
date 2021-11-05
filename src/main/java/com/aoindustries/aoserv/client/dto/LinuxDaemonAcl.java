@@ -34,6 +34,7 @@ public class LinuxDaemonAcl extends AOServObject {
 	private HostAddress host;
 
 	public LinuxDaemonAcl() {
+		// Do nothing
 	}
 
 	public LinuxDaemonAcl(

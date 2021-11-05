@@ -102,6 +102,17 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	 */
 	public static final int DEFAULT_SPAM_ASSASSIN_DISCARD_SCORE = 20;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public UserServer() {
+		// Do nothing
+	}
+
 	private User.Name username;
 	private int ao_server;
 	private LinuxId uid;
@@ -389,6 +400,7 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
 					@Override
 					public void afterRelease() {
+						// Do nothing
 					}
 				}
 			);

@@ -130,6 +130,17 @@ public final class Server
 	private LinuxId lastGid;
 	private long sftp_umask;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public Server() {
+		// Do nothing
+	}
+
 	@Override
 	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	protected Object getColumnImpl(int i) {
@@ -906,6 +917,7 @@ public final class Server
 
 					@Override
 					public void afterRelease() {
+						// Do nothing
 					}
 				}
 			);

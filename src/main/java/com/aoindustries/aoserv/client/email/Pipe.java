@@ -65,6 +65,17 @@ public final class Pipe extends CachedObjectIntegerKey<Pipe> implements Removabl
 	private Account.Name packageName;
 	private int disable_log;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public Pipe() {
+		// Do nothing
+	}
+
 	public int addEmailAddress(Address address) throws IOException, SQLException {
 		return table.getConnector().getEmail().getPipeAddress().addEmailPipeAddress(address, this);
 	}

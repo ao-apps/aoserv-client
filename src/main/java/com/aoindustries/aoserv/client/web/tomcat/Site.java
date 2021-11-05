@@ -65,6 +65,17 @@ public final class Site extends CachedObjectIntegerKey<Site> {
 	 */
 	public static final int MINIMUM_STOP_JVM_DELAY=15000;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public Site() {
+		// Do nothing
+	}
+
 	public int addHttpdTomcatContext(
 		String className,
 		boolean cookies,

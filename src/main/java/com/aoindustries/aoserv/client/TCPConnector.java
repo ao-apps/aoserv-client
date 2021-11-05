@@ -244,7 +244,7 @@ public class TCPConnector extends AOServConnector {
 	final int poolSize;
 	final long maxConnectionAge;
 
-	private static class CacheMonitorLock {}
+	private static class CacheMonitorLock {/* Empty lock class to help heap profile */}
 	private final CacheMonitorLock cacheMonitorLock=new CacheMonitorLock();
 	private long connectionLastUsed;
 	private CacheMonitor cacheMonitor;

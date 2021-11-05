@@ -47,6 +47,17 @@ public final class ServerFarm extends CachedObjectStringKey<ServerFarm> {
 	private int owner;
 	private boolean use_restricted_smtp_port;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public ServerFarm() {
+		// Do nothing
+	}
+
 	@Override
 	protected Object getColumnImpl(int i) {
 		switch(i) {

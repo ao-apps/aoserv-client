@@ -180,6 +180,17 @@ public final class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 	private Account.Name accounting;
 	private String id;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public EncryptionKey() {
+		// Do nothing
+	}
+
 	public Account.Name getAccount_name() {
 		return accounting;
 	}

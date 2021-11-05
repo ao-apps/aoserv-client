@@ -83,6 +83,17 @@ public final class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
 		can_control_virtual_server
 	;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public AccountHost() {
+		// Do nothing
+	}
+
 	public boolean canControlApache() {
 		return can_control_apache;
 	}

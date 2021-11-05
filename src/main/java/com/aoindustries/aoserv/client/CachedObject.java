@@ -33,7 +33,15 @@ public abstract class CachedObject<K, T extends CachedObject<K, T>> extends AOSe
 
 	protected AOServTable<K, T> table;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
 	protected CachedObject() {
+		// Do nothing
 	}
 
 	@Override

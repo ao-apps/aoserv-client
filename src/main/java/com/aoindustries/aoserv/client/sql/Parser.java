@@ -37,9 +37,10 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-public class Parser {
+public abstract class Parser {
 
-	private Parser() {}
+	/** Make no instances. */
+	private Parser() {throw new AssertionError();}
 
 	/**
 	 * Find a match only outside quoted section of the expressions.

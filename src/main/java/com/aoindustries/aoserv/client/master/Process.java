@@ -85,7 +85,16 @@ public class Process extends AOServObject<SmallIdentifier, Process> implements S
 
 	private AOServTable<SmallIdentifier, Process> table;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	// Also used by aoserv-master subclass
 	public Process() {
+		// Do nothing
 	}
 
 	@Override

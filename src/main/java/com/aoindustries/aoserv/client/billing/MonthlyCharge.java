@@ -73,9 +73,18 @@ public final class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 	private User.Name created_by;
 	private boolean active;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
 	public MonthlyCharge() {
+		// Do nothing
 	}
 
+	@SuppressWarnings("deprecation")
 	MonthlyCharge(
 		MonthlyChargeTable table,
 		Account business,

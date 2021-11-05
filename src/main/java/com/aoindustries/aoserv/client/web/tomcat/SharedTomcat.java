@@ -95,6 +95,17 @@ public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
 	private boolean autoDeploy;
 	private boolean tomcatAuthentication;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public SharedTomcat() {
+		// Do nothing
+	}
+
 	@Override
 	public boolean canDisable() {
 		return disable_log==-1;

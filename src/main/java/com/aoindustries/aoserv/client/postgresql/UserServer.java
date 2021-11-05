@@ -66,6 +66,17 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	private int disable_log;
 	private String predisable_password;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public UserServer() {
+		// Do nothing
+	}
+
 	@Override
 	public int arePasswordsSet() throws IOException, SQLException {
 		if(isSpecial()) throw new SQLException("Refusing to check if passwords set on special PostgreSQL user: " + this);
@@ -263,6 +274,7 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 				}
 				@Override
 				public void afterRelease() {
+					// Do nothing
 				}
 			}
 		);

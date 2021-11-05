@@ -49,6 +49,17 @@ public final class UsState extends GlobalObjectStringKey<UsState> {
 
 	private String name;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public UsState() {
+		// Do nothing
+	}
+
 	public String getCode() {
 		return pkey;
 	}

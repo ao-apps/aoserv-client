@@ -64,6 +64,17 @@ public final class Status extends GlobalObjectStringKey<Status> implements Compa
 
 	private short sort_order;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public Status() {
+		// Do nothing
+	}
+
 	@Override
 	protected Object getColumnImpl(int i) {
 		if(i==COLUMN_STATUS) return pkey;

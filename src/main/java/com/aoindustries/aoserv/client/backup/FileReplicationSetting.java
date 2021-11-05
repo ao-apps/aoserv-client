@@ -54,6 +54,17 @@ public final class FileReplicationSetting extends CachedObjectIntegerKey<FileRep
 	private boolean backup_enabled;
 	private boolean required;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public FileReplicationSetting() {
+		// Do nothing
+	}
+
 	@Override
 	public List<CannotRemoveReason<?>> getCannotRemoveReasons() {
 		return Collections.emptyList();

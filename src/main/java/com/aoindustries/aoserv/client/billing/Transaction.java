@@ -109,6 +109,17 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
 	private byte payment_confirmed;
 
 	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public Transaction() {
+		// Do nothing
+	}
+
+	/**
 	 * @param  paymentInfo  (Optional) The card info may have been updated during the transaction.
 	 */
 	public void approved(final int creditCardTransaction, final String paymentInfo) throws IOException, SQLException {

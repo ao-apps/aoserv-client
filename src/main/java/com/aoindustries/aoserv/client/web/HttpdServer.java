@@ -108,6 +108,17 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 	private Boolean mod_status;
 	private Boolean mod_wsgi;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public HttpdServer() {
+		// Do nothing
+	}
+
 	public boolean canAddSites() {
 		return can_add_sites;
 	}

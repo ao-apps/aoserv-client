@@ -50,10 +50,6 @@ public final class AppProtocol extends GlobalObjectStringKey<AppProtocol> {
 	static final int COLUMN_PROTOCOL = 0;
 	static final String COLUMN_PORT_name = "port";
 
-	private Port port;
-	private String name;
-	private boolean is_user_service;
-
 	public static final String
 		AOSERV_DAEMON = "aoserv-daemon",
 		AOSERV_DAEMON_SSL = "aoserv-daemon-ssl",
@@ -94,6 +90,21 @@ public final class AppProtocol extends GlobalObjectStringKey<AppProtocol> {
 		TOMCAT4_SHUTDOWN = "tomcat4-shutdown",
 		WEBSERVER = "webserver"
 	;
+
+	private Port port;
+	private String name;
+	private boolean is_user_service;
+
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public AppProtocol() {
+		// Do nothing
+	}
 
 	@Override
 	protected Object getColumnImpl(int i) {

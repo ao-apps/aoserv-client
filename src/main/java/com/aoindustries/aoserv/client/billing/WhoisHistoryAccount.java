@@ -51,6 +51,17 @@ public final class WhoisHistoryAccount extends CachedObjectIntegerKey<WhoisHisto
 	private int whoisHistory;
 	private Account.Name account;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public WhoisHistoryAccount() {
+		// Do nothing
+	}
+
 	@Override
 	protected Object getColumnImpl(int i) throws IOException, SQLException {
 		switch(i) {

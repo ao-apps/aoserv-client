@@ -36,10 +36,10 @@ import java.util.Currency;
  *
  * @author  AO Industries, Inc.
  */
-public class MoneyUtil {
+public abstract class MoneyUtil {
 
-	private MoneyUtil() {
-	}
+	/** Make no instances. */
+	private MoneyUtil() {throw new AssertionError();}
 
 	/**
 	 * null-safe getDto for Money.

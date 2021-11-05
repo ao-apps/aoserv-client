@@ -167,6 +167,17 @@ public final class IpAddress extends CachedObjectIntegerKey<IpAddress> {
 	private boolean checkBlacklistsOverSmtp;
 	private boolean monitoringEnabled;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public IpAddress() {
+		// Do nothing
+	}
+
 	@Override
 	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	protected Object getColumnImpl(int i) {

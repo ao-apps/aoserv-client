@@ -68,6 +68,17 @@ public final class GroupUser extends CachedObjectIntegerKey<GroupUser> implement
 	private boolean isPrimary;
 	private int operatingSystemVersion;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public GroupUser() {
+		// Do nothing
+	}
+
 	@Override
 	protected Object getColumnImpl(int i) {
 		switch(i) {

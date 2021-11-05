@@ -44,9 +44,12 @@ import java.util.Properties;
  *
  * @author  AO Industries, Inc.
  */
-public final class AOServClientConfiguration {
+public abstract class AOServClientConfiguration {
 
-	private static class PropsLock {}
+	/** Make no instances. */
+	private AOServClientConfiguration() {throw new AssertionError();}
+
+	private static class PropsLock {/* Empty lock class to help heap profile */}
 	private static final PropsLock propsLock = new PropsLock();
 	private static Properties props;
 
@@ -242,9 +245,4 @@ public final class AOServClientConfiguration {
 			throw new ConfigurationException(e);
 		}
 	}
-
-	/**
-	 * Make no instances.
-	 */
-	private AOServClientConfiguration() {}
 }

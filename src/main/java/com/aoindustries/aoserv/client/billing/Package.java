@@ -126,6 +126,17 @@ public final class Package extends CachedObjectIntegerKey<Package> implements Di
 	private int email_relay_burst;
 	private float email_relay_rate;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public Package() {
+		// Do nothing
+	}
+
 	@Override
 	public String toStringImpl() {
 		return name.toString();

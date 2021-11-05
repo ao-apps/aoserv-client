@@ -66,6 +66,17 @@ public final class FileReplication extends CachedObjectIntegerKey<FileReplicatio
 	private boolean enabled;
 	private LinuxId quota_gid;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public FileReplication() {
+		// Do nothing
+	}
+
 	public int addFailoverFileLog(long startTime, long endTime, int scanned, int updated, long bytes, boolean isSuccessful) throws IOException, SQLException {
 		return table.getConnector().getBackup().getFileReplicationLog().addFailoverFileLog(this, startTime, endTime, scanned, updated, bytes, isSuccessful);
 	}

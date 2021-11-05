@@ -50,7 +50,7 @@ public abstract class GlobalTable<K, V extends GlobalObject<K, V>> extends AOSer
 	/**
 	 * Each table has its own lock because we were getting deadlocks with one lock on GlobalTable.class.
 	 */
-	private static class Lock {}
+	private static class Lock {/* Empty lock class to help heap profile */}
 	private static final Lock[] locks = new Lock[numTables];
 	static {
 		for(int c=0;c<locks.length;c++) {

@@ -60,13 +60,24 @@ public final class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 	/**
 	 * Note: these are loaded in a separate call to the master as-needed to conserve heap space, and it is null to begin with.
 	 */
-	private static class OutputLock {}
+	private static class OutputLock {/* Empty lock class to help heap profile */}
 	private final OutputLock outputLock = new OutputLock();
 	private String output;
 	private String error;
 
 	// Protocol conversion
 	private Account.Name accounting;
+
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public WhoisHistory() {
+		// Do nothing
+	}
 
 	@Override
 	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp

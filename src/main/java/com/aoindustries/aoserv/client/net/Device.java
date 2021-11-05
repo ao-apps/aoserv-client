@@ -69,6 +69,17 @@ public final class Device extends CachedObjectIntegerKey<Device> {
 	private long monitoring_bit_rate_critical;
 	private boolean monitoring_enabled;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public Device() {
+		// Do nothing
+	}
+
 	@Override
 	protected Object getColumnImpl(int i) {
 		switch(i) {

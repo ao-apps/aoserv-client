@@ -39,7 +39,10 @@ import java.util.ResourceBundle;
  *
  * @author  AO Industries, Inc.
  */
-public final class PasswordChecker {
+public abstract class PasswordChecker {
+
+	/** Make no instances. */
+	private PasswordChecker() {throw new AssertionError();}
 
 	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, PasswordChecker.class);
 
@@ -98,8 +101,6 @@ public final class PasswordChecker {
 			return category+": "+result;
 		}
 	}
-
-	private PasswordChecker() {}
 
 	public static List<Result> getAllGoodResults() {
 		List<Result> results = new ArrayList<>(NUM_CATEGORIES);

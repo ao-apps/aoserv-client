@@ -93,9 +93,22 @@ public final class ServerStat extends AOServObject<String, ServerStat> implement
 	private String description;
 	private AOServTable<String, ServerStat> table;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
 	public ServerStat() {
+		// Do nothing
 	}
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	// Only used by aoserv-master
 	public ServerStat(String name, String value, String description) {
 		this.name=name;
 		this.value=value;

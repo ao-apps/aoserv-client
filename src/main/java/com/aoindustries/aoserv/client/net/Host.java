@@ -71,6 +71,17 @@ public final class Host extends CachedObjectIntegerKey<Host> implements Comparab
 	private String name;
 	private boolean monitoring_enabled;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public Host() {
+		// Do nothing
+	}
+
 	// TODO: No longer add to a server by default, move this method to correct place
 	public void addAccount(
 		Account.Name accounting,

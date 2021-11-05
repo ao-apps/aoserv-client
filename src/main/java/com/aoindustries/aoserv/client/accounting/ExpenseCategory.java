@@ -41,6 +41,17 @@ public final class ExpenseCategory extends CachedObjectStringKey<ExpenseCategory
 	static final int COLUMN_NAME = 0;
 	static final String COLUMN_NAME_name = "name";
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public ExpenseCategory() {
+		// Do nothing
+	}
+
 	@Override
 	protected Object getColumnImpl(int i) {
 		if(i == COLUMN_NAME) return pkey;

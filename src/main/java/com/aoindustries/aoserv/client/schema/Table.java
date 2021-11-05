@@ -239,9 +239,18 @@ public final class Table extends GlobalObjectIntegerKey<Table> {
 	private boolean isPublic;
 	private String description;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
 	public Table() {
+		// Do nothing
 	}
 
+	/* Unused 2021-11-04?
 	public Table(
 		int id,
 		String name,
@@ -259,6 +268,7 @@ public final class Table extends GlobalObjectIntegerKey<Table> {
 		this.isPublic = isPublic;
 		this.description = description;
 	}
+	 */
 
 	@Override
 	protected Object getColumnImpl(int i) {

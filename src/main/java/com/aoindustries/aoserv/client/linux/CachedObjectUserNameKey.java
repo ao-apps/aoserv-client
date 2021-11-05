@@ -33,6 +33,17 @@ public abstract class CachedObjectUserNameKey<V extends CachedObjectUserNameKey<
 
 	protected User.Name pkey;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	protected CachedObjectUserNameKey() {
+		// Do nothing
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		return

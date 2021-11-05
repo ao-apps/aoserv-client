@@ -40,10 +40,10 @@ import java.security.SecureRandom;
  *
  * @author  AO Industries, Inc.
  */
-public class PasswordGenerator {
+public abstract class PasswordGenerator {
 
-	private PasswordGenerator() {
-	}
+	/** Make no instances. */
+	private PasswordGenerator() {throw new AssertionError();}
 
 	/**
 	 * The minimum randomness of the generated password.

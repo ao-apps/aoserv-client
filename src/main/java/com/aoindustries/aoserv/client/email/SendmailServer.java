@@ -135,6 +135,17 @@ public final class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 	private int clientAddrInet;
 	private int clientAddrInet6;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public SendmailServer() {
+		// Do nothing
+	}
+
 	@Override
 	public String toStringImpl() {
 		return name==null ? "sendmail" : ("sendmail(" + name + ')');

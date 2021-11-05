@@ -52,6 +52,17 @@ public final class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 	private String disable_reason;
 
 	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public DisableLog() {
+		// Do nothing
+	}
+
+	/**
 	 * Determines if the current <code>AOServConnector</code> can enable
 	 * things disabled by this <code>DisableLog</code>.
 	 */

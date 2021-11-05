@@ -59,6 +59,17 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
 
 	public static final String DEFAULT_VERSION=VERSION_2_2_2;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public Version() {
+		// Do nothing
+	}
+
 	@Override
 	protected Object getColumnImpl(int i) {
 		if(i==COLUMN_VERSION) return pkey;

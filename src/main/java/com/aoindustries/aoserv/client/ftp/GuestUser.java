@@ -53,6 +53,17 @@ public final class GuestUser extends CachedObjectUserNameKey<GuestUser> implemen
 	static final int COLUMN_USERNAME=0;
 	static final String COLUMN_USERNAME_name = "username";
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public GuestUser() {
+		// Do nothing
+	}
+
 	@Override
 	protected Object getColumnImpl(int i) {
 		if(i==COLUMN_USERNAME) return pkey;

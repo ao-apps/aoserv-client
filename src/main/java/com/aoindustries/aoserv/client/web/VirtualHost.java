@@ -76,6 +76,17 @@ public final class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
 	private PosixPath oldSslCertKeyFile;
 	private PosixPath oldSslCertChainFile;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public VirtualHost() {
+		// Do nothing
+	}
+
 	@Override
 	public String toStringImpl() throws SQLException, IOException {
 		Site site = getHttpdSite();

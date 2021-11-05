@@ -261,7 +261,14 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
 		// <editor-fold defaultstate="collapsed" desc="FastExternalizable">
 		private static final long serialVersionUID = -837866431257794645L;
 
+		/**
+		 * @deprecated  Only required for implementation, do not use directly.
+		 *
+		 * @see  FastExternalizable
+		 */
+		@Deprecated/* Java 9: (forRemoval = false) */
 		public Name() {
+			// Do nothing
 		}
 
 		@Override
@@ -307,6 +314,17 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
 
 	private Account.Name packageName;
 	private int disable_log;
+
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public User() {
+		// Do nothing
+	}
 
 	public void addAdministrator(
 		String name,

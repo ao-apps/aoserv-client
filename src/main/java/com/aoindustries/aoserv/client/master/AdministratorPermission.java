@@ -48,6 +48,17 @@ public final class AdministratorPermission extends CachedObjectIntegerKey<Admini
 	static final String COLUMN_USERNAME_name = "username";
 	static final String COLUMN_PERMISSION_name = "permission";
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public AdministratorPermission() {
+		// Do nothing
+	}
+
 	private User.Name username;
 	private String permission;
 

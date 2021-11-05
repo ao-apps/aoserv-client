@@ -61,6 +61,17 @@ public final class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
 	private int pub_linux_server_account;
 	private boolean allow_anonymous;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public PrivateServer() {
+		// Do nothing
+	}
+
 	@Override
 	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	protected Object getColumnImpl(int i) {

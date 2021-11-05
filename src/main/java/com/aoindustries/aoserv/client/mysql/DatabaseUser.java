@@ -80,6 +80,17 @@ public final class DatabaseUser extends CachedObjectIntegerKey<DatabaseUser> imp
 		trigger_priv
 	;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public DatabaseUser() {
+		// Do nothing
+	}
+
 	public boolean canAlter() {
 		return alter_priv;
 	}

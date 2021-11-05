@@ -160,7 +160,14 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
 		// <editor-fold defaultstate="collapsed" desc="FastExternalizable">
 		private static final long serialVersionUID = 2L;
 
+		/**
+		 * @deprecated  Only required for implementation, do not use directly.
+		 *
+		 * @see  FastExternalizable
+		 */
+		@Deprecated/* Java 9: (forRemoval = false) */
 		public Name() {
+			// Do nothing
 		}
 
 		@Override
@@ -284,6 +291,17 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
 		catupd
 	;
 	private int disable_log;
+
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public User() {
+		// Do nothing
+	}
 
 	public int addPostgresServerUser(Server postgresServer) throws IOException, SQLException {
 		return table.getConnector().getPostgresql().getUserServer().addPostgresServerUser(pkey, postgresServer);

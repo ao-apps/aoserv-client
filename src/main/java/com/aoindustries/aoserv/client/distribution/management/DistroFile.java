@@ -83,6 +83,17 @@ public final class DistroFile extends FilesystemCachedObject<Integer, DistroFile
 	private long file_sha256_3;
 	private String symlink_target;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public DistroFile() {
+		// Do nothing
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		return

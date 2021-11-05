@@ -30,6 +30,7 @@ public class HashedKey {
 	private String hashedKey;
 
 	public HashedKey() {
+		// Do nothing
 	}
 
 	public HashedKey(String hashedKey) {

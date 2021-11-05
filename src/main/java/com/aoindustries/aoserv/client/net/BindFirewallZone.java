@@ -50,6 +50,17 @@ public final class BindFirewallZone extends CachedObjectIntegerKey<BindFirewallZ
 	private int net_bind;
 	private int firewalld_zone;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public BindFirewallZone() {
+		// Do nothing
+	}
+
 	public Bind getNetBind() throws SQLException, IOException {
 		Bind obj = table.getConnector().getNet().getBind().get(net_bind);
 		if(obj == null) throw new SQLException("Unable to find NetBind: " + net_bind);

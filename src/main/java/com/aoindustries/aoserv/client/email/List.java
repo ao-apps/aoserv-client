@@ -74,6 +74,17 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
 	private int linux_server_group;
 	private int disable_log;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public List() {
+		// Do nothing
+	}
+
 	public int addEmailAddress(Address address) throws IOException, SQLException {
 		return table.getConnector().getEmail().getListAddress().addEmailListAddress(address, this);
 	}

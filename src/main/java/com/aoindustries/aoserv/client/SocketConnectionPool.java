@@ -172,6 +172,7 @@ final class SocketConnectionPool extends AOPool<SocketConnection, IOException, I
 
 	@Override
 	protected void resetConnection(SocketConnection conn) {
+		// Do nothing
 	}
 
 	@Override

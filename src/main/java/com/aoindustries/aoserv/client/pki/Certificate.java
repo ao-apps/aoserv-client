@@ -67,6 +67,17 @@ public final class Certificate extends CachedObjectIntegerKey<Certificate> {
 	private PosixPath chainFile;
 	private String certbotName;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public Certificate() {
+		// Do nothing
+	}
+
 	@Override
 	public String toStringImpl() throws SQLException, IOException {
 		return getCommonName().toStringImpl();

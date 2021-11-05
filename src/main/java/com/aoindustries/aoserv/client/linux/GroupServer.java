@@ -70,6 +70,17 @@ public final class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
 	private LinuxId gid;
 	private UnmodifiableTimestamp created;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public GroupServer() {
+		// Do nothing
+	}
+
 	public List<UserServer> getAlternateLinuxServerAccounts() throws SQLException, IOException {
 		return table.getConnector().getLinux().getUserServer().getAlternateLinuxServerAccounts(this);
 	}

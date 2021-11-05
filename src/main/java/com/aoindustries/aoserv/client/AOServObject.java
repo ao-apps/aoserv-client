@@ -89,7 +89,15 @@ public abstract class AOServObject<K, T extends AOServObject<K, T>> implements R
 	 */
 	public static final boolean USE_ARRAY_OF_DOMAIN = false;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
 	protected AOServObject() {
+		// Do nothing
 	}
 
 	// <editor-fold defaultstate="collapsed" desc="Ordering">

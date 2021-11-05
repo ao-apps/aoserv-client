@@ -273,7 +273,14 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
 		// <editor-fold defaultstate="collapsed" desc="FastExternalizable">
 		private static final long serialVersionUID = -4701364475901418693L;
 
+		/**
+		 * @deprecated  Only required for implementation, do not use directly.
+		 *
+		 * @see  FastExternalizable
+		 */
+		@Deprecated/* Java 9: (forRemoval = false) */
 		public Name() {
+			// Do nothing
 		}
 
 		@Override
@@ -337,6 +344,17 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
 	private String do_not_disable_reason;
 	private boolean auto_enable;
 	private boolean bill_parent;
+
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public Account() {
+		// Do nothing
+	}
 
 	public int addProfile(
 		String name,

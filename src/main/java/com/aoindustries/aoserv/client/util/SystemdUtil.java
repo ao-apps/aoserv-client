@@ -32,7 +32,10 @@ import java.nio.charset.StandardCharsets;
  *
  * @author  AO Industries, Inc.
  */
-public class SystemdUtil {
+public abstract class SystemdUtil {
+
+	/** Make no instances. */
+	private SystemdUtil() {throw new AssertionError();}
 
 	/**
 	 * Implements <a href="https://www.freedesktop.org/software/systemd/man/systemd.unit.html">systemd-encoded</a> encoding.
@@ -71,6 +74,4 @@ public class SystemdUtil {
 		}
 		return escaped.toString();
 	}
-
-	private SystemdUtil() {}
 }

@@ -56,6 +56,17 @@ public final class CountryCode extends GlobalObjectStringKey<CountryCode> {
 	private String charge_com_name;
 
 	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public CountryCode() {
+		// Do nothing
+	}
+
+	/**
 	 * Gets the two-character unique code for this country.
 	 */
 	public String getCode() {

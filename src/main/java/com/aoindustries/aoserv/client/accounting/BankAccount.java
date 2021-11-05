@@ -46,6 +46,17 @@ public final class BankAccount extends CachedObjectStringKey<BankAccount> {
 
 	private int depositDelay, withdrawalDelay;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public BankAccount() {
+		// Do nothing
+	}
+
 	public Bank getBank(long maximumCacheAge) throws SQLException, IOException {
 		Bank bankObject = table.getConnector().getAccounting().getBank().get(bank);
 		if (bankObject == null) throw new SQLException("Bank not found: " + bank);

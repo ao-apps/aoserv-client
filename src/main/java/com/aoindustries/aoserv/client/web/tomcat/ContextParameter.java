@@ -57,6 +57,17 @@ public final class ContextParameter extends CachedObjectIntegerKey<ContextParame
 	private boolean override;
 	private String description;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public ContextParameter() {
+		// Do nothing
+	}
+
 	@Override
 	public List<CannotRemoveReason<?>> getCannotRemoveReasons() {
 		return Collections.emptyList();

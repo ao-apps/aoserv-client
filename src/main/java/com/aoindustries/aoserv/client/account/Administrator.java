@@ -98,6 +98,17 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
 	private boolean can_switch_users;
 	private String support_code;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public Administrator() {
+		// Do nothing
+	}
+
 	@Override
 	public int arePasswordsSet() throws IOException, SQLException {
 		return table.getConnector().requestBooleanQuery(

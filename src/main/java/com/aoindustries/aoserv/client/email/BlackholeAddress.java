@@ -49,6 +49,17 @@ public final class BlackholeAddress extends CachedObjectIntegerKey<BlackholeAddr
 	static final int COLUMN_EMAIL_ADDRESS=0;
 	static final String COLUMN_EMAIL_ADDRESS_name = "email_address";
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public BlackholeAddress() {
+		// Do nothing
+	}
+
 	@Override
 	protected Object getColumnImpl(int i) {
 		if(i==COLUMN_EMAIL_ADDRESS) return pkey;

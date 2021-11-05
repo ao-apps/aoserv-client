@@ -59,6 +59,7 @@ public class LinuxServer extends AOServObject {
 	private Long sftpUmask;
 
 	public LinuxServer() {
+		// Do nothing
 	}
 
 	public LinuxServer(

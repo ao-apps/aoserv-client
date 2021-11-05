@@ -50,8 +50,6 @@ public final class GroupType extends GlobalObjectStringKey<GroupType> {
 	static final int COLUMN_NAME=0;
 	static final String COLUMN_DESCRIPTION_name = "description";
 
-	private String description;
-
 	/**
 	 * The available group types.
 	 */
@@ -63,6 +61,19 @@ public final class GroupType extends GlobalObjectStringKey<GroupType> {
 		BACKUP="backup",
 		APPLICATION="application"
 	;
+
+	private String description;
+
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public GroupType() {
+		// Do nothing
+	}
 
 	@Override
 	protected Object getColumnImpl(int i) {

@@ -60,10 +60,21 @@ public final class Site extends CachedObjectIntegerKey<Site> {
 	private int hypersonicBind;
 	private int jmxBind;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public Site() {
+		// Do nothing
+	}
+
 	@Override
 	protected Object getColumnImpl(int i) {
 		if(i==COLUMN_TOMCAT_SITE) return pkey;
-		if(i==1) return version;	
+		if(i==1) return version;
 		if(i==COLUMN_JNP_BIND) return jnpBind;
 		if(i==COLUMN_WEBSERVER_BIND) return webserverBind;
 		if(i==COLUMN_RMI_BIND) return rmiBind;

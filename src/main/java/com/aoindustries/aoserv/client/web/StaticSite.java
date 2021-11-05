@@ -44,6 +44,17 @@ public final class StaticSite extends CachedObjectIntegerKey<StaticSite> {
 	static final int COLUMN_HTTPD_SITE=0;
 	static final String COLUMN_HTTPD_SITE_name = "httpd_site";
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public StaticSite() {
+		// Do nothing
+	}
+
 	@Override
 	protected Object getColumnImpl(int i) {
 		if(i==COLUMN_HTTPD_SITE) return pkey;

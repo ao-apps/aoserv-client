@@ -305,6 +305,17 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
 	private AlertLevel maxCheckTableAlertLevel;
 
 	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public Database() {
+		// Do nothing
+	}
+
+	/**
 	 * @deprecated  Please call {@link DatabaseUserTable#addMySQLDBUser(com.aoindustries.aoserv.client.mysql.Database, com.aoindustries.aoserv.client.mysql.UserServer, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean)} directly
 	 */
 	@Deprecated
@@ -398,6 +409,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
 
 				@Override
 				public void afterRelease() {
+					// Do nothing
 				}
 			}
 		);
@@ -437,6 +449,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
 
 				@Override
 				public void afterRelease() {
+					// Do nothing
 				}
 			}
 		);

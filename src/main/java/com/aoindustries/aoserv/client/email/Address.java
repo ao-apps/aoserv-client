@@ -62,6 +62,17 @@ public final class Address extends CachedObjectIntegerKey<Address> implements Re
 	private String address;
 	private int domain;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public Address() {
+		// Do nothing
+	}
+
 	public int addEmailForwarding(Email destination) throws IOException, SQLException {
 		return table.getConnector().getEmail().getForwarding().addEmailForwarding(this, destination);
 	}

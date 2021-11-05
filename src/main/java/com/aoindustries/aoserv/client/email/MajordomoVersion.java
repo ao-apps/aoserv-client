@@ -55,6 +55,17 @@ public final class MajordomoVersion extends GlobalObjectStringKey<MajordomoVersi
 
 	private UnmodifiableTimestamp created;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public MajordomoVersion() {
+		// Do nothing
+	}
+
 	@Override
 	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
 	protected Object getColumnImpl(int i) {

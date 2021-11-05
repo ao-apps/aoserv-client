@@ -53,9 +53,6 @@ public final class UserType extends GlobalObjectStringKey<UserType> {
 	static final int COLUMN_NAME=0;
 	static final String COLUMN_DESCRIPTION_name = "description";
 
-	private String description;
-	private boolean is_email;
-
 	/**
 	 * The different Linux account types.
 	 */
@@ -115,6 +112,20 @@ public final class UserType extends GlobalObjectStringKey<UserType> {
 		Shell.TCSH//,
 		//Shell.TRUE
 	};
+
+	private String description;
+	private boolean is_email;
+
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public UserType() {
+		// Do nothing
+	}
 
 	public PasswordChecker.PasswordStrength getPasswordStrength() {
 		return getPasswordStrength(pkey);

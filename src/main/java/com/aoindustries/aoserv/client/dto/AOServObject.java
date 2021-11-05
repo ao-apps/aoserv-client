@@ -28,5 +28,6 @@ package com.aoindustries.aoserv.client.dto;
 public abstract class AOServObject {
 
 	protected AOServObject() {
+		// Do nothing
 	}
 }

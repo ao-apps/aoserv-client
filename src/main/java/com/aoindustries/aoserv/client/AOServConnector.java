@@ -167,7 +167,7 @@ public abstract class AOServConnector implements SchemaParent {
 	 * @see  #getConnectorId()
 	 */
 	// TODO: AtomicReference
-	protected static class IdLock {}
+	protected static class IdLock {/* Empty lock class to help heap profile */}
 	protected final IdLock idLock = new IdLock();
 	protected Identifier id = null;
 
@@ -203,7 +203,7 @@ public abstract class AOServConnector implements SchemaParent {
 
 	protected final String password;
 
-	private static class TestConnectLock {}
+	private static class TestConnectLock {/* Empty lock class to help heap profile */}
 	private final TestConnectLock testConnectLock=new TestConnectLock();
 
 	private final com.aoindustries.aoserv.client.account.Schema account;
@@ -1656,6 +1656,7 @@ public abstract class AOServConnector implements SchemaParent {
 				new UpdateRequest() {
 					@Override
 					public void writeRequest(StreamableOutput out) {
+						// Do nothing
 					}
 					@Override
 					public void readResponse(StreamableInput in) throws IOException, SQLException {
@@ -1667,6 +1668,7 @@ public abstract class AOServConnector implements SchemaParent {
 					}
 					@Override
 					public void afterRelease() {
+						// Do nothing
 					}
 				}
 			);
@@ -1683,6 +1685,7 @@ public abstract class AOServConnector implements SchemaParent {
 	 */
 	@SuppressWarnings("NoopMethodInAbstractClass")
 	void addingTableListener() {
+		// Do nothing
 	}
 
 	/**

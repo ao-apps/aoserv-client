@@ -74,6 +74,17 @@ public final class JkMount extends CachedObjectIntegerKey<JkMount> implements Re
 	private String path;
 	private boolean mount;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public JkMount() {
+		// Do nothing
+	}
+
 	@Override
 	public List<CannotRemoveReason<?>> getCannotRemoveReasons() {
 		return Collections.emptyList();

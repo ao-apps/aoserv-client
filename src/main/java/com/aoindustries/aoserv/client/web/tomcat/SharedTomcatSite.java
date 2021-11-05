@@ -53,6 +53,17 @@ public final class SharedTomcatSite extends CachedObjectIntegerKey<SharedTomcatS
 	public static final String DEFAULT_TOMCAT_VERSION_PREFIX = Version.VERSION_10_0_PREFIX;
 
 	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public SharedTomcatSite() {
+		// Do nothing
+	}
+
+	/**
 	 * Determines if the API user is allowed to stop the Java virtual machine associated
 	 * with this site.
 	 */

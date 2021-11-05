@@ -405,6 +405,17 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
 	private Account.Name packageName;
 	private String type;
 
+	/**
+	 * @deprecated  Only required for implementation, do not use directly.
+	 *
+	 * @see  #init(java.sql.ResultSet)
+	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+	 */
+	@Deprecated/* Java 9: (forRemoval = true) */
+	public Group() {
+		// Do nothing
+	}
+
 	public int addLinuxAccount(User user) throws IOException, SQLException {
 		return table.getConnector().getLinux().getGroupUser().addLinuxGroupAccount(this, user);
 	}
