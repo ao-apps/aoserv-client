@@ -109,7 +109,8 @@ public final class UserType extends GlobalObjectStringKey<UserType> {
 		Shell.FALSE,
 		Shell.KSH,
 		Shell.SH,
-		Shell.TCSH//,
+		Shell.TCSH,
+		Shell.GIT_SHELL//,
 		//Shell.TRUE
 	};
 

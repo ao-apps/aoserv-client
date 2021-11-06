@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-05:00"
-		dateModified="2021-10-31T22:12:36-05:00"
+		dateModified="2021-11-06T04:11:23-05:00"
 	>
 		<c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
 			<changelog:release
@@ -81,6 +81,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
 					<li>Added support for <ao:a href="https://www.postgresql.org/docs/14/index.html">PostgreSQL 14</ao:a>.</li>
 					<li>Now properly restoring Thread interrupted state on <code>InterruptedException</code>.</li>
 					<li>Added missing <code>NoSuchElementException</code> from implementations of <code>Iterator</code>.</li>
+					<li>Added support for <ao:a href="https://git-scm.com/docs/git-shell">git-shell</ao:a>.</li>
 				</ul>
 			</changelog:release>
 		</c:if>

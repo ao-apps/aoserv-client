@@ -57,6 +57,7 @@ public final class Shell extends GlobalObjectPosixPathKey<Shell> {
 		SHUTDOWN,
 		FTPONLY,
 		FTPPASSWD,
+		GIT_SHELL,
 		PASSWD
 	;
 	static {
@@ -72,6 +73,7 @@ public final class Shell extends GlobalObjectPosixPathKey<Shell> {
 			SHUTDOWN = PosixPath.valueOf("/sbin/shutdown").intern();
 			FTPONLY = PosixPath.valueOf("/usr/bin/ftponly").intern();
 			FTPPASSWD = PosixPath.valueOf("/usr/bin/ftppasswd").intern();
+			GIT_SHELL = PosixPath.valueOf("/usr/bin/git-shell").intern();
 			PASSWD = PosixPath.valueOf("/usr/bin/passwd").intern();
 		} catch(ValidationException e) {
 			throw new AssertionError("These hard-coded values are valid", e);
