@@ -257,6 +257,7 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
 		FTPONLY,
 		GAMES,
 		INPUT,
+		JENKINS,
 		KMEM,
 		LOCK,
 		LP,
@@ -344,6 +345,7 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
 			FTPONLY = Name.valueOf("ftponly");
 			GAMES = Name.valueOf("games");
 			INPUT = Name.valueOf("input");
+			JENKINS = Name.valueOf("jenkins");
 			KMEM = Name.valueOf("kmem");
 			LOCK = Name.valueOf("lock");
 			LP = Name.valueOf("lp");

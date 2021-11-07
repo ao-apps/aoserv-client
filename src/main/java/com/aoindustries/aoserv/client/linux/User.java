@@ -411,6 +411,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
 		GAMES,
 		HALT,
 		INTERBASE,
+		JENKINS,
 		LP,
 		MAIL,
 		MAILNULL,
@@ -478,6 +479,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
 			GAMES = Name.valueOf("games");
 			HALT = Name.valueOf("halt");
 			INTERBASE = Name.valueOf("interbase");
+			JENKINS = Name.valueOf("jenkins");
 			LP = Name.valueOf("lp");
 			MAIL = Name.valueOf("mail");
 			MAILNULL = Name.valueOf("mailnull");
