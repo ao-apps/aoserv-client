@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 aoserv-client - Java client for the AOServ Platform.
-Copyright (C) 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
+Copyright (C) 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
     support@aoindustries.com
     7262 Bull Pen Cir
     Mobile, AL 36695
@@ -376,7 +376,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
 				<groupId>org.hamcrest</groupId><artifactId>hamcrest-core</artifactId><version>2.2</version>
 			</dependency>
 			<dependency>
-				<groupId>com.google.protobuf</groupId><artifactId>protobuf-java</artifactId><version>3.19.1</version>
+				<groupId>com.google.protobuf</groupId><artifactId>protobuf-java</artifactId><version>3.19.2</version>
 			</dependency>
 			<!-- BOM -->
 			<dependency>
