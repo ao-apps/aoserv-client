@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 aoserv-client - Java client for the AOServ Platform.
-Copyright (C) 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
+Copyright (C) 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
     support@aoindustries.com
     7262 Bull Pen Cir
     Mobile, AL 36695
@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-05:00"
-		dateModified="2021-11-06T22:15:23-05:00"
+		dateModified="2022-02-04T16:55:03-06:00"
 	>
 		<c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
 			<changelog:release
@@ -83,6 +83,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
 					<li>Added missing <code>NoSuchElementException</code> from implementations of <code>Iterator</code>.</li>
 					<li>Added support for <ao:a href="https://git-scm.com/docs/git-shell">git-shell</ao:a>.</li>
 					<li>Added support for <ao:a href="https://www.jenkins.io/">Jenkins</ao:a>.</li>
+					<li>Added resource definitions in support of new <ao:a href="https://www.aoapps.com/">AO Apps</ao:a> branding.</li>
 				</ul>
 			</changelog:release>
 		</c:if>
