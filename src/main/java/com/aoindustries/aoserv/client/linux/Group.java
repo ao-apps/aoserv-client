@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2009, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -282,6 +282,7 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
 		SASLAUTH,
 		SCREEN,
 		SMMSP,
+		SONARQUBE,
 		SSH_KEYS,
 		SSHD,
 		SYS,
@@ -370,6 +371,7 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
 			SASLAUTH = Name.valueOf("saslauth");
 			SCREEN = Name.valueOf("screen");
 			SMMSP = Name.valueOf("smmsp");
+			SONARQUBE = Name.valueOf("sonarqube");
 			SSH_KEYS = Name.valueOf("ssh_keys");
 			SSHD = Name.valueOf("sshd");
 			SYS = Name.valueOf("sys");

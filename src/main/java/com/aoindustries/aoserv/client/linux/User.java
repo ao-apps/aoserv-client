@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -431,6 +431,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
 		SASLAUTH,
 		SHUTDOWN,
 		SMMSP,
+		SONARQUBE,
 		SSHD,
 		SYNC,
 		SYSTEMD_BUS_PROXY,
@@ -499,6 +500,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
 			SASLAUTH = Name.valueOf("saslauth");
 			SHUTDOWN = Name.valueOf("shutdown");
 			SMMSP = Name.valueOf("smmsp");
+			SONARQUBE = Name.valueOf("sonarqube");
 			SSHD = Name.valueOf("sshd");
 			SYNC = Name.valueOf("sync");
 			SYSTEMD_BUS_PROXY = Name.valueOf("systemd-bus-proxy");
