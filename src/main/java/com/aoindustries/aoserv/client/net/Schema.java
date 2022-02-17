@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2018, 2020, 2021  AO Industries, Inc.
+ * Copyright (C) 2018, 2020, 2021, 2022  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -40,6 +40,11 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 	public com.aoindustries.aoserv.client.net.reputation.Schema getReputation() {return reputation;}
 
 	private final List<? extends com.aoindustries.aoserv.client.Schema> schemas;
+	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
+	public List<? extends com.aoindustries.aoserv.client.Schema> getSchemas() {
+		return schemas;
+	}
 
 	private final AppProtocolTable AppProtocol;
 	public AppProtocolTable getAppProtocol() {return AppProtocol;}
