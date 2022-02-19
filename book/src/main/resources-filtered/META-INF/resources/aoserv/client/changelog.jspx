@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-05:00"
-		dateModified="2022-02-14T12:23:52-06:00"
+		dateModified="2022-02-18T16:30:23-06:00"
 	>
 		<c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
 			<changelog:release
@@ -84,7 +84,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
 					<li>Added support for <ao:a href="https://git-scm.com/docs/git-shell">git-shell</ao:a>.</li>
 					<li>Added support for <ao:a href="https://www.jenkins.io/">Jenkins</ao:a>.</li>
 					<li>Added resource definitions in support of new <ao:a href="https://www.aoapps.com/">AO Apps</ao:a> branding.</li>
-					<li>Removed backup package category and related signup forms.</li>
+					<li>Removed package category and related signup forms for backup and colocation.</li>
 					<li>Added support for <ao:a href="https://www.sonarqube.org/">SonarQube</ao:a>.</li>
 				</ul>
 			</changelog:release>
