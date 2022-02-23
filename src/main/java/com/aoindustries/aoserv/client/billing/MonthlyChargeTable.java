@@ -24,6 +24,7 @@ package com.aoindustries.aoserv.client.billing;
 
 import com.aoapps.lang.i18n.Money;
 import com.aoapps.lang.math.NullMath;
+import com.aoapps.net.InetAddress;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
@@ -44,6 +45,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @see  MonthlyCharge
@@ -241,25 +243,36 @@ public final class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 					if(limit==null || limit.getSoftLimit()!=PackageDefinitionLimit.UNLIMITED) {
 						List<IpAddress> ips=pack.getIPAddresses();
 						if(!ips.isEmpty()) {
-							if(limit==null) throw new SQLException("IPAddresses exist, but no limit defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
-							if(ips.size()>limit.getSoftLimit()) {
-								Money addRate = limit.getAdditionalRate();
-								if(addRate==null) throw new SQLException("Additional IPAddresses exist, but no additional rate defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
-								TransactionType addType=limit.getAdditionalTransactionType();
-								if(addType==null) throw new SQLException("Additional IPAddresses exist, but no additional TransactionType defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
-								charges.add(
-									new MonthlyCharge(
-										this,
-										packBillingAccount,
-										pack,
-										addType,
-										"Additional IP Addresses ("+limit.getSoftLimit()+" included with package, have "+ips.size()+")",
-										(ips.size()-limit.getSoftLimit())*1000,
-										addRate,
-										administrator,
-										active
-									)
-								);
+							ips = ips.stream()
+								.filter(ip -> {
+									InetAddress ia = ip.getInetAddress();
+									return
+										!ia.isLoopback()
+										&& !ia.isUnspecified()
+										&& !ia.isUniqueLocal();
+								})
+								.collect(Collectors.toList());
+							if(!ips.isEmpty()) {
+								if(limit==null) throw new SQLException("IPAddresses exist, but no limit defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
+								if(ips.size()>limit.getSoftLimit()) {
+									Money addRate = limit.getAdditionalRate();
+									if(addRate==null) throw new SQLException("Additional IPAddresses exist, but no additional rate defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
+									TransactionType addType=limit.getAdditionalTransactionType();
+									if(addType==null) throw new SQLException("Additional IPAddresses exist, but no additional TransactionType defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
+									charges.add(
+										new MonthlyCharge(
+											this,
+											packBillingAccount,
+											pack,
+											addType,
+											"Additional IP Addresses ("+limit.getSoftLimit()+" included with package, have "+ips.size()+")",
+											(ips.size()-limit.getSoftLimit())*1000,
+											addRate,
+											administrator,
+											active
+										)
+									);
+								}
 							}
 						}
 					}
