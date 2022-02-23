@@ -84,6 +84,12 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
 						This is so fine-grained line items appear in matching order for new
 						<ao:a href="https://www.aoapps.com/">AOApps</ao:a> branding
 					</li>
+					<li>
+						Monthly charges now use <code>package_definitions.display</code> as their description, instead
+						of the previous default based on <code>package_definitions.monthly_rate_transaction_type</code>.
+						This provides more meaningful billing line items, instead of just "Virtual Dedicated Server"
+						repeated.
+					</li>
 				</ul>
 			</changelog:release>
 		</c:if>
