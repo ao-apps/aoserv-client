@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-05:00"
-		dateModified="2022-02-18T20:19:04-06:00"
+		dateModified="2022-02-23T00:55:26-06:00"
 	>
 		<c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
 			<changelog:release
@@ -77,6 +77,14 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
 					<li>Look into jOOQ: https://www.jooq.org/</li>
 				</ul>
 				-->
+				<ul>
+					<li>Added transaction type "support" for new <ao:a href="https://www.aoapps.com/">AOApps Premium Support</ao:a>.</li>
+					<li>
+						Monthly charges now order by <code>id</code> before <code>type</code> and <code>created</code>.
+						This is so fine-grained line items appear in matching order for new
+						<ao:a href="https://www.aoapps.com/">AOApps</ao:a> branding
+					</li>
+				</ul>
 			</changelog:release>
 		</c:if>
 
@@ -94,7 +102,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
 				<li>Added missing <code>NoSuchElementException</code> from implementations of <code>Iterator</code>.</li>
 				<li>Added support for <ao:a href="https://git-scm.com/docs/git-shell">git-shell</ao:a>.</li>
 				<li>Added support for <ao:a href="https://www.jenkins.io/">Jenkins</ao:a>.</li>
-				<li>Added resource definitions in support of new <ao:a href="https://www.aoapps.com/">AO Apps</ao:a> branding.</li>
+				<li>Added resource definitions in support of new <ao:a href="https://www.aoapps.com/">AOApps</ao:a> branding.</li>
 				<li>Removed package category and related signup forms for backup and colocation.</li>
 				<li>Added support for <ao:a href="https://www.sonarqube.org/">SonarQube</ao:a>.</li>
 			</ul>
