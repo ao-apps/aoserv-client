@@ -58,7 +58,7 @@ import java.sql.SQLException;
 public final class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 
 	static final int COLUMN_PKEY=0;
-	static final String COLUMN_ID_name = "id";
+	static final String COLUMN_PKEY_name = "pkey";
 	static final String COLUMN_ACCOUNTING_name = "accounting";
 	static final String COLUMN_PACKAGE_name = "package";
 	static final String COLUMN_TYPE_name = "type";

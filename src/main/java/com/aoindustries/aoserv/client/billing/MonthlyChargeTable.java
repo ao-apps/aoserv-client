@@ -59,7 +59,7 @@ public final class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 	private static final OrderBy[] defaultOrderBy = {
 		// new OrderBy(MonthlyCharge.COLUMN_ACCOUNTING_name, ASCENDING),
 		new OrderBy(MonthlyCharge.COLUMN_PACKAGE_name, ASCENDING),
-		new OrderBy(MonthlyCharge.COLUMN_ID_name, ASCENDING),
+		new OrderBy(MonthlyCharge.COLUMN_PKEY_name, ASCENDING),
 		new OrderBy(MonthlyCharge.COLUMN_TYPE_name, ASCENDING),
 		new OrderBy(MonthlyCharge.COLUMN_CREATED_name, ASCENDING)
 	};
