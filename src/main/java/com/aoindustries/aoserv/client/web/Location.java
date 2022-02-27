@@ -56,7 +56,7 @@ public final class Location extends CachedObjectIntegerKey<Location> implements 
 	 * The set of expected handlers.  This is not an enum because others may be
 	 * added at any time while older clients are still running.
 	 */
-	public final static class Handler {
+	public static final class Handler {
 
 		/** Make no instances. */
 		private Handler() {throw new AssertionError();}
