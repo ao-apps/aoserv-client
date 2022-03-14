@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2009-2012, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
+ * Copyright (C) 2009-2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -243,7 +243,7 @@ public class TicketLoggingHandler extends QueuedHandler {
 	}
 
 	@Override
-	protected void backgroundPublish(Formatter formatter, LogRecord record, String fullReport) throws IOException, SQLException {
+	protected void backgroundPublish(Formatter formatter, LogRecord rec, String fullReport) throws IOException, SQLException {
 		// Look-up things
 		Account account = connector.getCurrentAdministrator().getUsername().getPackage().getAccount();
 		Brand brand = account.getBrand();
@@ -259,12 +259,12 @@ public class TicketLoggingHandler extends QueuedHandler {
 		} else {
 			category = null;
 		}
-		Level level = record.getLevel();
+		Level level = rec.getLevel();
 		// Generate the summary from level, prefix classname, method
 		StringBuilder tempSB = new StringBuilder();
 		tempSB.append('[').append(level).append(']');
 		if(summaryPrefix != null) tempSB.append(' ').append(summaryPrefix);
-		tempSB.append(" - ").append(record.getSourceClassName()).append(" - ").append(record.getSourceMethodName());
+		tempSB.append(" - ").append(rec.getSourceClassName()).append(" - ").append(rec.getSourceMethodName());
 		String summary = tempSB.toString();
 		// Look for an existing ticket to append
 		Ticket existingTicket = null;
@@ -288,7 +288,7 @@ public class TicketLoggingHandler extends QueuedHandler {
 		}
 		if(existingTicket != null) {
 			existingTicket.addAnnotation(
-				generateActionSummary(formatter, record),
+				generateActionSummary(formatter, rec),
 				fullReport
 			);
 		} else {
@@ -312,10 +312,10 @@ public class TicketLoggingHandler extends QueuedHandler {
 		}
 	}
 
-	public static String generateActionSummary(Formatter formatter, LogRecord record) {
+	public static String generateActionSummary(Formatter formatter, LogRecord rec) {
 		// Generate the annotation summary as localized message + thrown
 		StringBuilder tempSB = new StringBuilder();
-		String message = formatter.formatMessage(record);
+		String message = formatter.formatMessage(rec);
 		if(message != null) {
 			message = message.trim();
 			int eol = message.indexOf('\n');
@@ -329,7 +329,7 @@ public class TicketLoggingHandler extends QueuedHandler {
 				if(doEllipsis) tempSB.append('\u2026');
 			}
 		}
-		Throwable thrown = record.getThrown();
+		Throwable thrown = rec.getThrown();
 		if(thrown != null) {
 			if(tempSB.length() > 0) tempSB.append(" - ");
 			String thrownMessage = thrown.getMessage();

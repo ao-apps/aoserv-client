@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -5682,13 +5682,13 @@ public final class SimpleAOClient {
 
 		// Find the record matching all four fields, should be one and *only* one
 		Record found = null;
-		for(Record record : nz.getDNSRecords(domain, nt)) {
+		for(Record rec : nz.getDNSRecords(domain, nt)) {
 			if(
-				Objects.equals(record.getTag(), tag)
-				&& record.getDestination().equals(destination)
+				Objects.equals(rec.getTag(), tag)
+				&& rec.getDestination().equals(destination)
 			) {
 				if(found != null) throw new AssertionError("Duplicate DNSRecord: (" + zone + ", " + domain + ", " + type + ", " + tag + ", " + destination + ")");
-				found = record;
+				found = rec;
 			}
 		}
 		if(found == null) throw new AssertionError("Unable to find DNSRecord: (" + zone + ", " + domain + ", " + type + ", " + tag + ", " + destination + ")");

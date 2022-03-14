@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -101,18 +101,18 @@ public final class RecordTable extends CachedTableIntegerKey<Record> {
 	}
 
 	List<Record> getDNSRecords(Zone dnsZone, String domain, RecordType dnsType) throws IOException, SQLException {
-		String type=dnsType.getType();
+		String type = dnsType.getType();
 
 		// Use the index first
-		List<Record> cached=getDNSRecords(dnsZone);
-		int size=cached.size();
-		List<Record> matches=new ArrayList<>(size);
-		for(int c=0;c<size;c++) {
-			Record record=cached.get(c);
+		List<Record> cached = getDNSRecords(dnsZone);
+		int size = cached.size();
+		List<Record> matches = new ArrayList<>(size);
+		for(int c = 0; c < size; c++) {
+			Record rec = cached.get(c);
 			if(
-				record.getType_type().equals(type)
-				&& record.getDomain().equals(domain)
-			) matches.add(record);
+				rec.getType_type().equals(type)
+				&& rec.getDomain().equals(domain)
+			) matches.add(rec);
 		}
 		return matches;
 	}

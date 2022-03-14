@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2014, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -391,10 +391,10 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
 		}
 		line.append("@                       ").append(ttl).append(" IN   SOA     ");
 		// Find the first nameserver
-		Record firstNS=null;
-		for(Record record : records) {
-			if(record.getType().getType().equals(RecordType.NS)) {
-				firstNS=record;
+		Record firstNS = null;
+		for(Record rec : records) {
+			if(rec.getType().getType().equals(RecordType.NS)) {
+				firstNS = rec;
 				break;
 			}
 		}
@@ -424,12 +424,12 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
 			printRecord("", line, out, "@", ttl, Record.NO_TTL, RecordType.NS, Record.NO_PRIORITY, Record.NO_WEIGHT, Record.NO_PORT, Record.NO_FLAG, null, "ns3.aoindustries.com.");
 			printRecord("", line, out, "@", ttl, Record.NO_TTL, RecordType.NS, Record.NO_PRIORITY, Record.NO_WEIGHT, Record.NO_PORT, Record.NO_FLAG, null, "ns4.aoindustries.com.");
 		}
-		int len=records.size();
-		for(int c=0;c<len;c++) {
-			Record record=records.get(c);
+		int len = records.size();
+		for(int c = 0; c < len; c++) {
+			Record rec = records.get(c);
 			boolean hasConflictAbove = false;
-			for(int d=0;d<c;d++) {
-				if(record.hasConflict(records.get(d))) {
+			for(int d = 0; d < c; d++) {
+				if(rec.hasConflict(records.get(d))) {
 					hasConflictAbove = true;
 					break;
 				}
@@ -438,22 +438,22 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
 				hasConflictAbove ? "; Disabled due to conflict: " : "",
 				line,
 				out,
-				record.getDomain(),
+				rec.getDomain(),
 				ttl,
-				record.getTtl(),
-				record.getType_type(),
-				record.getPriority(),
-				record.getWeight(),
-				record.getPort(),
-				record.getFlag(),
-				record.getTag(),
-				record.getDestination()
+				rec.getTtl(),
+				rec.getType_type(),
+				rec.getPriority(),
+				rec.getWeight(),
+				rec.getPort(),
+				rec.getFlag(),
+				rec.getTag(),
+				rec.getDestination()
 			);
 			// Allow the first one when there is a conflict
 			if(!hasConflictAbove) {
 				boolean hasConflictBelow = false;
 				for(int d=c+1;d<len;d++) {
-					if(record.hasConflict(records.get(d))) {
+					if(rec.hasConflict(records.get(d))) {
 						hasConflictBelow = true;
 						break;
 					}
