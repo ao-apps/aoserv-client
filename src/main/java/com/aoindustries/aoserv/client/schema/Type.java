@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -558,8 +558,9 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
 					break;
 				case FKEY:
 					switch(castToType.getId()) {
-						case INT: return value;
-						case PKEY: return value;
+						case INT:
+						case PKEY:
+							return value;
 					}
 					break;
 				case FLOAT:
@@ -646,8 +647,9 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
 					break;
 				case PKEY:
 					switch(castToType.getId()) {
-						case FKEY: return value;
-						case INT: return value;
+						case FKEY:
+						case INT:
+							return value;
 					}
 					break;
 				case PATH:
