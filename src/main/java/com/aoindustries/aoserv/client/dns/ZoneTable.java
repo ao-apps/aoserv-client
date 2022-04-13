@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -126,7 +126,7 @@ public final class ZoneTable extends CachedTableStringKey<Zone> {
 	 *
 	 * @return  the zone in the format <code><i>name</i>.<i>tld</i>.</code>
 	 */
-	public static String getDNSZoneForHostname(String hostname, List<DomainName> tlds) throws IllegalArgumentException, IOException, SQLException {
+	public static String getDNSZoneForHostname(String hostname, List<DomainName> tlds) throws IllegalArgumentException {
 		int hlen = hostname.length();
 		if (hlen>0 && hostname.charAt(hlen-1)=='.') {
 			hostname = hostname.substring(0, --hlen);

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -313,7 +313,7 @@ public abstract class AOServObject<K, T extends AOServObject<K, T>> implements R
 	/**
 	 * null-safe hashed key conversion.
 	 */
-	protected static HashedKey getHashedKey(com.aoindustries.aoserv.client.dto.HashedKey hashedKey) throws ValidationException {
+	protected static HashedKey getHashedKey(com.aoindustries.aoserv.client.dto.HashedKey hashedKey) throws IllegalArgumentException {
 		if(hashedKey==null) return null;
 		return HashedKey.valueOf(hashedKey.getHashedKey());
 	}
@@ -321,7 +321,7 @@ public abstract class AOServObject<K, T extends AOServObject<K, T>> implements R
 	/**
 	 * null-safe hashed password conversion.
 	 */
-	protected static HashedPassword getHashedPassword(com.aoindustries.aoserv.client.dto.HashedPassword hashedPassword) throws ValidationException {
+	protected static HashedPassword getHashedPassword(com.aoindustries.aoserv.client.dto.HashedPassword hashedPassword) throws IllegalArgumentException {
 		if(hashedPassword==null) return null;
 		return HashedPassword.valueOf(hashedPassword.getHashedPassword());
 	}

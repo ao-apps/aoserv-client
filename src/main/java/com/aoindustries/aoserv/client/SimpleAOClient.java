@@ -2996,7 +2996,7 @@ public final class SimpleAOClient {
 	public static List<PasswordChecker.Result> checkAdministratorPassword(
 		com.aoindustries.aoserv.client.account.User.Name username,
 		String password
-	) throws IOException, SQLException {
+	) throws IOException {
 		return Administrator.checkPassword(username, password);
 	}
 

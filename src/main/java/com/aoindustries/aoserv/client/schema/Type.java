@@ -924,7 +924,7 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
 	 *
 	 * @exception  IllegalArgumentException  if the type is invalid
 	 */
-	public static int compareTo(Object value1, Object value2, int id) throws IllegalArgumentException, SQLException, UnknownHostException {
+	public static int compareTo(Object value1, Object value2, int id) throws IllegalArgumentException {
 		if(value1==null) {
 			return value2==null?0:-1;
 		} else {
