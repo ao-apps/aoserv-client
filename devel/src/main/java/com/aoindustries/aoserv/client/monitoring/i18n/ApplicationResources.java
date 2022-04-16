@@ -20,6 +20,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 package com.aoindustries.aoserv.client.monitoring.i18n;
 
 import com.aoapps.hodgepodge.i18n.EditableResourceBundle;

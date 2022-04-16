@@ -20,6 +20,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 package com.aoindustries.aoserv.client.password;
 
 import com.aoapps.lang.i18n.Resources;
