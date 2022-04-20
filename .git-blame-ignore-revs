@@ -1,2 +1,28 @@
 # Significant manual code formatting clean-up…
 b22d0b122f3a2e9d1fb09e99f77f1d9d18d4ac41
+# Tab indentation and UNIX newlines
+8f565ab9b18abd41dd4ba3193ee3bf57f5489c6c
+# Added missing spaces after comma
+5165561bd0180e6e402c4780335b3eb2d253a3ca
+# Tab indent
+425f3ab8056e51d3d76ee79cdbbca4ed40c3c2b2
+# Removed extra trailing spaces
+32ad921a54e2d934b29b1aa4da7518da0ff68f86
+# Fixed spaces to tabs
+81c13ee55a080d3ad792494be44d387ac5a4d691
+# Whitespace formatting improved.
+4700eaf19920e090a86ce997ff78c68e3b01a838
+# Removed extraneous space at end of line.
+50f1af376a30975d56fc84b43f4263cd089eba1e
+# Removed extra trailing spaces
+61820464aa3544106a473d1e72f9ccb523384f98
+# Fixed spaces to tabs
+c72fa2e37a71fada34b18319f2e3278190db1129
+# Whitespace formatting improved.
+516bc9b429d0757c1f114892b3ed95767dc13fe9
+# Removed extraneous space at end of line.
+7a45de4f9ef983e6bfedd32fa52d3169706df818
+# Creating PHP version selector.
+bd783a9143efb143fbe413abf35f6eefe3fefa51
+# Converted all newlines to Unix format.
+bae6391c7962246fb50f2ad5e24d583253b56c6c
