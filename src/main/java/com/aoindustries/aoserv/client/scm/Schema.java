@@ -34,28 +34,28 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final CvsRepositoryTable CvsRepository;
-	public CvsRepositoryTable getCvsRepository() {return CvsRepository;}
+  private final CvsRepositoryTable CvsRepository;
+  public CvsRepositoryTable getCvsRepository() {return CvsRepository;}
 
-	private final List<? extends AOServTable<?, ?>> tables;
+  private final List<? extends AOServTable<?, ?>> tables;
 
-	public Schema(AOServConnector connector) {
-		super(connector);
+  public Schema(AOServConnector connector) {
+    super(connector);
 
-		ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
-		newTables.add(CvsRepository = new CvsRepositoryTable(connector));
-		newTables.trimToSize();
-		tables = Collections.unmodifiableList(newTables);
-	}
+    ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
+    newTables.add(CvsRepository = new CvsRepositoryTable(connector));
+    newTables.trimToSize();
+    tables = Collections.unmodifiableList(newTables);
+  }
 
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
-	public List<? extends AOServTable<?, ?>> getTables() {
-		return tables;
-	}
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
+  public List<? extends AOServTable<?, ?>> getTables() {
+    return tables;
+  }
 
-	@Override
-	public String getName() {
-		return "scm";
-	}
+  @Override
+  public String getName() {
+    return "scm";
+  }
 }

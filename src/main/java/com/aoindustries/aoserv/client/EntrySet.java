@@ -36,55 +36,57 @@ import java.util.NoSuchElementException;
  */
 final class EntrySet<K, V extends AOServObject<K, V>> extends AbstractSet<Map.Entry<K, V>> {
 
-	private final List<V> objs;
+  private final List<V> objs;
 
-	EntrySet(List<V> objs) {
-		this.objs = objs;
-	}
+  EntrySet(List<V> objs) {
+    this.objs = objs;
+  }
 
-	@Override
-	public int size() {
-		return objs.size();
-	}
+  @Override
+  public int size() {
+    return objs.size();
+  }
 
-	@Override
-	public Iterator<Map.Entry<K, V>> iterator() {
-		// Java 9: new Iterator<>
-		return new Iterator<Map.Entry<K, V>>() {
+  @Override
+  public Iterator<Map.Entry<K, V>> iterator() {
+    // Java 9: new Iterator<>
+    return new Iterator<Map.Entry<K, V>>() {
 
-			private int cursor = 0;
+      private int cursor = 0;
 
-			@Override
-			public boolean hasNext() {
-				return cursor < objs.size();
-			}
+      @Override
+      public boolean hasNext() {
+        return cursor < objs.size();
+      }
 
-			@Override
-			public Map.Entry<K, V> next() throws NoSuchElementException {
-				if(cursor >= objs.size()) throw new NoSuchElementException();
-				final V value = objs.get(cursor);
-				final K key = value.getKey();
-				// Java 9: new Map.Entry<>
-				Map.Entry<K, V> next = new Map.Entry<K, V>() {
+      @Override
+      public Map.Entry<K, V> next() throws NoSuchElementException {
+        if (cursor >= objs.size()) {
+          throw new NoSuchElementException();
+        }
+        final V value = objs.get(cursor);
+        final K key = value.getKey();
+        // Java 9: new Map.Entry<>
+        Map.Entry<K, V> next = new Map.Entry<K, V>() {
 
-					@Override
-					public V setValue(V value) {
-						throw new UnsupportedOperationException();
-					}
+          @Override
+          public V setValue(V value) {
+            throw new UnsupportedOperationException();
+          }
 
-					@Override
-					public V getValue() {
-						return value;
-					}
+          @Override
+          public V getValue() {
+            return value;
+          }
 
-					@Override
-					public K getKey() {
-						return key;
-					}
-				};
-				cursor++;
-				return next;
-			}
-		};
-	}
+          @Override
+          public K getKey() {
+            return key;
+          }
+        };
+        cursor++;
+        return next;
+      }
+    };
+  }
 }

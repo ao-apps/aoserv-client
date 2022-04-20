@@ -34,20 +34,20 @@ import java.sql.SQLException;
  */
 public interface Disablable {
 
-	/**
-	 * Checks if this object is disabled.  This should execute very quickly (not
-	 * incur any round-trip to any database) and thus does not throw any checked
-	 * exceptions.
-	 */
-	boolean isDisabled();
+  /**
+   * Checks if this object is disabled.  This should execute very quickly (not
+   * incur any round-trip to any database) and thus does not throw any checked
+   * exceptions.
+   */
+  boolean isDisabled();
 
-	DisableLog getDisableLog() throws IOException, SQLException;
+  DisableLog getDisableLog() throws IOException, SQLException;
 
-	boolean canDisable() throws IOException, SQLException;
+  boolean canDisable() throws IOException, SQLException;
 
-	boolean canEnable() throws IOException, SQLException;
+  boolean canEnable() throws IOException, SQLException;
 
-	void disable(DisableLog dl) throws IOException, SQLException;
+  void disable(DisableLog dl) throws IOException, SQLException;
 
-	void enable() throws IOException, SQLException;
+  void enable() throws IOException, SQLException;
 }

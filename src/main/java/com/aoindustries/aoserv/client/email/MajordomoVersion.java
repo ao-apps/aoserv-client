@@ -46,68 +46,72 @@ import java.sql.SQLException;
  */
 public final class MajordomoVersion extends GlobalObjectStringKey<MajordomoVersion> {
 
-	static final int COLUMN_VERSION=0;
-	static final String COLUMN_VERSION_name = "version";
+  static final int COLUMN_VERSION=0;
+  static final String COLUMN_VERSION_name = "version";
 
-	/**
-	 * The default Majordomo version.
-	 */
-	public static final String DEFAULT_VERSION="1.94.5";
+  /**
+   * The default Majordomo version.
+   */
+  public static final String DEFAULT_VERSION="1.94.5";
 
-	private UnmodifiableTimestamp created;
+  private UnmodifiableTimestamp created;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public MajordomoVersion() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public MajordomoVersion() {
+    // Do nothing
+  }
 
-	@Override
-	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
-	protected Object getColumnImpl(int i) {
-		if(i==COLUMN_VERSION) return pkey;
-		if(i==1) return created;
-		throw new IllegalArgumentException("Invalid index: " + i);
-	}
+  @Override
+  @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
+  protected Object getColumnImpl(int i) {
+    if (i == COLUMN_VERSION) {
+      return pkey;
+    }
+    if (i == 1) {
+      return created;
+    }
+    throw new IllegalArgumentException("Invalid index: " + i);
+  }
 
-	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
-	public UnmodifiableTimestamp getCreated() {
-		return created;
-	}
+  @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
+  public UnmodifiableTimestamp getCreated() {
+    return created;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.MAJORDOMO_VERSIONS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.MAJORDOMO_VERSIONS;
+  }
 
-	public String getVersion() {
-		return pkey;
-	}
+  public String getVersion() {
+    return pkey;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey=result.getString(1);
-		created = UnmodifiableTimestamp.valueOf(result.getTimestamp(2));
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey=result.getString(1);
+    created = UnmodifiableTimestamp.valueOf(result.getTimestamp(2));
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readUTF().intern();
-		created = SQLStreamables.readUnmodifiableTimestamp(in);
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readUTF().intern();
+    created = SQLStreamables.readUnmodifiableTimestamp(in);
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey);
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
-			out.writeLong(created.getTime());
-		} else {
-			SQLStreamables.writeTimestamp(created, out);
-		}
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey);
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+      out.writeLong(created.getTime());
+    } else {
+      SQLStreamables.writeTimestamp(created, out);
+    }
+  }
 }

@@ -39,83 +39,87 @@ import java.sql.SQLException;
  */
 public final class BackupRetention extends GlobalObject<Short, BackupRetention> {
 
-	static final int COLUMN_DAYS=0;
-	static final String COLUMN_DAYS_name = "days";
+  static final int COLUMN_DAYS=0;
+  static final String COLUMN_DAYS_name = "days";
 
-	// public static final short DEFAULT_BACKUP_RETENTION=7;
+  // public static final short DEFAULT_BACKUP_RETENTION=7;
 
-	private short days;
-	private String display;
+  private short days;
+  private String display;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public BackupRetention() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public BackupRetention() {
+    // Do nothing
+  }
 
-	@Override
-	public boolean equals(Object obj) {
-		return
-			(obj instanceof BackupRetention)
-			&& ((BackupRetention)obj).days == days
-		;
-	}
+  @Override
+  public boolean equals(Object obj) {
+    return
+      (obj instanceof BackupRetention)
+      && ((BackupRetention)obj).days == days
+    ;
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		if(i==COLUMN_DAYS) return days;
-		if(i==1) return display;
-		throw new IllegalArgumentException("Invalid index: " + i);
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    if (i == COLUMN_DAYS) {
+      return days;
+    }
+    if (i == 1) {
+      return display;
+    }
+    throw new IllegalArgumentException("Invalid index: " + i);
+  }
 
-	public short getDays() {
-		return days;
-	}
+  public short getDays() {
+    return days;
+  }
 
-	public String getDisplay() {
-		return display;
-	}
+  public String getDisplay() {
+    return display;
+  }
 
-	@Override
-	public Short getKey() {
-		return days;
-	}
+  @Override
+  public Short getKey() {
+    return days;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.BACKUP_RETENTIONS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.BACKUP_RETENTIONS;
+  }
 
-	@Override
-	public int hashCode() {
-		return days;
-	}
+  @Override
+  public int hashCode() {
+    return days;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		days=result.getShort(1);
-		display=result.getString(2);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    days=result.getShort(1);
+    display=result.getString(2);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		days=in.readShort();
-		display=in.readUTF();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    days=in.readShort();
+    display=in.readUTF();
+  }
 
-	@Override
-	public String toStringImpl() {
-		return display;
-	}
+  @Override
+  public String toStringImpl() {
+    return display;
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeShort(days);
-		out.writeUTF(display);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeShort(days);
+    out.writeUTF(display);
+  }
 }

@@ -36,26 +36,26 @@ import java.sql.SQLException;
  */
 public final class ServerFarmTable extends CachedTableStringKey<ServerFarm> {
 
-	ServerFarmTable(AOServConnector connector) {
-		super(connector, ServerFarm.class);
-	}
+  ServerFarmTable(AOServConnector connector) {
+    super(connector, ServerFarm.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(ServerFarm.COLUMN_NAME_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(ServerFarm.COLUMN_NAME_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public ServerFarm get(String name) throws IOException, SQLException {
-		return getUniqueRow(ServerFarm.COLUMN_NAME, name);
-	}
+  @Override
+  public ServerFarm get(String name) throws IOException, SQLException {
+    return getUniqueRow(ServerFarm.COLUMN_NAME, name);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.SERVER_FARMS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.SERVER_FARMS;
+  }
 }

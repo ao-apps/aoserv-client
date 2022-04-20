@@ -43,64 +43,66 @@ import java.util.List;
  */
 public final class BlackholeAddressTable extends CachedTableIntegerKey<BlackholeAddress> {
 
-	BlackholeAddressTable(AOServConnector connector) {
-		super(connector, BlackholeAddress.class);
-	}
+  BlackholeAddressTable(AOServConnector connector) {
+    super(connector, BlackholeAddress.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(BlackholeAddress.COLUMN_EMAIL_ADDRESS_name+'.'+Address.COLUMN_DOMAIN_name+'.'+Domain.COLUMN_DOMAIN_name, ASCENDING),
-		new OrderBy(BlackholeAddress.COLUMN_EMAIL_ADDRESS_name+'.'+Address.COLUMN_DOMAIN_name+'.'+Domain.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
-		new OrderBy(BlackholeAddress.COLUMN_EMAIL_ADDRESS_name+'.'+Address.COLUMN_ADDRESS_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(BlackholeAddress.COLUMN_EMAIL_ADDRESS_name+'.'+Address.COLUMN_DOMAIN_name+'.'+Domain.COLUMN_DOMAIN_name, ASCENDING),
+    new OrderBy(BlackholeAddress.COLUMN_EMAIL_ADDRESS_name+'.'+Address.COLUMN_DOMAIN_name+'.'+Domain.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
+    new OrderBy(BlackholeAddress.COLUMN_EMAIL_ADDRESS_name+'.'+Address.COLUMN_ADDRESS_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public BlackholeAddress get(int address) throws IOException, SQLException {
-		return getUniqueRow(BlackholeAddress.COLUMN_EMAIL_ADDRESS, address);
-	}
+  @Override
+  public BlackholeAddress get(int address) throws IOException, SQLException {
+    return getUniqueRow(BlackholeAddress.COLUMN_EMAIL_ADDRESS, address);
+  }
 
-	public List<BlackholeAddress> getBlackholeEmailAddresses(Server ao) throws IOException, SQLException {
-		int aoPKey=ao.getPkey();
-		List<BlackholeAddress> cached = getRows();
-		int len = cached.size();
-		List<BlackholeAddress> matches=new ArrayList<>(len);
-		for (int c = 0; c < len; c++) {
-			BlackholeAddress blackhole=cached.get(c);
-			if(blackhole.getEmailAddress().getDomain().getLinuxServer_host_id() == aoPKey) matches.add(blackhole);
-		}
-		return matches;
-	}
+  public List<BlackholeAddress> getBlackholeEmailAddresses(Server ao) throws IOException, SQLException {
+    int aoPKey=ao.getPkey();
+    List<BlackholeAddress> cached = getRows();
+    int len = cached.size();
+    List<BlackholeAddress> matches=new ArrayList<>(len);
+    for (int c = 0; c < len; c++) {
+      BlackholeAddress blackhole=cached.get(c);
+      if (blackhole.getEmailAddress().getDomain().getLinuxServer_host_id() == aoPKey) {
+        matches.add(blackhole);
+      }
+    }
+    return matches;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.BLACKHOLE_EMAIL_ADDRESSES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.BLACKHOLE_EMAIL_ADDRESSES;
+  }
 
-	@Override
-	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-		String command=args[0];
-		if(command.equalsIgnoreCase(Command.REMOVE_BLACKHOLE_EMAIL_ADDRESS)) {
-			if(AOSH.checkParamCount(Command.REMOVE_BLACKHOLE_EMAIL_ADDRESS, args, 2, err)) {
-				String addr=args[1];
-				int pos=addr.indexOf('@');
-				if(pos==-1) {
-					err.print("aosh: "+Command.REMOVE_BLACKHOLE_EMAIL_ADDRESS+": invalid email address: ");
-					err.println(addr);
-					err.flush();
-				} else {
-					connector.getSimpleAOClient().removeBlackholeEmailAddress(
-						addr.substring(0, pos),
-						AOSH.parseDomainName(addr.substring(pos+1), "address"),
-						args[2]
-					);
-				}
-			}
-			return true;
-		}
-		return false;
-	}
+  @Override
+  public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
+    String command=args[0];
+    if (command.equalsIgnoreCase(Command.REMOVE_BLACKHOLE_EMAIL_ADDRESS)) {
+      if (AOSH.checkParamCount(Command.REMOVE_BLACKHOLE_EMAIL_ADDRESS, args, 2, err)) {
+        String addr=args[1];
+        int pos=addr.indexOf('@');
+        if (pos == -1) {
+          err.print("aosh: "+Command.REMOVE_BLACKHOLE_EMAIL_ADDRESS+": invalid email address: ");
+          err.println(addr);
+          err.flush();
+        } else {
+          connector.getSimpleAOClient().removeBlackholeEmailAddress(
+            addr.substring(0, pos),
+            AOSH.parseDomainName(addr.substring(pos+1), "address"),
+            args[2]
+          );
+        }
+      }
+      return true;
+    }
+    return false;
+  }
 }

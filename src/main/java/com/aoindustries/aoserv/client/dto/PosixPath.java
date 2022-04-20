@@ -28,21 +28,21 @@ package com.aoindustries.aoserv.client.dto;
  */
 public class PosixPath {
 
-	private String path;
+  private String path;
 
-	public PosixPath() {
-		// Do nothing
-	}
+  public PosixPath() {
+    // Do nothing
+  }
 
-	public PosixPath(String path) {
-		this.path = path;
-	}
+  public PosixPath(String path) {
+    this.path = path;
+  }
 
-	public String getPath() {
-		return path;
-	}
+  public String getPath() {
+    return path;
+  }
 
-	public void setPath(String path) {
-		this.path = path;
-	}
+  public void setPath(String path) {
+    this.path = path;
+  }
 }

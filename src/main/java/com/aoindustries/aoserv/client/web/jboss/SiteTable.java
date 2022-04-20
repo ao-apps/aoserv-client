@@ -52,141 +52,141 @@ import java.sql.SQLException;
  */
 public final class SiteTable extends CachedTableIntegerKey<Site> {
 
-	SiteTable(AOServConnector connector) {
-		super(connector, Site.class);
-	}
+  SiteTable(AOServConnector connector) {
+    super(connector, Site.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(Site.COLUMN_TOMCAT_SITE_name+'.'+com.aoindustries.aoserv.client.web.tomcat.Site.COLUMN_HTTPD_SITE_name+'.'+com.aoindustries.aoserv.client.web.Site.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(Site.COLUMN_TOMCAT_SITE_name+'.'+com.aoindustries.aoserv.client.web.tomcat.Site.COLUMN_HTTPD_SITE_name+'.'+com.aoindustries.aoserv.client.web.Site.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(Site.COLUMN_TOMCAT_SITE_name+'.'+com.aoindustries.aoserv.client.web.tomcat.Site.COLUMN_HTTPD_SITE_name+'.'+com.aoindustries.aoserv.client.web.Site.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(Site.COLUMN_TOMCAT_SITE_name+'.'+com.aoindustries.aoserv.client.web.tomcat.Site.COLUMN_HTTPD_SITE_name+'.'+com.aoindustries.aoserv.client.web.Site.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	public int addHttpdJBossSite(
-		final Server aoServer,
-		final String siteName,
-		final Package packageObj,
-		final User siteUser,
-		final Group siteGroup,
-		final Email serverAdmin,
-		final boolean useApache,
-		final IpAddress ipAddress,
-		final DomainName primaryHttpHostname,
-		final DomainName[] altHttpHostnames,
-		final Version jBossVersion
-	) throws IOException, SQLException {
-		return connector.requestResult(
-			true,
-			AoservProtocol.CommandID.ADD,
-			// Java 9: new AOServConnector.ResultRequest<>
-			new AOServConnector.ResultRequest<Integer>() {
-				private int pkey;
-				private IntList invalidateList;
+  public int addHttpdJBossSite(
+    final Server aoServer,
+    final String siteName,
+    final Package packageObj,
+    final User siteUser,
+    final Group siteGroup,
+    final Email serverAdmin,
+    final boolean useApache,
+    final IpAddress ipAddress,
+    final DomainName primaryHttpHostname,
+    final DomainName[] altHttpHostnames,
+    final Version jBossVersion
+  ) throws IOException, SQLException {
+    return connector.requestResult(
+      true,
+      AoservProtocol.CommandID.ADD,
+      // Java 9: new AOServConnector.ResultRequest<>
+      new AOServConnector.ResultRequest<Integer>() {
+        private int pkey;
+        private IntList invalidateList;
 
-				@Override
-				public void writeRequest(StreamableOutput out) throws IOException {
-					out.writeCompressedInt(Table.TableID.HTTPD_JBOSS_SITES.ordinal());
-					out.writeCompressedInt(aoServer.getPkey());
-					out.writeUTF(siteName);
-					out.writeUTF(packageObj.getName().toString());
-					out.writeUTF(siteUser.getUsername_id().toString());
-					out.writeUTF(siteGroup.getName().toString());
-					out.writeUTF(serverAdmin.toString());
-					out.writeBoolean(useApache);
-					out.writeCompressedInt(ipAddress==null?-1:ipAddress.getPkey());
-					out.writeUTF(primaryHttpHostname.toString());
-					out.writeCompressedInt(altHttpHostnames.length);
-					for(DomainName altHttpHostname : altHttpHostnames) {
-						out.writeUTF(altHttpHostname.toString());
-					}
-					out.writeCompressedInt(jBossVersion.getPkey());
-				}
+        @Override
+        public void writeRequest(StreamableOutput out) throws IOException {
+          out.writeCompressedInt(Table.TableID.HTTPD_JBOSS_SITES.ordinal());
+          out.writeCompressedInt(aoServer.getPkey());
+          out.writeUTF(siteName);
+          out.writeUTF(packageObj.getName().toString());
+          out.writeUTF(siteUser.getUsername_id().toString());
+          out.writeUTF(siteGroup.getName().toString());
+          out.writeUTF(serverAdmin.toString());
+          out.writeBoolean(useApache);
+          out.writeCompressedInt(ipAddress == null?-1:ipAddress.getPkey());
+          out.writeUTF(primaryHttpHostname.toString());
+          out.writeCompressedInt(altHttpHostnames.length);
+          for (DomainName altHttpHostname : altHttpHostnames) {
+            out.writeUTF(altHttpHostname.toString());
+          }
+          out.writeCompressedInt(jBossVersion.getPkey());
+        }
 
-				@Override
-				public void readResponse(StreamableInput in) throws IOException, SQLException {
-					int code=in.readByte();
-					if(code==AoservProtocol.DONE) {
-						pkey=in.readCompressedInt();
-						invalidateList=AOServConnector.readInvalidateList(in);
-					} else {
-						AoservProtocol.checkResult(code, in);
-						throw new IOException("Unknown response code: "+code);
-					}
-				}
+        @Override
+        public void readResponse(StreamableInput in) throws IOException, SQLException {
+          int code=in.readByte();
+          if (code == AoservProtocol.DONE) {
+            pkey=in.readCompressedInt();
+            invalidateList=AOServConnector.readInvalidateList(in);
+          } else {
+            AoservProtocol.checkResult(code, in);
+            throw new IOException("Unknown response code: "+code);
+          }
+        }
 
-				@Override
-				public Integer afterRelease() {
-					connector.tablesUpdated(invalidateList);
-					return pkey;
-				}
-			}
-		);
-	}
+        @Override
+        public Integer afterRelease() {
+          connector.tablesUpdated(invalidateList);
+          return pkey;
+        }
+      }
+    );
+  }
 
-	@Override
-	public Site get(int pkey) throws SQLException, IOException {
-		return getUniqueRow(Site.COLUMN_TOMCAT_SITE, pkey);
-	}
+  @Override
+  public Site get(int pkey) throws SQLException, IOException {
+    return getUniqueRow(Site.COLUMN_TOMCAT_SITE, pkey);
+  }
 
-	public Site getHttpdJBossSiteByRMIPort(Bind bind) throws IOException, SQLException {
-		return getUniqueRow(Site.COLUMN_RMI_BIND, bind.getId());
-	}
+  public Site getHttpdJBossSiteByRMIPort(Bind bind) throws IOException, SQLException {
+    return getUniqueRow(Site.COLUMN_RMI_BIND, bind.getId());
+  }
 
-	public Site getHttpdJBossSiteByJNPPort(Bind bind) throws IOException, SQLException {
-		return getUniqueRow(Site.COLUMN_JNP_BIND, bind.getId());
-	}
+  public Site getHttpdJBossSiteByJNPPort(Bind bind) throws IOException, SQLException {
+    return getUniqueRow(Site.COLUMN_JNP_BIND, bind.getId());
+  }
 
-	public Site getHttpdJBossSiteByWebserverPort(Bind bind) throws IOException, SQLException {
-		return getUniqueRow(Site.COLUMN_WEBSERVER_BIND, bind.getId());
-	}
+  public Site getHttpdJBossSiteByWebserverPort(Bind bind) throws IOException, SQLException {
+    return getUniqueRow(Site.COLUMN_WEBSERVER_BIND, bind.getId());
+  }
 
-	public Site getHttpdJBossSiteByHypersonicPort(Bind bind) throws IOException, SQLException {
-		return getUniqueRow(Site.COLUMN_HYPERSONIC_BIND, bind.getId());
-	}
+  public Site getHttpdJBossSiteByHypersonicPort(Bind bind) throws IOException, SQLException {
+    return getUniqueRow(Site.COLUMN_HYPERSONIC_BIND, bind.getId());
+  }
 
-	public Site getHttpdJBossSiteByJMXPort(Bind bind) throws IOException, SQLException {
-		return getUniqueRow(Site.COLUMN_JMX_BIND, bind.getId());
-	}
+  public Site getHttpdJBossSiteByJMXPort(Bind bind) throws IOException, SQLException {
+    return getUniqueRow(Site.COLUMN_JMX_BIND, bind.getId());
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.HTTPD_JBOSS_SITES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.HTTPD_JBOSS_SITES;
+  }
 
-	@Override
-	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
-		String command=args[0];
-		if(command.equalsIgnoreCase(Command.ADD_HTTPD_JBOSS_SITE)) {
-			if(AOSH.checkMinParamCount(Command.ADD_HTTPD_JBOSS_SITE, args, 11, err)) {
-				// Create an array of all the alternate hostnames
-				DomainName[] altHostnames=new DomainName[args.length-12];
-				for(int i=12; i<args.length; i++) {
-					altHostnames[i-12] = AOSH.parseDomainName(args[i], "alternate_http_hostname");
-				}
-				out.println(
-					connector.getSimpleAOClient().addHttpdJBossSite(
-						args[1],
-						args[2],
-						AOSH.parseAccountingCode(args[3], "package"),
-						AOSH.parseLinuxUserName(args[4], "username"),
-						AOSH.parseGroupName(args[5], "group"),
-						AOSH.parseEmail(args[6], "server_admin_email"),
-						AOSH.parseBoolean(args[7], "use_apache"),
-						args[8].length()==0 ? null : AOSH.parseInetAddress(args[8], "ip_address"),
-						args[9],
-						AOSH.parseDomainName(args[11], "primary_http_hostname"),
-						altHostnames,
-						args[10]
-					)
-				);
-				out.flush();
-			}
-			return true;
-		}
-		return false;
-	}
+  @Override
+  public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
+    String command=args[0];
+    if (command.equalsIgnoreCase(Command.ADD_HTTPD_JBOSS_SITE)) {
+      if (AOSH.checkMinParamCount(Command.ADD_HTTPD_JBOSS_SITE, args, 11, err)) {
+        // Create an array of all the alternate hostnames
+        DomainName[] altHostnames=new DomainName[args.length-12];
+        for (int i=12; i<args.length; i++) {
+          altHostnames[i-12] = AOSH.parseDomainName(args[i], "alternate_http_hostname");
+        }
+        out.println(
+          connector.getSimpleAOClient().addHttpdJBossSite(
+            args[1],
+            args[2],
+            AOSH.parseAccountingCode(args[3], "package"),
+            AOSH.parseLinuxUserName(args[4], "username"),
+            AOSH.parseGroupName(args[5], "group"),
+            AOSH.parseEmail(args[6], "server_admin_email"),
+            AOSH.parseBoolean(args[7], "use_apache"),
+            args[8].length() == 0 ? null : AOSH.parseInetAddress(args[8], "ip_address"),
+            args[9],
+            AOSH.parseDomainName(args[11], "primary_http_hostname"),
+            altHostnames,
+            args[10]
+          )
+        );
+        out.flush();
+      }
+      return true;
+    }
+    return false;
+  }
 }

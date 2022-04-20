@@ -44,89 +44,89 @@ import java.util.List;
  */
 public final class PipeTable extends CachedTableIntegerKey<Pipe> {
 
-	PipeTable(AOServConnector connector) {
-		super(connector, Pipe.class);
-	}
+  PipeTable(AOServConnector connector) {
+    super(connector, Pipe.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(Pipe.COLUMN_COMMAND_name, ASCENDING),
-		new OrderBy(Pipe.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(Pipe.COLUMN_COMMAND_name, ASCENDING),
+    new OrderBy(Pipe.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	public int addEmailPipe(Server ao, String command, Package packageObject) throws IOException, SQLException {
-		int pkey=connector.requestIntQueryIL(
-			true,
-			AoservProtocol.CommandID.ADD,
-			Table.TableID.EMAIL_PIPES,
-			ao.getPkey(),
-			command,
-			packageObject.getName()
-		);
-		return pkey;
-	}
+  public int addEmailPipe(Server ao, String command, Package packageObject) throws IOException, SQLException {
+    int pkey=connector.requestIntQueryIL(
+      true,
+      AoservProtocol.CommandID.ADD,
+      Table.TableID.EMAIL_PIPES,
+      ao.getPkey(),
+      command,
+      packageObject.getName()
+    );
+    return pkey;
+  }
 
-	@Override
-	public Pipe get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(Pipe.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public Pipe get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(Pipe.COLUMN_PKEY, pkey);
+  }
 
-	public List<Pipe> getEmailPipes(Package pack) throws IOException, SQLException {
-		return getIndexedRows(Pipe.COLUMN_PACKAGE, pack.getName());
-	}
+  public List<Pipe> getEmailPipes(Package pack) throws IOException, SQLException {
+    return getIndexedRows(Pipe.COLUMN_PACKAGE, pack.getName());
+  }
 
-	public List<Pipe> getEmailPipes(Server ao) throws IOException, SQLException {
-		return getIndexedRows(Pipe.COLUMN_AO_SERVER, ao.getPkey());
-	}
+  public List<Pipe> getEmailPipes(Server ao) throws IOException, SQLException {
+    return getIndexedRows(Pipe.COLUMN_AO_SERVER, ao.getPkey());
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.EMAIL_PIPES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.EMAIL_PIPES;
+  }
 
-	@Override
-	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-		String command=args[0];
-		if(command.equalsIgnoreCase(Command.ADD_EMAIL_PIPE)) {
-			if(AOSH.checkParamCount(Command.ADD_EMAIL_PIPE, args, 3, err)) {
-				out.println(
-					connector.getSimpleAOClient().addEmailPipe(
-						args[1],
-						args[2],
-						AOSH.parseAccountingCode(args[3], "package")
-					)
-				);
-				out.flush();
-			}
-			return true;
-		} else if(command.equalsIgnoreCase(Command.DISABLE_EMAIL_PIPE)) {
-			if(AOSH.checkParamCount(Command.DISABLE_EMAIL_PIPE, args, 2, err)) {
-				out.println(
-					connector.getSimpleAOClient().disableEmailPipe(
-						AOSH.parseInt(args[1], "pkey"),
-						args[2]
-					)
-				);
-				out.flush();
-			}
-			return true;
-		} else if(command.equalsIgnoreCase(Command.ENABLE_EMAIL_PIPE)) {
-			if(AOSH.checkParamCount(Command.ENABLE_EMAIL_PIPE, args, 1, err)) {
-				connector.getSimpleAOClient().enableEmailPipe(AOSH.parseInt(args[1], "pkey"));
-			}
-			return true;
-		} else if(command.equalsIgnoreCase(Command.REMOVE_EMAIL_PIPE)) {
-			if(AOSH.checkParamCount(Command.REMOVE_EMAIL_PIPE, args, 1, err)) {
-				connector.getSimpleAOClient().removeEmailPipe(
-					AOSH.parseInt(args[1], "pkey")
-				);
-			}
-			return true;
-		}
-		return false;
-	}
+  @Override
+  public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
+    String command=args[0];
+    if (command.equalsIgnoreCase(Command.ADD_EMAIL_PIPE)) {
+      if (AOSH.checkParamCount(Command.ADD_EMAIL_PIPE, args, 3, err)) {
+        out.println(
+          connector.getSimpleAOClient().addEmailPipe(
+            args[1],
+            args[2],
+            AOSH.parseAccountingCode(args[3], "package")
+          )
+        );
+        out.flush();
+      }
+      return true;
+    } else if (command.equalsIgnoreCase(Command.DISABLE_EMAIL_PIPE)) {
+      if (AOSH.checkParamCount(Command.DISABLE_EMAIL_PIPE, args, 2, err)) {
+        out.println(
+          connector.getSimpleAOClient().disableEmailPipe(
+            AOSH.parseInt(args[1], "pkey"),
+            args[2]
+          )
+        );
+        out.flush();
+      }
+      return true;
+    } else if (command.equalsIgnoreCase(Command.ENABLE_EMAIL_PIPE)) {
+      if (AOSH.checkParamCount(Command.ENABLE_EMAIL_PIPE, args, 1, err)) {
+        connector.getSimpleAOClient().enableEmailPipe(AOSH.parseInt(args[1], "pkey"));
+      }
+      return true;
+    } else if (command.equalsIgnoreCase(Command.REMOVE_EMAIL_PIPE)) {
+      if (AOSH.checkParamCount(Command.REMOVE_EMAIL_PIPE, args, 1, err)) {
+        connector.getSimpleAOClient().removeEmailPipe(
+          AOSH.parseInt(args[1], "pkey")
+        );
+      }
+      return true;
+    }
+    return false;
+  }
 }

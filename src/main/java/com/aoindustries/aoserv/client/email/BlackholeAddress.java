@@ -47,69 +47,73 @@ import java.util.List;
  */
 public final class BlackholeAddress extends CachedObjectIntegerKey<BlackholeAddress> implements Removable {
 
-	static final int COLUMN_EMAIL_ADDRESS=0;
-	static final String COLUMN_EMAIL_ADDRESS_name = "email_address";
+  static final int COLUMN_EMAIL_ADDRESS=0;
+  static final String COLUMN_EMAIL_ADDRESS_name = "email_address";
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public BlackholeAddress() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public BlackholeAddress() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		if(i==COLUMN_EMAIL_ADDRESS) return pkey;
-		throw new IllegalArgumentException("Invalid index: " + i);
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    if (i == COLUMN_EMAIL_ADDRESS) {
+      return pkey;
+    }
+    throw new IllegalArgumentException("Invalid index: " + i);
+  }
 
-	public Address getEmailAddress() throws SQLException, IOException {
-		Address emailAddressObject = table.getConnector().getEmail().getAddress().get(pkey);
-		if (emailAddressObject == null) throw new SQLException("Unable to find EmailAddress: " + pkey);
-		return emailAddressObject;
-	}
+  public Address getEmailAddress() throws SQLException, IOException {
+    Address emailAddressObject = table.getConnector().getEmail().getAddress().get(pkey);
+    if (emailAddressObject == null) {
+      throw new SQLException("Unable to find EmailAddress: " + pkey);
+    }
+    return emailAddressObject;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.BLACKHOLE_EMAIL_ADDRESSES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.BLACKHOLE_EMAIL_ADDRESSES;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey = result.getInt(1);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey = result.getInt(1);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readCompressedInt();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readCompressedInt();
+  }
 
-	@Override
-	public List<CannotRemoveReason<?>> getCannotRemoveReasons() {
-		return Collections.emptyList();
-	}
+  @Override
+  public List<CannotRemoveReason<?>> getCannotRemoveReasons() {
+    return Collections.emptyList();
+  }
 
-	@Override
-	public void remove() throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(
-			true,
-			AoservProtocol.CommandID.REMOVE,
-			Table.TableID.BLACKHOLE_EMAIL_ADDRESSES,
-			pkey
-		);
-	}
+  @Override
+  public void remove() throws IOException, SQLException {
+    table.getConnector().requestUpdateIL(
+      true,
+      AoservProtocol.CommandID.REMOVE,
+      Table.TableID.BLACKHOLE_EMAIL_ADDRESSES,
+      pkey
+    );
+  }
 
-	@Override
-	public String toStringImpl() throws SQLException, IOException {
-		return getEmailAddress().toStringImpl();
-	}
+  @Override
+  public String toStringImpl() throws SQLException, IOException {
+    return getEmailAddress().toStringImpl();
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+  }
 }

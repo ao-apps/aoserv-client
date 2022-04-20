@@ -37,31 +37,31 @@ import java.util.List;
  */
 public final class SoftwareCategorizationTable extends GlobalTableIntegerKey<SoftwareCategorization> {
 
-	SoftwareCategorizationTable(AOServConnector connector) {
-		super(connector, SoftwareCategorization.class);
-	}
+  SoftwareCategorizationTable(AOServConnector connector) {
+    super(connector, SoftwareCategorization.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(SoftwareCategorization.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(SoftwareCategorization.COLUMN_CLASS_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(SoftwareCategorization.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(SoftwareCategorization.COLUMN_CLASS_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.TECHNOLOGIES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.TECHNOLOGIES;
+  }
 
-	@Override
-	public SoftwareCategorization get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(SoftwareCategorization.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public SoftwareCategorization get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(SoftwareCategorization.COLUMN_PKEY, pkey);
+  }
 
-	List<SoftwareCategorization> getTechnologies(Software techName) throws IOException, SQLException {
-		return getIndexedRows(SoftwareCategorization.COLUMN_NAME, techName.getName());
-	}
+  List<SoftwareCategorization> getTechnologies(Software techName) throws IOException, SQLException {
+    return getIndexedRows(SoftwareCategorization.COLUMN_NAME, techName.getName());
+  }
 }

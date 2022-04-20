@@ -44,92 +44,94 @@ import java.sql.SQLException;
  * @author  AO Industries, Inc.
  */
 public final class DaemonAcl extends CachedObjectIntegerKey<DaemonAcl>
-	implements DtoFactory<com.aoindustries.aoserv.client.dto.LinuxDaemonAcl> {
+  implements DtoFactory<com.aoindustries.aoserv.client.dto.LinuxDaemonAcl> {
 
-	static final int
-		COLUMN_PKEY=0,
-		COLUMN_AO_SERVER=1
-	;
-	static final String COLUMN_AO_SERVER_name = "ao_server";
-	static final String COLUMN_HOST_name = "host";
+  static final int
+    COLUMN_PKEY=0,
+    COLUMN_AO_SERVER=1
+  ;
+  static final String COLUMN_AO_SERVER_name = "ao_server";
+  static final String COLUMN_HOST_name = "host";
 
-	private int aoServer;
-	private HostAddress host;
+  private int aoServer;
+  private HostAddress host;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public DaemonAcl() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public DaemonAcl() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_PKEY: return pkey;
-			case COLUMN_AO_SERVER: return aoServer;
-			case 2: return host;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_PKEY: return pkey;
+      case COLUMN_AO_SERVER: return aoServer;
+      case 2: return host;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	public HostAddress getHost() {
-		return host;
-	}
+  public HostAddress getHost() {
+    return host;
+  }
 
-	public Server getServer() throws SQLException, IOException {
-		Server ao=table.getConnector().getLinux().getServer().get(aoServer);
-		if(ao==null) throw new SQLException("Unable to find linux.Server: "+aoServer);
-		return ao;
-	}
+  public Server getServer() throws SQLException, IOException {
+    Server ao=table.getConnector().getLinux().getServer().get(aoServer);
+    if (ao == null) {
+      throw new SQLException("Unable to find linux.Server: "+aoServer);
+    }
+    return ao;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.AO_SERVER_DAEMON_HOSTS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.AO_SERVER_DAEMON_HOSTS;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		try {
-			pkey = result.getInt(1);
-			aoServer = result.getInt(2);
-			host = HostAddress.valueOf(result.getString(3));
-		} catch(ValidationException e) {
-			throw new SQLException(e);
-		}
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    try {
+      pkey = result.getInt(1);
+      aoServer = result.getInt(2);
+      host = HostAddress.valueOf(result.getString(3));
+    } catch (ValidationException e) {
+      throw new SQLException(e);
+    }
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		try {
-			pkey = in.readCompressedInt();
-			aoServer = in.readCompressedInt();
-			host = HostAddress.valueOf(in.readUTF().intern());
-		} catch(ValidationException e) {
-			throw new IOException(e);
-		}
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    try {
+      pkey = in.readCompressedInt();
+      aoServer = in.readCompressedInt();
+      host = HostAddress.valueOf(in.readUTF().intern());
+    } catch (ValidationException e) {
+      throw new IOException(e);
+    }
+  }
 
-	@Override
-	public String toStringImpl() {
-		return aoServer+"|"+host;
-	}
+  @Override
+  public String toStringImpl() {
+    return aoServer+"|"+host;
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeCompressedInt(aoServer);
-		out.writeUTF(host.toString());
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    out.writeCompressedInt(aoServer);
+    out.writeUTF(host.toString());
+  }
 
-	// <editor-fold defaultstate="collapsed" desc="DTO">
-	@Override
-	public com.aoindustries.aoserv.client.dto.LinuxDaemonAcl getDto() {
-		return new com.aoindustries.aoserv.client.dto.LinuxDaemonAcl(getPkey(), aoServer, getDto(host));
-	}
-	// </editor-fold>
+  // <editor-fold defaultstate="collapsed" desc="DTO">
+  @Override
+  public com.aoindustries.aoserv.client.dto.LinuxDaemonAcl getDto() {
+    return new com.aoindustries.aoserv.client.dto.LinuxDaemonAcl(getPkey(), aoServer, getDto(host));
+  }
+  // </editor-fold>
 }

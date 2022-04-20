@@ -35,44 +35,50 @@ import java.nio.charset.StandardCharsets;
  */
 public final class SystemdUtil {
 
-	/** Make no instances. */
-	private SystemdUtil() {throw new AssertionError();}
+  /** Make no instances. */
+  private SystemdUtil() {
+    throw new AssertionError();
+  }
 
-	/**
-	 * Implements <a href="https://www.freedesktop.org/software/systemd/man/systemd.unit.html">systemd-encoded</a> encoding.
-	 * Note: "." is only escaped when in the first position of the string.
-	 *
-	 * @see  HttpdServer#getSystemdEscapedName()
-	 * @see  SendmailServer#getSystemdEscapedName()
-	 */
-	public static String encode(String value) {
-		if(value == null) return null;
-		byte[] utf8 = value.getBytes(StandardCharsets.UTF_8);
-		StringBuilder escaped = new StringBuilder(utf8.length);
-		for(int i = 0; i < utf8.length; i++) {
-			byte b = utf8[i];
-			if(b == '/') {
-				// '/' to '-'
-				escaped.append('-');
-			} else if(
-				b == '_'
-				|| (b >= 'A' && b <= 'Z')
-				|| (b >= 'a' && b <= 'z')
-				|| (b >= '0' && b <= '9')
-				|| (b == '.' && i > 0) // '.' only escaped at beginning of string
-			) {
-				// '_' or alphanumeric
-				escaped.append((char)b);
-			} else {
-				if(b == 0) throw new IllegalStateException("Illegal null character in systemd encoding");
-				// All others
-				@SuppressWarnings("deprecation")
-				char ch1 = Strings.getHexChar(b >>> 4);
-				@SuppressWarnings("deprecation")
-				char ch2 = Strings.getHexChar(b);
-				escaped.append('\\').append('x').append(ch1).append(ch2);
-			}
-		}
-		return escaped.toString();
-	}
+  /**
+   * Implements <a href="https://www.freedesktop.org/software/systemd/man/systemd.unit.html">systemd-encoded</a> encoding.
+   * Note: "." is only escaped when in the first position of the string.
+   *
+   * @see  HttpdServer#getSystemdEscapedName()
+   * @see  SendmailServer#getSystemdEscapedName()
+   */
+  public static String encode(String value) {
+    if (value == null) {
+      return null;
+    }
+    byte[] utf8 = value.getBytes(StandardCharsets.UTF_8);
+    StringBuilder escaped = new StringBuilder(utf8.length);
+    for (int i = 0; i < utf8.length; i++) {
+      byte b = utf8[i];
+      if (b == '/') {
+        // '/' to '-'
+        escaped.append('-');
+      } else if (
+        b == '_'
+        || (b >= 'A' && b <= 'Z')
+        || (b >= 'a' && b <= 'z')
+        || (b >= '0' && b <= '9')
+        || (b == '.' && i > 0) // '.' only escaped at beginning of string
+      ) {
+        // '_' or alphanumeric
+        escaped.append((char)b);
+      } else {
+        if (b == 0) {
+          throw new IllegalStateException("Illegal null character in systemd encoding");
+        }
+        // All others
+        @SuppressWarnings("deprecation")
+        char ch1 = Strings.getHexChar(b >>> 4);
+        @SuppressWarnings("deprecation")
+        char ch2 = Strings.getHexChar(b);
+        escaped.append('\\').append('x').append(ch1).append(ch2);
+      }
+    }
+    return escaped.toString();
+  }
 }

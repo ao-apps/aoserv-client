@@ -34,66 +34,66 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final ArchitectureTable Architecture;
-	public ArchitectureTable getArchitecture() {
-		return Architecture;
-	}
+  private final ArchitectureTable Architecture;
+  public ArchitectureTable getArchitecture() {
+    return Architecture;
+  }
 
-	private final OperatingSystemTable OperatingSystem;
-	public OperatingSystemTable getOperatingSystem() {
-		return OperatingSystem;
-	}
+  private final OperatingSystemTable OperatingSystem;
+  public OperatingSystemTable getOperatingSystem() {
+    return OperatingSystem;
+  }
 
-	private final OperatingSystemVersionTable OperatingSystemVersion;
-	public OperatingSystemVersionTable getOperatingSystemVersion() {
-		return OperatingSystemVersion;
-	}
+  private final OperatingSystemVersionTable OperatingSystemVersion;
+  public OperatingSystemVersionTable getOperatingSystemVersion() {
+    return OperatingSystemVersion;
+  }
 
-	private final SoftwareTable Software;
-	public SoftwareTable getSoftware() {
-		return Software;
-	}
+  private final SoftwareTable Software;
+  public SoftwareTable getSoftware() {
+    return Software;
+  }
 
-	private final SoftwareCategorizationTable SoftwareCategorization;
-	public SoftwareCategorizationTable getSoftwareCategorization() {
-		return SoftwareCategorization;
-	}
+  private final SoftwareCategorizationTable SoftwareCategorization;
+  public SoftwareCategorizationTable getSoftwareCategorization() {
+    return SoftwareCategorization;
+  }
 
-	private final SoftwareCategoryTable SoftwareCategory;
-	public SoftwareCategoryTable getSoftwareCategory() {
-		return SoftwareCategory;
-	}
+  private final SoftwareCategoryTable SoftwareCategory;
+  public SoftwareCategoryTable getSoftwareCategory() {
+    return SoftwareCategory;
+  }
 
-	private final SoftwareVersionTable SoftwareVersion;
-	public SoftwareVersionTable getSoftwareVersion() {
-		return SoftwareVersion;
-	}
+  private final SoftwareVersionTable SoftwareVersion;
+  public SoftwareVersionTable getSoftwareVersion() {
+    return SoftwareVersion;
+  }
 
-	private final List<? extends AOServTable<?, ?>> tables;
+  private final List<? extends AOServTable<?, ?>> tables;
 
-	public Schema(AOServConnector connector) {
-		super(connector);
+  public Schema(AOServConnector connector) {
+    super(connector);
 
-		ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
-		newTables.add(Architecture = new ArchitectureTable(connector));
-		newTables.add(OperatingSystem = new OperatingSystemTable(connector));
-		newTables.add(OperatingSystemVersion = new OperatingSystemVersionTable(connector));
-		newTables.add(Software = new SoftwareTable(connector));
-		newTables.add(SoftwareCategorization = new SoftwareCategorizationTable(connector));
-		newTables.add(SoftwareCategory = new SoftwareCategoryTable(connector));
-		newTables.add(SoftwareVersion = new SoftwareVersionTable(connector));
-		newTables.trimToSize();
-		tables = Collections.unmodifiableList(newTables);
-	}
+    ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
+    newTables.add(Architecture = new ArchitectureTable(connector));
+    newTables.add(OperatingSystem = new OperatingSystemTable(connector));
+    newTables.add(OperatingSystemVersion = new OperatingSystemVersionTable(connector));
+    newTables.add(Software = new SoftwareTable(connector));
+    newTables.add(SoftwareCategorization = new SoftwareCategorizationTable(connector));
+    newTables.add(SoftwareCategory = new SoftwareCategoryTable(connector));
+    newTables.add(SoftwareVersion = new SoftwareVersionTable(connector));
+    newTables.trimToSize();
+    tables = Collections.unmodifiableList(newTables);
+  }
 
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
-	public List<? extends AOServTable<?, ?>> getTables() {
-		return tables;
-	}
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
+  public List<? extends AOServTable<?, ?>> getTables() {
+    return tables;
+  }
 
-	@Override
-	public String getName() {
-		return "distribution";
-	}
+  @Override
+  public String getName() {
+    return "distribution";
+  }
 }

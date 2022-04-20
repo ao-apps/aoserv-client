@@ -36,38 +36,40 @@ import java.sql.SQLException;
  */
 public final class BackupRetentionTable extends GlobalTable<Short, BackupRetention> {
 
-	BackupRetentionTable(AOServConnector connector) {
-		super(connector, BackupRetention.class);
-	}
+  BackupRetentionTable(AOServConnector connector) {
+    super(connector, BackupRetention.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(BackupRetention.COLUMN_DAYS_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(BackupRetention.COLUMN_DAYS_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	/**
-	 * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
-	 */
-	@Deprecated
-	@Override
-	public BackupRetention get(Object days) throws IOException, SQLException {
-		if(days == null) return null;
-		return get(((Short)days).shortValue());
-	}
+  /**
+   * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
+   */
+  @Deprecated
+  @Override
+  public BackupRetention get(Object days) throws IOException, SQLException {
+    if (days == null) {
+      return null;
+    }
+    return get(((Short)days).shortValue());
+  }
 
-	/**
-	 * @see  #get(java.lang.Object)
-	 */
-	public BackupRetention get(short days) throws IOException, SQLException {
-		return getUniqueRow(BackupRetention.COLUMN_DAYS, days);
-	}
+  /**
+   * @see  #get(java.lang.Object)
+   */
+  public BackupRetention get(short days) throws IOException, SQLException {
+    return getUniqueRow(BackupRetention.COLUMN_DAYS, days);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.BACKUP_RETENTIONS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.BACKUP_RETENTIONS;
+  }
 }

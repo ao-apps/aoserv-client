@@ -37,15 +37,15 @@ import java.util.List;
  */
 public interface Removable {
 
-	/**
-	 * Lists the reasons an object may not be removed.
-	 *
-	 * @return  an empty {@code List<CannotRemoveReason>} if this object may be removed, or a list of descriptions
-	 */
-	List<? extends CannotRemoveReason<?>> getCannotRemoveReasons() throws IOException, SQLException;
+  /**
+   * Lists the reasons an object may not be removed.
+   *
+   * @return  an empty {@code List<CannotRemoveReason>} if this object may be removed, or a list of descriptions
+   */
+  List<? extends CannotRemoveReason<?>> getCannotRemoveReasons() throws IOException, SQLException;
 
-	/**
-	 * Removes this object, and all dependant objects, from the system.
-	 */
-	void remove() throws IOException, SQLException;
+  /**
+   * Removes this object, and all dependant objects, from the system.
+   */
+  void remove() throws IOException, SQLException;
 }

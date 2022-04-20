@@ -41,36 +41,36 @@ import java.util.List;
  */
 public final class HeaderTable extends CachedTableIntegerKey<Header> {
 
-	HeaderTable(AOServConnector connector) {
-		super(connector, Header.class);
-	}
+  HeaderTable(AOServConnector connector) {
+    super(connector, Header.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(Header.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_SITE_name + '.' + Site.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(Header.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_SITE_name + '.' + Site.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
-		new OrderBy(Header.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_IP_ADDRESS_name + '.' + IpAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
-		new OrderBy(Header.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_IP_ADDRESS_name + '.' + IpAddress.COLUMN_DEVICE_name + '.' + Device.COLUMN_DEVICE_ID_name, ASCENDING),
-		new OrderBy(Header.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_PORT_name, ASCENDING),
-		new OrderBy(Header.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(Header.COLUMN_SORT_ORDER_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(Header.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_SITE_name + '.' + Site.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(Header.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_SITE_name + '.' + Site.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
+    new OrderBy(Header.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_IP_ADDRESS_name + '.' + IpAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
+    new OrderBy(Header.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_IP_ADDRESS_name + '.' + IpAddress.COLUMN_DEVICE_name + '.' + Device.COLUMN_DEVICE_ID_name, ASCENDING),
+    new OrderBy(Header.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_PORT_name, ASCENDING),
+    new OrderBy(Header.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(Header.COLUMN_SORT_ORDER_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public Header get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(Header.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public Header get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(Header.COLUMN_PKEY, pkey);
+  }
 
-	List<Header> getHttpdSiteBindHeaders(VirtualHost bind) throws IOException, SQLException {
-		return getIndexedRows(Header.COLUMN_HTTPD_SITE_BIND, bind.getPkey());
-	}
+  List<Header> getHttpdSiteBindHeaders(VirtualHost bind) throws IOException, SQLException {
+    return getIndexedRows(Header.COLUMN_HTTPD_SITE_BIND, bind.getPkey());
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.HTTPD_SITE_BIND_HEADERS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.HTTPD_SITE_BIND_HEADERS;
+  }
 }

@@ -34,60 +34,60 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final HeaderTable Header;
-	public HeaderTable getHeader() {return Header;}
+  private final HeaderTable Header;
+  public HeaderTable getHeader() {return Header;}
 
-	private final HttpdBindTable HttpdBind;
-	public HttpdBindTable getHttpdBind() {return HttpdBind;}
+  private final HttpdBindTable HttpdBind;
+  public HttpdBindTable getHttpdBind() {return HttpdBind;}
 
-	private final HttpdServerTable HttpdServer;
-	public HttpdServerTable getHttpdServer() {return HttpdServer;}
+  private final HttpdServerTable HttpdServer;
+  public HttpdServerTable getHttpdServer() {return HttpdServer;}
 
-	private final LocationTable Location;
-	public LocationTable getLocation() {return Location;}
+  private final LocationTable Location;
+  public LocationTable getLocation() {return Location;}
 
-	private final RewriteRuleTable RewriteRule;
-	public RewriteRuleTable getRewriteRule() {return RewriteRule;}
+  private final RewriteRuleTable RewriteRule;
+  public RewriteRuleTable getRewriteRule() {return RewriteRule;}
 
-	private final SiteTable Site;
-	public SiteTable getSite() {return Site;}
+  private final SiteTable Site;
+  public SiteTable getSite() {return Site;}
 
-	private final StaticSiteTable StaticSite;
-	public StaticSiteTable getStaticSite() {return StaticSite;}
+  private final StaticSiteTable StaticSite;
+  public StaticSiteTable getStaticSite() {return StaticSite;}
 
-	private final VirtualHostTable VirtualHost;
-	public VirtualHostTable getVirtualHost() {return VirtualHost;}
+  private final VirtualHostTable VirtualHost;
+  public VirtualHostTable getVirtualHost() {return VirtualHost;}
 
-	private final VirtualHostNameTable VirtualHostName;
-	public VirtualHostNameTable getVirtualHostName() {return VirtualHostName;}
+  private final VirtualHostNameTable VirtualHostName;
+  public VirtualHostNameTable getVirtualHostName() {return VirtualHostName;}
 
-	private final List<? extends AOServTable<?, ?>> tables;
+  private final List<? extends AOServTable<?, ?>> tables;
 
-	public Schema(AOServConnector connector) {
-		super(connector);
+  public Schema(AOServConnector connector) {
+    super(connector);
 
-		ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
-		newTables.add(Header = new HeaderTable(connector));
-		newTables.add(HttpdBind = new HttpdBindTable(connector));
-		newTables.add(HttpdServer = new HttpdServerTable(connector));
-		newTables.add(Location = new LocationTable(connector));
-		newTables.add(RewriteRule = new RewriteRuleTable(connector));
-		newTables.add(Site = new SiteTable(connector));
-		newTables.add(StaticSite = new StaticSiteTable(connector));
-		newTables.add(VirtualHost = new VirtualHostTable(connector));
-		newTables.add(VirtualHostName = new VirtualHostNameTable(connector));
-		newTables.trimToSize();
-		tables = Collections.unmodifiableList(newTables);
-	}
+    ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
+    newTables.add(Header = new HeaderTable(connector));
+    newTables.add(HttpdBind = new HttpdBindTable(connector));
+    newTables.add(HttpdServer = new HttpdServerTable(connector));
+    newTables.add(Location = new LocationTable(connector));
+    newTables.add(RewriteRule = new RewriteRuleTable(connector));
+    newTables.add(Site = new SiteTable(connector));
+    newTables.add(StaticSite = new StaticSiteTable(connector));
+    newTables.add(VirtualHost = new VirtualHostTable(connector));
+    newTables.add(VirtualHostName = new VirtualHostNameTable(connector));
+    newTables.trimToSize();
+    tables = Collections.unmodifiableList(newTables);
+  }
 
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
-	public List<? extends AOServTable<?, ?>> getTables() {
-		return tables;
-	}
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
+  public List<? extends AOServTable<?, ?>> getTables() {
+    return tables;
+  }
 
-	@Override
-	public String getName() {
-		return "web";
-	}
+  @Override
+  public String getName() {
+    return "web";
+  }
 }

@@ -35,23 +35,23 @@ import java.sql.SQLException;
  */
 public abstract class CachedTableUserNameKey<V extends CachedObjectUserNameKey<V>> extends CachedTable<User.Name, V> {
 
-	protected CachedTableUserNameKey(AOServConnector connector, Class<V> clazz) {
-		super(connector, clazz);
-	}
+  protected CachedTableUserNameKey(AOServConnector connector, Class<V> clazz) {
+    super(connector, clazz);
+  }
 
-	/**
-	 * Gets the object with the provided key.  The key must be a {@link User.Name}.
-	 *
-	 * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
-	 */
-	@Deprecated
-	@Override
-	public V get(Object pkey) throws IOException, SQLException {
-		return get((User.Name)pkey);
-	}
+  /**
+   * Gets the object with the provided key.  The key must be a {@link User.Name}.
+   *
+   * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
+   */
+  @Deprecated
+  @Override
+  public V get(Object pkey) throws IOException, SQLException {
+    return get((User.Name)pkey);
+  }
 
-	/**
-	 * @see  #get(java.lang.Object)
-	 */
-	public abstract V get(User.Name pkey) throws IOException, SQLException;
+  /**
+   * @see  #get(java.lang.Object)
+   */
+  public abstract V get(User.Name pkey) throws IOException, SQLException;
 }

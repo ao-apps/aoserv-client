@@ -33,44 +33,44 @@ import java.sql.SQLException;
  */
 public abstract class CachedObjectIntegerKey<V extends CachedObjectIntegerKey<V>> extends CachedObject<Integer, V> {
 
-	protected int pkey;
+  protected int pkey;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	protected CachedObjectIntegerKey() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  protected CachedObjectIntegerKey() {
+    // Do nothing
+  }
 
-	@Override
-	public boolean equals(Object obj) {
-		return
-			obj != null
-			&& obj.getClass() == getClass()
-			&& ((CachedObjectIntegerKey)obj).pkey == pkey
-		;
-	}
+  @Override
+  public boolean equals(Object obj) {
+    return
+      obj != null
+      && obj.getClass() == getClass()
+      && ((CachedObjectIntegerKey)obj).pkey == pkey
+    ;
+  }
 
-	public int getPkey() {
-		return pkey;
-	}
+  public int getPkey() {
+    return pkey;
+  }
 
-	@Override
-	public Integer getKey() {
-		return pkey;
-	}
+  @Override
+  public Integer getKey() {
+    return pkey;
+  }
 
-	@Override
-	public int hashCode() {
-		return pkey;
-	}
+  @Override
+  public int hashCode() {
+    return pkey;
+  }
 
-	@Override
-	public String toStringImpl() throws IOException, SQLException {
-		return Integer.toString(pkey);
-	}
+  @Override
+  public String toStringImpl() throws IOException, SQLException {
+    return Integer.toString(pkey);
+  }
 }

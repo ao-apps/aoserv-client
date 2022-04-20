@@ -34,5 +34,5 @@ import java.io.IOException;
  */
 public interface AOServReadable {
 
-	void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException;
+  void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException;
 }

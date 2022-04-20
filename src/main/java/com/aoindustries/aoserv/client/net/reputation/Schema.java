@@ -34,48 +34,48 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final HostTable Host;
-	public HostTable getHost() {return Host;}
+  private final HostTable Host;
+  public HostTable getHost() {return Host;}
 
-	private final LimiterTable Limiter;
-	public LimiterTable getLimiter() {return Limiter;}
+  private final LimiterTable Limiter;
+  public LimiterTable getLimiter() {return Limiter;}
 
-	private final LimiterClassTable LimiterClass;
-	public LimiterClassTable getLimiterClass() {return LimiterClass;}
+  private final LimiterClassTable LimiterClass;
+  public LimiterClassTable getLimiterClass() {return LimiterClass;}
 
-	private final LimiterSetTable LimiterSet;
-	public LimiterSetTable getLimiterSet() {return LimiterSet;}
+  private final LimiterSetTable LimiterSet;
+  public LimiterSetTable getLimiterSet() {return LimiterSet;}
 
-	private final NetworkTable Network;
-	public NetworkTable getNetwork() {return Network;}
+  private final NetworkTable Network;
+  public NetworkTable getNetwork() {return Network;}
 
-	private final SetTable Set;
-	public SetTable getSet() {return Set;}
+  private final SetTable Set;
+  public SetTable getSet() {return Set;}
 
-	private final List<? extends AOServTable<?, ?>> tables;
+  private final List<? extends AOServTable<?, ?>> tables;
 
-	public Schema(AOServConnector connector) {
-		super(connector);
+  public Schema(AOServConnector connector) {
+    super(connector);
 
-		ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
-		newTables.add(Host = new HostTable(connector));
-		newTables.add(Limiter = new LimiterTable(connector));
-		newTables.add(LimiterClass = new LimiterClassTable(connector));
-		newTables.add(LimiterSet = new LimiterSetTable(connector));
-		newTables.add(Network = new NetworkTable(connector));
-		newTables.add(Set = new SetTable(connector));
-		newTables.trimToSize();
-		tables = Collections.unmodifiableList(newTables);
-	}
+    ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
+    newTables.add(Host = new HostTable(connector));
+    newTables.add(Limiter = new LimiterTable(connector));
+    newTables.add(LimiterClass = new LimiterClassTable(connector));
+    newTables.add(LimiterSet = new LimiterSetTable(connector));
+    newTables.add(Network = new NetworkTable(connector));
+    newTables.add(Set = new SetTable(connector));
+    newTables.trimToSize();
+    tables = Collections.unmodifiableList(newTables);
+  }
 
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
-	public List<? extends AOServTable<?, ?>> getTables() {
-		return tables;
-	}
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
+  public List<? extends AOServTable<?, ?>> getTables() {
+    return tables;
+  }
 
-	@Override
-	public String getName() {
-		return "net.reputation";
-	}
+  @Override
+  public String getName() {
+    return "net.reputation";
+  }
 }

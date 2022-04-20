@@ -37,34 +37,38 @@ import java.util.List;
  */
 public final class WhoisHistoryTable extends CachedTableIntegerKey<WhoisHistory> {
 
-	WhoisHistoryTable(AOServConnector connector) {
-		super(connector, WhoisHistory.class);
-	}
+  WhoisHistoryTable(AOServConnector connector) {
+    super(connector, WhoisHistory.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(WhoisHistory.COLUMN_registrableDomain_name, ASCENDING),
-		new OrderBy(WhoisHistory.COLUMN_time_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(WhoisHistory.COLUMN_registrableDomain_name, ASCENDING),
+    new OrderBy(WhoisHistory.COLUMN_time_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public WhoisHistory get(int id) throws IOException, SQLException {
-		return getUniqueRow(WhoisHistory.COLUMN_id, id);
-	}
+  @Override
+  public WhoisHistory get(int id) throws IOException, SQLException {
+    return getUniqueRow(WhoisHistory.COLUMN_id, id);
+  }
 
-	@Override
-	public List<WhoisHistory> getIndexedRows(int col, Object value) throws IOException, SQLException {
-		if(col == WhoisHistory.COLUMN_output) throw new UnsupportedOperationException("getIndexedRows not supported for WhoisHistory.output because each access is a round-trip to the server");
-		if(col == WhoisHistory.COLUMN_error) throw new UnsupportedOperationException("getIndexedRows not supported for WhoisHistory.error because each access is a round-trip to the server");
-		return super.getIndexedRows(col, value);
-	}
+  @Override
+  public List<WhoisHistory> getIndexedRows(int col, Object value) throws IOException, SQLException {
+    if (col == WhoisHistory.COLUMN_output) {
+      throw new UnsupportedOperationException("getIndexedRows not supported for WhoisHistory.output because each access is a round-trip to the server");
+    }
+    if (col == WhoisHistory.COLUMN_error) {
+      throw new UnsupportedOperationException("getIndexedRows not supported for WhoisHistory.error because each access is a round-trip to the server");
+    }
+    return super.getIndexedRows(col, value);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.WhoisHistory;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.WhoisHistory;
+  }
 }

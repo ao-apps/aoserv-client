@@ -44,68 +44,80 @@ import java.sql.SQLException;
  */
 public final class SoftwareCategorization extends GlobalObjectIntegerKey<SoftwareCategorization> {
 
-	static final int COLUMN_PKEY=0;
-	static final int COLUMN_NAME=1;
-	static final String COLUMN_NAME_name = "name";
-	static final String COLUMN_CLASS_name = "class";
+  static final int COLUMN_PKEY=0;
+  static final int COLUMN_NAME=1;
+  static final String COLUMN_NAME_name = "name";
+  static final String COLUMN_CLASS_name = "class";
 
-	private String name;
-	private String clazz;
+  private String name;
+  private String clazz;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public SoftwareCategorization() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public SoftwareCategorization() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		if(i==COLUMN_PKEY) return pkey;
-		if(i==COLUMN_NAME) return name;
-		if(i==2) return clazz;
-		throw new IllegalArgumentException("Invalid index: " + i);
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    if (i == COLUMN_PKEY) {
+      return pkey;
+    }
+    if (i == COLUMN_NAME) {
+      return name;
+    }
+    if (i == 2) {
+      return clazz;
+    }
+    throw new IllegalArgumentException("Invalid index: " + i);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.TECHNOLOGIES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.TECHNOLOGIES;
+  }
 
-	public SoftwareCategory getTechnologyClass(AOServConnector connector) throws SQLException, IOException {
-		SoftwareCategory technologyClass = connector.getDistribution().getSoftwareCategory().get(clazz);
-		if (technologyClass == null) throw new SQLException("Unable to find TechnologyClass: " + clazz);
-		return technologyClass;
-	}
+  public SoftwareCategory getTechnologyClass(AOServConnector connector) throws SQLException, IOException {
+    SoftwareCategory technologyClass = connector.getDistribution().getSoftwareCategory().get(clazz);
+    if (technologyClass == null) {
+      throw new SQLException("Unable to find TechnologyClass: " + clazz);
+    }
+    return technologyClass;
+  }
 
-	public Software getTechnologyName(AOServConnector connector) throws SQLException, IOException {
-		Software technologyName = connector.getDistribution().getSoftware().get(name);
-		if (technologyName == null) throw new SQLException("Unable to find TechnologyName: " + name);
-		return technologyName;
-	}
+  public Software getTechnologyName(AOServConnector connector) throws SQLException, IOException {
+    Software technologyName = connector.getDistribution().getSoftware().get(name);
+    if (technologyName == null) {
+      throw new SQLException("Unable to find TechnologyName: " + name);
+    }
+    return technologyName;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey = result.getInt(1);
-		name = result.getString(2);
-		clazz = result.getString(3);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey = result.getInt(1);
+    name = result.getString(2);
+    clazz = result.getString(3);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey = in.readCompressedInt();
-		name = in.readUTF().intern();
-		clazz = in.readUTF().intern();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey = in.readCompressedInt();
+    name = in.readUTF().intern();
+    clazz = in.readUTF().intern();
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_4)>=0) out.writeCompressedInt(pkey);
-		out.writeUTF(name);
-		out.writeUTF(clazz);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_4) >= 0) {
+      out.writeCompressedInt(pkey);
+    }
+    out.writeUTF(name);
+    out.writeUTF(clazz);
+  }
 }

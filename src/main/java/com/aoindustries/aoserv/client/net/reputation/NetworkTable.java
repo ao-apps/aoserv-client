@@ -37,31 +37,31 @@ import java.util.List;
  */
 public final class NetworkTable extends CachedTableLongKey<Network> {
 
-	NetworkTable(AOServConnector connector) {
-		super(connector, Network.class);
-	}
+  NetworkTable(AOServConnector connector) {
+    super(connector, Network.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(Network.COLUMN_SET_name+'.'+Set.COLUMN_IDENTIFIER_name, ASCENDING),
-		new OrderBy(Network.COLUMN_NETWORK_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(Network.COLUMN_SET_name+'.'+Set.COLUMN_IDENTIFIER_name, ASCENDING),
+    new OrderBy(Network.COLUMN_NETWORK_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public Network get(long pkey) throws IOException, SQLException {
-		return getUniqueRow(Network.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public Network get(long pkey) throws IOException, SQLException {
+    return getUniqueRow(Network.COLUMN_PKEY, pkey);
+  }
 
-	List<Network> getNetworks(Set set) throws IOException, SQLException {
-		return getIndexedRows(Network.COLUMN_SET, set.getPkey());
-	}
+  List<Network> getNetworks(Set set) throws IOException, SQLException {
+    return getIndexedRows(Network.COLUMN_SET, set.getPkey());
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.IP_REPUTATION_SET_NETWORKS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.IP_REPUTATION_SET_NETWORKS;
+  }
 }

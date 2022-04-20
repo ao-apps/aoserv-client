@@ -38,26 +38,26 @@ import java.sql.SQLException;
  */
 public final class TimeZoneTable extends GlobalTableStringKey<TimeZone> {
 
-	TimeZoneTable(AOServConnector connector) {
-		super(connector, TimeZone.class);
-	}
+  TimeZoneTable(AOServConnector connector) {
+    super(connector, TimeZone.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(TimeZone.COLUMN_NAME_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(TimeZone.COLUMN_NAME_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.TIME_ZONES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.TIME_ZONES;
+  }
 
-	@Override
-	public TimeZone get(String name) throws IOException, SQLException {
-		return getUniqueRow(TimeZone.COLUMN_NAME, name);
-	}
+  @Override
+  public TimeZone get(String name) throws IOException, SQLException {
+    return getUniqueRow(TimeZone.COLUMN_NAME, name);
+  }
 }

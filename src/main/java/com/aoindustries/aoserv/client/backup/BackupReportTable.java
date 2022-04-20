@@ -41,78 +41,86 @@ import java.util.List;
  */
 public final class BackupReportTable extends AOServTable<Integer, BackupReport> {
 
-	BackupReportTable(AOServConnector connector) {
-		super(connector, BackupReport.class);
-	}
+  BackupReportTable(AOServConnector connector) {
+    super(connector, BackupReport.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(BackupReport.COLUMN_DATE_name, DESCENDING),
-		new OrderBy(BackupReport.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(BackupReport.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(BackupReport.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(BackupReport.COLUMN_DATE_name, DESCENDING),
+    new OrderBy(BackupReport.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(BackupReport.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(BackupReport.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	/**
-	 * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
-	 */
-	@Deprecated
-	@Override
-	public BackupReport get(Object pkey) throws IOException, SQLException {
-		if(pkey == null) return null;
-		return get(((Integer)pkey).intValue());
-	}
+  /**
+   * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
+   */
+  @Deprecated
+  @Override
+  public BackupReport get(Object pkey) throws IOException, SQLException {
+    if (pkey == null) {
+      return null;
+    }
+    return get(((Integer)pkey).intValue());
+  }
 
-	/**
-	 * @see  #get(java.lang.Object)
-	 */
-	public BackupReport get(int pkey) throws IOException, SQLException {
-		return getObject(true, AoservProtocol.CommandID.GET_OBJECT, Table.TableID.BACKUP_REPORTS, pkey);
-	}
+  /**
+   * @see  #get(java.lang.Object)
+   */
+  public BackupReport get(int pkey) throws IOException, SQLException {
+    return getObject(true, AoservProtocol.CommandID.GET_OBJECT, Table.TableID.BACKUP_REPORTS, pkey);
+  }
 
-	public List<BackupReport> getBackupReports(Package pk) throws IOException, SQLException {
-		int package_id = pk.getPkey();
-		List<BackupReport> cached=getRows();
-		int size=cached.size();
-		List<BackupReport> matches=new ArrayList<>(size);
-		for(int c=0;c<size;c++) {
-			BackupReport br=cached.get(c);
-			if(br.getPackage_id() == package_id) matches.add(br);
-		}
-		return matches;
-	}
+  public List<BackupReport> getBackupReports(Package pk) throws IOException, SQLException {
+    int package_id = pk.getPkey();
+    List<BackupReport> cached=getRows();
+    int size=cached.size();
+    List<BackupReport> matches=new ArrayList<>(size);
+    for (int c=0;c<size;c++) {
+      BackupReport br=cached.get(c);
+      if (br.getPackage_id() == package_id) {
+        matches.add(br);
+      }
+    }
+    return matches;
+  }
 
-	public List<BackupReport> getBackupReports(Host host) throws IOException, SQLException {
-		int hots_id = host.getPkey();
-		List<BackupReport> cached=getRows();
-		int size=cached.size();
-		List<BackupReport> matches=new ArrayList<>(size);
-		for(int c=0;c<size;c++) {
-			BackupReport br=cached.get(c);
-			if(br.getHost_id() == hots_id) matches.add(br);
-		}
-		return matches;
-	}
+  public List<BackupReport> getBackupReports(Host host) throws IOException, SQLException {
+    int hots_id = host.getPkey();
+    List<BackupReport> cached=getRows();
+    int size=cached.size();
+    List<BackupReport> matches=new ArrayList<>(size);
+    for (int c=0;c<size;c++) {
+      BackupReport br=cached.get(c);
+      if (br.getHost_id() == hots_id) {
+        matches.add(br);
+      }
+    }
+    return matches;
+  }
 
-	@Override
-	public List<BackupReport> getRowsCopy() throws IOException, SQLException {
-		List<BackupReport> list = new ArrayList<>();
-		getObjects(true, list, AoservProtocol.CommandID.GET_TABLE, Table.TableID.BACKUP_REPORTS);
-		return list;
-	}
+  @Override
+  public List<BackupReport> getRowsCopy() throws IOException, SQLException {
+    List<BackupReport> list = new ArrayList<>();
+    getObjects(true, list, AoservProtocol.CommandID.GET_TABLE, Table.TableID.BACKUP_REPORTS);
+    return list;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.BACKUP_REPORTS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.BACKUP_REPORTS;
+  }
 
-	@Override
-	protected BackupReport getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
-		if(col == BackupReport.COLUMN_PKEY) return get(value);
-		throw new IllegalArgumentException("Not a unique column: " + col);
-	}
+  @Override
+  protected BackupReport getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
+    if (col == BackupReport.COLUMN_PKEY) {
+      return get(value);
+    }
+    throw new IllegalArgumentException("Not a unique column: " + col);
+  }
  }

@@ -36,26 +36,26 @@ import java.sql.SQLException;
  */
 public final class SoftwareCategoryTable extends GlobalTableStringKey<SoftwareCategory> {
 
-	SoftwareCategoryTable(AOServConnector connector) {
-		super(connector, SoftwareCategory.class);
-	}
+  SoftwareCategoryTable(AOServConnector connector) {
+    super(connector, SoftwareCategory.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(SoftwareCategory.COLUMN_NAME_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(SoftwareCategory.COLUMN_NAME_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.TECHNOLOGY_CLASSES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.TECHNOLOGY_CLASSES;
+  }
 
-	@Override
-	public SoftwareCategory get(String name) throws IOException, SQLException {
-		return getUniqueRow(SoftwareCategory.COLUMN_NAME, name);
-	}
+  @Override
+  public SoftwareCategory get(String name) throws IOException, SQLException {
+    return getUniqueRow(SoftwareCategory.COLUMN_NAME, name);
+  }
 }

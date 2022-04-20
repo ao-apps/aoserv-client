@@ -40,19 +40,19 @@ package com.aoindustries.aoserv.client;
 // TODO: Figure-out the correct generics for this interface
 public interface ProgressListener {
 
-	/**
-	 * Gets the scale of the progress returned.  The progress
-	 * values will be from zero to this number, inclusive.
-	 */
-	int getScale();
+  /**
+   * Gets the scale of the progress returned.  The progress
+   * values will be from zero to this number, inclusive.
+   */
+  int getScale();
 
-	/**
-	 * The progress is rounded off to the scale provided by <code>getScale</code>.
-	 * Whenever the rounded-off value changes, this method is called.
-	 * <p>
-	 * When a table load fails and auto-retries, this progress may
-	 * start back at zero again.
-	 * </p>
-	 */
-	void onProgressChanged(AOServTable<?, ?> table, int position, int scale);
+  /**
+   * The progress is rounded off to the scale provided by <code>getScale</code>.
+   * Whenever the rounded-off value changes, this method is called.
+   * <p>
+   * When a table load fails and auto-retries, this progress may
+   * start back at zero again.
+   * </p>
+   */
+  void onProgressChanged(AOServTable<?, ?> table, int position, int scale);
 }

@@ -45,62 +45,66 @@ import java.sql.SQLException;
  */
 public final class UsState extends GlobalObjectStringKey<UsState> {
 
-	static final int COLUMN_CODE=0;
-	static final String COLUMN_NAME_name = "name";
+  static final int COLUMN_CODE=0;
+  static final String COLUMN_NAME_name = "name";
 
-	private String name;
+  private String name;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public UsState() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public UsState() {
+    // Do nothing
+  }
 
-	public String getCode() {
-		return pkey;
-	}
+  public String getCode() {
+    return pkey;
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		if(i==COLUMN_CODE) return pkey;
-		if(i==1) return name;
-		throw new IllegalArgumentException("Invalid index: " + i);
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    if (i == COLUMN_CODE) {
+      return pkey;
+    }
+    if (i == 1) {
+      return name;
+    }
+    throw new IllegalArgumentException("Invalid index: " + i);
+  }
 
-	public String getName() {
-		return name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.US_STATES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.US_STATES;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey = result.getString(1);
-		name = result.getString(2);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey = result.getString(1);
+    name = result.getString(2);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readUTF().intern();
-		name=in.readUTF();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readUTF().intern();
+    name=in.readUTF();
+  }
 
-	@Override
-	public String toStringImpl() {
-		return name;
-	}
+  @Override
+  public String toStringImpl() {
+    return name;
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey);
-		out.writeUTF(name);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey);
+    out.writeUTF(name);
+  }
 }

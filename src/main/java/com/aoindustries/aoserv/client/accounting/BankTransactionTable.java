@@ -40,56 +40,60 @@ import java.util.List;
  */
 public final class BankTransactionTable extends AOServTable<Integer, BankTransaction> {
 
-	BankTransactionTable(AOServConnector connector) {
-		super(connector, BankTransaction.class);
-	}
+  BankTransactionTable(AOServConnector connector) {
+    super(connector, BankTransaction.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(BankTransaction.COLUMN_TIME_name+"::"+Type.DATE_name, ASCENDING),
-		new OrderBy(BankTransaction.COLUMN_ID_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(BankTransaction.COLUMN_TIME_name+"::"+Type.DATE_name, ASCENDING),
+    new OrderBy(BankTransaction.COLUMN_ID_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	/**
-	 * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
-	 */
-	@Deprecated
-	@Override
-	public BankTransaction get(Object transid) throws IOException, SQLException {
-		if(transid == null) return null;
-		return get(((Integer)transid).intValue());
-	}
+  /**
+   * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
+   */
+  @Deprecated
+  @Override
+  public BankTransaction get(Object transid) throws IOException, SQLException {
+    if (transid == null) {
+      return null;
+    }
+    return get(((Integer)transid).intValue());
+  }
 
-	/**
-	 * @see  #get(java.lang.Object)
-	 */
-	public BankTransaction get(int transid) throws IOException, SQLException {
-		return getObject(true, AoservProtocol.CommandID.GET_OBJECT, Table.TableID.BANK_TRANSACTIONS, transid);
-	}
+  /**
+   * @see  #get(java.lang.Object)
+   */
+  public BankTransaction get(int transid) throws IOException, SQLException {
+    return getObject(true, AoservProtocol.CommandID.GET_OBJECT, Table.TableID.BANK_TRANSACTIONS, transid);
+  }
 
-	List<BankTransaction> getBankTransactions(BankAccount account) throws IOException, SQLException {
-		return getObjects(true, AoservProtocol.CommandID.GET_BANK_TRANSACTIONS_ACCOUNT, account.getName());
-	}
+  List<BankTransaction> getBankTransactions(BankAccount account) throws IOException, SQLException {
+    return getObjects(true, AoservProtocol.CommandID.GET_BANK_TRANSACTIONS_ACCOUNT, account.getName());
+  }
 
-	@Override
-	public List<BankTransaction> getRowsCopy() throws IOException, SQLException {
-		List<BankTransaction> list = new ArrayList<>();
-		getObjects(true, list, AoservProtocol.CommandID.GET_TABLE, Table.TableID.BANK_TRANSACTIONS);
-		return list;
-	}
+  @Override
+  public List<BankTransaction> getRowsCopy() throws IOException, SQLException {
+    List<BankTransaction> list = new ArrayList<>();
+    getObjects(true, list, AoservProtocol.CommandID.GET_TABLE, Table.TableID.BANK_TRANSACTIONS);
+    return list;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.BANK_TRANSACTIONS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.BANK_TRANSACTIONS;
+  }
 
-	@Override
-	protected BankTransaction getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
-		if(col == BankTransaction.COLUMN_ID) return get(value);
-		throw new IllegalArgumentException("Not a unique column: " + col);
-	}
+  @Override
+  protected BankTransaction getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
+    if (col == BankTransaction.COLUMN_ID) {
+      return get(value);
+    }
+    throw new IllegalArgumentException("Not a unique column: " + col);
+  }
 }

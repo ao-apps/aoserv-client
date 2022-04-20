@@ -39,46 +39,52 @@ import java.util.List;
  */
 public final class ServerStatTable extends AOServTable<String, ServerStat> {
 
-	ServerStatTable(AOServConnector connector) {
-		super(connector, ServerStat.class);
-	}
+  ServerStatTable(AOServConnector connector) {
+    super(connector, ServerStat.class);
+  }
 
-	@Override
-	protected OrderBy[] getDefaultOrderBy() {
-		return null;
-	}
+  @Override
+  protected OrderBy[] getDefaultOrderBy() {
+    return null;
+  }
 
-	/**
-	 * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
-	 */
-	@Deprecated
-	@Override
-	public ServerStat get(Object name) throws IOException, SQLException {
-		if(name == null) return null;
-		List<ServerStat> table=getRows();
-		int size=table.size();
-		for(int c=0;c<size;c++) {
-			ServerStat mss=table.get(c);
-			if(mss.getName().equals(name)) return mss;
-		}
-		return null;
-	}
+  /**
+   * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
+   */
+  @Deprecated
+  @Override
+  public ServerStat get(Object name) throws IOException, SQLException {
+    if (name == null) {
+      return null;
+    }
+    List<ServerStat> table=getRows();
+    int size=table.size();
+    for (int c=0;c<size;c++) {
+      ServerStat mss=table.get(c);
+      if (mss.getName().equals(name)) {
+        return mss;
+      }
+    }
+    return null;
+  }
 
-	@Override
-	public List<ServerStat> getRowsCopy() throws IOException, SQLException {
-		List<ServerStat> list = new ArrayList<>();
-		getObjects(true, list, AoservProtocol.CommandID.GET_TABLE, Table.TableID.MASTER_SERVER_STATS);
-		return list;
-	}
+  @Override
+  public List<ServerStat> getRowsCopy() throws IOException, SQLException {
+    List<ServerStat> list = new ArrayList<>();
+    getObjects(true, list, AoservProtocol.CommandID.GET_TABLE, Table.TableID.MASTER_SERVER_STATS);
+    return list;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.MASTER_SERVER_STATS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.MASTER_SERVER_STATS;
+  }
 
-	@Override
-	protected ServerStat getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
-		if(col == ServerStat.COLUMN_NAME) return get(value);
-		throw new IllegalArgumentException("Not a unique column: " + col);
-	}
+  @Override
+  protected ServerStat getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
+    if (col == ServerStat.COLUMN_NAME) {
+      return get(value);
+    }
+    throw new IllegalArgumentException("Not a unique column: " + col);
+  }
 }

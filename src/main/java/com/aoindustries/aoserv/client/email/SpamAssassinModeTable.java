@@ -36,26 +36,26 @@ import java.sql.SQLException;
  */
 public final class SpamAssassinModeTable extends GlobalTableStringKey<SpamAssassinMode> {
 
-	SpamAssassinModeTable(AOServConnector connector) {
-		super(connector, SpamAssassinMode.class);
-	}
+  SpamAssassinModeTable(AOServConnector connector) {
+    super(connector, SpamAssassinMode.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(SpamAssassinMode.COLUMN_SORT_ORDER_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(SpamAssassinMode.COLUMN_SORT_ORDER_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public SpamAssassinMode get(String name) throws IOException, SQLException {
-		return getUniqueRow(SpamAssassinMode.COLUMN_NAME, name);
-	}
+  @Override
+  public SpamAssassinMode get(String name) throws IOException, SQLException {
+    return getUniqueRow(SpamAssassinMode.COLUMN_NAME, name);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.EMAIL_SPAMASSASSIN_INTEGRATION_MODES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.EMAIL_SPAMASSASSIN_INTEGRATION_MODES;
+  }
 }

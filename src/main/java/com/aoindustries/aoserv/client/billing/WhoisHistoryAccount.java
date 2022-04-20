@@ -41,111 +41,115 @@ import java.sql.SQLException;
  */
 public final class WhoisHistoryAccount extends CachedObjectIntegerKey<WhoisHistoryAccount> {
 
-	static final int
-		COLUMN_id = 0,
-		COLUMN_whoisHistory = 1,
-		COLUMN_account = 2
-	;
-	static final String COLUMN_whoisHistory_name = "whoisHistory";
-	static final String COLUMN_account_name = "account";
+  static final int
+    COLUMN_id = 0,
+    COLUMN_whoisHistory = 1,
+    COLUMN_account = 2
+  ;
+  static final String COLUMN_whoisHistory_name = "whoisHistory";
+  static final String COLUMN_account_name = "account";
 
-	private int whoisHistory;
-	private Account.Name account;
+  private int whoisHistory;
+  private Account.Name account;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public WhoisHistoryAccount() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public WhoisHistoryAccount() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) throws IOException, SQLException {
-		switch(i) {
-			case COLUMN_id: return pkey;
-			case COLUMN_whoisHistory: return whoisHistory;
-			case COLUMN_account: return account;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) throws IOException, SQLException {
+    switch (i) {
+      case COLUMN_id: return pkey;
+      case COLUMN_whoisHistory: return whoisHistory;
+      case COLUMN_account: return account;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	public int getId() {
-		return pkey;
-	}
+  public int getId() {
+    return pkey;
+  }
 
-	/**
-	 * @see  #getWhoisHistory()
-	 */
-	public int getWhoisHistory_id() {
-		return whoisHistory;
-	}
+  /**
+   * @see  #getWhoisHistory()
+   */
+  public int getWhoisHistory_id() {
+    return whoisHistory;
+  }
 
-	/**
-	 * @see  WhoisHistory#getAccounts()
-	 */
-	public WhoisHistory getWhoisHistory() throws SQLException, IOException {
-		WhoisHistory obj = table.getConnector().getBilling().getWhoisHistory().get(whoisHistory);
-		if(obj == null) throw new SQLException("Unable to find WhoisHistory: " + whoisHistory);
-		return obj;
-	}
+  /**
+   * @see  WhoisHistory#getAccounts()
+   */
+  public WhoisHistory getWhoisHistory() throws SQLException, IOException {
+    WhoisHistory obj = table.getConnector().getBilling().getWhoisHistory().get(whoisHistory);
+    if (obj == null) {
+      throw new SQLException("Unable to find WhoisHistory: " + whoisHistory);
+    }
+    return obj;
+  }
 
-	/**
-	 * @see  #getAccount()
-	 */
-	public Account.Name getAccount_id() {
-		return account;
-	}
+  /**
+   * @see  #getAccount()
+   */
+  public Account.Name getAccount_id() {
+    return account;
+  }
 
-	/**
-	 * @see  Account#getWhoisHistoryAccounts()
-	 */
-	public Account getAccount() throws SQLException, IOException {
-		Account obj = table.getConnector().getAccount().getAccount().get(account);
-		if (obj == null) throw new SQLException("Unable to find Account: " + account);
-		return obj;
-	}
+  /**
+   * @see  Account#getWhoisHistoryAccounts()
+   */
+  public Account getAccount() throws SQLException, IOException {
+    Account obj = table.getConnector().getAccount().getAccount().get(account);
+    if (obj == null) {
+      throw new SQLException("Unable to find Account: " + account);
+    }
+    return obj;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.WhoisHistoryAccount;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.WhoisHistoryAccount;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		try {
-			int pos = 1;
-			pkey = result.getInt(pos++);
-			whoisHistory = result.getInt(pos++);
-			account = Account.Name.valueOf(result.getString(pos++));
-		} catch(ValidationException e) {
-			throw new SQLException(e);
-		}
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    try {
+      int pos = 1;
+      pkey = result.getInt(pos++);
+      whoisHistory = result.getInt(pos++);
+      account = Account.Name.valueOf(result.getString(pos++));
+    } catch (ValidationException e) {
+      throw new SQLException(e);
+    }
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		try {
-			pkey = in.readCompressedInt();
-			whoisHistory = in.readCompressedInt();
-			account = Account.Name.valueOf(in.readUTF()).intern();
-		} catch(ValidationException e) {
-			throw new IOException(e);
-		}
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    try {
+      pkey = in.readCompressedInt();
+      whoisHistory = in.readCompressedInt();
+      account = Account.Name.valueOf(in.readUTF()).intern();
+    } catch (ValidationException e) {
+      throw new IOException(e);
+    }
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeCompressedInt(whoisHistory);
-		out.writeUTF(account.toString());
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    out.writeCompressedInt(whoisHistory);
+    out.writeUTF(account.toString());
+  }
 
-	@Override
-	public String toStringImpl() {
-		return pkey+"|"+whoisHistory+"|"+account;
-	}
+  @Override
+  public String toStringImpl() {
+    return pkey+"|"+whoisHistory+"|"+account;
+  }
 }

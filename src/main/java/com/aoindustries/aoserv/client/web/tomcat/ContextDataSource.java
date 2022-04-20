@@ -45,179 +45,181 @@ import java.util.List;
  */
 public final class ContextDataSource extends CachedObjectIntegerKey<ContextDataSource> implements Removable {
 
-	static final int
-		COLUMN_PKEY=0,
-		COLUMN_TOMCAT_CONTEXT=1
-	;
-	static final String COLUMN_TOMCAT_CONTEXT_name = "tomcat_context";
-	static final String COLUMN_NAME_name = "name";
+  static final int
+    COLUMN_PKEY=0,
+    COLUMN_TOMCAT_CONTEXT=1
+  ;
+  static final String COLUMN_TOMCAT_CONTEXT_name = "tomcat_context";
+  static final String COLUMN_NAME_name = "name";
 
-	private int tomcat_context;
-	private String name;
-	private String driverClassName;
-	private String url;
-	private String username;
-	private String password;
-	private int maxActive;
-	private int maxIdle;
-	private int maxWait;
-	private String validationQuery;
+  private int tomcat_context;
+  private String name;
+  private String driverClassName;
+  private String url;
+  private String username;
+  private String password;
+  private int maxActive;
+  private int maxIdle;
+  private int maxWait;
+  private String validationQuery;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public ContextDataSource() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public ContextDataSource() {
+    // Do nothing
+  }
 
-	@Override
-	public List<CannotRemoveReason<?>> getCannotRemoveReasons() {
-		return Collections.emptyList();
-	}
+  @Override
+  public List<CannotRemoveReason<?>> getCannotRemoveReasons() {
+    return Collections.emptyList();
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_PKEY: return pkey;
-			case COLUMN_TOMCAT_CONTEXT: return tomcat_context;
-			case 2: return name;
-			case 3: return driverClassName;
-			case 4: return url;
-			case 5: return username;
-			case 6: return password;
-			case 7: return maxActive;
-			case 8: return maxIdle;
-			case 9: return maxWait;
-			case 10: return validationQuery;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_PKEY: return pkey;
+      case COLUMN_TOMCAT_CONTEXT: return tomcat_context;
+      case 2: return name;
+      case 3: return driverClassName;
+      case 4: return url;
+      case 5: return username;
+      case 6: return password;
+      case 7: return maxActive;
+      case 8: return maxIdle;
+      case 9: return maxWait;
+      case 10: return validationQuery;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	public Context getHttpdTomcatContext() throws SQLException, IOException {
-		Context obj=table.getConnector().getWeb_tomcat().getContext().get(tomcat_context);
-		if(obj==null) throw new SQLException("Unable to find HttpdTomcatContext: "+tomcat_context);
-		return obj;
-	}
+  public Context getHttpdTomcatContext() throws SQLException, IOException {
+    Context obj=table.getConnector().getWeb_tomcat().getContext().get(tomcat_context);
+    if (obj == null) {
+      throw new SQLException("Unable to find HttpdTomcatContext: "+tomcat_context);
+    }
+    return obj;
+  }
 
-	public String getName() {
-		return name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public String getDriverClassName() {
-		return driverClassName;
-	}
+  public String getDriverClassName() {
+    return driverClassName;
+  }
 
-	public String getUrl() {
-		return url;
-	}
+  public String getUrl() {
+    return url;
+  }
 
-	public String getUsername() {
-		return username;
-	}
+  public String getUsername() {
+    return username;
+  }
 
-	public String getPassword() {
-		return password;
-	}
+  public String getPassword() {
+    return password;
+  }
 
-	public int getMaxActive() {
-		return maxActive;
-	}
+  public int getMaxActive() {
+    return maxActive;
+  }
 
-	public int getMaxIdle() {
-		return maxIdle;
-	}
+  public int getMaxIdle() {
+    return maxIdle;
+  }
 
-	public int getMaxWait() {
-		return maxWait;
-	}
+  public int getMaxWait() {
+    return maxWait;
+  }
 
-	public String getValidationQuery() {
-		return validationQuery;
-	}
+  public String getValidationQuery() {
+    return validationQuery;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.HTTPD_TOMCAT_DATA_SOURCES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.HTTPD_TOMCAT_DATA_SOURCES;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey=result.getInt(1);
-		tomcat_context=result.getInt(2);
-		name=result.getString(3);
-		driverClassName=result.getString(4);
-		url=result.getString(5);
-		username=result.getString(6);
-		password=result.getString(7);
-		maxActive=result.getInt(8);
-		maxIdle=result.getInt(9);
-		maxWait=result.getInt(10);
-		validationQuery=result.getString(11);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey=result.getInt(1);
+    tomcat_context=result.getInt(2);
+    name=result.getString(3);
+    driverClassName=result.getString(4);
+    url=result.getString(5);
+    username=result.getString(6);
+    password=result.getString(7);
+    maxActive=result.getInt(8);
+    maxIdle=result.getInt(9);
+    maxWait=result.getInt(10);
+    validationQuery=result.getString(11);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readCompressedInt();
-		tomcat_context=in.readCompressedInt();
-		name=in.readUTF();
-		driverClassName=in.readUTF();
-		url=in.readUTF();
-		username=in.readUTF().intern();
-		password=in.readUTF();
-		maxActive=in.readCompressedInt();
-		maxIdle=in.readCompressedInt();
-		maxWait=in.readCompressedInt();
-		validationQuery=in.readNullUTF();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readCompressedInt();
+    tomcat_context=in.readCompressedInt();
+    name=in.readUTF();
+    driverClassName=in.readUTF();
+    url=in.readUTF();
+    username=in.readUTF().intern();
+    password=in.readUTF();
+    maxActive=in.readCompressedInt();
+    maxIdle=in.readCompressedInt();
+    maxWait=in.readCompressedInt();
+    validationQuery=in.readNullUTF();
+  }
 
-	@Override
-	public void remove() throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.REMOVE, Table.TableID.HTTPD_TOMCAT_DATA_SOURCES, pkey);
-	}
+  @Override
+  public void remove() throws IOException, SQLException {
+    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.REMOVE, Table.TableID.HTTPD_TOMCAT_DATA_SOURCES, pkey);
+  }
 
-	public void update(
-		String name,
-		String driverClassName,
-		String url,
-		String username,
-		String password,
-		int maxActive,
-		int maxIdle,
-		int maxWait,
-		String validationQuery
-	) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(
-			true,
-			AoservProtocol.CommandID.UPDATE_HTTPD_TOMCAT_DATA_SOURCE,
-			pkey,
-			name,
-			driverClassName,
-			url,
-			username,
-			password,
-			maxActive,
-			maxIdle,
-			maxWait,
-			validationQuery==null ? "" : validationQuery
-		);
-	}
+  public void update(
+    String name,
+    String driverClassName,
+    String url,
+    String username,
+    String password,
+    int maxActive,
+    int maxIdle,
+    int maxWait,
+    String validationQuery
+  ) throws IOException, SQLException {
+    table.getConnector().requestUpdateIL(
+      true,
+      AoservProtocol.CommandID.UPDATE_HTTPD_TOMCAT_DATA_SOURCE,
+      pkey,
+      name,
+      driverClassName,
+      url,
+      username,
+      password,
+      maxActive,
+      maxIdle,
+      maxWait,
+      validationQuery == null ? "" : validationQuery
+    );
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeCompressedInt(tomcat_context);
-		out.writeUTF(name);
-		out.writeUTF(driverClassName);
-		out.writeUTF(url);
-		out.writeUTF(username);
-		out.writeUTF(password);
-		out.writeCompressedInt(maxActive);
-		out.writeCompressedInt(maxIdle);
-		out.writeCompressedInt(maxWait);
-		out.writeNullUTF(validationQuery);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    out.writeCompressedInt(tomcat_context);
+    out.writeUTF(name);
+    out.writeUTF(driverClassName);
+    out.writeUTF(url);
+    out.writeUTF(username);
+    out.writeUTF(password);
+    out.writeCompressedInt(maxActive);
+    out.writeCompressedInt(maxIdle);
+    out.writeCompressedInt(maxWait);
+    out.writeNullUTF(validationQuery);
+  }
 }

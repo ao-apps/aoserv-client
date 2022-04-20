@@ -31,40 +31,40 @@ import java.beans.SimpleBeanInfo;
 
 public class SchemaBeanInfo extends SimpleBeanInfo {
 
-	private static final PropertyDescriptor[] properties;
-	static {
-		try {
-			properties = new PropertyDescriptor[] {
-				new PropertyDescriptor("Architecture",           Schema.class, "getArchitecture",           null),
-				new PropertyDescriptor("OperatingSystem",        Schema.class, "getOperatingSystem",        null),
-				new PropertyDescriptor("OperatingSystemVersion", Schema.class, "getOperatingSystemVersion", null),
-				new PropertyDescriptor("Software",               Schema.class, "getSoftware",               null),
-				new PropertyDescriptor("SoftwareCategorization", Schema.class, "getSoftwareCategorization", null),
-				new PropertyDescriptor("SoftwareCategory",       Schema.class, "getSoftwareCategory",       null),
-				new PropertyDescriptor("SoftwareVersion",        Schema.class, "getSoftwareVersion",        null),
-			};
-		} catch(IntrospectionException err) {
-			throw new ExceptionInInitializerError(err);
-		}
-	}
+  private static final PropertyDescriptor[] properties;
+  static {
+    try {
+      properties = new PropertyDescriptor[] {
+        new PropertyDescriptor("Architecture",           Schema.class, "getArchitecture",           null),
+        new PropertyDescriptor("OperatingSystem",        Schema.class, "getOperatingSystem",        null),
+        new PropertyDescriptor("OperatingSystemVersion", Schema.class, "getOperatingSystemVersion", null),
+        new PropertyDescriptor("Software",               Schema.class, "getSoftware",               null),
+        new PropertyDescriptor("SoftwareCategorization", Schema.class, "getSoftwareCategorization", null),
+        new PropertyDescriptor("SoftwareCategory",       Schema.class, "getSoftwareCategory",       null),
+        new PropertyDescriptor("SoftwareVersion",        Schema.class, "getSoftwareVersion",        null),
+      };
+    } catch (IntrospectionException err) {
+      throw new ExceptionInInitializerError(err);
+    }
+  }
 
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Not copying array for performance
-	public PropertyDescriptor[] getPropertyDescriptors () {
-		return properties;
-	}
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField") // Not copying array for performance
+  public PropertyDescriptor[] getPropertyDescriptors () {
+    return properties;
+  }
 
-	/**
-	 * Include base class.
-	 */
-	@Override
-	public BeanInfo[] getAdditionalBeanInfo() {
-		try {
-			return new BeanInfo[] {
-				Introspector.getBeanInfo(Schema.class.getSuperclass())
-			};
-		} catch(IntrospectionException err) {
-			throw new AssertionError(err);
-		}
-	}
+  /**
+   * Include base class.
+   */
+  @Override
+  public BeanInfo[] getAdditionalBeanInfo() {
+    try {
+      return new BeanInfo[] {
+        Introspector.getBeanInfo(Schema.class.getSuperclass())
+      };
+    } catch (IntrospectionException err) {
+      throw new AssertionError(err);
+    }
+  }
 }

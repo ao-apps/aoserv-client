@@ -42,34 +42,34 @@ import java.util.List;
  */
 public final class SendmailBindTable extends CachedTableIntegerKey<SendmailBind> {
 
-	SendmailBindTable(AOServConnector connector) {
-		super(connector, SendmailBind.class);
-	}
+  SendmailBindTable(AOServConnector connector) {
+    super(connector, SendmailBind.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(SendmailBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(SendmailBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(SendmailBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_IP_ADDRESS_name+'.'+IpAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
-		new OrderBy(SendmailBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_IP_ADDRESS_name+'.'+IpAddress.COLUMN_DEVICE_name+'.'+Device.COLUMN_DEVICE_ID_name, ASCENDING),
-		new OrderBy(SendmailBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_PORT_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(SendmailBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(SendmailBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(SendmailBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_IP_ADDRESS_name+'.'+IpAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
+    new OrderBy(SendmailBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_IP_ADDRESS_name+'.'+IpAddress.COLUMN_DEVICE_name+'.'+Device.COLUMN_DEVICE_ID_name, ASCENDING),
+    new OrderBy(SendmailBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_PORT_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	List<SendmailBind> getSendmailBinds(SendmailServer server) throws IOException, SQLException {
-		return getIndexedRows(SendmailBind.COLUMN_SENDMAIL_SERVER, server.getPkey());
-	}
+  List<SendmailBind> getSendmailBinds(SendmailServer server) throws IOException, SQLException {
+    return getIndexedRows(SendmailBind.COLUMN_SENDMAIL_SERVER, server.getPkey());
+  }
 
-	@Override
-	public SendmailBind get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(SendmailBind.COLUMN_NET_BIND, pkey);
-	}
+  @Override
+  public SendmailBind get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(SendmailBind.COLUMN_NET_BIND, pkey);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.SENDMAIL_BINDS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.SENDMAIL_BINDS;
+  }
 }

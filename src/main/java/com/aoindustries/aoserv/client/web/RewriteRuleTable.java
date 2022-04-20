@@ -41,36 +41,36 @@ import java.util.List;
  */
 public final class RewriteRuleTable extends CachedTableIntegerKey<RewriteRule> {
 
-	RewriteRuleTable(AOServConnector connector) {
-		super(connector, RewriteRule.class);
-	}
+  RewriteRuleTable(AOServConnector connector) {
+    super(connector, RewriteRule.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(RewriteRule.COLUMN_virtualHost_name + '.' + VirtualHost.COLUMN_HTTPD_SITE_name + '.' + Site.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(RewriteRule.COLUMN_virtualHost_name + '.' + VirtualHost.COLUMN_HTTPD_SITE_name + '.' + Site.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
-		new OrderBy(RewriteRule.COLUMN_virtualHost_name + '.' + VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_IP_ADDRESS_name + '.' + IpAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
-		new OrderBy(RewriteRule.COLUMN_virtualHost_name + '.' + VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_IP_ADDRESS_name + '.' + IpAddress.COLUMN_DEVICE_name + '.' + Device.COLUMN_DEVICE_ID_name, ASCENDING),
-		new OrderBy(RewriteRule.COLUMN_virtualHost_name + '.' + VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_PORT_name, ASCENDING),
-		new OrderBy(RewriteRule.COLUMN_virtualHost_name + '.' + VirtualHost.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(RewriteRule.COLUMN_sortOrder_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(RewriteRule.COLUMN_virtualHost_name + '.' + VirtualHost.COLUMN_HTTPD_SITE_name + '.' + Site.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(RewriteRule.COLUMN_virtualHost_name + '.' + VirtualHost.COLUMN_HTTPD_SITE_name + '.' + Site.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
+    new OrderBy(RewriteRule.COLUMN_virtualHost_name + '.' + VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_IP_ADDRESS_name + '.' + IpAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
+    new OrderBy(RewriteRule.COLUMN_virtualHost_name + '.' + VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_IP_ADDRESS_name + '.' + IpAddress.COLUMN_DEVICE_name + '.' + Device.COLUMN_DEVICE_ID_name, ASCENDING),
+    new OrderBy(RewriteRule.COLUMN_virtualHost_name + '.' + VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_PORT_name, ASCENDING),
+    new OrderBy(RewriteRule.COLUMN_virtualHost_name + '.' + VirtualHost.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(RewriteRule.COLUMN_sortOrder_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public RewriteRule get(int id) throws IOException, SQLException {
-		return getUniqueRow(RewriteRule.COLUMN_id, id);
-	}
+  @Override
+  public RewriteRule get(int id) throws IOException, SQLException {
+    return getUniqueRow(RewriteRule.COLUMN_id, id);
+  }
 
-	List<RewriteRule> getRewriteRules(VirtualHost virtualHost) throws IOException, SQLException {
-		return getIndexedRows(RewriteRule.COLUMN_virtualHost, virtualHost.getPkey());
-	}
+  List<RewriteRule> getRewriteRules(VirtualHost virtualHost) throws IOException, SQLException {
+    return getIndexedRows(RewriteRule.COLUMN_virtualHost, virtualHost.getPkey());
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.RewriteRule;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.RewriteRule;
+  }
 }

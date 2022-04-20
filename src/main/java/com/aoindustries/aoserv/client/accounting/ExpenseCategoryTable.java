@@ -36,26 +36,26 @@ import java.sql.SQLException;
  */
 public final class ExpenseCategoryTable extends CachedTableStringKey<ExpenseCategory> {
 
-	ExpenseCategoryTable(AOServConnector connector) {
-		super(connector, ExpenseCategory.class);
-	}
+  ExpenseCategoryTable(AOServConnector connector) {
+    super(connector, ExpenseCategory.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(ExpenseCategory.COLUMN_NAME_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(ExpenseCategory.COLUMN_NAME_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public ExpenseCategory get(String name) throws IOException, SQLException {
-		return getUniqueRow(ExpenseCategory.COLUMN_NAME, name);
-	}
+  @Override
+  public ExpenseCategory get(String name) throws IOException, SQLException {
+    return getUniqueRow(ExpenseCategory.COLUMN_NAME, name);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.EXPENSE_CATEGORIES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.EXPENSE_CATEGORIES;
+  }
 }

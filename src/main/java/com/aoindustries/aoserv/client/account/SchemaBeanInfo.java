@@ -31,40 +31,40 @@ import java.beans.SimpleBeanInfo;
 
 public class SchemaBeanInfo extends SimpleBeanInfo {
 
-	private static final PropertyDescriptor[] properties;
-	static {
-		try {
-			properties = new PropertyDescriptor[] {
-				new PropertyDescriptor("Account",       Schema.class, "getAccount",       null),
-				new PropertyDescriptor("AccountHost",   Schema.class, "getAccountHost",   null),
-				new PropertyDescriptor("Administrator", Schema.class, "getAdministrator", null),
-				new PropertyDescriptor("DisableLog",    Schema.class, "getDisableLog",    null),
-				new PropertyDescriptor("Profile",       Schema.class, "getProfile",       null),
-				new PropertyDescriptor("UsState",       Schema.class, "getUsState",       null),
-				new PropertyDescriptor("User",          Schema.class, "getUser",          null),
-			};
-		} catch(IntrospectionException err) {
-			throw new ExceptionInInitializerError(err);
-		}
-	}
+  private static final PropertyDescriptor[] properties;
+  static {
+    try {
+      properties = new PropertyDescriptor[] {
+        new PropertyDescriptor("Account",       Schema.class, "getAccount",       null),
+        new PropertyDescriptor("AccountHost",   Schema.class, "getAccountHost",   null),
+        new PropertyDescriptor("Administrator", Schema.class, "getAdministrator", null),
+        new PropertyDescriptor("DisableLog",    Schema.class, "getDisableLog",    null),
+        new PropertyDescriptor("Profile",       Schema.class, "getProfile",       null),
+        new PropertyDescriptor("UsState",       Schema.class, "getUsState",       null),
+        new PropertyDescriptor("User",          Schema.class, "getUser",          null),
+      };
+    } catch (IntrospectionException err) {
+      throw new ExceptionInInitializerError(err);
+    }
+  }
 
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Not copying array for performance
-	public PropertyDescriptor[] getPropertyDescriptors () {
-		return properties;
-	}
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField") // Not copying array for performance
+  public PropertyDescriptor[] getPropertyDescriptors () {
+    return properties;
+  }
 
-	/**
-	 * Include base class.
-	 */
-	@Override
-	public BeanInfo[] getAdditionalBeanInfo() {
-		try {
-			return new BeanInfo[] {
-				Introspector.getBeanInfo(Schema.class.getSuperclass())
-			};
-		} catch(IntrospectionException err) {
-			throw new AssertionError(err);
-		}
-	}
+  /**
+   * Include base class.
+   */
+  @Override
+  public BeanInfo[] getAdditionalBeanInfo() {
+    try {
+      return new BeanInfo[] {
+        Introspector.getBeanInfo(Schema.class.getSuperclass())
+      };
+    } catch (IntrospectionException err) {
+      throw new AssertionError(err);
+    }
+  }
 }

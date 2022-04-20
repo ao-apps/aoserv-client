@@ -36,26 +36,26 @@ import java.sql.SQLException;
  */
 public final class ArchitectureTable extends GlobalTableStringKey<Architecture> {
 
-	ArchitectureTable(AOServConnector connector) {
-		super(connector, Architecture.class);
-	}
+  ArchitectureTable(AOServConnector connector) {
+    super(connector, Architecture.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(Architecture.COLUMN_NAME_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(Architecture.COLUMN_NAME_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public Architecture get(String name) throws IOException, SQLException {
-		return getUniqueRow(Architecture.COLUMN_NAME, name);
-	}
+  @Override
+  public Architecture get(String name) throws IOException, SQLException {
+    return getUniqueRow(Architecture.COLUMN_NAME, name);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.ARCHITECTURES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.ARCHITECTURES;
+  }
 }

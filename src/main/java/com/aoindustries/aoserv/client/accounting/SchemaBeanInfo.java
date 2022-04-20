@@ -31,38 +31,38 @@ import java.beans.SimpleBeanInfo;
 
 public class SchemaBeanInfo extends SimpleBeanInfo {
 
-	private static final PropertyDescriptor[] properties;
-	static {
-		try {
-			properties = new PropertyDescriptor[] {
-				new PropertyDescriptor("BankAccount",         Schema.class, "getBankAccount",         null),
-				new PropertyDescriptor("BankTransactionType", Schema.class, "getBankTransactionType", null),
-				new PropertyDescriptor("BankTransaction",     Schema.class, "getBankTransaction",     null),
-				new PropertyDescriptor("Bank",                Schema.class, "getBank",                null),
-				new PropertyDescriptor("ExpenseCategory",     Schema.class, "getExpenseCategory",     null),
-			};
-		} catch(IntrospectionException err) {
-			throw new ExceptionInInitializerError(err);
-		}
-	}
+  private static final PropertyDescriptor[] properties;
+  static {
+    try {
+      properties = new PropertyDescriptor[] {
+        new PropertyDescriptor("BankAccount",         Schema.class, "getBankAccount",         null),
+        new PropertyDescriptor("BankTransactionType", Schema.class, "getBankTransactionType", null),
+        new PropertyDescriptor("BankTransaction",     Schema.class, "getBankTransaction",     null),
+        new PropertyDescriptor("Bank",                Schema.class, "getBank",                null),
+        new PropertyDescriptor("ExpenseCategory",     Schema.class, "getExpenseCategory",     null),
+      };
+    } catch (IntrospectionException err) {
+      throw new ExceptionInInitializerError(err);
+    }
+  }
 
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Not copying array for performance
-	public PropertyDescriptor[] getPropertyDescriptors () {
-		return properties;
-	}
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField") // Not copying array for performance
+  public PropertyDescriptor[] getPropertyDescriptors () {
+    return properties;
+  }
 
-	/**
-	 * Include base class.
-	 */
-	@Override
-	public BeanInfo[] getAdditionalBeanInfo() {
-		try {
-			return new BeanInfo[] {
-				Introspector.getBeanInfo(Schema.class.getSuperclass())
-			};
-		} catch(IntrospectionException err) {
-			throw new AssertionError(err);
-		}
-	}
+  /**
+   * Include base class.
+   */
+  @Override
+  public BeanInfo[] getAdditionalBeanInfo() {
+    try {
+      return new BeanInfo[] {
+        Introspector.getBeanInfo(Schema.class.getSuperclass())
+      };
+    } catch (IntrospectionException err) {
+      throw new AssertionError(err);
+    }
+  }
 }

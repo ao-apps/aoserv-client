@@ -36,26 +36,26 @@ import java.sql.SQLException;
  */
 public final class DistroFileTypeTable extends GlobalTableStringKey<DistroFileType> {
 
-	DistroFileTypeTable(AOServConnector connector) {
-		super(connector, DistroFileType.class);
-	}
+  DistroFileTypeTable(AOServConnector connector) {
+    super(connector, DistroFileType.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(DistroFileType.COLUMN_TYPE_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(DistroFileType.COLUMN_TYPE_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public DistroFileType get(String type) throws IOException, SQLException {
-		return getUniqueRow(DistroFileType.COLUMN_TYPE, type);
-	}
+  @Override
+  public DistroFileType get(String type) throws IOException, SQLException {
+    return getUniqueRow(DistroFileType.COLUMN_TYPE, type);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.DISTRO_FILE_TYPES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.DISTRO_FILE_TYPES;
+  }
 }

@@ -39,62 +39,62 @@ import java.sql.SQLException;
  */
 public final class ProcessorType extends GlobalObjectStringKey<ProcessorType> {
 
-	static final int COLUMN_TYPE = 0;
-	static final int COLUMN_SORT_ORDER = 1;
+  static final int COLUMN_TYPE = 0;
+  static final int COLUMN_SORT_ORDER = 1;
 
-	static final String COLUMN_SORT_ORDER_name = "sort_order";
+  static final String COLUMN_SORT_ORDER_name = "sort_order";
 
-	private short sortOrder;
+  private short sortOrder;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public ProcessorType() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public ProcessorType() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_TYPE: return pkey;
-			case COLUMN_SORT_ORDER : return sortOrder;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_TYPE: return pkey;
+      case COLUMN_SORT_ORDER : return sortOrder;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.PROCESSOR_TYPES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.PROCESSOR_TYPES;
+  }
 
-	public String getType() {
-		return pkey;
-	}
+  public String getType() {
+    return pkey;
+  }
 
-	public short getSortOrder() {
-		return sortOrder;
-	}
+  public short getSortOrder() {
+    return sortOrder;
+  }
 
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey = result.getString(1);
-		sortOrder = result.getShort(2);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey = result.getString(1);
+    sortOrder = result.getShort(2);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readUTF().intern();
-		sortOrder = in.readShort();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readUTF().intern();
+    sortOrder = in.readShort();
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey);
-		out.writeShort(sortOrder);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey);
+    out.writeShort(sortOrder);
+  }
 }

@@ -33,24 +33,26 @@ import java.sql.SQLException;
  */
 public abstract class GlobalTableIntegerKey<V extends GlobalObjectIntegerKey<V>> extends GlobalTable<Integer, V> {
 
-	protected GlobalTableIntegerKey(AOServConnector connector, Class<V> clazz) {
-		super(connector, clazz);
-	}
+  protected GlobalTableIntegerKey(AOServConnector connector, Class<V> clazz) {
+    super(connector, clazz);
+  }
 
-	/**
-	 * Gets the object with the provided key.  The key must be an Integer.
-	 *
-	 * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
-	 */
-	@Deprecated
-	@Override
-	public V get(Object pkey) throws IOException, SQLException {
-		if(pkey == null) return null;
-		return get(((Integer)pkey).intValue());
-	}
+  /**
+   * Gets the object with the provided key.  The key must be an Integer.
+   *
+   * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
+   */
+  @Deprecated
+  @Override
+  public V get(Object pkey) throws IOException, SQLException {
+    if (pkey == null) {
+      return null;
+    }
+    return get(((Integer)pkey).intValue());
+  }
 
-	/**
-	 * @see  #get(java.lang.Object)
-	 */
-	public abstract V get(int pkey) throws IOException, SQLException;
+  /**
+   * @see  #get(java.lang.Object)
+   */
+  public abstract V get(int pkey) throws IOException, SQLException;
 }

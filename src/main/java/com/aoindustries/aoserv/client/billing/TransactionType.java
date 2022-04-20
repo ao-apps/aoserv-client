@@ -48,92 +48,92 @@ import java.util.ResourceBundle;
  */
 public final class TransactionType extends GlobalObjectStringKey<TransactionType> {
 
-	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, TransactionType.class);
+  private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, TransactionType.class);
 
-	static final int COLUMN_NAME=0;
-	static final String COLUMN_NAME_name = "name";
+  static final int COLUMN_NAME=0;
+  static final String COLUMN_NAME_name = "name";
 
-	public static final String
-		HTTPD="httpd",
-		PAYMENT="payment",
-		VIRTUAL="virtual"
-	;
+  public static final String
+    HTTPD="httpd",
+    PAYMENT="payment",
+    VIRTUAL="virtual"
+  ;
 
-	/**
-	 * If <code>true</code> this <code>TransactionType</code> represents a credit to
-	 * an account and will be listed in payments received reports.
-	 */
-	private boolean isCredit;
+  /**
+   * If <code>true</code> this <code>TransactionType</code> represents a credit to
+   * an account and will be listed in payments received reports.
+   */
+  private boolean isCredit;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public TransactionType() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public TransactionType() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_NAME: return pkey;
-			case 1: return isCredit;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_NAME: return pkey;
+      case 1: return isCredit;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	public String getDescription() {
-		return RESOURCES.getMessage(pkey + ".description");
-	}
+  public String getDescription() {
+    return RESOURCES.getMessage(pkey + ".description");
+  }
 
-	/**
-	 * Gets the unique name of this transaction type.
-	 */
-	public String getName() {
-		return pkey;
-	}
+  /**
+   * Gets the unique name of this transaction type.
+   */
+  public String getName() {
+    return pkey;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.TRANSACTION_TYPES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.TRANSACTION_TYPES;
+  }
 
-	public String getUnit() {
-		return RESOURCES.getMessage(pkey + ".unit");
-	}
+  public String getUnit() {
+    return RESOURCES.getMessage(pkey + ".unit");
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey = result.getString(1);
-		isCredit = result.getBoolean(2);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey = result.getString(1);
+    isCredit = result.getBoolean(2);
+  }
 
-	public boolean isCredit() {
-		return isCredit;
-	}
+  public boolean isCredit() {
+    return isCredit;
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey = in.readUTF().intern();
-		isCredit = in.readBoolean();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey = in.readUTF().intern();
+    isCredit = in.readBoolean();
+  }
 
-	@Override
-	public String toStringImpl() {
-		return RESOURCES.getMessage(pkey + ".toString");
-	}
+  @Override
+  public String toStringImpl() {
+    return RESOURCES.getMessage(pkey + ".toString");
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey);
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_60)<=0) {
-			out.writeUTF(toStringImpl()); // display
-			out.writeUTF(getDescription()); // description
-			out.writeUTF(getUnit()); // unit
-		}
-		out.writeBoolean(isCredit);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey);
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_60) <= 0) {
+      out.writeUTF(toStringImpl()); // display
+      out.writeUTF(getDescription()); // description
+      out.writeUTF(getUnit()); // unit
+    }
+    out.writeBoolean(isCredit);
+  }
 }

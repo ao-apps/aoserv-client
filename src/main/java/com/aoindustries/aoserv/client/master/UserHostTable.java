@@ -38,28 +38,28 @@ import java.sql.SQLException;
  */
 public final class UserHostTable extends CachedTableIntegerKey<UserHost> {
 
-	UserHostTable(AOServConnector connector) {
-		super(connector, UserHost.class);
-	}
+  UserHostTable(AOServConnector connector) {
+    super(connector, UserHost.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(UserHost.COLUMN_USERNAME_name, ASCENDING),
-		new OrderBy(UserHost.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(UserHost.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(UserHost.COLUMN_USERNAME_name, ASCENDING),
+    new OrderBy(UserHost.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(UserHost.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public UserHost get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(UserHost.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public UserHost get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(UserHost.COLUMN_PKEY, pkey);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.MASTER_SERVERS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.MASTER_SERVERS;
+  }
 }

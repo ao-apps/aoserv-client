@@ -43,71 +43,71 @@ import java.util.List;
  */
 public final class CertificateTable extends CachedTableIntegerKey<Certificate> {
 
-	CertificateTable(AOServConnector connector) {
-		super(connector, Certificate.class);
-	}
+  CertificateTable(AOServConnector connector) {
+    super(connector, Certificate.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(Certificate.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
-		new OrderBy(Certificate.COLUMN_CERT_FILE_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(Certificate.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
+    new OrderBy(Certificate.COLUMN_CERT_FILE_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public Certificate get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(Certificate.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public Certificate get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(Certificate.COLUMN_PKEY, pkey);
+  }
 
-	public List<Certificate> getSslCertificates(Server aoServer) throws IOException, SQLException {
-		return getIndexedRows(Certificate.COLUMN_AO_SERVER, aoServer.getPkey());
-	}
+  public List<Certificate> getSslCertificates(Server aoServer) throws IOException, SQLException {
+    return getIndexedRows(Certificate.COLUMN_AO_SERVER, aoServer.getPkey());
+  }
 
-	public List<Certificate> getSslCertificates(Package pk) throws IOException, SQLException {
-		return getIndexedRows(Certificate.COLUMN_PACKAGE, pk.getPkey());
-	}
+  public List<Certificate> getSslCertificates(Package pk) throws IOException, SQLException {
+    return getIndexedRows(Certificate.COLUMN_PACKAGE, pk.getPkey());
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.SSL_CERTIFICATES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.SSL_CERTIFICATES;
+  }
 
-	@Override
-	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-		String command = args[0];
-		if(command.equalsIgnoreCase(Command.PKI_CERTIFICATE_CHECK)) {
-			if(AOSH.checkParamCount(Command.PKI_CERTIFICATE_CHECK, args, 3, err)) {
-				List<Certificate.Check> results = connector.getSimpleAOClient().checkSslCertificate(
-					args[1],
-					args[2],
-					AOSH.parseBoolean(args[3], "allowCached")
-				);
-				int size = results.size();
-				List<Object[]> rows = new ArrayList<>(size);
-				for(int i = 0; i < size; i++) {
-					Certificate.Check status = results.get(i);
-					rows.add(new Object[] {
-						status.getCheck(),
-						status.getValue(),
-						status.getAlertLevel(),
-						status.getMessage()
-					});
-				}
-				// Display as a table
-				SQLUtility.printTable(
-					new String[] {"check", "value", "alert_level", "message"},
-					rows,
-					out,
-					isInteractive,
-					new boolean[] {false, false, false, false}
-				);
-				out.flush();
-			}
-			return true;
-		}
-		return false;
-	}
+  @Override
+  public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
+    String command = args[0];
+    if (command.equalsIgnoreCase(Command.PKI_CERTIFICATE_CHECK)) {
+      if (AOSH.checkParamCount(Command.PKI_CERTIFICATE_CHECK, args, 3, err)) {
+        List<Certificate.Check> results = connector.getSimpleAOClient().checkSslCertificate(
+          args[1],
+          args[2],
+          AOSH.parseBoolean(args[3], "allowCached")
+        );
+        int size = results.size();
+        List<Object[]> rows = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+          Certificate.Check status = results.get(i);
+          rows.add(new Object[] {
+            status.getCheck(),
+            status.getValue(),
+            status.getAlertLevel(),
+            status.getMessage()
+          });
+        }
+        // Display as a table
+        SQLUtility.printTable(
+          new String[] {"check", "value", "alert_level", "message"},
+          rows,
+          out,
+          isInteractive,
+          new boolean[] {false, false, false, false}
+        );
+        out.flush();
+      }
+      return true;
+    }
+    return false;
+  }
 }

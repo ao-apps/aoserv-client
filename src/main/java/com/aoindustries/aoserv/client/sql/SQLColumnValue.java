@@ -39,39 +39,43 @@ import java.util.List;
  */
 public final class SQLColumnValue implements SQLExpression {
 
-	private final Column column;
-	private final Type columnType;
+  private final Column column;
+  private final Type columnType;
 
-	public SQLColumnValue(AOServConnector conn, Column column) throws SQLException, IOException {
-		if(column == null) throw new NullPointerException("column is null");
-		this.column = column;
-		this.columnType = column.getType(conn);
-	}
+  public SQLColumnValue(AOServConnector conn, Column column) throws SQLException, IOException {
+    if (column == null) {
+      throw new NullPointerException("column is null");
+    }
+    this.column = column;
+    this.columnType = column.getType(conn);
+  }
 
-	@Override
-	public String toString() {
-		return Parser.quote(column.getName());
-	}
+  @Override
+  public String toString() {
+    return Parser.quote(column.getName());
+  }
 
-	@Override
-	public String getColumnName() {
-		return column.getName();
-	}
+  @Override
+  public String getColumnName() {
+    return column.getName();
+  }
 
-	@Override
-	public Object evaluate(AOServConnector conn, AOServObject<?, ?> obj) {
-		return obj.getColumn(column.getIndex());
-	}
+  @Override
+  public Object evaluate(AOServConnector conn, AOServObject<?, ?> obj) {
+    return obj.getColumn(column.getIndex());
+  }
 
-	@Override
-	public Type getType() {
-		return columnType;
-	}
+  @Override
+  public Type getType() {
+    return columnType;
+  }
 
-	@Override
-	public void getReferencedTables(AOServConnector conn, List<Table> tables) throws SQLException, IOException {
-		Table table = column.getTable(conn);
-		if(!tables.contains(table)) tables.add(table);
-	}
+  @Override
+  public void getReferencedTables(AOServConnector conn, List<Table> tables) throws SQLException, IOException {
+    Table table = column.getTable(conn);
+    if (!tables.contains(table)) {
+      tables.add(table);
+    }
+  }
 }
 

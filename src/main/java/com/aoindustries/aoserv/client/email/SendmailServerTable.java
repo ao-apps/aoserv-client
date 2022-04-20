@@ -40,43 +40,43 @@ import java.util.List;
  */
 public final class SendmailServerTable extends CachedTableIntegerKey<SendmailServer> {
 
-	SendmailServerTable(AOServConnector connector) {
-		super(connector, SendmailServer.class);
-	}
+  SendmailServerTable(AOServConnector connector) {
+    super(connector, SendmailServer.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(SendmailServer.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
-		new OrderBy(SendmailServer.COLUMN_NAME_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(SendmailServer.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
+    new OrderBy(SendmailServer.COLUMN_NAME_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public SendmailServer get(int id) throws IOException, SQLException {
-		return getUniqueRow(SendmailServer.COLUMN_ID, id);
-	}
+  @Override
+  public SendmailServer get(int id) throws IOException, SQLException {
+    return getUniqueRow(SendmailServer.COLUMN_ID, id);
+  }
 
-	public List<SendmailServer> getSendmailServers(Server ao) throws IOException, SQLException {
-		return getIndexedRows(SendmailServer.COLUMN_AO_SERVER, ao.getPkey());
-	}
+  public List<SendmailServer> getSendmailServers(Server ao) throws IOException, SQLException {
+    return getIndexedRows(SendmailServer.COLUMN_AO_SERVER, ao.getPkey());
+  }
 
-	public List<SendmailServer> getSendmailServers(Package pk) throws IOException, SQLException {
-		return getIndexedRows(SendmailServer.COLUMN_PACKAGE, pk.getPkey());
-	}
+  public List<SendmailServer> getSendmailServers(Package pk) throws IOException, SQLException {
+    return getIndexedRows(SendmailServer.COLUMN_PACKAGE, pk.getPkey());
+  }
 
-	public List<SendmailServer> getSendmailServersByServerCertificate(Certificate sslCert) throws IOException, SQLException {
-		return getIndexedRows(SendmailServer.COLUMN_SERVER_CERTIFICATE, sslCert.getPkey());
-	}
+  public List<SendmailServer> getSendmailServersByServerCertificate(Certificate sslCert) throws IOException, SQLException {
+    return getIndexedRows(SendmailServer.COLUMN_SERVER_CERTIFICATE, sslCert.getPkey());
+  }
 
-	public List<SendmailServer> getSendmailServersByClientCertificate(Certificate sslCert) throws IOException, SQLException {
-		return getIndexedRows(SendmailServer.COLUMN_CLIENT_CERTIFICATE, sslCert.getPkey());
-	}
+  public List<SendmailServer> getSendmailServersByClientCertificate(Certificate sslCert) throws IOException, SQLException {
+    return getIndexedRows(SendmailServer.COLUMN_CLIENT_CERTIFICATE, sslCert.getPkey());
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.SENDMAIL_SERVERS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.SENDMAIL_SERVERS;
+  }
 }

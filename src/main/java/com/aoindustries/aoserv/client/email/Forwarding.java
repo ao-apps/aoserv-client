@@ -49,104 +49,106 @@ import java.util.List;
  */
 public final class Forwarding extends CachedObjectIntegerKey<Forwarding> implements Removable {
 
-	static final int
-		COLUMN_PKEY=0,
-		COLUMN_EMAIL_ADDRESS=1
-	;
-	static final String COLUMN_EMAIL_ADDRESS_name = "email_address";
-	static final String COLUMN_DESTINATION_name = "destination";
+  static final int
+    COLUMN_PKEY=0,
+    COLUMN_EMAIL_ADDRESS=1
+  ;
+  static final String COLUMN_EMAIL_ADDRESS_name = "email_address";
+  static final String COLUMN_DESTINATION_name = "destination";
 
-	private int email_address;
-	private Email destination;
+  private int email_address;
+  private Email destination;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public Forwarding() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public Forwarding() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_PKEY: return pkey;
-			case COLUMN_EMAIL_ADDRESS: return email_address;
-			case 2: return destination;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_PKEY: return pkey;
+      case COLUMN_EMAIL_ADDRESS: return email_address;
+      case 2: return destination;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	/**
-	 * Gets the <code>destination</code>
-	 */
-	public Email getDestination() {
-		return destination;
-	}
+  /**
+   * Gets the <code>destination</code>
+   */
+  public Email getDestination() {
+    return destination;
+  }
 
-	/**
-	 * Gets the <code>email_address</code>
-	 */
-	public Address getEmailAddress() throws SQLException, IOException {
-		Address emailAddressObject = table.getConnector().getEmail().getAddress().get(email_address);
-		if (emailAddressObject == null) throw new SQLException("Unable to find EmailAddress: " + email_address);
-		return emailAddressObject;
-	}
+  /**
+   * Gets the <code>email_address</code>
+   */
+  public Address getEmailAddress() throws SQLException, IOException {
+    Address emailAddressObject = table.getConnector().getEmail().getAddress().get(email_address);
+    if (emailAddressObject == null) {
+      throw new SQLException("Unable to find EmailAddress: " + email_address);
+    }
+    return emailAddressObject;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.EMAIL_FORWARDING;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.EMAIL_FORWARDING;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		try {
-			pkey=result.getInt(1);
-			email_address=result.getInt(2);
-			destination=Email.valueOf(result.getString(3));
-		} catch(ValidationException e) {
-			throw new SQLException(e);
-		}
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    try {
+      pkey=result.getInt(1);
+      email_address=result.getInt(2);
+      destination=Email.valueOf(result.getString(3));
+    } catch (ValidationException e) {
+      throw new SQLException(e);
+    }
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		try {
-			pkey=in.readCompressedInt();
-			email_address=in.readCompressedInt();
-			destination=Email.valueOf(in.readUTF());
-		} catch(ValidationException e) {
-			throw new IOException(e);
-		}
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    try {
+      pkey=in.readCompressedInt();
+      email_address=in.readCompressedInt();
+      destination=Email.valueOf(in.readUTF());
+    } catch (ValidationException e) {
+      throw new IOException(e);
+    }
+  }
 
-	@Override
-	public List<CannotRemoveReason<?>> getCannotRemoveReasons() {
-		return Collections.emptyList();
-	}
+  @Override
+  public List<CannotRemoveReason<?>> getCannotRemoveReasons() {
+    return Collections.emptyList();
+  }
 
-	@Override
-	public void remove() throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(
-			true,
-			AoservProtocol.CommandID.REMOVE,
-			Table.TableID.EMAIL_FORWARDING,
-			pkey
-		);
-	}
+  @Override
+  public void remove() throws IOException, SQLException {
+    table.getConnector().requestUpdateIL(
+      true,
+      AoservProtocol.CommandID.REMOVE,
+      Table.TableID.EMAIL_FORWARDING,
+      pkey
+    );
+  }
 
-	@Override
-	public String toStringImpl() throws SQLException, IOException {
-		return getEmailAddress().toStringImpl()+" -> "+destination;
-	}
+  @Override
+  public String toStringImpl() throws SQLException, IOException {
+    return getEmailAddress().toStringImpl()+" -> "+destination;
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeCompressedInt(email_address);
-		out.writeUTF(destination.toString());
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    out.writeCompressedInt(email_address);
+    out.writeUTF(destination.toString());
+  }
 }

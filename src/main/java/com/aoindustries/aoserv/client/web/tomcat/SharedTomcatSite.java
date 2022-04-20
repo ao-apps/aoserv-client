@@ -43,97 +43,101 @@ import java.sql.SQLException;
  */
 public final class SharedTomcatSite extends CachedObjectIntegerKey<SharedTomcatSite> {
 
-	static final int
-		COLUMN_TOMCAT_SITE=0,
-		COLUMN_HTTPD_SHARED_TOMCAT=1
-	;
-	static final String COLUMN_TOMCAT_SITE_name = "tomcat_site";
+  static final int
+    COLUMN_TOMCAT_SITE=0,
+    COLUMN_HTTPD_SHARED_TOMCAT=1
+  ;
+  static final String COLUMN_TOMCAT_SITE_name = "tomcat_site";
 
-	private int httpd_shared_tomcat;
+  private int httpd_shared_tomcat;
 
-	public static final String DEFAULT_TOMCAT_VERSION_PREFIX = Version.VERSION_10_0_PREFIX;
+  public static final String DEFAULT_TOMCAT_VERSION_PREFIX = Version.VERSION_10_0_PREFIX;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public SharedTomcatSite() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public SharedTomcatSite() {
+    // Do nothing
+  }
 
-	/**
-	 * Determines if the API user is allowed to stop the Java virtual machine associated
-	 * with this site.
-	 */
-	public boolean canStop() throws SQLException, IOException {
-		SharedTomcat hst=getHttpdSharedTomcat();
-		return getHttpdSharedTomcat()!=null && !hst.isDisabled();
-	}
+  /**
+   * Determines if the API user is allowed to stop the Java virtual machine associated
+   * with this site.
+   */
+  public boolean canStop() throws SQLException, IOException {
+    SharedTomcat hst=getHttpdSharedTomcat();
+    return getHttpdSharedTomcat() != null && !hst.isDisabled();
+  }
 
-	/**
-	 * Determines if the API user is allowed to start the Java virtual machine associated
-	 * with this site.
-	 */
-	public boolean canStart() throws SQLException, IOException {
-		// This site must be enabled
-		if(getHttpdTomcatSite().getHttpdSite().isDisabled()) return false;
-		SharedTomcat hst = getHttpdSharedTomcat();
-		if(hst == null) {
-			// Filtered, assume can start
-			return true;
-		}
-		// Has at least one enabled site: this one
-		return !hst.isDisabled();
-	}
+  /**
+   * Determines if the API user is allowed to start the Java virtual machine associated
+   * with this site.
+   */
+  public boolean canStart() throws SQLException, IOException {
+    // This site must be enabled
+    if (getHttpdTomcatSite().getHttpdSite().isDisabled()) {
+      return false;
+    }
+    SharedTomcat hst = getHttpdSharedTomcat();
+    if (hst == null) {
+      // Filtered, assume can start
+      return true;
+    }
+    // Has at least one enabled site: this one
+    return !hst.isDisabled();
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_TOMCAT_SITE: return pkey;
-			case COLUMN_HTTPD_SHARED_TOMCAT: return httpd_shared_tomcat;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_TOMCAT_SITE: return pkey;
+      case COLUMN_HTTPD_SHARED_TOMCAT: return httpd_shared_tomcat;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	public SharedTomcat getHttpdSharedTomcat() throws SQLException, IOException {
-		// May be null when filtered
-		return table.getConnector().getWeb_tomcat().getSharedTomcat().get(httpd_shared_tomcat);
-	}
+  public SharedTomcat getHttpdSharedTomcat() throws SQLException, IOException {
+    // May be null when filtered
+    return table.getConnector().getWeb_tomcat().getSharedTomcat().get(httpd_shared_tomcat);
+  }
 
-	public Site getHttpdTomcatSite() throws SQLException, IOException {
-		Site obj=table.getConnector().getWeb_tomcat().getSite().get(pkey);
-		if(obj==null) throw new SQLException("Unable to find HttpdTomcatSite: "+pkey);
-		return obj;
-	}
+  public Site getHttpdTomcatSite() throws SQLException, IOException {
+    Site obj=table.getConnector().getWeb_tomcat().getSite().get(pkey);
+    if (obj == null) {
+      throw new SQLException("Unable to find HttpdTomcatSite: "+pkey);
+    }
+    return obj;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.HTTPD_TOMCAT_SHARED_SITES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.HTTPD_TOMCAT_SHARED_SITES;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey=result.getInt(1);
-		httpd_shared_tomcat=result.getInt(2);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey=result.getInt(1);
+    httpd_shared_tomcat=result.getInt(2);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readCompressedInt();
-		httpd_shared_tomcat=in.readCompressedInt();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readCompressedInt();
+    httpd_shared_tomcat=in.readCompressedInt();
+  }
 
-	@Override
-	public String toStringImpl() throws SQLException, IOException {
-		return getHttpdTomcatSite().toStringImpl();
-	}
+  @Override
+  public String toStringImpl() throws SQLException, IOException {
+    return getHttpdTomcatSite().toStringImpl();
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeCompressedInt(httpd_shared_tomcat);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    out.writeCompressedInt(httpd_shared_tomcat);
+  }
 }

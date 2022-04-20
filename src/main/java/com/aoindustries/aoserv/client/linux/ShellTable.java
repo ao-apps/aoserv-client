@@ -35,26 +35,26 @@ import java.sql.SQLException;
  */
 public final class ShellTable extends GlobalTablePosixPathKey<Shell> {
 
-	ShellTable(AOServConnector connector) {
-		super(connector, Shell.class);
-	}
+  ShellTable(AOServConnector connector) {
+    super(connector, Shell.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(Shell.COLUMN_PATH_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(Shell.COLUMN_PATH_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.SHELLS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.SHELLS;
+  }
 
-	@Override
-	public Shell get(PosixPath path) throws IOException, SQLException {
-		return getUniqueRow(Shell.COLUMN_PATH, path);
-	}
+  @Override
+  public Shell get(PosixPath path) throws IOException, SQLException {
+    return getUniqueRow(Shell.COLUMN_PATH, path);
+  }
 }

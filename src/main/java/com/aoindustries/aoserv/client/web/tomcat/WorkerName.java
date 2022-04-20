@@ -43,47 +43,49 @@ import java.sql.SQLException;
  */
 public final class WorkerName extends GlobalObjectStringKey<WorkerName> {
 
-	static final int COLUMN_CODE=0;
-	static final String COLUMN_CODE_name = "code";
+  static final int COLUMN_CODE=0;
+  static final String COLUMN_CODE_name = "code";
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public WorkerName() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public WorkerName() {
+    // Do nothing
+  }
 
-	public String getCode() {
-		return pkey;
-	}
+  public String getCode() {
+    return pkey;
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		if(i==COLUMN_CODE) return pkey;
-		throw new IllegalArgumentException("Invalid index: " + i);
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    if (i == COLUMN_CODE) {
+      return pkey;
+    }
+    throw new IllegalArgumentException("Invalid index: " + i);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.HTTPD_JK_CODES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.HTTPD_JK_CODES;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey=result.getString(1);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey=result.getString(1);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readUTF();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readUTF();
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey);
+  }
 }

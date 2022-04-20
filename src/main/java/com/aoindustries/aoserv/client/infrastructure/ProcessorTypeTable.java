@@ -36,26 +36,26 @@ import java.sql.SQLException;
  */
 public final class ProcessorTypeTable extends GlobalTableStringKey<ProcessorType> {
 
-	ProcessorTypeTable(AOServConnector connector) {
-		super(connector, ProcessorType.class);
-	}
+  ProcessorTypeTable(AOServConnector connector) {
+    super(connector, ProcessorType.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(ProcessorType.COLUMN_SORT_ORDER_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(ProcessorType.COLUMN_SORT_ORDER_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public ProcessorType get(String type) throws IOException, SQLException {
-		return getUniqueRow(ProcessorType.COLUMN_TYPE, type);
-	}
+  @Override
+  public ProcessorType get(String type) throws IOException, SQLException {
+    return getUniqueRow(ProcessorType.COLUMN_TYPE, type);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.PROCESSOR_TYPES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.PROCESSOR_TYPES;
+  }
 }

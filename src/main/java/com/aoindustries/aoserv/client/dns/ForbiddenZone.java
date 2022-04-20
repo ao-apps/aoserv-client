@@ -43,47 +43,49 @@ import java.sql.SQLException;
  */
 public final class ForbiddenZone extends GlobalObjectStringKey<ForbiddenZone> {
 
-	static final int COLUMN_ZONE=0;
-	static final String COLUMN_ZONE_name = "zone";
+  static final int COLUMN_ZONE=0;
+  static final String COLUMN_ZONE_name = "zone";
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public ForbiddenZone() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public ForbiddenZone() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		if(i==COLUMN_ZONE) return pkey;
-		throw new IllegalArgumentException("Invalid index: " + i);
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    if (i == COLUMN_ZONE) {
+      return pkey;
+    }
+    throw new IllegalArgumentException("Invalid index: " + i);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.DNS_FORBIDDEN_ZONES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.DNS_FORBIDDEN_ZONES;
+  }
 
-	public String getZone() {
-		return pkey;
-	}
+  public String getZone() {
+    return pkey;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey=result.getString(1);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey=result.getString(1);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readUTF().intern();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readUTF().intern();
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey);
+  }
 }

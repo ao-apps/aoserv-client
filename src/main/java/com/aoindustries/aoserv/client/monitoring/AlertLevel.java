@@ -35,27 +35,27 @@ import java.util.ResourceBundle;
 // Matches aoserv-master-db/aoindustries/monitoring/AlertLevel-type.sql
 // TODO: Once a separate project exists for aoserv-client-monitoring, remove this duplicate enum and depend on noc-common
 public enum AlertLevel {
-	NONE,
-	LOW,
-	MEDIUM,
-	HIGH,
-	CRITICAL,
-	UNKNOWN;
+  NONE,
+  LOW,
+  MEDIUM,
+  HIGH,
+  CRITICAL,
+  UNKNOWN;
 
-	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, AlertLevel.class);
+  private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, AlertLevel.class);
 
-	private static final AlertLevel[] alertLevels = values();
+  private static final AlertLevel[] alertLevels = values();
 
-	/**
-	 * Gets the alert level from ordinal without the overhead of a call
-	 * to <code>values</code>.
-	 */
-	public static AlertLevel fromOrdinal(int ordinal) {
-		return alertLevels[ordinal];
-	}
+  /**
+   * Gets the alert level from ordinal without the overhead of a call
+   * to <code>values</code>.
+   */
+  public static AlertLevel fromOrdinal(int ordinal) {
+    return alertLevels[ordinal];
+  }
 
-	@Override
-	public String toString() {
-		return RESOURCES.getMessage(name() + ".toString");
-	}
+  @Override
+  public String toString() {
+    return RESOURCES.getMessage(name() + ".toString");
+  }
 }

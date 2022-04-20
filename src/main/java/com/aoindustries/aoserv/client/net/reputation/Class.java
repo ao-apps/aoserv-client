@@ -30,43 +30,43 @@ package com.aoindustries.aoserv.client.net.reputation;
  */
 // Matches aoserv-master-db/aoindustries/net/reputation/Class-type.sql
 public enum Class {
-	/**
-	 * Manual Good
-	 */
-	gm,
+  /**
+   * Manual Good
+   */
+  gm,
 
-	/**
-	 * Manual Bad
-	 */
-	bm,
+  /**
+   * Manual Bad
+   */
+  bm,
 
-	/**
-	 * Definite Bad
-	 */
-	bd,
+  /**
+   * Definite Bad
+   */
+  bd,
 
-	/**
-	 * Uncertain Bad
-	 */
-	bu,
+  /**
+   * Uncertain Bad
+   */
+  bu,
 
-	/**
-	 * Uncertain Good
-	 */
-	gu,
+  /**
+   * Uncertain Good
+   */
+  gu,
 
-	/**
-	 * Definite Good
-	 */
-	gd,
+  /**
+   * Definite Good
+   */
+  gd,
 
-	/**
-	 * Network Good
-	 */
-	gn,
+  /**
+   * Network Good
+   */
+  gn,
 
-	/**
-	 * Unknown
-	 */
-	uu
+  /**
+   * Unknown
+   */
+  uu
 }

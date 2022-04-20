@@ -34,44 +34,44 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final BankTable Bank;
-	public BankTable getBank() {return Bank;}
+  private final BankTable Bank;
+  public BankTable getBank() {return Bank;}
 
-	private final BankAccountTable BankAccount;
-	public BankAccountTable getBankAccount() {return BankAccount;}
+  private final BankAccountTable BankAccount;
+  public BankAccountTable getBankAccount() {return BankAccount;}
 
-	private final BankTransactionTable BankTransaction;
-	public BankTransactionTable getBankTransaction() {return BankTransaction;}
+  private final BankTransactionTable BankTransaction;
+  public BankTransactionTable getBankTransaction() {return BankTransaction;}
 
-	private final BankTransactionTypeTable BankTransactionType;
-	public BankTransactionTypeTable getBankTransactionType() {return BankTransactionType;}
+  private final BankTransactionTypeTable BankTransactionType;
+  public BankTransactionTypeTable getBankTransactionType() {return BankTransactionType;}
 
-	private final ExpenseCategoryTable ExpenseCategory;
-	public ExpenseCategoryTable getExpenseCategory() {return ExpenseCategory;}
+  private final ExpenseCategoryTable ExpenseCategory;
+  public ExpenseCategoryTable getExpenseCategory() {return ExpenseCategory;}
 
-	private final List<? extends AOServTable<?, ?>> tables;
+  private final List<? extends AOServTable<?, ?>> tables;
 
-	public Schema(AOServConnector connector) {
-		super(connector);
+  public Schema(AOServConnector connector) {
+    super(connector);
 
-		ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
-		newTables.add(BankAccount = new BankAccountTable(connector));
-		newTables.add(BankTransactionType = new BankTransactionTypeTable(connector));
-		newTables.add(BankTransaction = new BankTransactionTable(connector));
-		newTables.add(Bank = new BankTable(connector));
-		newTables.add(ExpenseCategory = new ExpenseCategoryTable(connector));
-		newTables.trimToSize();
-		tables = Collections.unmodifiableList(newTables);
-	}
+    ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
+    newTables.add(BankAccount = new BankAccountTable(connector));
+    newTables.add(BankTransactionType = new BankTransactionTypeTable(connector));
+    newTables.add(BankTransaction = new BankTransactionTable(connector));
+    newTables.add(Bank = new BankTable(connector));
+    newTables.add(ExpenseCategory = new ExpenseCategoryTable(connector));
+    newTables.trimToSize();
+    tables = Collections.unmodifiableList(newTables);
+  }
 
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
-	public List<? extends AOServTable<?, ?>> getTables() {
-		return tables;
-	}
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
+  public List<? extends AOServTable<?, ?>> getTables() {
+    return tables;
+  }
 
-	@Override
-	public String getName() {
-		return "accounting";
-	}
+  @Override
+  public String getName() {
+    return "accounting";
+  }
 }

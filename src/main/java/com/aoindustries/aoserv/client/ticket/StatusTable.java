@@ -36,26 +36,26 @@ import java.sql.SQLException;
  */
 public final class StatusTable extends GlobalTableStringKey<Status> {
 
-	StatusTable(AOServConnector connector) {
-		super(connector, Status.class);
-	}
+  StatusTable(AOServConnector connector) {
+    super(connector, Status.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(Status.COLUMN_SORT_ORDER_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(Status.COLUMN_SORT_ORDER_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.TICKET_STATI;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.TICKET_STATI;
+  }
 
-	@Override
-	public Status get(String status) throws IOException, SQLException {
-		return getUniqueRow(Status.COLUMN_STATUS, status);
-	}
+  @Override
+  public Status get(String status) throws IOException, SQLException {
+    return getUniqueRow(Status.COLUMN_STATUS, status);
+  }
 }

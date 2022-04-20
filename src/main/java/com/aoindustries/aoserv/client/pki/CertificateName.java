@@ -39,123 +39,128 @@ import java.sql.SQLException;
  */
 public final class CertificateName extends CachedObjectIntegerKey<CertificateName> {
 
-	public static final String WILDCARD_PREFIX = "*.";
+  public static final String WILDCARD_PREFIX = "*.";
 
-	static final int
-		COLUMN_PKEY = 0,
-		COLUMN_SSL_CERTIFICATE = 1
-	;
-	static final String COLUMN_SSL_CERTIFICATE_name = "ssl_certificate";
-	static final String COLUMN_IS_COMMON_NAME_name = "is_common_name";
-	static final String COLUMN_IS_WILDCARD_name = "is_wildcard";
-	static final String COLUMN_DOMAIN_name = "domain";
+  static final int
+    COLUMN_PKEY = 0,
+    COLUMN_SSL_CERTIFICATE = 1
+  ;
+  static final String COLUMN_SSL_CERTIFICATE_name = "ssl_certificate";
+  static final String COLUMN_IS_COMMON_NAME_name = "is_common_name";
+  static final String COLUMN_IS_WILDCARD_name = "is_wildcard";
+  static final String COLUMN_DOMAIN_name = "domain";
 
-	private int sslCertificate;
-	private boolean isCommonName;
-	private boolean isWildcard;
-	private DomainName domain;
+  private int sslCertificate;
+  private boolean isCommonName;
+  private boolean isWildcard;
+  private DomainName domain;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public CertificateName() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public CertificateName() {
+    // Do nothing
+  }
 
-	@Override
-	public String toStringImpl() {
-		if(isCommonName) return getName();
-		else return getName() + " (Alt)";
-	}
+  @Override
+  public String toStringImpl() {
+    if (isCommonName) {
+      return getName();
+    } else {
+      return getName() + " (Alt)";
+    }
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_PKEY: return pkey;
-			case COLUMN_SSL_CERTIFICATE: return sslCertificate;
-			case 2: return isCommonName;
-			case 3: return isWildcard;
-			case 4: return domain;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_PKEY: return pkey;
+      case COLUMN_SSL_CERTIFICATE: return sslCertificate;
+      case 2: return isCommonName;
+      case 3: return isWildcard;
+      case 4: return domain;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.SSL_CERTIFICATE_NAMES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.SSL_CERTIFICATE_NAMES;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		try {
-			int pos = 1;
-			pkey = result.getInt(pos++);
-			sslCertificate = result.getInt(pos++);
-			isCommonName = result.getBoolean(pos++);
-			isWildcard = result.getBoolean(pos++);
-			domain = DomainName.valueOf(result.getString(pos++));
-		} catch(ValidationException e) {
-			throw new SQLException(e);
-		}
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    try {
+      int pos = 1;
+      pkey = result.getInt(pos++);
+      sslCertificate = result.getInt(pos++);
+      isCommonName = result.getBoolean(pos++);
+      isWildcard = result.getBoolean(pos++);
+      domain = DomainName.valueOf(result.getString(pos++));
+    } catch (ValidationException e) {
+      throw new SQLException(e);
+    }
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		try {
-			pkey = in.readCompressedInt();
-			sslCertificate = in.readCompressedInt();
-			isCommonName = in.readBoolean();
-			isWildcard = in.readBoolean();
-			domain = DomainName.valueOf(in.readUTF());
-		} catch(ValidationException e) {
-			throw new IOException(e);
-		}
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    try {
+      pkey = in.readCompressedInt();
+      sslCertificate = in.readCompressedInt();
+      isCommonName = in.readBoolean();
+      isWildcard = in.readBoolean();
+      domain = DomainName.valueOf(in.readUTF());
+    } catch (ValidationException e) {
+      throw new IOException(e);
+    }
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeCompressedInt(sslCertificate);
-		out.writeBoolean(isCommonName);
-		out.writeBoolean(isWildcard);
-		out.writeUTF(domain.toString());
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    out.writeCompressedInt(sslCertificate);
+    out.writeBoolean(isCommonName);
+    out.writeBoolean(isWildcard);
+    out.writeUTF(domain.toString());
+  }
 
-	public Certificate getSslCertificate() throws SQLException, IOException {
-		Certificate obj = table.getConnector().getPki().getCertificate().get(sslCertificate);
-		if(obj == null) throw new SQLException("Unable to find SslCertificate: " + sslCertificate);
-		return obj;
-	}
+  public Certificate getSslCertificate() throws SQLException, IOException {
+    Certificate obj = table.getConnector().getPki().getCertificate().get(sslCertificate);
+    if (obj == null) {
+      throw new SQLException("Unable to find SslCertificate: " + sslCertificate);
+    }
+    return obj;
+  }
 
-	public boolean isCommon() {
-		return isCommonName;
-	}
+  public boolean isCommon() {
+    return isCommonName;
+  }
 
-	public boolean isWildcard() {
-		return isWildcard;
-	}
+  public boolean isWildcard() {
+    return isWildcard;
+  }
 
-	public DomainName getDomain() {
-		return domain;
-	}
+  public DomainName getDomain() {
+    return domain;
+  }
 
-	/**
-	 * Gets the name, which is {@link #getDomain()} or non-wildcard,
-	 * or "*." + {@link #getDomain()} for wildcard domains.
-	 *
-	 * @see  #WILDCARD_PREFIX
-	 * @see  #isWildcard()
-	 * @see  #getDomain()
-	 */
-	public String getName() {
-		if(isWildcard) {
-			return WILDCARD_PREFIX + domain;
-		} else {
-			return domain.toString();
-		}
-	}
+  /**
+   * Gets the name, which is {@link #getDomain()} or non-wildcard,
+   * or "*." + {@link #getDomain()} for wildcard domains.
+   *
+   * @see  #WILDCARD_PREFIX
+   * @see  #isWildcard()
+   * @see  #getDomain()
+   */
+  public String getName() {
+    if (isWildcard) {
+      return WILDCARD_PREFIX + domain;
+    } else {
+      return domain.toString();
+    }
+  }
 }

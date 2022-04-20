@@ -43,79 +43,81 @@ import java.sql.SQLException;
  */
 public final class SystemAlias extends CachedObjectIntegerKey<SystemAlias> {
 
-	static final int
-		COLUMN_PKEY=0,
-		COLUMN_AO_SERVER=1
-	;
-	static final String COLUMN_AO_SERVER_name = "ao_server";
-	static final String COLUMN_ADDRESS_name = "address";
+  static final int
+    COLUMN_PKEY=0,
+    COLUMN_AO_SERVER=1
+  ;
+  static final String COLUMN_AO_SERVER_name = "ao_server";
+  static final String COLUMN_ADDRESS_name = "address";
 
-	private int ao_server;
-	private String address;
-	private String destination;
+  private int ao_server;
+  private String address;
+  private String destination;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public SystemAlias() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public SystemAlias() {
+    // Do nothing
+  }
 
-	public String getAddress() {
-		return address;
-	}
+  public String getAddress() {
+    return address;
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_PKEY: return pkey;
-			case COLUMN_AO_SERVER: return ao_server;
-			case 2: return address;
-			case 3: return destination;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_PKEY: return pkey;
+      case COLUMN_AO_SERVER: return ao_server;
+      case 2: return address;
+      case 3: return destination;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	public String getDestination() {
-		return destination;
-	}
+  public String getDestination() {
+    return destination;
+  }
 
-	public Server getLinuxServer() throws SQLException, IOException {
-		Server ao=table.getConnector().getLinux().getServer().get(ao_server);
-		if(ao==null) throw new SQLException("Unable to find linux.Server: "+ao_server);
-		return ao;
-	}
+  public Server getLinuxServer() throws SQLException, IOException {
+    Server ao=table.getConnector().getLinux().getServer().get(ao_server);
+    if (ao == null) {
+      throw new SQLException("Unable to find linux.Server: "+ao_server);
+    }
+    return ao;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.SYSTEM_EMAIL_ALIASES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.SYSTEM_EMAIL_ALIASES;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey = result.getInt(1);
-		ao_server = result.getInt(2);
-		address = result.getString(3);
-		destination = result.getString(4);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey = result.getInt(1);
+    ao_server = result.getInt(2);
+    address = result.getString(3);
+    destination = result.getString(4);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readCompressedInt();
-		ao_server=in.readCompressedInt();
-		address=in.readUTF().intern();
-		destination=in.readUTF().intern();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readCompressedInt();
+    ao_server=in.readCompressedInt();
+    address=in.readUTF().intern();
+    destination=in.readUTF().intern();
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeCompressedInt(ao_server);
-		out.writeUTF(address);
-		out.writeUTF(destination);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    out.writeCompressedInt(ao_server);
+    out.writeUTF(address);
+    out.writeUTF(destination);
+  }
 }

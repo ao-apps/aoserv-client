@@ -39,76 +39,78 @@ import java.sql.SQLException;
  */
 public final class TimeZone extends GlobalObjectStringKey<TimeZone> {
 
-	static final int COLUMN_NAME=0;
-	static final String COLUMN_NAME_name = "name";
+  static final int COLUMN_NAME=0;
+  static final String COLUMN_NAME_name = "name";
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public TimeZone() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public TimeZone() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_NAME: return pkey;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_NAME: return pkey;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	/**
-	 * Gets the unique name for this time zone.
-	 */
-	public String getName() {
-		return pkey;
-	}
+  /**
+   * Gets the unique name for this time zone.
+   */
+  public String getName() {
+    return pkey;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.TIME_ZONES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.TIME_ZONES;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey = result.getString(1);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey = result.getString(1);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readUTF().intern();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readUTF().intern();
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey);
+  }
 
-	private java.util.TimeZone timeZone;
+  private java.util.TimeZone timeZone;
 
-	/**
-	 * Gets the Java TimeZone for this TimeZone.
-	 *
-	 * Not synchronized because double initialization is acceptable.
-	 */
-	public java.util.TimeZone getTimeZone() {
-		if(timeZone == null) {
-			// Sequential scan done here in order to detect not found versus automatic conversion to GMT
-			String[] ids = java.util.TimeZone.getAvailableIDs();
-			boolean found = false;
-			for(String id : ids) {
-				if(id.equals(pkey)) {
-					found = true;
-					break;
-				}
-			}
-			if(!found) throw new IllegalArgumentException("TimeZone not found: " + pkey);
-			timeZone = java.util.TimeZone.getTimeZone(pkey);
-		}
-		return timeZone;
-	}
+  /**
+   * Gets the Java TimeZone for this TimeZone.
+   *
+   * Not synchronized because double initialization is acceptable.
+   */
+  public java.util.TimeZone getTimeZone() {
+    if (timeZone == null) {
+      // Sequential scan done here in order to detect not found versus automatic conversion to GMT
+      String[] ids = java.util.TimeZone.getAvailableIDs();
+      boolean found = false;
+      for (String id : ids) {
+        if (id.equals(pkey)) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        throw new IllegalArgumentException("TimeZone not found: " + pkey);
+      }
+      timeZone = java.util.TimeZone.getTimeZone(pkey);
+    }
+    return timeZone;
+  }
 }

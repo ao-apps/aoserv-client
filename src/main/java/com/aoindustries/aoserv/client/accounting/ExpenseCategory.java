@@ -39,47 +39,49 @@ import java.sql.SQLException;
  */
 public final class ExpenseCategory extends CachedObjectStringKey<ExpenseCategory> {
 
-	static final int COLUMN_NAME = 0;
-	static final String COLUMN_NAME_name = "name";
+  static final int COLUMN_NAME = 0;
+  static final String COLUMN_NAME_name = "name";
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public ExpenseCategory() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public ExpenseCategory() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		if(i == COLUMN_NAME) return pkey;
-		throw new IllegalArgumentException("Invalid index: " + i);
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    if (i == COLUMN_NAME) {
+      return pkey;
+    }
+    throw new IllegalArgumentException("Invalid index: " + i);
+  }
 
-	public String getName() {
-		return pkey;
-	}
+  public String getName() {
+    return pkey;
+  }
 
-	@Override
-		public Table.TableID getTableID() {
-		return Table.TableID.EXPENSE_CATEGORIES;
-	}
+  @Override
+    public Table.TableID getTableID() {
+    return Table.TableID.EXPENSE_CATEGORIES;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey = result.getString(1);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey = result.getString(1);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey = in.readUTF().intern();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey = in.readUTF().intern();
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey);
+  }
 }

@@ -28,21 +28,21 @@ package com.aoindustries.aoserv.client.dto;
  */
 public class PostgresDatabaseName {
 
-	private String name;
+  private String name;
 
-	public PostgresDatabaseName() {
-		// Do nothing
-	}
+  public PostgresDatabaseName() {
+    // Do nothing
+  }
 
-	public PostgresDatabaseName(String name) {
-		this.name = name;
-	}
+  public PostgresDatabaseName(String name) {
+    this.name = name;
+  }
 
-	public String getName() {
-		return name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 }

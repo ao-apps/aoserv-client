@@ -34,68 +34,68 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final DaemonAclTable DaemonAcl;
-	public DaemonAclTable getDaemonAcl() {return DaemonAcl;}
+  private final DaemonAclTable DaemonAcl;
+  public DaemonAclTable getDaemonAcl() {return DaemonAcl;}
 
-	private final GroupTable Group;
-	public GroupTable getGroup() {return Group;}
+  private final GroupTable Group;
+  public GroupTable getGroup() {return Group;}
 
-	private final GroupServerTable GroupServer;
-	public GroupServerTable getGroupServer() {return GroupServer;}
+  private final GroupServerTable GroupServer;
+  public GroupServerTable getGroupServer() {return GroupServer;}
 
-	private final GroupTypeTable GroupType;
-	public GroupTypeTable getGroupType() {return GroupType;}
+  private final GroupTypeTable GroupType;
+  public GroupTypeTable getGroupType() {return GroupType;}
 
-	private final GroupUserTable GroupUser;
-	public GroupUserTable getGroupUser() {return GroupUser;}
+  private final GroupUserTable GroupUser;
+  public GroupUserTable getGroupUser() {return GroupUser;}
 
-	private final ServerTable Server;
-	public ServerTable getServer() {return Server;}
+  private final ServerTable Server;
+  public ServerTable getServer() {return Server;}
 
-	private final ShellTable Shell;
-	public ShellTable getShell() {return Shell;}
+  private final ShellTable Shell;
+  public ShellTable getShell() {return Shell;}
 
-	private final TimeZoneTable TimeZone;
-	public TimeZoneTable getTimeZone() {return TimeZone;}
+  private final TimeZoneTable TimeZone;
+  public TimeZoneTable getTimeZone() {return TimeZone;}
 
-	private final UserTable User;
-	public UserTable getUser() {return User;}
+  private final UserTable User;
+  public UserTable getUser() {return User;}
 
-	private final UserServerTable UserServer;
-	public UserServerTable getUserServer() {return UserServer;}
+  private final UserServerTable UserServer;
+  public UserServerTable getUserServer() {return UserServer;}
 
-	private final UserTypeTable UserType;
-	public UserTypeTable getUserType() {return UserType;}
+  private final UserTypeTable UserType;
+  public UserTypeTable getUserType() {return UserType;}
 
-	private final List<? extends AOServTable<?, ?>> tables;
+  private final List<? extends AOServTable<?, ?>> tables;
 
-	public Schema(AOServConnector connector) {
-		super(connector);
+  public Schema(AOServConnector connector) {
+    super(connector);
 
-		ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
-		newTables.add(DaemonAcl = new DaemonAclTable(connector));
-		newTables.add(Group = new GroupTable(connector));
-		newTables.add(GroupServer = new GroupServerTable(connector));
-		newTables.add(GroupType = new GroupTypeTable(connector));
-		newTables.add(GroupUser = new GroupUserTable(connector));
-		newTables.add(Server = new ServerTable(connector));
-		newTables.add(Shell = new ShellTable(connector));
-		newTables.add(TimeZone = new TimeZoneTable(connector));
-		newTables.add(User = new UserTable(connector));
-		newTables.add(UserServer = new UserServerTable(connector));
-		newTables.add(UserType = new UserTypeTable(connector));
-		newTables.trimToSize();
-		tables = Collections.unmodifiableList(newTables);
-	}
+    ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
+    newTables.add(DaemonAcl = new DaemonAclTable(connector));
+    newTables.add(Group = new GroupTable(connector));
+    newTables.add(GroupServer = new GroupServerTable(connector));
+    newTables.add(GroupType = new GroupTypeTable(connector));
+    newTables.add(GroupUser = new GroupUserTable(connector));
+    newTables.add(Server = new ServerTable(connector));
+    newTables.add(Shell = new ShellTable(connector));
+    newTables.add(TimeZone = new TimeZoneTable(connector));
+    newTables.add(User = new UserTable(connector));
+    newTables.add(UserServer = new UserServerTable(connector));
+    newTables.add(UserType = new UserTypeTable(connector));
+    newTables.trimToSize();
+    tables = Collections.unmodifiableList(newTables);
+  }
 
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
-	public List<? extends AOServTable<?, ?>> getTables() {
-		return tables;
-	}
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
+  public List<? extends AOServTable<?, ?>> getTables() {
+    return tables;
+  }
 
-	@Override
-	public String getName() {
-		return "linux";
-	}
+  @Override
+  public String getName() {
+    return "linux";
+  }
 }

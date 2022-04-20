@@ -42,62 +42,64 @@ import java.sql.SQLException;
  */
 public final class Priority extends GlobalObjectStringKey<Priority> implements Comparable<Priority> {
 
-	static final int COLUMN_PRIORITY=0;
-	static final String COLUMN_PRIORITY_name = "priority";
+  static final int COLUMN_PRIORITY=0;
+  static final String COLUMN_PRIORITY_name = "priority";
 
-	/**
-	 * The possible ticket priorities.
-	 */
-	public static final String
-		LOW="0-Low",
-		NORMAL="1-Normal",
-		HIGH="2-High",
-		URGENT="3-Urgent"
-	;
+  /**
+   * The possible ticket priorities.
+   */
+  public static final String
+    LOW="0-Low",
+    NORMAL="1-Normal",
+    HIGH="2-High",
+    URGENT="3-Urgent"
+  ;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public Priority() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public Priority() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		if(i==COLUMN_PRIORITY) return pkey;
-		throw new IllegalArgumentException("Invalid index: " + i);
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    if (i == COLUMN_PRIORITY) {
+      return pkey;
+    }
+    throw new IllegalArgumentException("Invalid index: " + i);
+  }
 
-	public String getPriority() {
-		return pkey;
-	}
+  public String getPriority() {
+    return pkey;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.TICKET_PRIORITIES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.TICKET_PRIORITIES;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey = result.getString(1);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey = result.getString(1);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readUTF().intern();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readUTF().intern();
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey);
+  }
 
-	@Override
-	public int compareTo(Priority o) {
-		return pkey.compareTo(o.pkey);
-	}
+  @Override
+  public int compareTo(Priority o) {
+    return pkey.compareTo(o.pkey);
+  }
 }

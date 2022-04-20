@@ -36,26 +36,26 @@ import java.sql.SQLException;
  */
 public final class ResourceTable extends GlobalTableStringKey<Resource> {
 
-	ResourceTable(AOServConnector connector) {
-		super(connector, Resource.class);
-	}
+  ResourceTable(AOServConnector connector) {
+    super(connector, Resource.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(Resource.COLUMN_NAME_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(Resource.COLUMN_NAME_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public Resource get(String name) throws IOException, SQLException {
-		return getUniqueRow(Resource.COLUMN_NAME, name);
-	}
+  @Override
+  public Resource get(String name) throws IOException, SQLException {
+    return getUniqueRow(Resource.COLUMN_NAME, name);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.RESOURCES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.RESOURCES;
+  }
 }

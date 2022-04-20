@@ -46,90 +46,94 @@ import java.sql.SQLException;
  */
 public final class SendmailBind extends CachedObjectIntegerKey<SendmailBind> {
 
-	static final int
-		COLUMN_NET_BIND = 0,
-		COLUMN_SENDMAIL_SERVER = 1
-	;
-	static final String COLUMN_NET_BIND_name = "net_bind";
+  static final int
+    COLUMN_NET_BIND = 0,
+    COLUMN_SENDMAIL_SERVER = 1
+  ;
+  static final String COLUMN_NET_BIND_name = "net_bind";
 
-	private int sendmail_server;
-	private String name;
+  private int sendmail_server;
+  private String name;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public SendmailBind() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public SendmailBind() {
+    // Do nothing
+  }
 
-	@Override
-	public String toStringImpl() throws SQLException, IOException {
-		SendmailServer server = getSendmailServer();
-		Bind bind = getNetBind();
-		return server.toStringImpl() + '|' + bind.toStringImpl();
-	}
+  @Override
+  public String toStringImpl() throws SQLException, IOException {
+    SendmailServer server = getSendmailServer();
+    Bind bind = getNetBind();
+    return server.toStringImpl() + '|' + bind.toStringImpl();
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_NET_BIND: return pkey;
-			case COLUMN_SENDMAIL_SERVER: return sendmail_server;
-			case 2: return name;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_NET_BIND: return pkey;
+      case COLUMN_SENDMAIL_SERVER: return sendmail_server;
+      case 2: return name;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.SENDMAIL_BINDS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.SENDMAIL_BINDS;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey = result.getInt(1);
-		sendmail_server = result.getInt(2);
-		name = result.getString(3);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey = result.getInt(1);
+    sendmail_server = result.getInt(2);
+    name = result.getString(3);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey = in.readCompressedInt();
-		sendmail_server = in.readCompressedInt();
-		name = in.readNullUTF();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey = in.readCompressedInt();
+    sendmail_server = in.readCompressedInt();
+    name = in.readNullUTF();
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeCompressedInt(sendmail_server);
-		out.writeNullUTF(name);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    out.writeCompressedInt(sendmail_server);
+    out.writeNullUTF(name);
+  }
 
-	public Bind getNetBind() throws SQLException, IOException {
-		Bind obj = table.getConnector().getNet().getBind().get(pkey);
-		if(obj == null) throw new SQLException("Unable to find NetBind: " + pkey);
-		return obj;
-	}
+  public Bind getNetBind() throws SQLException, IOException {
+    Bind obj = table.getConnector().getNet().getBind().get(pkey);
+    if (obj == null) {
+      throw new SQLException("Unable to find NetBind: " + pkey);
+    }
+    return obj;
+  }
 
-	public SendmailServer getSendmailServer() throws SQLException, IOException {
-		SendmailServer obj = table.getConnector().getEmail().getSendmailServer().get(sendmail_server);
-		if(obj == null) throw new SQLException("Unable to find SendmailServer: " + sendmail_server);
-		return obj;
-	}
+  public SendmailServer getSendmailServer() throws SQLException, IOException {
+    SendmailServer obj = table.getConnector().getEmail().getSendmailServer().get(sendmail_server);
+    if (obj == null) {
+      throw new SQLException("Unable to find SendmailServer: " + sendmail_server);
+    }
+    return obj;
+  }
 
-	/**
-	 * The <code>Name</code> for <code>DaemonPortOptions</code> or {@code null} if not set.
-	 * The name is unique per-{@link SendmailServer}.
-	 * The name will never contain a space.
-	 * Will default to a generated value based on {@link SendmailServer#getHostname()} or
-	 * {@link IpAddress#getHostname()} if not specified.
-	 */
-	public String getName() {
-		assert name == null || name.indexOf(' ') == -1;
-		return name;
-	}
+  /**
+   * The <code>Name</code> for <code>DaemonPortOptions</code> or {@code null} if not set.
+   * The name is unique per-{@link SendmailServer}.
+   * The name will never contain a space.
+   * Will default to a generated value based on {@link SendmailServer#getHostname()} or
+   * {@link IpAddress#getHostname()} if not specified.
+   */
+  public String getName() {
+    assert name == null || name.indexOf(' ') == -1;
+    return name;
+  }
 }

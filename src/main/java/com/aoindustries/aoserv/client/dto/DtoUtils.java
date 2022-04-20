@@ -31,23 +31,27 @@ import java.util.TimeZone;
  */
 final class DtoUtils {
 
-	/** Make no instances. */
-	private DtoUtils() {throw new AssertionError();}
+  /** Make no instances. */
+  private DtoUtils() {
+    throw new AssertionError();
+  }
 
-	/**
-	 * @param timeZone  The time zone to use or {@code null} to use the default time zone
-	 */
-	static GregorianCalendar getCalendar(long time, TimeZone timeZone) {
-		GregorianCalendar gcal = timeZone == null ? new GregorianCalendar() : new GregorianCalendar(timeZone);
-		gcal.setTimeInMillis(time);
-		return gcal;
-	}
+  /**
+   * @param timeZone  The time zone to use or {@code null} to use the default time zone
+   */
+  static GregorianCalendar getCalendar(long time, TimeZone timeZone) {
+    GregorianCalendar gcal = timeZone == null ? new GregorianCalendar() : new GregorianCalendar(timeZone);
+    gcal.setTimeInMillis(time);
+    return gcal;
+  }
 
-	/**
-	 * @param timeZone  The time zone to use or {@code null} to use the default time zone
-	 */
-	static GregorianCalendar getCalendar(Long time, TimeZone timeZone) {
-		if(time == null) return null;
-		return getCalendar(time.longValue(), timeZone);
-	}
+  /**
+   * @param timeZone  The time zone to use or {@code null} to use the default time zone
+   */
+  static GregorianCalendar getCalendar(Long time, TimeZone timeZone) {
+    if (time == null) {
+      return null;
+    }
+    return getCalendar(time.longValue(), timeZone);
+  }
 }

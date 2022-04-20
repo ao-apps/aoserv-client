@@ -41,91 +41,95 @@ import java.sql.SQLException;
  */
 public final class ServerFarm extends CachedObjectStringKey<ServerFarm> {
 
-	static final int COLUMN_NAME=0;
-	static final String COLUMN_NAME_name = "name";
+  static final int COLUMN_NAME=0;
+  static final String COLUMN_NAME_name = "name";
 
-	private String description;
-	private int owner;
-	private boolean use_restricted_smtp_port;
+  private String description;
+  private int owner;
+  private boolean use_restricted_smtp_port;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public ServerFarm() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public ServerFarm() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_NAME: return pkey;
-			case 1: return description;
-			case 2: return owner;
-			case 3: return use_restricted_smtp_port;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_NAME: return pkey;
+      case 1: return description;
+      case 2: return owner;
+      case 3: return use_restricted_smtp_port;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	public Package getOwner() throws IOException, SQLException {
-		// May be filtered
-		return table.getConnector().getBilling().getPackage().get(owner);
-	}
+  public Package getOwner() throws IOException, SQLException {
+    // May be filtered
+    return table.getConnector().getBilling().getPackage().get(owner);
+  }
 
-	/**
-	 * TODO: Remove this flag once all servers are CentOS 7+ with firewalld-based egress filters.
-	 */
-	public boolean useRestrictedSmtpPort() {
-		return use_restricted_smtp_port;
-	}
+  /**
+   * TODO: Remove this flag once all servers are CentOS 7+ with firewalld-based egress filters.
+   */
+  public boolean useRestrictedSmtpPort() {
+    return use_restricted_smtp_port;
+  }
 
-	public String getDescription() {
-		return description;
-	}
+  public String getDescription() {
+    return description;
+  }
 
-	public String getName() {
-		return pkey;
-	}
+  public String getName() {
+    return pkey;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.SERVER_FARMS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.SERVER_FARMS;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey = result.getString(1);
-		description = result.getString(2);
-		owner = result.getInt(3);
-		use_restricted_smtp_port = result.getBoolean(4);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey = result.getString(1);
+    description = result.getString(2);
+    owner = result.getInt(3);
+    use_restricted_smtp_port = result.getBoolean(4);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readUTF().intern();
-		description=in.readUTF();
-		owner=in.readCompressedInt();
-		use_restricted_smtp_port = in.readBoolean();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readUTF().intern();
+    description=in.readUTF();
+    owner=in.readCompressedInt();
+    use_restricted_smtp_port = in.readBoolean();
+  }
 
-	@Override
-	public String toStringImpl() {
-		return description;
-	}
+  @Override
+  public String toStringImpl() {
+    return description;
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey);
-		out.writeUTF(description);
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30)<=0) {
-			out.writeUTF("192.168.0.0/16");
-			out.writeBoolean(false);
-			out.writeUTF("mob");
-		}
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_102)>=0) out.writeCompressedInt(owner);
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_26)>=0) out.writeBoolean(use_restricted_smtp_port);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey);
+    out.writeUTF(description);
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30) <= 0) {
+      out.writeUTF("192.168.0.0/16");
+      out.writeBoolean(false);
+      out.writeUTF("mob");
+    }
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_102) >= 0) {
+      out.writeCompressedInt(owner);
+    }
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_26) >= 0) {
+      out.writeBoolean(use_restricted_smtp_port);
+    }
+  }
 }

@@ -31,43 +31,43 @@ import java.util.List;
  */
 public abstract class Schema implements SchemaParent {
 
-	protected final AOServConnector connector;
+  protected final AOServConnector connector;
 
-	protected Schema(AOServConnector connector) {
-		this.connector = connector;
-	}
+  protected Schema(AOServConnector connector) {
+    this.connector = connector;
+  }
 
-	public final AOServConnector getConnector() {
-		return connector;
-	}
+  public final AOServConnector getConnector() {
+    return connector;
+  }
 
-	/**
-	 * Gets an unmodifiable list of all of the direct sub-schemas of this schema.
-	 * <p>
-	 * <b>Implementation Note:</b><br>
-	 * This default implementation returns {@link Collections#emptyList()}.
-	 * </p>
-	 */
-	@Override
-	public List<? extends Schema> getSchemas() {
-		return Collections.emptyList();
-	}
+  /**
+   * Gets an unmodifiable list of all of the direct sub-schemas of this schema.
+   * <p>
+   * <b>Implementation Note:</b><br>
+   * This default implementation returns {@link Collections#emptyList()}.
+   * </p>
+   */
+  @Override
+  public List<? extends Schema> getSchemas() {
+    return Collections.emptyList();
+  }
 
-	/**
-	 * Gets an unmodifiable list of all of the tables in the schema.
-	 */
-	public abstract List<? extends AOServTable<?, ?>> getTables();
+  /**
+   * Gets an unmodifiable list of all of the tables in the schema.
+   */
+  public abstract List<? extends AOServTable<?, ?>> getTables();
 
-	/**
-	 * Gets the unique name of the schema.
-	 */
-	public abstract String getName();
+  /**
+   * Gets the unique name of the schema.
+   */
+  public abstract String getName();
 
-	/**
-	 * @see  #getName()
-	 */
-	@Override
-	public final String toString() {
-		return getName();
-	}
+  /**
+   * @see  #getName()
+   */
+  @Override
+  public final String toString() {
+    return getName();
+  }
 }

@@ -46,215 +46,217 @@ import java.util.List;
  */
 public final class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 
-	static final int
-		COLUMN_id = 0,
-		COLUMN_output = 4,
-		COLUMN_error = 5
-	;
-	static final String COLUMN_registrableDomain_name = "registrableDomain";
-	static final String COLUMN_time_name = "time";
+  static final int
+    COLUMN_id = 0,
+    COLUMN_output = 4,
+    COLUMN_error = 5
+  ;
+  static final String COLUMN_registrableDomain_name = "registrableDomain";
+  static final String COLUMN_time_name = "time";
 
-	private DomainName registrableDomain;
-	private UnmodifiableTimestamp time;
-	private Integer exitStatus;
+  private DomainName registrableDomain;
+  private UnmodifiableTimestamp time;
+  private Integer exitStatus;
 
-	/**
-	 * Note: these are loaded in a separate call to the master as-needed to conserve heap space, and it is null to begin with.
-	 */
-	private static class OutputLock {/* Empty lock class to help heap profile */}
-	private final OutputLock outputLock = new OutputLock();
-	private String output;
-	private String error;
+  /**
+   * Note: these are loaded in a separate call to the master as-needed to conserve heap space, and it is null to begin with.
+   */
+  private static class OutputLock {/* Empty lock class to help heap profile */}
+  private final OutputLock outputLock = new OutputLock();
+  private String output;
+  private String error;
 
-	// Protocol conversion
-	private Account.Name accounting;
+  // Protocol conversion
+  private Account.Name accounting;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public WhoisHistory() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public WhoisHistory() {
+    // Do nothing
+  }
 
-	@Override
-	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
-	protected Object getColumnImpl(int i) throws IOException, SQLException {
-		switch(i) {
-			case COLUMN_id: return pkey;
-			case 1: return registrableDomain;
-			case 2: return time;
-			case 3: return exitStatus;
-			case COLUMN_output: return getOutput();
-			case COLUMN_error: return getError();
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
+  protected Object getColumnImpl(int i) throws IOException, SQLException {
+    switch (i) {
+      case COLUMN_id: return pkey;
+      case 1: return registrableDomain;
+      case 2: return time;
+      case 3: return exitStatus;
+      case COLUMN_output: return getOutput();
+      case COLUMN_error: return getError();
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	public int getId() {
-		return pkey;
-	}
+  public int getId() {
+    return pkey;
+  }
 
-	/**
-	 * Gets the registrable domain that was queried in the whois system.
-	 */
-	public DomainName getRegistrableDomain() {
-		return registrableDomain;
-	}
+  /**
+   * Gets the registrable domain that was queried in the whois system.
+   */
+  public DomainName getRegistrableDomain() {
+    return registrableDomain;
+  }
 
-	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
-	public UnmodifiableTimestamp getTime() {
-		return time;
-	}
+  @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
+  public UnmodifiableTimestamp getTime() {
+    return time;
+  }
 
-	public Integer getExitStatus() {
-		return exitStatus;
-	}
+  public Integer getExitStatus() {
+    return exitStatus;
+  }
 
-	/**
-	 * Loads output and error when first needed
-	 */
-	private void loadOutput() throws IOException, SQLException {
-		assert Thread.holdsLock(outputLock);
-		if(error == null) {
-			table.getConnector().requestResult(
-				true,
-				AoservProtocol.CommandID.GET_WHOIS_HISTORY_WHOIS_OUTPUT,
-				// Java 9: new AOServConnector.ResultRequest<>
-				new AOServConnector.ResultRequest<Void>() {
-					@Override
-					public void writeRequest(StreamableOutput out) throws IOException {
-						out.writeCompressedInt(pkey);
-					}
+  /**
+   * Loads output and error when first needed
+   */
+  private void loadOutput() throws IOException, SQLException {
+    assert Thread.holdsLock(outputLock);
+    if (error == null) {
+      table.getConnector().requestResult(
+        true,
+        AoservProtocol.CommandID.GET_WHOIS_HISTORY_WHOIS_OUTPUT,
+        // Java 9: new AOServConnector.ResultRequest<>
+        new AOServConnector.ResultRequest<Void>() {
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(pkey);
+          }
 
-					@Override
-					public void readResponse(StreamableInput in) throws IOException, SQLException {
-						int code = in.readByte();
-						if(code == AoservProtocol.DONE) {
-							output = in.readUTF();
-							error = in.readUTF();
-						} else {
-							AoservProtocol.checkResult(code, in);
-							throw new IOException("Unexpected response code: " + code);
-						}
-					}
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              output = in.readUTF();
+              error = in.readUTF();
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
+            }
+          }
 
-					@Override
-					public Void afterRelease() {
-						return null;
-					}
-				}
-			);
-		}
-	}
+          @Override
+          public Void afterRelease() {
+            return null;
+          }
+        }
+      );
+    }
+  }
 
-	/**
-	 * Gets the whois output from the database.  The first access to this, or {@link #getError()}, for a specific object instance
-	 * will query the master server for the information and then cache the results.  This is done
-	 * to conserve heap space while still yielding high performance through the caching of the rest of the fields.
-	 *
-	 * From an outside point of view, the object is still immutable and will yield constant return
-	 * values per instance.
-	 */
-	public String getOutput() throws IOException, SQLException {
-		synchronized(outputLock) {
-			loadOutput();
-			return output;
-		}
-	}
+  /**
+   * Gets the whois output from the database.  The first access to this, or {@link #getError()}, for a specific object instance
+   * will query the master server for the information and then cache the results.  This is done
+   * to conserve heap space while still yielding high performance through the caching of the rest of the fields.
+   *
+   * From an outside point of view, the object is still immutable and will yield constant return
+   * values per instance.
+   */
+  public String getOutput() throws IOException, SQLException {
+    synchronized (outputLock) {
+      loadOutput();
+      return output;
+    }
+  }
 
-	/**
-	 * Gets the whois error from the database.  The first access to this, or {@link #getOutput()}, for a specific object instance
-	 * will query the master server for the information and then cache the results.  This is done
-	 * to conserve heap space while still yielding high performance through the caching of the rest of the fields.
-	 *
-	 * From an outside point of view, the object is still immutable and will yield constant return
-	 * values per instance.
-	 */
-	public String getError() throws IOException, SQLException {
-		synchronized(outputLock) {
-			loadOutput();
-			return error;
-		}
-	}
+  /**
+   * Gets the whois error from the database.  The first access to this, or {@link #getOutput()}, for a specific object instance
+   * will query the master server for the information and then cache the results.  This is done
+   * to conserve heap space while still yielding high performance through the caching of the rest of the fields.
+   *
+   * From an outside point of view, the object is still immutable and will yield constant return
+   * values per instance.
+   */
+  public String getError() throws IOException, SQLException {
+    synchronized (outputLock) {
+      loadOutput();
+      return error;
+    }
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.WhoisHistory;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.WhoisHistory;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		try {
-			int pos = 1;
-			pkey = result.getInt(pos++);
-			registrableDomain = DomainName.valueOf(result.getString(pos++));
-			time = UnmodifiableTimestamp.valueOf(result.getTimestamp(pos++));
-			exitStatus = result.getInt(pos++);
-			if(result.wasNull()) exitStatus = null;
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    try {
+      int pos = 1;
+      pkey = result.getInt(pos++);
+      registrableDomain = DomainName.valueOf(result.getString(pos++));
+      time = UnmodifiableTimestamp.valueOf(result.getTimestamp(pos++));
+      exitStatus = result.getInt(pos++);
+      if (result.wasNull()) {
+        exitStatus = null;
+      }
 
-			// Note: these are loaded in a separate call to the master as-needed to conserve heap space:
-			// output = result.getString(pos++);
-			// error = result.getString(pos++);
+      // Note: these are loaded in a separate call to the master as-needed to conserve heap space:
+      // output = result.getString(pos++);
+      // error = result.getString(pos++);
 
-			// Protocol conversion
-			accounting = Account.Name.valueOf(result.getString(pos++));
-		} catch(ValidationException e) {
-			throw new SQLException(e);
-		}
-	}
+      // Protocol conversion
+      accounting = Account.Name.valueOf(result.getString(pos++));
+    } catch (ValidationException e) {
+      throw new SQLException(e);
+    }
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		try {
-			pkey = in.readCompressedInt();
-			registrableDomain = DomainName.valueOf(in.readUTF()).intern();
-			time = SQLStreamables.readUnmodifiableTimestamp(in);
-			exitStatus = in.readNullInteger();
-			// Note: these are loaded in a separate call to the master as-needed to conserve heap space:
-			// output = in.readUTF();
-			// error = in.readUTF();
-		} catch(ValidationException e) {
-			throw new IOException(e);
-		}
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    try {
+      pkey = in.readCompressedInt();
+      registrableDomain = DomainName.valueOf(in.readUTF()).intern();
+      time = SQLStreamables.readUnmodifiableTimestamp(in);
+      exitStatus = in.readNullInteger();
+      // Note: these are loaded in a separate call to the master as-needed to conserve heap space:
+      // output = in.readUTF();
+      // error = in.readUTF();
+    } catch (ValidationException e) {
+      throw new IOException(e);
+    }
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_19) >= 0) {
-			out.writeUTF(registrableDomain.toString());
-		}
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
-			out.writeLong(time.getTime());
-		} else {
-			SQLStreamables.writeTimestamp(time, out);
-		}
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_19) < 0) {
-			out.writeUTF(accounting.toString());
-			// Was "zone" type with trailing period
-			out.writeUTF(registrableDomain.toString() + ".");
-		} else {
-			out.writeNullInteger(exitStatus);
-		}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_19) >= 0) {
+      out.writeUTF(registrableDomain.toString());
+    }
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+      out.writeLong(time.getTime());
+    } else {
+      SQLStreamables.writeTimestamp(time, out);
+    }
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_19) < 0) {
+      out.writeUTF(accounting.toString());
+      // Was "zone" type with trailing period
+      out.writeUTF(registrableDomain.toString() + ".");
+    } else {
+      out.writeNullInteger(exitStatus);
+    }
 
-		// Note: these are loaded in a separate call to the master as-needed to conserve heap space:
-		// out.writeUTF(output);
-		// out.writeUTF(error);
-	}
+    // Note: these are loaded in a separate call to the master as-needed to conserve heap space:
+    // out.writeUTF(output);
+    // out.writeUTF(error);
+  }
 
-	@Override
-	public String toStringImpl() {
-		return pkey+"|"+registrableDomain+"|"+getTime();
-	}
+  @Override
+  public String toStringImpl() {
+    return pkey+"|"+registrableDomain+"|"+getTime();
+  }
 
-	/**
-	 * @see  WhoisHistoryAccountTable#getWhoisHistoryAccounts(com.aoindustries.aoserv.client.billing.WhoisHistory)
-	 */
-	public List<WhoisHistoryAccount> getAccounts() throws IOException, SQLException {
-		return table.getConnector().getBilling().getWhoisHistoryAccount().getWhoisHistoryAccounts(this);
-	}
+  /**
+   * @see  WhoisHistoryAccountTable#getWhoisHistoryAccounts(com.aoindustries.aoserv.client.billing.WhoisHistory)
+   */
+  public List<WhoisHistoryAccount> getAccounts() throws IOException, SQLException {
+    return table.getConnector().getBilling().getWhoisHistoryAccount().getWhoisHistoryAccounts(this);
+  }
 }

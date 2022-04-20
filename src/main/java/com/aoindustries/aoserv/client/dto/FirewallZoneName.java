@@ -28,21 +28,21 @@ package com.aoindustries.aoserv.client.dto;
  */
 public class FirewallZoneName {
 
-	private String name;
+  private String name;
 
-	public FirewallZoneName() {
-		// Do nothing
-	}
+  public FirewallZoneName() {
+    // Do nothing
+  }
 
-	public FirewallZoneName(String name) {
-		this.name = name;
-	}
+  public FirewallZoneName(String name) {
+    this.name = name;
+  }
 
-	public String getName() {
-		return name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 }

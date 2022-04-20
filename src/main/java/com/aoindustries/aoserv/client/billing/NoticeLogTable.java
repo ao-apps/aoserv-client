@@ -44,71 +44,71 @@ import java.util.List;
  */
 public final class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
 
-	NoticeLogTable(AOServConnector connector) {
-		super(connector, NoticeLog.class);
-	}
+  NoticeLogTable(AOServConnector connector) {
+    super(connector, NoticeLog.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(NoticeLog.COLUMN_CREATE_TIME_name, ASCENDING),
-		new OrderBy(NoticeLog.COLUMN_PKEY_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(NoticeLog.COLUMN_CREATE_TIME_name, ASCENDING),
+    new OrderBy(NoticeLog.COLUMN_PKEY_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	public int addNoticeLog(
-		final Account account,
-		final String billingContact,
-		final Email emailAddress,
-		final NoticeType type,
-		final Transaction trans
-	) throws IOException, SQLException {
-		return connector.requestIntQueryIL(
-			true,
-			AoservProtocol.CommandID.ADD,
-			Table.TableID.NOTICE_LOG,
-			account.getName().toString(),
-			billingContact,
-			emailAddress,
-			type.getType(),
-			trans == null ? NoticeLog.NO_TRANSACTION : trans.getTransid()
-		);
-	}
+  public int addNoticeLog(
+    final Account account,
+    final String billingContact,
+    final Email emailAddress,
+    final NoticeType type,
+    final Transaction trans
+  ) throws IOException, SQLException {
+    return connector.requestIntQueryIL(
+      true,
+      AoservProtocol.CommandID.ADD,
+      Table.TableID.NOTICE_LOG,
+      account.getName().toString(),
+      billingContact,
+      emailAddress,
+      type.getType(),
+      trans == null ? NoticeLog.NO_TRANSACTION : trans.getTransid()
+    );
+  }
 
-	@Override
-	public NoticeLog get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(NoticeLog.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public NoticeLog get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(NoticeLog.COLUMN_PKEY, pkey);
+  }
 
-	public List<NoticeLog> getNoticeLogs(Account bu) throws IOException, SQLException {
-		return getIndexedRows(NoticeLog.COLUMN_ACCOUNTING, bu.getName());
-	}
+  public List<NoticeLog> getNoticeLogs(Account bu) throws IOException, SQLException {
+    return getIndexedRows(NoticeLog.COLUMN_ACCOUNTING, bu.getName());
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.NOTICE_LOG;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.NOTICE_LOG;
+  }
 
-	@Override
-	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-		String command = args[0];
-		if(command.equalsIgnoreCase(Command.ADD_NOTICE_LOG)) {
-			if(AOSH.checkParamCount(Command.ADD_NOTICE_LOG, args, 5, err)) {
-				out.println(
-					connector.getSimpleAOClient().addNoticeLog(
-						AOSH.parseAccountingCode(args[1], "business"),
-						args[2],
-						AOSH.parseEmail(args[3], "email_address"),
-						args[4],
-						args[5].isEmpty() ? NoticeLog.NO_TRANSACTION : AOSH.parseInt(args[5], "transid")
-					)
-				);
-				out.flush();
-			}
-			return true;
-		}
-		return false;
-	}
+  @Override
+  public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
+    String command = args[0];
+    if (command.equalsIgnoreCase(Command.ADD_NOTICE_LOG)) {
+      if (AOSH.checkParamCount(Command.ADD_NOTICE_LOG, args, 5, err)) {
+        out.println(
+          connector.getSimpleAOClient().addNoticeLog(
+            AOSH.parseAccountingCode(args[1], "business"),
+            args[2],
+            AOSH.parseEmail(args[3], "email_address"),
+            args[4],
+            args[5].isEmpty() ? NoticeLog.NO_TRANSACTION : AOSH.parseInt(args[5], "transid")
+          )
+        );
+        out.flush();
+      }
+      return true;
+    }
+    return false;
+  }
 }

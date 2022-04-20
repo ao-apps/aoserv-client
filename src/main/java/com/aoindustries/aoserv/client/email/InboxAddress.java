@@ -53,112 +53,122 @@ import java.util.List;
  */
 public final class InboxAddress extends CachedObjectIntegerKey<InboxAddress> implements Removable {
 
-	static final int
-		COLUMN_PKEY=0,
-		COLUMN_EMAIL_ADDRESS=1,
-		COLUMN_LINUX_SERVER_ACCOUNT=2
-	;
-	static final String COLUMN_EMAIL_ADDRESS_name = "email_address";
-	static final String COLUMN_LINUX_SERVER_ACCOUNT_name = "linux_server_account";
+  static final int
+    COLUMN_PKEY=0,
+    COLUMN_EMAIL_ADDRESS=1,
+    COLUMN_LINUX_SERVER_ACCOUNT=2
+  ;
+  static final String COLUMN_EMAIL_ADDRESS_name = "email_address";
+  static final String COLUMN_LINUX_SERVER_ACCOUNT_name = "linux_server_account";
 
-	private int email_address;
-	private int linux_server_account;
+  private int email_address;
+  private int linux_server_account;
 
-	// Protocol conversion <= 1.30:
-	private User.Name linux_account;
+  // Protocol conversion <= 1.30:
+  private User.Name linux_account;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public InboxAddress() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public InboxAddress() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		if(i==COLUMN_PKEY) return pkey;
-		if(i==COLUMN_EMAIL_ADDRESS) return email_address;
-		if(i==COLUMN_LINUX_SERVER_ACCOUNT) return linux_server_account;
-		throw new IllegalArgumentException("Invalid index: " + i);
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    if (i == COLUMN_PKEY) {
+      return pkey;
+    }
+    if (i == COLUMN_EMAIL_ADDRESS) {
+      return email_address;
+    }
+    if (i == COLUMN_LINUX_SERVER_ACCOUNT) {
+      return linux_server_account;
+    }
+    throw new IllegalArgumentException("Invalid index: " + i);
+  }
 
-	public int getEmailAddress_id() {
-		return email_address;
-	}
+  public int getEmailAddress_id() {
+    return email_address;
+  }
 
-	public Address getEmailAddress() throws SQLException, IOException {
-		Address emailAddressObject = table.getConnector().getEmail().getAddress().get(email_address);
-		if (emailAddressObject == null) throw new SQLException("Unable to find EmailAddress: " + email_address);
-		return emailAddressObject;
-	}
+  public Address getEmailAddress() throws SQLException, IOException {
+    Address emailAddressObject = table.getConnector().getEmail().getAddress().get(email_address);
+    if (emailAddressObject == null) {
+      throw new SQLException("Unable to find EmailAddress: " + email_address);
+    }
+    return emailAddressObject;
+  }
 
-	public int getLinuxServerAccount_id() {
-		return linux_server_account;
-	}
+  public int getLinuxServerAccount_id() {
+    return linux_server_account;
+  }
 
-	public UserServer getLinuxServerAccount() throws SQLException, IOException {
-		UserServer lsa = table.getConnector().getLinux().getUserServer().get(linux_server_account);
-		if(lsa == null) throw new SQLException("Unable to find LinuxServerAccount: " + linux_server_account);
-		return lsa;
-	}
+  public UserServer getLinuxServerAccount() throws SQLException, IOException {
+    UserServer lsa = table.getConnector().getLinux().getUserServer().get(linux_server_account);
+    if (lsa == null) {
+      throw new SQLException("Unable to find LinuxServerAccount: " + linux_server_account);
+    }
+    return lsa;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.LINUX_ACC_ADDRESSES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.LINUX_ACC_ADDRESSES;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		try {
-			int pos = 1;
-			pkey = result.getInt(pos++);
-			email_address = result.getInt(pos++);
-			linux_server_account = result.getInt(pos++);
-			linux_account = User.Name.valueOf(result.getString(pos++));
-		} catch(ValidationException e) {
-			throw new SQLException(e);
-		}
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    try {
+      int pos = 1;
+      pkey = result.getInt(pos++);
+      email_address = result.getInt(pos++);
+      linux_server_account = result.getInt(pos++);
+      linux_account = User.Name.valueOf(result.getString(pos++));
+    } catch (ValidationException e) {
+      throw new SQLException(e);
+    }
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readCompressedInt();
-		email_address=in.readCompressedInt();
-		linux_server_account=in.readCompressedInt();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readCompressedInt();
+    email_address=in.readCompressedInt();
+    linux_server_account=in.readCompressedInt();
+  }
 
-	@Override
-	public List<CannotRemoveReason<?>> getCannotRemoveReasons() {
-		return Collections.emptyList();
-	}
+  @Override
+  public List<CannotRemoveReason<?>> getCannotRemoveReasons() {
+    return Collections.emptyList();
+  }
 
-	@Override
-	public void remove() throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(
-			true,
-			AoservProtocol.CommandID.REMOVE,
-			Table.TableID.LINUX_ACC_ADDRESSES,
-			pkey
-		);
-	}
+  @Override
+  public void remove() throws IOException, SQLException {
+    table.getConnector().requestUpdateIL(
+      true,
+      AoservProtocol.CommandID.REMOVE,
+      Table.TableID.LINUX_ACC_ADDRESSES,
+      pkey
+    );
+  }
 
-	@Override
-	public String toStringImpl() throws SQLException, IOException {
-		return getEmailAddress().toStringImpl()+"->"+getLinuxServerAccount().toStringImpl();
-	}
+  @Override
+  public String toStringImpl() throws SQLException, IOException {
+    return getEmailAddress().toStringImpl()+"->"+getLinuxServerAccount().toStringImpl();
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeCompressedInt(email_address);
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30) <= 0) {
-			out.writeUTF(linux_account.toString());
-		} else {
-			out.writeCompressedInt(linux_server_account);
-		}
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    out.writeCompressedInt(email_address);
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30) <= 0) {
+      out.writeUTF(linux_account.toString());
+    } else {
+      out.writeCompressedInt(linux_server_account);
+    }
+  }
 }

@@ -34,44 +34,44 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final AoservProtocolTable AoservProtocol;
-	public AoservProtocolTable getAoservProtocol() {return AoservProtocol;}
+  private final AoservProtocolTable AoservProtocol;
+  public AoservProtocolTable getAoservProtocol() {return AoservProtocol;}
 
-	private final ColumnTable Column;
-	public ColumnTable getColumn() {return Column;}
+  private final ColumnTable Column;
+  public ColumnTable getColumn() {return Column;}
 
-	private final ForeignKeyTable ForeignKey;
-	public ForeignKeyTable getForeignKey() {return ForeignKey;}
+  private final ForeignKeyTable ForeignKey;
+  public ForeignKeyTable getForeignKey() {return ForeignKey;}
 
-	private final TableTable Table;
-	public TableTable getTable() {return Table;}
+  private final TableTable Table;
+  public TableTable getTable() {return Table;}
 
-	private final TypeTable Type;
-	public TypeTable getType() {return Type;}
+  private final TypeTable Type;
+  public TypeTable getType() {return Type;}
 
-	private final List<? extends AOServTable<?, ?>> tables;
+  private final List<? extends AOServTable<?, ?>> tables;
 
-	public Schema(AOServConnector connector) {
-		super(connector);
+  public Schema(AOServConnector connector) {
+    super(connector);
 
-		ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
-		newTables.add(AoservProtocol = new AoservProtocolTable(connector));
-		newTables.add(Column = new ColumnTable(connector));
-		newTables.add(ForeignKey = new ForeignKeyTable(connector));
-		newTables.add(Table = new TableTable(connector));
-		newTables.add(Type = new TypeTable(connector));
-		newTables.trimToSize();
-		tables = Collections.unmodifiableList(newTables);
-	}
+    ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
+    newTables.add(AoservProtocol = new AoservProtocolTable(connector));
+    newTables.add(Column = new ColumnTable(connector));
+    newTables.add(ForeignKey = new ForeignKeyTable(connector));
+    newTables.add(Table = new TableTable(connector));
+    newTables.add(Type = new TypeTable(connector));
+    newTables.trimToSize();
+    tables = Collections.unmodifiableList(newTables);
+  }
 
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
-	public List<? extends AOServTable<?, ?>> getTables() {
-		return tables;
-	}
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
+  public List<? extends AOServTable<?, ?>> getTables() {
+    return tables;
+  }
 
-	@Override
-	public String getName() {
-		return "schema";
-	}
+  @Override
+  public String getName() {
+    return "schema";
+  }
 }

@@ -48,74 +48,78 @@ import java.sql.SQLException;
  */
 public final class GroupType extends GlobalObjectStringKey<GroupType> {
 
-	static final int COLUMN_NAME=0;
-	static final String COLUMN_DESCRIPTION_name = "description";
+  static final int COLUMN_NAME=0;
+  static final String COLUMN_DESCRIPTION_name = "description";
 
-	/**
-	 * The available group types.
-	 */
-	public static final String
-		USER="user",
-		EMAIL="email",
-		FTPONLY="ftponly",
-		SYSTEM="system",
-		BACKUP="backup",
-		APPLICATION="application"
-	;
+  /**
+   * The available group types.
+   */
+  public static final String
+    USER="user",
+    EMAIL="email",
+    FTPONLY="ftponly",
+    SYSTEM="system",
+    BACKUP="backup",
+    APPLICATION="application"
+  ;
 
-	private String description;
+  private String description;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public GroupType() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public GroupType() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		if(i==COLUMN_NAME) return pkey;
-		if(i==1) return description;
-		throw new IllegalArgumentException("Invalid index: " + i);
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    if (i == COLUMN_NAME) {
+      return pkey;
+    }
+    if (i == 1) {
+      return description;
+    }
+    throw new IllegalArgumentException("Invalid index: " + i);
+  }
 
-	public String getDescription() {
-		return description;
-	}
+  public String getDescription() {
+    return description;
+  }
 
-	public String getName() {
-		return pkey;
-	}
+  public String getName() {
+    return pkey;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.LINUX_GROUP_TYPES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.LINUX_GROUP_TYPES;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey = result.getString(1);
-		description = result.getString(2);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey = result.getString(1);
+    description = result.getString(2);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readUTF().intern();
-		description=in.readUTF();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readUTF().intern();
+    description=in.readUTF();
+  }
 
-	@Override
-	public String toStringImpl() {
-		return description;
-	}
+  @Override
+  public String toStringImpl() {
+    return description;
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey);
-		out.writeUTF(description);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey);
+    out.writeUTF(description);
+  }
 }

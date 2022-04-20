@@ -47,111 +47,115 @@ import java.util.ArrayList;
  */
 public final class ListAddress extends CachedObjectIntegerKey<ListAddress> implements Removable {
 
-	static final int
-		COLUMN_PKEY=0,
-		COLUMN_EMAIL_ADDRESS=1,
-		COLUMN_EMAIL_LIST=2
-	;
-	static final String COLUMN_EMAIL_ADDRESS_name = "email_address";
-	static final String COLUMN_EMAIL_LIST_name = "email_list";
+  static final int
+    COLUMN_PKEY=0,
+    COLUMN_EMAIL_ADDRESS=1,
+    COLUMN_EMAIL_LIST=2
+  ;
+  static final String COLUMN_EMAIL_ADDRESS_name = "email_address";
+  static final String COLUMN_EMAIL_LIST_name = "email_list";
 
-	private int email_address;
-	private int email_list;
+  private int email_address;
+  private int email_list;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public ListAddress() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public ListAddress() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_PKEY: return pkey;
-			case COLUMN_EMAIL_ADDRESS: return email_address;
-			case COLUMN_EMAIL_LIST: return email_list;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_PKEY: return pkey;
+      case COLUMN_EMAIL_ADDRESS: return email_address;
+      case COLUMN_EMAIL_LIST: return email_list;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	public int getEmailAddress_pkey() {
-		return email_address;
-	}
+  public int getEmailAddress_pkey() {
+    return email_address;
+  }
 
-	public Address getEmailAddress() throws SQLException, IOException {
-		Address emailAddressObject = table.getConnector().getEmail().getAddress().get(email_address);
-		if (emailAddressObject == null) throw new SQLException("Unable to find EmailAddress: " + email_address);
-		return emailAddressObject;
-	}
+  public Address getEmailAddress() throws SQLException, IOException {
+    Address emailAddressObject = table.getConnector().getEmail().getAddress().get(email_address);
+    if (emailAddressObject == null) {
+      throw new SQLException("Unable to find EmailAddress: " + email_address);
+    }
+    return emailAddressObject;
+  }
 
-	public int getEmailList_pkey() {
-		return email_list;
-	}
+  public int getEmailList_pkey() {
+    return email_list;
+  }
 
-	public List getEmailList() throws SQLException, IOException {
-		List emailListObject = table.getConnector().getEmail().getList().get(email_list);
-		if (emailListObject == null) throw new SQLException("Unable to find EmailList: " + email_list);
-		return emailListObject;
-	}
+  public List getEmailList() throws SQLException, IOException {
+    List emailListObject = table.getConnector().getEmail().getList().get(email_list);
+    if (emailListObject == null) {
+      throw new SQLException("Unable to find EmailList: " + email_list);
+    }
+    return emailListObject;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.EMAIL_LIST_ADDRESSES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.EMAIL_LIST_ADDRESSES;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey=result.getInt(1);
-		email_address=result.getInt(2);
-		email_list=result.getInt(3);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey=result.getInt(1);
+    email_address=result.getInt(2);
+    email_list=result.getInt(3);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readCompressedInt();
-		email_address=in.readCompressedInt();
-		email_list=in.readCompressedInt();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readCompressedInt();
+    email_address=in.readCompressedInt();
+    email_list=in.readCompressedInt();
+  }
 
-	@Override
-	public java.util.List<CannotRemoveReason<MajordomoList>> getCannotRemoveReasons() throws SQLException, IOException {
-		java.util.List<CannotRemoveReason<MajordomoList>> reasons=new ArrayList<>();
+  @Override
+  public java.util.List<CannotRemoveReason<MajordomoList>> getCannotRemoveReasons() throws SQLException, IOException {
+    java.util.List<CannotRemoveReason<MajordomoList>> reasons=new ArrayList<>();
 
-		// Cannot be used as the list for a majordomo list
-		for(MajordomoList ml : table.getConnector().getEmail().getMajordomoList().getRows()) {
-			if(ml.getListListAddress().getPkey()==pkey) {
-				Domain ed=ml.getMajordomoServer().getDomain();
-				reasons.add(new CannotRemoveReason<>("Used by Majordomo list "+ml.getName()+'@'+ed.getDomain()+" on "+ed.getLinuxServer().getHostname(), ml));
-			}
-		}
+    // Cannot be used as the list for a majordomo list
+    for (MajordomoList ml : table.getConnector().getEmail().getMajordomoList().getRows()) {
+      if (ml.getListListAddress().getPkey() == pkey) {
+        Domain ed=ml.getMajordomoServer().getDomain();
+        reasons.add(new CannotRemoveReason<>("Used by Majordomo list "+ml.getName()+'@'+ed.getDomain()+" on "+ed.getLinuxServer().getHostname(), ml));
+      }
+    }
 
-		return reasons;
-	}
+    return reasons;
+  }
 
-	@Override
-	public void remove() throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(
-			true,
-			AoservProtocol.CommandID.REMOVE,
-			Table.TableID.EMAIL_LIST_ADDRESSES,
-			pkey
-		);
-	}
+  @Override
+  public void remove() throws IOException, SQLException {
+    table.getConnector().requestUpdateIL(
+      true,
+      AoservProtocol.CommandID.REMOVE,
+      Table.TableID.EMAIL_LIST_ADDRESSES,
+      pkey
+    );
+  }
 
-	@Override
-	public String toStringImpl() throws SQLException, IOException {
-		return getEmailAddress().toStringImpl()+"->"+getEmailList().getPath();
-	}
+  @Override
+  public String toStringImpl() throws SQLException, IOException {
+    return getEmailAddress().toStringImpl()+"->"+getEmailList().getPath();
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeCompressedInt(email_address);
-		out.writeCompressedInt(email_list);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    out.writeCompressedInt(email_address);
+    out.writeCompressedInt(email_list);
+  }
 }

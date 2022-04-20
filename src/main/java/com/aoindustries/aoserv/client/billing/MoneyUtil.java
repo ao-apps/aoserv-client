@@ -39,64 +39,74 @@ import java.util.Currency;
  */
 public final class MoneyUtil {
 
-	/** Make no instances. */
-	private MoneyUtil() {throw new AssertionError();}
+  /** Make no instances. */
+  private MoneyUtil() {
+    throw new AssertionError();
+  }
 
-	/**
-	 * null-safe getDto for Money.
-	 */
-	public static com.aoindustries.aoserv.client.dto.Money getDto(Money money) {
-		return money == null ? null : new com.aoindustries.aoserv.client.dto.Money(money.getCurrency().getCurrencyCode(), money.getValue());
-	}
+  /**
+   * null-safe getDto for Money.
+   */
+  public static com.aoindustries.aoserv.client.dto.Money getDto(Money money) {
+    return money == null ? null : new com.aoindustries.aoserv.client.dto.Money(money.getCurrency().getCurrencyCode(), money.getValue());
+  }
 
-	/**
-	 * null-safe money conversion.
-	 */
-	public static Money getMoney(com.aoindustries.aoserv.client.dto.Money money) {
-		if(money == null) return null;
-		return new Money(Currency.getInstance(money.getCurrency()), money.getValue());
-	}
+  /**
+   * null-safe money conversion.
+   */
+  public static Money getMoney(com.aoindustries.aoserv.client.dto.Money money) {
+    if (money == null) {
+      return null;
+    }
+    return new Money(Currency.getInstance(money.getCurrency()), money.getValue());
+  }
 
-	/**
-	 * null-safe money conversion.
-	 */
-	public static Money getMoney(Currency currency, BigDecimal value) {
-		if(value == null) return null;
-		return new Money(currency, value);
-	}
+  /**
+   * null-safe money conversion.
+   */
+  public static Money getMoney(Currency currency, BigDecimal value) {
+    if (value == null) {
+      return null;
+    }
+    return new Money(currency, value);
+  }
 
-	/**
-	 * Gets a {@link Money} type from two columns of a {@link ResultSet}.  Supports
-	 * {@code null}.  If value is non-null then currency must also be non-null.
-	 */
-	public static Money getMoney(ResultSet result, String currencyColumnLabel, String valueColumnLabel) throws SQLException {
-		BigDecimal value = result.getBigDecimal(valueColumnLabel);
-		if(value == null) return null;
-		String currencyCode = result.getString(currencyColumnLabel);
-		if(currencyCode == null) throw new SQLException(currencyColumnLabel + " == null && " + valueColumnLabel+" != null");
-		return new Money(Currency.getInstance(currencyCode), value);
-	}
+  /**
+   * Gets a {@link Money} type from two columns of a {@link ResultSet}.  Supports
+   * {@code null}.  If value is non-null then currency must also be non-null.
+   */
+  public static Money getMoney(ResultSet result, String currencyColumnLabel, String valueColumnLabel) throws SQLException {
+    BigDecimal value = result.getBigDecimal(valueColumnLabel);
+    if (value == null) {
+      return null;
+    }
+    String currencyCode = result.getString(currencyColumnLabel);
+    if (currencyCode == null) {
+      throw new SQLException(currencyColumnLabel + " == null && " + valueColumnLabel+" != null");
+    }
+    return new Money(Currency.getInstance(currencyCode), value);
+  }
 
-	public static void writeMoney(Money money, StreamableOutput out) throws IOException {
-		out.writeUTF(money.getCurrency().getCurrencyCode());
-		out.writeLong(money.getUnscaledValue());
-		out.writeCompressedInt(money.getScale());
-	}
+  public static void writeMoney(Money money, StreamableOutput out) throws IOException {
+    out.writeUTF(money.getCurrency().getCurrencyCode());
+    out.writeLong(money.getUnscaledValue());
+    out.writeCompressedInt(money.getScale());
+  }
 
-	public static void writeNullMoney(Money money, StreamableOutput out) throws IOException {
-		if(money != null) {
-			out.writeBoolean(true);
-			writeMoney(money, out);
-		} else {
-			out.writeBoolean(false);
-		}
-	}
+  public static void writeNullMoney(Money money, StreamableOutput out) throws IOException {
+    if (money != null) {
+      out.writeBoolean(true);
+      writeMoney(money, out);
+    } else {
+      out.writeBoolean(false);
+    }
+  }
 
-	public static Money readMoney(StreamableInput in) throws IOException {
-		return new Money(Currency.getInstance(in.readUTF()), in.readLong(), in.readCompressedInt());
-	}
+  public static Money readMoney(StreamableInput in) throws IOException {
+    return new Money(Currency.getInstance(in.readUTF()), in.readLong(), in.readCompressedInt());
+  }
 
-	public static Money readNullMoney(StreamableInput in) throws IOException {
-		return in.readBoolean() ? readMoney(in) : null;
-	}
+  public static Money readNullMoney(StreamableInput in) throws IOException {
+    return in.readBoolean() ? readMoney(in) : null;
+  }
 }

@@ -38,36 +38,36 @@ import java.util.List;
  */
 public final class SQLCast implements SQLExpression {
 
-	private final SQLExpression expression;
-	private final Type castToType;
+  private final SQLExpression expression;
+  private final Type castToType;
 
-	public SQLCast(SQLExpression expression, Type castToType) {
-		this.expression=expression;
-		this.castToType=castToType;
-	}
+  public SQLCast(SQLExpression expression, Type castToType) {
+    this.expression=expression;
+    this.castToType=castToType;
+  }
 
-	@Override
-	public String toString() {
-		return expression.toString() + "::" + Parser.quote(castToType.getName());
-	}
+  @Override
+  public String toString() {
+    return expression.toString() + "::" + Parser.quote(castToType.getName());
+  }
 
-	@Override
-	public String getColumnName() {
-		return castToType.getName();
-	}
+  @Override
+  public String getColumnName() {
+    return castToType.getName();
+  }
 
-	@Override
-	public Object evaluate(AOServConnector conn, AOServObject<?, ?> obj) throws IOException, SQLException {
-		return expression.getType().cast(conn, expression.evaluate(conn, obj), castToType);
-	}
+  @Override
+  public Object evaluate(AOServConnector conn, AOServObject<?, ?> obj) throws IOException, SQLException {
+    return expression.getType().cast(conn, expression.evaluate(conn, obj), castToType);
+  }
 
-	@Override
-	public Type getType() {
-		return castToType;
-	}
+  @Override
+  public Type getType() {
+    return castToType;
+  }
 
-	@Override
-	public void getReferencedTables(AOServConnector conn, List<Table> tables) throws IOException, SQLException {
-		expression.getReferencedTables(conn, tables);
-	}
+  @Override
+  public void getReferencedTables(AOServConnector conn, List<Table> tables) throws IOException, SQLException {
+    expression.getReferencedTables(conn, tables);
+  }
 }

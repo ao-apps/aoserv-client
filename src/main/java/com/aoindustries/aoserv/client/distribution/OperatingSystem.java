@@ -43,91 +43,91 @@ import java.sql.SQLException;
  */
 public final class OperatingSystem extends GlobalObjectStringKey<OperatingSystem> {
 
-	static final int COLUMN_NAME=0;
-	static final String COLUMN_NAME_name = "name";
+  static final int COLUMN_NAME=0;
+  static final String COLUMN_NAME_name = "name";
 
-	public static final String
-		CENTOS="centos",
-		DEBIAN="debian",
-		WINDOWS="windows"
-	;
+  public static final String
+    CENTOS="centos",
+    DEBIAN="debian",
+    WINDOWS="windows"
+  ;
 
-	/**
-	 * @deprecated  What is this used for?
-	 *
-	 * @see  OperatingSystemVersion#DEFAULT_OPERATING_SYSTEM_VERSION
-	 */
-	@Deprecated
-	public static final String DEFAULT_OPERATING_SYSTEM = CENTOS;
+  /**
+   * @deprecated  What is this used for?
+   *
+   * @see  OperatingSystemVersion#DEFAULT_OPERATING_SYSTEM_VERSION
+   */
+  @Deprecated
+  public static final String DEFAULT_OPERATING_SYSTEM = CENTOS;
 
-	private String display;
-	private boolean is_unix;
+  private String display;
+  private boolean is_unix;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public OperatingSystem() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public OperatingSystem() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_NAME: return pkey;
-			case 1: return display;
-			case 2: return is_unix;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_NAME: return pkey;
+      case 1: return display;
+      case 2: return is_unix;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	public String getName() {
-		return pkey;
-	}
+  public String getName() {
+    return pkey;
+  }
 
-	public String getDisplay() {
-		return display;
-	}
+  public String getDisplay() {
+    return display;
+  }
 
-	public boolean isUnix() {
-		return is_unix;
-	}
+  public boolean isUnix() {
+    return is_unix;
+  }
 
-	public OperatingSystemVersion getOperatingSystemVersion(AOServConnector conn, String version, Architecture architecture) throws IOException, SQLException {
-		return conn.getDistribution().getOperatingSystemVersion().getOperatingSystemVersion(this, version, architecture);
-	}
+  public OperatingSystemVersion getOperatingSystemVersion(AOServConnector conn, String version, Architecture architecture) throws IOException, SQLException {
+    return conn.getDistribution().getOperatingSystemVersion().getOperatingSystemVersion(this, version, architecture);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.OPERATING_SYSTEMS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.OPERATING_SYSTEMS;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey=result.getString(1);
-		display=result.getString(2);
-		is_unix=result.getBoolean(3);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey=result.getString(1);
+    display=result.getString(2);
+    is_unix=result.getBoolean(3);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readUTF().intern();
-		display=in.readUTF();
-		is_unix=in.readBoolean();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readUTF().intern();
+    display=in.readUTF();
+    is_unix=in.readBoolean();
+  }
 
-	@Override
-	public String toStringImpl() {
-		return display;
-	}
+  @Override
+  public String toStringImpl() {
+    return display;
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey);
-		out.writeUTF(display);
-		out.writeBoolean(is_unix);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey);
+    out.writeUTF(display);
+    out.writeBoolean(is_unix);
+  }
 }

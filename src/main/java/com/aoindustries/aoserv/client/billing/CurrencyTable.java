@@ -36,49 +36,57 @@ import java.sql.SQLException;
  */
 public final class CurrencyTable extends GlobalTableStringKey<Currency> {
 
-	CurrencyTable(AOServConnector connector) {
-		super(connector, Currency.class);
-	}
+  CurrencyTable(AOServConnector connector) {
+    super(connector, Currency.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(Currency.COLUMN_currencyCode_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(Currency.COLUMN_currencyCode_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public Currency get(String currencyCode) throws IOException, SQLException {
-		return getUniqueRow(Currency.COLUMN_currencyCode, currencyCode);
-	}
+  @Override
+  public Currency get(String currencyCode) throws IOException, SQLException {
+    return getUniqueRow(Currency.COLUMN_currencyCode, currencyCode);
+  }
 
-	/**
-	 * @see  #get(java.lang.String)
-	 */
-	public Currency get(java.util.Currency currency) throws IOException, SQLException {
-		if(currency == null) return null;
-		return get(currency.getCurrencyCode());		
-	}
+  /**
+   * @see  #get(java.lang.String)
+   */
+  public Currency get(java.util.Currency currency) throws IOException, SQLException {
+    if (currency == null) {
+      return null;
+    }
+    return get(currency.getCurrencyCode());
+  }
 
-	/**
-	 * @see  #get(java.lang.String)
-	 * @see  #get(java.util.Currency)
-	 *
-	 * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
-	 */
-	@Deprecated
-	@Override
-	public Currency get(Object pkey) throws IOException, SQLException {
-		if(pkey == null) return null;
-		if(pkey instanceof String) return get((String)pkey);
-		else if(pkey instanceof java.util.Currency) return get((java.util.Currency)pkey);
-		else throw new IllegalArgumentException("pkey is neither a String nor a Currency: " + pkey);
-	}
+  /**
+   * @see  #get(java.lang.String)
+   * @see  #get(java.util.Currency)
+   *
+   * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
+   */
+  @Deprecated
+  @Override
+  public Currency get(Object pkey) throws IOException, SQLException {
+    if (pkey == null) {
+      return null;
+    }
+    if (pkey instanceof String) {
+      return get((String)pkey);
+    } else if (pkey instanceof java.util.Currency) {
+      return get((java.util.Currency)pkey);
+    } else {
+      throw new IllegalArgumentException("pkey is neither a String nor a Currency: " + pkey);
+    }
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.Currency;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.Currency;
+  }
 }

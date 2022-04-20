@@ -39,61 +39,61 @@ import java.util.ResourceBundle;
  */
 public final class Language extends GlobalObjectStringKey<Language> {
 
-	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Language.class);
+  private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Language.class);
 
-	static final int COLUMN_CODE = 0;
-	static final String COLUMN_CODE_name = "code";
+  static final int COLUMN_CODE = 0;
+  static final String COLUMN_CODE_name = "code";
 
-	public static final String
-		EN="en",
-		JA="ja"
-	;
+  public static final String
+    EN="en",
+    JA="ja"
+  ;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public Language() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public Language() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_CODE: return pkey;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_CODE: return pkey;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	@Override
-	public String toStringImpl() {
-		return RESOURCES.getMessage(pkey + ".toString");
-	}
+  @Override
+  public String toStringImpl() {
+    return RESOURCES.getMessage(pkey + ".toString");
+  }
 
-	public String getCode() {
-		return pkey;
-	}
+  public String getCode() {
+    return pkey;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.LANGUAGES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.LANGUAGES;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey = result.getString(1);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey = result.getString(1);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey = in.readUTF().intern();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey = in.readUTF().intern();
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey);
+  }
 }

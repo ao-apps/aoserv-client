@@ -42,71 +42,79 @@ import java.util.List;
  */
 public final class BackupPartitionTable extends CachedTableIntegerKey<BackupPartition> {
 
-	BackupPartitionTable(AOServConnector connector) {
-		super(connector, BackupPartition.class);
-	}
+  BackupPartitionTable(AOServConnector connector) {
+    super(connector, BackupPartition.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(BackupPartition.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
-		new OrderBy(BackupPartition.COLUMN_PATH_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(BackupPartition.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
+    new OrderBy(BackupPartition.COLUMN_PATH_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public BackupPartition get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(BackupPartition.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public BackupPartition get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(BackupPartition.COLUMN_PKEY, pkey);
+  }
 
-	public List<BackupPartition> getBackupPartitions(Server ao) throws IOException, SQLException {
-		return getIndexedRows(BackupPartition.COLUMN_AO_SERVER, ao.getPkey());
-	}
+  public List<BackupPartition> getBackupPartitions(Server ao) throws IOException, SQLException {
+    return getIndexedRows(BackupPartition.COLUMN_AO_SERVER, ao.getPkey());
+  }
 
-	public BackupPartition getBackupPartitionForPath(Server ao, String path) throws IOException, SQLException {
-		// Use index first
-		List<BackupPartition> cached=getBackupPartitions(ao);
-		int size=cached.size();
-		for(int c=0;c<size;c++) {
-			BackupPartition bp=cached.get(c);
-			if(bp.getPath().toString().equals(path)) return bp;
-		}
-		return null;
-	}
+  public BackupPartition getBackupPartitionForPath(Server ao, String path) throws IOException, SQLException {
+    // Use index first
+    List<BackupPartition> cached=getBackupPartitions(ao);
+    int size=cached.size();
+    for (int c=0;c<size;c++) {
+      BackupPartition bp=cached.get(c);
+      if (bp.getPath().toString().equals(path)) {
+        return bp;
+      }
+    }
+    return null;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.BACKUP_PARTITIONS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.BACKUP_PARTITIONS;
+  }
 
-	@Override
-	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-		String command=args[0];
-		if(command.equalsIgnoreCase(Command.GET_BACKUP_PARTITION_TOTAL_SIZE)) {
-			if(AOSH.checkParamCount(Command.GET_BACKUP_PARTITION_TOTAL_SIZE, args, 2, err)) {
-				long size=connector.getSimpleAOClient().getBackupPartitionTotalSize(
-					args[1],
-					args[2]
-				);
-				if(size==-1) out.println("Server unavailable");
-				else out.println(size);
-				out.flush();
-			}
-			return true;
-		} else if(command.equalsIgnoreCase(Command.GET_BACKUP_PARTITION_USED_SIZE)) {
-			if(AOSH.checkParamCount(Command.GET_BACKUP_PARTITION_USED_SIZE, args, 2, err)) {
-				long size=connector.getSimpleAOClient().getBackupPartitionUsedSize(
-					args[1],
-					args[2]
-				);
-				if(size==-1) out.println("Server unavailable");
-				else out.println(size);
-				out.flush();
-			}
-			return true;
-		}
-		return false;
-	}
+  @Override
+  public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
+    String command=args[0];
+    if (command.equalsIgnoreCase(Command.GET_BACKUP_PARTITION_TOTAL_SIZE)) {
+      if (AOSH.checkParamCount(Command.GET_BACKUP_PARTITION_TOTAL_SIZE, args, 2, err)) {
+        long size=connector.getSimpleAOClient().getBackupPartitionTotalSize(
+          args[1],
+          args[2]
+        );
+        if (size == -1) {
+          out.println("Server unavailable");
+        } else {
+          out.println(size);
+        }
+        out.flush();
+      }
+      return true;
+    } else if (command.equalsIgnoreCase(Command.GET_BACKUP_PARTITION_USED_SIZE)) {
+      if (AOSH.checkParamCount(Command.GET_BACKUP_PARTITION_USED_SIZE, args, 2, err)) {
+        long size=connector.getSimpleAOClient().getBackupPartitionUsedSize(
+          args[1],
+          args[2]
+        );
+        if (size == -1) {
+          out.println("Server unavailable");
+        } else {
+          out.println(size);
+        }
+        out.flush();
+      }
+      return true;
+    }
+    return false;
+  }
 }

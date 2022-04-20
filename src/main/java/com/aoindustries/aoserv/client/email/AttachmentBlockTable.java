@@ -39,32 +39,32 @@ import java.util.List;
  */
 public final class AttachmentBlockTable extends CachedTableIntegerKey<AttachmentBlock> {
 
-	AttachmentBlockTable(AOServConnector connector) {
-		super(connector, AttachmentBlock.class);
-	}
+  AttachmentBlockTable(AOServConnector connector) {
+    super(connector, AttachmentBlock.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(AttachmentBlock.COLUMN_LINUX_SERVER_ACCOUNT_name+'.'+UserServer.COLUMN_USERNAME_name, ASCENDING),
-		new OrderBy(AttachmentBlock.COLUMN_LINUX_SERVER_ACCOUNT_name+'.'+UserServer.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
-		new OrderBy(AttachmentBlock.COLUMN_EXTENSION_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(AttachmentBlock.COLUMN_LINUX_SERVER_ACCOUNT_name+'.'+UserServer.COLUMN_USERNAME_name, ASCENDING),
+    new OrderBy(AttachmentBlock.COLUMN_LINUX_SERVER_ACCOUNT_name+'.'+UserServer.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
+    new OrderBy(AttachmentBlock.COLUMN_EXTENSION_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public AttachmentBlock get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(AttachmentBlock.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public AttachmentBlock get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(AttachmentBlock.COLUMN_PKEY, pkey);
+  }
 
-	public List<AttachmentBlock> getEmailAttachmentBlocks(UserServer lsa) throws IOException, SQLException {
-		return getIndexedRows(AttachmentBlock.COLUMN_LINUX_SERVER_ACCOUNT, lsa.getPkey());
-	}
+  public List<AttachmentBlock> getEmailAttachmentBlocks(UserServer lsa) throws IOException, SQLException {
+    return getIndexedRows(AttachmentBlock.COLUMN_LINUX_SERVER_ACCOUNT, lsa.getPkey());
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.EMAIL_ATTACHMENT_BLOCKS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.EMAIL_ATTACHMENT_BLOCKS;
+  }
 }

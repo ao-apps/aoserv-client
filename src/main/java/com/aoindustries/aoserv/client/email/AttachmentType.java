@@ -42,68 +42,68 @@ import java.sql.SQLException;
  */
 public final class AttachmentType extends GlobalObjectStringKey<AttachmentType> {
 
-	static final int COLUMN_EXTENSION=0;
-	static final String COLUMN_EXTENSION_name = "extension";
+  static final int COLUMN_EXTENSION=0;
+  static final String COLUMN_EXTENSION_name = "extension";
 
-	private String description;
-	private boolean is_default_block;
+  private String description;
+  private boolean is_default_block;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public AttachmentType() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public AttachmentType() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_EXTENSION: return pkey;
-			case 1: return description;
-			case 2: return is_default_block;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_EXTENSION: return pkey;
+      case 1: return description;
+      case 2: return is_default_block;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	public String getExtension() {
-		return pkey;
-	}
+  public String getExtension() {
+    return pkey;
+  }
 
-	public String getDescription() {
-		return description;
-	}
+  public String getDescription() {
+    return description;
+  }
 
-	public boolean isDefaultBlock() {
-		return is_default_block;
-	}
+  public boolean isDefaultBlock() {
+    return is_default_block;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.EMAIL_ATTACHMENT_TYPES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.EMAIL_ATTACHMENT_TYPES;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey=result.getString(1);
-		description=result.getString(2);
-		is_default_block=result.getBoolean(3);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey=result.getString(1);
+    description=result.getString(2);
+    is_default_block=result.getBoolean(3);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readUTF().intern();
-		description=in.readUTF();
-		is_default_block=in.readBoolean();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readUTF().intern();
+    description=in.readUTF();
+    is_default_block=in.readBoolean();
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey);
-		out.writeUTF(description);
-		out.writeBoolean(is_default_block);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey);
+    out.writeUTF(description);
+    out.writeBoolean(is_default_block);
+  }
 }

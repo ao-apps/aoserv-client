@@ -44,95 +44,107 @@ import java.util.ResourceBundle;
  */
 public final class Status extends GlobalObjectStringKey<Status> implements Comparable<Status> {
 
-	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Status.class);
+  private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Status.class);
 
-	static final int COLUMN_STATUS = 0;
-	static final int COLUMN_SORT_ORDER = 1;
-	static final String COLUMN_STATUS_name = "status";
-	static final String COLUMN_SORT_ORDER_name = "sort_order";
+  static final int COLUMN_STATUS = 0;
+  static final int COLUMN_SORT_ORDER = 1;
+  static final String COLUMN_STATUS_name = "status";
+  static final String COLUMN_SORT_ORDER_name = "sort_order";
 
-	/**
-	 * The different ticket statuses.
-	 */
-	public static final String
-		JUNK="junk",
-		DELETED="deleted",
-		CLOSED="closed",
-		BOUNCED="bounced",
-		HOLD="hold",
-		OPEN="open"
-	;
+  /**
+   * The different ticket statuses.
+   */
+  public static final String
+    JUNK="junk",
+    DELETED="deleted",
+    CLOSED="closed",
+    BOUNCED="bounced",
+    HOLD="hold",
+    OPEN="open"
+  ;
 
-	private short sort_order;
+  private short sort_order;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public Status() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public Status() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		if(i==COLUMN_STATUS) return pkey;
-		if(i==1) return sort_order;
-		throw new IllegalArgumentException("Invalid index: " + i);
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    if (i == COLUMN_STATUS) {
+      return pkey;
+    }
+    if (i == 1) {
+      return sort_order;
+    }
+    throw new IllegalArgumentException("Invalid index: " + i);
+  }
 
-	public short getSortOrder() {
-		return sort_order;
-	}
+  public short getSortOrder() {
+    return sort_order;
+  }
 
-	public String getStatus() {
-		return pkey;
-	}
+  public String getStatus() {
+    return pkey;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.TICKET_STATI;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.TICKET_STATI;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey = result.getString(1);
-		sort_order = result.getShort(2);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey = result.getString(1);
+    sort_order = result.getShort(2);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey = in.readUTF().intern();
-		sort_order = in.readShort();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey = in.readUTF().intern();
+    sort_order = in.readShort();
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey);
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43)<=0) out.writeUTF(pkey);
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_44)>=0) out.writeShort(sort_order);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey);
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43) <= 0) {
+      out.writeUTF(pkey);
+    }
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_44) >= 0) {
+      out.writeShort(sort_order);
+    }
+  }
 
-	@Override
-	public String toStringImpl() {
-		return RESOURCES.getMessage(pkey + ".toString");
-	}
+  @Override
+  public String toStringImpl() {
+    return RESOURCES.getMessage(pkey + ".toString");
+  }
 
-	/**
-	 * Localized description.
-	 */
-	public String getDescription() {
-		return RESOURCES.getMessage(pkey + ".description");
-	}
+  /**
+   * Localized description.
+   */
+  public String getDescription() {
+    return RESOURCES.getMessage(pkey + ".description");
+  }
 
-	@Override
-	public int compareTo(Status o) {
-		short sortOrder1 = sort_order;
-		short sortOrder2 = o.sort_order;
-		if(sortOrder1<sortOrder2) return -1;
-		if(sortOrder1>sortOrder2) return 1;
-		return 0;
-	}
+  @Override
+  public int compareTo(Status o) {
+    short sortOrder1 = sort_order;
+    short sortOrder2 = o.sort_order;
+    if (sortOrder1<sortOrder2) {
+      return -1;
+    }
+    if (sortOrder1>sortOrder2) {
+      return 1;
+    }
+    return 0;
+  }
 }

@@ -35,52 +35,58 @@ import java.sql.SQLException;
  */
 public final class TypeTable extends GlobalTableIntegerKey<Type> {
 
-	TypeTable(AOServConnector connector) {
-		super(connector, Type.class);
-	}
+  TypeTable(AOServConnector connector) {
+    super(connector, Type.class);
+  }
 
-	@Override
-	protected OrderBy[] getDefaultOrderBy() {
-		return null;
-	}
+  @Override
+  protected OrderBy[] getDefaultOrderBy() {
+    return null;
+  }
 
-	/*
-	@Override
-	protected int getMaxConnectionsPerThread() {
-		return 2;
-	}*/
+  /*
+  @Override
+  protected int getMaxConnectionsPerThread() {
+    return 2;
+  }*/
 
-	/**
-	 * Supports both Integer (num) and String (type) keys.
-	 *
-	 * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
-	 */
-	@Deprecated
-	@Override
-	public Type get(Object pkey) throws IOException, SQLException {
-		if(pkey == null) return null;
-		if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
-		else if(pkey instanceof String) return get((String)pkey);
-		else throw new IllegalArgumentException("Must be an Integer or a String");
-	}
+  /**
+   * Supports both Integer (num) and String (type) keys.
+   *
+   * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
+   */
+  @Deprecated
+  @Override
+  public Type get(Object pkey) throws IOException, SQLException {
+    if (pkey == null) {
+      return null;
+    }
+    if (pkey instanceof Integer) {
+      return get(((Integer)pkey).intValue());
+    } else if (pkey instanceof String) {
+      return get((String)pkey);
+    } else {
+      throw new IllegalArgumentException("Must be an Integer or a String");
+    }
+  }
 
-	/**
-	 * @see  #get(java.lang.Object)
-	 */
-	@Override
-	public Type get(int num) throws IOException, SQLException {
-		return getRows().get(num);
-	}
+  /**
+   * @see  #get(java.lang.Object)
+   */
+  @Override
+  public Type get(int num) throws IOException, SQLException {
+    return getRows().get(num);
+  }
 
-	/**
-	 * @see  #get(java.lang.Object)
-	 */
-	public Type get(String type) throws IOException, SQLException {
-		return getUniqueRow(Type.COLUMN_NAME, type);
-	}
+  /**
+   * @see  #get(java.lang.Object)
+   */
+  public Type get(String type) throws IOException, SQLException {
+    return getUniqueRow(Type.COLUMN_NAME, type);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.SCHEMA_TYPES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.SCHEMA_TYPES;
+  }
 }

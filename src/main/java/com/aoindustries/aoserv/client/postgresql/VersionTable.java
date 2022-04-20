@@ -38,34 +38,34 @@ import java.sql.SQLException;
  */
 public final class VersionTable extends GlobalTableIntegerKey<Version> {
 
-	VersionTable(AOServConnector connector) {
-		super(connector, Version.class);
-	}
+  VersionTable(AOServConnector connector) {
+    super(connector, Version.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(Version.COLUMN_VERSION_name+'.'+SoftwareVersion.COLUMN_VERSION_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(Version.COLUMN_VERSION_name+'.'+SoftwareVersion.COLUMN_VERSION_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public Version get(int version) throws IOException, SQLException {
-		return getUniqueRow(Version.COLUMN_VERSION, version);
-	}
+  @Override
+  public Version get(int version) throws IOException, SQLException {
+    return getUniqueRow(Version.COLUMN_VERSION, version);
+  }
 
-	public Version getPostgresVersion(String version, OperatingSystemVersion osv) throws IOException, SQLException {
-		return get(connector.getDistribution().getSoftware()
-			.get(Version.TECHNOLOGY_NAME)
-			.getTechnologyVersion(connector, version, osv)
-			.getPkey()
-		);
-	}
+  public Version getPostgresVersion(String version, OperatingSystemVersion osv) throws IOException, SQLException {
+    return get(connector.getDistribution().getSoftware()
+      .get(Version.TECHNOLOGY_NAME)
+      .getTechnologyVersion(connector, version, osv)
+      .getPkey()
+    );
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.POSTGRES_VERSIONS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.POSTGRES_VERSIONS;
+  }
 }

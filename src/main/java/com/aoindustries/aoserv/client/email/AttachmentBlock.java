@@ -47,92 +47,96 @@ import java.util.List;
  */
 public final class AttachmentBlock extends CachedObjectIntegerKey<AttachmentBlock> implements Removable {
 
-	static final int
-		COLUMN_PKEY=0,
-		COLUMN_LINUX_SERVER_ACCOUNT=1
-	;
-	static final String COLUMN_LINUX_SERVER_ACCOUNT_name = "linux_server_account";
-	static final String COLUMN_EXTENSION_name = "extension";
+  static final int
+    COLUMN_PKEY=0,
+    COLUMN_LINUX_SERVER_ACCOUNT=1
+  ;
+  static final String COLUMN_LINUX_SERVER_ACCOUNT_name = "linux_server_account";
+  static final String COLUMN_EXTENSION_name = "extension";
 
-	private int linux_server_account;
-	private String extension;
+  private int linux_server_account;
+  private String extension;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public AttachmentBlock() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public AttachmentBlock() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_PKEY: return pkey;
-			case COLUMN_LINUX_SERVER_ACCOUNT: return linux_server_account;
-			case 2: return extension;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_PKEY: return pkey;
+      case COLUMN_LINUX_SERVER_ACCOUNT: return linux_server_account;
+      case 2: return extension;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	public UserServer getLinuxServerAccount() throws SQLException, IOException {
-		UserServer lsa=table.getConnector().getLinux().getUserServer().get(linux_server_account);
-		if(lsa==null) throw new SQLException("Unable to find LinuxServerAccount: " + linux_server_account);
-		return lsa;
-	}
+  public UserServer getLinuxServerAccount() throws SQLException, IOException {
+    UserServer lsa=table.getConnector().getLinux().getUserServer().get(linux_server_account);
+    if (lsa == null) {
+      throw new SQLException("Unable to find LinuxServerAccount: " + linux_server_account);
+    }
+    return lsa;
+  }
 
-	public AttachmentType getEmailAttachmentType() throws SQLException, IOException {
-		AttachmentType eat=table.getConnector().getEmail().getAttachmentType().get(extension);
-		if(eat==null) throw new SQLException("Unable to find EmailAttachmentType: " + extension);
-		return eat;
-	}
+  public AttachmentType getEmailAttachmentType() throws SQLException, IOException {
+    AttachmentType eat=table.getConnector().getEmail().getAttachmentType().get(extension);
+    if (eat == null) {
+      throw new SQLException("Unable to find EmailAttachmentType: " + extension);
+    }
+    return eat;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.EMAIL_ATTACHMENT_BLOCKS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.EMAIL_ATTACHMENT_BLOCKS;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey=result.getInt(1);
-		linux_server_account=result.getInt(2);
-		extension=result.getString(3);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey=result.getInt(1);
+    linux_server_account=result.getInt(2);
+    extension=result.getString(3);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readCompressedInt();
-		linux_server_account=in.readCompressedInt();
-		extension=in.readUTF().intern();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readCompressedInt();
+    linux_server_account=in.readCompressedInt();
+    extension=in.readUTF().intern();
+  }
 
-	@Override
-	public List<CannotRemoveReason<?>> getCannotRemoveReasons() {
-		return Collections.emptyList();
-	}
+  @Override
+  public List<CannotRemoveReason<?>> getCannotRemoveReasons() {
+    return Collections.emptyList();
+  }
 
-	@Override
-	public void remove() throws SQLException, IOException {
-		table.getConnector().requestUpdateIL(
-			true,
-			AoservProtocol.CommandID.REMOVE,
-			Table.TableID.EMAIL_ATTACHMENT_BLOCKS,
-			pkey
-		);
-	}
+  @Override
+  public void remove() throws SQLException, IOException {
+    table.getConnector().requestUpdateIL(
+      true,
+      AoservProtocol.CommandID.REMOVE,
+      Table.TableID.EMAIL_ATTACHMENT_BLOCKS,
+      pkey
+    );
+  }
 
-	@Override
-	public String toStringImpl() throws SQLException, IOException {
-		return getLinuxServerAccount().toStringImpl()+"->"+extension;
-	}
+  @Override
+  public String toStringImpl() throws SQLException, IOException {
+    return getLinuxServerAccount().toStringImpl()+"->"+extension;
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeCompressedInt(linux_server_account);
-		out.writeUTF(extension);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    out.writeCompressedInt(linux_server_account);
+    out.writeUTF(extension);
+  }
 }

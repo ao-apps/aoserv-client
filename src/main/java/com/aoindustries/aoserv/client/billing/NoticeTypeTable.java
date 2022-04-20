@@ -36,26 +36,26 @@ import java.sql.SQLException;
  */
 public final class NoticeTypeTable extends GlobalTableStringKey<NoticeType> {
 
-	NoticeTypeTable(AOServConnector connector) {
-		super(connector, NoticeType.class);
-	}
+  NoticeTypeTable(AOServConnector connector) {
+    super(connector, NoticeType.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(NoticeType.COLUMN_TYPE_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(NoticeType.COLUMN_TYPE_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public NoticeType get(String type) throws IOException, SQLException {
-		return getUniqueRow(NoticeType.COLUMN_TYPE, type);
-	}
+  @Override
+  public NoticeType get(String type) throws IOException, SQLException {
+    return getUniqueRow(NoticeType.COLUMN_TYPE, type);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.NOTICE_TYPES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.NOTICE_TYPES;
+  }
 }

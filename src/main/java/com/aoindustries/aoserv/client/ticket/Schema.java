@@ -34,72 +34,72 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final ActionTable Action;
-	public ActionTable getAction() {
-		return Action;
-	}
+  private final ActionTable Action;
+  public ActionTable getAction() {
+    return Action;
+  }
 
-	private final ActionTypeTable ActionType;
-	public ActionTypeTable getActionType() {
-		return ActionType;
-	}
+  private final ActionTypeTable ActionType;
+  public ActionTypeTable getActionType() {
+    return ActionType;
+  }
 
-	private final AssignmentTable Assignment;
-	public AssignmentTable getAssignment() {
-		return Assignment;
-	}
+  private final AssignmentTable Assignment;
+  public AssignmentTable getAssignment() {
+    return Assignment;
+  }
 
-	private final LanguageTable Language;
-	public LanguageTable getLanguage() {
-		return Language;
-	}
+  private final LanguageTable Language;
+  public LanguageTable getLanguage() {
+    return Language;
+  }
 
-	private final PriorityTable Priority;
-	public PriorityTable getPriority() {
-		return Priority;
-	}
+  private final PriorityTable Priority;
+  public PriorityTable getPriority() {
+    return Priority;
+  }
 
-	private final StatusTable Status;
-	public StatusTable getStatus() {
-		return Status;
-	}
+  private final StatusTable Status;
+  public StatusTable getStatus() {
+    return Status;
+  }
 
-	private final TicketTable Ticket;
-	public TicketTable getTicket() {
-		return Ticket;
-	}
+  private final TicketTable Ticket;
+  public TicketTable getTicket() {
+    return Ticket;
+  }
 
-	private final TicketTypeTable TicketType;
-	public TicketTypeTable getTicketType() {
-		return TicketType;
-	}
+  private final TicketTypeTable TicketType;
+  public TicketTypeTable getTicketType() {
+    return TicketType;
+  }
 
-	private final List<? extends AOServTable<?, ?>> tables;
+  private final List<? extends AOServTable<?, ?>> tables;
 
-	public Schema(AOServConnector connector) {
-		super(connector);
+  public Schema(AOServConnector connector) {
+    super(connector);
 
-		ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
-		newTables.add(Action = new ActionTable(connector));
-		newTables.add(ActionType = new ActionTypeTable(connector));
-		newTables.add(Assignment = new AssignmentTable(connector));
-		newTables.add(Language = new LanguageTable(connector));
-		newTables.add(Priority = new PriorityTable(connector));
-		newTables.add(Status = new StatusTable(connector));
-		newTables.add(Ticket = new TicketTable(connector));
-		newTables.add(TicketType = new TicketTypeTable(connector));
-		newTables.trimToSize();
-		tables = Collections.unmodifiableList(newTables);
-	}
+    ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
+    newTables.add(Action = new ActionTable(connector));
+    newTables.add(ActionType = new ActionTypeTable(connector));
+    newTables.add(Assignment = new AssignmentTable(connector));
+    newTables.add(Language = new LanguageTable(connector));
+    newTables.add(Priority = new PriorityTable(connector));
+    newTables.add(Status = new StatusTable(connector));
+    newTables.add(Ticket = new TicketTable(connector));
+    newTables.add(TicketType = new TicketTypeTable(connector));
+    newTables.trimToSize();
+    tables = Collections.unmodifiableList(newTables);
+  }
 
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
-	public List<? extends AOServTable<?, ?>> getTables() {
-		return tables;
-	}
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
+  public List<? extends AOServTable<?, ?>> getTables() {
+    return tables;
+  }
 
-	@Override
-	public String getName() {
-		return "ticket";
-	}
+  @Override
+  public String getName() {
+    return "ticket";
+  }
 }

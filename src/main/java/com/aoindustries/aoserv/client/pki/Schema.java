@@ -34,40 +34,40 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final CertificateTable Certificate;
-	public CertificateTable getCertificate() {return Certificate;}
+  private final CertificateTable Certificate;
+  public CertificateTable getCertificate() {return Certificate;}
 
-	private final CertificateNameTable CertificateName;
-	public CertificateNameTable getCertificateName() {return CertificateName;}
+  private final CertificateNameTable CertificateName;
+  public CertificateNameTable getCertificateName() {return CertificateName;}
 
-	private final CertificateOtherUseTable CertificateOtherUse;
-	public CertificateOtherUseTable getCertificateOtherUse() {return CertificateOtherUse;}
+  private final CertificateOtherUseTable CertificateOtherUse;
+  public CertificateOtherUseTable getCertificateOtherUse() {return CertificateOtherUse;}
 
-	private final EncryptionKeyTable EncryptionKey;
-	public EncryptionKeyTable getEncryptionKey() {return EncryptionKey;}
+  private final EncryptionKeyTable EncryptionKey;
+  public EncryptionKeyTable getEncryptionKey() {return EncryptionKey;}
 
-	private final List<? extends AOServTable<?, ?>> tables;
+  private final List<? extends AOServTable<?, ?>> tables;
 
-	public Schema(AOServConnector connector) {
-		super(connector);
+  public Schema(AOServConnector connector) {
+    super(connector);
 
-		ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
-		newTables.add(Certificate = new CertificateTable(connector));
-		newTables.add(CertificateName = new CertificateNameTable(connector));
-		newTables.add(CertificateOtherUse = new CertificateOtherUseTable(connector));
-		newTables.add(EncryptionKey = new EncryptionKeyTable(connector));
-		newTables.trimToSize();
-		tables = Collections.unmodifiableList(newTables);
-	}
+    ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
+    newTables.add(Certificate = new CertificateTable(connector));
+    newTables.add(CertificateName = new CertificateNameTable(connector));
+    newTables.add(CertificateOtherUse = new CertificateOtherUseTable(connector));
+    newTables.add(EncryptionKey = new EncryptionKeyTable(connector));
+    newTables.trimToSize();
+    tables = Collections.unmodifiableList(newTables);
+  }
 
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
-	public List<? extends AOServTable<?, ?>> getTables() {
-		return tables;
-	}
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
+  public List<? extends AOServTable<?, ?>> getTables() {
+    return tables;
+  }
 
-	@Override
-	public String getName() {
-		return "pki";
-	}
+  @Override
+  public String getName() {
+    return "pki";
+  }
 }

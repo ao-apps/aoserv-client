@@ -34,40 +34,40 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final BrandTable Brand;
-	public BrandTable getBrand() {return Brand;}
+  private final BrandTable Brand;
+  public BrandTable getBrand() {return Brand;}
 
-	private final BrandCategoryTable BrandCategory;
-	public BrandCategoryTable getBrandCategory() {return BrandCategory;}
+  private final BrandCategoryTable BrandCategory;
+  public BrandCategoryTable getBrandCategory() {return BrandCategory;}
 
-	private final CategoryTable Category;
-	public CategoryTable getCategory() {return Category;}
+  private final CategoryTable Category;
+  public CategoryTable getCategory() {return Category;}
 
-	private final ResellerTable Reseller;
-	public ResellerTable getReseller() {return Reseller;}
+  private final ResellerTable Reseller;
+  public ResellerTable getReseller() {return Reseller;}
 
-	private final List<? extends AOServTable<?, ?>> tables;
+  private final List<? extends AOServTable<?, ?>> tables;
 
-	public Schema(AOServConnector connector) {
-		super(connector);
+  public Schema(AOServConnector connector) {
+    super(connector);
 
-		ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
-		newTables.add(Brand = new BrandTable(connector));
-		newTables.add(BrandCategory = new BrandCategoryTable(connector));
-		newTables.add(Category = new CategoryTable(connector));
-		newTables.add(Reseller = new ResellerTable(connector));
-		newTables.trimToSize();
-		tables = Collections.unmodifiableList(newTables);
-	}
+    ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
+    newTables.add(Brand = new BrandTable(connector));
+    newTables.add(BrandCategory = new BrandCategoryTable(connector));
+    newTables.add(Category = new CategoryTable(connector));
+    newTables.add(Reseller = new ResellerTable(connector));
+    newTables.trimToSize();
+    tables = Collections.unmodifiableList(newTables);
+  }
 
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
-	public List<? extends AOServTable<?, ?>> getTables() {
-		return tables;
-	}
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
+  public List<? extends AOServTable<?, ?>> getTables() {
+    return tables;
+  }
 
-	@Override
-	public String getName() {
-		return "reseller";
-	}
+  @Override
+  public String getName() {
+    return "reseller";
+  }
 }

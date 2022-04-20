@@ -61,132 +61,160 @@ import java.util.concurrent.ConcurrentMap;
  */
 // TODO: Move to an ao-posix-types package, similar to ao-net-types
 public final class PosixPath implements
-	Comparable<PosixPath>,
-	Serializable,
-	DtoFactory<com.aoindustries.aoserv.client.dto.PosixPath>,
-	Internable<PosixPath>
+  Comparable<PosixPath>,
+  Serializable,
+  DtoFactory<com.aoindustries.aoserv.client.dto.PosixPath>,
+  Internable<PosixPath>
 {
 
-	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, PosixPath.class);
+  private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, PosixPath.class);
 
-	private static final long serialVersionUID = -4832121065303689152L;
+  private static final long serialVersionUID = -4832121065303689152L;
 
-	public static ValidationResult validate(String path) {
-		// Be non-null
-		if(path==null) return new InvalidResult(RESOURCES, "validate.isNull");
-		// Be non-empty
-		if(path.length()==0) return new InvalidResult(RESOURCES, "validate.empty");
-		// Start with a /
-		char ch;
-		if((ch = path.charAt(0))!='/') return new InvalidResult(RESOURCES, "validate.startWithNonSlash", ch);
-		// Not contain any null characters
-		int i;
-		if((i = path.indexOf('\0'))!=-1) return new InvalidResult(RESOURCES, "validate.containsNullCharacter", i);
-		// Not contain any /../ or /./ path elements
-		if((i = path.indexOf("/../"))!=-1) return new InvalidResult(RESOURCES, "validate.containsDotDot", i);
-		if((i = path.indexOf("/./"))!=-1) return new InvalidResult(RESOURCES, "validate.containsDot", i);
-		// Not end with / unless "/"
-		if(path.length()>1 && path.endsWith("/")) return new InvalidResult(RESOURCES, "validate.endsSlash");
-		// Not end with /.. or /.
-		if(path.endsWith("/.")) return new InvalidResult(RESOURCES, "validate.endsSlashDot");
-		if(path.endsWith("/..")) return new InvalidResult(RESOURCES, "validate.endsSlashDotDot");
-		// Not contain any // in the path
-		if((i = path.indexOf("//"))!=-1) return new InvalidResult(RESOURCES, "validate.containsDoubleSlash", i);
-		return ValidResult.getInstance();
-	}
+  public static ValidationResult validate(String path) {
+    // Be non-null
+    if (path == null) {
+      return new InvalidResult(RESOURCES, "validate.isNull");
+    }
+    // Be non-empty
+    if (path.length() == 0) {
+      return new InvalidResult(RESOURCES, "validate.empty");
+    }
+    // Start with a /
+    char ch;
+    if ((ch = path.charAt(0)) != '/') {
+      return new InvalidResult(RESOURCES, "validate.startWithNonSlash", ch);
+    }
+    // Not contain any null characters
+    int i;
+    if ((i = path.indexOf('\0')) != -1) {
+      return new InvalidResult(RESOURCES, "validate.containsNullCharacter", i);
+    }
+    // Not contain any /../ or /./ path elements
+    if ((i = path.indexOf("/../")) != -1) {
+      return new InvalidResult(RESOURCES, "validate.containsDotDot", i);
+    }
+    if ((i = path.indexOf("/./")) != -1) {
+      return new InvalidResult(RESOURCES, "validate.containsDot", i);
+    }
+    // Not end with / unless "/"
+    if (path.length()>1 && path.endsWith("/")) {
+      return new InvalidResult(RESOURCES, "validate.endsSlash");
+    }
+    // Not end with /.. or /.
+    if (path.endsWith("/.")) {
+      return new InvalidResult(RESOURCES, "validate.endsSlashDot");
+    }
+    if (path.endsWith("/..")) {
+      return new InvalidResult(RESOURCES, "validate.endsSlashDotDot");
+    }
+    // Not contain any // in the path
+    if ((i = path.indexOf("//")) != -1) {
+      return new InvalidResult(RESOURCES, "validate.containsDoubleSlash", i);
+    }
+    return ValidResult.getInstance();
+  }
 
-	private static final ConcurrentMap<String, PosixPath> interned = new ConcurrentHashMap<>();
+  private static final ConcurrentMap<String, PosixPath> interned = new ConcurrentHashMap<>();
 
-	/**
-	 * @param path  when {@code null}, returns {@code null}
-	 */
-	public static PosixPath valueOf(String path) throws ValidationException {
-		if(path == null) return null;
-		//PosixPath existing = interned.get(path);
-		//return existing!=null ? existing : new PosixPath(path);
-		return new PosixPath(path, true);
-	}
+  /**
+   * @param path  when {@code null}, returns {@code null}
+   */
+  public static PosixPath valueOf(String path) throws ValidationException {
+    if (path == null) {
+      return null;
+    }
+    //PosixPath existing = interned.get(path);
+    //return existing != null ? existing : new PosixPath(path);
+    return new PosixPath(path, true);
+  }
 
-	private final String path;
+  private final String path;
 
-	private PosixPath(String path, boolean validate) throws ValidationException {
-		this.path = path;
-		if(validate) validate();
-	}
+  private PosixPath(String path, boolean validate) throws ValidationException {
+    this.path = path;
+    if (validate) {
+      validate();
+    }
+  }
 
-	/**
-	 * @param  path  Does not validate, should only be used with a known valid value.
-	 */
-	private PosixPath(String path) {
-		ValidationResult result;
-		assert (result = validate(path)).isValid() : result.toString();
-		this.path = path;
-	}
+  /**
+   * @param  path  Does not validate, should only be used with a known valid value.
+   */
+  private PosixPath(String path) {
+    ValidationResult result;
+    assert (result = validate(path)).isValid() : result.toString();
+    this.path = path;
+  }
 
-	private void validate() throws ValidationException {
-		ValidationResult result = validate(path);
-		if(!result.isValid()) throw new ValidationException(result);
-	}
+  private void validate() throws ValidationException {
+    ValidationResult result = validate(path);
+    if (!result.isValid()) {
+      throw new ValidationException(result);
+    }
+  }
 
-	/**
-	 * Perform same validation as constructor on readObject.
-	 */
-	private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-		ois.defaultReadObject();
-		try {
-			validate();
-		} catch(ValidationException err) {
-			InvalidObjectException newErr = new InvalidObjectException(err.getMessage());
-			newErr.initCause(err);
-			throw newErr;
-		}
-	}
+  /**
+   * Perform same validation as constructor on readObject.
+   */
+  private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+    ois.defaultReadObject();
+    try {
+      validate();
+    } catch (ValidationException err) {
+      InvalidObjectException newErr = new InvalidObjectException(err.getMessage());
+      newErr.initCause(err);
+      throw newErr;
+    }
+  }
 
-	@Override
-	public boolean equals(Object obj) {
-		return
-			(obj instanceof PosixPath)
-			&& path.equals(((PosixPath)obj).path)
-		;
-	}
+  @Override
+  public boolean equals(Object obj) {
+    return
+      (obj instanceof PosixPath)
+      && path.equals(((PosixPath)obj).path)
+    ;
+  }
 
-	@Override
-	public int hashCode() {
-		return path.hashCode();
-	}
+  @Override
+  public int hashCode() {
+    return path.hashCode();
+  }
 
-	@Override
-	public int compareTo(PosixPath other) {
-		return this==other ? 0 : ComparatorUtils.compareIgnoreCaseConsistentWithEquals(path, other.path);
-	}
+  @Override
+  public int compareTo(PosixPath other) {
+    return this == other ? 0 : ComparatorUtils.compareIgnoreCaseConsistentWithEquals(path, other.path);
+  }
 
-	@Override
-	public String toString() {
-		return path;
-	}
+  @Override
+  public String toString() {
+    return path;
+  }
 
-	/**
-	 * Interns this path much in the same fashion as <code>String.intern()</code>.
-	 *
-	 * @see  String#intern()
-	 */
-	@Override
-	public PosixPath intern() {
-		PosixPath existing = interned.get(path);
-		if(existing==null) {
-			String internedPath = path.intern();
-			@SuppressWarnings("StringEquality")
-			PosixPath addMe = (path == internedPath) ? this : new PosixPath(internedPath);
-			existing = interned.putIfAbsent(internedPath, addMe);
-			if(existing==null) existing = addMe;
-		}
-		return existing;
-	}
+  /**
+   * Interns this path much in the same fashion as <code>String.intern()</code>.
+   *
+   * @see  String#intern()
+   */
+  @Override
+  public PosixPath intern() {
+    PosixPath existing = interned.get(path);
+    if (existing == null) {
+      String internedPath = path.intern();
+      @SuppressWarnings("StringEquality")
+      PosixPath addMe = (path == internedPath) ? this : new PosixPath(internedPath);
+      existing = interned.putIfAbsent(internedPath, addMe);
+      if (existing == null) {
+        existing = addMe;
+      }
+    }
+    return existing;
+  }
 
-	@Override
-	public com.aoindustries.aoserv.client.dto.PosixPath getDto() {
-		return new com.aoindustries.aoserv.client.dto.PosixPath(path);
-	}
+  @Override
+  public com.aoindustries.aoserv.client.dto.PosixPath getDto() {
+    return new com.aoindustries.aoserv.client.dto.PosixPath(path);
+  }
 
-	// TODO: subPath, prefix, suffix matching Path except watch for trailing slash
+  // TODO: subPath, prefix, suffix matching Path except watch for trailing slash
 }

@@ -62,150 +62,154 @@ import java.util.List;
  */
 public final class Domain extends CachedObjectIntegerKey<Domain> implements Removable {
 
-	static final int
-		COLUMN_PKEY=0,
-		COLUMN_AO_SERVER=2,
-		COLUMN_PACKAGE=3
-	;
-	static final String COLUMN_AO_SERVER_name = "ao_server";
-	static final String COLUMN_DOMAIN_name = "domain";
+  static final int
+    COLUMN_PKEY=0,
+    COLUMN_AO_SERVER=2,
+    COLUMN_PACKAGE=3
+  ;
+  static final String COLUMN_AO_SERVER_name = "ao_server";
+  static final String COLUMN_DOMAIN_name = "domain";
 
-	private DomainName domain;
-	private int ao_server;
-	private Account.Name packageName;
+  private DomainName domain;
+  private int ao_server;
+  private Account.Name packageName;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public Domain() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public Domain() {
+    // Do nothing
+  }
 
-	public int addEmailAddress(String address) throws SQLException, IOException {
-		return table.getConnector().getEmail().getAddress().addEmailAddress(address, this);
-	}
+  public int addEmailAddress(String address) throws SQLException, IOException {
+    return table.getConnector().getEmail().getAddress().addEmailAddress(address, this);
+  }
 
-	public void addMajordomoServer(
-		UserServer linuxServerAccount,
-		GroupServer linuxServerGroup,
-		MajordomoVersion majordomoVersion
-	) throws IOException, SQLException {
-		table.getConnector().getEmail().getMajordomoServer().addMajordomoServer(
-			this,
-			linuxServerAccount,
-			linuxServerGroup,
-			majordomoVersion
-		);
-	}
+  public void addMajordomoServer(
+    UserServer linuxServerAccount,
+    GroupServer linuxServerGroup,
+    MajordomoVersion majordomoVersion
+  ) throws IOException, SQLException {
+    table.getConnector().getEmail().getMajordomoServer().addMajordomoServer(
+      this,
+      linuxServerAccount,
+      linuxServerGroup,
+      majordomoVersion
+    );
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_PKEY: return pkey;
-			case 1: return domain;
-			case COLUMN_AO_SERVER: return ao_server;
-			case COLUMN_PACKAGE: return packageName;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_PKEY: return pkey;
+      case 1: return domain;
+      case COLUMN_AO_SERVER: return ao_server;
+      case COLUMN_PACKAGE: return packageName;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	public DomainName getDomain() {
-		return domain;
-	}
+  public DomainName getDomain() {
+    return domain;
+  }
 
-	public Address getEmailAddress(String address) throws IOException, SQLException {
-		return table.getConnector().getEmail().getAddress().getEmailAddress(address, this);
-	}
+  public Address getEmailAddress(String address) throws IOException, SQLException {
+    return table.getConnector().getEmail().getAddress().getEmailAddress(address, this);
+  }
 
-	public List<Address> getEmailAddresses() throws IOException, SQLException {
-		return table.getConnector().getEmail().getAddress().getEmailAddresses(this);
-	}
+  public List<Address> getEmailAddresses() throws IOException, SQLException {
+    return table.getConnector().getEmail().getAddress().getEmailAddresses(this);
+  }
 
-	public MajordomoServer getMajordomoServer() throws IOException, SQLException {
-		return table.getConnector().getEmail().getMajordomoServer().get(pkey);
-	}
+  public MajordomoServer getMajordomoServer() throws IOException, SQLException {
+    return table.getConnector().getEmail().getMajordomoServer().get(pkey);
+  }
 
-	public Package getPackage() throws SQLException, IOException {
-		Package packageObject = table.getConnector().getBilling().getPackage().get(packageName);
-		if (packageObject == null) throw new SQLException("Unable to find Package: " + packageName);
-		return packageObject;
-	}
+  public Package getPackage() throws SQLException, IOException {
+    Package packageObject = table.getConnector().getBilling().getPackage().get(packageName);
+    if (packageObject == null) {
+      throw new SQLException("Unable to find Package: " + packageName);
+    }
+    return packageObject;
+  }
 
-	public int getLinuxServer_host_id() {
-		return ao_server;
-	}
+  public int getLinuxServer_host_id() {
+    return ao_server;
+  }
 
-	public Server getLinuxServer() throws SQLException, IOException {
-		Server ao=table.getConnector().getLinux().getServer().get(ao_server);
-		if(ao==null) throw new SQLException("Unable to find linux.Server: "+ao_server);
-		return ao;
-	}
+  public Server getLinuxServer() throws SQLException, IOException {
+    Server ao=table.getConnector().getLinux().getServer().get(ao_server);
+    if (ao == null) {
+      throw new SQLException("Unable to find linux.Server: "+ao_server);
+    }
+    return ao;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.EMAIL_DOMAINS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.EMAIL_DOMAINS;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		try {
-			pkey=result.getInt(1);
-			domain=DomainName.valueOf(result.getString(2));
-			ao_server=result.getInt(3);
-			packageName = Account.Name.valueOf(result.getString(4));
-		} catch(ValidationException e) {
-			throw new SQLException(e);
-		}
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    try {
+      pkey=result.getInt(1);
+      domain=DomainName.valueOf(result.getString(2));
+      ao_server=result.getInt(3);
+      packageName = Account.Name.valueOf(result.getString(4));
+    } catch (ValidationException e) {
+      throw new SQLException(e);
+    }
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		try {
-			pkey = in.readCompressedInt();
-			domain = DomainName.valueOf(in.readUTF());
-			ao_server = in.readCompressedInt();
-			packageName = Account.Name.valueOf(in.readUTF()).intern();
-		} catch(ValidationException e) {
-			throw new IOException(e);
-		}
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    try {
+      pkey = in.readCompressedInt();
+      domain = DomainName.valueOf(in.readUTF());
+      ao_server = in.readCompressedInt();
+      packageName = Account.Name.valueOf(in.readUTF()).intern();
+    } catch (ValidationException e) {
+      throw new IOException(e);
+    }
+  }
 
-	@Override
-	public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws SQLException, IOException {
-		List<CannotRemoveReason<?>> reasons=new ArrayList<>();
+  @Override
+  public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws SQLException, IOException {
+    List<CannotRemoveReason<?>> reasons=new ArrayList<>();
 
-		MajordomoServer ms=getMajordomoServer();
-		if(ms!=null) {
-			Domain ed=ms.getDomain();
-			reasons.add(new CannotRemoveReason<>("Used by Majordomo server "+ed.getDomain()+" on "+ed.getLinuxServer().getHostname(), ms));
-		}
+    MajordomoServer ms=getMajordomoServer();
+    if (ms != null) {
+      Domain ed=ms.getDomain();
+      reasons.add(new CannotRemoveReason<>("Used by Majordomo server "+ed.getDomain()+" on "+ed.getLinuxServer().getHostname(), ms));
+    }
 
-		for(Address ea : getEmailAddresses()) {
-			reasons.addAll(ea.getCannotRemoveReasons());
-		}
+    for (Address ea : getEmailAddresses()) {
+      reasons.addAll(ea.getCannotRemoveReasons());
+    }
 
-		return reasons;
-	}
+    return reasons;
+  }
 
-	@Override
-	public void remove() throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(
-			true,
-			AoservProtocol.CommandID.REMOVE,
-			Table.TableID.EMAIL_DOMAINS,
-			pkey
-		);
-	}
+  @Override
+  public void remove() throws IOException, SQLException {
+    table.getConnector().requestUpdateIL(
+      true,
+      AoservProtocol.CommandID.REMOVE,
+      Table.TableID.EMAIL_DOMAINS,
+      pkey
+    );
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeUTF(domain.toString());
-		out.writeCompressedInt(ao_server);
-		out.writeUTF(packageName.toString());
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    out.writeUTF(domain.toString());
+    out.writeCompressedInt(ao_server);
+    out.writeUTF(packageName.toString());
+  }
 }

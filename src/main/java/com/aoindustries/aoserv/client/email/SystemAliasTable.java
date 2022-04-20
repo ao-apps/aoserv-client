@@ -38,31 +38,31 @@ import java.util.List;
  */
 public final class SystemAliasTable extends CachedTableIntegerKey<SystemAlias> {
 
-	SystemAliasTable(AOServConnector connector) {
-		super(connector, SystemAlias.class);
-	}
+  SystemAliasTable(AOServConnector connector) {
+    super(connector, SystemAlias.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(SystemAlias.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
-		new OrderBy(SystemAlias.COLUMN_ADDRESS_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(SystemAlias.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
+    new OrderBy(SystemAlias.COLUMN_ADDRESS_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	public List<SystemAlias> getSystemEmailAliases(Server ao) throws IOException, SQLException {
-		return getIndexedRows(SystemAlias.COLUMN_AO_SERVER, ao.getPkey());
-	}
+  public List<SystemAlias> getSystemEmailAliases(Server ao) throws IOException, SQLException {
+    return getIndexedRows(SystemAlias.COLUMN_AO_SERVER, ao.getPkey());
+  }
 
-	@Override
-	public SystemAlias get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(SystemAlias.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public SystemAlias get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(SystemAlias.COLUMN_PKEY, pkey);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.SYSTEM_EMAIL_ALIASES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.SYSTEM_EMAIL_ALIASES;
+  }
 }

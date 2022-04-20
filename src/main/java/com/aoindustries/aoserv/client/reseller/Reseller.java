@@ -47,107 +47,115 @@ import java.util.List;
  */
 public final class Reseller extends CachedObjectAccountNameKey<Reseller> {
 
-	static final int COLUMN_ACCOUNTING = 0;
-	static final String COLUMN_ACCOUNTING_name = "accounting";
+  static final int COLUMN_ACCOUNTING = 0;
+  static final String COLUMN_ACCOUNTING_name = "accounting";
 
-	private boolean ticket_auto_escalate;
+  private boolean ticket_auto_escalate;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public Reseller() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public Reseller() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_ACCOUNTING : return pkey;
-			case 1: return ticket_auto_escalate;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_ACCOUNTING : return pkey;
+      case 1: return ticket_auto_escalate;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	public Account.Name getBrand_business_accounting() {
-		return pkey;
-	}
+  public Account.Name getBrand_business_accounting() {
+    return pkey;
+  }
 
-	public Brand getBrand() throws SQLException, IOException {
-		Brand br = table.getConnector().getReseller().getBrand().get(pkey);
-		if(br==null) throw new SQLException("Unable to find Brand: "+pkey);
-		return br;
-	}
+  public Brand getBrand() throws SQLException, IOException {
+    Brand br = table.getConnector().getReseller().getBrand().get(pkey);
+    if (br == null) {
+      throw new SQLException("Unable to find Brand: "+pkey);
+    }
+    return br;
+  }
 
-	public boolean getTicketAutoEscalate() {
-		return ticket_auto_escalate;
-	}
+  public boolean getTicketAutoEscalate() {
+    return ticket_auto_escalate;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.RESELLERS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.RESELLERS;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		try {
-			int pos = 1;
-			pkey = Account.Name.valueOf(result.getString(pos++));
-			ticket_auto_escalate = result.getBoolean(pos++);
-		} catch(ValidationException e) {
-			throw new SQLException(e);
-		}
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    try {
+      int pos = 1;
+      pkey = Account.Name.valueOf(result.getString(pos++));
+      ticket_auto_escalate = result.getBoolean(pos++);
+    } catch (ValidationException e) {
+      throw new SQLException(e);
+    }
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		try {
-			pkey=Account.Name.valueOf(in.readUTF()).intern();
-			ticket_auto_escalate = in.readBoolean();
-		} catch(ValidationException e) {
-			throw new IOException(e);
-		}
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    try {
+      pkey=Account.Name.valueOf(in.readUTF()).intern();
+      ticket_auto_escalate = in.readBoolean();
+    } catch (ValidationException e) {
+      throw new IOException(e);
+    }
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey.toUpperCase());
-		out.writeBoolean(ticket_auto_escalate);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey.toUpperCase());
+    out.writeBoolean(ticket_auto_escalate);
+  }
 
-	public List<Assignment> getTicketAssignments() throws IOException, SQLException {
-		return table.getConnector().getTicket().getAssignment().getTicketAssignments(this);
-	}
+  public List<Assignment> getTicketAssignments() throws IOException, SQLException {
+    return table.getConnector().getTicket().getAssignment().getTicketAssignments(this);
+  }
 
-	/**
-	 * Gets the immediate parent of this reseller or {@code null} if none available.
-	 */
-	public Reseller getParent() throws IOException, SQLException {
-		Account bu = getBrand().getAccount();
-		if(bu==null) return null;
-		Account parent = bu.getParent();
-		while(parent!=null) {
-			Brand parentBrand = parent.getBrand();
-			if(parentBrand!=null) {
-				Reseller parentReseller = parentBrand.getReseller();
-				if(parentReseller!=null) return parentReseller;
-			}
-		}
-		return null;
-	}
+  /**
+   * Gets the immediate parent of this reseller or {@code null} if none available.
+   */
+  public Reseller getParent() throws IOException, SQLException {
+    Account bu = getBrand().getAccount();
+    if (bu == null) {
+      return null;
+    }
+    Account parent = bu.getParent();
+    while (parent != null) {
+      Brand parentBrand = parent.getBrand();
+      if (parentBrand != null) {
+        Reseller parentReseller = parentBrand.getReseller();
+        if (parentReseller != null) {
+          return parentReseller;
+        }
+      }
+    }
+    return null;
+  }
 
-	/**
-	 * The children of the reseller are any resellers that have their closest parent
-	 * account (that is a reseller) equal to this one.
-	 */
-	public List<Reseller> getChildResellers() throws IOException, SQLException {
-		List<Reseller> children = new ArrayList<>();
-		for(Reseller reseller : table.getConnector().getReseller().getReseller().getRows()) {
-			if(!reseller.equals(this) && this.equals(reseller.getParent())) children.add(reseller);
-		}
-		return children;
-	}
+  /**
+   * The children of the reseller are any resellers that have their closest parent
+   * account (that is a reseller) equal to this one.
+   */
+  public List<Reseller> getChildResellers() throws IOException, SQLException {
+    List<Reseller> children = new ArrayList<>();
+    for (Reseller reseller : table.getConnector().getReseller().getReseller().getRows()) {
+      if (!reseller.equals(this) && this.equals(reseller.getParent())) {
+        children.add(reseller);
+      }
+    }
+    return children;
+  }
 }

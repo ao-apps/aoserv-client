@@ -40,34 +40,34 @@ import java.util.List;
  */
 public final class LimiterSetTable extends CachedTableIntegerKey<LimiterSet> {
 
-	LimiterSetTable(AOServConnector connector) {
-		super(connector, LimiterSet.class);
-	}
+  LimiterSetTable(AOServConnector connector) {
+    super(connector, LimiterSet.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(LimiterSet.COLUMN_LIMITER_name+'.'+Limiter.COLUMN_NET_DEVICE_name+'.'+Device.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(LimiterSet.COLUMN_LIMITER_name+'.'+Limiter.COLUMN_NET_DEVICE_name+'.'+Device.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(LimiterSet.COLUMN_LIMITER_name+'.'+Limiter.COLUMN_NET_DEVICE_name+'.'+Device.COLUMN_DEVICE_ID_name, ASCENDING),
-		new OrderBy(LimiterSet.COLUMN_LIMITER_name+'.'+Limiter.COLUMN_IDENTIFIER_name, ASCENDING),
-		new OrderBy(LimiterSet.COLUMN_SORT_ORDER_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(LimiterSet.COLUMN_LIMITER_name+'.'+Limiter.COLUMN_NET_DEVICE_name+'.'+Device.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(LimiterSet.COLUMN_LIMITER_name+'.'+Limiter.COLUMN_NET_DEVICE_name+'.'+Device.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(LimiterSet.COLUMN_LIMITER_name+'.'+Limiter.COLUMN_NET_DEVICE_name+'.'+Device.COLUMN_DEVICE_ID_name, ASCENDING),
+    new OrderBy(LimiterSet.COLUMN_LIMITER_name+'.'+Limiter.COLUMN_IDENTIFIER_name, ASCENDING),
+    new OrderBy(LimiterSet.COLUMN_SORT_ORDER_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public LimiterSet get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(LimiterSet.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public LimiterSet get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(LimiterSet.COLUMN_PKEY, pkey);
+  }
 
-	List<LimiterSet> getSets(Limiter limiter) throws IOException, SQLException {
-		return getIndexedRows(LimiterSet.COLUMN_LIMITER, limiter.getPkey());
-	}
+  List<LimiterSet> getSets(Limiter limiter) throws IOException, SQLException {
+    return getIndexedRows(LimiterSet.COLUMN_LIMITER, limiter.getPkey());
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.IP_REPUTATION_LIMITER_SETS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.IP_REPUTATION_LIMITER_SETS;
+  }
 }

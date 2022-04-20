@@ -45,73 +45,81 @@ import java.sql.SQLException;
  */
 public final class UserAcl extends CachedObjectIntegerKey<UserAcl> {
 
-	static final int COLUMN_PKEY=0;
-	static final String COLUMN_USERNAME_name = "username";
-	static final String COLUMN_HOST_name = "host";
+  static final int COLUMN_PKEY=0;
+  static final String COLUMN_USERNAME_name = "username";
+  static final String COLUMN_HOST_name = "host";
 
-	private com.aoindustries.aoserv.client.account.User.Name username;
-	private HostAddress host;
+  private com.aoindustries.aoserv.client.account.User.Name username;
+  private HostAddress host;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public UserAcl() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public UserAcl() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		if(i==COLUMN_PKEY) return pkey;
-		if(i==1) return username;
-		if(i==2) return host;
-		throw new IllegalArgumentException("Invalid index: " + i);
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    if (i == COLUMN_PKEY) {
+      return pkey;
+    }
+    if (i == 1) {
+      return username;
+    }
+    if (i == 2) {
+      return host;
+    }
+    throw new IllegalArgumentException("Invalid index: " + i);
+  }
 
-	public HostAddress getHost() {
-		return host;
-	}
+  public HostAddress getHost() {
+    return host;
+  }
 
-	public User getMasterUser() throws SQLException, IOException {
-		User obj=table.getConnector().getMaster().getUser().get(username);
-		if(obj==null) throw new SQLException("Unable to find MasterUser: "+username);
-		return obj;
-	}
+  public User getMasterUser() throws SQLException, IOException {
+    User obj=table.getConnector().getMaster().getUser().get(username);
+    if (obj == null) {
+      throw new SQLException("Unable to find MasterUser: "+username);
+    }
+    return obj;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.MASTER_HOSTS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.MASTER_HOSTS;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		try {
-			pkey=result.getInt(1);
-			username = com.aoindustries.aoserv.client.account.User.Name.valueOf(result.getString(2));
-			host = HostAddress.valueOf(result.getString(3));
-		} catch(ValidationException e) {
-			throw new SQLException(e);
-		}
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    try {
+      pkey=result.getInt(1);
+      username = com.aoindustries.aoserv.client.account.User.Name.valueOf(result.getString(2));
+      host = HostAddress.valueOf(result.getString(3));
+    } catch (ValidationException e) {
+      throw new SQLException(e);
+    }
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		try {
-			pkey = in.readCompressedInt();
-			username = com.aoindustries.aoserv.client.account.User.Name.valueOf(in.readUTF()).intern();
-			host = HostAddress.valueOf(in.readUTF()).intern();
-		} catch(ValidationException e) {
-			throw new IOException(e);
-		}
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    try {
+      pkey = in.readCompressedInt();
+      username = com.aoindustries.aoserv.client.account.User.Name.valueOf(in.readUTF()).intern();
+      host = HostAddress.valueOf(in.readUTF()).intern();
+    } catch (ValidationException e) {
+      throw new IOException(e);
+    }
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeUTF(username.toString());
-		out.writeUTF(host.toString());
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    out.writeUTF(username.toString());
+    out.writeUTF(host.toString());
+  }
 }

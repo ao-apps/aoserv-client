@@ -43,55 +43,55 @@ import java.util.List;
  */
 public final class HttpdServerTable extends CachedTableIntegerKey<HttpdServer> {
 
-	HttpdServerTable(AOServConnector connector) {
-		super(connector, HttpdServer.class);
-	}
+  HttpdServerTable(AOServConnector connector) {
+    super(connector, HttpdServer.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(HttpdServer.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
-		new OrderBy(HttpdServer.COLUMN_NAME_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(HttpdServer.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
+    new OrderBy(HttpdServer.COLUMN_NAME_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public HttpdServer get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(HttpdServer.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public HttpdServer get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(HttpdServer.COLUMN_PKEY, pkey);
+  }
 
-	public List<HttpdServer> getHttpdServers(Server ao) throws IOException, SQLException {
-		return getIndexedRows(HttpdServer.COLUMN_AO_SERVER, ao.getPkey());
-	}
+  public List<HttpdServer> getHttpdServers(Server ao) throws IOException, SQLException {
+    return getIndexedRows(HttpdServer.COLUMN_AO_SERVER, ao.getPkey());
+  }
 
-	public List<HttpdServer> getHttpdServers(Package pk) throws IOException, SQLException {
-		return getIndexedRows(HttpdServer.COLUMN_PACKAGE, pk.getPkey());
-	}
+  public List<HttpdServer> getHttpdServers(Package pk) throws IOException, SQLException {
+    return getIndexedRows(HttpdServer.COLUMN_PACKAGE, pk.getPkey());
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.HTTPD_SERVERS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.HTTPD_SERVERS;
+  }
 
-	@Override
-	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-		String command = args[0];
-		if(command.equalsIgnoreCase(Command.GET_HTTPD_SERVER_CONCURRENCY)) {
-			if(AOSH.checkParamCount(Command.GET_HTTPD_SERVER_CONCURRENCY, args, 2, err)) {
-				out.write(
-					Integer.toString(
-						connector.getSimpleAOClient().getHttpdServerConcurrency(
-							args[1],
-							args[2].isEmpty() ? null : args[2]
-						)
-					)
-				);
-				out.flush();
-			}
-			return true;
-		}
-		return false;
-	}
+  @Override
+  public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
+    String command = args[0];
+    if (command.equalsIgnoreCase(Command.GET_HTTPD_SERVER_CONCURRENCY)) {
+      if (AOSH.checkParamCount(Command.GET_HTTPD_SERVER_CONCURRENCY, args, 2, err)) {
+        out.write(
+          Integer.toString(
+            connector.getSimpleAOClient().getHttpdServerConcurrency(
+              args[1],
+              args[2].isEmpty() ? null : args[2]
+            )
+          )
+        );
+        out.flush();
+      }
+      return true;
+    }
+    return false;
+  }
 }

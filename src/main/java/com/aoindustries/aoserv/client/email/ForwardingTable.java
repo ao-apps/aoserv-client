@@ -48,137 +48,148 @@ import java.util.List;
  */
 public final class ForwardingTable extends CachedTableIntegerKey<Forwarding> {
 
-	ForwardingTable(AOServConnector connector) {
-		super(connector, Forwarding.class);
-	}
+  ForwardingTable(AOServConnector connector) {
+    super(connector, Forwarding.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(Forwarding.COLUMN_EMAIL_ADDRESS_name+'.'+Address.COLUMN_DOMAIN_name+'.'+Domain.COLUMN_DOMAIN_name, ASCENDING),
-		new OrderBy(Forwarding.COLUMN_EMAIL_ADDRESS_name+'.'+Address.COLUMN_DOMAIN_name+'.'+Domain.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
-		new OrderBy(Forwarding.COLUMN_EMAIL_ADDRESS_name+'.'+Address.COLUMN_ADDRESS_name, ASCENDING),
-		new OrderBy(Forwarding.COLUMN_DESTINATION_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(Forwarding.COLUMN_EMAIL_ADDRESS_name+'.'+Address.COLUMN_DOMAIN_name+'.'+Domain.COLUMN_DOMAIN_name, ASCENDING),
+    new OrderBy(Forwarding.COLUMN_EMAIL_ADDRESS_name+'.'+Address.COLUMN_DOMAIN_name+'.'+Domain.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
+    new OrderBy(Forwarding.COLUMN_EMAIL_ADDRESS_name+'.'+Address.COLUMN_ADDRESS_name, ASCENDING),
+    new OrderBy(Forwarding.COLUMN_DESTINATION_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	int addEmailForwarding(Address emailAddressObject, Email destination) throws IOException, SQLException {
-		return connector.requestIntQueryIL(
-			true,
-			AoservProtocol.CommandID.ADD,
-			Table.TableID.EMAIL_FORWARDING,
-			emailAddressObject.getPkey(),
-			destination
-		);
-	}
+  int addEmailForwarding(Address emailAddressObject, Email destination) throws IOException, SQLException {
+    return connector.requestIntQueryIL(
+      true,
+      AoservProtocol.CommandID.ADD,
+      Table.TableID.EMAIL_FORWARDING,
+      emailAddressObject.getPkey(),
+      destination
+    );
+  }
 
-	@Override
-	public Forwarding get(int pkey) throws SQLException, IOException {
-		return getUniqueRow(Forwarding.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public Forwarding get(int pkey) throws SQLException, IOException {
+    return getUniqueRow(Forwarding.COLUMN_PKEY, pkey);
+  }
 
-	public List<Forwarding> getEmailForwarding(Account account) throws SQLException, IOException {
-		List<Forwarding> cached = getRows();
-		int len = cached.size();
-		List<Forwarding> matches=new ArrayList<>(len);
-		for (int c = 0; c < len; c++) {
-			Forwarding forward = cached.get(c);
-			if (forward
-				.getEmailAddress()
-				.getDomain()
-				.getPackage()
-				.getAccount_name()
-				.equals(account.getName())
-			) matches.add(forward);
-		}
-		return matches;
-	}
+  public List<Forwarding> getEmailForwarding(Account account) throws SQLException, IOException {
+    List<Forwarding> cached = getRows();
+    int len = cached.size();
+    List<Forwarding> matches=new ArrayList<>(len);
+    for (int c = 0; c < len; c++) {
+      Forwarding forward = cached.get(c);
+      if (forward
+        .getEmailAddress()
+        .getDomain()
+        .getPackage()
+        .getAccount_name()
+        .equals(account.getName())
+      ) {
+        matches.add(forward);
+      }
+    }
+    return matches;
+  }
 
-	List<Forwarding> getEmailForwardings(Address ea) throws IOException, SQLException {
-		return getIndexedRows(Forwarding.COLUMN_EMAIL_ADDRESS, ea.getPkey());
-	}
+  List<Forwarding> getEmailForwardings(Address ea) throws IOException, SQLException {
+    return getIndexedRows(Forwarding.COLUMN_EMAIL_ADDRESS, ea.getPkey());
+  }
 
-	List<Forwarding> getEnabledEmailForwardings(Address ea) throws SQLException, IOException {
-		if(!ea.getDomain().getPackage().isDisabled()) return getEmailForwardings(ea);
-		else return Collections.emptyList();
-	}
+  List<Forwarding> getEnabledEmailForwardings(Address ea) throws SQLException, IOException {
+    if (!ea.getDomain().getPackage().isDisabled()) {
+      return getEmailForwardings(ea);
+    } else {
+      return Collections.emptyList();
+    }
+  }
 
-	Forwarding getEmailForwarding(Address ea, Email destination) throws IOException, SQLException {
-		// Use index first
-		for(Forwarding forward : getEmailForwardings(ea)) {
-			if(forward.getDestination().equals(destination)) return forward;
-		}
-		return null;
-	}
+  Forwarding getEmailForwarding(Address ea, Email destination) throws IOException, SQLException {
+    // Use index first
+    for (Forwarding forward : getEmailForwardings(ea)) {
+      if (forward.getDestination().equals(destination)) {
+        return forward;
+      }
+    }
+    return null;
+  }
 
-	public List<Forwarding> getEmailForwarding(Server ao) throws SQLException, IOException {
-		int aoPKey=ao.getPkey();
-		List<Forwarding> cached = getRows();
-		int len = cached.size();
-		List<Forwarding> matches=new ArrayList<>(len);
-		for (int c = 0; c < len; c++) {
-			Forwarding forward = cached.get(c);
-			if (forward.getEmailAddress().getDomain().getLinuxServer_host_id() == aoPKey) matches.add(forward);
-		}
-		return matches;
-	}
+  public List<Forwarding> getEmailForwarding(Server ao) throws SQLException, IOException {
+    int aoPKey=ao.getPkey();
+    List<Forwarding> cached = getRows();
+    int len = cached.size();
+    List<Forwarding> matches=new ArrayList<>(len);
+    for (int c = 0; c < len; c++) {
+      Forwarding forward = cached.get(c);
+      if (forward.getEmailAddress().getDomain().getLinuxServer_host_id() == aoPKey) {
+        matches.add(forward);
+      }
+    }
+    return matches;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.EMAIL_FORWARDING;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.EMAIL_FORWARDING;
+  }
 
-	@Override
-	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-		String command=args[0];
-		if(command.equalsIgnoreCase(Command.ADD_EMAIL_FORWARDING)) {
-			if(AOSH.checkMinParamCount(Command.ADD_EMAIL_FORWARDING, args, 3, err)) {
-				if((args.length%3)!=1) {
-					err.println("aosh: "+Command.ADD_EMAIL_FORWARDING+": must have multiple of three number of parameters");
-					err.flush();
-				} else {
-					for(int c=1;c<args.length;c+=3) {
-						String addr=args[c];
-						int pos=addr.indexOf('@');
-						if(pos==-1) {
-							err.print("aosh: "+Command.ADD_EMAIL_FORWARDING+": invalid email address: ");
-							err.println(addr);
-							err.flush();
-						} else {
-							out.println(
-								connector.getSimpleAOClient().addEmailForwarding(
-									addr.substring(0, pos),
-									AOSH.parseDomainName(addr.substring(pos+1), "address"),
-									args[c+1],
-									AOSH.parseEmail(args[c+2], "to_address")
-								)
-							);
-							out.flush();
-						}
-					}
-				}
-			}
-			return true;
-		} else if(command.equalsIgnoreCase(Command.REMOVE_EMAIL_FORWARDING)) {
-			if(AOSH.checkParamCount(Command.REMOVE_EMAIL_FORWARDING, args, 3, err)) {
-				String addr=args[1];
-				int pos=addr.indexOf('@');
-				if(pos==-1) {
-					err.print("aosh: "+Command.REMOVE_EMAIL_FORWARDING+": invalid email address: ");
-					err.println(addr);
-					err.flush();
-				} else {
-					connector.getSimpleAOClient().removeEmailForwarding(
-						addr.substring(0, pos),
-						AOSH.parseDomainName(addr.substring(pos+1), "domain"),
-						args[2],
-						AOSH.parseEmail(args[3], "destination")
-					);
-				}
-			}
-			return true;
-		} else return false;
-	}
+  @Override
+  public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
+    String command=args[0];
+    if (command.equalsIgnoreCase(Command.ADD_EMAIL_FORWARDING)) {
+      if (AOSH.checkMinParamCount(Command.ADD_EMAIL_FORWARDING, args, 3, err)) {
+        if ((args.length%3) != 1) {
+          err.println("aosh: "+Command.ADD_EMAIL_FORWARDING+": must have multiple of three number of parameters");
+          err.flush();
+        } else {
+          for (int c=1;c<args.length;c+=3) {
+            String addr=args[c];
+            int pos=addr.indexOf('@');
+            if (pos == -1) {
+              err.print("aosh: "+Command.ADD_EMAIL_FORWARDING+": invalid email address: ");
+              err.println(addr);
+              err.flush();
+            } else {
+              out.println(
+                connector.getSimpleAOClient().addEmailForwarding(
+                  addr.substring(0, pos),
+                  AOSH.parseDomainName(addr.substring(pos+1), "address"),
+                  args[c+1],
+                  AOSH.parseEmail(args[c+2], "to_address")
+                )
+              );
+              out.flush();
+            }
+          }
+        }
+      }
+      return true;
+    } else if (command.equalsIgnoreCase(Command.REMOVE_EMAIL_FORWARDING)) {
+      if (AOSH.checkParamCount(Command.REMOVE_EMAIL_FORWARDING, args, 3, err)) {
+        String addr=args[1];
+        int pos=addr.indexOf('@');
+        if (pos == -1) {
+          err.print("aosh: "+Command.REMOVE_EMAIL_FORWARDING+": invalid email address: ");
+          err.println(addr);
+          err.flush();
+        } else {
+          connector.getSimpleAOClient().removeEmailForwarding(
+            addr.substring(0, pos),
+            AOSH.parseDomainName(addr.substring(pos+1), "domain"),
+            args[2],
+            AOSH.parseEmail(args[3], "destination")
+          );
+        }
+      }
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

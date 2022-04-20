@@ -50,126 +50,136 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public final class SocketConnection extends AOServConnection {
 
-	/**
-	 * Keeps a flag of the connection status.
-	 */
-	private final AtomicBoolean isClosed = new AtomicBoolean(true);
+  /**
+   * Keeps a flag of the connection status.
+   */
+  private final AtomicBoolean isClosed = new AtomicBoolean(true);
 
-	/**
-	 * The socket to the server.
-	 */
-	private final Socket socket;
+  /**
+   * The socket to the server.
+   */
+  private final Socket socket;
 
-	/**
-	 * The output stream to the server.
-	 */
-	private final StreamableOutput out;
+  /**
+   * The output stream to the server.
+   */
+  private final StreamableOutput out;
 
-	/**
-	 * The input stream from the server.
-	 */
-	private final StreamableInput in;
+  /**
+   * The input stream from the server.
+   */
+  private final StreamableInput in;
 
-	/**
-	 * The first command sequence for this connection.
-	 */
-	//private final long startSeq;
+  /**
+   * The first command sequence for this connection.
+   */
+  //private final long startSeq;
 
-	/**
-	 * The next command sequence that will be sent.
-	 */
-	private final AtomicLong seq;
+  /**
+   * The next command sequence that will be sent.
+   */
+  private final AtomicLong seq;
 
-	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
-	SocketConnection(TCPConnector connector) throws InterruptedIOException, IOException {
-		super(connector);
-		socket = connector.getSocket();
-		try {
-			this.isClosed.set(false);
-			out = new StreamableOutput(new BufferedOutputStream(socket.getOutputStream()));
-			in = new StreamableInput(new BufferedInputStream(socket.getInputStream()));
+  @SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
+  SocketConnection(TCPConnector connector) throws InterruptedIOException, IOException {
+    super(connector);
+    socket = connector.getSocket();
+    try {
+      this.isClosed.set(false);
+      out = new StreamableOutput(new BufferedOutputStream(socket.getOutputStream()));
+      in = new StreamableInput(new BufferedInputStream(socket.getInputStream()));
 
-			out.writeUTF(AoservProtocol.Version.CURRENT_VERSION.getVersion());
-			out.writeNullUTF(Objects.toString(connector.daemonServer, null));
-			out.writeUTF(connector.connectAs.toString());
-			out.writeUTF(connector.authenticateAs.toString());
-			out.writeUTF(connector.password);
-			boolean hadConnectorId;
-			Identifier connectorId;
-			synchronized(connector.idLock) {
-				connectorId = connector.id;
-				if(connectorId == null) {
-					// Hold the idLock when need a connector ID
-					SecurityStreamables.writeNullIdentifier(null, out);
-					out.flush();
-					if(Thread.currentThread().isInterrupted()) throw new InterruptedIOException();
-					if(!in.readBoolean()) throw new IOException(in.readUTF());
-					connectorId = SecurityStreamables.readIdentifier(in);
-					connector.id = connectorId;
-					hadConnectorId = false;
-				} else {
-					hadConnectorId = true;
-				}
-			}
-			if(hadConnectorId) {
-				// Finish connecting outside the idLock when already have a connector ID
-				SecurityStreamables.writeNullIdentifier(connectorId, out);
-				out.flush();
-				if(Thread.currentThread().isInterrupted()) throw new InterruptedIOException();
-				if(!in.readBoolean()) throw new IOException(in.readUTF());
-			}
-			final long startSeq = in.readLong();
-			this.seq = new AtomicLong(startSeq);
-		} catch(Throwable t) {
-			throw Throwables.wrap(abort(t), IOException.class, IOException::new);
-		}
-	}
+      out.writeUTF(AoservProtocol.Version.CURRENT_VERSION.getVersion());
+      out.writeNullUTF(Objects.toString(connector.daemonServer, null));
+      out.writeUTF(connector.connectAs.toString());
+      out.writeUTF(connector.authenticateAs.toString());
+      out.writeUTF(connector.password);
+      boolean hadConnectorId;
+      Identifier connectorId;
+      synchronized (connector.idLock) {
+        connectorId = connector.id;
+        if (connectorId == null) {
+          // Hold the idLock when need a connector ID
+          SecurityStreamables.writeNullIdentifier(null, out);
+          out.flush();
+          if (Thread.currentThread().isInterrupted()) {
+            throw new InterruptedIOException();
+          }
+          if (!in.readBoolean()) {
+            throw new IOException(in.readUTF());
+          }
+          connectorId = SecurityStreamables.readIdentifier(in);
+          connector.id = connectorId;
+          hadConnectorId = false;
+        } else {
+          hadConnectorId = true;
+        }
+      }
+      if (hadConnectorId) {
+        // Finish connecting outside the idLock when already have a connector ID
+        SecurityStreamables.writeNullIdentifier(connectorId, out);
+        out.flush();
+        if (Thread.currentThread().isInterrupted()) {
+          throw new InterruptedIOException();
+        }
+        if (!in.readBoolean()) {
+          throw new IOException(in.readUTF());
+        }
+      }
+      final long startSeq = in.readLong();
+      this.seq = new AtomicLong(startSeq);
+    } catch (Throwable t) {
+      throw Throwables.wrap(abort(t), IOException.class, IOException::new);
+    }
+  }
 
-	/**
-	 * Forces connection closed, adding any new throwables to {@code t0} via
-	 * {@link Throwables#addSuppressed(java.lang.Throwable, java.lang.Throwable)}.
-	 */
-	@Override
-	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
-	Throwable abort(Throwable t0) {
-		if(!isClosed.getAndSet(true)) {
-			try {
-				out.writeCompressedInt(AoservProtocol.CommandID.QUIT.ordinal());
-				out.flush();
-			} catch(Throwable t) {
-				t0 = Throwables.addSuppressed(t0, t);
-			}
-			t0 = AutoCloseables.closeAndCatch(t0, in, out, socket);
-		}
-		return t0;
-	}
+  /**
+   * Forces connection closed, adding any new throwables to {@code t0} via
+   * {@link Throwables#addSuppressed(java.lang.Throwable, java.lang.Throwable)}.
+   */
+  @Override
+  @SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
+  Throwable abort(Throwable t0) {
+    if (!isClosed.getAndSet(true)) {
+      try {
+        out.writeCompressedInt(AoservProtocol.CommandID.QUIT.ordinal());
+        out.flush();
+      } catch (Throwable t) {
+        t0 = Throwables.addSuppressed(t0, t);
+      }
+      t0 = AutoCloseables.closeAndCatch(t0, in, out, socket);
+    }
+    return t0;
+  }
 
-	InetAddress getLocalInetAddress() {
-		return socket.getLocalAddress();
-	}
+  InetAddress getLocalInetAddress() {
+    return socket.getLocalAddress();
+  }
 
-	private long currentSeq;
+  private long currentSeq;
 
-	@Override
-	StreamableOutput getRequestOut(AoservProtocol.CommandID commID) throws IOException {
-		currentSeq = seq.getAndIncrement();
-		out.writeLong(currentSeq);
-		out.writeCompressedInt(commID.ordinal());
-		return out;
-	}
+  @Override
+  StreamableOutput getRequestOut(AoservProtocol.CommandID commID) throws IOException {
+    currentSeq = seq.getAndIncrement();
+    out.writeLong(currentSeq);
+    out.writeCompressedInt(commID.ordinal());
+    return out;
+  }
 
-	@Override
-	StreamableInput getResponseIn() throws IOException {
-		// Verify server sends matching sequence
-		long serverSeq = in.readLong();
-		if(serverSeq != currentSeq) throw new IOException("Sequence mismatch: " + serverSeq + " != " + currentSeq);
-		return in;
-	}
+  @Override
+  StreamableInput getResponseIn() throws IOException {
+    // Verify server sends matching sequence
+    long serverSeq = in.readLong();
+    if (serverSeq != currentSeq) {
+      throw new IOException("Sequence mismatch: " + serverSeq + " != " + currentSeq);
+    }
+    return in;
+  }
 
-	/**
-	 * Determines if this connection has been closed.
-	 */
-	boolean isClosed() {
-		return isClosed.get();
-	}
+  /**
+   * Determines if this connection has been closed.
+   */
+  boolean isClosed() {
+    return isClosed.get();
+  }
 }

@@ -36,26 +36,26 @@ import java.sql.SQLException;
  */
 public final class LanguageTable extends GlobalTableStringKey<Language> {
 
-	LanguageTable(AOServConnector connector) {
-		super(connector, Language.class);
-	}
+  LanguageTable(AOServConnector connector) {
+    super(connector, Language.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(Language.COLUMN_CODE_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(Language.COLUMN_CODE_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public Language get(String code) throws IOException, SQLException {
-		return getUniqueRow(Language.COLUMN_CODE, code);
-	}
+  @Override
+  public Language get(String code) throws IOException, SQLException {
+    return getUniqueRow(Language.COLUMN_CODE, code);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.LANGUAGES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.LANGUAGES;
+  }
 }

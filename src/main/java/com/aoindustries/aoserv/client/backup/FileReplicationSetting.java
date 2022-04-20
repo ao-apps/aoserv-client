@@ -43,136 +43,138 @@ import java.util.List;
  */
 public final class FileReplicationSetting extends CachedObjectIntegerKey<FileReplicationSetting> implements Removable {
 
-	static final int
-		COLUMN_PKEY=0,
-		COLUMN_REPLICATION=1
-	;
-	static final String COLUMN_REPLICATION_name = "replication";
-	static final String COLUMN_PATH_name = "path";
+  static final int
+    COLUMN_PKEY=0,
+    COLUMN_REPLICATION=1
+  ;
+  static final String COLUMN_REPLICATION_name = "replication";
+  static final String COLUMN_PATH_name = "path";
 
-	private int replication;
-	private String path;
-	private boolean backup_enabled;
-	private boolean required;
+  private int replication;
+  private String path;
+  private boolean backup_enabled;
+  private boolean required;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public FileReplicationSetting() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public FileReplicationSetting() {
+    // Do nothing
+  }
 
-	@Override
-	public List<CannotRemoveReason<?>> getCannotRemoveReasons() {
-		return Collections.emptyList();
-	}
+  @Override
+  public List<CannotRemoveReason<?>> getCannotRemoveReasons() {
+    return Collections.emptyList();
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_PKEY: return pkey;
-			case COLUMN_REPLICATION: return replication;
-			case 2: return path;
-			case 3: return backup_enabled;
-			case 4: return required;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_PKEY: return pkey;
+      case COLUMN_REPLICATION: return replication;
+      case 2: return path;
+      case 3: return backup_enabled;
+      case 4: return required;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	public FileReplication getReplication() throws SQLException, IOException {
-		FileReplication ffr = table.getConnector().getBackup().getFileReplication().get(replication);
-		if(ffr==null) throw new SQLException("Unable to find FailoverFileReplication: "+replication);
-		return ffr;
-	}
+  public FileReplication getReplication() throws SQLException, IOException {
+    FileReplication ffr = table.getConnector().getBackup().getFileReplication().get(replication);
+    if (ffr == null) {
+      throw new SQLException("Unable to find FailoverFileReplication: "+replication);
+    }
+    return ffr;
+  }
 
-	public String getPath() {
-		return path;
-	}
+  public String getPath() {
+    return path;
+  }
 
-	public boolean getBackupEnabled() {
-		return backup_enabled;
-	}
+  public boolean getBackupEnabled() {
+    return backup_enabled;
+  }
 
-	/**
-	 * All required file backup settings must match in the filesystem for the
-	 * backup to be considered successful.  This is used to detect missing filesystems
-	 * or files during a backup pass.
-	 */
-	public boolean isRequired() {
-		return required;
-	}
+  /**
+   * All required file backup settings must match in the filesystem for the
+   * backup to be considered successful.  This is used to detect missing filesystems
+   * or files during a backup pass.
+   */
+  public boolean isRequired() {
+    return required;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.FILE_BACKUP_SETTINGS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.FILE_BACKUP_SETTINGS;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey=result.getInt(1);
-		replication=result.getInt(2);
-		path=result.getString(3);
-		backup_enabled = result.getBoolean(4);
-		required = result.getBoolean(5);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey=result.getInt(1);
+    replication=result.getInt(2);
+    path=result.getString(3);
+    backup_enabled = result.getBoolean(4);
+    required = result.getBoolean(5);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readCompressedInt();
-		replication=in.readCompressedInt();
-		path=in.readUTF();
-		backup_enabled = in.readBoolean();
-		required = in.readBoolean();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readCompressedInt();
+    replication=in.readCompressedInt();
+    path=in.readUTF();
+    backup_enabled = in.readBoolean();
+    required = in.readBoolean();
+  }
 
-	@Override
-	public void remove() throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(
-			true,
-			AoservProtocol.CommandID.REMOVE,
-			Table.TableID.FILE_BACKUP_SETTINGS,
-			pkey
-		);
-	}
+  @Override
+  public void remove() throws IOException, SQLException {
+    table.getConnector().requestUpdateIL(
+      true,
+      AoservProtocol.CommandID.REMOVE,
+      Table.TableID.FILE_BACKUP_SETTINGS,
+      pkey
+    );
+  }
 
-	public void setSettings(
-		String path,
-		boolean backupEnabled,
-		boolean required
-	) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(
-			true,
-			AoservProtocol.CommandID.SET_FILE_BACKUP_SETTINGS,
-			pkey,
-			path,
-			backupEnabled,
-			required
-		);
-	}
+  public void setSettings(
+    String path,
+    boolean backupEnabled,
+    boolean required
+  ) throws IOException, SQLException {
+    table.getConnector().requestUpdateIL(
+      true,
+      AoservProtocol.CommandID.SET_FILE_BACKUP_SETTINGS,
+      pkey,
+      path,
+      backupEnabled,
+      required
+    );
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_31)>=0) {
-			out.writeCompressedInt(replication);
-		} else {
-			out.writeCompressedInt(-1); // server
-		}
-		out.writeUTF(path);
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_31)>=0) {
-			out.writeBoolean(backup_enabled);
-		} else {
-			out.writeCompressedInt(308); // package (hard-coded AOINDUSTRIES)
-			out.writeShort(backup_enabled ? 1 : 0); // backup_level
-			out.writeShort(7); // backup_retention
-			out.writeBoolean(backup_enabled); // recurse
-		}
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_62)>=0) {
-			out.writeBoolean(required);
-		}
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_31) >= 0) {
+      out.writeCompressedInt(replication);
+    } else {
+      out.writeCompressedInt(-1); // server
+    }
+    out.writeUTF(path);
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_31) >= 0) {
+      out.writeBoolean(backup_enabled);
+    } else {
+      out.writeCompressedInt(308); // package (hard-coded AOINDUSTRIES)
+      out.writeShort(backup_enabled ? 1 : 0); // backup_level
+      out.writeShort(7); // backup_retention
+      out.writeBoolean(backup_enabled); // recurse
+    }
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_62) >= 0) {
+      out.writeBoolean(required);
+    }
+  }
 }

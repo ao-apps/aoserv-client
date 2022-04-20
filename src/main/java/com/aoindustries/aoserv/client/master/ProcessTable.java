@@ -40,54 +40,62 @@ import java.util.List;
  */
 public final class ProcessTable extends AOServTable<SmallIdentifier, Process> {
 
-	ProcessTable(AOServConnector connector) {
-		super(connector, Process.class);
-	}
+  ProcessTable(AOServConnector connector) {
+    super(connector, Process.class);
+  }
 
-	/**
-	 * Data comes from the server sorted.
-	 */
-	@Override
-	protected OrderBy[] getDefaultOrderBy() {
-		return null;
-	}
+  /**
+   * Data comes from the server sorted.
+   */
+  @Override
+  protected OrderBy[] getDefaultOrderBy() {
+    return null;
+  }
 
-	/**
-	 * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
-	 */
-	@Deprecated
-	@Override
-	public Process get(Object id) throws IOException, SQLException {
-		if(id == null) return null;
-		return get((SmallIdentifier)id);
-	}
+  /**
+   * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
+   */
+  @Deprecated
+  @Override
+  public Process get(Object id) throws IOException, SQLException {
+    if (id == null) {
+      return null;
+    }
+    return get((SmallIdentifier)id);
+  }
 
-	/**
-	 * @see  #get(java.lang.Object)
-	 */
-	public Process get(SmallIdentifier id) throws IOException, SQLException {
-		if(id == null) return null;
-		for(Process process : getRows()) {
-			if(id.equals(process.getId())) return process;
-		}
-		return null;
-	}
+  /**
+   * @see  #get(java.lang.Object)
+   */
+  public Process get(SmallIdentifier id) throws IOException, SQLException {
+    if (id == null) {
+      return null;
+    }
+    for (Process process : getRows()) {
+      if (id.equals(process.getId())) {
+        return process;
+      }
+    }
+    return null;
+  }
 
-	@Override
-	public List<Process> getRowsCopy() throws IOException, SQLException {
-		List<Process> list = new ArrayList<>();
-		getObjects(true, list, AoservProtocol.CommandID.GET_TABLE, Table.TableID.MASTER_PROCESSES);
-		return list;
-	}
+  @Override
+  public List<Process> getRowsCopy() throws IOException, SQLException {
+    List<Process> list = new ArrayList<>();
+    getObjects(true, list, AoservProtocol.CommandID.GET_TABLE, Table.TableID.MASTER_PROCESSES);
+    return list;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.MASTER_PROCESSES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.MASTER_PROCESSES;
+  }
 
-	@Override
-	protected Process getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
-		if(col == Process.COLUMN_ID) return get(value);
-		throw new IllegalArgumentException("Not a unique column: " + col);
-	}
+  @Override
+  protected Process getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
+    if (col == Process.COLUMN_ID) {
+      return get(value);
+    }
+    throw new IllegalArgumentException("Not a unique column: " + col);
+  }
 }

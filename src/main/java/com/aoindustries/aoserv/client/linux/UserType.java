@@ -51,206 +51,230 @@ import java.util.List;
  */
 public final class UserType extends GlobalObjectStringKey<UserType> {
 
-	static final int COLUMN_NAME=0;
-	static final String COLUMN_DESCRIPTION_name = "description";
+  static final int COLUMN_NAME=0;
+  static final String COLUMN_DESCRIPTION_name = "description";
 
-	/**
-	 * The different Linux account types.
-	 */
-	public static final String
-		BACKUP="backup",
-		EMAIL="email",
-		FTPONLY="ftponly",
-		USER="user",
-		MERCENARY="mercenary",
-		SYSTEM="system",
-		APPLICATION="application"
-	;
+  /**
+   * The different Linux account types.
+   */
+  public static final String
+    BACKUP="backup",
+    EMAIL="email",
+    FTPONLY="ftponly",
+    USER="user",
+    MERCENARY="mercenary",
+    SYSTEM="system",
+    APPLICATION="application"
+  ;
 
-	private static final PosixPath[] backupShells={
-		Shell.BASH
-	};
+  private static final PosixPath[] backupShells={
+    Shell.BASH
+  };
 
-	private static final PosixPath[] emailShells={
-		Shell.PASSWD
-	};
+  private static final PosixPath[] emailShells={
+    Shell.PASSWD
+  };
 
-	private static final PosixPath[] ftpShells={
-		Shell.FTPONLY,
-		Shell.FTPPASSWD
-	};
+  private static final PosixPath[] ftpShells={
+    Shell.FTPONLY,
+    Shell.FTPPASSWD
+  };
 
-	private static final PosixPath[] mercenaryShells={
-		Shell.BASH
-	};
+  private static final PosixPath[] mercenaryShells={
+    Shell.BASH
+  };
 
-	private static final PosixPath[] systemShells={
-		Shell.BASH,
-		Shell.FALSE,
-		Shell.NOLOGIN,
-		Shell.SYNC,
-		Shell.HALT,
-		Shell.SHUTDOWN//,
-		//Shell.TRUE
-	};
+  private static final PosixPath[] systemShells={
+    Shell.BASH,
+    Shell.FALSE,
+    Shell.NOLOGIN,
+    Shell.SYNC,
+    Shell.HALT,
+    Shell.SHUTDOWN//,
+    //Shell.TRUE
+  };
 
-	private static final PosixPath[] applicationShells={
-		Shell.BASH,
-		Shell.FALSE//,
-		//Shell.NULL,
-		//Shell.TRUE
-	};
+  private static final PosixPath[] applicationShells={
+    Shell.BASH,
+    Shell.FALSE//,
+    //Shell.NULL,
+    //Shell.TRUE
+  };
 
-	private static final PosixPath[] userShells={
-		//Shell.ASH,
-		Shell.BASH,
-		//Shell.BASH2,
-		//Shell.BSH,
-		//Shell.CSH,
-		Shell.FALSE,
-		Shell.KSH,
-		Shell.SH,
-		Shell.TCSH,
-		Shell.GIT_SHELL//,
-		//Shell.TRUE
-	};
+  private static final PosixPath[] userShells={
+    //Shell.ASH,
+    Shell.BASH,
+    //Shell.BASH2,
+    //Shell.BSH,
+    //Shell.CSH,
+    Shell.FALSE,
+    Shell.KSH,
+    Shell.SH,
+    Shell.TCSH,
+    Shell.GIT_SHELL//,
+    //Shell.TRUE
+  };
 
-	private String description;
-	private boolean is_email;
+  private String description;
+  private boolean is_email;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public UserType() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public UserType() {
+    // Do nothing
+  }
 
-	public PasswordChecker.PasswordStrength getPasswordStrength() {
-		return getPasswordStrength(pkey);
-	}
+  public PasswordChecker.PasswordStrength getPasswordStrength() {
+    return getPasswordStrength(pkey);
+  }
 
-	public static PasswordChecker.PasswordStrength getPasswordStrength(String type) {
-		return type.equals(EMAIL) ? PasswordChecker.PasswordStrength.SUPER_LAX : PasswordChecker.PasswordStrength.STRICT;
-	}
+  public static PasswordChecker.PasswordStrength getPasswordStrength(String type) {
+    return type.equals(EMAIL) ? PasswordChecker.PasswordStrength.SUPER_LAX : PasswordChecker.PasswordStrength.STRICT;
+  }
 
-	public List<Shell> getAllowedShells(AOServConnector connector) throws SQLException, IOException {
-		PosixPath[] paths=getShellList(pkey);
+  public List<Shell> getAllowedShells(AOServConnector connector) throws SQLException, IOException {
+    PosixPath[] paths=getShellList(pkey);
 
-		ShellTable shellTable=connector.getLinux().getShell();
-		int len=paths.length;
-		List<Shell> shells=new ArrayList<>(len);
-		for(int c=0;c<len;c++) {
-			Shell shell=shellTable.get(paths[c]);
-			if(shell==null) throw new SQLException("Unable to find Shell: "+paths[c]);
-			shells.add(shell);
-		}
-		return shells;
-	}
+    ShellTable shellTable=connector.getLinux().getShell();
+    int len=paths.length;
+    List<Shell> shells=new ArrayList<>(len);
+    for (int c=0;c<len;c++) {
+      Shell shell=shellTable.get(paths[c]);
+      if (shell == null) {
+        throw new SQLException("Unable to find Shell: "+paths[c]);
+      }
+      shells.add(shell);
+    }
+    return shells;
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		if(i==COLUMN_NAME) return pkey;
-		if(i==1) return description;
-		if(i==2) return is_email;
-		throw new IllegalArgumentException("Invalid index: " + i);
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    if (i == COLUMN_NAME) {
+      return pkey;
+    }
+    if (i == 1) {
+      return description;
+    }
+    if (i == 2) {
+      return is_email;
+    }
+    throw new IllegalArgumentException("Invalid index: " + i);
+  }
 
-	public String getDescription() {
-		return description;
-	}
+  public String getDescription() {
+    return description;
+  }
 
-	public String getName() {
-		return pkey;
-	}
+  public String getName() {
+    return pkey;
+  }
 
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	private static PosixPath[] getShellList(String type) throws SQLException {
-		if(type.equals(BACKUP)) return backupShells;
-		if(type.equals(EMAIL)) return emailShells;
-		if(type.equals(FTPONLY)) return ftpShells;
-		if(type.equals(USER)) return userShells;
-		if(type.equals(MERCENARY)) return mercenaryShells;
-		if(type.equals(SYSTEM)) return systemShells;
-		if(type.equals(APPLICATION)) return applicationShells;
-		throw new SQLException("Unknown type: "+type);
-	}
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  private static PosixPath[] getShellList(String type) throws SQLException {
+    if (type.equals(BACKUP)) {
+      return backupShells;
+    }
+    if (type.equals(EMAIL)) {
+      return emailShells;
+    }
+    if (type.equals(FTPONLY)) {
+      return ftpShells;
+    }
+    if (type.equals(USER)) {
+      return userShells;
+    }
+    if (type.equals(MERCENARY)) {
+      return mercenaryShells;
+    }
+    if (type.equals(SYSTEM)) {
+      return systemShells;
+    }
+    if (type.equals(APPLICATION)) {
+      return applicationShells;
+    }
+    throw new SQLException("Unknown type: "+type);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.LINUX_ACCOUNT_TYPES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.LINUX_ACCOUNT_TYPES;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey = result.getString(1);
-		description = result.getString(2);
-		is_email = result.getBoolean(3);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey = result.getString(1);
+    description = result.getString(2);
+    is_email = result.getBoolean(3);
+  }
 
-	public boolean canPostgresIdent() {
-		return canPostgresIdent(pkey);
-	}
+  public boolean canPostgresIdent() {
+    return canPostgresIdent(pkey);
+  }
 
-	public static boolean canPostgresIdent(String type) {
-		return
-			APPLICATION.equals(type)
-			|| USER.equals(type);
-	}
+  public static boolean canPostgresIdent(String type) {
+    return
+      APPLICATION.equals(type)
+      || USER.equals(type);
+  }
 
-	public boolean isAllowedShell(Shell shell) throws SQLException {
-		return isAllowedShell(shell.getPath());
-	}
+  public boolean isAllowedShell(Shell shell) throws SQLException {
+    return isAllowedShell(shell.getPath());
+  }
 
-	public boolean isAllowedShell(PosixPath path) throws SQLException {
-		return isAllowedShell(pkey, path);
-	}
+  public boolean isAllowedShell(PosixPath path) throws SQLException {
+    return isAllowedShell(pkey, path);
+  }
 
-	public static boolean isAllowedShell(String type, PosixPath path) throws SQLException {
-		PosixPath[] paths=getShellList(type);
-		int len=paths.length;
-		for(int c=0;c<len;c++) {
-			if(paths[c].equals(path)) return true;
-		}
-		return false;
-	}
+  public static boolean isAllowedShell(String type, PosixPath path) throws SQLException {
+    PosixPath[] paths=getShellList(type);
+    int len=paths.length;
+    for (int c=0;c<len;c++) {
+      if (paths[c].equals(path)) {
+        return true;
+      }
+    }
+    return false;
+  }
 
-	public boolean isEmail() {
-		return is_email;
-	}
+  public boolean isEmail() {
+    return is_email;
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readUTF().intern();
-		description=in.readUTF();
-		is_email=in.readBoolean();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readUTF().intern();
+    description=in.readUTF();
+    is_email=in.readBoolean();
+  }
 
-	@Override
-	public String toStringImpl() {
-		return description;
-	}
+  @Override
+  public String toStringImpl() {
+    return description;
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey);
-		out.writeUTF(description);
-		out.writeBoolean(is_email);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey);
+    out.writeUTF(description);
+    out.writeBoolean(is_email);
+  }
 
-	public static boolean canSetPassword(String type) {
-		return
-			APPLICATION.equals(type)
-			|| EMAIL.equals(type)
-			|| FTPONLY.equals(type)
-			|| USER.equals(type)
-		;
-	}
+  public static boolean canSetPassword(String type) {
+    return
+      APPLICATION.equals(type)
+      || EMAIL.equals(type)
+      || FTPONLY.equals(type)
+      || USER.equals(type)
+    ;
+  }
 
-	public boolean canSetPassword() {
-		return canSetPassword(pkey);
-	}
+  public boolean canSetPassword() {
+    return canSetPassword(pkey);
+  }
 }

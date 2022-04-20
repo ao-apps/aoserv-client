@@ -43,138 +43,140 @@ import java.sql.SQLException;
  */
 public final class ServerStat extends AOServObject<String, ServerStat> implements SingleTableObject<String, ServerStat> {
 
-	public static final String
-		BYTE_ARRAY_CACHE_CREATES = "byte_array_cache_creates",
-		BYTE_ARRAY_CACHE_USES = "byte_array_cache_uses",
-		BYTE_ARRAY_CACHE_ZERO_FILLS = "byte_array_cache_zero_fills",
-		BYTE_ARRAY_CACHE_COLLECTED = "byte_array_cache_collected",
-		CHAR_ARRAY_CACHE_CREATES = "char_array_cache_creates",
-		CHAR_ARRAY_CACHE_USES="char_array_cache_uses",
-		CHAR_ARRAY_CACHE_ZERO_FILLS = "char_array_cache_zero_fills",
-		CHAR_ARRAY_CACHE_COLLECTED = "char_array_cache_collected",
-		DAEMON_CONCURRENCY = "daemon_concurrency",
-		DAEMON_CONNECTIONS = "daemon_connections",
-		DAEMON_CONNECTS = "daemon_connects",
-		DAEMON_COUNT = "daemon_count",
-		DAEMON_DOWN_COUNT = "daemon_down_count",
-		DAEMON_MAX_CONCURRENCY = "daemon_max_concurrency",
-		DAEMON_POOL_SIZE = "daemon_pool_size",
-		DAEMON_TOTAL_TIME = "daemon_total_time",
-		DAEMON_TRANSACTIONS = "daemon_transactions",
-		DB_CONCURRENCY = "db_concurrency",
-		DB_CONNECTIONS = "db_connections",
-		DB_CONNECTS = "db_connects",
-		DB_MAX_CONCURRENCY = "db_max_concurrency",
-		DB_POOL_SIZE = "db_pool_size",
-		DB_TOTAL_TIME = "db_total_time",
-		DB_TRANSACTIONS = "db_transactions",
-		ENTROPY_AVAIL = "entropy_avail",
-		ENTROPY_POOLSIZE = "entropy_poolsize",
-		ENTROPY_READ_BYTES = "entropy_read_bytes",
-		ENTROPY_READ_COUNT = "entropy_read_count",
-		ENTROPY_WRITE_BYTES = "entropy_write_bytes",
-		ENTROPY_WRITE_COUNT = "entropy_write_count",
-		MEMORY_FREE = "memory_free",
-		MEMORY_TOTAL = "memory_total",
-		// TODO: Coalesce version ranges
-		PROTOCOL_VERSION = "protocol_version",
-		REQUEST_CONCURRENCY = "request_concurrency",
-		REQUEST_CONNECTIONS = "request_connections",
-		REQUEST_MAX_CONCURRENCY = "request_max_concurrency",
-		REQUEST_TOTAL_TIME = "request_total_time",
-		REQUEST_TRANSACTIONS = "request_transactions",
-		THREAD_COUNT = "thread_count",
-		UPTIME = "uptime"
-	;
+  public static final String
+    BYTE_ARRAY_CACHE_CREATES = "byte_array_cache_creates",
+    BYTE_ARRAY_CACHE_USES = "byte_array_cache_uses",
+    BYTE_ARRAY_CACHE_ZERO_FILLS = "byte_array_cache_zero_fills",
+    BYTE_ARRAY_CACHE_COLLECTED = "byte_array_cache_collected",
+    CHAR_ARRAY_CACHE_CREATES = "char_array_cache_creates",
+    CHAR_ARRAY_CACHE_USES="char_array_cache_uses",
+    CHAR_ARRAY_CACHE_ZERO_FILLS = "char_array_cache_zero_fills",
+    CHAR_ARRAY_CACHE_COLLECTED = "char_array_cache_collected",
+    DAEMON_CONCURRENCY = "daemon_concurrency",
+    DAEMON_CONNECTIONS = "daemon_connections",
+    DAEMON_CONNECTS = "daemon_connects",
+    DAEMON_COUNT = "daemon_count",
+    DAEMON_DOWN_COUNT = "daemon_down_count",
+    DAEMON_MAX_CONCURRENCY = "daemon_max_concurrency",
+    DAEMON_POOL_SIZE = "daemon_pool_size",
+    DAEMON_TOTAL_TIME = "daemon_total_time",
+    DAEMON_TRANSACTIONS = "daemon_transactions",
+    DB_CONCURRENCY = "db_concurrency",
+    DB_CONNECTIONS = "db_connections",
+    DB_CONNECTS = "db_connects",
+    DB_MAX_CONCURRENCY = "db_max_concurrency",
+    DB_POOL_SIZE = "db_pool_size",
+    DB_TOTAL_TIME = "db_total_time",
+    DB_TRANSACTIONS = "db_transactions",
+    ENTROPY_AVAIL = "entropy_avail",
+    ENTROPY_POOLSIZE = "entropy_poolsize",
+    ENTROPY_READ_BYTES = "entropy_read_bytes",
+    ENTROPY_READ_COUNT = "entropy_read_count",
+    ENTROPY_WRITE_BYTES = "entropy_write_bytes",
+    ENTROPY_WRITE_COUNT = "entropy_write_count",
+    MEMORY_FREE = "memory_free",
+    MEMORY_TOTAL = "memory_total",
+    // TODO: Coalesce version ranges
+    PROTOCOL_VERSION = "protocol_version",
+    REQUEST_CONCURRENCY = "request_concurrency",
+    REQUEST_CONNECTIONS = "request_connections",
+    REQUEST_MAX_CONCURRENCY = "request_max_concurrency",
+    REQUEST_TOTAL_TIME = "request_total_time",
+    REQUEST_TRANSACTIONS = "request_transactions",
+    THREAD_COUNT = "thread_count",
+    UPTIME = "uptime"
+  ;
 
-	static final int COLUMN_NAME = 0;
+  static final int COLUMN_NAME = 0;
 
-	private String name;
-	private String value;
-	private String description;
-	private AOServTable<String, ServerStat> table;
+  private String name;
+  private String value;
+  private String description;
+  private AOServTable<String, ServerStat> table;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public ServerStat() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public ServerStat() {
+    // Do nothing
+  }
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	// Only used by aoserv-master
-	public ServerStat(String name, String value, String description) {
-		this.name=name;
-		this.value=value;
-		this.description=description;
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  // Only used by aoserv-master
+  public ServerStat(String name, String value, String description) {
+    this.name=name;
+    this.value=value;
+    this.description=description;
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_NAME: return name;
-			case 1: return value;
-			case 2: return description;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_NAME: return name;
+      case 1: return value;
+      case 2: return description;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	public String getDescription() {
-		return description;
-	}
+  public String getDescription() {
+    return description;
+  }
 
-	public String getName() {
-		return name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	@Override
-	public String getKey() {
-		return name;
-	}
+  @Override
+  public String getKey() {
+    return name;
+  }
 
-	@Override
-	public AOServTable<String, ServerStat> getTable() {
-		return table;
-	}
+  @Override
+  public AOServTable<String, ServerStat> getTable() {
+    return table;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.MASTER_SERVER_STATS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.MASTER_SERVER_STATS;
+  }
 
-	public String getValue() {
-		return value;
-	}
+  public String getValue() {
+    return value;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		throw new SQLException("Should not be read from the database, should be generated.");
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    throw new SQLException("Should not be read from the database, should be generated.");
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		name=in.readUTF().intern();
-		value=in.readNullUTF();
-		description=in.readUTF();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    name=in.readUTF().intern();
+    value=in.readNullUTF();
+    description=in.readUTF();
+  }
 
-	@Override
-	public void setTable(AOServTable<String, ServerStat> table) {
-		if(this.table!=null) throw new IllegalStateException("table already set");
-		this.table=table;
-	}
+  @Override
+  public void setTable(AOServTable<String, ServerStat> table) {
+    if (this.table != null) {
+      throw new IllegalStateException("table already set");
+    }
+    this.table=table;
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(name);
-		out.writeNullUTF(value);
-		out.writeUTF(description);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(name);
+    out.writeNullUTF(value);
+    out.writeUTF(description);
+  }
 }

@@ -36,26 +36,26 @@ import java.sql.SQLException;
  */
 public final class DeviceIdTable extends GlobalTableStringKey<DeviceId> {
 
-	DeviceIdTable(AOServConnector connector) {
-		super(connector, DeviceId.class);
-	}
+  DeviceIdTable(AOServConnector connector) {
+    super(connector, DeviceId.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(DeviceId.COLUMN_NAME_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(DeviceId.COLUMN_NAME_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public DeviceId get(String name) throws IOException, SQLException {
-		return getUniqueRow(DeviceId.COLUMN_NAME, name);
-	}
+  @Override
+  public DeviceId get(String name) throws IOException, SQLException {
+    return getUniqueRow(DeviceId.COLUMN_NAME, name);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.NET_DEVICE_IDS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.NET_DEVICE_IDS;
+  }
 }

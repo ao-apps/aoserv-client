@@ -45,119 +45,125 @@ import java.util.List;
  */
 public final class JkMount extends CachedObjectIntegerKey<JkMount> implements Removable {
 
-	static final int
-		COLUMN_PKEY = 0,
-		COLUMN_HTTPD_TOMCAT_SITE = 1
-	;
-	static final String COLUMN_HTTPD_TOMCAT_SITE_name = "httpd_tomcat_site";
-	static final String COLUMN_PATH_name = "path";
-	static final String COLUMN_MOUNT_name = "mount";
+  static final int
+    COLUMN_PKEY = 0,
+    COLUMN_HTTPD_TOMCAT_SITE = 1
+  ;
+  static final String COLUMN_HTTPD_TOMCAT_SITE_name = "httpd_tomcat_site";
+  static final String COLUMN_PATH_name = "path";
+  static final String COLUMN_MOUNT_name = "mount";
 
-	/**
-	 * Checks if the path is valid for JkMount
-	 * and JkUnMount.
-	 */
-	public static boolean isValidPath(String path) {
-		return
-			path.length() > 1
-			&& path.charAt(0) == '/'
-			&& !path.contains("//")
-			&& !path.contains("..")
-			&& path.indexOf('"') == -1
-			&& path.indexOf('\\') == -1
-			&& path.indexOf('\n') == -1
-			&& path.indexOf('\r') == -1
-			&& path.indexOf('\0') == -1
-		;
-	}
+  /**
+   * Checks if the path is valid for JkMount
+   * and JkUnMount.
+   */
+  public static boolean isValidPath(String path) {
+    return
+      path.length() > 1
+      && path.charAt(0) == '/'
+      && !path.contains("//")
+      && !path.contains("..")
+      && path.indexOf('"') == -1
+      && path.indexOf('\\') == -1
+      && path.indexOf('\n') == -1
+      && path.indexOf('\r') == -1
+      && path.indexOf('\0') == -1
+    ;
+  }
 
-	private int httpd_tomcat_site;
-	private String path;
-	private boolean mount;
+  private int httpd_tomcat_site;
+  private String path;
+  private boolean mount;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public JkMount() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public JkMount() {
+    // Do nothing
+  }
 
-	@Override
-	public List<CannotRemoveReason<?>> getCannotRemoveReasons() {
-		return Collections.emptyList();
-	}
+  @Override
+  public List<CannotRemoveReason<?>> getCannotRemoveReasons() {
+    return Collections.emptyList();
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_PKEY: return pkey;
-			case COLUMN_HTTPD_TOMCAT_SITE: return httpd_tomcat_site;
-			case 2: return path;
-			case 3: return mount;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_PKEY: return pkey;
+      case COLUMN_HTTPD_TOMCAT_SITE: return httpd_tomcat_site;
+      case 2: return path;
+      case 3: return mount;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	public Site getHttpdTomcatSite() throws SQLException, IOException {
-		Site obj = table.getConnector().getWeb_tomcat().getSite().get(httpd_tomcat_site);
-		if(obj == null) throw new SQLException("Unable to find HttpdTomcatSite: " + httpd_tomcat_site);
-		return obj;
-	}
+  public Site getHttpdTomcatSite() throws SQLException, IOException {
+    Site obj = table.getConnector().getWeb_tomcat().getSite().get(httpd_tomcat_site);
+    if (obj == null) {
+      throw new SQLException("Unable to find HttpdTomcatSite: " + httpd_tomcat_site);
+    }
+    return obj;
+  }
 
-	public String getPath() {
-		return path;
-	}
+  public String getPath() {
+    return path;
+  }
 
-	/**
-	 * When {@code true} is a <code>JkMount</code> directive.
-	 * When {@code false} is a <code>JkUnMount</code> directive.
-	 */
-	public boolean isMount() {
-		return mount;
-	}
+  /**
+   * When {@code true} is a <code>JkMount</code> directive.
+   * When {@code false} is a <code>JkUnMount</code> directive.
+   */
+  public boolean isMount() {
+    return mount;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.HTTPD_TOMCAT_SITE_JK_MOUNTS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.HTTPD_TOMCAT_SITE_JK_MOUNTS;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey = result.getInt(1);
-		httpd_tomcat_site = result.getInt(2);
-		path = result.getString(3);
-		mount = result.getBoolean(4);
-		if(!isValidPath(path)) throw new SQLException("Invalid path: " + path);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey = result.getInt(1);
+    httpd_tomcat_site = result.getInt(2);
+    path = result.getString(3);
+    mount = result.getBoolean(4);
+    if (!isValidPath(path)) {
+      throw new SQLException("Invalid path: " + path);
+    }
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey = in.readCompressedInt();
-		httpd_tomcat_site = in.readCompressedInt();
-		path = in.readUTF();
-		mount = in.readBoolean();
-		if(!isValidPath(path)) throw new IOException("Invalid path: " + path);
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey = in.readCompressedInt();
+    httpd_tomcat_site = in.readCompressedInt();
+    path = in.readUTF();
+    mount = in.readBoolean();
+    if (!isValidPath(path)) {
+      throw new IOException("Invalid path: " + path);
+    }
+  }
 
-	@Override
-	public String toStringImpl() {
-		return (mount ? "JkMount " : "JkUnMount ") + path;
-	}
+  @Override
+  public String toStringImpl() {
+    return (mount ? "JkMount " : "JkUnMount ") + path;
+  }
 
-	@Override
-	public void remove() throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.REMOVE, Table.TableID.HTTPD_TOMCAT_SITE_JK_MOUNTS, pkey);
-	}
+  @Override
+  public void remove() throws IOException, SQLException {
+    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.REMOVE, Table.TableID.HTTPD_TOMCAT_SITE_JK_MOUNTS, pkey);
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeCompressedInt(httpd_tomcat_site);
-		out.writeUTF(path);
-		out.writeBoolean(mount);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    out.writeCompressedInt(httpd_tomcat_site);
+    out.writeUTF(path);
+    out.writeBoolean(mount);
+  }
 }

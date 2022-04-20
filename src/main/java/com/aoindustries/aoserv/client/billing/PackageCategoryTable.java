@@ -36,26 +36,26 @@ import java.sql.SQLException;
  */
 public final class PackageCategoryTable extends GlobalTableStringKey<PackageCategory> {
 
-	PackageCategoryTable(AOServConnector connector) {
-		super(connector, PackageCategory.class);
-	}
+  PackageCategoryTable(AOServConnector connector) {
+    super(connector, PackageCategory.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(PackageCategory.COLUMN_NAME_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(PackageCategory.COLUMN_NAME_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public PackageCategory get(String name) throws IOException, SQLException {
-		return getUniqueRow(PackageCategory.COLUMN_NAME, name);
-	}
+  @Override
+  public PackageCategory get(String name) throws IOException, SQLException {
+    return getUniqueRow(PackageCategory.COLUMN_NAME, name);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.PACKAGE_CATEGORIES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.PACKAGE_CATEGORIES;
+  }
 }

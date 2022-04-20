@@ -35,37 +35,39 @@ import java.util.NoSuchElementException;
  */
 final class KeySet<K, V extends AOServObject<K, V>> extends AbstractSet<K> {
 
-	private final List<V> objs;
+  private final List<V> objs;
 
-	KeySet(List<V> objs) {
-		this.objs = objs;
-	}
+  KeySet(List<V> objs) {
+    this.objs = objs;
+  }
 
-	@Override
-	public int size() {
-		return objs.size();
-	}
+  @Override
+  public int size() {
+    return objs.size();
+  }
 
-	@Override
-	public Iterator<K> iterator() {
-		// Java 9: new Iterator<>
-		return new Iterator<K>() {
+  @Override
+  public Iterator<K> iterator() {
+    // Java 9: new Iterator<>
+    return new Iterator<K>() {
 
-			private int cursor = 0;
+      private int cursor = 0;
 
-			@Override
-			public boolean hasNext() {
-				return cursor < objs.size();
-			}
+      @Override
+      public boolean hasNext() {
+        return cursor < objs.size();
+      }
 
-			@Override
-			public K next() throws NoSuchElementException {
-				if(cursor >= objs.size()) throw new NoSuchElementException();
-				V value = objs.get(cursor);
-				K next = value.getKey();
-				cursor++;
-				return next;
-			}
-		};
-	}
+      @Override
+      public K next() throws NoSuchElementException {
+        if (cursor >= objs.size()) {
+          throw new NoSuchElementException();
+        }
+        V value = objs.get(cursor);
+        K next = value.getKey();
+        cursor++;
+        return next;
+      }
+    };
+  }
 }

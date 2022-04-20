@@ -44,51 +44,51 @@ import java.util.List;
  */
 public final class VirtualDiskTable extends CachedTableIntegerKey<VirtualDisk> {
 
-	VirtualDiskTable(AOServConnector connector) {
-		super(connector, VirtualDisk.class);
-	}
+  VirtualDiskTable(AOServConnector connector) {
+    super(connector, VirtualDisk.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(VirtualDisk.COLUMN_VIRTUAL_SERVER_name+'.'+VirtualServer.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(VirtualDisk.COLUMN_VIRTUAL_SERVER_name+'.'+VirtualServer.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(VirtualDisk.COLUMN_DEVICE_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(VirtualDisk.COLUMN_VIRTUAL_SERVER_name+'.'+VirtualServer.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(VirtualDisk.COLUMN_VIRTUAL_SERVER_name+'.'+VirtualServer.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(VirtualDisk.COLUMN_DEVICE_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public VirtualDisk get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(VirtualDisk.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public VirtualDisk get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(VirtualDisk.COLUMN_PKEY, pkey);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.VIRTUAL_DISKS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.VIRTUAL_DISKS;
+  }
 
-	List<VirtualDisk> getVirtualDisks(VirtualServer vs) throws IOException, SQLException {
-		return getIndexedRows(VirtualDisk.COLUMN_VIRTUAL_SERVER, vs.getPkey());
-	}
+  List<VirtualDisk> getVirtualDisks(VirtualServer vs) throws IOException, SQLException {
+    return getIndexedRows(VirtualDisk.COLUMN_VIRTUAL_SERVER, vs.getPkey());
+  }
 
-	@Override
-	@SuppressWarnings("deprecation")
-	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-		String command=args[0];
-		if(command.equalsIgnoreCase(Command.VERIFY_VIRTUAL_DISK)) {
-			if(AOSH.checkParamCount(Command.VERIFY_VIRTUAL_DISK, args, 2, err)) {
-				long lastVerified = connector.getSimpleAOClient().verifyVirtualDisk(args[1], args[2]);
-				if(isInteractive) {
-					out.println(SQLUtility.formatDateTime(lastVerified));
-				} else {
-					out.println(lastVerified);
-				}
-				out.flush();
-			}
-			return true;
-		}
-		return false;
-	}
+  @Override
+  @SuppressWarnings("deprecation")
+  public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
+    String command=args[0];
+    if (command.equalsIgnoreCase(Command.VERIFY_VIRTUAL_DISK)) {
+      if (AOSH.checkParamCount(Command.VERIFY_VIRTUAL_DISK, args, 2, err)) {
+        long lastVerified = connector.getSimpleAOClient().verifyVirtualDisk(args[1], args[2]);
+        if (isInteractive) {
+          out.println(SQLUtility.formatDateTime(lastVerified));
+        } else {
+          out.println(lastVerified);
+        }
+        out.flush();
+      }
+      return true;
+    }
+    return false;
+  }
 }

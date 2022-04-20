@@ -47,54 +47,58 @@ import java.sql.SQLException;
  */
 public final class JkProtocol extends GlobalObjectStringKey<JkProtocol> {
 
-	static final int COLUMN_PROTOCOL=0;
-	static final String COLUMN_PROTOCOL_name = "protocol";
+  static final int COLUMN_PROTOCOL=0;
+  static final String COLUMN_PROTOCOL_name = "protocol";
 
-	public static final String
-		AJP12="ajp12",
-		AJP13="ajp13"
-	;
+  public static final String
+    AJP12="ajp12",
+    AJP13="ajp13"
+  ;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public JkProtocol() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public JkProtocol() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		if(i==COLUMN_PROTOCOL) return pkey;
-		throw new IllegalArgumentException("Invalid index: " + i);
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    if (i == COLUMN_PROTOCOL) {
+      return pkey;
+    }
+    throw new IllegalArgumentException("Invalid index: " + i);
+  }
 
-	public AppProtocol getProtocol(AOServConnector connector) throws SQLException, IOException {
-		AppProtocol protocol=connector.getNet().getAppProtocol().get(pkey);
-		if(protocol==null) throw new SQLException("Unable to find Protocol: "+pkey);
-		return protocol;
-	}
+  public AppProtocol getProtocol(AOServConnector connector) throws SQLException, IOException {
+    AppProtocol protocol=connector.getNet().getAppProtocol().get(pkey);
+    if (protocol == null) {
+      throw new SQLException("Unable to find Protocol: "+pkey);
+    }
+    return protocol;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.HTTPD_JK_PROTOCOLS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.HTTPD_JK_PROTOCOLS;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey=result.getString(1);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey=result.getString(1);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readUTF().intern();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readUTF().intern();
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey);
+  }
 }

@@ -42,98 +42,106 @@ import java.sql.SQLException;
  */
 public final class PaymentType extends GlobalObjectStringKey<PaymentType> {
 
-	static final int COLUMN_NAME=0;
-	static final String COLUMN_NAME_name = "name";
+  static final int COLUMN_NAME=0;
+  static final String COLUMN_NAME_name = "name";
 
-	/**
-	 * The system supported payment types, not all of which can
-	 * be processed by AO Industries.
-	 */
-	public static final String
-		AMEX = "amex",
-		CASH = "cash",
-		CHECK = "check",
-		DISCOVER = "discover",
-		MASTERCARD = "mastercard",
-		MONEY_ORDER = "money_order",
-		PAYPAL = "paypal",
-		VISA = "visa",
-		WIRE = "wire"
-	;
+  /**
+   * The system supported payment types, not all of which can
+   * be processed by AO Industries.
+   */
+  public static final String
+    AMEX = "amex",
+    CASH = "cash",
+    CHECK = "check",
+    DISCOVER = "discover",
+    MASTERCARD = "mastercard",
+    MONEY_ORDER = "money_order",
+    PAYPAL = "paypal",
+    VISA = "visa",
+    WIRE = "wire"
+  ;
 
-	private String description;
+  private String description;
 
-	private boolean isActive;
+  private boolean isActive;
 
-	private boolean allowWeb;
+  private boolean allowWeb;
 
-	public boolean allowWeb() {
-		return allowWeb;
-	}
+  public boolean allowWeb() {
+    return allowWeb;
+  }
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public PaymentType() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public PaymentType() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		if(i==COLUMN_NAME) return pkey;
-		if(i==1) return description;
-		if(i==2) return isActive;
-		if(i==3) return allowWeb;
-		throw new IllegalArgumentException("Invalid index: " + i);
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    if (i == COLUMN_NAME) {
+      return pkey;
+    }
+    if (i == 1) {
+      return description;
+    }
+    if (i == 2) {
+      return isActive;
+    }
+    if (i == 3) {
+      return allowWeb;
+    }
+    throw new IllegalArgumentException("Invalid index: " + i);
+  }
 
-	public String getDescription() {
-		return description;
-	}
+  public String getDescription() {
+    return description;
+  }
 
-	public String getName() {
-		return pkey;
-	}
+  public String getName() {
+    return pkey;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.PAYMENT_TYPES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.PAYMENT_TYPES;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey = result.getString(1);
-		description = result.getString(2);
-		isActive = result.getBoolean(3);
-		allowWeb = result.getBoolean(4);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey = result.getString(1);
+    description = result.getString(2);
+    isActive = result.getBoolean(3);
+    allowWeb = result.getBoolean(4);
+  }
 
-	public boolean isActive() {
-		return isActive;
-	}
+  public boolean isActive() {
+    return isActive;
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readUTF().intern();
-		description=in.readUTF();
-		isActive=in.readBoolean();
-		allowWeb=in.readBoolean();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readUTF().intern();
+    description=in.readUTF();
+    isActive=in.readBoolean();
+    allowWeb=in.readBoolean();
+  }
 
-	@Override
-	public String toStringImpl() {
-		return description;
-	}
+  @Override
+  public String toStringImpl() {
+    return description;
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey);
-		out.writeUTF(description);
-		out.writeBoolean(isActive);
-		out.writeBoolean(allowWeb);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey);
+    out.writeUTF(description);
+    out.writeBoolean(isActive);
+    out.writeBoolean(allowWeb);
+  }
 }

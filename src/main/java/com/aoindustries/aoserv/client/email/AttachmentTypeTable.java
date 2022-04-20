@@ -36,26 +36,26 @@ import java.sql.SQLException;
  */
 public final class AttachmentTypeTable extends GlobalTableStringKey<AttachmentType> {
 
-	AttachmentTypeTable(AOServConnector connector) {
-		super(connector, AttachmentType.class);
-	}
+  AttachmentTypeTable(AOServConnector connector) {
+    super(connector, AttachmentType.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(AttachmentType.COLUMN_EXTENSION_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(AttachmentType.COLUMN_EXTENSION_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public AttachmentType get(String extension) throws IOException, SQLException {
-		return getUniqueRow(AttachmentType.COLUMN_EXTENSION, extension);
-	}
+  @Override
+  public AttachmentType get(String extension) throws IOException, SQLException {
+    return getUniqueRow(AttachmentType.COLUMN_EXTENSION, extension);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.EMAIL_ATTACHMENT_TYPES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.EMAIL_ATTACHMENT_TYPES;
+  }
 }

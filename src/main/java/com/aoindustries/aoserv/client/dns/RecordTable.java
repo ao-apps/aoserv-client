@@ -43,204 +43,208 @@ import java.util.List;
  */
 public final class RecordTable extends CachedTableIntegerKey<Record> {
 
-	RecordTable(AOServConnector connector) {
-		super(connector, Record.class);
-	}
+  RecordTable(AOServConnector connector) {
+    super(connector, Record.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(Record.COLUMN_ZONE_name, ASCENDING),
-		new OrderBy(Record.COLUMN_DOMAIN_name, ASCENDING),
-		new OrderBy(Record.COLUMN_TYPE_name, ASCENDING),
-		new OrderBy(Record.COLUMN_PRIORITY_name, ASCENDING),
-		new OrderBy(Record.COLUMN_WEIGHT_name, ASCENDING),
-		new OrderBy(Record.COLUMN_TAG_name, ASCENDING),
-		new OrderBy(Record.COLUMN_DESTINATION_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(Record.COLUMN_ZONE_name, ASCENDING),
+    new OrderBy(Record.COLUMN_DOMAIN_name, ASCENDING),
+    new OrderBy(Record.COLUMN_TYPE_name, ASCENDING),
+    new OrderBy(Record.COLUMN_PRIORITY_name, ASCENDING),
+    new OrderBy(Record.COLUMN_WEIGHT_name, ASCENDING),
+    new OrderBy(Record.COLUMN_TAG_name, ASCENDING),
+    new OrderBy(Record.COLUMN_DESTINATION_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	int addDNSRecord(
-		Zone zone,
-		String domain,
-		RecordType type,
-		int priority,
-		int weight,
-		int port,
-		short flag,
-		String tag,
-		String destination,
-		int ttl
-	) throws IOException, SQLException {
-		if(!Record.isValidFlag(flag)) throw new IllegalArgumentException("Invalid flag: " + flag);
-		return connector.requestIntQueryIL(
-			true,
-			AoservProtocol.CommandID.ADD,
-			Table.TableID.DNS_RECORDS,
-			zone.getZone(),
-			domain,
-			type.getType(),
-			priority,
-			weight,
-			port,
-			flag,
-			(tag == null) ? "" : tag,
-			destination,
-			ttl
-		);
-	}
+  int addDNSRecord(
+    Zone zone,
+    String domain,
+    RecordType type,
+    int priority,
+    int weight,
+    int port,
+    short flag,
+    String tag,
+    String destination,
+    int ttl
+  ) throws IOException, SQLException {
+    if (!Record.isValidFlag(flag)) {
+      throw new IllegalArgumentException("Invalid flag: " + flag);
+    }
+    return connector.requestIntQueryIL(
+      true,
+      AoservProtocol.CommandID.ADD,
+      Table.TableID.DNS_RECORDS,
+      zone.getZone(),
+      domain,
+      type.getType(),
+      priority,
+      weight,
+      port,
+      flag,
+      (tag == null) ? "" : tag,
+      destination,
+      ttl
+    );
+  }
 
-	@Override
-	public Record get(int id) throws IOException, SQLException {
-		return getUniqueRow(Record.COLUMN_ID, id);
-	}
+  @Override
+  public Record get(int id) throws IOException, SQLException {
+    return getUniqueRow(Record.COLUMN_ID, id);
+  }
 
-	List<Record> getDNSRecords(Zone dnsZone) throws IOException, SQLException {
-		return getIndexedRows(Record.COLUMN_ZONE, dnsZone.getZone());
-	}
+  List<Record> getDNSRecords(Zone dnsZone) throws IOException, SQLException {
+    return getIndexedRows(Record.COLUMN_ZONE, dnsZone.getZone());
+  }
 
-	List<Record> getDNSRecords(Zone dnsZone, String domain, RecordType dnsType) throws IOException, SQLException {
-		String type = dnsType.getType();
+  List<Record> getDNSRecords(Zone dnsZone, String domain, RecordType dnsType) throws IOException, SQLException {
+    String type = dnsType.getType();
 
-		// Use the index first
-		List<Record> cached = getDNSRecords(dnsZone);
-		int size = cached.size();
-		List<Record> matches = new ArrayList<>(size);
-		for(int c = 0; c < size; c++) {
-			Record rec = cached.get(c);
-			if(
-				rec.getType_type().equals(type)
-				&& rec.getDomain().equals(domain)
-			) matches.add(rec);
-		}
-		return matches;
-	}
+    // Use the index first
+    List<Record> cached = getDNSRecords(dnsZone);
+    int size = cached.size();
+    List<Record> matches = new ArrayList<>(size);
+    for (int c = 0; c < size; c++) {
+      Record rec = cached.get(c);
+      if (
+        rec.getType_type().equals(type)
+        && rec.getDomain().equals(domain)
+      ) {
+        matches.add(rec);
+      }
+    }
+    return matches;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.DNS_RECORDS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.DNS_RECORDS;
+  }
 
-	@Override
-	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-		String command=args[0];
-		if(command.equalsIgnoreCase(Command.ADD_DNS_RECORD)) {
-			if(AOSH.checkMinParamCount(Command.ADD_DNS_RECORD, args, 3, err)) {
-				String zone   = args[1];
-				String domain = args[2];
-				String type   = args[3];
-				int priority;
-				int weight;
-				int port;
-				short flag;
-				String tag;
-				String destination;
-				int ttl;
-				if(
-					(
-						RecordType.A.equals(type)
-						|| RecordType.AAAA.equals(type)
-						|| RecordType.CNAME.equals(type)
-						|| RecordType.NS.equals(type)
-						|| RecordType.PTR.equals(type)
-						|| RecordType.TXT.equals(type)
-					)
-					&& (args.length == 5 || args.length == 6)
-				) {
-					priority    = Record.NO_PRIORITY;
-					weight      = Record.NO_WEIGHT;
-					port        = Record.NO_PORT;
-					flag        = Record.NO_FLAG;
-					tag         = null;
-					destination = args[4];
-					ttl         = args.length <= 5 || args[5].isEmpty() ? Record.NO_TTL : AOSH.parseInt(args[5], "ttl");
-				} else if(
-					RecordType.CAA.equals(type)
-					&& (args.length == 7 || args.length == 8)
-				) {
-					priority = Record.NO_PRIORITY;
-					weight = Record.NO_WEIGHT;
-					port = Record.NO_PORT;
-					flag        = AOSH.parseShort(args[4], "flag");
-					tag         = args[5];
-					destination = args[6];
-					ttl         = args.length <= 7 || args[7].isEmpty() ? Record.NO_TTL : AOSH.parseInt(args[7], "ttl");
-				} else if(
-					RecordType.MX.equals(type)
-					&& (args.length == 6 || args.length == 7)
-				) {
-					priority    = AOSH.parseInt(args[4], "priority");
-					weight      = Record.NO_WEIGHT;
-					port        = Record.NO_PORT;
-					flag        = Record.NO_FLAG;
-					tag         = null;
-					destination = args[5];
-					ttl         = args.length <= 6 || args[6].isEmpty() ? Record.NO_TTL : AOSH.parseInt(args[6], "ttl");
-				} else if(
-					RecordType.SRV.equals(type)
-					&& (args.length == 8 || args.length == 9)
-				) {
-					priority    = AOSH.parseInt(args[4], "priority");
-					weight      = AOSH.parseInt(args[5], "weight");
-					port        = AOSH.parseInt(args[6], "port");
-					flag        = Record.NO_FLAG;
-					tag         = null;
-					destination = args[7];
-					ttl         = args.length <= 8 || args[8].isEmpty() ? Record.NO_TTL : AOSH.parseInt(args[8], "ttl");
-				} else if(args.length == 10 || AOSH.checkParamCount(Command.ADD_DNS_RECORD, args, 10, err)) {
-					// Arbitrary type, all fields
-					priority    = args[ 4].isEmpty() ? Record.NO_PRIORITY : AOSH.parseInt(args[4], "priority");
-					weight      = args[ 5].isEmpty() ? Record.NO_WEIGHT   : AOSH.parseInt(args[5], "weight");
-					port        = args[ 6].isEmpty() ? Record.NO_PORT     : AOSH.parseInt(args[6], "port");
-					flag        = args[ 7].isEmpty() ? Record.NO_FLAG     : AOSH.parseShort(args[7], "flag");
-					tag         = args[ 8].isEmpty() ? null               : args[8];
-					destination = args[ 9];
-					ttl         = args.length <= 10 || args[10].isEmpty() ? Record.NO_TTL : AOSH.parseInt(args[10], "ttl");
-				} else {
-					return true;
-				}
-				out.println(
-					connector.getSimpleAOClient().addDNSRecord(
-						zone,
-						domain,
-						type,
-						priority,
-						weight,
-						port,
-						flag,
-						tag,
-						destination,
-						ttl
-					)
-				);
-				out.flush();
-			}
-			return true;
-		} else if(command.equalsIgnoreCase(Command.REMOVE_DNS_RECORD)) {
-			if(args.length == 2) {
-				connector.getSimpleAOClient().removeDNSRecord(
-					AOSH.parseInt(args[1], "pkey")
-				);
-				return true;
-			} else if(args.length == 6) {
-				connector.getSimpleAOClient().removeDNSRecord(
-					args[1],
-					args[2],
-					args[3],
-					args[4].isEmpty() ? null : args[4],
-					args[5]
-				);
-				return true;
-			} else {
-				err.print("aosh: ");
-				err.print(Command.REMOVE_DNS_RECORD);
-				err.println(": must be either 1 or 5 parameters");
-				err.flush();
-				return false;
-			}
-		}
-		return false;
-	}
+  @Override
+  public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
+    String command=args[0];
+    if (command.equalsIgnoreCase(Command.ADD_DNS_RECORD)) {
+      if (AOSH.checkMinParamCount(Command.ADD_DNS_RECORD, args, 3, err)) {
+        String zone   = args[1];
+        String domain = args[2];
+        String type   = args[3];
+        int priority;
+        int weight;
+        int port;
+        short flag;
+        String tag;
+        String destination;
+        int ttl;
+        if (
+          (
+            RecordType.A.equals(type)
+            || RecordType.AAAA.equals(type)
+            || RecordType.CNAME.equals(type)
+            || RecordType.NS.equals(type)
+            || RecordType.PTR.equals(type)
+            || RecordType.TXT.equals(type)
+          )
+          && (args.length == 5 || args.length == 6)
+        ) {
+          priority    = Record.NO_PRIORITY;
+          weight      = Record.NO_WEIGHT;
+          port        = Record.NO_PORT;
+          flag        = Record.NO_FLAG;
+          tag         = null;
+          destination = args[4];
+          ttl         = args.length <= 5 || args[5].isEmpty() ? Record.NO_TTL : AOSH.parseInt(args[5], "ttl");
+        } else if (
+          RecordType.CAA.equals(type)
+          && (args.length == 7 || args.length == 8)
+        ) {
+          priority = Record.NO_PRIORITY;
+          weight = Record.NO_WEIGHT;
+          port = Record.NO_PORT;
+          flag        = AOSH.parseShort(args[4], "flag");
+          tag         = args[5];
+          destination = args[6];
+          ttl         = args.length <= 7 || args[7].isEmpty() ? Record.NO_TTL : AOSH.parseInt(args[7], "ttl");
+        } else if (
+          RecordType.MX.equals(type)
+          && (args.length == 6 || args.length == 7)
+        ) {
+          priority    = AOSH.parseInt(args[4], "priority");
+          weight      = Record.NO_WEIGHT;
+          port        = Record.NO_PORT;
+          flag        = Record.NO_FLAG;
+          tag         = null;
+          destination = args[5];
+          ttl         = args.length <= 6 || args[6].isEmpty() ? Record.NO_TTL : AOSH.parseInt(args[6], "ttl");
+        } else if (
+          RecordType.SRV.equals(type)
+          && (args.length == 8 || args.length == 9)
+        ) {
+          priority    = AOSH.parseInt(args[4], "priority");
+          weight      = AOSH.parseInt(args[5], "weight");
+          port        = AOSH.parseInt(args[6], "port");
+          flag        = Record.NO_FLAG;
+          tag         = null;
+          destination = args[7];
+          ttl         = args.length <= 8 || args[8].isEmpty() ? Record.NO_TTL : AOSH.parseInt(args[8], "ttl");
+        } else if (args.length == 10 || AOSH.checkParamCount(Command.ADD_DNS_RECORD, args, 10, err)) {
+          // Arbitrary type, all fields
+          priority    = args[ 4].isEmpty() ? Record.NO_PRIORITY : AOSH.parseInt(args[4], "priority");
+          weight      = args[ 5].isEmpty() ? Record.NO_WEIGHT   : AOSH.parseInt(args[5], "weight");
+          port        = args[ 6].isEmpty() ? Record.NO_PORT     : AOSH.parseInt(args[6], "port");
+          flag        = args[ 7].isEmpty() ? Record.NO_FLAG     : AOSH.parseShort(args[7], "flag");
+          tag         = args[ 8].isEmpty() ? null               : args[8];
+          destination = args[ 9];
+          ttl         = args.length <= 10 || args[10].isEmpty() ? Record.NO_TTL : AOSH.parseInt(args[10], "ttl");
+        } else {
+          return true;
+        }
+        out.println(
+          connector.getSimpleAOClient().addDNSRecord(
+            zone,
+            domain,
+            type,
+            priority,
+            weight,
+            port,
+            flag,
+            tag,
+            destination,
+            ttl
+          )
+        );
+        out.flush();
+      }
+      return true;
+    } else if (command.equalsIgnoreCase(Command.REMOVE_DNS_RECORD)) {
+      if (args.length == 2) {
+        connector.getSimpleAOClient().removeDNSRecord(
+          AOSH.parseInt(args[1], "pkey")
+        );
+        return true;
+      } else if (args.length == 6) {
+        connector.getSimpleAOClient().removeDNSRecord(
+          args[1],
+          args[2],
+          args[3],
+          args[4].isEmpty() ? null : args[4],
+          args[5]
+        );
+        return true;
+      } else {
+        err.print("aosh: ");
+        err.print(Command.REMOVE_DNS_RECORD);
+        err.println(": must be either 1 or 5 parameters");
+        err.flush();
+        return false;
+      }
+    }
+    return false;
+  }
 }

@@ -31,40 +31,40 @@ import java.beans.SimpleBeanInfo;
 
 public class SchemaBeanInfo extends SimpleBeanInfo {
 
-	private static final PropertyDescriptor[] properties;
-	static {
-		try {
-			properties = new PropertyDescriptor[] {
-				new PropertyDescriptor("AdministratorPermission", Schema.class, "getAdministratorPermission", null),
-				new PropertyDescriptor("Process",                 Schema.class, "getProcess",                 null),
-				new PropertyDescriptor("ServerStat",              Schema.class, "getServerStat",              null),
-				new PropertyDescriptor("Permission",              Schema.class, "getPermission",              null),
-				new PropertyDescriptor("User",                    Schema.class, "getUser",                    null),
-				new PropertyDescriptor("UserAcl",                 Schema.class, "getUserAcl",                 null),
-				new PropertyDescriptor("UserHost",                Schema.class, "getUserHost",                null),
-			};
-		} catch(IntrospectionException err) {
-			throw new ExceptionInInitializerError(err);
-		}
-	}
+  private static final PropertyDescriptor[] properties;
+  static {
+    try {
+      properties = new PropertyDescriptor[] {
+        new PropertyDescriptor("AdministratorPermission", Schema.class, "getAdministratorPermission", null),
+        new PropertyDescriptor("Process",                 Schema.class, "getProcess",                 null),
+        new PropertyDescriptor("ServerStat",              Schema.class, "getServerStat",              null),
+        new PropertyDescriptor("Permission",              Schema.class, "getPermission",              null),
+        new PropertyDescriptor("User",                    Schema.class, "getUser",                    null),
+        new PropertyDescriptor("UserAcl",                 Schema.class, "getUserAcl",                 null),
+        new PropertyDescriptor("UserHost",                Schema.class, "getUserHost",                null),
+      };
+    } catch (IntrospectionException err) {
+      throw new ExceptionInInitializerError(err);
+    }
+  }
 
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Not copying array for performance
-	public PropertyDescriptor[] getPropertyDescriptors () {
-		return properties;
-	}
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField") // Not copying array for performance
+  public PropertyDescriptor[] getPropertyDescriptors () {
+    return properties;
+  }
 
-	/**
-	 * Include base class.
-	 */
-	@Override
-	public BeanInfo[] getAdditionalBeanInfo() {
-		try {
-			return new BeanInfo[] {
-				Introspector.getBeanInfo(Schema.class.getSuperclass())
-			};
-		} catch(IntrospectionException err) {
-			throw new AssertionError(err);
-		}
-	}
+  /**
+   * Include base class.
+   */
+  @Override
+  public BeanInfo[] getAdditionalBeanInfo() {
+    try {
+      return new BeanInfo[] {
+        Introspector.getBeanInfo(Schema.class.getSuperclass())
+      };
+    } catch (IntrospectionException err) {
+      throw new AssertionError(err);
+    }
+  }
 }

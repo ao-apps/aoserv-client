@@ -45,108 +45,114 @@ import java.util.List;
  */
 public final class AccountHostTable extends CachedTableIntegerKey<AccountHost> {
 
-	AccountHostTable(AOServConnector connector) {
-		super(connector, AccountHost.class);
-	}
+  AccountHostTable(AOServConnector connector) {
+    super(connector, AccountHost.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(AccountHost.COLUMN_ACCOUNTING_name, ASCENDING),
-		new OrderBy(AccountHost.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(AccountHost.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(AccountHost.COLUMN_ACCOUNTING_name, ASCENDING),
+    new OrderBy(AccountHost.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(AccountHost.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	int addAccountHost(Account business, Host server) throws IOException, SQLException {
-		return connector.requestIntQueryIL(true, AoservProtocol.CommandID.ADD, Table.TableID.BUSINESS_SERVERS, business.getName().toString(), server.getPkey());
-	}
+  int addAccountHost(Account business, Host server) throws IOException, SQLException {
+    return connector.requestIntQueryIL(true, AoservProtocol.CommandID.ADD, Table.TableID.BUSINESS_SERVERS, business.getName().toString(), server.getPkey());
+  }
 
-	@Override
-	public AccountHost get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(AccountHost.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public AccountHost get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(AccountHost.COLUMN_PKEY, pkey);
+  }
 
-	List<AccountHost> getAccountHosts(Account bu) throws IOException, SQLException {
-		return getIndexedRows(AccountHost.COLUMN_ACCOUNTING, bu.getName());
-	}
+  List<AccountHost> getAccountHosts(Account bu) throws IOException, SQLException {
+    return getIndexedRows(AccountHost.COLUMN_ACCOUNTING, bu.getName());
+  }
 
-	List<AccountHost> getAccountHosts(Host server) throws IOException, SQLException {
-		return getIndexedRows(AccountHost.COLUMN_SERVER, server.getPkey());
-	}
+  List<AccountHost> getAccountHosts(Host server) throws IOException, SQLException {
+    return getIndexedRows(AccountHost.COLUMN_SERVER, server.getPkey());
+  }
 
-	public List<Account> getAccounts(Host server) throws IOException, SQLException {
-		// Use the cache and convert
-		List<AccountHost> cached = getAccountHosts(server);
-		int size=cached.size();
-		List<Account> businesses=new ArrayList<>(size);
-		for(int c=0;c<size;c++) {
-			businesses.add(cached.get(c).getAccount());
-		}
-		return businesses;
-	}
+  public List<Account> getAccounts(Host server) throws IOException, SQLException {
+    // Use the cache and convert
+    List<AccountHost> cached = getAccountHosts(server);
+    int size=cached.size();
+    List<Account> businesses=new ArrayList<>(size);
+    for (int c=0;c<size;c++) {
+      businesses.add(cached.get(c).getAccount());
+    }
+    return businesses;
+  }
 
-	AccountHost getAccountHost(Account account, Host host) throws IOException, SQLException {
-		int host_id = host.getPkey();
+  AccountHost getAccountHost(Account account, Host host) throws IOException, SQLException {
+    int host_id = host.getPkey();
 
-		// Use the index first
-		List<AccountHost> cached = getAccountHosts(account);
-		int size=cached.size();
-		for(int c=0;c<size;c++) {
-			AccountHost bs=cached.get(c);
-			if(bs.getHost_id() == host_id) return bs;
-		}
-		return null;
-	}
+    // Use the index first
+    List<AccountHost> cached = getAccountHosts(account);
+    int size=cached.size();
+    for (int c=0;c<size;c++) {
+      AccountHost bs=cached.get(c);
+      if (bs.getHost_id() == host_id) {
+        return bs;
+      }
+    }
+    return null;
+  }
 
-	Host getDefaultHost(Account business) throws IOException, SQLException {
-		// Use index first
-		List<AccountHost> cached = getAccountHosts(business);
-		int size=cached.size();
-		for(int c=0;c<size;c++) {
-			AccountHost bs=cached.get(c);
-			if(bs.isDefault()) return bs.getHost();
-		}
-		return null;
-	}
+  Host getDefaultHost(Account business) throws IOException, SQLException {
+    // Use index first
+    List<AccountHost> cached = getAccountHosts(business);
+    int size=cached.size();
+    for (int c=0;c<size;c++) {
+      AccountHost bs=cached.get(c);
+      if (bs.isDefault()) {
+        return bs.getHost();
+      }
+    }
+    return null;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.BUSINESS_SERVERS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.BUSINESS_SERVERS;
+  }
 
-	@Override
-	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
-		String command=args[0];
-		if(command.equalsIgnoreCase(Command.ADD_BUSINESS_SERVER)) {
-			if(AOSH.checkParamCount(Command.ADD_BUSINESS_SERVER, args, 2, err)) {
-				out.println(
-					connector.getSimpleAOClient().addAccountHost(
-						AOSH.parseAccountingCode(args[1], "business"),
-						args[2]
-					)
-				);
-				out.flush();
-			}
-			return true;
-		} else if(command.equalsIgnoreCase(Command.REMOVE_BUSINESS_SERVER)) {
-			if(AOSH.checkParamCount(Command.REMOVE_BUSINESS_SERVER, args, 2, err)) {
-				connector.getSimpleAOClient().removeAccountHost(
-					AOSH.parseAccountingCode(args[1], "business"),
-					args[2]
-				);
-			}
-			return true;
-		} else if(command.equalsIgnoreCase(Command.SET_DEFAULT_BUSINESS_SERVER)) {
-			if(AOSH.checkParamCount(Command.SET_DEFAULT_BUSINESS_SERVER, args, 2, err)) {
-				connector.getSimpleAOClient().setDefaultAccountHost(
-					AOSH.parseAccountingCode(args[1], "business"),
-					args[2]
-				);
-			}
-			return true;
-		} else return false;
-	}
+  @Override
+  public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
+    String command=args[0];
+    if (command.equalsIgnoreCase(Command.ADD_BUSINESS_SERVER)) {
+      if (AOSH.checkParamCount(Command.ADD_BUSINESS_SERVER, args, 2, err)) {
+        out.println(
+          connector.getSimpleAOClient().addAccountHost(
+            AOSH.parseAccountingCode(args[1], "business"),
+            args[2]
+          )
+        );
+        out.flush();
+      }
+      return true;
+    } else if (command.equalsIgnoreCase(Command.REMOVE_BUSINESS_SERVER)) {
+      if (AOSH.checkParamCount(Command.REMOVE_BUSINESS_SERVER, args, 2, err)) {
+        connector.getSimpleAOClient().removeAccountHost(
+          AOSH.parseAccountingCode(args[1], "business"),
+          args[2]
+        );
+      }
+      return true;
+    } else if (command.equalsIgnoreCase(Command.SET_DEFAULT_BUSINESS_SERVER)) {
+      if (AOSH.checkParamCount(Command.SET_DEFAULT_BUSINESS_SERVER, args, 2, err)) {
+        connector.getSimpleAOClient().setDefaultAccountHost(
+          AOSH.parseAccountingCode(args[1], "business"),
+          args[2]
+        );
+      }
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

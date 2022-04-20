@@ -37,32 +37,32 @@ import java.util.List;
  */
 public final class NoticeLogBalanceTable extends CachedTableIntegerKey<NoticeLogBalance> {
 
-	NoticeLogBalanceTable(AOServConnector connector) {
-		super(connector, NoticeLogBalance.class);
-	}
+  NoticeLogBalanceTable(AOServConnector connector) {
+    super(connector, NoticeLogBalance.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(NoticeLogBalance.COLUMN_noticeLog_name + '.' + NoticeLog.COLUMN_CREATE_TIME_name, ASCENDING),
-		new OrderBy(NoticeLogBalance.COLUMN_noticeLog_name + '.' + NoticeLog.COLUMN_PKEY_name, ASCENDING),
-		new OrderBy(NoticeLogBalance.COLUMN_balance_name, ASCENDING),
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(NoticeLogBalance.COLUMN_noticeLog_name + '.' + NoticeLog.COLUMN_CREATE_TIME_name, ASCENDING),
+    new OrderBy(NoticeLogBalance.COLUMN_noticeLog_name + '.' + NoticeLog.COLUMN_PKEY_name, ASCENDING),
+    new OrderBy(NoticeLogBalance.COLUMN_balance_name, ASCENDING),
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public NoticeLogBalance get(int id) throws IOException, SQLException {
-		return getUniqueRow(NoticeLogBalance.COLUMN_id, id);
-	}
+  @Override
+  public NoticeLogBalance get(int id) throws IOException, SQLException {
+    return getUniqueRow(NoticeLogBalance.COLUMN_id, id);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.NoticeLogBalance;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.NoticeLogBalance;
+  }
 
-	List<NoticeLogBalance> getNoticeLogBalances(NoticeLog noticeLog) throws IOException, SQLException {
-		return getIndexedRows(NoticeLogBalance.COLUMN_noticeLog, noticeLog.getPkey());
-	}
+  List<NoticeLogBalance> getNoticeLogBalances(NoticeLog noticeLog) throws IOException, SQLException {
+    return getIndexedRows(NoticeLogBalance.COLUMN_noticeLog, noticeLog.getPkey());
+  }
 }

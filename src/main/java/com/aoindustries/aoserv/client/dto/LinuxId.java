@@ -28,21 +28,21 @@ package com.aoindustries.aoserv.client.dto;
  */
 public class LinuxId {
 
-	private int id;
+  private int id;
 
-	public LinuxId() {
-		// Do nothing
-	}
+  public LinuxId() {
+    // Do nothing
+  }
 
-	public LinuxId(int id) {
-		this.id = id;
-	}
+  public LinuxId(int id) {
+    this.id = id;
+  }
 
-	public int getId() {
-		return id;
-	}
+  public int getId() {
+    return id;
+  }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+  public void setId(int id) {
+    this.id = id;
+  }
 }

@@ -36,26 +36,26 @@ import java.sql.SQLException;
  */
 public final class TicketTypeTable extends GlobalTableStringKey<TicketType> {
 
-	TicketTypeTable(AOServConnector connector) {
-		super(connector, TicketType.class);
-	}
+  TicketTypeTable(AOServConnector connector) {
+    super(connector, TicketType.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(TicketType.COLUMN_TYPE_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(TicketType.COLUMN_TYPE_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public TicketType get(String type) throws IOException, SQLException {
-		return getUniqueRow(TicketType.COLUMN_TYPE, type);
-	}
+  @Override
+  public TicketType get(String type) throws IOException, SQLException {
+    return getUniqueRow(TicketType.COLUMN_TYPE, type);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.TICKET_TYPES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.TICKET_TYPES;
+  }
 }

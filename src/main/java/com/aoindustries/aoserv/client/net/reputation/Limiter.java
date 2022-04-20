@@ -41,95 +41,97 @@ import java.util.List;
  */
 public final class Limiter extends CachedObjectIntegerKey<Limiter> {
 
-	static final int
-		COLUMN_PKEY=0,
-		COLUMN_NET_DEVICE=1
-	;
+  static final int
+    COLUMN_PKEY=0,
+    COLUMN_NET_DEVICE=1
+  ;
 
-	static final String COLUMN_NET_DEVICE_name= "net_device";
-	static final String COLUMN_IDENTIFIER_name= "identifier";
+  static final String COLUMN_NET_DEVICE_name= "net_device";
+  static final String COLUMN_IDENTIFIER_name= "identifier";
 
-	private int netDevice;
-	private String identifier;
-	private String description;
+  private int netDevice;
+  private String identifier;
+  private String description;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public Limiter() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public Limiter() {
+    // Do nothing
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.IP_REPUTATION_LIMITERS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.IP_REPUTATION_LIMITERS;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		int pos = 1;
-		pkey        = result.getInt(pos++);
-		netDevice   = result.getInt(pos++);
-		identifier  = result.getString(pos++);
-		description = result.getString(pos++);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    int pos = 1;
+    pkey        = result.getInt(pos++);
+    netDevice   = result.getInt(pos++);
+    identifier  = result.getString(pos++);
+    description = result.getString(pos++);
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeCompressedInt(netDevice);
-		out.writeUTF          (identifier);
-		out.writeNullUTF      (description);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    out.writeCompressedInt(netDevice);
+    out.writeUTF          (identifier);
+    out.writeNullUTF      (description);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey        = in.readCompressedInt();
-		netDevice   = in.readCompressedInt();
-		identifier  = in.readUTF();
-		description = in.readNullUTF();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey        = in.readCompressedInt();
+    netDevice   = in.readCompressedInt();
+    identifier  = in.readUTF();
+    description = in.readNullUTF();
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_PKEY :       return pkey;
-			case COLUMN_NET_DEVICE : return netDevice;
-			case 2 :                 return identifier;
-			case 3 :                 return description;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_PKEY :       return pkey;
+      case COLUMN_NET_DEVICE : return netDevice;
+      case 2 :                 return identifier;
+      case 3 :                 return description;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	public Device getNetDevice() throws SQLException, IOException {
-		Device nd = table.getConnector().getNet().getDevice().get(netDevice);
-		if(nd==null) throw new SQLException("Unable to find NetDevice: " + netDevice);
-		return nd;
-	}
+  public Device getNetDevice() throws SQLException, IOException {
+    Device nd = table.getConnector().getNet().getDevice().get(netDevice);
+    if (nd == null) {
+      throw new SQLException("Unable to find NetDevice: " + netDevice);
+    }
+    return nd;
+  }
 
-	/**
-	 * Gets the per-net device unique identifier for this reputation limiter.
-	 */
-	public String getIdentifier() {
-		return identifier;
-	}
+  /**
+   * Gets the per-net device unique identifier for this reputation limiter.
+   */
+  public String getIdentifier() {
+    return identifier;
+  }
 
-	/**
-	 * Gets the optional description of the limiter.
-	 */
-	public String getDescription() {
-		return description;
-	}
+  /**
+   * Gets the optional description of the limiter.
+   */
+  public String getDescription() {
+    return description;
+  }
 
-	public List<LimiterClass> getLimits() throws IOException, SQLException {
-		return table.getConnector().getNet().getReputation().getLimiterClass().getLimits(this);
-	}
+  public List<LimiterClass> getLimits() throws IOException, SQLException {
+    return table.getConnector().getNet().getReputation().getLimiterClass().getLimits(this);
+  }
 
-	public List<LimiterSet> getSets() throws IOException, SQLException {
-		return table.getConnector().getNet().getReputation().getLimiterSet().getSets(this);
-	}
+  public List<LimiterSet> getSets() throws IOException, SQLException {
+    return table.getConnector().getNet().getReputation().getLimiterSet().getSets(this);
+  }
 }

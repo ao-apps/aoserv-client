@@ -38,27 +38,27 @@ import java.sql.SQLException;
  */
 public final class PhysicalServerTable extends CachedTableIntegerKey<PhysicalServer> {
 
-	PhysicalServerTable(AOServConnector connector) {
-		super(connector, PhysicalServer.class);
-	}
+  PhysicalServerTable(AOServConnector connector) {
+    super(connector, PhysicalServer.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(PhysicalServer.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(PhysicalServer.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(PhysicalServer.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(PhysicalServer.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public PhysicalServer get(int server) throws IOException, SQLException {
-		return getUniqueRow(PhysicalServer.COLUMN_SERVER, server);
-	}
+  @Override
+  public PhysicalServer get(int server) throws IOException, SQLException {
+    return getUniqueRow(PhysicalServer.COLUMN_SERVER, server);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.PHYSICAL_SERVERS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.PHYSICAL_SERVERS;
+  }
 }

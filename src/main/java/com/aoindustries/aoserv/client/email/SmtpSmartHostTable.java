@@ -41,30 +41,30 @@ import java.sql.SQLException;
  */
 public final class SmtpSmartHostTable extends CachedTableIntegerKey<SmtpSmartHost> {
 
-	SmtpSmartHostTable(AOServConnector connector) {
-		super(connector, SmtpSmartHost.class);
-	}
+  SmtpSmartHostTable(AOServConnector connector) {
+    super(connector, SmtpSmartHost.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(SmtpSmartHost.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(SmtpSmartHost.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(SmtpSmartHost.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_IP_ADDRESS_name+'.'+IpAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
-		new OrderBy(SmtpSmartHost.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_IP_ADDRESS_name+'.'+IpAddress.COLUMN_DEVICE_name+'.'+Device.COLUMN_DEVICE_ID_name, ASCENDING),
-		new OrderBy(SmtpSmartHost.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_PORT_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(SmtpSmartHost.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(SmtpSmartHost.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(SmtpSmartHost.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_IP_ADDRESS_name+'.'+IpAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
+    new OrderBy(SmtpSmartHost.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_IP_ADDRESS_name+'.'+IpAddress.COLUMN_DEVICE_name+'.'+Device.COLUMN_DEVICE_ID_name, ASCENDING),
+    new OrderBy(SmtpSmartHost.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_PORT_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public SmtpSmartHost get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(SmtpSmartHost.COLUMN_NET_BIND, pkey);
-	}
+  @Override
+  public SmtpSmartHost get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(SmtpSmartHost.COLUMN_NET_BIND, pkey);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.EMAIL_SMTP_SMART_HOSTS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.EMAIL_SMTP_SMART_HOSTS;
+  }
 }

@@ -39,41 +39,41 @@ import java.io.IOException;
  */
 public abstract class AOServConnection implements Closeable {
 
-	/**
-	 * The connector that this connection is part of.
-	 */
-	protected final AOServConnector connector;
+  /**
+   * The connector that this connection is part of.
+   */
+  protected final AOServConnector connector;
 
-	/**
-	 * Creates a new <code>AOServConnection</code>.
-	 */
-	protected AOServConnection(AOServConnector connector) {
-		this.connector=connector;
-	}
+  /**
+   * Creates a new <code>AOServConnection</code>.
+   */
+  protected AOServConnection(AOServConnector connector) {
+    this.connector=connector;
+  }
 
-	/**
-	 * Releases this connection back to the pool.
-	 *
-	 * @see  AOServConnector#release(com.aoindustries.aoserv.client.AOServConnection)
-	 */
-	@Override
-	public void close() throws IOException {
-		connector.release(this);
-	}
+  /**
+   * Releases this connection back to the pool.
+   *
+   * @see  AOServConnector#release(com.aoindustries.aoserv.client.AOServConnection)
+   */
+  @Override
+  public void close() throws IOException {
+    connector.release(this);
+  }
 
-	/**
-	 * Closes this connection to the server so that a reconnect is forced in the future.
-	 * Adds any new throwables to {@code t0} via {@link Throwables#addSuppressed(java.lang.Throwable, java.lang.Throwable)}.
-	 */
-	abstract Throwable abort(Throwable t0);
+  /**
+   * Closes this connection to the server so that a reconnect is forced in the future.
+   * Adds any new throwables to {@code t0} via {@link Throwables#addSuppressed(java.lang.Throwable, java.lang.Throwable)}.
+   */
+  abstract Throwable abort(Throwable t0);
 
-	/**
-	 * Gets the stream to write to the server.
-	 */
-	abstract StreamableOutput getRequestOut(AoservProtocol.CommandID commID) throws IOException;
+  /**
+   * Gets the stream to write to the server.
+   */
+  abstract StreamableOutput getRequestOut(AoservProtocol.CommandID commID) throws IOException;
 
-	/**
-	 * Gets the stream to read from the server.
-	 */
-	abstract StreamableInput getResponseIn() throws IOException;
+  /**
+   * Gets the stream to read from the server.
+   */
+  abstract StreamableInput getResponseIn() throws IOException;
 }

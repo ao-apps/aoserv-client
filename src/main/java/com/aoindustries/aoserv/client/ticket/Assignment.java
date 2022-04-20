@@ -44,103 +44,111 @@ import java.sql.SQLException;
  */
 public final class Assignment extends CachedObjectIntegerKey<Assignment> {
 
-	static final int
-		COLUMN_PKEY=0,
-		COLUMN_TICKET=1,
-		COLUMN_RESELLER=2,
-		COLUMN_ADMINISTRATOR=3
-	;
-	static final String COLUMN_PKEY_name = "pkey";
-	static final String COLUMN_TICKET_name = "ticket";
-	static final String COLUMN_RESELLER_name = "reseller";
-	static final String COLUMN_ADMINISTRATOR_name = "administrator";
+  static final int
+    COLUMN_PKEY=0,
+    COLUMN_TICKET=1,
+    COLUMN_RESELLER=2,
+    COLUMN_ADMINISTRATOR=3
+  ;
+  static final String COLUMN_PKEY_name = "pkey";
+  static final String COLUMN_TICKET_name = "ticket";
+  static final String COLUMN_RESELLER_name = "reseller";
+  static final String COLUMN_ADMINISTRATOR_name = "administrator";
 
-	private int ticket;
-	private Account.Name reseller;
-	private User.Name administrator;
+  private int ticket;
+  private Account.Name reseller;
+  private User.Name administrator;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public Assignment() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public Assignment() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_PKEY: return pkey;
-			case COLUMN_TICKET: return ticket;
-			case COLUMN_RESELLER: return reseller;
-			case COLUMN_ADMINISTRATOR: return administrator;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_PKEY: return pkey;
+      case COLUMN_TICKET: return ticket;
+      case COLUMN_RESELLER: return reseller;
+      case COLUMN_ADMINISTRATOR: return administrator;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	public Ticket getTicket() throws IOException, SQLException {
-		Ticket t = table.getConnector().getTicket().getTicket().get(ticket);
-		if(t==null) throw new SQLException("Unable to find Ticket: "+ticket);
-		return t;
-	}
+  public Ticket getTicket() throws IOException, SQLException {
+    Ticket t = table.getConnector().getTicket().getTicket().get(ticket);
+    if (t == null) {
+      throw new SQLException("Unable to find Ticket: "+ticket);
+    }
+    return t;
+  }
 
-	public Reseller getReseller() throws IOException, SQLException {
-		Reseller r = table.getConnector().getReseller().getReseller().get(reseller);
-		if(r==null) throw new SQLException("Unable to find Reseller: "+reseller);
-		return r;
-	}
+  public Reseller getReseller() throws IOException, SQLException {
+    Reseller r = table.getConnector().getReseller().getReseller().get(reseller);
+    if (r == null) {
+      throw new SQLException("Unable to find Reseller: "+reseller);
+    }
+    return r;
+  }
 
-	public Administrator getAdministrator() throws IOException, SQLException {
-		Administrator obj = table.getConnector().getAccount().getAdministrator().get(administrator);
-		if(obj == null) throw new SQLException("Unable to find Administrator: " + administrator);
-		return obj;
-		//Username un=table.getConnector().getUsernames().get(administrator);
-		//if(un==null) return null;
-		//return un.getAdministrator();
-	}
+  public Administrator getAdministrator() throws IOException, SQLException {
+    Administrator obj = table.getConnector().getAccount().getAdministrator().get(administrator);
+    if (obj == null) {
+      throw new SQLException("Unable to find Administrator: " + administrator);
+    }
+    return obj;
+    //Username un=table.getConnector().getUsernames().get(administrator);
+    //if (un == null) {
+    //  return null;
+    //}
+    //return un.getAdministrator();
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.TICKET_ASSIGNMENTS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.TICKET_ASSIGNMENTS;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		try {
-			pkey = result.getInt(1);
-			ticket = result.getInt(2);
-			reseller = Account.Name.valueOf(result.getString(3));
-			administrator = User.Name.valueOf(result.getString(4));
-		} catch(ValidationException e) {
-			throw new SQLException(e);
-		}
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    try {
+      pkey = result.getInt(1);
+      ticket = result.getInt(2);
+      reseller = Account.Name.valueOf(result.getString(3));
+      administrator = User.Name.valueOf(result.getString(4));
+    } catch (ValidationException e) {
+      throw new SQLException(e);
+    }
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		try {
-			pkey = in.readCompressedInt();
-			ticket = in.readCompressedInt();
-			reseller = Account.Name.valueOf(in.readUTF()).intern();
-			administrator = User.Name.valueOf(in.readUTF()).intern();
-		} catch(ValidationException e) {
-			throw new IOException(e);
-		}
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    try {
+      pkey = in.readCompressedInt();
+      ticket = in.readCompressedInt();
+      reseller = Account.Name.valueOf(in.readUTF()).intern();
+      administrator = User.Name.valueOf(in.readUTF()).intern();
+    } catch (ValidationException e) {
+      throw new IOException(e);
+    }
+  }
 
-	@Override
-	public String toStringImpl() {
-		return ticket+"|"+pkey+'|'+reseller+'|'+administrator;
-	}
+  @Override
+  public String toStringImpl() {
+    return ticket+"|"+pkey+'|'+reseller+'|'+administrator;
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeCompressedInt(ticket);
-		out.writeUTF(reseller.toString());
-		out.writeUTF(administrator.toString());
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    out.writeCompressedInt(ticket);
+    out.writeUTF(reseller.toString());
+    out.writeUTF(administrator.toString());
+  }
 }

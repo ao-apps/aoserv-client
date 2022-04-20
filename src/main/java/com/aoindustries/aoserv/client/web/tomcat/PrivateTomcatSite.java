@@ -46,195 +46,206 @@ import java.sql.SQLException;
  */
 public final class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomcatSite> {
 
-	static final int COLUMN_TOMCAT_SITE = 0;
-	static final int COLUMN_TOMCAT4_SHUTDOWN_PORT = 1;
-	static final String COLUMN_TOMCAT_SITE_name = "tomcat_site";
+  static final int COLUMN_TOMCAT_SITE = 0;
+  static final int COLUMN_TOMCAT4_SHUTDOWN_PORT = 1;
+  static final String COLUMN_TOMCAT_SITE_name = "tomcat_site";
 
-	/**
-	 * The default setting of maxPostSize on the &lt;Connector /&gt; in server.xml.
-	 * This raises the value from the Tomcat default of 2 MiB to a more real-world
-	 * value, such as allowing uploads of pictures from modern digital cameras.
-	 *
-	 * @see  #getMaxPostSize()
-	 */
-	public static final int DEFAULT_MAX_POST_SIZE = 16 * 1024 * 1024; // 16 MiB
+  /**
+   * The default setting of maxPostSize on the &lt;Connector /&gt; in server.xml.
+   * This raises the value from the Tomcat default of 2 MiB to a more real-world
+   * value, such as allowing uploads of pictures from modern digital cameras.
+   *
+   * @see  #getMaxPostSize()
+   */
+  public static final int DEFAULT_MAX_POST_SIZE = 16 * 1024 * 1024; // 16 MiB
 
-	public static final String DEFAULT_TOMCAT_VERSION_PREFIX = Version.VERSION_10_0_PREFIX;
+  public static final String DEFAULT_TOMCAT_VERSION_PREFIX = Version.VERSION_10_0_PREFIX;
 
-	private int tomcat4_shutdown_port;
-	private String tomcat4_shutdown_key;
-	private int maxPostSize;
-	private boolean unpackWARs;
-	private boolean autoDeploy;
-	private boolean tomcatAuthentication;
+  private int tomcat4_shutdown_port;
+  private String tomcat4_shutdown_key;
+  private int maxPostSize;
+  private boolean unpackWARs;
+  private boolean autoDeploy;
+  private boolean tomcatAuthentication;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public PrivateTomcatSite() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public PrivateTomcatSite() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_TOMCAT_SITE: return pkey;
-			case COLUMN_TOMCAT4_SHUTDOWN_PORT: return tomcat4_shutdown_port==-1?null:tomcat4_shutdown_port;
-			case 2: return tomcat4_shutdown_key;
-			case 3: return maxPostSize==-1 ? null: maxPostSize;
-			case 4: return unpackWARs;
-			case 5: return autoDeploy;
-			case 6: return tomcatAuthentication;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_TOMCAT_SITE: return pkey;
+      case COLUMN_TOMCAT4_SHUTDOWN_PORT: return tomcat4_shutdown_port == -1?null:tomcat4_shutdown_port;
+      case 2: return tomcat4_shutdown_key;
+      case 3: return maxPostSize == -1 ? null: maxPostSize;
+      case 4: return unpackWARs;
+      case 5: return autoDeploy;
+      case 6: return tomcatAuthentication;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	public Site getHttpdTomcatSite() throws SQLException, IOException {
-		Site obj=table.getConnector().getWeb_tomcat().getSite().get(pkey);
-		if(obj==null) throw new SQLException("Unable to find HttpdTomcatSite: "+pkey);
-		return obj;
-	}
+  public Site getHttpdTomcatSite() throws SQLException, IOException {
+    Site obj=table.getConnector().getWeb_tomcat().getSite().get(pkey);
+    if (obj == null) {
+      throw new SQLException("Unable to find HttpdTomcatSite: "+pkey);
+    }
+    return obj;
+  }
 
-	public String getTomcat4ShutdownKey() {
-		return tomcat4_shutdown_key;
-	}
+  public String getTomcat4ShutdownKey() {
+    return tomcat4_shutdown_key;
+  }
 
-	/**
-	 * Gets the max post size or {@code -1} of not limited.
-	 */
-	public int getMaxPostSize() {
-		return maxPostSize;
-	}
+  /**
+   * Gets the max post size or {@code -1} of not limited.
+   */
+  public int getMaxPostSize() {
+    return maxPostSize;
+  }
 
-	public void setMaxPostSize(final int maxPostSize) throws IOException, SQLException {
-		table.getConnector().requestUpdate(
-			true,
-			AoservProtocol.CommandID.SET_HTTPD_TOMCAT_STD_SITE_MAX_POST_SIZE,
-			new AOServConnector.UpdateRequest() {
-				private IntList invalidateList;
+  public void setMaxPostSize(final int maxPostSize) throws IOException, SQLException {
+    table.getConnector().requestUpdate(
+      true,
+      AoservProtocol.CommandID.SET_HTTPD_TOMCAT_STD_SITE_MAX_POST_SIZE,
+      new AOServConnector.UpdateRequest() {
+        private IntList invalidateList;
 
-				@Override
-				public void writeRequest(StreamableOutput out) throws IOException {
-					out.writeCompressedInt(pkey);
-					out.writeInt(maxPostSize);
-				}
+        @Override
+        public void writeRequest(StreamableOutput out) throws IOException {
+          out.writeCompressedInt(pkey);
+          out.writeInt(maxPostSize);
+        }
 
-				@Override
-				public void readResponse(StreamableInput in) throws IOException, SQLException {
-					int code=in.readByte();
-					if(code==AoservProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
-					else {
-						AoservProtocol.checkResult(code, in);
-						throw new IOException("Unexpected response code: "+code);
-					}
-				}
+        @Override
+        public void readResponse(StreamableInput in) throws IOException, SQLException {
+          int code=in.readByte();
+          if (code == AoservProtocol.DONE) {
+            invalidateList=AOServConnector.readInvalidateList(in);
+          } else {
+            AoservProtocol.checkResult(code, in);
+            throw new IOException("Unexpected response code: "+code);
+          }
+        }
 
-				@Override
-				public void afterRelease() {
-					table.getConnector().tablesUpdated(invalidateList);
-				}
-			}
-		);
-	}
+        @Override
+        public void afterRelease() {
+          table.getConnector().tablesUpdated(invalidateList);
+        }
+      }
+    );
+  }
 
-	/**
-	 * Gets the <code>unpackWARs</code> setting for this Tomcat.
-	 */
-	public boolean getUnpackWARs() {
-		return unpackWARs;
-	}
+  /**
+   * Gets the <code>unpackWARs</code> setting for this Tomcat.
+   */
+  public boolean getUnpackWARs() {
+    return unpackWARs;
+  }
 
-	public void setUnpackWARs(boolean unpackWARs) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_HTTPD_TOMCAT_STD_SITE_UNPACK_WARS, pkey, unpackWARs);
-	}
+  public void setUnpackWARs(boolean unpackWARs) throws IOException, SQLException {
+    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_HTTPD_TOMCAT_STD_SITE_UNPACK_WARS, pkey, unpackWARs);
+  }
 
-	/**
-	 * Gets the <code>autoDeploy</code> setting for this Tomcat.
-	 */
-	public boolean getAutoDeploy() {
-		return autoDeploy;
-	}
+  /**
+   * Gets the <code>autoDeploy</code> setting for this Tomcat.
+   */
+  public boolean getAutoDeploy() {
+    return autoDeploy;
+  }
 
-	public void setAutoDeploy(boolean autoDeploy) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_HTTPD_TOMCAT_STD_SITE_AUTO_DEPLOY, pkey, autoDeploy);
-	}
+  public void setAutoDeploy(boolean autoDeploy) throws IOException, SQLException {
+    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_HTTPD_TOMCAT_STD_SITE_AUTO_DEPLOY, pkey, autoDeploy);
+  }
 
-	/**
-	 * Gets the <code>tomcatAuthentication</code> setting for this Tomcat.
-	 */
-	public boolean getTomcatAuthentication() {
-		return tomcatAuthentication;
-	}
+  /**
+   * Gets the <code>tomcatAuthentication</code> setting for this Tomcat.
+   */
+  public boolean getTomcatAuthentication() {
+    return tomcatAuthentication;
+  }
 
-	public void setTomcatAuthentication(boolean tomcatAuthentication) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.web_tomcat_PrivateTomcatSite_tomcatAuthentication_set, pkey, tomcatAuthentication);
-	}
+  public void setTomcatAuthentication(boolean tomcatAuthentication) throws IOException, SQLException {
+    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.web_tomcat_PrivateTomcatSite_tomcatAuthentication_set, pkey, tomcatAuthentication);
+  }
 
-	public Integer getTomcat4ShutdownPort_id() {
-		return (tomcat4_shutdown_port == -1) ? null : tomcat4_shutdown_port;
-	}
+  public Integer getTomcat4ShutdownPort_id() {
+    return (tomcat4_shutdown_port == -1) ? null : tomcat4_shutdown_port;
+  }
 
-	public Bind getTomcat4ShutdownPort() throws IOException, SQLException {
-		if(tomcat4_shutdown_port==-1) return null;
-		Bind nb=table.getConnector().getNet().getBind().get(tomcat4_shutdown_port);
-		if(nb==null) throw new SQLException("Unable to find NetBind: "+tomcat4_shutdown_port);
-		return nb;
-	}
+  public Bind getTomcat4ShutdownPort() throws IOException, SQLException {
+    if (tomcat4_shutdown_port == -1) {
+      return null;
+    }
+    Bind nb=table.getConnector().getNet().getBind().get(tomcat4_shutdown_port);
+    if (nb == null) {
+      throw new SQLException("Unable to find NetBind: "+tomcat4_shutdown_port);
+    }
+    return nb;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.HTTPD_TOMCAT_STD_SITES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.HTTPD_TOMCAT_STD_SITES;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey=result.getInt(1);
-		tomcat4_shutdown_port=result.getInt(2);
-		if(result.wasNull()) tomcat4_shutdown_port=-1;
-		tomcat4_shutdown_key=result.getString(3);
-		maxPostSize = result.getInt(4);
-		if(result.wasNull()) maxPostSize = -1;
-		unpackWARs = result.getBoolean(5);
-		autoDeploy = result.getBoolean(6);
-		tomcatAuthentication = result.getBoolean(7);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey=result.getInt(1);
+    tomcat4_shutdown_port=result.getInt(2);
+    if (result.wasNull()) {
+      tomcat4_shutdown_port=-1;
+    }
+    tomcat4_shutdown_key=result.getString(3);
+    maxPostSize = result.getInt(4);
+    if (result.wasNull()) {
+      maxPostSize = -1;
+    }
+    unpackWARs = result.getBoolean(5);
+    autoDeploy = result.getBoolean(6);
+    tomcatAuthentication = result.getBoolean(7);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readCompressedInt();
-		tomcat4_shutdown_port=in.readCompressedInt();
-		tomcat4_shutdown_key=in.readNullUTF();
-		maxPostSize = in.readInt();
-		unpackWARs = in.readBoolean();
-		autoDeploy = in.readBoolean();
-		tomcatAuthentication = in.readBoolean();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readCompressedInt();
+    tomcat4_shutdown_port=in.readCompressedInt();
+    tomcat4_shutdown_key=in.readNullUTF();
+    maxPostSize = in.readInt();
+    unpackWARs = in.readBoolean();
+    autoDeploy = in.readBoolean();
+    tomcatAuthentication = in.readBoolean();
+  }
 
-	@Override
-	public String toStringImpl() throws SQLException, IOException {
-		return getHttpdTomcatSite().toStringImpl();
-	}
+  @Override
+  public String toStringImpl() throws SQLException, IOException {
+    return getHttpdTomcatSite().toStringImpl();
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeCompressedInt(tomcat4_shutdown_port);
-		out.writeNullUTF(tomcat4_shutdown_key);
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_80_1) >= 0) {
-			out.writeInt(maxPostSize);
-			out.writeBoolean(unpackWARs);
-			out.writeBoolean(autoDeploy);
-		}
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_2) >= 0) {
-			out.writeBoolean(tomcatAuthentication);
-		}
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    out.writeCompressedInt(tomcat4_shutdown_port);
+    out.writeNullUTF(tomcat4_shutdown_key);
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_80_1) >= 0) {
+      out.writeInt(maxPostSize);
+      out.writeBoolean(unpackWARs);
+      out.writeBoolean(autoDeploy);
+    }
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_2) >= 0) {
+      out.writeBoolean(tomcatAuthentication);
+    }
+  }
 
-	public void setHttpdTomcatVersion(Version version) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_HTTPD_TOMCAT_STD_SITE_VERSION, pkey, version.getPkey());
-	}
+  public void setHttpdTomcatVersion(Version version) throws IOException, SQLException {
+    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_HTTPD_TOMCAT_STD_SITE_VERSION, pkey, version.getPkey());
+  }
 }

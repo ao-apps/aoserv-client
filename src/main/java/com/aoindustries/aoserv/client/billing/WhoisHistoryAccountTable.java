@@ -38,42 +38,42 @@ import java.util.List;
  */
 public final class WhoisHistoryAccountTable extends CachedTableIntegerKey<WhoisHistoryAccount> {
 
-	WhoisHistoryAccountTable(AOServConnector connector) {
-		super(connector, WhoisHistoryAccount.class);
-	}
+  WhoisHistoryAccountTable(AOServConnector connector) {
+    super(connector, WhoisHistoryAccount.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(WhoisHistoryAccount.COLUMN_whoisHistory_name + "." + WhoisHistory.COLUMN_registrableDomain_name, ASCENDING),
-		new OrderBy(WhoisHistoryAccount.COLUMN_whoisHistory_name + "." + WhoisHistory.COLUMN_time_name, ASCENDING),
-		new OrderBy(WhoisHistoryAccount.COLUMN_account_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(WhoisHistoryAccount.COLUMN_whoisHistory_name + "." + WhoisHistory.COLUMN_registrableDomain_name, ASCENDING),
+    new OrderBy(WhoisHistoryAccount.COLUMN_whoisHistory_name + "." + WhoisHistory.COLUMN_time_name, ASCENDING),
+    new OrderBy(WhoisHistoryAccount.COLUMN_account_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public WhoisHistoryAccount get(int id) throws IOException, SQLException {
-		return getUniqueRow(WhoisHistoryAccount.COLUMN_id, id);
-	}
+  @Override
+  public WhoisHistoryAccount get(int id) throws IOException, SQLException {
+    return getUniqueRow(WhoisHistoryAccount.COLUMN_id, id);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.WhoisHistoryAccount;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.WhoisHistoryAccount;
+  }
 
-	/**
-	 * @see  WhoisHistory#getAccounts()
-	 */
-	List<WhoisHistoryAccount> getWhoisHistoryAccounts(WhoisHistory whoisHistory) throws IOException, SQLException {
-		return getIndexedRows(WhoisHistoryAccount.COLUMN_whoisHistory, whoisHistory.getId());
-	}
+  /**
+   * @see  WhoisHistory#getAccounts()
+   */
+  List<WhoisHistoryAccount> getWhoisHistoryAccounts(WhoisHistory whoisHistory) throws IOException, SQLException {
+    return getIndexedRows(WhoisHistoryAccount.COLUMN_whoisHistory, whoisHistory.getId());
+  }
 
-	/**
-	 * @see  Account#getWhoisHistoryAccounts()
-	 */
-	public List<WhoisHistoryAccount> getWhoisHistoryAccounts(Account account) throws IOException, SQLException {
-		return getIndexedRows(WhoisHistoryAccount.COLUMN_account, account.getName());
-	}
+  /**
+   * @see  Account#getWhoisHistoryAccounts()
+   */
+  public List<WhoisHistoryAccount> getWhoisHistoryAccounts(Account account) throws IOException, SQLException {
+    return getIndexedRows(WhoisHistoryAccount.COLUMN_account, account.getName());
+  }
 }

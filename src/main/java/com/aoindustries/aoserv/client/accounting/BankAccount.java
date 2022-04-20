@@ -40,94 +40,106 @@ import java.util.List;
  */
 public final class BankAccount extends CachedObjectStringKey<BankAccount> {
 
-	static final int COLUMN_NAME=0;
-	static final String COLUMN_NAME_name = "name";
+  static final int COLUMN_NAME=0;
+  static final String COLUMN_NAME_name = "name";
 
-	private String display, bank;
+  private String display, bank;
 
-	private int depositDelay, withdrawalDelay;
+  private int depositDelay, withdrawalDelay;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public BankAccount() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public BankAccount() {
+    // Do nothing
+  }
 
-	public Bank getBank(long maximumCacheAge) throws SQLException, IOException {
-		Bank bankObject = table.getConnector().getAccounting().getBank().get(bank);
-		if (bankObject == null) throw new SQLException("Bank not found: " + bank);
-		return bankObject;
-	}
+  public Bank getBank(long maximumCacheAge) throws SQLException, IOException {
+    Bank bankObject = table.getConnector().getAccounting().getBank().get(bank);
+    if (bankObject == null) {
+      throw new SQLException("Bank not found: " + bank);
+    }
+    return bankObject;
+  }
 
-	public List<BankTransaction> getBankTransactions() throws IOException, SQLException {
-		return table.getConnector().getAccounting().getBankTransaction().getBankTransactions(this);
-	}
+  public List<BankTransaction> getBankTransactions() throws IOException, SQLException {
+    return table.getConnector().getAccounting().getBankTransaction().getBankTransactions(this);
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		if(i==COLUMN_NAME) return pkey;
-		if(i==1) return display;
-		if(i==2) return bank;
-		if(i==3) return depositDelay;
-		if(i==4) return withdrawalDelay;
-		throw new IllegalArgumentException("Invalid index: " + i);
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    if (i == COLUMN_NAME) {
+      return pkey;
+    }
+    if (i == 1) {
+      return display;
+    }
+    if (i == 2) {
+      return bank;
+    }
+    if (i == 3) {
+      return depositDelay;
+    }
+    if (i == 4) {
+      return withdrawalDelay;
+    }
+    throw new IllegalArgumentException("Invalid index: " + i);
+  }
 
-	public int getDepositDelay() {
-		return depositDelay;
-	}
+  public int getDepositDelay() {
+    return depositDelay;
+  }
 
-	public String getDisplay() {
-		return display;
-	}
+  public String getDisplay() {
+    return display;
+  }
 
-	public String getName() {
-		return pkey;
-	}
+  public String getName() {
+    return pkey;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.BANK_ACCOUNTS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.BANK_ACCOUNTS;
+  }
 
-	public int getWithdrawalDelay() {
-		return withdrawalDelay;
-	}
+  public int getWithdrawalDelay() {
+    return withdrawalDelay;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey = result.getString(1);
-		display = result.getString(2);
-		bank = result.getString(3);
-		depositDelay = result.getInt(4);
-		withdrawalDelay = result.getInt(5);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey = result.getString(1);
+    display = result.getString(2);
+    bank = result.getString(3);
+    depositDelay = result.getInt(4);
+    withdrawalDelay = result.getInt(5);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readUTF();
-		display=in.readUTF();
-		bank=in.readUTF();
-		depositDelay=in.readCompressedInt();
-		withdrawalDelay=in.readCompressedInt();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readUTF();
+    display=in.readUTF();
+    bank=in.readUTF();
+    depositDelay=in.readCompressedInt();
+    withdrawalDelay=in.readCompressedInt();
+  }
 
-	@Override
-	public String toStringImpl() {
-		return display;
-	}
+  @Override
+  public String toStringImpl() {
+    return display;
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey);
-		out.writeUTF(display);
-		out.writeUTF(bank);
-		out.writeCompressedInt(depositDelay);
-		out.writeCompressedInt(withdrawalDelay);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey);
+    out.writeUTF(display);
+    out.writeUTF(bank);
+    out.writeCompressedInt(depositDelay);
+    out.writeCompressedInt(withdrawalDelay);
+  }
 }

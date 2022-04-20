@@ -36,33 +36,33 @@ import java.io.IOException;
  */
 public interface AOServStreamable extends Streamable, AOServReadable, AOServWritable {
 
-	/**
-	 *
-	 * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
-	 *
-	 * @see  #read(StreamableInput,com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated
-	@Override
-	void read(StreamableInput in, String protocolVersion) throws IOException;
-	// Java 1.8: default method (or inherit from AOServReadable)
-	// read(in, com.aoindustries.aoserv.client.schema.AoservProtocol.Version.getVersion(version));
+  /**
+   *
+   * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
+   *
+   * @see  #read(StreamableInput,com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated
+  @Override
+  void read(StreamableInput in, String protocolVersion) throws IOException;
+  // Java 1.8: default method (or inherit from AOServReadable)
+  // read(in, com.aoindustries.aoserv.client.schema.AoservProtocol.Version.getVersion(version));
 
-	@Override
-	void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException;
+  @Override
+  void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException;
 
-	/**
-	 *
-	 * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
-	 *
-	 * @see  #write(StreamableOutput,com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated
-	@Override
-	void write(StreamableOutput out, String protocolVersion) throws IOException;
-	// Java 1.8: default method (or inherit from AOServWritable)
-	// write(out, com.aoindustries.aoserv.client.schema.AoservProtocol.Version.getVersion(version));
+  /**
+   *
+   * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
+   *
+   * @see  #write(StreamableOutput,com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated
+  @Override
+  void write(StreamableOutput out, String protocolVersion) throws IOException;
+  // Java 1.8: default method (or inherit from AOServWritable)
+  // write(out, com.aoindustries.aoserv.client.schema.AoservProtocol.Version.getVersion(version));
 
-	@Override
-	void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException;
+  @Override
+  void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException;
 }

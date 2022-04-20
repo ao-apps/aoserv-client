@@ -36,26 +36,26 @@ import java.sql.SQLException;
  */
 public final class BankTransactionTypeTable extends CachedTableStringKey<BankTransactionType> {
 
-	BankTransactionTypeTable(AOServConnector connector) {
-		super(connector, BankTransactionType.class);
-	}
+  BankTransactionTypeTable(AOServConnector connector) {
+    super(connector, BankTransactionType.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(BankTransactionType.COLUMN_DISPLAY_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(BankTransactionType.COLUMN_DISPLAY_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public BankTransactionType get(String name) throws IOException, SQLException {
-		return getUniqueRow(BankTransactionType.COLUMN_NAME, name);
-	}
+  @Override
+  public BankTransactionType get(String name) throws IOException, SQLException {
+    return getUniqueRow(BankTransactionType.COLUMN_NAME, name);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.BANK_TRANSACTION_TYPES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.BANK_TRANSACTION_TYPES;
+  }
 }

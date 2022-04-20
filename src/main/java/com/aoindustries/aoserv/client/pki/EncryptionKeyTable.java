@@ -38,31 +38,31 @@ import java.util.List;
  */
 public final class EncryptionKeyTable extends CachedTableIntegerKey<EncryptionKey> {
 
-	EncryptionKeyTable(AOServConnector connector) {
-		super(connector, EncryptionKey.class);
-	}
+  EncryptionKeyTable(AOServConnector connector) {
+    super(connector, EncryptionKey.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(EncryptionKey.COLUMN_ACCOUNTING_name, ASCENDING),
-		new OrderBy(EncryptionKey.COLUMN_ID_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(EncryptionKey.COLUMN_ACCOUNTING_name, ASCENDING),
+    new OrderBy(EncryptionKey.COLUMN_ID_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public EncryptionKey get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(EncryptionKey.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public EncryptionKey get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(EncryptionKey.COLUMN_PKEY, pkey);
+  }
 
-	public List<EncryptionKey> getEncryptionKeys(Account business) throws IOException, SQLException {
-		return getIndexedRows(EncryptionKey.COLUMN_ACCOUNTING, business.getName());
-	}
+  public List<EncryptionKey> getEncryptionKeys(Account business) throws IOException, SQLException {
+    return getIndexedRows(EncryptionKey.COLUMN_ACCOUNTING, business.getName());
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.ENCRYPTION_KEYS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.ENCRYPTION_KEYS;
+  }
 }

@@ -36,26 +36,26 @@ import java.sql.SQLException;
  */
 public final class GroupTypeTable extends GlobalTableStringKey<GroupType> {
 
-	GroupTypeTable(AOServConnector connector) {
-		super(connector, GroupType.class);
-	}
+  GroupTypeTable(AOServConnector connector) {
+    super(connector, GroupType.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(GroupType.COLUMN_DESCRIPTION_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(GroupType.COLUMN_DESCRIPTION_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public GroupType get(String name) throws IOException, SQLException {
-		return getUniqueRow(GroupType.COLUMN_NAME, name);
-	}
+  @Override
+  public GroupType get(String name) throws IOException, SQLException {
+    return getUniqueRow(GroupType.COLUMN_NAME, name);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.LINUX_GROUP_TYPES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.LINUX_GROUP_TYPES;
+  }
 }

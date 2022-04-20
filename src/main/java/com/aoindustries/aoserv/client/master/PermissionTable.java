@@ -38,30 +38,30 @@ import java.sql.SQLException;
  */
 public final class PermissionTable extends GlobalTableStringKey<Permission> {
 
-	PermissionTable(AOServConnector connector) {
-		super(connector, Permission.class);
-	}
+  PermissionTable(AOServConnector connector) {
+    super(connector, Permission.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(Permission.COLUMN_SORT_ORDER_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(Permission.COLUMN_SORT_ORDER_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public Permission get(String name) throws IOException, SQLException {
-		return getUniqueRow(Permission.COLUMN_NAME, name);
-	}
+  @Override
+  public Permission get(String name) throws IOException, SQLException {
+    return getUniqueRow(Permission.COLUMN_NAME, name);
+  }
 
-	public Permission get(Permission.Name permission) throws IOException, SQLException {
-		return getUniqueRow(Permission.COLUMN_NAME, permission.name());
-	}
+  public Permission get(Permission.Name permission) throws IOException, SQLException {
+    return getUniqueRow(Permission.COLUMN_NAME, permission.name());
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.AOSERV_PERMISSIONS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.AOSERV_PERMISSIONS;
+  }
 }

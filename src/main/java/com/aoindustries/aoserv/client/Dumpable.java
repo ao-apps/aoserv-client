@@ -37,8 +37,8 @@ import java.sql.SQLException;
  */
 public interface Dumpable {
 
-	/**
-	 * Dumps the contents of this object into a <code>Writer</code>
-	 */
-	void dump(PrintWriter out) throws IOException, SQLException;
+  /**
+   * Dumps the contents of this object into a <code>Writer</code>
+   */
+  void dump(PrintWriter out) throws IOException, SQLException;
 }

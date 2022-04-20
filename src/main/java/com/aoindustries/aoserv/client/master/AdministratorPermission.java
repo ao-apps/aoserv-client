@@ -42,88 +42,92 @@ import java.sql.SQLException;
  */
 public final class AdministratorPermission extends CachedObjectIntegerKey<AdministratorPermission> {
 
-	static final int
-		COLUMN_PKEY=0,
-		COLUMN_USERNAME=1
-	;
-	static final String COLUMN_USERNAME_name = "username";
-	static final String COLUMN_PERMISSION_name = "permission";
+  static final int
+    COLUMN_PKEY=0,
+    COLUMN_USERNAME=1
+  ;
+  static final String COLUMN_USERNAME_name = "username";
+  static final String COLUMN_PERMISSION_name = "permission";
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public AdministratorPermission() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public AdministratorPermission() {
+    // Do nothing
+  }
 
-	private User.Name username;
-	private String permission;
+  private User.Name username;
+  private String permission;
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_PKEY: return pkey;
-			case COLUMN_USERNAME: return username;
-			case 2: return permission;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_PKEY: return pkey;
+      case COLUMN_USERNAME: return username;
+      case 2: return permission;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	public User.Name getAdministrator_username() {
-		return username;
-	}
+  public User.Name getAdministrator_username() {
+    return username;
+  }
 
-	public Administrator getAdministrator() throws SQLException, IOException {
-		Administrator obj = table.getConnector().getAccount().getAdministrator().get(username);
-		if(obj == null) throw new SQLException("Unable to find Administrator: " + username);
-		return obj;
-	}
+  public Administrator getAdministrator() throws SQLException, IOException {
+    Administrator obj = table.getConnector().getAccount().getAdministrator().get(username);
+    if (obj == null) {
+      throw new SQLException("Unable to find Administrator: " + username);
+    }
+    return obj;
+  }
 
-	public String getAOServPermission_name() {
-		return permission;
-	}
+  public String getAOServPermission_name() {
+    return permission;
+  }
 
-	public Permission getAOServPermission() throws SQLException, IOException {
-		Permission ap = table.getConnector().getMaster().getPermission().get(permission);
-		if(ap==null) throw new SQLException("Unable to find AOServPermission: "+permission);
-		return ap;
-	}
+  public Permission getAOServPermission() throws SQLException, IOException {
+    Permission ap = table.getConnector().getMaster().getPermission().get(permission);
+    if (ap == null) {
+      throw new SQLException("Unable to find AOServPermission: "+permission);
+    }
+    return ap;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.BUSINESS_ADMINISTRATOR_PERMISSIONS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.BUSINESS_ADMINISTRATOR_PERMISSIONS;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		try {
-			pkey = result.getInt(1);
-			username = User.Name.valueOf(result.getString(2));
-			permission = result.getString(3);
-		} catch(ValidationException e) {
-			throw new SQLException(e);
-		}
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    try {
+      pkey = result.getInt(1);
+      username = User.Name.valueOf(result.getString(2));
+      permission = result.getString(3);
+    } catch (ValidationException e) {
+      throw new SQLException(e);
+    }
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		try {
-			pkey = in.readCompressedInt();
-			username = User.Name.valueOf(in.readUTF()).intern();
-			permission = in.readUTF().intern();
-		} catch(ValidationException e) {
-			throw new IOException(e);
-		}
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    try {
+      pkey = in.readCompressedInt();
+      username = User.Name.valueOf(in.readUTF()).intern();
+      permission = in.readUTF().intern();
+    } catch (ValidationException e) {
+      throw new IOException(e);
+    }
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeUTF(username.toString());
-		out.writeUTF(permission);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    out.writeUTF(username.toString());
+    out.writeUTF(permission);
+  }
 }

@@ -30,31 +30,31 @@ import java.math.BigDecimal;
  */
 public class Money {
 
-	private String currency;
-	private BigDecimal value;
+  private String currency;
+  private BigDecimal value;
 
-	public Money() {
-		// Do nothing
-	}
+  public Money() {
+    // Do nothing
+  }
 
-	public Money(String currency, BigDecimal value) {
-		this.currency = currency;
-		this.value = value;
-	}
+  public Money(String currency, BigDecimal value) {
+    this.currency = currency;
+    this.value = value;
+  }
 
-	public String getCurrency() {
-		return currency;
-	}
+  public String getCurrency() {
+    return currency;
+  }
 
-	public void setCurrency(String currency) {
-		this.currency = currency;
-	}
+  public void setCurrency(String currency) {
+    this.currency = currency;
+  }
 
-	public BigDecimal getValue() {
-		return value;
-	}
+  public BigDecimal getValue() {
+    return value;
+  }
 
-	public void setValue(BigDecimal value) {
-		this.value = value;
-	}
+  public void setValue(BigDecimal value) {
+    this.value = value;
+  }
 }

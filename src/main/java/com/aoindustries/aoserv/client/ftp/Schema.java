@@ -34,32 +34,32 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final GuestUserTable GuestUser;
-	public GuestUserTable getGuestUser() {return GuestUser;}
+  private final GuestUserTable GuestUser;
+  public GuestUserTable getGuestUser() {return GuestUser;}
 
-	private final PrivateServerTable PrivateServer;
-	public PrivateServerTable getPrivateServer() {return PrivateServer;}
+  private final PrivateServerTable PrivateServer;
+  public PrivateServerTable getPrivateServer() {return PrivateServer;}
 
-	private final List<? extends AOServTable<?, ?>> tables;
+  private final List<? extends AOServTable<?, ?>> tables;
 
-	public Schema(AOServConnector connector) {
-		super(connector);
+  public Schema(AOServConnector connector) {
+    super(connector);
 
-		ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
-		newTables.add(GuestUser = new GuestUserTable(connector));
-		newTables.add(PrivateServer = new PrivateServerTable(connector));
-		newTables.trimToSize();
-		tables = Collections.unmodifiableList(newTables);
-	}
+    ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
+    newTables.add(GuestUser = new GuestUserTable(connector));
+    newTables.add(PrivateServer = new PrivateServerTable(connector));
+    newTables.trimToSize();
+    tables = Collections.unmodifiableList(newTables);
+  }
 
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
-	public List<? extends AOServTable<?, ?>> getTables() {
-		return tables;
-	}
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
+  public List<? extends AOServTable<?, ?>> getTables() {
+    return tables;
+  }
 
-	@Override
-	public String getName() {
-		return "ftp";
-	}
+  @Override
+  public String getName() {
+    return "ftp";
+  }
 }

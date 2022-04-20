@@ -32,27 +32,29 @@ package com.aoindustries.aoserv.client;
  */
 public abstract class CachedObject<K, T extends CachedObject<K, T>> extends AOServObject<K, T> implements SingleTableObject<K, T> {
 
-	protected AOServTable<K, T> table;
+  protected AOServTable<K, T> table;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	protected CachedObject() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  protected CachedObject() {
+    // Do nothing
+  }
 
-	@Override
-	public final AOServTable<K, T> getTable() {
-		return table;
-	}
+  @Override
+  public final AOServTable<K, T> getTable() {
+    return table;
+  }
 
-	@Override
-	public final void setTable(AOServTable<K, T> table) {
-		if(this.table!=null) throw new IllegalStateException("table already set");
-		this.table=table;
-	}
+  @Override
+  public final void setTable(AOServTable<K, T> table) {
+    if (this.table != null) {
+      throw new IllegalStateException("table already set");
+    }
+    this.table=table;
+  }
 }

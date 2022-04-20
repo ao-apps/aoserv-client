@@ -46,103 +46,108 @@ import java.util.ResourceBundle;
  */
 public final class Resource extends GlobalObjectStringKey<Resource> {
 
-	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Resource.class);
+  private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Resource.class);
 
-	static final int COLUMN_NAME=0;
-	static final String COLUMN_NAME_name = "name";
+  static final int COLUMN_NAME=0;
+  static final String COLUMN_NAME_name = "name";
 
-	public static final String
-		AOSERV_DAEMON="aoserv_daemon",
-		AOSERV_MASTER="aoserv_master",
-		BANDWIDTH="bandwidth",
-		CONSULTING="consulting",
-		DISK="disk",
-		DISTRIBUTION_SCAN="distribution_scan",
-		DRUPAL="drupal",
-		EMAIL="email",
-		FAILOVER="failover",
-		HARDWARE_DISK_7200_120="hardware_disk_7200_120",
-		HTTPD="httpd",
-		IP="ip",
-		JAVAVM="javavm",
-		JOOMLA="joomla",
-		MYSQL_REPLICATION="mysql_replication",
-		RACK="rack",
-		SERVER_DATABASE="server_database",
-		SERVER_ENTERPRISE="server_enterprise",
-		SERVER_P4="server_p4",
-		SERVER_SCSI="server_scsi",
-		SERVER_XEON="server_xeon",
-		SITE="site",
-		SYSADMIN="sysadmin",
-		USER="user"
-	;
+  public static final String
+    AOSERV_DAEMON="aoserv_daemon",
+    AOSERV_MASTER="aoserv_master",
+    BANDWIDTH="bandwidth",
+    CONSULTING="consulting",
+    DISK="disk",
+    DISTRIBUTION_SCAN="distribution_scan",
+    DRUPAL="drupal",
+    EMAIL="email",
+    FAILOVER="failover",
+    HARDWARE_DISK_7200_120="hardware_disk_7200_120",
+    HTTPD="httpd",
+    IP="ip",
+    JAVAVM="javavm",
+    JOOMLA="joomla",
+    MYSQL_REPLICATION="mysql_replication",
+    RACK="rack",
+    SERVER_DATABASE="server_database",
+    SERVER_ENTERPRISE="server_enterprise",
+    SERVER_P4="server_p4",
+    SERVER_SCSI="server_scsi",
+    SERVER_XEON="server_xeon",
+    SITE="site",
+    SYSADMIN="sysadmin",
+    USER="user"
+  ;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public Resource() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public Resource() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_NAME: return pkey;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_NAME: return pkey;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	/**
-	 * Gets the unique name of this resource.
-	 */
-	public String getName() {
-		return pkey;
-	}
+  /**
+   * Gets the unique name of this resource.
+   */
+  public String getName() {
+    return pkey;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.RESOURCES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.RESOURCES;
+  }
 
-	public String getDisplayUnit(int quantity) {
-		if(quantity==1) return RESOURCES.getMessage(pkey + ".singularDisplayUnit", quantity);
-		else return RESOURCES.getMessage(pkey + ".pluralDisplayUnit", quantity);
-	}
+  public String getDisplayUnit(int quantity) {
+    if (quantity == 1) {
+      return RESOURCES.getMessage(pkey + ".singularDisplayUnit", quantity);
+    } else {
+      return RESOURCES.getMessage(pkey + ".pluralDisplayUnit", quantity);
+    }
+  }
 
-	public String getPerUnit(Object amount) {
-		return RESOURCES.getMessage(pkey + ".perUnit", amount);
-	}
+  public String getPerUnit(Object amount) {
+    return RESOURCES.getMessage(pkey + ".perUnit", amount);
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey = result.getString(1);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey = result.getString(1);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readUTF().intern();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readUTF().intern();
+  }
 
-	@Override
-	public String toStringImpl() {
-		return RESOURCES.getMessage(pkey + ".toString");
-	}
+  @Override
+  public String toStringImpl() {
+    return RESOURCES.getMessage(pkey + ".toString");
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey);
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_60)<=0) {
-			out.writeUTF(RESOURCES.getMessage(pkey + ".singularDisplayUnit", ""));
-		}
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_123)>=0 && protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_60)<=0) {
-			out.writeUTF(RESOURCES.getMessage(pkey + ".pluralDisplayUnit", ""));
-			out.writeUTF(getPerUnit(""));
-		}
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_60)<=0) out.writeUTF(toString()); // description
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey);
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_60) <= 0) {
+      out.writeUTF(RESOURCES.getMessage(pkey + ".singularDisplayUnit", ""));
+    }
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_123) >= 0 && protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_60) <= 0) {
+      out.writeUTF(RESOURCES.getMessage(pkey + ".pluralDisplayUnit", ""));
+      out.writeUTF(getPerUnit(""));
+    }
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_60) <= 0) {
+      out.writeUTF(toString());
+    } // description
+  }
 }

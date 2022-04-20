@@ -44,103 +44,113 @@ import java.util.concurrent.atomic.AtomicReferenceArray;
  * @author  AO Industries, Inc.
  */
 public final class LinuxId implements
-	Comparable<LinuxId>,
-	Serializable,
-	DtoFactory<com.aoindustries.aoserv.client.dto.LinuxId>
+  Comparable<LinuxId>,
+  Serializable,
+  DtoFactory<com.aoindustries.aoserv.client.dto.LinuxId>
 {
 
-	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, LinuxId.class);
+  private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, LinuxId.class);
 
-	private static final long serialVersionUID = -6222776271442175855L;
+  private static final long serialVersionUID = -6222776271442175855L;
 
-	public static ValidationResult validate(int id) {
-		if(id<0) return new InvalidResult(RESOURCES, "validate.lessThanZero", id);
-		if(id>65535) return new InvalidResult(RESOURCES, "validate.greaterThan64k", id);
-		return ValidResult.getInstance();
-	}
+  public static ValidationResult validate(int id) {
+    if (id<0) {
+      return new InvalidResult(RESOURCES, "validate.lessThanZero", id);
+    }
+    if (id>65535) {
+      return new InvalidResult(RESOURCES, "validate.greaterThan64k", id);
+    }
+    return ValidResult.getInstance();
+  }
 
-	private static final AtomicReferenceArray<LinuxId> cache = new AtomicReferenceArray<>(65536);
+  private static final AtomicReferenceArray<LinuxId> cache = new AtomicReferenceArray<>(65536);
 
-	public static LinuxId valueOf(int id) throws ValidationException {
-		ValidationResult result = validate(id);
-		if(!result.isValid()) throw new ValidationException(result);
-		LinuxId linuxId = cache.get(id);
-		if(linuxId==null) {
-			linuxId = new LinuxId(id);
-			if(!cache.compareAndSet(id, null, linuxId)) linuxId = cache.get(id);
-		}
-		return linuxId;
-	}
+  public static LinuxId valueOf(int id) throws ValidationException {
+    ValidationResult result = validate(id);
+    if (!result.isValid()) {
+      throw new ValidationException(result);
+    }
+    LinuxId linuxId = cache.get(id);
+    if (linuxId == null) {
+      linuxId = new LinuxId(id);
+      if (!cache.compareAndSet(id, null, linuxId)) {
+        linuxId = cache.get(id);
+      }
+    }
+    return linuxId;
+  }
 
-	private final int id;
+  private final int id;
 
-	/**
-	 * @param  id  Does not validate, should only be used with a known valid value.
-	 */
-	private LinuxId(int id) {
-		ValidationResult result;
-		assert (result = validate(id)).isValid() : result.toString();
-		this.id=id;
-	}
+  /**
+   * @param  id  Does not validate, should only be used with a known valid value.
+   */
+  private LinuxId(int id) {
+    ValidationResult result;
+    assert (result = validate(id)).isValid() : result.toString();
+    this.id=id;
+  }
 
-	private void validate() throws ValidationException {
-		ValidationResult result = validate(id);
-		if(!result.isValid()) throw new ValidationException(result);
-	}
+  private void validate() throws ValidationException {
+    ValidationResult result = validate(id);
+    if (!result.isValid()) {
+      throw new ValidationException(result);
+    }
+  }
 
-	/**
-	 * Perform same validation as constructor on readObject.
-	 */
-	private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-		ois.defaultReadObject();
-		try {
-			validate();
-		} catch(ValidationException err) {
-			InvalidObjectException newErr = new InvalidObjectException(err.getMessage());
-			newErr.initCause(err);
-			throw newErr;
-		}
-	}
+  /**
+   * Perform same validation as constructor on readObject.
+   */
+  private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+    ois.defaultReadObject();
+    try {
+      validate();
+    } catch (ValidationException err) {
+      InvalidObjectException newErr = new InvalidObjectException(err.getMessage());
+      newErr.initCause(err);
+      throw newErr;
+    }
+  }
 
-	private Object readResolve() throws InvalidObjectException {
-		try {
-			return valueOf(id);
-		} catch(ValidationException err) {
-			InvalidObjectException newErr = new InvalidObjectException(err.getMessage());
-			newErr.initCause(err);
-			throw newErr;
-		}
-	}
+  private Object readResolve() throws InvalidObjectException {
+    try {
+      return valueOf(id);
+    } catch (ValidationException err) {
+      InvalidObjectException newErr = new InvalidObjectException(err.getMessage());
+      newErr.initCause(err);
+      throw newErr;
+    }
+  }
 
-	@Override
-	public boolean equals(Object obj) {
-		return
-			(obj instanceof LinuxId)
-			&& ((LinuxId)obj).id==id
-		;
-	}
+  @Override
+  public boolean equals(Object obj) {
+    return
+      (obj instanceof LinuxId)
+      && ((LinuxId)obj).id == id
+    ;
+  }
 
-	@Override
-	public int hashCode() {
-		return id;
-	}
+  @Override
+  public int hashCode() {
+    return id;
+  }
 
-	@Override
-	public int compareTo(LinuxId other) {
-		return this==other ? 0 : Integer.compare(id, other.id);
-	}
+  @Override
+  public int compareTo(LinuxId other) {
+    return this == other ? 0 : Integer.compare(id, other.id);
+  }
 
-	@Override
-	public String toString() {
-		return Integer.toString(id);
-	}
+  @Override
+  public String toString() {
+    return Integer.toString(id);
+  }
 
-	public int getId() {
-		return id;
-	}
+  public int getId() {
+    return id;
+  }
 
-	@Override
-	public com.aoindustries.aoserv.client.dto.LinuxId getDto() {
-		return new com.aoindustries.aoserv.client.dto.LinuxId(id);
-	}
+  @Override
+  public com.aoindustries.aoserv.client.dto.LinuxId getDto() {
+    return new com.aoindustries.aoserv.client.dto.LinuxId(id);
+  }
 }

@@ -49,178 +49,188 @@ import java.util.Objects;
  */
 public final class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
 
-	CreditCardTable(AOServConnector connector) {
-		super(connector, CreditCard.class);
-	}
+  CreditCardTable(AOServConnector connector) {
+    super(connector, CreditCard.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(CreditCard.COLUMN_ACCOUNTING_name, ASCENDING),
-		new OrderBy(CreditCard.COLUMN_CREATED_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(CreditCard.COLUMN_ACCOUNTING_name, ASCENDING),
+    new OrderBy(CreditCard.COLUMN_CREATED_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	public int addCreditCard(
-		final Processor processor,
-		final Account business,
-		final String groupName,
-		final String cardInfo,
-		final byte expirationMonth,
-		final short expirationYear,
-		final String providerUniqueId,
-		final String firstName,
-		final String lastName,
-		final String companyName,
-		final Email email,
-		final String phone,
-		final String fax,
-		final String customerId,
-		final String customerTaxId,
-		final String streetAddress1,
-		final String streetAddress2,
-		final String city,
-		final String state,
-		final String postalCode,
-		final CountryCode countryCode,
-		final String principalName,
-		final String description,
-		// Encrypted values
-		String card_number
-	) throws IOException, SQLException {
-		// Validate the encrypted parameters
-		if(card_number==null) throw new NullPointerException("billing_card_number is null");
-		if(card_number.indexOf('\n')!=-1) throw new IllegalArgumentException("billing_card_number may not contain '\n'");
+  public int addCreditCard(
+    final Processor processor,
+    final Account business,
+    final String groupName,
+    final String cardInfo,
+    final byte expirationMonth,
+    final short expirationYear,
+    final String providerUniqueId,
+    final String firstName,
+    final String lastName,
+    final String companyName,
+    final Email email,
+    final String phone,
+    final String fax,
+    final String customerId,
+    final String customerTaxId,
+    final String streetAddress1,
+    final String streetAddress2,
+    final String city,
+    final String state,
+    final String postalCode,
+    final CountryCode countryCode,
+    final String principalName,
+    final String description,
+    // Encrypted values
+    String card_number
+  ) throws IOException, SQLException {
+    // Validate the encrypted parameters
+    if (card_number == null) {
+      throw new NullPointerException("billing_card_number is null");
+    }
+    if (card_number.indexOf('\n') != -1) {
+      throw new IllegalArgumentException("billing_card_number may not contain '\n'");
+    }
 
-		if(!connector.isSecure()) throw new IOException("Credit cards may only be added when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure.");
+    if (!connector.isSecure()) {
+      throw new IOException("Credit cards may only be added when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure.");
+    }
 
-		// Encrypt if currently configured to
-		final EncryptionKey encryptionFrom = processor.getEncryptionFrom();
-		final EncryptionKey encryptionRecipient = processor.getEncryptionRecipient();
-		final String encryptedCardNumber;
-		if(encryptionFrom != null && encryptionRecipient != null) {
-			// Encrypt the card number
-			encryptedCardNumber = encryptionFrom.encrypt(encryptionRecipient, CreditCard.randomize(card_number));
-		} else {
-			encryptedCardNumber = null;
-		}
+    // Encrypt if currently configured to
+    final EncryptionKey encryptionFrom = processor.getEncryptionFrom();
+    final EncryptionKey encryptionRecipient = processor.getEncryptionRecipient();
+    final String encryptedCardNumber;
+    if (encryptionFrom != null && encryptionRecipient != null) {
+      // Encrypt the card number
+      encryptedCardNumber = encryptionFrom.encrypt(encryptionRecipient, CreditCard.randomize(card_number));
+    } else {
+      encryptedCardNumber = null;
+    }
 
-		return connector.requestResult(
-			true,
-			AoservProtocol.CommandID.ADD,
-			// Java 9: new AOServConnector.ResultRequest<>
-			new AOServConnector.ResultRequest<Integer>() {
-				private int pkey;
-				private IntList invalidateList;
+    return connector.requestResult(
+      true,
+      AoservProtocol.CommandID.ADD,
+      // Java 9: new AOServConnector.ResultRequest<>
+      new AOServConnector.ResultRequest<Integer>() {
+        private int pkey;
+        private IntList invalidateList;
 
-				@Override
-				public void writeRequest(StreamableOutput out) throws IOException {
-					out.writeCompressedInt(Table.TableID.CREDIT_CARDS.ordinal());
-					out.writeUTF(processor.getProviderId());
-					out.writeUTF(business.getName().toString());
-					out.writeNullUTF(groupName);
-					out.writeUTF(cardInfo);
-					out.writeByte(expirationMonth);
-					out.writeShort(expirationYear);
-					out.writeUTF(providerUniqueId);
-					out.writeUTF(firstName);
-					out.writeUTF(lastName);
-					out.writeNullUTF(companyName);
-					out.writeNullUTF(Objects.toString(email, null));
-					out.writeNullUTF(phone);
-					out.writeNullUTF(fax);
-					out.writeNullUTF(customerId);
-					out.writeNullUTF(customerTaxId);
-					out.writeUTF(streetAddress1);
-					out.writeNullUTF(streetAddress2);
-					out.writeUTF(city);
-					out.writeNullUTF(state);
-					out.writeNullUTF(postalCode);
-					out.writeUTF(countryCode.getCode());
-					out.writeNullUTF(principalName);
-					out.writeNullUTF(description);
-					out.writeNullUTF(encryptedCardNumber);
-					out.writeCompressedInt(encryptionFrom==null ? -1 : encryptionFrom.getPkey());
-					out.writeCompressedInt(encryptionRecipient==null ? -1 : encryptionRecipient.getPkey());
-				}
+        @Override
+        public void writeRequest(StreamableOutput out) throws IOException {
+          out.writeCompressedInt(Table.TableID.CREDIT_CARDS.ordinal());
+          out.writeUTF(processor.getProviderId());
+          out.writeUTF(business.getName().toString());
+          out.writeNullUTF(groupName);
+          out.writeUTF(cardInfo);
+          out.writeByte(expirationMonth);
+          out.writeShort(expirationYear);
+          out.writeUTF(providerUniqueId);
+          out.writeUTF(firstName);
+          out.writeUTF(lastName);
+          out.writeNullUTF(companyName);
+          out.writeNullUTF(Objects.toString(email, null));
+          out.writeNullUTF(phone);
+          out.writeNullUTF(fax);
+          out.writeNullUTF(customerId);
+          out.writeNullUTF(customerTaxId);
+          out.writeUTF(streetAddress1);
+          out.writeNullUTF(streetAddress2);
+          out.writeUTF(city);
+          out.writeNullUTF(state);
+          out.writeNullUTF(postalCode);
+          out.writeUTF(countryCode.getCode());
+          out.writeNullUTF(principalName);
+          out.writeNullUTF(description);
+          out.writeNullUTF(encryptedCardNumber);
+          out.writeCompressedInt(encryptionFrom == null ? -1 : encryptionFrom.getPkey());
+          out.writeCompressedInt(encryptionRecipient == null ? -1 : encryptionRecipient.getPkey());
+        }
 
-				@Override
-				public void readResponse(StreamableInput in) throws IOException, SQLException {
-					int code=in.readByte();
-					if(code==AoservProtocol.DONE) {
-						pkey=in.readCompressedInt();
-						invalidateList=AOServConnector.readInvalidateList(in);
-					} else {
-						AoservProtocol.checkResult(code, in);
-						throw new IOException("Unknown response code: "+code);
-					}
-				}
+        @Override
+        public void readResponse(StreamableInput in) throws IOException, SQLException {
+          int code=in.readByte();
+          if (code == AoservProtocol.DONE) {
+            pkey=in.readCompressedInt();
+            invalidateList=AOServConnector.readInvalidateList(in);
+          } else {
+            AoservProtocol.checkResult(code, in);
+            throw new IOException("Unknown response code: "+code);
+          }
+        }
 
-				@Override
-				public Integer afterRelease() {
-					connector.tablesUpdated(invalidateList);
-					return pkey;
-				}
-			}
-		);
-	}
+        @Override
+        public Integer afterRelease() {
+          connector.tablesUpdated(invalidateList);
+          return pkey;
+        }
+      }
+    );
+  }
 
-	@Override
-	public CreditCard get(int pkey) throws SQLException, IOException {
-		return getUniqueRow(CreditCard.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public CreditCard get(int pkey) throws SQLException, IOException {
+    return getUniqueRow(CreditCard.COLUMN_PKEY, pkey);
+  }
 
-	public List<CreditCard> getCreditCards(Account business) throws IOException, SQLException {
-		return getIndexedRows(CreditCard.COLUMN_ACCOUNTING, business.getName());
-	}
+  public List<CreditCard> getCreditCards(Account business) throws IOException, SQLException {
+    return getIndexedRows(CreditCard.COLUMN_ACCOUNTING, business.getName());
+  }
 
-	List<CreditCard> getCreditCards(Processor processor) throws IOException, SQLException {
-		return getIndexedRows(CreditCard.COLUMN_PROCESSOR_ID, processor.getProviderId());
-	}
+  List<CreditCard> getCreditCards(Processor processor) throws IOException, SQLException {
+    return getIndexedRows(CreditCard.COLUMN_PROCESSOR_ID, processor.getProviderId());
+  }
 
-	/**
-	 * Gets the active credit card with the highest priority for a business.
-	 *
-	 * @param  business  the {@link Account}
-	 *
-	 * @return  the <code>CreditCard</code> or {@code null} if none found
-	 */
-	public CreditCard getMonthlyCreditCard(Account business) throws IOException, SQLException {
-		Account.Name accounting = business.getName();
-		List<CreditCard> cards = getRows();
-		int size = cards.size();
-		for (int c = 0; c < size; c++) {
-			CreditCard tcard = cards.get(c);
-			if (tcard.getIsActive() && tcard.getUseMonthly() && tcard.getAccount_name().equals(accounting)) return tcard;
-		}
-		return null;
-	}
+  /**
+   * Gets the active credit card with the highest priority for a business.
+   *
+   * @param  business  the {@link Account}
+   *
+   * @return  the <code>CreditCard</code> or {@code null} if none found
+   */
+  public CreditCard getMonthlyCreditCard(Account business) throws IOException, SQLException {
+    Account.Name accounting = business.getName();
+    List<CreditCard> cards = getRows();
+    int size = cards.size();
+    for (int c = 0; c < size; c++) {
+      CreditCard tcard = cards.get(c);
+      if (tcard.getIsActive() && tcard.getUseMonthly() && tcard.getAccount_name().equals(accounting)) {
+        return tcard;
+      }
+    }
+    return null;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.CREDIT_CARDS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.CREDIT_CARDS;
+  }
 
-	@Override
-	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-		String command=args[0];
-		if(command.equalsIgnoreCase(Command.DECLINE_CREDIT_CARD)) {
-			if(AOSH.checkParamCount(Command.DECLINE_CREDIT_CARD, args, 2, err)) {
-				connector.getSimpleAOClient().declineCreditCard(
-					AOSH.parseInt(args[1], "pkey"),
-					args[2]
-				);
-			}
-			return true;
-		} else if(command.equalsIgnoreCase(Command.REMOVE_CREDIT_CARD)) {
-			if(AOSH.checkParamCount(Command.REMOVE_CREDIT_CARD, args, 1, err)) {
-				connector.getSimpleAOClient().removeCreditCard(
-					AOSH.parseInt(args[1], "pkey")
-				);
-			}
-			return true;
-		} else return false;
-	}
+  @Override
+  public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
+    String command=args[0];
+    if (command.equalsIgnoreCase(Command.DECLINE_CREDIT_CARD)) {
+      if (AOSH.checkParamCount(Command.DECLINE_CREDIT_CARD, args, 2, err)) {
+        connector.getSimpleAOClient().declineCreditCard(
+          AOSH.parseInt(args[1], "pkey"),
+          args[2]
+        );
+      }
+      return true;
+    } else if (command.equalsIgnoreCase(Command.REMOVE_CREDIT_CARD)) {
+      if (AOSH.checkParamCount(Command.REMOVE_CREDIT_CARD, args, 1, err)) {
+        connector.getSimpleAOClient().removeCreditCard(
+          AOSH.parseInt(args[1], "pkey")
+        );
+      }
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

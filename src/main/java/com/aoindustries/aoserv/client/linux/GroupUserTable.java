@@ -49,177 +49,185 @@ import java.util.Map;
  */
 public final class GroupUserTable extends CachedTableIntegerKey<GroupUser> {
 
-	private boolean hashBuilt = false;
-	private final Map<Tuple2<Group.Name, User.Name>, List<GroupUser>> hash = new HashMap<>();
+  private boolean hashBuilt = false;
+  private final Map<Tuple2<Group.Name, User.Name>, List<GroupUser>> hash = new HashMap<>();
 
-	/**
-	 * The group name of the primary group is hashed on first use for fast
-	 * lookups.
-	 */
-	private boolean primaryHashBuilt = false;
-	private final Map<User.Name, Group.Name> primaryHash = new HashMap<>();
+  /**
+   * The group name of the primary group is hashed on first use for fast
+   * lookups.
+   */
+  private boolean primaryHashBuilt = false;
+  private final Map<User.Name, Group.Name> primaryHash = new HashMap<>();
 
-	GroupUserTable(AOServConnector connector) {
-		super(connector, GroupUser.class);
-	}
+  GroupUserTable(AOServConnector connector) {
+    super(connector, GroupUser.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(GroupUser.COLUMN_GROUP_name, ASCENDING),
-		new OrderBy(GroupUser.COLUMN_USER_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(GroupUser.COLUMN_GROUP_name, ASCENDING),
+    new OrderBy(GroupUser.COLUMN_USER_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	int addLinuxGroupAccount(
-		Group groupObject,
-		User userObject
-	) throws IOException, SQLException {
-		int pkey=connector.requestIntQueryIL(
-			true,
-			AoservProtocol.CommandID.ADD,
-			Table.TableID.LINUX_GROUP_ACCOUNTS,
-			groupObject.getName(),
-			userObject.getUsername()
-		);
-		return pkey;
-	}
+  int addLinuxGroupAccount(
+    Group groupObject,
+    User userObject
+  ) throws IOException, SQLException {
+    int pkey=connector.requestIntQueryIL(
+      true,
+      AoservProtocol.CommandID.ADD,
+      Table.TableID.LINUX_GROUP_ACCOUNTS,
+      groupObject.getName(),
+      userObject.getUsername()
+    );
+    return pkey;
+  }
 
-	@Override
-	public GroupUser get(int id) throws IOException, SQLException {
-		return getUniqueRow(GroupUser.COLUMN_ID, id);
-	}
+  @Override
+  public GroupUser get(int id) throws IOException, SQLException {
+    return getUniqueRow(GroupUser.COLUMN_ID, id);
+  }
 
-	public List<GroupUser> getLinuxGroupAccounts(
-		Group.Name group,
-		User.Name user
-	) throws IOException, SQLException {
-		synchronized(hash) {
-			if(!hashBuilt) {
-				hash.clear();
-				for(GroupUser lga : getRows()) {
-					Tuple2<Group.Name, User.Name> key = new Tuple2<>(lga.getGroup_name(), lga.getUser_username());
-					List<GroupUser> list = hash.get(key);
-					if(list == null) hash.put(key, list = new ArrayList<>());
-					list.add(lga);
-				}
-				// Make entries unmodifiable
-				for(Map.Entry<Tuple2<Group.Name, User.Name>, List<GroupUser>> entry : hash.entrySet()) {
-					entry.setValue(
-						AoCollections.optimalUnmodifiableList(entry.getValue())
-					);
-				}
-				hashBuilt = true;
-			}
-			List<GroupUser> lgas = hash.get(new Tuple2<>(group, user));
-			if(lgas == null) return Collections.emptyList();
-			return lgas;
-		}
-	}
+  public List<GroupUser> getLinuxGroupAccounts(
+    Group.Name group,
+    User.Name user
+  ) throws IOException, SQLException {
+    synchronized (hash) {
+      if (!hashBuilt) {
+        hash.clear();
+        for (GroupUser lga : getRows()) {
+          Tuple2<Group.Name, User.Name> key = new Tuple2<>(lga.getGroup_name(), lga.getUser_username());
+          List<GroupUser> list = hash.get(key);
+          if (list == null) {
+            hash.put(key, list = new ArrayList<>());
+          }
+          list.add(lga);
+        }
+        // Make entries unmodifiable
+        for (Map.Entry<Tuple2<Group.Name, User.Name>, List<GroupUser>> entry : hash.entrySet()) {
+          entry.setValue(
+            AoCollections.optimalUnmodifiableList(entry.getValue())
+          );
+        }
+        hashBuilt = true;
+      }
+      List<GroupUser> lgas = hash.get(new Tuple2<>(group, user));
+      if (lgas == null) {
+        return Collections.emptyList();
+      }
+      return lgas;
+    }
+  }
 
-	List<Group> getLinuxGroups(User linuxAccount) throws IOException, SQLException {
-		User.Name username = linuxAccount.getUsername_id();
-		List<GroupUser> rows = getRows();
-		int len = rows.size();
-		List<Group> matches = new ArrayList<>(GroupUser.MAX_GROUPS);
-		for(int c = 0; c < len; c++) {
-			GroupUser lga = rows.get(c);
-			if(lga.getUser_username().equals(username)) {
-				Group lg = lga.getGroup();
-				// Avoid duplicates that are now possible due to operating_system_version
-				if(!matches.contains(lg)) matches.add(lg);
-			}
-		}
-		return matches;
-	}
+  List<Group> getLinuxGroups(User linuxAccount) throws IOException, SQLException {
+    User.Name username = linuxAccount.getUsername_id();
+    List<GroupUser> rows = getRows();
+    int len = rows.size();
+    List<Group> matches = new ArrayList<>(GroupUser.MAX_GROUPS);
+    for (int c = 0; c < len; c++) {
+      GroupUser lga = rows.get(c);
+      if (lga.getUser_username().equals(username)) {
+        Group lg = lga.getGroup();
+        // Avoid duplicates that are now possible due to operating_system_version
+        if (!matches.contains(lg)) {
+          matches.add(lg);
+        }
+      }
+    }
+    return matches;
+  }
 
-	Group getPrimaryGroup(User account) throws IOException, SQLException {
-		NullArgumentException.checkNotNull(account, "account");
-		synchronized(primaryHash) {
-			// Rebuild the hash if needed
-			if(!primaryHashBuilt) {
-				List<GroupUser> cache = getRows();
-				primaryHash.clear();
-				int len = cache.size();
-				for(int c = 0; c < len; c++) {
-					GroupUser lga = cache.get(c);
-					if(lga.isPrimary()) {
-						User.Name username = lga.getUser_username();
-						Group.Name groupName = lga.getGroup_name();
-						Group.Name existing = primaryHash.put(username, groupName);
-						if(
-							existing != null
-							&& !existing.equals(groupName)
-						) {
-							throw new SQLException(
-								"Conflicting primary groups for "
-									+ username
-									+ ": "
-									+ existing
-									+ " and "
-									+ groupName
-							);
-						}
-					}
-				}
-				primaryHashBuilt = true;
-			}
-			Group.Name groupName = primaryHash.get(account.getUsername_id());
-			if(groupName == null) return null;
-			// May be filtered
-			return connector.getLinux().getGroup().get(groupName);
-		}
-	}
+  Group getPrimaryGroup(User account) throws IOException, SQLException {
+    NullArgumentException.checkNotNull(account, "account");
+    synchronized (primaryHash) {
+      // Rebuild the hash if needed
+      if (!primaryHashBuilt) {
+        List<GroupUser> cache = getRows();
+        primaryHash.clear();
+        int len = cache.size();
+        for (int c = 0; c < len; c++) {
+          GroupUser lga = cache.get(c);
+          if (lga.isPrimary()) {
+            User.Name username = lga.getUser_username();
+            Group.Name groupName = lga.getGroup_name();
+            Group.Name existing = primaryHash.put(username, groupName);
+            if (
+              existing != null
+              && !existing.equals(groupName)
+            ) {
+              throw new SQLException(
+                "Conflicting primary groups for "
+                  + username
+                  + ": "
+                  + existing
+                  + " and "
+                  + groupName
+              );
+            }
+          }
+        }
+        primaryHashBuilt = true;
+      }
+      Group.Name groupName = primaryHash.get(account.getUsername_id());
+      if (groupName == null) {
+        return null;
+      }
+      // May be filtered
+      return connector.getLinux().getGroup().get(groupName);
+    }
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.LINUX_GROUP_ACCOUNTS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.LINUX_GROUP_ACCOUNTS;
+  }
 
-	@Override
-	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-		String command=args[0];
-		if(command.equalsIgnoreCase(Command.ADD_LINUX_GROUP_ACCOUNT)) {
-			if(AOSH.checkParamCount(Command.ADD_LINUX_GROUP_ACCOUNT, args, 2, err)) {
-				out.println(
-					connector.getSimpleAOClient().addLinuxGroupAccount(
-						AOSH.parseGroupName(args[1], "group"),
-						AOSH.parseLinuxUserName(args[2], "username")
-					)
-				);
-				out.flush();
-			}
-			return true;
-		} else if(command.equalsIgnoreCase(Command.REMOVE_LINUX_GROUP_ACCOUNT)) {
-			if(AOSH.checkParamCount(Command.REMOVE_LINUX_GROUP_ACCOUNT, args, 2, err)) {
-				connector.getSimpleAOClient().removeLinuxGroupAccount(
-					AOSH.parseGroupName(args[1], "group"),
-					AOSH.parseLinuxUserName(args[2], "username")
-				);
-			}
-			return true;
-		} else if(command.equalsIgnoreCase(Command.SET_PRIMARY_LINUX_GROUP_ACCOUNT)) {
-			if(AOSH.checkParamCount(Command.SET_PRIMARY_LINUX_GROUP_ACCOUNT, args, 2, err)) {
-				connector.getSimpleAOClient().setPrimaryLinuxGroupAccount(
-					AOSH.parseGroupName(args[1], "group"),
-					AOSH.parseLinuxUserName(args[2], "username")
-				);
-			}
-			return true;
-		}
-		return false;
-	}
+  @Override
+  public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
+    String command=args[0];
+    if (command.equalsIgnoreCase(Command.ADD_LINUX_GROUP_ACCOUNT)) {
+      if (AOSH.checkParamCount(Command.ADD_LINUX_GROUP_ACCOUNT, args, 2, err)) {
+        out.println(
+          connector.getSimpleAOClient().addLinuxGroupAccount(
+            AOSH.parseGroupName(args[1], "group"),
+            AOSH.parseLinuxUserName(args[2], "username")
+          )
+        );
+        out.flush();
+      }
+      return true;
+    } else if (command.equalsIgnoreCase(Command.REMOVE_LINUX_GROUP_ACCOUNT)) {
+      if (AOSH.checkParamCount(Command.REMOVE_LINUX_GROUP_ACCOUNT, args, 2, err)) {
+        connector.getSimpleAOClient().removeLinuxGroupAccount(
+          AOSH.parseGroupName(args[1], "group"),
+          AOSH.parseLinuxUserName(args[2], "username")
+        );
+      }
+      return true;
+    } else if (command.equalsIgnoreCase(Command.SET_PRIMARY_LINUX_GROUP_ACCOUNT)) {
+      if (AOSH.checkParamCount(Command.SET_PRIMARY_LINUX_GROUP_ACCOUNT, args, 2, err)) {
+        connector.getSimpleAOClient().setPrimaryLinuxGroupAccount(
+          AOSH.parseGroupName(args[1], "group"),
+          AOSH.parseLinuxUserName(args[2], "username")
+        );
+      }
+      return true;
+    }
+    return false;
+  }
 
-	@Override
-	public void clearCache() {
-		super.clearCache();
-		synchronized(hash) {
-			hashBuilt = false;
-		}
-		synchronized(primaryHash) {
-			primaryHashBuilt = false;
-		}
-	}
+  @Override
+  public void clearCache() {
+    super.clearCache();
+    synchronized (hash) {
+      hashBuilt = false;
+    }
+    synchronized (primaryHash) {
+      primaryHashBuilt = false;
+    }
+  }
 }

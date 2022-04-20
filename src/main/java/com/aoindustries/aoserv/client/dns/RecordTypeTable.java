@@ -36,26 +36,26 @@ import java.sql.SQLException;
  */
 public final class RecordTypeTable extends GlobalTableStringKey<RecordType> {
 
-	RecordTypeTable(AOServConnector connector) {
-		super(connector, RecordType.class);
-	}
+  RecordTypeTable(AOServConnector connector) {
+    super(connector, RecordType.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(RecordType.COLUMN_DESCRIPTION_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(RecordType.COLUMN_DESCRIPTION_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public RecordType get(String type) throws IOException, SQLException {
-		return getUniqueRow(RecordType.COLUMN_TYPE, type);
-	}
+  @Override
+  public RecordType get(String type) throws IOException, SQLException {
+    return getUniqueRow(RecordType.COLUMN_TYPE, type);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.DNS_TYPES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.DNS_TYPES;
+  }
 }

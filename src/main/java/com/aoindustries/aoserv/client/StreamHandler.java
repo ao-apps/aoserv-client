@@ -33,16 +33,16 @@ import java.io.OutputStream;
  */
 public interface StreamHandler {
 
-	/**
-	 * Called once the dump size is known and before
-	 * the stream is obtained.
-	 *
-	 * @param  dumpSize  The number of bytes that will be transferred or {@code -1} if unknown
-	 */
-	void onDumpSize(long dumpSize) throws IOException;
+  /**
+   * Called once the dump size is known and before
+   * the stream is obtained.
+   *
+   * @param  dumpSize  The number of bytes that will be transferred or {@code -1} if unknown
+   */
+  void onDumpSize(long dumpSize) throws IOException;
 
-	/**
-	 * Gets the output to write to.  This output stream will neither be flushed nor closed.
-	 */
-	OutputStream getOut() throws IOException;
+  /**
+   * Gets the output to write to.  This output stream will neither be flushed nor closed.
+   */
+  OutputStream getOut() throws IOException;
 }

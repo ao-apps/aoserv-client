@@ -38,31 +38,31 @@ import java.util.List;
  */
 public final class ProcessorTable extends CachedTableStringKey<Processor> {
 
-	ProcessorTable(AOServConnector connector) {
-		super(connector, Processor.class);
-	}
+  ProcessorTable(AOServConnector connector) {
+    super(connector, Processor.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(Processor.COLUMN_ACCOUNTING_name, ASCENDING),
-		new OrderBy(Processor.COLUMN_PROVIDER_ID_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(Processor.COLUMN_ACCOUNTING_name, ASCENDING),
+    new OrderBy(Processor.COLUMN_PROVIDER_ID_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public Processor get(String providerId) throws IOException, SQLException {
-		return getUniqueRow(Processor.COLUMN_PROVIDER_ID, providerId);
-	}
+  @Override
+  public Processor get(String providerId) throws IOException, SQLException {
+    return getUniqueRow(Processor.COLUMN_PROVIDER_ID, providerId);
+  }
 
-	public List<Processor> getCreditCardProcessors(Account business) throws IOException, SQLException {
-		return getIndexedRows(Processor.COLUMN_ACCOUNTING, business.getName());
-	}
+  public List<Processor> getCreditCardProcessors(Account business) throws IOException, SQLException {
+    return getIndexedRows(Processor.COLUMN_ACCOUNTING, business.getName());
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.CREDIT_CARD_PROCESSORS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.CREDIT_CARD_PROCESSORS;
+  }
 }

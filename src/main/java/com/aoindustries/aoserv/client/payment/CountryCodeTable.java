@@ -45,82 +45,88 @@ import java.util.Set;
  */
 public final class CountryCodeTable extends GlobalTableStringKey<CountryCode> {
 
-	CountryCodeTable(AOServConnector connector) {
-		super(connector, CountryCode.class);
-	}
+  CountryCodeTable(AOServConnector connector) {
+    super(connector, CountryCode.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(CountryCode.COLUMN_NAME_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(CountryCode.COLUMN_NAME_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public CountryCode get(String code) throws IOException, SQLException {
-		return getUniqueRow(CountryCode.COLUMN_CODE, code);
-	}
+  @Override
+  public CountryCode get(String code) throws IOException, SQLException {
+    return getUniqueRow(CountryCode.COLUMN_CODE, code);
+  }
 
-	public List<CountryCode> getCountryCodesByPriority(int prioritySize, int[] priorityCounter) throws IOException, SQLException {
-		Map<String, int[]> counts = new HashMap<>();
+  public List<CountryCode> getCountryCodesByPriority(int prioritySize, int[] priorityCounter) throws IOException, SQLException {
+    Map<String, int[]> counts = new HashMap<>();
 
-		// Add the business_profiles
-		Set<Account.Name> finishedAccounts=new HashSet<>();
-		for(Profile profile : connector.getAccount().getProfile().getRows()) {
-			Account.Name accounting = profile.getAccount_name();
-			if(!finishedAccounts.contains(accounting)) {
-				finishedAccounts.add(accounting);
-				String code = profile.getCountry_code();
-				int[] counter = counts.get(code);
-				if(counter == null) counts.put(code, counter = new int[1]);
-				counter[0]++;
-			}
-		}
+    // Add the business_profiles
+    Set<Account.Name> finishedAccounts=new HashSet<>();
+    for (Profile profile : connector.getAccount().getProfile().getRows()) {
+      Account.Name accounting = profile.getAccount_name();
+      if (!finishedAccounts.contains(accounting)) {
+        finishedAccounts.add(accounting);
+        String code = profile.getCountry_code();
+        int[] counter = counts.get(code);
+        if (counter == null) {
+          counts.put(code, counter = new int[1]);
+        }
+        counter[0]++;
+      }
+    }
 
-		// Find the biggest ones
-		List<String> biggest = new ArrayList<>(prioritySize);
-		Iterator<String> iter = counts.keySet().iterator();
-		while(iter.hasNext()) {
-			String code = iter.next();
-			int count = counts.get(code)[0];
-			int c=0;
-			for(; c<biggest.size(); c++) {
-				String ccCode = biggest.get(c);
-				int[] ccCounter = counts.get(ccCode);
-				int ccCount = ccCounter==null ? 0 : ccCounter[0];
-				if(
-					count>ccCount
-					|| (
-						count==ccCount
-						&& code.compareToIgnoreCase(ccCode)<=0
-					)
-				) {
-					break;
-				}
-			}
-			if(c<prioritySize) {
-				if(biggest.size()>=prioritySize) biggest.remove(prioritySize-1);
-				biggest.add(Math.min(c, biggest.size()), code);
-			}
-		}
+    // Find the biggest ones
+    List<String> biggest = new ArrayList<>(prioritySize);
+    Iterator<String> iter = counts.keySet().iterator();
+    while (iter.hasNext()) {
+      String code = iter.next();
+      int count = counts.get(code)[0];
+      int c=0;
+      for (; c<biggest.size(); c++) {
+        String ccCode = biggest.get(c);
+        int[] ccCounter = counts.get(ccCode);
+        int ccCount = ccCounter == null ? 0 : ccCounter[0];
+        if (
+          count>ccCount
+          || (
+            count == ccCount
+            && code.compareToIgnoreCase(ccCode) <= 0
+          )
+        ) {
+          break;
+        }
+      }
+      if (c<prioritySize) {
+        if (biggest.size() >= prioritySize) {
+          biggest.remove(prioritySize-1);
+        }
+        biggest.add(Math.min(c, biggest.size()), code);
+      }
+    }
 
-		// Package the results
-		List<CountryCode> ccs=getRows();
-		List<CountryCode> results=new ArrayList<>(ccs.size() + biggest.size());
-		for(String code : biggest) {
-			results.add(get(code));
-		}
-		results.addAll(ccs);
+    // Package the results
+    List<CountryCode> ccs=getRows();
+    List<CountryCode> results=new ArrayList<>(ccs.size() + biggest.size());
+    for (String code : biggest) {
+      results.add(get(code));
+    }
+    results.addAll(ccs);
 
-		// Return the results
-		if(priorityCounter!=null && priorityCounter.length>=1) priorityCounter[0]=biggest.size();
-		return results;
-	}
+    // Return the results
+    if (priorityCounter != null && priorityCounter.length >= 1) {
+      priorityCounter[0]=biggest.size();
+    }
+    return results;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.COUNTRY_CODES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.COUNTRY_CODES;
+  }
 }

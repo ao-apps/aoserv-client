@@ -42,34 +42,34 @@ import java.util.List;
  */
 public final class HttpdBindTable extends CachedTableIntegerKey<HttpdBind> {
 
-	HttpdBindTable(AOServConnector connector) {
-		super(connector, HttpdBind.class);
-	}
+  HttpdBindTable(AOServConnector connector) {
+    super(connector, HttpdBind.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(HttpdBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(HttpdBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(HttpdBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_IP_ADDRESS_name+'.'+IpAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
-		new OrderBy(HttpdBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_IP_ADDRESS_name+'.'+IpAddress.COLUMN_DEVICE_name+'.'+Device.COLUMN_DEVICE_ID_name, ASCENDING),
-		new OrderBy(HttpdBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_PORT_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(HttpdBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(HttpdBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(HttpdBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_IP_ADDRESS_name+'.'+IpAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
+    new OrderBy(HttpdBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_IP_ADDRESS_name+'.'+IpAddress.COLUMN_DEVICE_name+'.'+Device.COLUMN_DEVICE_ID_name, ASCENDING),
+    new OrderBy(HttpdBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_PORT_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	List<HttpdBind> getHttpdBinds(HttpdServer server) throws IOException, SQLException {
-		return getIndexedRows(HttpdBind.COLUMN_HTTPD_SERVER, server.getPkey());
-	}
+  List<HttpdBind> getHttpdBinds(HttpdServer server) throws IOException, SQLException {
+    return getIndexedRows(HttpdBind.COLUMN_HTTPD_SERVER, server.getPkey());
+  }
 
-	@Override
-	public HttpdBind get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(HttpdBind.COLUMN_NET_BIND, pkey);
-	}
+  @Override
+  public HttpdBind get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(HttpdBind.COLUMN_NET_BIND, pkey);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.HTTPD_BINDS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.HTTPD_BINDS;
+  }
 }

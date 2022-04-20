@@ -36,26 +36,26 @@ import java.sql.SQLException;
  */
 public final class AppProtocolTable extends GlobalTableStringKey<AppProtocol> {
 
-	AppProtocolTable(AOServConnector connector) {
-		super(connector, AppProtocol.class);
-	}
+  AppProtocolTable(AOServConnector connector) {
+    super(connector, AppProtocol.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(AppProtocol.COLUMN_PORT_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(AppProtocol.COLUMN_PORT_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public AppProtocol get(String protocol) throws IOException, SQLException {
-		return getUniqueRow(AppProtocol.COLUMN_PROTOCOL, protocol);
-	}
+  @Override
+  public AppProtocol get(String protocol) throws IOException, SQLException {
+    return getUniqueRow(AppProtocol.COLUMN_PROTOCOL, protocol);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.PROTOCOLS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.PROTOCOLS;
+  }
 }

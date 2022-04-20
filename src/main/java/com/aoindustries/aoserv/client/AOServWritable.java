@@ -34,5 +34,5 @@ import java.io.IOException;
  */
 public interface AOServWritable {
 
-	void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException;
+  void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException;
 }

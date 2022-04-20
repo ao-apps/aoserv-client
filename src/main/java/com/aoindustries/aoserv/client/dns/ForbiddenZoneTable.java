@@ -36,26 +36,26 @@ import java.sql.SQLException;
  */
 public final class ForbiddenZoneTable extends GlobalTableStringKey<ForbiddenZone> {
 
-	ForbiddenZoneTable(AOServConnector connector) {
-		super(connector, ForbiddenZone.class);
-	}
+  ForbiddenZoneTable(AOServConnector connector) {
+    super(connector, ForbiddenZone.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(ForbiddenZone.COLUMN_ZONE_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(ForbiddenZone.COLUMN_ZONE_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public ForbiddenZone get(String zone) throws IOException, SQLException {
-		return getUniqueRow(ForbiddenZone.COLUMN_ZONE, zone);
-	}
+  @Override
+  public ForbiddenZone get(String zone) throws IOException, SQLException {
+    return getUniqueRow(ForbiddenZone.COLUMN_ZONE, zone);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.DNS_FORBIDDEN_ZONES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.DNS_FORBIDDEN_ZONES;
+  }
 }

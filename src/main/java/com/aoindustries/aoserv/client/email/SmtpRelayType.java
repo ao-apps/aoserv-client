@@ -42,86 +42,94 @@ import java.sql.SQLException;
  */
 public final class SmtpRelayType extends GlobalObjectStringKey<SmtpRelayType> {
 
-	static final int COLUMN_NAME=0;
-	static final String COLUMN_NAME_name = "name";
+  static final int COLUMN_NAME=0;
+  static final String COLUMN_NAME_name = "name";
 
-	/**
-	 * The different relay types.
-	 */
-	public static final String
-		ALLOW="allow",
-		ALLOW_RELAY="allow_relay",
-		DENY_SPAM="deny_spam",
-		DENY="deny"
-	;
+  /**
+   * The different relay types.
+   */
+  public static final String
+    ALLOW="allow",
+    ALLOW_RELAY="allow_relay",
+    DENY_SPAM="deny_spam",
+    DENY="deny"
+  ;
 
-	private String sendmail_config;
-	private String qmail_config;
+  private String sendmail_config;
+  private String qmail_config;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public SmtpRelayType() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public SmtpRelayType() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_NAME: return pkey;
-			case 1: return sendmail_config;
-			case 2: return qmail_config;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_NAME: return pkey;
+      case 1: return sendmail_config;
+      case 2: return qmail_config;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	public String getName() {
-		return pkey;
-	}
+  public String getName() {
+    return pkey;
+  }
 
-	public String getSendmailConfig() {
-		return sendmail_config;
-	}
+  public String getSendmailConfig() {
+    return sendmail_config;
+  }
 
-	public String getQmailConfig() {
-		return qmail_config;
-	}
+  public String getQmailConfig() {
+    return qmail_config;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.EMAIL_SMTP_RELAY_TYPES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.EMAIL_SMTP_RELAY_TYPES;
+  }
 
-	public String getVerb() throws SQLException {
-		if(pkey.equals(ALLOW)) return "allowed regular access";
-		if(pkey.equals(ALLOW_RELAY)) return "allowed unauthenticated relay access";
-		if(pkey.equals(DENY_SPAM)) return "blocked for sending unsolicited bulk email";
-		if(pkey.equals(DENY)) return "blocked";
-		throw new SQLException("Unknown value for name: "+pkey);
-	}
+  public String getVerb() throws SQLException {
+    if (pkey.equals(ALLOW)) {
+      return "allowed regular access";
+    }
+    if (pkey.equals(ALLOW_RELAY)) {
+      return "allowed unauthenticated relay access";
+    }
+    if (pkey.equals(DENY_SPAM)) {
+      return "blocked for sending unsolicited bulk email";
+    }
+    if (pkey.equals(DENY)) {
+      return "blocked";
+    }
+    throw new SQLException("Unknown value for name: "+pkey);
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey=result.getString(1);
-		sendmail_config=result.getString(2);
-		qmail_config=result.getString(3);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey=result.getString(1);
+    sendmail_config=result.getString(2);
+    qmail_config=result.getString(3);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readUTF().intern();
-		sendmail_config=in.readUTF();
-		qmail_config=in.readUTF();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readUTF().intern();
+    sendmail_config=in.readUTF();
+    qmail_config=in.readUTF();
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey);
-		out.writeUTF(sendmail_config);
-		out.writeUTF(qmail_config);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey);
+    out.writeUTF(sendmail_config);
+    out.writeUTF(qmail_config);
+  }
 }

@@ -43,109 +43,115 @@ import java.sql.SQLException;
  */
 public final class Shell extends GlobalObjectPosixPathKey<Shell> {
 
-	static final int COLUMN_PATH=0;
-	static final String COLUMN_PATH_name = "path";
+  static final int COLUMN_PATH=0;
+  static final String COLUMN_PATH_name = "path";
 
-	public static final PosixPath
-		BASH,
-		FALSE,
-		KSH,
-		SH,
-		SYNC,
-		TCSH,
-		HALT,
-		NOLOGIN,
-		SHUTDOWN,
-		FTPONLY,
-		FTPPASSWD,
-		GIT_SHELL,
-		PASSWD
-	;
-	static {
-		try {
-			BASH = PosixPath.valueOf("/bin/bash").intern();
-			FALSE = PosixPath.valueOf("/bin/false").intern();
-			KSH = PosixPath.valueOf("/bin/ksh").intern();
-			SH = PosixPath.valueOf("/bin/sh").intern();
-			SYNC = PosixPath.valueOf("/bin/sync").intern();
-			TCSH = PosixPath.valueOf("/bin/tcsh").intern();
-			HALT = PosixPath.valueOf("/sbin/halt").intern();
-			NOLOGIN = PosixPath.valueOf("/sbin/nologin").intern();
-			SHUTDOWN = PosixPath.valueOf("/sbin/shutdown").intern();
-			FTPONLY = PosixPath.valueOf("/usr/bin/ftponly").intern();
-			FTPPASSWD = PosixPath.valueOf("/usr/bin/ftppasswd").intern();
-			GIT_SHELL = PosixPath.valueOf("/usr/bin/git-shell").intern();
-			PASSWD = PosixPath.valueOf("/usr/bin/passwd").intern();
-		} catch(ValidationException e) {
-			throw new AssertionError("These hard-coded values are valid", e);
-		}
-	}
+  public static final PosixPath
+    BASH,
+    FALSE,
+    KSH,
+    SH,
+    SYNC,
+    TCSH,
+    HALT,
+    NOLOGIN,
+    SHUTDOWN,
+    FTPONLY,
+    FTPPASSWD,
+    GIT_SHELL,
+    PASSWD
+  ;
+  static {
+    try {
+      BASH = PosixPath.valueOf("/bin/bash").intern();
+      FALSE = PosixPath.valueOf("/bin/false").intern();
+      KSH = PosixPath.valueOf("/bin/ksh").intern();
+      SH = PosixPath.valueOf("/bin/sh").intern();
+      SYNC = PosixPath.valueOf("/bin/sync").intern();
+      TCSH = PosixPath.valueOf("/bin/tcsh").intern();
+      HALT = PosixPath.valueOf("/sbin/halt").intern();
+      NOLOGIN = PosixPath.valueOf("/sbin/nologin").intern();
+      SHUTDOWN = PosixPath.valueOf("/sbin/shutdown").intern();
+      FTPONLY = PosixPath.valueOf("/usr/bin/ftponly").intern();
+      FTPPASSWD = PosixPath.valueOf("/usr/bin/ftppasswd").intern();
+      GIT_SHELL = PosixPath.valueOf("/usr/bin/git-shell").intern();
+      PASSWD = PosixPath.valueOf("/usr/bin/passwd").intern();
+    } catch (ValidationException e) {
+      throw new AssertionError("These hard-coded values are valid", e);
+    }
+  }
 
-	private boolean is_login;
-	private boolean is_system;
+  private boolean is_login;
+  private boolean is_system;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public Shell() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public Shell() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		if(i==COLUMN_PATH) return pkey;
-		if(i==1) return is_login;
-		if(i==2) return is_system;
-		throw new IllegalArgumentException("Invalid index: " + i);
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    if (i == COLUMN_PATH) {
+      return pkey;
+    }
+    if (i == 1) {
+      return is_login;
+    }
+    if (i == 2) {
+      return is_system;
+    }
+    throw new IllegalArgumentException("Invalid index: " + i);
+  }
 
-	public PosixPath getPath() {
-		return pkey;
-	}
+  public PosixPath getPath() {
+    return pkey;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.SHELLS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.SHELLS;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		try {
-			pkey = PosixPath.valueOf(result.getString(1));
-			is_login = result.getBoolean(2);
-			is_system = result.getBoolean(3);
-		} catch(ValidationException e) {
-			throw new SQLException(e);
-		}
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    try {
+      pkey = PosixPath.valueOf(result.getString(1));
+      is_login = result.getBoolean(2);
+      is_system = result.getBoolean(3);
+    } catch (ValidationException e) {
+      throw new SQLException(e);
+    }
+  }
 
-	public boolean isLogin() {
-		return is_login;
-	}
+  public boolean isLogin() {
+    return is_login;
+  }
 
-	public boolean isSystem() {
-		return is_system;
-	}
+  public boolean isSystem() {
+    return is_system;
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		try {
-			pkey = PosixPath.valueOf(in.readUTF()).intern();
-			is_login=in.readBoolean();
-			is_system=in.readBoolean();
-		} catch(ValidationException e) {
-			throw new IOException(e);
-		}
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    try {
+      pkey = PosixPath.valueOf(in.readUTF()).intern();
+      is_login=in.readBoolean();
+      is_system=in.readBoolean();
+    } catch (ValidationException e) {
+      throw new IOException(e);
+    }
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey.toString());
-		out.writeBoolean(is_login);
-		out.writeBoolean(is_system);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey.toString());
+    out.writeBoolean(is_login);
+    out.writeBoolean(is_system);
+  }
 }

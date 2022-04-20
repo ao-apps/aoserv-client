@@ -39,68 +39,72 @@ import java.sql.SQLException;
  */
 public final class DistroFileType extends GlobalObjectStringKey<DistroFileType> {
 
-	static final int COLUMN_TYPE=0;
-	static final String COLUMN_TYPE_name = "type";
+  static final int COLUMN_TYPE=0;
+  static final String COLUMN_TYPE_name = "type";
 
-	private String description;
+  private String description;
 
-	/**
-	 * The different file types.
-	 */
-	public static final String
-		CONFIG="config",
-		NO_RECURSE="no_recurse",
-		PRELINK="prelink",
-		SYSTEM="system",
-		USER="user"
-	;
+  /**
+   * The different file types.
+   */
+  public static final String
+    CONFIG="config",
+    NO_RECURSE="no_recurse",
+    PRELINK="prelink",
+    SYSTEM="system",
+    USER="user"
+  ;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public DistroFileType() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public DistroFileType() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		if(i==COLUMN_TYPE) return pkey;
-		if(i==1) return description;
-		throw new IllegalArgumentException("Invalid index: " + i);
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    if (i == COLUMN_TYPE) {
+      return pkey;
+    }
+    if (i == 1) {
+      return description;
+    }
+    throw new IllegalArgumentException("Invalid index: " + i);
+  }
 
-	public String getDescription() {
-		return description;
-	}
+  public String getDescription() {
+    return description;
+  }
 
-	public String getType() {
-		return pkey;
-	}
+  public String getType() {
+    return pkey;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.DISTRO_FILE_TYPES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.DISTRO_FILE_TYPES;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey = result.getString(1);
-		description = result.getString(2);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey = result.getString(1);
+    description = result.getString(2);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readUTF().intern();
-		description=in.readUTF();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readUTF().intern();
+    description=in.readUTF();
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey);
-		out.writeUTF(description);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey);
+    out.writeUTF(description);
+  }
 }

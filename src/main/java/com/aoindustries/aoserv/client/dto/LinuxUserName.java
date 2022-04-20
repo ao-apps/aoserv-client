@@ -28,11 +28,11 @@ package com.aoindustries.aoserv.client.dto;
  */
 public class LinuxUserName extends UserName {
 
-	public LinuxUserName() {
-		// Do nothing
-	}
+  public LinuxUserName() {
+    // Do nothing
+  }
 
-	public LinuxUserName(String name) {
-		super(name);
-	}
+  public LinuxUserName(String name) {
+    super(name);
+  }
 }

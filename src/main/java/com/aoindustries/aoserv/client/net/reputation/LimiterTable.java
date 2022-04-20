@@ -39,35 +39,35 @@ import java.sql.SQLException;
  */
 public final class LimiterTable extends CachedTableIntegerKey<Limiter> {
 
-	LimiterTable(AOServConnector connector) {
-		super(connector, Limiter.class);
-	}
+  LimiterTable(AOServConnector connector) {
+    super(connector, Limiter.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(Limiter.COLUMN_NET_DEVICE_name+'.'+Device.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(Limiter.COLUMN_NET_DEVICE_name+'.'+Device.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(Limiter.COLUMN_NET_DEVICE_name+'.'+Device.COLUMN_DEVICE_ID_name, ASCENDING),
-		new OrderBy(Limiter.COLUMN_IDENTIFIER_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(Limiter.COLUMN_NET_DEVICE_name+'.'+Device.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(Limiter.COLUMN_NET_DEVICE_name+'.'+Device.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(Limiter.COLUMN_NET_DEVICE_name+'.'+Device.COLUMN_DEVICE_ID_name, ASCENDING),
+    new OrderBy(Limiter.COLUMN_IDENTIFIER_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public Limiter get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(Limiter.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public Limiter get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(Limiter.COLUMN_PKEY, pkey);
+  }
 
-	/*
-	List<IpReputationLimiter> getIpReputationLimiters(NetDevice nd) throws IOException, SQLException {
-		return getIndexedRows(IpReputationLimiter.COLUMN_NET_DEVICE, nd.getPkey());
-	}
-	 */
+  /*
+  List<IpReputationLimiter> getIpReputationLimiters(NetDevice nd) throws IOException, SQLException {
+    return getIndexedRows(IpReputationLimiter.COLUMN_NET_DEVICE, nd.getPkey());
+  }
+   */
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.IP_REPUTATION_LIMITERS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.IP_REPUTATION_LIMITERS;
+  }
 }

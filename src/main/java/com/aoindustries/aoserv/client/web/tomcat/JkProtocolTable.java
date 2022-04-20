@@ -36,26 +36,26 @@ import java.sql.SQLException;
  */
 public final class JkProtocolTable extends GlobalTableStringKey<JkProtocol> {
 
-	JkProtocolTable(AOServConnector connector) {
-		super(connector, JkProtocol.class);
-	}
+  JkProtocolTable(AOServConnector connector) {
+    super(connector, JkProtocol.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(JkProtocol.COLUMN_PROTOCOL_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(JkProtocol.COLUMN_PROTOCOL_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public JkProtocol get(String protocol) throws IOException, SQLException {
-		return getUniqueRow(JkProtocol.COLUMN_PROTOCOL, protocol);
-	}
+  @Override
+  public JkProtocol get(String protocol) throws IOException, SQLException {
+    return getUniqueRow(JkProtocol.COLUMN_PROTOCOL, protocol);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.HTTPD_JK_PROTOCOLS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.HTTPD_JK_PROTOCOLS;
+  }
 }

@@ -44,88 +44,96 @@ import java.sql.SQLException;
  */
 public final class CountryCode extends GlobalObjectStringKey<CountryCode> {
 
-	static final int COLUMN_CODE=0;
-	static final String COLUMN_NAME_name = "name";
+  static final int COLUMN_CODE=0;
+  static final String COLUMN_NAME_name = "name";
 
-	/**
-	 * <code>CountryCode</code>s used as constants.
-	 */
-	public static final String US="US";
+  /**
+   * <code>CountryCode</code>s used as constants.
+   */
+  public static final String US="US";
 
-	private String name;
-	private boolean charge_com_supported;
-	private String charge_com_name;
+  private String name;
+  private boolean charge_com_supported;
+  private String charge_com_name;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public CountryCode() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public CountryCode() {
+    // Do nothing
+  }
 
-	/**
-	 * Gets the two-character unique code for this country.
-	 */
-	public String getCode() {
-		return pkey;
-	}
+  /**
+   * Gets the two-character unique code for this country.
+   */
+  public String getCode() {
+    return pkey;
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		if(i==COLUMN_CODE) return pkey;
-		if(i==1) return name;
-		if(i==2) return charge_com_supported;
-		if(i==3) return charge_com_name;
-		throw new IllegalArgumentException("Invalid index: " + i);
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    if (i == COLUMN_CODE) {
+      return pkey;
+    }
+    if (i == 1) {
+      return name;
+    }
+    if (i == 2) {
+      return charge_com_supported;
+    }
+    if (i == 3) {
+      return charge_com_name;
+    }
+    throw new IllegalArgumentException("Invalid index: " + i);
+  }
 
-	public String getName() {
-		return name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public boolean getChargeComSupported() {
-		return charge_com_supported;
-	}
+  public boolean getChargeComSupported() {
+    return charge_com_supported;
+  }
 
-	public String getChargeComName() {
-		return charge_com_name == null ? name : charge_com_name;
-	}
+  public String getChargeComName() {
+    return charge_com_name == null ? name : charge_com_name;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.COUNTRY_CODES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.COUNTRY_CODES;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey = result.getString(1);
-		name = result.getString(2);
-		charge_com_supported = result.getBoolean(3);
-		charge_com_name = result.getString(4);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey = result.getString(1);
+    name = result.getString(2);
+    charge_com_supported = result.getBoolean(3);
+    charge_com_name = result.getString(4);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readUTF().intern();
-		name=in.readUTF();
-		charge_com_supported = in.readBoolean();
-		charge_com_name = in.readNullUTF();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readUTF().intern();
+    name=in.readUTF();
+    charge_com_supported = in.readBoolean();
+    charge_com_name = in.readNullUTF();
+  }
 
-	@Override
-	public String toStringImpl() {
-		return name;
-	}
+  @Override
+  public String toStringImpl() {
+    return name;
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey);
-		out.writeUTF(name);
-		out.writeBoolean(charge_com_supported);
-		out.writeNullUTF(charge_com_name);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey);
+    out.writeUTF(name);
+    out.writeBoolean(charge_com_supported);
+    out.writeNullUTF(charge_com_name);
+  }
 }

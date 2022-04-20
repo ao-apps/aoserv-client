@@ -51,72 +51,76 @@ import java.util.List;
  */
 public final class GuestUser extends CachedObjectUserNameKey<GuestUser> implements Removable {
 
-	static final int COLUMN_USERNAME=0;
-	static final String COLUMN_USERNAME_name = "username";
+  static final int COLUMN_USERNAME=0;
+  static final String COLUMN_USERNAME_name = "username";
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public GuestUser() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public GuestUser() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		if(i==COLUMN_USERNAME) return pkey;
-		throw new IllegalArgumentException("Invalid index: " + i);
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    if (i == COLUMN_USERNAME) {
+      return pkey;
+    }
+    throw new IllegalArgumentException("Invalid index: " + i);
+  }
 
-	public User getLinuxAccount() throws SQLException, IOException {
-		User obj = table.getConnector().getLinux().getUser().get(pkey);
-		if (obj == null) throw new SQLException("Unable to find LinuxAccount: " + pkey);
-		return obj;
-	}
+  public User getLinuxAccount() throws SQLException, IOException {
+    User obj = table.getConnector().getLinux().getUser().get(pkey);
+    if (obj == null) {
+      throw new SQLException("Unable to find LinuxAccount: " + pkey);
+    }
+    return obj;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.FTP_GUEST_USERS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.FTP_GUEST_USERS;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		try {
-			pkey = User.Name.valueOf(result.getString(1));
-		} catch(ValidationException e) {
-			throw new SQLException(e);
-		}
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    try {
+      pkey = User.Name.valueOf(result.getString(1));
+    } catch (ValidationException e) {
+      throw new SQLException(e);
+    }
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		try {
-			pkey = User.Name.valueOf(in.readUTF()).intern();
-		} catch(ValidationException e) {
-			throw new IOException(e);
-		}
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    try {
+      pkey = User.Name.valueOf(in.readUTF()).intern();
+    } catch (ValidationException e) {
+      throw new IOException(e);
+    }
+  }
 
-	@Override
-	public List<CannotRemoveReason<?>> getCannotRemoveReasons() {
-		return Collections.emptyList();
-	}
+  @Override
+  public List<CannotRemoveReason<?>> getCannotRemoveReasons() {
+    return Collections.emptyList();
+  }
 
-	@Override
-	public void remove() throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(
-			true,
-			AoservProtocol.CommandID.REMOVE,
-			Table.TableID.FTP_GUEST_USERS,
-			pkey
-		);
-	}
+  @Override
+  public void remove() throws IOException, SQLException {
+    table.getConnector().requestUpdateIL(
+      true,
+      AoservProtocol.CommandID.REMOVE,
+      Table.TableID.FTP_GUEST_USERS,
+      pkey
+    );
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey.toString());
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey.toString());
+  }
 }

@@ -39,87 +39,91 @@ import java.sql.SQLException;
  */
 public final class LimiterSet extends CachedObjectIntegerKey<LimiterSet> {
 
-	static final int
-		COLUMN_PKEY    = 0,
-		COLUMN_LIMITER = 1
-	;
-	static final String
-		COLUMN_LIMITER_name = "limiter",
-		COLUMN_SORT_ORDER_name = "sort_order"
-	;
+  static final int
+    COLUMN_PKEY    = 0,
+    COLUMN_LIMITER = 1
+  ;
+  static final String
+    COLUMN_LIMITER_name = "limiter",
+    COLUMN_SORT_ORDER_name = "sort_order"
+  ;
 
-	private int limiter;
-	private int set;
-	private short sortOrder;
+  private int limiter;
+  private int set;
+  private short sortOrder;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public LimiterSet() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public LimiterSet() {
+    // Do nothing
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.IP_REPUTATION_LIMITER_SETS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.IP_REPUTATION_LIMITER_SETS;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		int pos = 1;
-		pkey      = result.getInt(pos++);
-		limiter   = result.getInt(pos++);
-		set       = result.getInt(pos++);
-		sortOrder = result.getShort(pos++);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    int pos = 1;
+    pkey      = result.getInt(pos++);
+    limiter   = result.getInt(pos++);
+    set       = result.getInt(pos++);
+    sortOrder = result.getShort(pos++);
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeCompressedInt(limiter);
-		out.writeCompressedInt(set);
-		out.writeShort        (sortOrder);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    out.writeCompressedInt(limiter);
+    out.writeCompressedInt(set);
+    out.writeShort        (sortOrder);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey      = in.readCompressedInt();
-		limiter   = in.readCompressedInt();
-		set       = in.readCompressedInt();
-		sortOrder = in.readShort();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey      = in.readCompressedInt();
+    limiter   = in.readCompressedInt();
+    set       = in.readCompressedInt();
+    sortOrder = in.readShort();
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_PKEY     : return pkey;
-			case COLUMN_LIMITER  : return limiter;
-			case 2               : return set;
-			case 3               : return sortOrder;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_PKEY     : return pkey;
+      case COLUMN_LIMITER  : return limiter;
+      case 2               : return set;
+      case 3               : return sortOrder;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	public Limiter getLimiter() throws SQLException, IOException {
-		Limiter obj = table.getConnector().getNet().getReputation().getLimiter().get(limiter);
-		if(obj==null) throw new SQLException("Unable to find IpReputationLimiter: " + limiter);
-		return obj;
-	}
+  public Limiter getLimiter() throws SQLException, IOException {
+    Limiter obj = table.getConnector().getNet().getReputation().getLimiter().get(limiter);
+    if (obj == null) {
+      throw new SQLException("Unable to find IpReputationLimiter: " + limiter);
+    }
+    return obj;
+  }
 
-	public Set getSet() throws SQLException, IOException {
-		Set obj = table.getConnector().getNet().getReputation().getSet().get(set);
-		if(obj==null) throw new SQLException("Unable to find IpReputationSet: " + set);
-		return obj;
-	}
+  public Set getSet() throws SQLException, IOException {
+    Set obj = table.getConnector().getNet().getReputation().getSet().get(set);
+    if (obj == null) {
+      throw new SQLException("Unable to find IpReputationSet: " + set);
+    }
+    return obj;
+  }
 
-	/**
-	 * Gets the per-limiter sort ordering.  This controls the preference.
-	 */
-	public short getSortOrder() {
-		return sortOrder;
-	}
+  /**
+   * Gets the per-limiter sort ordering.  This controls the preference.
+   */
+  public short getSortOrder() {
+    return sortOrder;
+  }
 }

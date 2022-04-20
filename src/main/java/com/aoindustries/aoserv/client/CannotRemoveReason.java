@@ -35,33 +35,33 @@ import java.util.List;
  */
 public final class CannotRemoveReason<T extends AOServObject<?, ? extends T>> {
 
-	private final String reason;
-	private final List<T> dependentObjects;
+  private final String reason;
+  private final List<T> dependentObjects;
 
-	public CannotRemoveReason(String reason) {
-		this.reason=reason;
-		this.dependentObjects=null;
-	}
+  public CannotRemoveReason(String reason) {
+    this.reason=reason;
+    this.dependentObjects=null;
+  }
 
-	public CannotRemoveReason(String reason, T dependentObject) {
-		this.reason=reason;
-		this.dependentObjects=dependentObject==null?null:Collections.singletonList(dependentObject);
-	}
+  public CannotRemoveReason(String reason, T dependentObject) {
+    this.reason=reason;
+    this.dependentObjects=dependentObject == null?null:Collections.singletonList(dependentObject);
+  }
 
-	/**
-	 * @param  dependentObjects  No defensive copy is made
-	 */
-	public CannotRemoveReason(String reason, List<T> dependentObjects) {
-		this.reason=reason;
-		this.dependentObjects = Collections.unmodifiableList(dependentObjects);
-	}
+  /**
+   * @param  dependentObjects  No defensive copy is made
+   */
+  public CannotRemoveReason(String reason, List<T> dependentObjects) {
+    this.reason=reason;
+    this.dependentObjects = Collections.unmodifiableList(dependentObjects);
+  }
 
-	public String getReason() {
-		return reason;
-	}
+  public String getReason() {
+    return reason;
+  }
 
-	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
-	public List<T> getDependentObjects() {
-		return dependentObjects;
-	}
+  @SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
+  public List<T> getDependentObjects() {
+    return dependentObjects;
+  }
 }

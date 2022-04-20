@@ -38,32 +38,32 @@ import java.util.List;
  */
 public final class CertificateOtherUseTable extends CachedTableIntegerKey<CertificateOtherUse> {
 
-	CertificateOtherUseTable(AOServConnector connector) {
-		super(connector, CertificateOtherUse.class);
-	}
+  CertificateOtherUseTable(AOServConnector connector) {
+    super(connector, CertificateOtherUse.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(CertificateOtherUse.COLUMN_SSL_CERTIFICATE_name+'.'+Certificate.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
-		new OrderBy(CertificateOtherUse.COLUMN_SSL_CERTIFICATE_name+'.'+Certificate.COLUMN_CERT_FILE_name, ASCENDING),
-		new OrderBy(CertificateOtherUse.COLUMN_SORT_ORDER_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(CertificateOtherUse.COLUMN_SSL_CERTIFICATE_name+'.'+Certificate.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
+    new OrderBy(CertificateOtherUse.COLUMN_SSL_CERTIFICATE_name+'.'+Certificate.COLUMN_CERT_FILE_name, ASCENDING),
+    new OrderBy(CertificateOtherUse.COLUMN_SORT_ORDER_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public CertificateOtherUse get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(CertificateOtherUse.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public CertificateOtherUse get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(CertificateOtherUse.COLUMN_PKEY, pkey);
+  }
 
-	List<CertificateOtherUse> getOtherUses(Certificate sslCert) throws IOException, SQLException {
-		return getIndexedRows(CertificateOtherUse.COLUMN_SSL_CERTIFICATE, sslCert.getPkey());
-	}
+  List<CertificateOtherUse> getOtherUses(Certificate sslCert) throws IOException, SQLException {
+    return getIndexedRows(CertificateOtherUse.COLUMN_SSL_CERTIFICATE, sslCert.getPkey());
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.SSL_CERTIFICATE_OTHER_USES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.SSL_CERTIFICATE_OTHER_USES;
+  }
 }

@@ -37,31 +37,31 @@ import java.util.List;
  */
 public final class DaemonAclTable extends CachedTableIntegerKey<DaemonAcl> {
 
-	DaemonAclTable(AOServConnector connector) {
-		super(connector, DaemonAcl.class);
-	}
+  DaemonAclTable(AOServConnector connector) {
+    super(connector, DaemonAcl.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(DaemonAcl.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
-		new OrderBy(DaemonAcl.COLUMN_HOST_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(DaemonAcl.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
+    new OrderBy(DaemonAcl.COLUMN_HOST_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public DaemonAcl get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(DaemonAcl.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public DaemonAcl get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(DaemonAcl.COLUMN_PKEY, pkey);
+  }
 
-	List<DaemonAcl> getAOServerDaemonHosts(Server aoServer) throws IOException, SQLException {
-		return getIndexedRows(DaemonAcl.COLUMN_AO_SERVER, aoServer.getPkey());
-	}
+  List<DaemonAcl> getAOServerDaemonHosts(Server aoServer) throws IOException, SQLException {
+    return getIndexedRows(DaemonAcl.COLUMN_AO_SERVER, aoServer.getPkey());
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.AO_SERVER_DAEMON_HOSTS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.AO_SERVER_DAEMON_HOSTS;
+  }
 }

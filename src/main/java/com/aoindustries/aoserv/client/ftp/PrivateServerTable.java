@@ -44,59 +44,63 @@ import java.util.List;
  */
 public final class PrivateServerTable extends CachedTableIntegerKey<PrivateServer> {
 
-	PrivateServerTable(AOServConnector connector) {
-		super(connector, PrivateServer.class);
-	}
+  PrivateServerTable(AOServConnector connector) {
+    super(connector, PrivateServer.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(PrivateServer.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(PrivateServer.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(PrivateServer.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_IP_ADDRESS_name+'.'+IpAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
-		new OrderBy(PrivateServer.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_IP_ADDRESS_name+'.'+IpAddress.COLUMN_DEVICE_name+'.'+Device.COLUMN_DEVICE_ID_name, ASCENDING),
-		new OrderBy(PrivateServer.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_PORT_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(PrivateServer.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(PrivateServer.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(PrivateServer.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_IP_ADDRESS_name+'.'+IpAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
+    new OrderBy(PrivateServer.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_IP_ADDRESS_name+'.'+IpAddress.COLUMN_DEVICE_name+'.'+Device.COLUMN_DEVICE_ID_name, ASCENDING),
+    new OrderBy(PrivateServer.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_PORT_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public PrivateServer get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(PrivateServer.COLUMN_NET_BIND, pkey);
-	}
+  @Override
+  public PrivateServer get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(PrivateServer.COLUMN_NET_BIND, pkey);
+  }
 
-	public List<PrivateServer> getPrivateFTPServers(Server ao) throws IOException, SQLException {
-		int aoPKey=ao.getPkey();
+  public List<PrivateServer> getPrivateFTPServers(Server ao) throws IOException, SQLException {
+    int aoPKey=ao.getPkey();
 
-		List<PrivateServer> cached=getRows();
-		int size=cached.size();
-		List<PrivateServer> matches=new ArrayList<>(size);
-		for(int c=0;c<size;c++) {
-			PrivateServer obj=cached.get(c);
-			if(obj.getNetBind().getServer_pkey()==aoPKey) matches.add(obj);
-		}
-		return matches;
-	}
+    List<PrivateServer> cached=getRows();
+    int size=cached.size();
+    List<PrivateServer> matches=new ArrayList<>(size);
+    for (int c=0;c<size;c++) {
+      PrivateServer obj=cached.get(c);
+      if (obj.getNetBind().getServer_pkey() == aoPKey) {
+        matches.add(obj);
+      }
+    }
+    return matches;
+  }
 
-	/*
-	PrivateFTPServer getPrivateFTPServer(Server ao, String path) {
-		int aoPKey=ao.getPkey();
+  /*
+  PrivateFTPServer getPrivateFTPServer(Server ao, String path) {
+    int aoPKey=ao.getPkey();
 
-		List<PrivateFTPServer> cached=getRows();
-		int size=cached.size();
-		for(int c=0;c<size;c++) {
-			PrivateFTPServer obj=cached.get(c);
-			if(
-				obj.getRoot().equals(path)
-				&& obj.getNetBind().server==aoPKey
-			) return obj;
-		}
-		return null;
-	}*/
+    List<PrivateFTPServer> cached=getRows();
+    int size=cached.size();
+    for (int c=0;c<size;c++) {
+      PrivateFTPServer obj=cached.get(c);
+      if (
+        obj.getRoot().equals(path)
+        && obj.getNetBind().server == aoPKey
+      ) {
+        return obj;
+      }
+    }
+    return null;
+  }*/
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.PRIVATE_FTP_SERVERS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.PRIVATE_FTP_SERVERS;
+  }
 }

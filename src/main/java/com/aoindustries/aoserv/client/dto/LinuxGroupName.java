@@ -28,21 +28,21 @@ package com.aoindustries.aoserv.client.dto;
  */
 public class LinuxGroupName {
 
-	private String name;
+  private String name;
 
-	public LinuxGroupName() {
-		// Do nothing
-	}
+  public LinuxGroupName() {
+    // Do nothing
+  }
 
-	public LinuxGroupName(String name) {
-		this.name = name;
-	}
+  public LinuxGroupName(String name) {
+    this.name = name;
+  }
 
-	public String getName() {
-		return name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 }

@@ -40,84 +40,84 @@ import java.sql.SQLException;
  */
 public final class InboxAttributes implements AOServStreamable {
 
-	private final AOServConnector connector;
-	private final int linuxServerAccount;
-	private long systemTime;
-	private long fileSize;
-	private long lastModified;
+  private final AOServConnector connector;
+  private final int linuxServerAccount;
+  private long systemTime;
+  private long fileSize;
+  private long lastModified;
 
-	public InboxAttributes(AOServConnector connector, UserServer lsa) {
-		this.connector=connector;
-		this.linuxServerAccount=lsa.getPkey();
-	}
+  public InboxAttributes(AOServConnector connector, UserServer lsa) {
+    this.connector=connector;
+    this.linuxServerAccount=lsa.getPkey();
+  }
 
-	public InboxAttributes(
-		long fileSize,
-		long lastModified
-	) {
-		this.connector=null;
-		this.linuxServerAccount=-1;
-		this.systemTime=System.currentTimeMillis();
-		this.fileSize=fileSize;
-		this.lastModified=lastModified;
-	}
+  public InboxAttributes(
+    long fileSize,
+    long lastModified
+  ) {
+    this.connector=null;
+    this.linuxServerAccount=-1;
+    this.systemTime=System.currentTimeMillis();
+    this.fileSize=fileSize;
+    this.lastModified=lastModified;
+  }
 
-	public AOServConnector getAOServConnector() {
-		return connector;
-	}
+  public AOServConnector getAOServConnector() {
+    return connector;
+  }
 
-	public UserServer getLinuxServerAccount() throws IOException, SQLException {
-		return connector.getLinux().getUserServer().get(linuxServerAccount);
-	}
+  public UserServer getLinuxServerAccount() throws IOException, SQLException {
+    return connector.getLinux().getUserServer().get(linuxServerAccount);
+  }
 
-	public long getSystemTime() {
-		return systemTime;
-	}
+  public long getSystemTime() {
+    return systemTime;
+  }
 
-	public long getFileSize() {
-		return fileSize;
-	}
+  public long getFileSize() {
+    return fileSize;
+  }
 
-	/**
-	 * Gets the last modified time or <code>0L</code> if unknown.
-	 */
-	public long getLastModified() {
-		return lastModified;
-	}
+  /**
+   * Gets the last modified time or <code>0L</code> if unknown.
+   */
+  public long getLastModified() {
+    return lastModified;
+  }
 
-	/**
-	 * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
-	 *
-	 * @see  #read(StreamableInput,AOServProtocol.Version)
-	 */
-	@Deprecated
-	@Override
-	public void read(StreamableInput in, String protocolVersion) throws IOException {
-		read(in, AoservProtocol.Version.getVersion(protocolVersion));
-	}
+  /**
+   * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
+   *
+   * @see  #read(StreamableInput,AOServProtocol.Version)
+   */
+  @Deprecated
+  @Override
+  public void read(StreamableInput in, String protocolVersion) throws IOException {
+    read(in, AoservProtocol.Version.getVersion(protocolVersion));
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		systemTime=in.readLong();
-		fileSize=in.readLong();
-		lastModified=in.readLong();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    systemTime=in.readLong();
+    fileSize=in.readLong();
+    lastModified=in.readLong();
+  }
 
-	/**
-	 * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
-	 *
-	 * @see  #write(StreamableOutput,AOServProtocol.Version)
-	 */
-	@Deprecated
-	@Override
-	public void write(StreamableOutput out, String protocolVersion) throws IOException {
-		write(out, AoservProtocol.Version.getVersion(protocolVersion));
-	}
+  /**
+   * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
+   *
+   * @see  #write(StreamableOutput,AOServProtocol.Version)
+   */
+  @Deprecated
+  @Override
+  public void write(StreamableOutput out, String protocolVersion) throws IOException {
+    write(out, AoservProtocol.Version.getVersion(protocolVersion));
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeLong(systemTime);
-		out.writeLong(fileSize);
-		out.writeLong(lastModified);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeLong(systemTime);
+    out.writeLong(fileSize);
+    out.writeLong(lastModified);
+  }
 }

@@ -34,72 +34,72 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final ContextTable Context;
-	public ContextTable getContext() {return Context;}
+  private final ContextTable Context;
+  public ContextTable getContext() {return Context;}
 
-	private final ContextDataSourceTable ContextDataSource;
-	public ContextDataSourceTable getContextDataSource() {return ContextDataSource;}
+  private final ContextDataSourceTable ContextDataSource;
+  public ContextDataSourceTable getContextDataSource() {return ContextDataSource;}
 
-	private final ContextParameterTable ContextParameter;
-	public ContextParameterTable getContextParameter() {return ContextParameter;}
+  private final ContextParameterTable ContextParameter;
+  public ContextParameterTable getContextParameter() {return ContextParameter;}
 
-	private final JkMountTable JkMount;
-	public JkMountTable getJkMount() {return JkMount;}
+  private final JkMountTable JkMount;
+  public JkMountTable getJkMount() {return JkMount;}
 
-	private final JkProtocolTable JkProtocol;
-	public JkProtocolTable getJkProtocol() {return JkProtocol;}
+  private final JkProtocolTable JkProtocol;
+  public JkProtocolTable getJkProtocol() {return JkProtocol;}
 
-	private final PrivateTomcatSiteTable PrivateTomcatSite;
-	public PrivateTomcatSiteTable getPrivateTomcatSite() {return PrivateTomcatSite;}
+  private final PrivateTomcatSiteTable PrivateTomcatSite;
+  public PrivateTomcatSiteTable getPrivateTomcatSite() {return PrivateTomcatSite;}
 
-	private final SharedTomcatTable SharedTomcat;
-	public SharedTomcatTable getSharedTomcat() {return SharedTomcat;}
+  private final SharedTomcatTable SharedTomcat;
+  public SharedTomcatTable getSharedTomcat() {return SharedTomcat;}
 
-	private final SharedTomcatSiteTable SharedTomcatSite;
-	public SharedTomcatSiteTable getSharedTomcatSite() {return SharedTomcatSite;}
+  private final SharedTomcatSiteTable SharedTomcatSite;
+  public SharedTomcatSiteTable getSharedTomcatSite() {return SharedTomcatSite;}
 
-	private final SiteTable Site;
-	public SiteTable getSite() {return Site;}
+  private final SiteTable Site;
+  public SiteTable getSite() {return Site;}
 
-	private final VersionTable Version;
-	public VersionTable getVersion() {return Version;}
+  private final VersionTable Version;
+  public VersionTable getVersion() {return Version;}
 
-	private final WorkerTable Worker;
-	public WorkerTable getWorker() {return Worker;}
+  private final WorkerTable Worker;
+  public WorkerTable getWorker() {return Worker;}
 
-	private final WorkerNameTable WorkerName;
-	public WorkerNameTable getWorkerName() {return WorkerName;}
+  private final WorkerNameTable WorkerName;
+  public WorkerNameTable getWorkerName() {return WorkerName;}
 
-	private final List<? extends AOServTable<?, ?>> tables;
+  private final List<? extends AOServTable<?, ?>> tables;
 
-	public Schema(AOServConnector connector) {
-		super(connector);
+  public Schema(AOServConnector connector) {
+    super(connector);
 
-		ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
-		newTables.add(Context = new ContextTable(connector));
-		newTables.add(ContextDataSource = new ContextDataSourceTable(connector));
-		newTables.add(ContextParameter = new ContextParameterTable(connector));
-		newTables.add(JkMount = new JkMountTable(connector));
-		newTables.add(JkProtocol = new JkProtocolTable(connector));
-		newTables.add(PrivateTomcatSite = new PrivateTomcatSiteTable(connector));
-		newTables.add(SharedTomcat = new SharedTomcatTable(connector));
-		newTables.add(SharedTomcatSite = new SharedTomcatSiteTable(connector));
-		newTables.add(Site = new SiteTable(connector));
-		newTables.add(Version = new VersionTable(connector));
-		newTables.add(Worker = new WorkerTable(connector));
-		newTables.add(WorkerName = new WorkerNameTable(connector));
-		newTables.trimToSize();
-		tables = Collections.unmodifiableList(newTables);
-	}
+    ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
+    newTables.add(Context = new ContextTable(connector));
+    newTables.add(ContextDataSource = new ContextDataSourceTable(connector));
+    newTables.add(ContextParameter = new ContextParameterTable(connector));
+    newTables.add(JkMount = new JkMountTable(connector));
+    newTables.add(JkProtocol = new JkProtocolTable(connector));
+    newTables.add(PrivateTomcatSite = new PrivateTomcatSiteTable(connector));
+    newTables.add(SharedTomcat = new SharedTomcatTable(connector));
+    newTables.add(SharedTomcatSite = new SharedTomcatSiteTable(connector));
+    newTables.add(Site = new SiteTable(connector));
+    newTables.add(Version = new VersionTable(connector));
+    newTables.add(Worker = new WorkerTable(connector));
+    newTables.add(WorkerName = new WorkerNameTable(connector));
+    newTables.trimToSize();
+    tables = Collections.unmodifiableList(newTables);
+  }
 
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
-	public List<? extends AOServTable<?, ?>> getTables() {
-		return tables;
-	}
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
+  public List<? extends AOServTable<?, ?>> getTables() {
+    return tables;
+  }
 
-	@Override
-	public String getName() {
-		return "web.tomcat";
-	}
+  @Override
+  public String getName() {
+    return "web.tomcat";
+  }
 }

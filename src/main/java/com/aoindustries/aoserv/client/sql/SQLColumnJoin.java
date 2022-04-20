@@ -40,58 +40,62 @@ import java.util.List;
  */
 public final class SQLColumnJoin implements SQLExpression {
 
-	private final SQLExpression expression;
-	private final Column keyColumn;
-	private final int keyIndex;
-	private final Column valueColumn;
-	private final Type type;
-	private final AOServTable<?, ?> table;
-	private final int valueIndex;
+  private final SQLExpression expression;
+  private final Column keyColumn;
+  private final int keyIndex;
+  private final Column valueColumn;
+  private final Type type;
+  private final AOServTable<?, ?> table;
+  private final int valueIndex;
 
-	public SQLColumnJoin(
-		AOServConnector conn,
-		SQLExpression expression,
-		Column keyColumn,
-		Column valueColumn
-	) throws SQLException, IOException {
-		this.expression = expression;
-		this.keyColumn = keyColumn;
-		this.keyIndex = keyColumn.getIndex();
-		this.valueColumn = valueColumn;
-		this.type = valueColumn.getType(conn);
-		this.table = keyColumn.getTable(conn).getAOServTable(conn);
-		this.valueIndex=valueColumn.getIndex();
-	}
+  public SQLColumnJoin(
+    AOServConnector conn,
+    SQLExpression expression,
+    Column keyColumn,
+    Column valueColumn
+  ) throws SQLException, IOException {
+    this.expression = expression;
+    this.keyColumn = keyColumn;
+    this.keyIndex = keyColumn.getIndex();
+    this.valueColumn = valueColumn;
+    this.type = valueColumn.getType(conn);
+    this.table = keyColumn.getTable(conn).getAOServTable(conn);
+    this.valueIndex=valueColumn.getIndex();
+  }
 
-	@Override
-	public String toString() {
-		return expression.toString() + "." + Parser.quote(valueColumn.getName());
-	}
+  @Override
+  public String toString() {
+    return expression.toString() + "." + Parser.quote(valueColumn.getName());
+  }
 
-	@Override
-	public String getColumnName() {
-		return valueColumn.getName();
-	}
+  @Override
+  public String getColumnName() {
+    return valueColumn.getName();
+  }
 
-	@Override
-	public Object evaluate(AOServConnector conn, AOServObject<?, ?> obj) throws IOException, SQLException {
-		Object keyValue=expression.evaluate(conn, obj);
-		if(keyValue!=null) {
-			AOServObject<?, ?> row=table.getUniqueRow(keyIndex, keyValue);
-			if(row!=null) return row.getColumn(valueIndex);
-		}
-		return null;
-	}
+  @Override
+  public Object evaluate(AOServConnector conn, AOServObject<?, ?> obj) throws IOException, SQLException {
+    Object keyValue=expression.evaluate(conn, obj);
+    if (keyValue != null) {
+      AOServObject<?, ?> row=table.getUniqueRow(keyIndex, keyValue);
+      if (row != null) {
+        return row.getColumn(valueIndex);
+      }
+    }
+    return null;
+  }
 
-	@Override
-	public Type getType() {
-		return type;
-	}
+  @Override
+  public Type getType() {
+    return type;
+  }
 
-	@Override
-	public void getReferencedTables(AOServConnector conn, List<Table> tables) throws IOException, SQLException {
-		expression.getReferencedTables(conn, tables);
-		Table t = keyColumn.getTable(conn);
-		if(!tables.contains(t)) tables.add(t);
-	}
+  @Override
+  public void getReferencedTables(AOServConnector conn, List<Table> tables) throws IOException, SQLException {
+    expression.getReferencedTables(conn, tables);
+    Table t = keyColumn.getTable(conn);
+    if (!tables.contains(t)) {
+      tables.add(t);
+    }
+  }
 }

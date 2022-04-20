@@ -30,45 +30,45 @@ import com.aoapps.net.dto.HostAddress;
  */
 public class LinuxDaemonAcl extends AOServObject {
 
-	private int pkey;
-	private int aoServer;
-	private HostAddress host;
+  private int pkey;
+  private int aoServer;
+  private HostAddress host;
 
-	public LinuxDaemonAcl() {
-		// Do nothing
-	}
+  public LinuxDaemonAcl() {
+    // Do nothing
+  }
 
-	public LinuxDaemonAcl(
-		int pkey,
-		int aoServer,
-		HostAddress host
-	) {
-		this.pkey = pkey;
-		this.aoServer = aoServer;
-		this.host = host;
-	}
+  public LinuxDaemonAcl(
+    int pkey,
+    int aoServer,
+    HostAddress host
+  ) {
+    this.pkey = pkey;
+    this.aoServer = aoServer;
+    this.host = host;
+  }
 
-	public int getPkey() {
-		return pkey;
-	}
+  public int getPkey() {
+    return pkey;
+  }
 
-	public void setPkey(int pkey) {
-		this.pkey = pkey;
-	}
+  public void setPkey(int pkey) {
+    this.pkey = pkey;
+  }
 
-	public int getServer() {
-		return aoServer;
-	}
+  public int getServer() {
+    return aoServer;
+  }
 
-	public void setServer(int aoServer) {
-		this.aoServer = aoServer;
-	}
+  public void setServer(int aoServer) {
+    this.aoServer = aoServer;
+  }
 
-	public HostAddress getHost() {
-		return host;
-	}
+  public HostAddress getHost() {
+    return host;
+  }
 
-	public void setHost(HostAddress host) {
-		this.host = host;
-	}
+  public void setHost(HostAddress host) {
+    this.host = host;
+  }
 }

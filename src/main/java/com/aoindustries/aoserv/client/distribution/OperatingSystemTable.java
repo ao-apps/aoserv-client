@@ -38,26 +38,26 @@ import java.sql.SQLException;
  */
 public final class OperatingSystemTable extends GlobalTableStringKey<OperatingSystem> {
 
-	OperatingSystemTable(AOServConnector connector) {
-		super(connector, OperatingSystem.class);
-	}
+  OperatingSystemTable(AOServConnector connector) {
+    super(connector, OperatingSystem.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(OperatingSystem.COLUMN_NAME_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(OperatingSystem.COLUMN_NAME_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public OperatingSystem get(String name) throws IOException, SQLException {
-		return getUniqueRow(OperatingSystem.COLUMN_NAME, name);
-	}
+  @Override
+  public OperatingSystem get(String name) throws IOException, SQLException {
+    return getUniqueRow(OperatingSystem.COLUMN_NAME, name);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.OPERATING_SYSTEMS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.OPERATING_SYSTEMS;
+  }
 }

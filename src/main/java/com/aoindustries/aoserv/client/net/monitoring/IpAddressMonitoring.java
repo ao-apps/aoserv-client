@@ -41,118 +41,120 @@ import java.sql.SQLException;
  */
 public final class IpAddressMonitoring extends CachedObjectIntegerKey<IpAddressMonitoring> {
 
-	static final int COLUMN_ID = 0;
-	static final String COLUMN_ID_name = "id";
+  static final int COLUMN_ID = 0;
+  static final String COLUMN_ID_name = "id";
 
-	private boolean enabled;
-	private boolean pingMonitorEnabled;
-	private boolean checkBlacklistsOverSmtp;
-	private boolean verifyDnsPtr;
-	private boolean verifyDnsA;
+  private boolean enabled;
+  private boolean pingMonitorEnabled;
+  private boolean checkBlacklistsOverSmtp;
+  private boolean verifyDnsPtr;
+  private boolean verifyDnsA;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public IpAddressMonitoring() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public IpAddressMonitoring() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_ID: return pkey;
-			case 1: return enabled;
-			case 2: return pingMonitorEnabled;
-			case 3: return checkBlacklistsOverSmtp;
-			case 4: return verifyDnsPtr;
-			case 5: return verifyDnsA;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_ID: return pkey;
+      case 1: return enabled;
+      case 2: return pingMonitorEnabled;
+      case 3: return checkBlacklistsOverSmtp;
+      case 4: return verifyDnsPtr;
+      case 5: return verifyDnsA;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	public int getId() {
-		return pkey;
-	}
+  public int getId() {
+    return pkey;
+  }
 
-	public IpAddress getIpAddress() throws SQLException, IOException {
-		IpAddress obj = table.getConnector().getNet().getIpAddress().get(pkey);
-		if(obj == null) throw new SQLException("Unable to find IPAddress: " + pkey);
-		return obj;
-	}
+  public IpAddress getIpAddress() throws SQLException, IOException {
+    IpAddress obj = table.getConnector().getNet().getIpAddress().get(pkey);
+    if (obj == null) {
+      throw new SQLException("Unable to find IPAddress: " + pkey);
+    }
+    return obj;
+  }
 
-	public boolean getEnabled() {
-		return enabled;
-	}
+  public boolean getEnabled() {
+    return enabled;
+  }
 
-	public boolean getPingMonitorEnabled() {
-		return pingMonitorEnabled;
-	}
+  public boolean getPingMonitorEnabled() {
+    return pingMonitorEnabled;
+  }
 
-	/**
-	 * When the IP address is assigned to a {@link Server}, blacklist status
-	 * may be further determined by making SMTP connections out from the
-	 * server point of view.  This allows the detection of blocks by some
-	 * providers that give no other way to query, such as Comcast and the
-	 * AT&amp;T family of companies.
-	 */
-	public boolean getCheckBlacklistsOverSmtp() {
-		return checkBlacklistsOverSmtp;
-	}
+  /**
+   * When the IP address is assigned to a {@link Server}, blacklist status
+   * may be further determined by making SMTP connections out from the
+   * server point of view.  This allows the detection of blocks by some
+   * providers that give no other way to query, such as Comcast and the
+   * AT&amp;T family of companies.
+   */
+  public boolean getCheckBlacklistsOverSmtp() {
+    return checkBlacklistsOverSmtp;
+  }
 
-	public boolean getVerifyDnsPtr() {
-		return verifyDnsPtr;
-	}
+  public boolean getVerifyDnsPtr() {
+    return verifyDnsPtr;
+  }
 
-	public boolean getVerifyDnsA() {
-		return verifyDnsA;
-	}
+  public boolean getVerifyDnsA() {
+    return verifyDnsA;
+  }
 
-	public void setEnabled(boolean enabled) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(
-			true,
-			AoservProtocol.CommandID.SET_IP_ADDRESS_MONITORING_ENABLED,
-			pkey,
-			enabled
-		);
-	}
+  public void setEnabled(boolean enabled) throws IOException, SQLException {
+    table.getConnector().requestUpdateIL(
+      true,
+      AoservProtocol.CommandID.SET_IP_ADDRESS_MONITORING_ENABLED,
+      pkey,
+      enabled
+    );
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.IpAddressMonitoring;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.IpAddressMonitoring;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		int pos = 1;
-		pkey = result.getInt(pos++);
-		enabled = result.getBoolean(pos++);
-		pingMonitorEnabled = result.getBoolean(pos++);
-		checkBlacklistsOverSmtp = result.getBoolean(pos++);
-		verifyDnsPtr = result.getBoolean(pos++);
-		verifyDnsA = result.getBoolean(pos++);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    int pos = 1;
+    pkey = result.getInt(pos++);
+    enabled = result.getBoolean(pos++);
+    pingMonitorEnabled = result.getBoolean(pos++);
+    checkBlacklistsOverSmtp = result.getBoolean(pos++);
+    verifyDnsPtr = result.getBoolean(pos++);
+    verifyDnsA = result.getBoolean(pos++);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey = in.readCompressedInt();
-		enabled = in.readBoolean();
-		pingMonitorEnabled = in.readBoolean();
-		checkBlacklistsOverSmtp = in.readBoolean();
-		verifyDnsPtr = in.readBoolean();
-		verifyDnsA = in.readBoolean();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey = in.readCompressedInt();
+    enabled = in.readBoolean();
+    pingMonitorEnabled = in.readBoolean();
+    checkBlacklistsOverSmtp = in.readBoolean();
+    verifyDnsPtr = in.readBoolean();
+    verifyDnsA = in.readBoolean();
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeBoolean(enabled);
-		out.writeBoolean(pingMonitorEnabled);
-		out.writeBoolean(checkBlacklistsOverSmtp);
-		out.writeBoolean(verifyDnsPtr);
-		out.writeBoolean(verifyDnsA);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    out.writeBoolean(enabled);
+    out.writeBoolean(pingMonitorEnabled);
+    out.writeBoolean(checkBlacklistsOverSmtp);
+    out.writeBoolean(verifyDnsPtr);
+    out.writeBoolean(verifyDnsA);
+  }
 }

@@ -49,129 +49,139 @@ import java.util.Objects;
  */
 public final class CyrusImapdBind extends CachedObjectIntegerKey<CyrusImapdBind> {
 
-	static final int
-		COLUMN_NET_BIND = 0,
-		COLUMN_CYRUS_IMAPD_SERVER = 1,
-		COLUMN_SSL_CERTIFICATE = 3
-	;
-	static final String COLUMN_NET_BIND_name = "net_bind";
+  static final int
+    COLUMN_NET_BIND = 0,
+    COLUMN_CYRUS_IMAPD_SERVER = 1,
+    COLUMN_SSL_CERTIFICATE = 3
+  ;
+  static final String COLUMN_NET_BIND_name = "net_bind";
 
-	private int cyrus_imapd_server;
-	private DomainName servername;
-	private int certificate;
-	private Boolean allowPlaintextAuth;
+  private int cyrus_imapd_server;
+  private DomainName servername;
+  private int certificate;
+  private Boolean allowPlaintextAuth;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public CyrusImapdBind() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public CyrusImapdBind() {
+    // Do nothing
+  }
 
-	@Override
-	public String toStringImpl() throws SQLException, IOException {
-		CyrusImapdServer server = getCyrusImapdServer();
-		Bind bind = getNetBind();
-		return server.toStringImpl() + '|' + bind.toStringImpl();
-	}
+  @Override
+  public String toStringImpl() throws SQLException, IOException {
+    CyrusImapdServer server = getCyrusImapdServer();
+    Bind bind = getNetBind();
+    return server.toStringImpl() + '|' + bind.toStringImpl();
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_NET_BIND: return pkey;
-			case COLUMN_CYRUS_IMAPD_SERVER: return cyrus_imapd_server;
-			case 2: return servername;
-			case COLUMN_SSL_CERTIFICATE: return certificate == -1 ? null : certificate;
-			case 4: return allowPlaintextAuth;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_NET_BIND: return pkey;
+      case COLUMN_CYRUS_IMAPD_SERVER: return cyrus_imapd_server;
+      case 2: return servername;
+      case COLUMN_SSL_CERTIFICATE: return certificate == -1 ? null : certificate;
+      case 4: return allowPlaintextAuth;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.CYRUS_IMAPD_BINDS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.CYRUS_IMAPD_BINDS;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		try {
-			int pos = 1;
-			pkey = result.getInt(pos++);
-			cyrus_imapd_server = result.getInt(pos++);
-			servername = DomainName.valueOf(result.getString(pos++));
-			certificate = result.getInt(pos++);
-			if(result.wasNull()) certificate = -1;
-			allowPlaintextAuth = result.getBoolean(pos++);
-			if(result.wasNull()) allowPlaintextAuth = null;
-		} catch(ValidationException e) {
-			throw new SQLException(e);
-		}
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    try {
+      int pos = 1;
+      pkey = result.getInt(pos++);
+      cyrus_imapd_server = result.getInt(pos++);
+      servername = DomainName.valueOf(result.getString(pos++));
+      certificate = result.getInt(pos++);
+      if (result.wasNull()) {
+        certificate = -1;
+      }
+      allowPlaintextAuth = result.getBoolean(pos++);
+      if (result.wasNull()) {
+        allowPlaintextAuth = null;
+      }
+    } catch (ValidationException e) {
+      throw new SQLException(e);
+    }
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		try {
-			pkey = in.readCompressedInt();
-			cyrus_imapd_server = in.readCompressedInt();
-			servername = DomainName.valueOf(in.readNullUTF());
-			certificate = in.readCompressedInt();
-			allowPlaintextAuth = in.readNullBoolean();
-		} catch(ValidationException e) {
-			throw new IOException(e);
-		}
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    try {
+      pkey = in.readCompressedInt();
+      cyrus_imapd_server = in.readCompressedInt();
+      servername = DomainName.valueOf(in.readNullUTF());
+      certificate = in.readCompressedInt();
+      allowPlaintextAuth = in.readNullBoolean();
+    } catch (ValidationException e) {
+      throw new IOException(e);
+    }
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeCompressedInt(cyrus_imapd_server);
-		out.writeNullUTF(Objects.toString(servername, null));
-		out.writeCompressedInt(certificate);
-		out.writeNullBoolean(allowPlaintextAuth);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    out.writeCompressedInt(cyrus_imapd_server);
+    out.writeNullUTF(Objects.toString(servername, null));
+    out.writeCompressedInt(certificate);
+    out.writeNullBoolean(allowPlaintextAuth);
+  }
 
-	public Bind getNetBind() throws SQLException, IOException {
-		Bind obj = table.getConnector().getNet().getBind().get(pkey);
-		if(obj == null) throw new SQLException("Unable to find NetBind: " + pkey);
-		return obj;
-	}
+  public Bind getNetBind() throws SQLException, IOException {
+    Bind obj = table.getConnector().getNet().getBind().get(pkey);
+    if (obj == null) {
+      throw new SQLException("Unable to find NetBind: " + pkey);
+    }
+    return obj;
+  }
 
-	public CyrusImapdServer getCyrusImapdServer() throws SQLException, IOException {
-		CyrusImapdServer obj = table.getConnector().getEmail().getCyrusImapdServer().get(cyrus_imapd_server);
-		if(obj == null) throw new SQLException("Unable to find CyrusImapd: " + cyrus_imapd_server);
-		return obj;
-	}
+  public CyrusImapdServer getCyrusImapdServer() throws SQLException, IOException {
+    CyrusImapdServer obj = table.getConnector().getEmail().getCyrusImapdServer().get(cyrus_imapd_server);
+    if (obj == null) {
+      throw new SQLException("Unable to find CyrusImapd: " + cyrus_imapd_server);
+    }
+    return obj;
+  }
 
-	/**
-	 * The fully qualified hostname for <code>servername</code>.
-	 *
-	 * When {@code null}, defaults to {@link CyrusImapdServer#getServername()}.
-	 */
-	public DomainName getServername() {
-		return servername;
-	}
+  /**
+   * The fully qualified hostname for <code>servername</code>.
+   *
+   * When {@code null}, defaults to {@link CyrusImapdServer#getServername()}.
+   */
+  public DomainName getServername() {
+    return servername;
+  }
 
-	/**
-	 * Gets the SSL certificate for this server.
-	 *
-	 * @return  the SSL certificate or {@code null} when filtered or defaulting to {@link CyrusImapdServer#getCertificate()}
-	 */
-	public Certificate getCertificate() throws SQLException, IOException {
-		if(certificate == -1) return null;
-		// May be filtered
-		return table.getConnector().getPki().getCertificate().get(certificate);
-	}
+  /**
+   * Gets the SSL certificate for this server.
+   *
+   * @return  the SSL certificate or {@code null} when filtered or defaulting to {@link CyrusImapdServer#getCertificate()}
+   */
+  public Certificate getCertificate() throws SQLException, IOException {
+    if (certificate == -1) {
+      return null;
+    }
+    // May be filtered
+    return table.getConnector().getPki().getCertificate().get(certificate);
+  }
 
-	/**
-	 * Allows plaintext authentication (PLAIN/LOGIN) on non-TLS links.
-	 *
-	 * When {@code null}, defaults to {@link CyrusImapdServer#getAllowPlaintextAuth()}.
-	 */
-	public Boolean getAllowPlaintextAuth() {
-		return allowPlaintextAuth;
-	}
+  /**
+   * Allows plaintext authentication (PLAIN/LOGIN) on non-TLS links.
+   *
+   * When {@code null}, defaults to {@link CyrusImapdServer#getAllowPlaintextAuth()}.
+   */
+  public Boolean getAllowPlaintextAuth() {
+    return allowPlaintextAuth;
+  }
 }

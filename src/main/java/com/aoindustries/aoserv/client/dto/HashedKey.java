@@ -28,21 +28,21 @@ package com.aoindustries.aoserv.client.dto;
  */
 public class HashedKey {
 
-	private String hashedKey;
+  private String hashedKey;
 
-	public HashedKey() {
-		// Do nothing
-	}
+  public HashedKey() {
+    // Do nothing
+  }
 
-	public HashedKey(String hashedKey) {
-		this.hashedKey = hashedKey;
-	}
+  public HashedKey(String hashedKey) {
+    this.hashedKey = hashedKey;
+  }
 
-	public String getHashedKey() {
-		return hashedKey;
-	}
+  public String getHashedKey() {
+    return hashedKey;
+  }
 
-	public void setHashedKey(String hashedKey) {
-		this.hashedKey = hashedKey;
-	}
+  public void setHashedKey(String hashedKey) {
+    this.hashedKey = hashedKey;
+  }
 }

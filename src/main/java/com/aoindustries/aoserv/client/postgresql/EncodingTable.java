@@ -37,43 +37,45 @@ import java.util.List;
  */
 public final class EncodingTable extends GlobalTableIntegerKey<Encoding> {
 
-	EncodingTable(AOServConnector connector) {
-		super(connector, Encoding.class);
-	}
+  EncodingTable(AOServConnector connector) {
+    super(connector, Encoding.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(Encoding.COLUMN_ENCODING_name, ASCENDING),
-		new OrderBy(Encoding.COLUMN_POSTGRES_VERSION_name+'.'+Version.COLUMN_MINOR_VERSION_name, ASCENDING),
-		new OrderBy(Encoding.COLUMN_PKEY_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(Encoding.COLUMN_ENCODING_name, ASCENDING),
+    new OrderBy(Encoding.COLUMN_POSTGRES_VERSION_name+'.'+Version.COLUMN_MINOR_VERSION_name, ASCENDING),
+    new OrderBy(Encoding.COLUMN_PKEY_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public Encoding get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(Encoding.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public Encoding get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(Encoding.COLUMN_PKEY, pkey);
+  }
 
-	List<Encoding> getPostgresEncodings(Version version) throws IOException, SQLException {
-		return getIndexedRows(Encoding.COLUMN_POSTGRES_VERSION, version.getPkey());
-	}
+  List<Encoding> getPostgresEncodings(Version version) throws IOException, SQLException {
+    return getIndexedRows(Encoding.COLUMN_POSTGRES_VERSION, version.getPkey());
+  }
 
-	Encoding getPostgresEncoding(Version pv, String encoding) throws IOException, SQLException {
-		// Use the index first
-		List<Encoding> cached=getPostgresEncodings(pv);
-		int cachedLen=cached.size();
-		for (int c = 0; c < cachedLen; c++) {
-			Encoding pe=cached.get(c);
-			if (pe.getEncoding().equals(encoding)) return pe;
-		}
-		return null;
-	}
+  Encoding getPostgresEncoding(Version pv, String encoding) throws IOException, SQLException {
+    // Use the index first
+    List<Encoding> cached=getPostgresEncodings(pv);
+    int cachedLen=cached.size();
+    for (int c = 0; c < cachedLen; c++) {
+      Encoding pe=cached.get(c);
+      if (pe.getEncoding().equals(encoding)) {
+        return pe;
+      }
+    }
+    return null;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.POSTGRES_ENCODINGS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.POSTGRES_ENCODINGS;
+  }
 }

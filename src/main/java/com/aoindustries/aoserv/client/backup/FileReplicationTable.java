@@ -45,57 +45,58 @@ import java.util.List;
  */
 public final class FileReplicationTable extends CachedTableIntegerKey<FileReplication> {
 
-	FileReplicationTable(AOServConnector connector) {
-		super(connector, FileReplication.class);
-	}
+  FileReplicationTable(AOServConnector connector) {
+    super(connector, FileReplication.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(FileReplication.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(FileReplication.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(FileReplication.COLUMN_BACKUP_PARTITION_name+'.'+BackupPartition.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
-		new OrderBy(FileReplication.COLUMN_BACKUP_PARTITION_name+'.'+BackupPartition.COLUMN_PATH_name, ASCENDING)
-	};
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(FileReplication.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(FileReplication.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(FileReplication.COLUMN_BACKUP_PARTITION_name+'.'+BackupPartition.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
+    new OrderBy(FileReplication.COLUMN_BACKUP_PARTITION_name+'.'+BackupPartition.COLUMN_PATH_name, ASCENDING)
+  };
 
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	public List<FileReplication> getFailoverFileReplications(Host server) throws IOException, SQLException {
-		return getIndexedRows(FileReplication.COLUMN_SERVER, server.getPkey());
-	}
+  public List<FileReplication> getFailoverFileReplications(Host server) throws IOException, SQLException {
+    return getIndexedRows(FileReplication.COLUMN_SERVER, server.getPkey());
+  }
 
-	@Override
-	public FileReplication get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(FileReplication.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public FileReplication get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(FileReplication.COLUMN_PKEY, pkey);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.FAILOVER_FILE_REPLICATIONS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.FAILOVER_FILE_REPLICATIONS;
+  }
 
-	@Override
-	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-		String command=args[0];
-		if(command.equalsIgnoreCase(Command.GET_FAILOVER_FILE_REPLICATION_ACTIVITY)) {
-			if(AOSH.checkParamCount(Command.GET_FAILOVER_FILE_REPLICATION_ACTIVITY, args, 3, err)) {
-				FileReplication.Activity activity = connector.getSimpleAOClient().getFailoverFileReplicationActivity(
-					args[1],
-					args[2],
-					args[3]
-				);
-				long timeSince = activity.getTimeSince();
-				if(timeSince == -1) out.println("No activity available");
-				else {
-					out.println(Strings.getDecimalTimeLengthString(timeSince));
-					out.println(activity.getMessage());
-				}
-				out.flush();
-			}
-			return true;
-		}
-		return false;
-	}
+  @Override
+  public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
+    String command=args[0];
+    if (command.equalsIgnoreCase(Command.GET_FAILOVER_FILE_REPLICATION_ACTIVITY)) {
+      if (AOSH.checkParamCount(Command.GET_FAILOVER_FILE_REPLICATION_ACTIVITY, args, 3, err)) {
+        FileReplication.Activity activity = connector.getSimpleAOClient().getFailoverFileReplicationActivity(
+          args[1],
+          args[2],
+          args[3]
+        );
+        long timeSince = activity.getTimeSince();
+        if (timeSince == -1) {
+          out.println("No activity available");
+        } else {
+          out.println(Strings.getDecimalTimeLengthString(timeSince));
+          out.println(activity.getMessage());
+        }
+        out.flush();
+      }
+      return true;
+    }
+    return false;
+  }
 }

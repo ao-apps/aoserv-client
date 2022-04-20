@@ -28,21 +28,21 @@ package com.aoindustries.aoserv.client.dto;
  */
 public class Gecos {
 
-	private String value;
+  private String value;
 
-	public Gecos() {
-		// Do nothing
-	}
+  public Gecos() {
+    // Do nothing
+  }
 
-	public Gecos(String value) {
-		this.value = value;
-	}
+  public Gecos(String value) {
+    this.value = value;
+  }
 
-	public String getValue() {
-		return value;
-	}
+  public String getValue() {
+    return value;
+  }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+  public void setValue(String value) {
+    this.value = value;
+  }
 }

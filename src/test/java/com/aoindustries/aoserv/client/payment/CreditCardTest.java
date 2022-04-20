@@ -37,46 +37,52 @@ import junit.framework.TestSuite;
  */
 public class CreditCardTest extends TestCase {
 
-	/**
-	 * A fast pseudo-random number generator for non-cryptographic purposes.
-	 */
-	private static final Random fastRandom = new Random(IoUtils.bufferToLong(new SecureRandom().generateSeed(Long.BYTES)));
+  /**
+   * A fast pseudo-random number generator for non-cryptographic purposes.
+   */
+  private static final Random fastRandom = new Random(IoUtils.bufferToLong(new SecureRandom().generateSeed(Long.BYTES)));
 
-	public CreditCardTest(String testName) {
-		super(testName);
-	}
+  public CreditCardTest(String testName) {
+    super(testName);
+  }
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite(CreditCardTest.class);
-		return suite;
-	}
+  public static Test suite() {
+    TestSuite suite = new TestSuite(CreditCardTest.class);
+    return suite;
+  }
 
-	/**
-	 * @see CreditCard#randomize(java.lang.String)
-	 * @see CreditCard#derandomize(java.lang.String)
-	 */
-	public void testRandomizeDerandomize() {
-		StringBuilder sb = new StringBuilder();
-		for(int c = 0; c < 100; c++) {
-			int len = fastRandom.nextInt(50);
-			sb.setLength(0);
-			for(int d = 0; d < len; d++) {
-				int randVal = fastRandom.nextInt(13);
-				char randCh;
-				if(randVal<10) randCh = (char)('0'+randVal);
-				else if(randVal==10) randCh = ' ';
-				else if(randVal==11) randCh = '-';
-				else if(randVal==12) randCh = '/';
-				else throw new AssertionError("Unexpected value for randVal: "+randVal);
-				sb.append(randCh);
-			}
-			String original = sb.toString();
-			//System.out.println(original);
-			String randomized = CreditCard.randomize(original);
-			//System.out.println(randomized);
-			String derandomized = CreditCard.derandomize(randomized);
-			//System.out.println(derandomized);
-			assertEquals("original and derandomized do not match", original, derandomized);
-		}
-	}
+  /**
+   * @see CreditCard#randomize(java.lang.String)
+   * @see CreditCard#derandomize(java.lang.String)
+   */
+  public void testRandomizeDerandomize() {
+    StringBuilder sb = new StringBuilder();
+    for (int c = 0; c < 100; c++) {
+      int len = fastRandom.nextInt(50);
+      sb.setLength(0);
+      for (int d = 0; d < len; d++) {
+        int randVal = fastRandom.nextInt(13);
+        char randCh;
+        if (randVal<10) {
+          randCh = (char)('0'+randVal);
+        } else if (randVal == 10) {
+          randCh = ' ';
+        } else if (randVal == 11) {
+          randCh = '-';
+        } else if (randVal == 12) {
+          randCh = '/';
+        } else {
+          throw new AssertionError("Unexpected value for randVal: "+randVal);
+        }
+        sb.append(randCh);
+      }
+      String original = sb.toString();
+      //System.out.println(original);
+      String randomized = CreditCard.randomize(original);
+      //System.out.println(randomized);
+      String derandomized = CreditCard.derandomize(randomized);
+      //System.out.println(derandomized);
+      assertEquals("original and derandomized do not match", original, derandomized);
+    }
+  }
 }

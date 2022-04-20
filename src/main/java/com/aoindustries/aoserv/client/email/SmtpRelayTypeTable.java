@@ -36,26 +36,26 @@ import java.sql.SQLException;
  */
 public final class SmtpRelayTypeTable extends GlobalTableStringKey<SmtpRelayType> {
 
-	SmtpRelayTypeTable(AOServConnector connector) {
-		super(connector, SmtpRelayType.class);
-	}
+  SmtpRelayTypeTable(AOServConnector connector) {
+    super(connector, SmtpRelayType.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(SmtpRelayType.COLUMN_NAME_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(SmtpRelayType.COLUMN_NAME_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public SmtpRelayType get(String name) throws IOException, SQLException {
-		return getUniqueRow(SmtpRelayType.COLUMN_NAME, name);
-	}
+  @Override
+  public SmtpRelayType get(String name) throws IOException, SQLException {
+    return getUniqueRow(SmtpRelayType.COLUMN_NAME, name);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.EMAIL_SMTP_RELAY_TYPES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.EMAIL_SMTP_RELAY_TYPES;
+  }
 }

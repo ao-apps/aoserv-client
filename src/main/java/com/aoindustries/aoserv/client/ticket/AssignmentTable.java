@@ -40,39 +40,39 @@ import java.util.List;
  */
 public final class AssignmentTable extends CachedTableIntegerKey<Assignment> {
 
-	AssignmentTable(AOServConnector connector) {
-		super(connector, Assignment.class);
-	}
+  AssignmentTable(AOServConnector connector) {
+    super(connector, Assignment.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(Assignment.COLUMN_TICKET_name, ASCENDING),
-		new OrderBy(Assignment.COLUMN_RESELLER_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(Assignment.COLUMN_TICKET_name, ASCENDING),
+    new OrderBy(Assignment.COLUMN_RESELLER_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public Assignment get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(Assignment.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public Assignment get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(Assignment.COLUMN_PKEY, pkey);
+  }
 
-	List<Assignment> getTicketAssignments(Ticket ticket) throws IOException, SQLException {
-		return getIndexedRows(Assignment.COLUMN_TICKET, ticket.getTicketID());
-	}
+  List<Assignment> getTicketAssignments(Ticket ticket) throws IOException, SQLException {
+    return getIndexedRows(Assignment.COLUMN_TICKET, ticket.getTicketID());
+  }
 
-	public List<Assignment> getTicketAssignments(Reseller reseller) throws IOException, SQLException {
-		return getIndexedRows(Assignment.COLUMN_RESELLER, reseller.getBrand_business_accounting());
-	}
+  public List<Assignment> getTicketAssignments(Reseller reseller) throws IOException, SQLException {
+    return getIndexedRows(Assignment.COLUMN_RESELLER, reseller.getBrand_business_accounting());
+  }
 
-	public List<Assignment> getTicketAssignments(Administrator ba) throws IOException, SQLException {
-		return getIndexedRows(Assignment.COLUMN_ADMINISTRATOR, ba.getUsername_userId());
-	}
+  public List<Assignment> getTicketAssignments(Administrator ba) throws IOException, SQLException {
+    return getIndexedRows(Assignment.COLUMN_ADMINISTRATOR, ba.getUsername_userId());
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.TICKET_ASSIGNMENTS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.TICKET_ASSIGNMENTS;
+  }
 }

@@ -32,9 +32,9 @@ import java.util.List;
  */
 public interface SchemaParent {
 
-	/**
-	 * Gets an unmodifiable list of all of the schemas.
-	 */
-	// Java 1.8: default implementation returning empty list
-	List<? extends Schema> getSchemas();
+  /**
+   * Gets an unmodifiable list of all of the schemas.
+   */
+  // Java 1.8: default implementation returning empty list
+  List<? extends Schema> getSchemas();
 }

@@ -41,91 +41,91 @@ import java.sql.SQLException;
  */
 public final class Currency extends GlobalObjectStringKey<Currency> {
 
-	static final int COLUMN_currencyCode = 0;
-	static final String COLUMN_currencyCode_name = "currencyCode";
+  static final int COLUMN_currencyCode = 0;
+  static final String COLUMN_currencyCode_name = "currencyCode";
 
-	/**
-	 * The currency assumed by the system before multiple currencies were supported.
-	 */
-	public static final java.util.Currency USD = java.util.Currency.getInstance("USD");
+  /**
+   * The currency assumed by the system before multiple currencies were supported.
+   */
+  public static final java.util.Currency USD = java.util.Currency.getInstance("USD");
 
-	private short fractionDigits;
-	private Money autoEnableMinimumPayment;
+  private short fractionDigits;
+  private Money autoEnableMinimumPayment;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public Currency() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public Currency() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_currencyCode : return pkey;
-			case 1 : return fractionDigits;
-			case 2 : return autoEnableMinimumPayment;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_currencyCode : return pkey;
+      case 1 : return fractionDigits;
+      case 2 : return autoEnableMinimumPayment;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	public String getCurrencyCode() {
-		return pkey;
-	}
+  public String getCurrencyCode() {
+    return pkey;
+  }
 
-	public java.util.Currency getCurrency() {
-		return autoEnableMinimumPayment.getCurrency();
-	}
+  public java.util.Currency getCurrency() {
+    return autoEnableMinimumPayment.getCurrency();
+  }
 
-	public short getFractionDigits() {
-		assert getCurrency().getDefaultFractionDigits() == fractionDigits;
-		return fractionDigits;
-	}
+  public short getFractionDigits() {
+    assert getCurrency().getDefaultFractionDigits() == fractionDigits;
+    return fractionDigits;
+  }
 
-	public Money getAutoEnableMinimumPayment() {
-		return autoEnableMinimumPayment;
-	}
+  public Money getAutoEnableMinimumPayment() {
+    return autoEnableMinimumPayment;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.Currency;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.Currency;
+  }
 
-	@Override
-	public void init(ResultSet results) throws SQLException {
-		pkey = results.getString("currencyCode");
-		fractionDigits = results.getShort("fractionDigits");
-		autoEnableMinimumPayment = new Money(
-			java.util.Currency.getInstance(pkey),
-			results.getBigDecimal("autoEnableMinimumPayment")
-		);
-	}
+  @Override
+  public void init(ResultSet results) throws SQLException {
+    pkey = results.getString("currencyCode");
+    fractionDigits = results.getShort("fractionDigits");
+    autoEnableMinimumPayment = new Money(
+      java.util.Currency.getInstance(pkey),
+      results.getBigDecimal("autoEnableMinimumPayment")
+    );
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey = in.readUTF().intern();
-		fractionDigits = in.readShort();
-		autoEnableMinimumPayment = new Money(
-			java.util.Currency.getInstance(pkey),
-			in.readLong(),
-			in.readCompressedInt()
-		);
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey = in.readUTF().intern();
+    fractionDigits = in.readShort();
+    autoEnableMinimumPayment = new Money(
+      java.util.Currency.getInstance(pkey),
+      in.readLong(),
+      in.readCompressedInt()
+    );
+  }
 
-	@Override
-	public String toStringImpl() {
-		return getCurrency().getDisplayName(ThreadLocale.get());
-	}
+  @Override
+  public String toStringImpl() {
+    return getCurrency().getDisplayName(ThreadLocale.get());
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey);
-		out.writeShort(fractionDigits);
-		out.writeLong(autoEnableMinimumPayment.getUnscaledValue());
-		out.writeCompressedInt(autoEnableMinimumPayment.getScale());
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey);
+    out.writeShort(fractionDigits);
+    out.writeLong(autoEnableMinimumPayment.getUnscaledValue());
+    out.writeCompressedInt(autoEnableMinimumPayment.getScale());
+  }
 }

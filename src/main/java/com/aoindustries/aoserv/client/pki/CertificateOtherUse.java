@@ -37,94 +37,96 @@ import java.sql.SQLException;
  */
 public final class CertificateOtherUse extends CachedObjectIntegerKey<CertificateOtherUse> {
 
-	static final int
-		COLUMN_PKEY = 0,
-		COLUMN_SSL_CERTIFICATE = 1
-	;
-	static final String COLUMN_SSL_CERTIFICATE_name = "ssl_certificate";
-	static final String COLUMN_SORT_ORDER_name = "sort_order";
+  static final int
+    COLUMN_PKEY = 0,
+    COLUMN_SSL_CERTIFICATE = 1
+  ;
+  static final String COLUMN_SSL_CERTIFICATE_name = "ssl_certificate";
+  static final String COLUMN_SORT_ORDER_name = "sort_order";
 
-	private int sslCertificate;
-	private short sortOrder;
-	private int count;
-	private String display;
+  private int sslCertificate;
+  private short sortOrder;
+  private int count;
+  private String display;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public CertificateOtherUse() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public CertificateOtherUse() {
+    // Do nothing
+  }
 
-	@Override
-	public String toStringImpl() {
-		return count + " " + display;
-	}
+  @Override
+  public String toStringImpl() {
+    return count + " " + display;
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_PKEY: return pkey;
-			case COLUMN_SSL_CERTIFICATE: return sslCertificate;
-			case 2: return sortOrder;
-			case 3: return count;
-			case 4: return display;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_PKEY: return pkey;
+      case COLUMN_SSL_CERTIFICATE: return sslCertificate;
+      case 2: return sortOrder;
+      case 3: return count;
+      case 4: return display;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.SSL_CERTIFICATE_OTHER_USES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.SSL_CERTIFICATE_OTHER_USES;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		int pos = 1;
-		pkey           = result.getInt(pos++);
-		sslCertificate = result.getInt(pos++);
-		sortOrder      = result.getShort(pos++);
-		count          = result.getInt(pos++);
-		display        = result.getString(pos++);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    int pos = 1;
+    pkey           = result.getInt(pos++);
+    sslCertificate = result.getInt(pos++);
+    sortOrder      = result.getShort(pos++);
+    count          = result.getInt(pos++);
+    display        = result.getString(pos++);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey           = in.readCompressedInt();
-		sslCertificate = in.readCompressedInt();
-		sortOrder      = in.readShort();
-		count          = in.readCompressedInt();
-		display        = in.readUTF();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey           = in.readCompressedInt();
+    sslCertificate = in.readCompressedInt();
+    sortOrder      = in.readShort();
+    count          = in.readCompressedInt();
+    display        = in.readUTF();
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeCompressedInt(sslCertificate);
-		out.writeShort(sortOrder);
-		out.writeCompressedInt(count);
-		out.writeUTF(display);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    out.writeCompressedInt(sslCertificate);
+    out.writeShort(sortOrder);
+    out.writeCompressedInt(count);
+    out.writeUTF(display);
+  }
 
-	public Certificate getSslCertificate() throws SQLException, IOException {
-		Certificate obj = table.getConnector().getPki().getCertificate().get(sslCertificate);
-		if(obj == null) throw new SQLException("Unable to find SslCertificate: " + sslCertificate);
-		return obj;
-	}
+  public Certificate getSslCertificate() throws SQLException, IOException {
+    Certificate obj = table.getConnector().getPki().getCertificate().get(sslCertificate);
+    if (obj == null) {
+      throw new SQLException("Unable to find SslCertificate: " + sslCertificate);
+    }
+    return obj;
+  }
 
-	public short getSortOrder() {
-		return sortOrder;
-	}
+  public short getSortOrder() {
+    return sortOrder;
+  }
 
-	public int getCount() {
-		return count;
-	}
+  public int getCount() {
+    return count;
+  }
 
-	public String getDisplay() {
-		return display;
-	}
+  public String getDisplay() {
+    return display;
+  }
 }

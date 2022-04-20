@@ -48,148 +48,148 @@ import java.util.Locale;
  */
 public final class AppProtocol extends GlobalObjectStringKey<AppProtocol> {
 
-	static final int COLUMN_PROTOCOL = 0;
-	static final String COLUMN_PORT_name = "port";
+  static final int COLUMN_PROTOCOL = 0;
+  static final String COLUMN_PORT_name = "port";
 
-	public static final String
-		AOSERV_DAEMON = "aoserv-daemon",
-		AOSERV_DAEMON_SSL = "aoserv-daemon-ssl",
-		AOSERV_MASTER = "aoserv-master",
-		AOSERV_MASTER_SSL = "aoserv-master-ssl",
-		AUTH = "auth",
-		CVSPSERVER = "cvspserver",
-		DNS = "DNS",
-		FTP = "FTP",
-		FTP_DATA = "FTP-DATA",
-		HTTP = "HTTP",
-		HTTPS = "HTTPS",
-		HYPERSONIC = "hypersonic",
-		IMAP2 = "IMAP2",
-		JMX = "JMX",
-		JNP = "JNP",
-		MEMCACHED = "memcached",
-		MILTER = "milter",
-		MYSQL = "MySQL",
-		NTALK = "ntalk",
-		POP3 = "POP3",
-		POSTGRESQL = "PostgreSQL",
-		REDIS = "redis",
-		REDIS_CLUSTER = "redis-cluster",
-		REDIS_SENTINEL = "redis-sentinel",
-		RFB = "RFB",
-		RMI = "RMI",
-		SIEVE = "sieve",
-		SIMAP = "SIMAP",
-		SPAMD = "spamd",
-		SPOP3 = "SPOP3",
-		SSH = "SSH",
-		SMTP = "SMTP",
-		SMTPS = "SMTPS",
-		SUBMISSION = "submission",
-		TALK = "talk",
-		TELNET = "Telnet",
-		TOMCAT4_SHUTDOWN = "tomcat4-shutdown",
-		WEBSERVER = "webserver"
-	;
+  public static final String
+    AOSERV_DAEMON = "aoserv-daemon",
+    AOSERV_DAEMON_SSL = "aoserv-daemon-ssl",
+    AOSERV_MASTER = "aoserv-master",
+    AOSERV_MASTER_SSL = "aoserv-master-ssl",
+    AUTH = "auth",
+    CVSPSERVER = "cvspserver",
+    DNS = "DNS",
+    FTP = "FTP",
+    FTP_DATA = "FTP-DATA",
+    HTTP = "HTTP",
+    HTTPS = "HTTPS",
+    HYPERSONIC = "hypersonic",
+    IMAP2 = "IMAP2",
+    JMX = "JMX",
+    JNP = "JNP",
+    MEMCACHED = "memcached",
+    MILTER = "milter",
+    MYSQL = "MySQL",
+    NTALK = "ntalk",
+    POP3 = "POP3",
+    POSTGRESQL = "PostgreSQL",
+    REDIS = "redis",
+    REDIS_CLUSTER = "redis-cluster",
+    REDIS_SENTINEL = "redis-sentinel",
+    RFB = "RFB",
+    RMI = "RMI",
+    SIEVE = "sieve",
+    SIMAP = "SIMAP",
+    SPAMD = "spamd",
+    SPOP3 = "SPOP3",
+    SSH = "SSH",
+    SMTP = "SMTP",
+    SMTPS = "SMTPS",
+    SUBMISSION = "submission",
+    TALK = "talk",
+    TELNET = "Telnet",
+    TOMCAT4_SHUTDOWN = "tomcat4-shutdown",
+    WEBSERVER = "webserver"
+  ;
 
-	private Port port;
-	private String name;
-	private boolean is_user_service;
+  private Port port;
+  private String name;
+  private boolean is_user_service;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public AppProtocol() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public AppProtocol() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_PROTOCOL: return pkey;
-			case 1: return port;
-			case 2: return name;
-			case 3: return is_user_service;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_PROTOCOL: return pkey;
+      case 1: return port;
+      case 2: return name;
+      case 3: return is_user_service;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	public JkProtocol getHttpdJKProtocol(AOServConnector connector) throws IOException, SQLException {
-		return connector.getWeb_tomcat().getJkProtocol().get(pkey);
-	}
+  public JkProtocol getHttpdJKProtocol(AOServConnector connector) throws IOException, SQLException {
+    return connector.getWeb_tomcat().getJkProtocol().get(pkey);
+  }
 
-	public String getName() {
-		return name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public boolean isUserService() {
-		return is_user_service;
-	}
+  public boolean isUserService() {
+    return is_user_service;
+  }
 
-	public Port getPort() {
-		return port;
-	}
+  public Port getPort() {
+    return port;
+  }
 
-	/**
-	 * Gets the unique name of the protocol.
-	 */
-	public String getProtocol() {
-		return pkey;
-	}
+  /**
+   * Gets the unique name of the protocol.
+   */
+  public String getProtocol() {
+    return pkey;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.PROTOCOLS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.PROTOCOLS;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		try {
-			pkey = result.getString(1);
-			int portNum = result.getInt(2);
-			name = result.getString(3);
-			is_user_service = result.getBoolean(4);
-			port = Port.valueOf(
-				portNum,
-				com.aoapps.net.Protocol.valueOf(result.getString(5).toUpperCase(Locale.ROOT))
-			);
-		} catch(ValidationException e) {
-			throw new SQLException(e);
-		}
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    try {
+      pkey = result.getString(1);
+      int portNum = result.getInt(2);
+      name = result.getString(3);
+      is_user_service = result.getBoolean(4);
+      port = Port.valueOf(
+        portNum,
+        com.aoapps.net.Protocol.valueOf(result.getString(5).toUpperCase(Locale.ROOT))
+      );
+    } catch (ValidationException e) {
+      throw new SQLException(e);
+    }
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		try {
-			pkey = in.readUTF().intern();
-			int portNum = in.readCompressedInt();
-			name = in.readUTF();
-			is_user_service = in.readBoolean();
-			port = Port.valueOf(
-				portNum,
-				in.readEnum(com.aoapps.net.Protocol.class)
-			);
-		} catch(ValidationException e) {
-			throw new IOException(e);
-		}
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    try {
+      pkey = in.readUTF().intern();
+      int portNum = in.readCompressedInt();
+      name = in.readUTF();
+      is_user_service = in.readBoolean();
+      port = Port.valueOf(
+        portNum,
+        in.readEnum(com.aoapps.net.Protocol.class)
+      );
+    } catch (ValidationException e) {
+      throw new IOException(e);
+    }
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey);
-		out.writeCompressedInt(port.getPort());
-		out.writeUTF(name);
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_105) >= 0) {
-			out.writeBoolean(is_user_service);
-			if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_80_0) < 0) {
-				out.writeUTF(port.getProtocol().name().toLowerCase(Locale.ROOT));
-			} else {
-				out.writeEnum(port.getProtocol());
-			}
-		}
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey);
+    out.writeCompressedInt(port.getPort());
+    out.writeUTF(name);
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_105) >= 0) {
+      out.writeBoolean(is_user_service);
+      if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_80_0) < 0) {
+        out.writeUTF(port.getProtocol().name().toLowerCase(Locale.ROOT));
+      } else {
+        out.writeEnum(port.getProtocol());
+      }
+    }
+  }
 }

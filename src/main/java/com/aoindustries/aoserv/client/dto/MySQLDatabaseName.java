@@ -28,21 +28,21 @@ package com.aoindustries.aoserv.client.dto;
  */
 public class MySQLDatabaseName {
 
-	private String name;
+  private String name;
 
-	public MySQLDatabaseName() {
-		// Do nothing
-	}
+  public MySQLDatabaseName() {
+    // Do nothing
+  }
 
-	public MySQLDatabaseName(String name) {
-		this.name = name;
-	}
+  public MySQLDatabaseName(String name) {
+    this.name = name;
+  }
 
-	public String getName() {
-		return name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 }

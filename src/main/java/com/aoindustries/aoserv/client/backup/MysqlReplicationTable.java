@@ -41,53 +41,53 @@ import java.util.List;
  */
 public final class MysqlReplicationTable extends CachedTableIntegerKey<MysqlReplication> {
 
-	MysqlReplicationTable(AOServConnector connector) {
-		super(connector, MysqlReplication.class);
-	}
+  MysqlReplicationTable(AOServConnector connector) {
+    super(connector, MysqlReplication.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(MysqlReplication.COLUMN_MYSQL_SERVER_name+'.'+Server.COLUMN_AO_SERVER_name+'.'+com.aoindustries.aoserv.client.linux.Server.COLUMN_HOSTNAME_name, ASCENDING),
-		new OrderBy(MysqlReplication.COLUMN_MYSQL_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(MysqlReplication.COLUMN_AO_SERVER_name, ASCENDING),
-		new OrderBy(MysqlReplication.COLUMN_REPLICATION_name, ASCENDING)
-	};
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(MysqlReplication.COLUMN_MYSQL_SERVER_name+'.'+Server.COLUMN_AO_SERVER_name+'.'+com.aoindustries.aoserv.client.linux.Server.COLUMN_HOSTNAME_name, ASCENDING),
+    new OrderBy(MysqlReplication.COLUMN_MYSQL_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(MysqlReplication.COLUMN_AO_SERVER_name, ASCENDING),
+    new OrderBy(MysqlReplication.COLUMN_REPLICATION_name, ASCENDING)
+  };
 
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public MysqlReplication get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(MysqlReplication.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public MysqlReplication get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(MysqlReplication.COLUMN_PKEY, pkey);
+  }
 
-	public List<MysqlReplication> getFailoverMySQLReplications(Package pk) throws IOException, SQLException {
-		List<MysqlReplication> matches = new ArrayList<>();
-		for(Bind nb : pk.getNetBinds()) {
-			Server ms = nb.getMySQLServer();
-			if(ms != null) {
-				matches.addAll(ms.getFailoverMySQLReplications());
-			}
-		}
-		return matches;
-	}
+  public List<MysqlReplication> getFailoverMySQLReplications(Package pk) throws IOException, SQLException {
+    List<MysqlReplication> matches = new ArrayList<>();
+    for (Bind nb : pk.getNetBinds()) {
+      Server ms = nb.getMySQLServer();
+      if (ms != null) {
+        matches.addAll(ms.getFailoverMySQLReplications());
+      }
+    }
+    return matches;
+  }
 
-	public List<MysqlReplication> getFailoverMySQLReplications(Server mysqlServer) throws IOException, SQLException {
-		return getIndexedRows(MysqlReplication.COLUMN_MYSQL_SERVER, mysqlServer.getPkey());
-	}
+  public List<MysqlReplication> getFailoverMySQLReplications(Server mysqlServer) throws IOException, SQLException {
+    return getIndexedRows(MysqlReplication.COLUMN_MYSQL_SERVER, mysqlServer.getPkey());
+  }
 
-	public List<MysqlReplication> getFailoverMySQLReplications(com.aoindustries.aoserv.client.linux.Server aoServer) throws IOException, SQLException {
-		return getIndexedRows(MysqlReplication.COLUMN_AO_SERVER, aoServer.getPkey());
-	}
+  public List<MysqlReplication> getFailoverMySQLReplications(com.aoindustries.aoserv.client.linux.Server aoServer) throws IOException, SQLException {
+    return getIndexedRows(MysqlReplication.COLUMN_AO_SERVER, aoServer.getPkey());
+  }
 
-	List<MysqlReplication> getFailoverMySQLReplications(FileReplication replication) throws IOException, SQLException {
-		return getIndexedRows(MysqlReplication.COLUMN_REPLICATION, replication.getPkey());
-	}
+  List<MysqlReplication> getFailoverMySQLReplications(FileReplication replication) throws IOException, SQLException {
+    return getIndexedRows(MysqlReplication.COLUMN_REPLICATION, replication.getPkey());
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.FAILOVER_MYSQL_REPLICATIONS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.FAILOVER_MYSQL_REPLICATIONS;
+  }
 }

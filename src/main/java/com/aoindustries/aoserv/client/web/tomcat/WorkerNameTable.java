@@ -36,26 +36,26 @@ import java.sql.SQLException;
  */
 public final class WorkerNameTable extends GlobalTableStringKey<WorkerName> {
 
-	WorkerNameTable(AOServConnector connector) {
-		super(connector, WorkerName.class);
-	}
+  WorkerNameTable(AOServConnector connector) {
+    super(connector, WorkerName.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(WorkerName.COLUMN_CODE_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(WorkerName.COLUMN_CODE_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public WorkerName get(String code) throws IOException, SQLException {
-		return getUniqueRow(WorkerName.COLUMN_CODE, code);
-	}
+  @Override
+  public WorkerName get(String code) throws IOException, SQLException {
+    return getUniqueRow(WorkerName.COLUMN_CODE, code);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.HTTPD_JK_CODES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.HTTPD_JK_CODES;
+  }
 }

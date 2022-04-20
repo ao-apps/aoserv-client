@@ -36,26 +36,26 @@ import java.sql.SQLException;
  */
 public final class UserTypeTable extends GlobalTableStringKey<UserType> {
 
-	UserTypeTable(AOServConnector connector) {
-		super(connector, UserType.class);
-	}
+  UserTypeTable(AOServConnector connector) {
+    super(connector, UserType.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(UserType.COLUMN_DESCRIPTION_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(UserType.COLUMN_DESCRIPTION_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public UserType get(String name) throws IOException, SQLException {
-		return getUniqueRow(UserType.COLUMN_NAME, name);
-	}
+  @Override
+  public UserType get(String name) throws IOException, SQLException {
+    return getUniqueRow(UserType.COLUMN_NAME, name);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.LINUX_ACCOUNT_TYPES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.LINUX_ACCOUNT_TYPES;
+  }
 }

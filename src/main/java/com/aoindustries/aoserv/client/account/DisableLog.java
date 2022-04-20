@@ -42,127 +42,139 @@ import java.sql.SQLException;
  */
 public final class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 
-	static final int COLUMN_PKEY=0;
-	static final String COLUMN_TIME_name = "time";
-	static final String COLUMN_ACCOUNTING_name = "accounting";
-	static final String COLUMN_PKEY_name = "pkey";
+  static final int COLUMN_PKEY=0;
+  static final String COLUMN_TIME_name = "time";
+  static final String COLUMN_ACCOUNTING_name = "accounting";
+  static final String COLUMN_PKEY_name = "pkey";
 
-	private UnmodifiableTimestamp time;
-	private Account.Name accounting;
-	private User.Name disabled_by;
-	private String disable_reason;
+  private UnmodifiableTimestamp time;
+  private Account.Name accounting;
+  private User.Name disabled_by;
+  private String disable_reason;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public DisableLog() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public DisableLog() {
+    // Do nothing
+  }
 
-	/**
-	 * Determines if the current <code>AOServConnector</code> can enable
-	 * things disabled by this <code>DisableLog</code>.
-	 */
-	public boolean canEnable() throws SQLException, IOException {
-		Administrator disabledBy=getDisabledBy();
-		return disabledBy!=null && table
-			.getConnector()
-			.getCurrentAdministrator()
-			.getUsername()
-			.getPackage()
-			.getAccount()
-			.isAccountOrParentOf(
-				disabledBy
-				.getUsername()
-				.getPackage()
-				.getAccount()
-			);
-	}
+  /**
+   * Determines if the current <code>AOServConnector</code> can enable
+   * things disabled by this <code>DisableLog</code>.
+   */
+  public boolean canEnable() throws SQLException, IOException {
+    Administrator disabledBy=getDisabledBy();
+    return disabledBy != null && table
+      .getConnector()
+      .getCurrentAdministrator()
+      .getUsername()
+      .getPackage()
+      .getAccount()
+      .isAccountOrParentOf(
+        disabledBy
+        .getUsername()
+        .getPackage()
+        .getAccount()
+      );
+  }
 
-	@Override
-	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
-	protected Object getColumnImpl(int i) {
-		if(i==COLUMN_PKEY) return pkey;
-		if(i==1) return time;
-		if(i==2) return accounting;
-		if(i==3) return disabled_by;
-		if(i==4) return disable_reason;
-		throw new IllegalArgumentException("Invalid index: " + i);
-	}
+  @Override
+  @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
+  protected Object getColumnImpl(int i) {
+    if (i == COLUMN_PKEY) {
+      return pkey;
+    }
+    if (i == 1) {
+      return time;
+    }
+    if (i == 2) {
+      return accounting;
+    }
+    if (i == 3) {
+      return disabled_by;
+    }
+    if (i == 4) {
+      return disable_reason;
+    }
+    throw new IllegalArgumentException("Invalid index: " + i);
+  }
 
-	public Account.Name getAccount_name() {
-		return accounting;
-	}
+  public Account.Name getAccount_name() {
+    return accounting;
+  }
 
-	public Account getAccount() throws SQLException, IOException {
-		Account obj = table.getConnector().getAccount().getAccount().get(accounting);
-		if(obj == null) throw new SQLException("Unable to find Account: " + accounting);
-		return obj;
-	}
+  public Account getAccount() throws SQLException, IOException {
+    Account obj = table.getConnector().getAccount().getAccount().get(accounting);
+    if (obj == null) {
+      throw new SQLException("Unable to find Account: " + accounting);
+    }
+    return obj;
+  }
 
-	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
-	public UnmodifiableTimestamp getTime() {
-		return time;
-	}
+  @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
+  public UnmodifiableTimestamp getTime() {
+    return time;
+  }
 
-	public User.Name getDisabledByUsername() {
-		return disabled_by;
-	}
+  public User.Name getDisabledByUsername() {
+    return disabled_by;
+  }
 
-	public Administrator getDisabledBy() throws IOException, SQLException {
-		// May be filtered
-		return table.getConnector().getAccount().getAdministrator().get(disabled_by);
-	}
+  public Administrator getDisabledBy() throws IOException, SQLException {
+    // May be filtered
+    return table.getConnector().getAccount().getAdministrator().get(disabled_by);
+  }
 
-	public String getDisableReason() {
-		return disable_reason;
-	}
+  public String getDisableReason() {
+    return disable_reason;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.DISABLE_LOG;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.DISABLE_LOG;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		try {
-			pkey=result.getInt(1);
-			time = UnmodifiableTimestamp.valueOf(result.getTimestamp(2));
-			accounting=Account.Name.valueOf(result.getString(3));
-			disabled_by = User.Name.valueOf(result.getString(4));
-			disable_reason=result.getString(5);
-		} catch(ValidationException e) {
-			throw new SQLException(e);
-		}
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    try {
+      pkey=result.getInt(1);
+      time = UnmodifiableTimestamp.valueOf(result.getTimestamp(2));
+      accounting=Account.Name.valueOf(result.getString(3));
+      disabled_by = User.Name.valueOf(result.getString(4));
+      disable_reason=result.getString(5);
+    } catch (ValidationException e) {
+      throw new SQLException(e);
+    }
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		try {
-			pkey=in.readCompressedInt();
-			time = SQLStreamables.readUnmodifiableTimestamp(in);
-			accounting=Account.Name.valueOf(in.readUTF()).intern();
-			disabled_by = User.Name.valueOf(in.readUTF()).intern();
-			disable_reason=in.readNullUTF();
-		} catch(ValidationException e) {
-			throw new IOException(e);
-		}
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    try {
+      pkey=in.readCompressedInt();
+      time = SQLStreamables.readUnmodifiableTimestamp(in);
+      accounting=Account.Name.valueOf(in.readUTF()).intern();
+      disabled_by = User.Name.valueOf(in.readUTF()).intern();
+      disable_reason=in.readNullUTF();
+    } catch (ValidationException e) {
+      throw new IOException(e);
+    }
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
-			out.writeLong(time.getTime());
-		} else {
-			SQLStreamables.writeTimestamp(time, out);
-		}
-		out.writeUTF(accounting.toString());
-		out.writeUTF(disabled_by.toString());
-		out.writeNullUTF(disable_reason);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+      out.writeLong(time.getTime());
+    } else {
+      SQLStreamables.writeTimestamp(time, out);
+    }
+    out.writeUTF(accounting.toString());
+    out.writeUTF(disabled_by.toString());
+    out.writeNullUTF(disable_reason);
+  }
 }

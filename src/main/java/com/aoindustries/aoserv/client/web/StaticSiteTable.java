@@ -37,27 +37,27 @@ import java.sql.SQLException;
  */
 public final class StaticSiteTable extends CachedTableIntegerKey<StaticSite> {
 
-	StaticSiteTable(AOServConnector connector) {
-		super(connector, StaticSite.class);
-	}
+  StaticSiteTable(AOServConnector connector) {
+    super(connector, StaticSite.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(StaticSite.COLUMN_HTTPD_SITE_name+'.'+Site.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(StaticSite.COLUMN_HTTPD_SITE_name+'.'+Site.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(StaticSite.COLUMN_HTTPD_SITE_name+'.'+Site.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(StaticSite.COLUMN_HTTPD_SITE_name+'.'+Site.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public StaticSite get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(StaticSite.COLUMN_HTTPD_SITE, pkey);
-	}
+  @Override
+  public StaticSite get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(StaticSite.COLUMN_HTTPD_SITE, pkey);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.HTTPD_STATIC_SITES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.HTTPD_STATIC_SITES;
+  }
 }

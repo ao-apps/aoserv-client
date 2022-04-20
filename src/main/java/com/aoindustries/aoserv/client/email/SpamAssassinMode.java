@@ -43,76 +43,76 @@ import java.sql.SQLException;
  */
 public final class SpamAssassinMode extends GlobalObjectStringKey<SpamAssassinMode> {
 
-	static final int COLUMN_NAME=0;
-	static final String COLUMN_SORT_ORDER_name = "sort_order";
+  static final int COLUMN_NAME=0;
+  static final String COLUMN_SORT_ORDER_name = "sort_order";
 
-	public static final String
-		NONE="none",
-		POP3="pop3",
-		IMAP="imap"
-	;
+  public static final String
+    NONE="none",
+    POP3="pop3",
+    IMAP="imap"
+  ;
 
-	public static final String DEFAULT_SPAMASSASSIN_INTEGRATION_MODE = NONE;
+  public static final String DEFAULT_SPAMASSASSIN_INTEGRATION_MODE = NONE;
 
-	private String display;
-	private int sort_order;
+  private String display;
+  private int sort_order;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public SpamAssassinMode() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public SpamAssassinMode() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_NAME: return pkey;
-			case 1: return display;
-			case 2: return sort_order;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_NAME: return pkey;
+      case 1: return display;
+      case 2: return sort_order;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	public String getName() {
-		return pkey;
-	}
+  public String getName() {
+    return pkey;
+  }
 
-	public String getDisplay() {
-		return display;
-	}
+  public String getDisplay() {
+    return display;
+  }
 
-	public int getSortOrder() {
-		return sort_order;
-	}
+  public int getSortOrder() {
+    return sort_order;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.EMAIL_SPAMASSASSIN_INTEGRATION_MODES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.EMAIL_SPAMASSASSIN_INTEGRATION_MODES;
+  }
 
-	@Override
-	public void init(ResultSet results) throws SQLException {
-		pkey=results.getString(1);
-		display=results.getString(2);
-		sort_order=results.getInt(3);
-	}
+  @Override
+  public void init(ResultSet results) throws SQLException {
+    pkey=results.getString(1);
+    display=results.getString(2);
+    sort_order=results.getInt(3);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readUTF().intern();
-		display=in.readUTF();
-		sort_order=in.readCompressedInt();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readUTF().intern();
+    display=in.readUTF();
+    sort_order=in.readCompressedInt();
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey);
-		out.writeUTF(display);
-		out.writeCompressedInt(sort_order);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey);
+    out.writeUTF(display);
+    out.writeCompressedInt(sort_order);
+  }
 }

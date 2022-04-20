@@ -36,26 +36,26 @@ import java.sql.SQLException;
  */
 public final class BankTable extends CachedTableStringKey<Bank> {
 
-	BankTable(AOServConnector connector) {
-		super(connector, Bank.class);
-	}
+  BankTable(AOServConnector connector) {
+    super(connector, Bank.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(Bank.COLUMN_NAME_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(Bank.COLUMN_NAME_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public Bank get(String name) throws IOException, SQLException {
-		return getUniqueRow(Bank.COLUMN_NAME, name);
-	}
+  @Override
+  public Bank get(String name) throws IOException, SQLException {
+    return getUniqueRow(Bank.COLUMN_NAME, name);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.BANKS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.BANKS;
+  }
 }

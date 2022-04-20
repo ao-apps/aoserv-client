@@ -39,82 +39,86 @@ import java.sql.SQLException;
  */
 public final class DistroReportType extends GlobalObjectStringKey<DistroReportType> {
 
-	static final int COLUMN_NAME=0;
-	static final String COLUMN_NAME_name = "name";
+  static final int COLUMN_NAME=0;
+  static final String COLUMN_NAME_name = "name";
 
-	private String display;
+  private String display;
 
-	/**
-	 * The different report types.
-	 */
-	public static final String
-		BIG_DIRECTORY  = "BD",
-		DIGEST         = "DI",
-		EXTRA          = "EX",
-		GROUP_MISMATCH = "GR",
-		HIDDEN         = "HI",
-		LENGTH         = "LN",
-		MISSING        = "MI",
-		OWNER_MISMATCH = "OW",
-		NO_OWNER       = "NO",
-		NO_GROUP       = "NG",
-		PERMISSIONS    = "PR",
-		SETUID         = "SU",
-		SYMLINK        = "SY",
-		TYPE           = "TY"
-	;
+  /**
+   * The different report types.
+   */
+  public static final String
+    BIG_DIRECTORY  = "BD",
+    DIGEST         = "DI",
+    EXTRA          = "EX",
+    GROUP_MISMATCH = "GR",
+    HIDDEN         = "HI",
+    LENGTH         = "LN",
+    MISSING        = "MI",
+    OWNER_MISMATCH = "OW",
+    NO_OWNER       = "NO",
+    NO_GROUP       = "NG",
+    PERMISSIONS    = "PR",
+    SETUID         = "SU",
+    SYMLINK        = "SY",
+    TYPE           = "TY"
+  ;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public DistroReportType() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public DistroReportType() {
+    // Do nothing
+  }
 
-	@Override
-	public String toStringImpl() {
-		return display;
-	}
+  @Override
+  public String toStringImpl() {
+    return display;
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		if(i==COLUMN_NAME) return pkey;
-		if(i==1) return display;
-		throw new IllegalArgumentException("Invalid index: " + i);
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    if (i == COLUMN_NAME) {
+      return pkey;
+    }
+    if (i == 1) {
+      return display;
+    }
+    throw new IllegalArgumentException("Invalid index: " + i);
+  }
 
-	public String getDisplay() {
-		return display;
-	}
+  public String getDisplay() {
+    return display;
+  }
 
-	public String getName() {
-		return pkey;
-	}
+  public String getName() {
+    return pkey;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.DISTRO_REPORT_TYPES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.DISTRO_REPORT_TYPES;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey = result.getString(1);
-		display = result.getString(2);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey = result.getString(1);
+    display = result.getString(2);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readUTF().intern();
-		display=in.readUTF();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readUTF().intern();
+    display=in.readUTF();
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey);
-		out.writeUTF(display);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey);
+    out.writeUTF(display);
+  }
 }

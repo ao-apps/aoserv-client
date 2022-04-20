@@ -42,83 +42,85 @@ import java.sql.SQLException;
  */
 public final class NoticeLogBalance extends CachedObjectIntegerKey<NoticeLogBalance> {
 
-	static final int
-		COLUMN_id = 0,
-		COLUMN_noticeLog = 1
-	;
-	static final String COLUMN_noticeLog_name = "noticeLog";
-	static final String COLUMN_balance_name = "balance";
+  static final int
+    COLUMN_id = 0,
+    COLUMN_noticeLog = 1
+  ;
+  static final String COLUMN_noticeLog_name = "noticeLog";
+  static final String COLUMN_balance_name = "balance";
 
-	private int noticeLog;
-	private Money balance;
+  private int noticeLog;
+  private Money balance;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public NoticeLogBalance() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public NoticeLogBalance() {
+    // Do nothing
+  }
 
-	public int getId() {
-		return pkey;
-	}
+  public int getId() {
+    return pkey;
+  }
 
-	public int getNoticeLog_id() {
-		return noticeLog;
-	}
+  public int getNoticeLog_id() {
+    return noticeLog;
+  }
 
-	public NoticeLog getNoticeLog() throws SQLException, IOException {
-		NoticeLog obj = table.getConnector().getBilling().getNoticeLog().get(noticeLog);
-		if(obj == null) throw new SQLException("Unable to find NoticeLog: " + noticeLog);
-		return obj;
-	}
+  public NoticeLog getNoticeLog() throws SQLException, IOException {
+    NoticeLog obj = table.getConnector().getBilling().getNoticeLog().get(noticeLog);
+    if (obj == null) {
+      throw new SQLException("Unable to find NoticeLog: " + noticeLog);
+    }
+    return obj;
+  }
 
-	public Money getBalance() {
-		return balance;
-	}
+  public Money getBalance() {
+    return balance;
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_id : return pkey;
-			case COLUMN_noticeLog : return noticeLog;
-			case 2: return balance;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_id : return pkey;
+      case COLUMN_noticeLog : return noticeLog;
+      case 2: return balance;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.NoticeLogBalance;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.NoticeLogBalance;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey = result.getInt("id");
-		noticeLog = result.getInt("noticeLog");
-		balance = MoneyUtil.getMoney(result, "balance.currency", "balance.value");
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey = result.getInt("id");
+    noticeLog = result.getInt("noticeLog");
+    balance = MoneyUtil.getMoney(result, "balance.currency", "balance.value");
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey = in.readCompressedInt();
-		noticeLog = in.readCompressedInt();
-		balance = MoneyUtil.readMoney(in);
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey = in.readCompressedInt();
+    noticeLog = in.readCompressedInt();
+    balance = MoneyUtil.readMoney(in);
+  }
 
-	@Override
-	public String toStringImpl() throws SQLException, IOException {
-		return getNoticeLog().toStringImpl() + "->" + balance;
-	}
+  @Override
+  public String toStringImpl() throws SQLException, IOException {
+    return getNoticeLog().toStringImpl() + "->" + balance;
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeCompressedInt(noticeLog);
-		MoneyUtil.writeMoney(balance, out);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    out.writeCompressedInt(noticeLog);
+    MoneyUtil.writeMoney(balance, out);
+  }
 }

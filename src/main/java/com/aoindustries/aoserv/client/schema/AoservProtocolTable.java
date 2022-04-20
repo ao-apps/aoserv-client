@@ -35,26 +35,26 @@ import java.sql.SQLException;
  */
 public final class AoservProtocolTable extends GlobalTableStringKey<AoservProtocol> {
 
-	AoservProtocolTable(AOServConnector connector) {
-		super(connector, AoservProtocol.class);
-	}
+  AoservProtocolTable(AOServConnector connector) {
+    super(connector, AoservProtocol.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(AoservProtocol.COLUMN_CREATED_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(AoservProtocol.COLUMN_CREATED_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public AoservProtocol get(String version) throws IOException, SQLException {
-		return getUniqueRow(AoservProtocol.COLUMN_VERSION, version);
-	}
+  @Override
+  public AoservProtocol get(String version) throws IOException, SQLException {
+    return getUniqueRow(AoservProtocol.COLUMN_VERSION, version);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.AOSERV_PROTOCOLS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.AOSERV_PROTOCOLS;
+  }
 }

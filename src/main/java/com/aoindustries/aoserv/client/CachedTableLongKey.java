@@ -33,30 +33,35 @@ import java.sql.SQLException;
  */
 public abstract class CachedTableLongKey<V extends CachedObjectLongKey<V>> extends CachedTable<Long, V> {
 
-	protected CachedTableLongKey(AOServConnector connector, Class<V> clazz) {
-		super(connector, clazz);
-	}
+  protected CachedTableLongKey(AOServConnector connector, Class<V> clazz) {
+    super(connector, clazz);
+  }
 
-	/**
-	 * Gets the object with the provided key.  The key must be either a Long or a String.
-	 * If a String, will be parsed to a long.
-	 *
-	 * @exception IllegalArgumentException if pkey is neither a Long nor a String.
-	 * @exception NumberFormatException if String cannot be parsed to a Long
-	 *
-	 * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
-	 */
-	@Deprecated
-	@Override
-	public V get(Object pkey) throws IOException, SQLException, IllegalArgumentException, NumberFormatException {
-		if(pkey == null) return null;
-		if(pkey instanceof Long) return get(((Long)pkey).longValue());
-		else if(pkey instanceof String) return get(Long.parseLong((String)pkey));
-		else throw new IllegalArgumentException("pkey is neither a Long nor a String: "+pkey);
-	}
+  /**
+   * Gets the object with the provided key.  The key must be either a Long or a String.
+   * If a String, will be parsed to a long.
+   *
+   * @exception IllegalArgumentException if pkey is neither a Long nor a String.
+   * @exception NumberFormatException if String cannot be parsed to a Long
+   *
+   * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
+   */
+  @Deprecated
+  @Override
+  public V get(Object pkey) throws IOException, SQLException, IllegalArgumentException, NumberFormatException {
+    if (pkey == null) {
+      return null;
+    } else if (pkey instanceof Long) {
+      return get(((Long)pkey).longValue());
+    } else if (pkey instanceof String) {
+      return get(Long.parseLong((String)pkey));
+    } else {
+      throw new IllegalArgumentException("pkey is neither a Long nor a String: "+pkey);
+    }
+  }
 
-	/**
-	 * @see  #get(java.lang.Object)
-	 */
-	public abstract V get(long pkey) throws IOException, SQLException;
+  /**
+   * @see  #get(java.lang.Object)
+   */
+  public abstract V get(long pkey) throws IOException, SQLException;
 }

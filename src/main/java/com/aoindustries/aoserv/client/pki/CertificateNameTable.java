@@ -39,54 +39,58 @@ import java.util.List;
  */
 public final class CertificateNameTable extends CachedTableIntegerKey<CertificateName> {
 
-	CertificateNameTable(AOServConnector connector) {
-		super(connector, CertificateName.class);
-	}
+  CertificateNameTable(AOServConnector connector) {
+    super(connector, CertificateName.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(CertificateName.COLUMN_SSL_CERTIFICATE_name+'.'+Certificate.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
-		new OrderBy(CertificateName.COLUMN_SSL_CERTIFICATE_name+'.'+Certificate.COLUMN_CERT_FILE_name, ASCENDING),
-		new OrderBy(CertificateName.COLUMN_IS_COMMON_NAME_name, DESCENDING),
-		new OrderBy(CertificateName.COLUMN_DOMAIN_name, ASCENDING),
-		new OrderBy(CertificateName.COLUMN_IS_WILDCARD_name, DESCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(CertificateName.COLUMN_SSL_CERTIFICATE_name+'.'+Certificate.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
+    new OrderBy(CertificateName.COLUMN_SSL_CERTIFICATE_name+'.'+Certificate.COLUMN_CERT_FILE_name, ASCENDING),
+    new OrderBy(CertificateName.COLUMN_IS_COMMON_NAME_name, DESCENDING),
+    new OrderBy(CertificateName.COLUMN_DOMAIN_name, ASCENDING),
+    new OrderBy(CertificateName.COLUMN_IS_WILDCARD_name, DESCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public CertificateName get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(CertificateName.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public CertificateName get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(CertificateName.COLUMN_PKEY, pkey);
+  }
 
-	List<CertificateName> getNames(Certificate sslCert) throws IOException, SQLException {
-		return getIndexedRows(CertificateName.COLUMN_SSL_CERTIFICATE, sslCert.getPkey());
-	}
+  List<CertificateName> getNames(Certificate sslCert) throws IOException, SQLException {
+    return getIndexedRows(CertificateName.COLUMN_SSL_CERTIFICATE, sslCert.getPkey());
+  }
 
-	CertificateName getCommonName(Certificate sslCert) throws SQLException, IOException {
-		// Use the index first
-		for(CertificateName name : getNames(sslCert)) {
-			if(name.isCommon()) return name;
-		}
-		throw new SQLException("Unable to find Common Name (CN) for SslCertificate with pkey = " + sslCert.getPkey());
-	}
+  CertificateName getCommonName(Certificate sslCert) throws SQLException, IOException {
+    // Use the index first
+    for (CertificateName name : getNames(sslCert)) {
+      if (name.isCommon()) {
+        return name;
+      }
+    }
+    throw new SQLException("Unable to find Common Name (CN) for SslCertificate with pkey = " + sslCert.getPkey());
+  }
 
-	List<CertificateName> getAltNames(Certificate sslCert) throws IOException, SQLException {
-		// Use the index first
-		List<CertificateName> cached = getNames(sslCert);
-		int size = cached.size();
-		List<CertificateName> matches = new ArrayList<>(size - 1);
-		for(int c = 0; c < size; c++) {
-			CertificateName name = cached.get(c);
-			if(!name.isCommon()) matches.add(name);
-		}
-		return matches;
-	}
+  List<CertificateName> getAltNames(Certificate sslCert) throws IOException, SQLException {
+    // Use the index first
+    List<CertificateName> cached = getNames(sslCert);
+    int size = cached.size();
+    List<CertificateName> matches = new ArrayList<>(size - 1);
+    for (int c = 0; c < size; c++) {
+      CertificateName name = cached.get(c);
+      if (!name.isCommon()) {
+        matches.add(name);
+      }
+    }
+    return matches;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.SSL_CERTIFICATE_NAMES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.SSL_CERTIFICATE_NAMES;
+  }
 }

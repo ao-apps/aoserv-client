@@ -36,26 +36,26 @@ import java.sql.SQLException;
  */
 public final class UsStateTable extends GlobalTableStringKey<UsState> {
 
-	UsStateTable(AOServConnector connector) {
-		super(connector, UsState.class);
-	}
+  UsStateTable(AOServConnector connector) {
+    super(connector, UsState.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(UsState.COLUMN_NAME_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(UsState.COLUMN_NAME_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.US_STATES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.US_STATES;
+  }
 
-	@Override
-	public UsState get(String code) throws IOException, SQLException {
-		return getUniqueRow(UsState.COLUMN_CODE, code);
-	}
+  @Override
+  public UsState get(String code) throws IOException, SQLException {
+    return getUniqueRow(UsState.COLUMN_CODE, code);
+  }
 }

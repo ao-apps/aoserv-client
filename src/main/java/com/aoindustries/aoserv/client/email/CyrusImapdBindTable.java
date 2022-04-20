@@ -43,38 +43,38 @@ import java.util.List;
  */
 public final class CyrusImapdBindTable extends CachedTableIntegerKey<CyrusImapdBind> {
 
-	CyrusImapdBindTable(AOServConnector connector) {
-		super(connector, CyrusImapdBind.class);
-	}
+  CyrusImapdBindTable(AOServConnector connector) {
+    super(connector, CyrusImapdBind.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(CyrusImapdBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(CyrusImapdBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(CyrusImapdBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_IP_ADDRESS_name+'.'+IpAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
-		new OrderBy(CyrusImapdBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_IP_ADDRESS_name+'.'+IpAddress.COLUMN_DEVICE_name+'.'+Device.COLUMN_DEVICE_ID_name, ASCENDING),
-		new OrderBy(CyrusImapdBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_PORT_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(CyrusImapdBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(CyrusImapdBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(CyrusImapdBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_IP_ADDRESS_name+'.'+IpAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
+    new OrderBy(CyrusImapdBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_IP_ADDRESS_name+'.'+IpAddress.COLUMN_DEVICE_name+'.'+Device.COLUMN_DEVICE_ID_name, ASCENDING),
+    new OrderBy(CyrusImapdBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_PORT_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	List<CyrusImapdBind> getCyrusImapdBinds(CyrusImapdServer server) throws IOException, SQLException {
-		return getIndexedRows(CyrusImapdBind.COLUMN_CYRUS_IMAPD_SERVER, server.getPkey());
-	}
+  List<CyrusImapdBind> getCyrusImapdBinds(CyrusImapdServer server) throws IOException, SQLException {
+    return getIndexedRows(CyrusImapdBind.COLUMN_CYRUS_IMAPD_SERVER, server.getPkey());
+  }
 
-	@Override
-	public CyrusImapdBind get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(CyrusImapdBind.COLUMN_NET_BIND, pkey);
-	}
+  @Override
+  public CyrusImapdBind get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(CyrusImapdBind.COLUMN_NET_BIND, pkey);
+  }
 
-	public List<CyrusImapdBind> getCyrusImapdBinds(Certificate sslCert) throws IOException, SQLException {
-		return getIndexedRows(CyrusImapdBind.COLUMN_SSL_CERTIFICATE, sslCert.getPkey());
-	}
+  public List<CyrusImapdBind> getCyrusImapdBinds(Certificate sslCert) throws IOException, SQLException {
+    return getIndexedRows(CyrusImapdBind.COLUMN_SSL_CERTIFICATE, sslCert.getPkey());
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.CYRUS_IMAPD_BINDS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.CYRUS_IMAPD_BINDS;
+  }
 }

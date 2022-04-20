@@ -43,69 +43,71 @@ import java.util.ResourceBundle;
  */
 public final class TicketType extends GlobalObjectStringKey<TicketType> {
 
-	private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, TicketType.class);
+  private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, TicketType.class);
 
-	static final int COLUMN_TYPE=0;
-	static final String COLUMN_TYPE_name = "type";
+  static final int COLUMN_TYPE=0;
+  static final String COLUMN_TYPE_name = "type";
 
-	/**
-	 * The types of <code>Ticket</code>s.
-	 */
-	public static final String
-		CONTACT="contact",
-		LOGS="logs",
-		SUPPORT="support",
-		PROJECTS="projects",
-		INTERNAL="internal"
-	;
+  /**
+   * The types of <code>Ticket</code>s.
+   */
+  public static final String
+    CONTACT="contact",
+    LOGS="logs",
+    SUPPORT="support",
+    PROJECTS="projects",
+    INTERNAL="internal"
+  ;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public TicketType() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public TicketType() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		if(i==COLUMN_TYPE) return pkey;
-		throw new IllegalArgumentException("Invalid index: " + i);
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    if (i == COLUMN_TYPE) {
+      return pkey;
+    }
+    throw new IllegalArgumentException("Invalid index: " + i);
+  }
 
-	@Override
-	public String toStringImpl() {
-		return RESOURCES.getMessage(pkey + ".toString");
-	}
+  @Override
+  public String toStringImpl() {
+    return RESOURCES.getMessage(pkey + ".toString");
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.TICKET_TYPES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.TICKET_TYPES;
+  }
 
-	public String getType() {
-		return pkey;
-	}
+  public String getType() {
+    return pkey;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey = result.getString(1);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey = result.getString(1);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readUTF().intern();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readUTF().intern();
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey);
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43)<=0) {
-			out.writeUTF(pkey); // description
-			out.writeBoolean(false); // client_view
-		}
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey);
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43) <= 0) {
+      out.writeUTF(pkey); // description
+      out.writeBoolean(false); // client_view
+    }
+  }
 }

@@ -42,77 +42,81 @@ import java.sql.SQLException;
  */
 public final class DeviceId extends GlobalObjectStringKey<DeviceId> implements Comparable<DeviceId> {
 
-	static final int COLUMN_NAME=0;
-	static final String COLUMN_NAME_name = "name";
+  static final int COLUMN_NAME=0;
+  static final String COLUMN_NAME_name = "name";
 
-	public static final String
-		BMC="bmc",
-		BOND0="bond0",
-		BOND1="bond1",
-		BOND2="bond2",
-		LO="lo",
-		ETH0="eth0",
-		ETH1="eth1",
-		ETH2="eth2",
-		ETH3="eth3",
-		ETH4="eth4",
-		ETH5="eth5",
-		ETH6="eth6"
-	;
+  public static final String
+    BMC="bmc",
+    BOND0="bond0",
+    BOND1="bond1",
+    BOND2="bond2",
+    LO="lo",
+    ETH0="eth0",
+    ETH1="eth1",
+    ETH2="eth2",
+    ETH3="eth3",
+    ETH4="eth4",
+    ETH5="eth5",
+    ETH6="eth6"
+  ;
 
-	private boolean is_loopback;
+  private boolean is_loopback;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public DeviceId() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public DeviceId() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		if(i==COLUMN_NAME) return pkey;
-		if(i==1) return is_loopback;
-		throw new IllegalArgumentException("Invalid index: " + i);
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    if (i == COLUMN_NAME) {
+      return pkey;
+    }
+    if (i == 1) {
+      return is_loopback;
+    }
+    throw new IllegalArgumentException("Invalid index: " + i);
+  }
 
-	public String getName() {
-		return pkey;
-	}
+  public String getName() {
+    return pkey;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.NET_DEVICE_IDS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.NET_DEVICE_IDS;
+  }
 
-	@Override
-	public void init(ResultSet results) throws SQLException {
-		pkey=results.getString(1);
-		is_loopback=results.getBoolean(2);
-	}
+  @Override
+  public void init(ResultSet results) throws SQLException {
+    pkey=results.getString(1);
+    is_loopback=results.getBoolean(2);
+  }
 
-	public boolean isLoopback() {
-		return is_loopback;
-	}
+  public boolean isLoopback() {
+    return is_loopback;
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readUTF().intern();
-		is_loopback=in.readBoolean();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readUTF().intern();
+    is_loopback=in.readBoolean();
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey);
-		out.writeBoolean(is_loopback);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey);
+    out.writeBoolean(is_loopback);
+  }
 
-	@Override
-	public int compareTo(DeviceId other) {
-		return pkey.compareTo(other.getName());
-	}
+  @Override
+  public int compareTo(DeviceId other) {
+    return pkey.compareTo(other.getName());
+  }
 }

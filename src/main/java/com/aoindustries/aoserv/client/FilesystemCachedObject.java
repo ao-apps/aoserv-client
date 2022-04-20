@@ -38,41 +38,45 @@ import java.io.IOException;
 // TODO: Is this worth maintaining?
 public abstract class FilesystemCachedObject<K, T extends FilesystemCachedObject<K, T>> extends AOServObject<K, T> implements SingleTableObject<K, T>, FileListObject {
 
-	protected AOServTable<K, T> table;
+  protected AOServTable<K, T> table;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	protected FilesystemCachedObject() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  protected FilesystemCachedObject() {
+    // Do nothing
+  }
 
-	/*
-	public FileListObject createInstance() throws IOException {
-		T fco=table.getNewObject();
-		if(table!=null) fco.setTable(table);
-		return fco;
-	}
-	 */
+  /*
+  public FileListObject createInstance() throws IOException {
+    T fco=table.getNewObject();
+    if (table != null) {
+      fco.setTable(table);
+    }
+    return fco;
+  }
+   */
 
-	@Override
-	public final AOServTable<K, T> getTable() {
-		return table;
-	}
+  @Override
+  public final AOServTable<K, T> getTable() {
+    return table;
+  }
 
-	@Override
-	public final void setTable(AOServTable<K, T> table) {
-		if(this.table!=null) throw new IllegalStateException("table already set");
-		this.table=table;
-	}
+  @Override
+  public final void setTable(AOServTable<K, T> table) {
+    if (this.table != null) {
+      throw new IllegalStateException("table already set");
+    }
+    this.table=table;
+  }
 
-	@Override
-	public abstract void writeRecord(DataOutputStream out) throws IOException;
+  @Override
+  public abstract void writeRecord(DataOutputStream out) throws IOException;
 
-	@Override
-	public abstract void readRecord(DataInputStream in) throws IOException;
+  @Override
+  public abstract void readRecord(DataInputStream in) throws IOException;
 }

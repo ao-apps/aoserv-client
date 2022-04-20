@@ -47,120 +47,124 @@ import java.sql.SQLException;
  */
 public final class SpamMessage extends AOServObject<Integer, SpamMessage> implements SingleTableObject<Integer, SpamMessage> {
 
-	static final int
-		COLUMN_PKEY=0,
-		COLUMN_EMAIL_RELAY=1
-	;
-	static final String COLUMN_PKEY_name = "pkey";
+  static final int
+    COLUMN_PKEY=0,
+    COLUMN_EMAIL_RELAY=1
+  ;
+  static final String COLUMN_PKEY_name = "pkey";
 
-	private AOServTable<Integer, SpamMessage> table;
+  private AOServTable<Integer, SpamMessage> table;
 
-	private int pkey;
-	private int email_relay;
-	private UnmodifiableTimestamp time;
-	private String message;
+  private int pkey;
+  private int email_relay;
+  private UnmodifiableTimestamp time;
+  private String message;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public SpamMessage() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public SpamMessage() {
+    // Do nothing
+  }
 
-	@Override
-	public boolean equals(Object obj) {
-		return
-			(obj instanceof SpamMessage)
-			&& ((SpamMessage)obj).getPkey() == pkey
-		;
-	}
+  @Override
+  public boolean equals(Object obj) {
+    return
+      (obj instanceof SpamMessage)
+      && ((SpamMessage)obj).getPkey() == pkey
+    ;
+  }
 
-	public int getPkey() {
-		return pkey;
-	}
+  public int getPkey() {
+    return pkey;
+  }
 
-	public SmtpRelay getEmailSmtpRelay() throws SQLException, IOException {
-		SmtpRelay er=table.getConnector().getEmail().getSmtpRelay().get(email_relay);
-		if(er==null) throw new SQLException("Unable to find EmailSmtpRelay: "+email_relay);
-		return er;
-	}
+  public SmtpRelay getEmailSmtpRelay() throws SQLException, IOException {
+    SmtpRelay er=table.getConnector().getEmail().getSmtpRelay().get(email_relay);
+    if (er == null) {
+      throw new SQLException("Unable to find EmailSmtpRelay: "+email_relay);
+    }
+    return er;
+  }
 
-	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
-	public UnmodifiableTimestamp getTime() {
-		return time;
-	}
+  @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
+  public UnmodifiableTimestamp getTime() {
+    return time;
+  }
 
-	public String getMessage() {
-		return message;
-	}
+  public String getMessage() {
+    return message;
+  }
 
-	@Override
-	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_PKEY: return pkey;
-			case 1: return email_relay;
-			case 2: return time;
-			case 3: return message;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_PKEY: return pkey;
+      case 1: return email_relay;
+      case 2: return time;
+      case 3: return message;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	@Override
-	public Integer getKey() {
-		return pkey;
-	}
+  @Override
+  public Integer getKey() {
+    return pkey;
+  }
 
-	@Override
-	public AOServTable<Integer, SpamMessage> getTable() {
-		return table;
-	}
+  @Override
+  public AOServTable<Integer, SpamMessage> getTable() {
+    return table;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.SPAM_EMAIL_MESSAGES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.SPAM_EMAIL_MESSAGES;
+  }
 
-	@Override
-	public int hashCode() {
-		return pkey;
-	}
+  @Override
+  public int hashCode() {
+    return pkey;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey=result.getInt(1);
-		email_relay=result.getInt(2);
-		time = UnmodifiableTimestamp.valueOf(result.getTimestamp(3));
-		message=result.getString(4);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey=result.getInt(1);
+    email_relay=result.getInt(2);
+    time = UnmodifiableTimestamp.valueOf(result.getTimestamp(3));
+    message=result.getString(4);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey = in.readCompressedInt();
-		email_relay = in.readCompressedInt();
-		time = SQLStreamables.readUnmodifiableTimestamp(in);
-		message = in.readUTF();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey = in.readCompressedInt();
+    email_relay = in.readCompressedInt();
+    time = SQLStreamables.readUnmodifiableTimestamp(in);
+    message = in.readUTF();
+  }
 
-	@Override
-	public void setTable(AOServTable<Integer, SpamMessage> table) {
-		if(this.table!=null) throw new IllegalStateException("table already set");
-		this.table=table;
-	}
+  @Override
+  public void setTable(AOServTable<Integer, SpamMessage> table) {
+    if (this.table != null) {
+      throw new IllegalStateException("table already set");
+    }
+    this.table=table;
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeCompressedInt(email_relay);
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
-			out.writeLong(time.getTime());
-		} else {
-			SQLStreamables.writeTimestamp(time, out);
-		}
-		out.writeUTF(message);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    out.writeCompressedInt(email_relay);
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+      out.writeLong(time.getTime());
+    } else {
+      SQLStreamables.writeTimestamp(time, out);
+    }
+    out.writeUTF(message);
+  }
 }

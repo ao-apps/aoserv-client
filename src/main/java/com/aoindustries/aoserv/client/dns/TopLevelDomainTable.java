@@ -37,26 +37,26 @@ import java.sql.SQLException;
  */
 public final class TopLevelDomainTable extends GlobalTableDomainNameKey<TopLevelDomain> {
 
-	TopLevelDomainTable(AOServConnector connector) {
-		super(connector, TopLevelDomain.class);
-	}
+  TopLevelDomainTable(AOServConnector connector) {
+    super(connector, TopLevelDomain.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(TopLevelDomain.COLUMN_DOMAIN_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(TopLevelDomain.COLUMN_DOMAIN_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public TopLevelDomain get(DomainName domain) throws IOException, SQLException {
-		return getUniqueRow(TopLevelDomain.COLUMN_DOMAIN, domain);
-	}
+  @Override
+  public TopLevelDomain get(DomainName domain) throws IOException, SQLException {
+    return getUniqueRow(TopLevelDomain.COLUMN_DOMAIN, domain);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.DNS_TLDS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.DNS_TLDS;
+  }
 }

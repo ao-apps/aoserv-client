@@ -35,28 +35,28 @@ import java.util.List;
  */
 public interface PasswordProtected {
 
-	/**
-	 * Indicates that none of the passwords are set.
-	 */
-	int NONE=0;
+  /**
+   * Indicates that none of the passwords are set.
+   */
+  int NONE=0;
 
-	/**
-	 * Indicates that some of the passwords are set.
-	 */
-	int SOME=1;
+  /**
+   * Indicates that some of the passwords are set.
+   */
+  int SOME=1;
 
-	/**
-	 * Indicates that all of the passwords are set.
-	 */
-	int ALL=2;
+  /**
+   * Indicates that all of the passwords are set.
+   */
+  int ALL=2;
 
-	List<PasswordChecker.Result> checkPassword(String password) throws IOException, SQLException;
+  List<PasswordChecker.Result> checkPassword(String password) throws IOException, SQLException;
 
-	//String checkPasswordDescribe(String password);
+  //String checkPasswordDescribe(String password);
 
-	boolean canSetPassword() throws IOException, SQLException;
+  boolean canSetPassword() throws IOException, SQLException;
 
-	int arePasswordsSet() throws IOException, SQLException;
+  int arePasswordsSet() throws IOException, SQLException;
 
-	void setPassword(String password) throws IOException, SQLException;
+  void setPassword(String password) throws IOException, SQLException;
 }

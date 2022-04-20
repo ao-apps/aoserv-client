@@ -43,63 +43,65 @@ import java.util.TreeSet;
  */
 public final class AdministratorPermissionTable extends CachedTableIntegerKey<AdministratorPermission> {
 
-	AdministratorPermissionTable(AOServConnector connector) {
-		super(connector, AdministratorPermission.class);
-	}
+  AdministratorPermissionTable(AOServConnector connector) {
+    super(connector, AdministratorPermission.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(AdministratorPermission.COLUMN_USERNAME_name, ASCENDING),
-		new OrderBy(AdministratorPermission.COLUMN_PERMISSION_name+'.'+Permission.COLUMN_SORT_ORDER_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(AdministratorPermission.COLUMN_USERNAME_name, ASCENDING),
+    new OrderBy(AdministratorPermission.COLUMN_PERMISSION_name+'.'+Permission.COLUMN_SORT_ORDER_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public AdministratorPermission get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(AdministratorPermission.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public AdministratorPermission get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(AdministratorPermission.COLUMN_PKEY, pkey);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.BUSINESS_ADMINISTRATOR_PERMISSIONS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.BUSINESS_ADMINISTRATOR_PERMISSIONS;
+  }
 
-	public List<AdministratorPermission> getPermissions(Administrator ba) throws IOException, SQLException {
-		return getIndexedRows(AdministratorPermission.COLUMN_USERNAME, ba.getUsername_userId());
-	}
+  public List<AdministratorPermission> getPermissions(Administrator ba) throws IOException, SQLException {
+    return getIndexedRows(AdministratorPermission.COLUMN_USERNAME, ba.getUsername_userId());
+  }
 
-	/**
-	 * Caches the permission lookups for speed.
-	 */
-	private Map<User.Name, SortedSet<String>> cachedPermissions;
+  /**
+   * Caches the permission lookups for speed.
+   */
+  private Map<User.Name, SortedSet<String>> cachedPermissions;
 
-	@Override
-	public void clearCache() {
-		super.clearCache();
-		synchronized(this) {
-			cachedPermissions = null;
-		}
-	}
+  @Override
+  public void clearCache() {
+    super.clearCache();
+    synchronized (this) {
+      cachedPermissions = null;
+    }
+  }
 
-	public boolean hasPermission(Administrator ba, String permission) throws IOException, SQLException {
-		synchronized(this) {
-			if(cachedPermissions==null) {
-				Map<User.Name, SortedSet<String>> newCachedPermissions = new HashMap<>();
-				List<AdministratorPermission> baps = getRows();
-				for(AdministratorPermission bap : baps) {
-					User.Name bapUsername = bap.getAdministrator_username();
-					String bapPermission = bap.getAOServPermission_name();
-					SortedSet<String> perms = newCachedPermissions.get(bapUsername);
-					if(perms==null) newCachedPermissions.put(bapUsername, perms = new TreeSet<>());
-					perms.add(bapPermission);
-				}
-				cachedPermissions = newCachedPermissions;
-			}
-			SortedSet<String> perms = cachedPermissions.get(ba.getUsername_userId());
-			return perms!=null && perms.contains(permission);
-		}
-	}
+  public boolean hasPermission(Administrator ba, String permission) throws IOException, SQLException {
+    synchronized (this) {
+      if (cachedPermissions == null) {
+        Map<User.Name, SortedSet<String>> newCachedPermissions = new HashMap<>();
+        List<AdministratorPermission> baps = getRows();
+        for (AdministratorPermission bap : baps) {
+          User.Name bapUsername = bap.getAdministrator_username();
+          String bapPermission = bap.getAOServPermission_name();
+          SortedSet<String> perms = newCachedPermissions.get(bapUsername);
+          if (perms == null) {
+            newCachedPermissions.put(bapUsername, perms = new TreeSet<>());
+          }
+          perms.add(bapPermission);
+        }
+        cachedPermissions = newCachedPermissions;
+      }
+      SortedSet<String> perms = cachedPermissions.get(ba.getUsername_userId());
+      return perms != null && perms.contains(permission);
+    }
+  }
 }

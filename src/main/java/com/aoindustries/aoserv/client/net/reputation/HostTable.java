@@ -37,31 +37,31 @@ import java.util.List;
  */
 public final class HostTable extends CachedTableLongKey<Host> {
 
-	HostTable(AOServConnector connector) {
-		super(connector, Host.class);
-	}
+  HostTable(AOServConnector connector) {
+    super(connector, Host.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(Host.COLUMN_SET_name+'.'+Set.COLUMN_IDENTIFIER_name, ASCENDING),
-		new OrderBy(Host.COLUMN_HOST_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(Host.COLUMN_SET_name+'.'+Set.COLUMN_IDENTIFIER_name, ASCENDING),
+    new OrderBy(Host.COLUMN_HOST_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public Host get(long pkey) throws IOException, SQLException {
-		return getUniqueRow(Host.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public Host get(long pkey) throws IOException, SQLException {
+    return getUniqueRow(Host.COLUMN_PKEY, pkey);
+  }
 
-	List<Host> getHosts(Set set) throws IOException, SQLException {
-		return getIndexedRows(Host.COLUMN_SET, set.getPkey());
-	}
+  List<Host> getHosts(Set set) throws IOException, SQLException {
+    return getIndexedRows(Host.COLUMN_SET, set.getPkey());
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.IP_REPUTATION_SET_HOSTS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.IP_REPUTATION_SET_HOSTS;
+  }
 }

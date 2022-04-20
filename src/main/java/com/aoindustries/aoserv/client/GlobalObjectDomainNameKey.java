@@ -32,40 +32,40 @@ import com.aoapps.net.DomainName;
  */
 public abstract class GlobalObjectDomainNameKey<T extends GlobalObjectDomainNameKey<T>> extends GlobalObject<DomainName, T> {
 
-	protected DomainName pkey;
+  protected DomainName pkey;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	protected GlobalObjectDomainNameKey() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  protected GlobalObjectDomainNameKey() {
+    // Do nothing
+  }
 
-	@Override
-	public boolean equals(Object obj) {
-		return
-			obj != null
-			&& obj.getClass() == getClass()
-			&& ((GlobalObjectDomainNameKey)obj).pkey.equals(pkey)
-		;
-	}
+  @Override
+  public boolean equals(Object obj) {
+    return
+      obj != null
+      && obj.getClass() == getClass()
+      && ((GlobalObjectDomainNameKey)obj).pkey.equals(pkey)
+    ;
+  }
 
-	@Override
-	public DomainName getKey() {
-		return pkey;
-	}
+  @Override
+  public DomainName getKey() {
+    return pkey;
+  }
 
-	@Override
-	public int hashCode() {
-		return pkey.hashCode();
-	}
+  @Override
+  public int hashCode() {
+    return pkey.hashCode();
+  }
 
-	@Override
-	public String toStringImpl() {
-		return pkey.toString();
-	}
+  @Override
+  public String toStringImpl() {
+    return pkey.toString();
+  }
 }

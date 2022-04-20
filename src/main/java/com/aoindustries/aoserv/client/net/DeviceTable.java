@@ -38,43 +38,45 @@ import java.util.List;
  */
 public final class DeviceTable extends CachedTableIntegerKey<Device> {
 
-	DeviceTable(AOServConnector connector) {
-		super(connector, Device.class);
-	}
+  DeviceTable(AOServConnector connector) {
+    super(connector, Device.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(Device.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(Device.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(Device.COLUMN_DEVICE_ID_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(Device.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(Device.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(Device.COLUMN_DEVICE_ID_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public Device get(int id) throws IOException, SQLException {
-		return getUniqueRow(Device.COLUMN_ID, id);
-	}
+  @Override
+  public Device get(int id) throws IOException, SQLException {
+    return getUniqueRow(Device.COLUMN_ID, id);
+  }
 
-	List<Device> getNetDevices(Host se) throws IOException, SQLException {
-		return getIndexedRows(Device.COLUMN_SERVER, se.getPkey());
-	}
+  List<Device> getNetDevices(Host se) throws IOException, SQLException {
+    return getIndexedRows(Device.COLUMN_SERVER, se.getPkey());
+  }
 
-	Device getNetDevice(Host se, String deviceID) throws IOException, SQLException {
-		// Use the index first
-		List<Device> cached=getNetDevices(se);
-		int size=cached.size();
-		for(int c=0;c<size;c++) {
-			Device dev=cached.get(c);
-			if(dev.getDeviceId_name().equals(deviceID)) return dev;
-		}
-		return null;
-	}
+  Device getNetDevice(Host se, String deviceID) throws IOException, SQLException {
+    // Use the index first
+    List<Device> cached=getNetDevices(se);
+    int size=cached.size();
+    for (int c=0;c<size;c++) {
+      Device dev=cached.get(c);
+      if (dev.getDeviceId_name().equals(deviceID)) {
+        return dev;
+      }
+    }
+    return null;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.NET_DEVICES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.NET_DEVICES;
+  }
 }

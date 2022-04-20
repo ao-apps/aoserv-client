@@ -30,44 +30,44 @@ package com.aoindustries.aoserv.client;
  */
 public abstract class GlobalObjectIntegerKey<T extends GlobalObjectIntegerKey<T>> extends GlobalObject<Integer, T> {
 
-	protected int pkey;
+  protected int pkey;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	protected GlobalObjectIntegerKey() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  protected GlobalObjectIntegerKey() {
+    // Do nothing
+  }
 
-	@Override
-	public boolean equals(Object obj) {
-		return
-			obj != null
-			&& obj.getClass() == getClass()
-			&& ((GlobalObjectIntegerKey)obj).pkey == pkey
-		;
-	}
+  @Override
+  public boolean equals(Object obj) {
+    return
+      obj != null
+      && obj.getClass() == getClass()
+      && ((GlobalObjectIntegerKey)obj).pkey == pkey
+    ;
+  }
 
-	public int getPkey() {
-		return pkey;
-	}
+  public int getPkey() {
+    return pkey;
+  }
 
-	@Override
-	public Integer getKey() {
-		return pkey;
-	}
+  @Override
+  public Integer getKey() {
+    return pkey;
+  }
 
-	@Override
-	public int hashCode() {
-		return pkey;
-	}
+  @Override
+  public int hashCode() {
+    return pkey;
+  }
 
-	@Override
-	public String toStringImpl() {
-		return Integer.toString(pkey);
-	}
+  @Override
+  public String toStringImpl() {
+    return Integer.toString(pkey);
+  }
 }

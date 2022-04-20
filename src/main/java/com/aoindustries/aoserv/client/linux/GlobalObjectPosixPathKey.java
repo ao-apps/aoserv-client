@@ -32,40 +32,40 @@ import com.aoindustries.aoserv.client.GlobalObject;
  */
 public abstract class GlobalObjectPosixPathKey<T extends GlobalObjectPosixPathKey<T>> extends GlobalObject<PosixPath, T> {
 
-	protected PosixPath pkey;
+  protected PosixPath pkey;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	protected GlobalObjectPosixPathKey() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  protected GlobalObjectPosixPathKey() {
+    // Do nothing
+  }
 
-	@Override
-	public boolean equals(Object obj) {
-		return
-			obj != null
-			&& obj.getClass() == getClass()
-			&& ((GlobalObjectPosixPathKey)obj).pkey.equals(pkey)
-		;
-	}
+  @Override
+  public boolean equals(Object obj) {
+    return
+      obj != null
+      && obj.getClass() == getClass()
+      && ((GlobalObjectPosixPathKey)obj).pkey.equals(pkey)
+    ;
+  }
 
-	@Override
-	public PosixPath getKey() {
-		return pkey;
-	}
+  @Override
+  public PosixPath getKey() {
+    return pkey;
+  }
 
-	@Override
-	public int hashCode() {
-		return pkey.hashCode();
-	}
+  @Override
+  public int hashCode() {
+    return pkey.hashCode();
+  }
 
-	@Override
-	public String toStringImpl() {
-		return pkey.toString();
-	}
+  @Override
+  public String toStringImpl() {
+    return pkey.toString();
+  }
 }

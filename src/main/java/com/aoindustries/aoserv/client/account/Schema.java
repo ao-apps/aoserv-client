@@ -34,52 +34,52 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final AccountTable Account;
-	public AccountTable getAccount() {return Account;}
+  private final AccountTable Account;
+  public AccountTable getAccount() {return Account;}
 
-	private final AccountHostTable AccountHost;
-	public AccountHostTable getAccountHost() {return AccountHost;}
+  private final AccountHostTable AccountHost;
+  public AccountHostTable getAccountHost() {return AccountHost;}
 
-	private final AdministratorTable Administrator;
-	public AdministratorTable getAdministrator() {return Administrator;}
+  private final AdministratorTable Administrator;
+  public AdministratorTable getAdministrator() {return Administrator;}
 
-	private final DisableLogTable DisableLog;
-	public DisableLogTable getDisableLog() {return DisableLog;}
+  private final DisableLogTable DisableLog;
+  public DisableLogTable getDisableLog() {return DisableLog;}
 
-	private final ProfileTable Profile;
-	public ProfileTable getProfile() {return Profile;}
+  private final ProfileTable Profile;
+  public ProfileTable getProfile() {return Profile;}
 
-	private final UsStateTable UsState;
-	public UsStateTable getUsState() {return UsState;}
+  private final UsStateTable UsState;
+  public UsStateTable getUsState() {return UsState;}
 
-	private final UserTable User;
-	public UserTable getUser() {return User;}
+  private final UserTable User;
+  public UserTable getUser() {return User;}
 
-	private final List<? extends AOServTable<?, ?>> tables;
+  private final List<? extends AOServTable<?, ?>> tables;
 
-	public Schema(AOServConnector connector) {
-		super(connector);
+  public Schema(AOServConnector connector) {
+    super(connector);
 
-		ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
-		newTables.add(Account = new AccountTable(connector));
-		newTables.add(AccountHost = new AccountHostTable(connector));
-		newTables.add(Administrator = new AdministratorTable(connector));
-		newTables.add(DisableLog = new DisableLogTable(connector));
-		newTables.add(Profile = new ProfileTable(connector));
-		newTables.add(UsState = new UsStateTable(connector));
-		newTables.add(User = new UserTable(connector));
-		newTables.trimToSize();
-		tables = Collections.unmodifiableList(newTables);
-	}
+    ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
+    newTables.add(Account = new AccountTable(connector));
+    newTables.add(AccountHost = new AccountHostTable(connector));
+    newTables.add(Administrator = new AdministratorTable(connector));
+    newTables.add(DisableLog = new DisableLogTable(connector));
+    newTables.add(Profile = new ProfileTable(connector));
+    newTables.add(UsState = new UsStateTable(connector));
+    newTables.add(User = new UserTable(connector));
+    newTables.trimToSize();
+    tables = Collections.unmodifiableList(newTables);
+  }
 
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
-	public List<? extends AOServTable<?, ?>> getTables() {
-		return tables;
-	}
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
+  public List<? extends AOServTable<?, ?>> getTables() {
+    return tables;
+  }
 
-	@Override
-	public String getName() {
-		return "account";
-	}
+  @Override
+  public String getName() {
+    return "account";
+  }
 }

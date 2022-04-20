@@ -28,11 +28,11 @@ package com.aoindustries.aoserv.client.dto;
  */
 public class PostgresUserName extends LinuxUserName {
 
-	public PostgresUserName() {
-		// Do nothing
-	}
+  public PostgresUserName() {
+    // Do nothing
+  }
 
-	public PostgresUserName(String name) {
-		super(name);
-	}
+  public PostgresUserName(String name) {
+    super(name);
+  }
 }

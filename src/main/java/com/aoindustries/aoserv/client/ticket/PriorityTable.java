@@ -36,26 +36,26 @@ import java.sql.SQLException;
  */
 public final class PriorityTable extends GlobalTableStringKey<Priority> {
 
-	PriorityTable(AOServConnector connector) {
-		super(connector, Priority.class);
-	}
+  PriorityTable(AOServConnector connector) {
+    super(connector, Priority.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(Priority.COLUMN_PRIORITY_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(Priority.COLUMN_PRIORITY_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.TICKET_PRIORITIES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.TICKET_PRIORITIES;
+  }
 
-	@Override
-	public Priority get(String priority) throws IOException, SQLException {
-		return getUniqueRow(Priority.COLUMN_PRIORITY, priority);
-	}
+  @Override
+  public Priority get(String priority) throws IOException, SQLException {
+    return getUniqueRow(Priority.COLUMN_PRIORITY, priority);
+  }
 }

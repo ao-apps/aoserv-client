@@ -40,102 +40,110 @@ import java.sql.SQLException;
  */
 public final class FileReplicationSchedule extends CachedObjectIntegerKey<FileReplicationSchedule> {
 
-	static final int
-		COLUMN_PKEY=0,
-		COLUMN_REPLICATION=1
-	;
-	static final String COLUMN_REPLICATION_name = "replication";
-	static final String COLUMN_HOUR_name = "hour";
-	static final String COLUMN_MINUTE_name = "minute";
+  static final int
+    COLUMN_PKEY=0,
+    COLUMN_REPLICATION=1
+  ;
+  static final String COLUMN_REPLICATION_name = "replication";
+  static final String COLUMN_HOUR_name = "hour";
+  static final String COLUMN_MINUTE_name = "minute";
 
-	private int replication;
-	private short hour;
-	private short minute;
-	private boolean enabled;
+  private int replication;
+  private short hour;
+  private short minute;
+  private boolean enabled;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public FileReplicationSchedule() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public FileReplicationSchedule() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_PKEY: return pkey;
-			case COLUMN_REPLICATION: return replication;
-			case 2: return hour;
-			case 3: return minute;
-			case 4: return enabled;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_PKEY: return pkey;
+      case COLUMN_REPLICATION: return replication;
+      case 2: return hour;
+      case 3: return minute;
+      case 4: return enabled;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	public FileReplication getFailoverFileReplication() throws SQLException, IOException {
-		FileReplication ffr=table.getConnector().getBackup().getFileReplication().get(replication);
-		if(ffr==null) throw new SQLException("Unable to find FailoverFileReplication: "+replication);
-		return ffr;
-	}
+  public FileReplication getFailoverFileReplication() throws SQLException, IOException {
+    FileReplication ffr=table.getConnector().getBackup().getFileReplication().get(replication);
+    if (ffr == null) {
+      throw new SQLException("Unable to find FailoverFileReplication: "+replication);
+    }
+    return ffr;
+  }
 
-	public short getHour() {
-		return hour;
-	}
+  public short getHour() {
+    return hour;
+  }
 
-	public short getMinute() {
-		return minute;
-	}
+  public short getMinute() {
+    return minute;
+  }
 
-	public boolean isEnabled() {
-		return enabled;
-	}
+  public boolean isEnabled() {
+    return enabled;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.FAILOVER_FILE_SCHEDULE;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.FAILOVER_FILE_SCHEDULE;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey=result.getInt(1);
-		replication=result.getInt(2);
-		hour=result.getShort(3);
-		minute=result.getShort(4);
-		enabled=result.getBoolean(5);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey=result.getInt(1);
+    replication=result.getInt(2);
+    hour=result.getShort(3);
+    minute=result.getShort(4);
+    enabled=result.getBoolean(5);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readCompressedInt();
-		replication=in.readCompressedInt();
-		hour=in.readShort();
-		minute=in.readShort();
-		enabled=in.readBoolean();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readCompressedInt();
+    replication=in.readCompressedInt();
+    hour=in.readShort();
+    minute=in.readShort();
+    enabled=in.readBoolean();
+  }
 
-	@Override
-	public String toStringImpl() throws SQLException, IOException {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getFailoverFileReplication().toStringImpl());
-		sb.append('@');
-		if(hour < 10) sb.append('0');
-		sb.append(hour);
-		sb.append(':');
-		if(minute < 10) sb.append('0');
-		sb.append(minute);
-		return sb.toString();
-	}
+  @Override
+  public String toStringImpl() throws SQLException, IOException {
+    StringBuilder sb = new StringBuilder();
+    sb.append(getFailoverFileReplication().toStringImpl());
+    sb.append('@');
+    if (hour < 10) {
+      sb.append('0');
+    }
+    sb.append(hour);
+    sb.append(':');
+    if (minute < 10) {
+      sb.append('0');
+    }
+    sb.append(minute);
+    return sb.toString();
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeCompressedInt(replication);
-		out.writeShort(hour);
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_31)>=0) out.writeShort(minute);
-		out.writeBoolean(enabled);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    out.writeCompressedInt(replication);
+    out.writeShort(hour);
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_31) >= 0) {
+      out.writeShort(minute);
+    }
+    out.writeBoolean(enabled);
+  }
 }

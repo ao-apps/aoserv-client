@@ -39,102 +39,108 @@ import java.sql.SQLException;
  */
 public final class Rack extends CachedObjectIntegerKey<Rack> {
 
-	static final int
-		COLUMN_PKEY=0,
-		COLUMN_FARM=1,
-		COLUMN_NAME=2
-	;
-	static final String COLUMN_FARM_name = "farm";
-	static final String COLUMN_NAME_name = "name";
+  static final int
+    COLUMN_PKEY=0,
+    COLUMN_FARM=1,
+    COLUMN_NAME=2
+  ;
+  static final String COLUMN_FARM_name = "farm";
+  static final String COLUMN_NAME_name = "name";
 
-	private String farm;
-	private String name;
-	private float maxPower;
-	private int totalRackUnits;
+  private String farm;
+  private String name;
+  private float maxPower;
+  private int totalRackUnits;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public Rack() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public Rack() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_PKEY: return pkey;
-			case COLUMN_FARM: return farm;
-			case COLUMN_NAME: return name;
-			case 3: return Float.isNaN(maxPower) ? null : maxPower;
-			case 4: return totalRackUnits==-1 ? null : totalRackUnits;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_PKEY: return pkey;
+      case COLUMN_FARM: return farm;
+      case COLUMN_NAME: return name;
+      case 3: return Float.isNaN(maxPower) ? null : maxPower;
+      case 4: return totalRackUnits == -1 ? null : totalRackUnits;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	public ServerFarm getServerFarm() throws SQLException, IOException {
-		ServerFarm sf=table.getConnector().getInfrastructure().getServerFarm().get(farm);
-		if(sf==null) throw new SQLException("Unable to find ServerFarm: "+farm);
-		return sf;
-	}
+  public ServerFarm getServerFarm() throws SQLException, IOException {
+    ServerFarm sf=table.getConnector().getInfrastructure().getServerFarm().get(farm);
+    if (sf == null) {
+      throw new SQLException("Unable to find ServerFarm: "+farm);
+    }
+    return sf;
+  }
 
-	public String getName() {
-		return name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	/**
-	 * Gets the max power for the rack or <code>Float.NaN</code> if unknown.
-	 */
-	public float getMaxPower() {
-		return maxPower;
-	}
+  /**
+   * Gets the max power for the rack or <code>Float.NaN</code> if unknown.
+   */
+  public float getMaxPower() {
+    return maxPower;
+  }
 
-	/**
-	 * Gets the total rack units or <code>-1</code> if unknown.
-	 */
-	public int getTotalRackUnits() {
-		return totalRackUnits;
-	}
+  /**
+   * Gets the total rack units or <code>-1</code> if unknown.
+   */
+  public int getTotalRackUnits() {
+    return totalRackUnits;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.RACKS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.RACKS;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey = result.getInt(1);
-		farm = result.getString(2);
-		name = result.getString(3);
-		maxPower = result.getFloat(4);
-		if(result.wasNull()) maxPower = Float.NaN;
-		totalRackUnits = result.getInt(5);
-		if(result.wasNull()) totalRackUnits = -1;
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey = result.getInt(1);
+    farm = result.getString(2);
+    name = result.getString(3);
+    maxPower = result.getFloat(4);
+    if (result.wasNull()) {
+      maxPower = Float.NaN;
+    }
+    totalRackUnits = result.getInt(5);
+    if (result.wasNull()) {
+      totalRackUnits = -1;
+    }
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey = in.readCompressedInt();
-		farm = in.readUTF().intern();
-		name = in.readUTF();
-		maxPower = in.readFloat();
-		totalRackUnits = in.readCompressedInt();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey = in.readCompressedInt();
+    farm = in.readUTF().intern();
+    name = in.readUTF();
+    maxPower = in.readFloat();
+    totalRackUnits = in.readCompressedInt();
+  }
 
-	@Override
-	public String toStringImpl() {
-		return name;
-	}
+  @Override
+  public String toStringImpl() {
+    return name;
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeUTF(farm);
-		out.writeUTF(name);
-		out.writeFloat(maxPower);
-		out.writeCompressedInt(totalRackUnits);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    out.writeUTF(farm);
+    out.writeUTF(name);
+    out.writeFloat(maxPower);
+    out.writeCompressedInt(totalRackUnits);
+  }
 }

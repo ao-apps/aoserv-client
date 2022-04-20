@@ -46,160 +46,166 @@ import java.sql.SQLException;
  */
 public final class BackupReport extends AOServObject<Integer, BackupReport> implements SingleTableObject<Integer, BackupReport> {
 
-	static final int COLUMN_PKEY=0;
-	static final String COLUMN_DATE_name = "date";
-	static final String COLUMN_SERVER_name = "server";
-	static final String COLUMN_PACKAGE_name = "package";
+  static final int COLUMN_PKEY=0;
+  static final String COLUMN_DATE_name = "date";
+  static final String COLUMN_SERVER_name = "server";
+  static final String COLUMN_PACKAGE_name = "package";
 
-	/**
-	 * The hour of the day (in master server time zone) that backup reports will be created.
-	 */
-	public static final int BACKUP_REPORT_HOUR=2;
+  /**
+   * The hour of the day (in master server time zone) that backup reports will be created.
+   */
+  public static final int BACKUP_REPORT_HOUR=2;
 
-	/**
-	 * The minute (in master server time zone) that backup reports will be created.
-	 */
-	public static final int BACKUP_REPORT_MINUTE=15;
+  /**
+   * The minute (in master server time zone) that backup reports will be created.
+   */
+  public static final int BACKUP_REPORT_MINUTE=15;
 
-	/**
-	 * The maximum number of days that reports will be maintained.  This is roughly 5 years.
-	 */
-	public static final int MAX_REPORT_AGE=2*366+3*365; // Assumes worst-case of two leap years in 5-year span.
+  /**
+   * The maximum number of days that reports will be maintained.  This is roughly 5 years.
+   */
+  public static final int MAX_REPORT_AGE=2*366+3*365; // Assumes worst-case of two leap years in 5-year span.
 
-	private int pkey;
-	private int server;
-	private int package_id;
-	private long date;
-	private int file_count;
-	private long disk_size;
+  private int pkey;
+  private int server;
+  private int package_id;
+  private long date;
+  private int file_count;
+  private long disk_size;
 
-	private AOServTable<Integer, BackupReport> table;
+  private AOServTable<Integer, BackupReport> table;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public BackupReport() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public BackupReport() {
+    // Do nothing
+  }
 
-	@Override
-	public boolean equals(Object obj) {
-		return
-			(obj instanceof BackupReport)
-			&& ((BackupReport)obj).pkey == pkey
-		;
-	}
+  @Override
+  public boolean equals(Object obj) {
+    return
+      (obj instanceof BackupReport)
+      && ((BackupReport)obj).pkey == pkey
+    ;
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_PKEY: return pkey;
-			case 1: return server;
-			case 2: return package_id;
-			case 3: return getDate();
-			case 4: return file_count;
-			case 5: return disk_size;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_PKEY: return pkey;
+      case 1: return server;
+      case 2: return package_id;
+      case 3: return getDate();
+      case 4: return file_count;
+      case 5: return disk_size;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	public int getPkey() {
-		return pkey;
-	}
+  public int getPkey() {
+    return pkey;
+  }
 
-	public int getHost_id() {
-		return server;
-	}
+  public int getHost_id() {
+    return server;
+  }
 
-	public Host getHost() throws SQLException, IOException {
-		Host se=table.getConnector().getNet().getHost().get(server);
-		if(se==null) throw new SQLException("Unable to find Host: "+server);
-		return se;
-	}
+  public Host getHost() throws SQLException, IOException {
+    Host se=table.getConnector().getNet().getHost().get(server);
+    if (se == null) {
+      throw new SQLException("Unable to find Host: "+server);
+    }
+    return se;
+  }
 
-	public int getPackage_id() {
-		return package_id;
-	}
+  public int getPackage_id() {
+    return package_id;
+  }
 
-	public Package getPackage() throws IOException, SQLException {
-		Package pk=table.getConnector().getBilling().getPackage().get(package_id);
-		if(pk==null) throw new SQLException("Unable to find Package: "+package_id);
-		return pk;
-	}
+  public Package getPackage() throws IOException, SQLException {
+    Package pk=table.getConnector().getBilling().getPackage().get(package_id);
+    if (pk == null) {
+      throw new SQLException("Unable to find Package: "+package_id);
+    }
+    return pk;
+  }
 
-	public Date getDate() {
-		return new Date(date);
-	}
+  public Date getDate() {
+    return new Date(date);
+  }
 
-	public int getFileCount() {
-		return file_count;
-	}
+  public int getFileCount() {
+    return file_count;
+  }
 
-	public long getDiskSize() {
-		return disk_size;
-	}
+  public long getDiskSize() {
+    return disk_size;
+  }
 
-	@Override
-	public Integer getKey() {
-		return pkey;
-	}
+  @Override
+  public Integer getKey() {
+    return pkey;
+  }
 
-	@Override
-	public AOServTable<Integer, BackupReport> getTable() {
-		return table;
-	}
+  @Override
+  public AOServTable<Integer, BackupReport> getTable() {
+    return table;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.BACKUP_REPORTS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.BACKUP_REPORTS;
+  }
 
-	@Override
-	public int hashCode() {
-		return pkey;
-	}
+  @Override
+  public int hashCode() {
+    return pkey;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey=result.getInt(1);
-		server=result.getInt(2);
-		package_id=result.getInt(3);
-		date=result.getDate(4).getTime();
-		file_count=result.getInt(5);
-		disk_size=result.getLong(6);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey=result.getInt(1);
+    server=result.getInt(2);
+    package_id=result.getInt(3);
+    date=result.getDate(4).getTime();
+    file_count=result.getInt(5);
+    disk_size=result.getLong(6);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readCompressedInt();
-		server=in.readCompressedInt();
-		package_id=in.readCompressedInt();
-		date=in.readLong();
-		file_count=in.readInt();
-		disk_size=in.readLong();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readCompressedInt();
+    server=in.readCompressedInt();
+    package_id=in.readCompressedInt();
+    date=in.readLong();
+    file_count=in.readInt();
+    disk_size=in.readLong();
+  }
 
-	@Override
-	public void setTable(AOServTable<Integer, BackupReport> table) {
-		if(this.table!=null) throw new IllegalStateException("table already set");
-		this.table=table;
-	}
+  @Override
+  public void setTable(AOServTable<Integer, BackupReport> table) {
+    if (this.table != null) {
+      throw new IllegalStateException("table already set");
+    }
+    this.table=table;
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeCompressedInt(server);
-		out.writeCompressedInt(package_id);
-		out.writeLong(date);
-		out.writeInt(file_count);
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30)<=0) {
-			out.writeLong(0); // uncompressed_size
-			out.writeLong(0); // compressed_size
-		}
-		out.writeLong(disk_size);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    out.writeCompressedInt(server);
+    out.writeCompressedInt(package_id);
+    out.writeLong(date);
+    out.writeInt(file_count);
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30) <= 0) {
+      out.writeLong(0); // uncompressed_size
+      out.writeLong(0); // compressed_size
+    }
+    out.writeLong(disk_size);
+  }
 }

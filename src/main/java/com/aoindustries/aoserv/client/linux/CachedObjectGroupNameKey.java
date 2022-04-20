@@ -32,40 +32,40 @@ import com.aoindustries.aoserv.client.CachedObject;
  */
 public abstract class CachedObjectGroupNameKey<V extends CachedObjectGroupNameKey<V>> extends CachedObject<Group.Name, V> {
 
-	protected Group.Name pkey;
+  protected Group.Name pkey;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	protected CachedObjectGroupNameKey() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  protected CachedObjectGroupNameKey() {
+    // Do nothing
+  }
 
-	@Override
-	public boolean equals(Object obj) {
-		return
-			obj != null
-			&& obj.getClass() == getClass()
-			&& ((CachedObjectGroupNameKey<?>)obj).pkey.equals(pkey)
-		;
-	}
+  @Override
+  public boolean equals(Object obj) {
+    return
+      obj != null
+      && obj.getClass() == getClass()
+      && ((CachedObjectGroupNameKey<?>)obj).pkey.equals(pkey)
+    ;
+  }
 
-	@Override
-	public Group.Name getKey() {
-		return pkey;
-	}
+  @Override
+  public Group.Name getKey() {
+    return pkey;
+  }
 
-	@Override
-	public int hashCode() {
-		return pkey.hashCode();
-	}
+  @Override
+  public int hashCode() {
+    return pkey.hashCode();
+  }
 
-	@Override
-	public String toStringImpl() {
-		return pkey.toString();
-	}
+  @Override
+  public String toStringImpl() {
+    return pkey.toString();
+  }
 }

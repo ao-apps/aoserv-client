@@ -58,205 +58,213 @@ import java.sql.SQLException;
  */
 public final class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 
-	static final int COLUMN_PKEY=0;
-	static final String COLUMN_PKEY_name = "pkey";
-	static final String COLUMN_ACCOUNTING_name = "accounting";
-	static final String COLUMN_PACKAGE_name = "package";
-	static final String COLUMN_TYPE_name = "type";
-	static final String COLUMN_CREATED_name = "created";
+  static final int COLUMN_PKEY=0;
+  static final String COLUMN_PKEY_name = "pkey";
+  static final String COLUMN_ACCOUNTING_name = "accounting";
+  static final String COLUMN_PACKAGE_name = "package";
+  static final String COLUMN_TYPE_name = "type";
+  static final String COLUMN_CREATED_name = "created";
 
-	private Account.Name accounting;
-	private Account.Name packageName;
-	private String type;
-	private String description;
-	private int quantity;
-	private Money rate;
-	private UnmodifiableTimestamp created;
-	private User.Name created_by;
-	private boolean active;
+  private Account.Name accounting;
+  private Account.Name packageName;
+  private String type;
+  private String description;
+  private int quantity;
+  private Money rate;
+  private UnmodifiableTimestamp created;
+  private User.Name created_by;
+  private boolean active;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public MonthlyCharge() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public MonthlyCharge() {
+    // Do nothing
+  }
 
-	@SuppressWarnings("deprecation")
-	MonthlyCharge(
-		MonthlyChargeTable table,
-		Account business,
-		Package packageObject,
-		TransactionType typeObject,
-		String description,
-		int quantity,
-		Money rate,
-		Administrator createdByObject,
-		boolean active
-	) {
-		setTable(table);
-		this.pkey=-1;
-		this.accounting = business.getName();
-		this.packageName = packageObject.getName();
-		this.type = typeObject.getName();
-		this.description=description;
-		this.quantity = quantity;
-		this.rate = rate;
-		this.created = new UnmodifiableTimestamp(System.currentTimeMillis());
-		this.created_by = createdByObject.getUsername_userId();
-		this.active = active;
-	}
+  @SuppressWarnings("deprecation")
+  MonthlyCharge(
+    MonthlyChargeTable table,
+    Account business,
+    Package packageObject,
+    TransactionType typeObject,
+    String description,
+    int quantity,
+    Money rate,
+    Administrator createdByObject,
+    boolean active
+  ) {
+    setTable(table);
+    this.pkey=-1;
+    this.accounting = business.getName();
+    this.packageName = packageObject.getName();
+    this.type = typeObject.getName();
+    this.description=description;
+    this.quantity = quantity;
+    this.rate = rate;
+    this.created = new UnmodifiableTimestamp(System.currentTimeMillis());
+    this.created_by = createdByObject.getUsername_userId();
+    this.active = active;
+  }
 
-	@Override
-	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_PKEY: return pkey == -1 ? null : pkey;
-			case 1: return accounting;
-			case 2: return packageName;
-			case 3: return type;
-			case 4: return description;
-			case 5: return quantity;
-			case 6: return rate;
-			case 7: return created;
-			case 8: return created_by;
-			case 9: return active;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_PKEY: return pkey == -1 ? null : pkey;
+      case 1: return accounting;
+      case 2: return packageName;
+      case 3: return type;
+      case 4: return description;
+      case 5: return quantity;
+      case 6: return rate;
+      case 7: return created;
+      case 8: return created_by;
+      case 9: return active;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	@SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
-	public UnmodifiableTimestamp getCreated() {
-		return created;
-	}
+  @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
+  public UnmodifiableTimestamp getCreated() {
+    return created;
+  }
 
-	public Administrator getCreatedBy() throws SQLException, IOException {
-		Administrator obj = table.getConnector().getAccount().getAdministrator().get(created_by);
-		if (obj == null) throw new SQLException("Unable to find Administrator: " + created_by);
-		return obj;
-	}
+  public Administrator getCreatedBy() throws SQLException, IOException {
+    Administrator obj = table.getConnector().getAccount().getAdministrator().get(created_by);
+    if (obj == null) {
+      throw new SQLException("Unable to find Administrator: " + created_by);
+    }
+    return obj;
+  }
 
-	public Account.Name getAccount_name() {
-		return accounting;
-	}
+  public Account.Name getAccount_name() {
+    return accounting;
+  }
 
-	public Account getAccount() throws SQLException, IOException {
-		Account obj = table.getConnector().getAccount().getAccount().get(accounting);
-		if(obj == null) throw new SQLException("Unable to find Account: " + accounting);
-		return obj;
-	}
+  public Account getAccount() throws SQLException, IOException {
+    Account obj = table.getConnector().getAccount().getAccount().get(accounting);
+    if (obj == null) {
+      throw new SQLException("Unable to find Account: " + accounting);
+    }
+    return obj;
+  }
 
-	public String getDescription() throws SQLException, IOException {
-		return description == null ? getType().getDescription() : description;
-	}
+  public String getDescription() throws SQLException, IOException {
+    return description == null ? getType().getDescription() : description;
+  }
 
-	public Package getPackage() throws SQLException, IOException {
-		Package packageObject = table.getConnector().getBilling().getPackage().get(packageName);
-		if (packageObject == null) throw new SQLException("Unable to find Package: " + packageName);
-		return packageObject;
-	}
+  public Package getPackage() throws SQLException, IOException {
+    Package packageObject = table.getConnector().getBilling().getPackage().get(packageName);
+    if (packageObject == null) {
+      throw new SQLException("Unable to find Package: " + packageName);
+    }
+    return packageObject;
+  }
 
-	/**
-	 * Gets the effective amount of {@code quantity * rate} or {@code null} when unknown.
-	 */
-	public Money getAmount() {
-		return (rate == null) ? null : rate.multiply(BigDecimal.valueOf(quantity, 3), RoundingMode.HALF_UP);
-	}
+  /**
+   * Gets the effective amount of {@code quantity * rate} or {@code null} when unknown.
+   */
+  public Money getAmount() {
+    return (rate == null) ? null : rate.multiply(BigDecimal.valueOf(quantity, 3), RoundingMode.HALF_UP);
+  }
 
-	public int getQuantity() {
-		return quantity;
-	}
+  public int getQuantity() {
+    return quantity;
+  }
 
-	/**
-	 * Gets the rate or {@code null} when unknown.
-	 */
-	public Money getRate() {
-		return rate;
-	}
+  /**
+   * Gets the rate or {@code null} when unknown.
+   */
+  public Money getRate() {
+    return rate;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.MONTHLY_CHARGES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.MONTHLY_CHARGES;
+  }
 
-	public TransactionType getType() throws SQLException, IOException {
-		TransactionType typeObject = table.getConnector().getBilling().getTransactionType().get(type);
-		if (typeObject == null) throw new SQLException("Unable to find TransactionType: " + type);
-		return typeObject;
-	}
+  public TransactionType getType() throws SQLException, IOException {
+    TransactionType typeObject = table.getConnector().getBilling().getTransactionType().get(type);
+    if (typeObject == null) {
+      throw new SQLException("Unable to find TransactionType: " + type);
+    }
+    return typeObject;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		try {
-			pkey = result.getInt("id");
-			accounting = Account.Name.valueOf(result.getString("accounting"));
-			packageName = Account.Name.valueOf(result.getString("package"));
-			type = result.getString("type");
-			description = result.getString("description");
-			quantity = SQLUtility.parseDecimal3(result.getString("quantity"));
-			rate = MoneyUtil.getMoney(result, "rate.currency", "rate.value");
-			created = UnmodifiableTimestamp.valueOf(result.getTimestamp("created"));
-			created_by = User.Name.valueOf(result.getString("created_by"));
-			active = result.getBoolean("active");
-		} catch(ValidationException e) {
-			throw new SQLException(e);
-		}
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    try {
+      pkey = result.getInt("id");
+      accounting = Account.Name.valueOf(result.getString("accounting"));
+      packageName = Account.Name.valueOf(result.getString("package"));
+      type = result.getString("type");
+      description = result.getString("description");
+      quantity = SQLUtility.parseDecimal3(result.getString("quantity"));
+      rate = MoneyUtil.getMoney(result, "rate.currency", "rate.value");
+      created = UnmodifiableTimestamp.valueOf(result.getTimestamp("created"));
+      created_by = User.Name.valueOf(result.getString("created_by"));
+      active = result.getBoolean("active");
+    } catch (ValidationException e) {
+      throw new SQLException(e);
+    }
+  }
 
-	public boolean isActive() {
-		return active;
-	}
+  public boolean isActive() {
+    return active;
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		try {
-			pkey = in.readCompressedInt();
-			accounting = Account.Name.valueOf(in.readUTF()).intern();
-			packageName = Account.Name.valueOf(in.readUTF()).intern();
-			type = in.readUTF().intern();
-			description = in.readNullUTF();
-			quantity = in.readCompressedInt();
-			rate = MoneyUtil.readNullMoney(in);
-			created = SQLStreamables.readUnmodifiableTimestamp(in);
-			created_by = User.Name.valueOf(in.readUTF()).intern();
-			active = in.readBoolean();
-		} catch(ValidationException e) {
-			throw new IOException(e);
-		}
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    try {
+      pkey = in.readCompressedInt();
+      accounting = Account.Name.valueOf(in.readUTF()).intern();
+      packageName = Account.Name.valueOf(in.readUTF()).intern();
+      type = in.readUTF().intern();
+      description = in.readNullUTF();
+      quantity = in.readCompressedInt();
+      rate = MoneyUtil.readNullMoney(in);
+      created = SQLStreamables.readUnmodifiableTimestamp(in);
+      created_by = User.Name.valueOf(in.readUTF()).intern();
+      active = in.readBoolean();
+    } catch (ValidationException e) {
+      throw new IOException(e);
+    }
+  }
 
-	@Override
-	public String toStringImpl() {
-		return packageName.toString() + '|' + type + '|' + SQLUtility.formatDecimal3(quantity) + "×" + rate;
-	}
+  @Override
+  public String toStringImpl() {
+    return packageName.toString() + '|' + type + '|' + SQLUtility.formatDecimal3(quantity) + "×" + rate;
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeUTF(accounting.toString());
-		out.writeUTF(packageName.toString());
-		out.writeUTF(type);
-		out.writeNullUTF(description);
-		out.writeCompressedInt(quantity);
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
-			if(rate != null && rate.getCurrency() == Currency.USD && rate.getScale() == 2) {
-				out.writeCompressedInt(SafeMath.castInt(rate.getUnscaledValue()));
-			} else {
-				out.writeCompressedInt(-1);
-			}
-		} else {
-			MoneyUtil.writeNullMoney(rate, out);
-		}
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
-			out.writeLong(created.getTime());
-		} else {
-			SQLStreamables.writeTimestamp(created, out);
-		}
-		out.writeUTF(created_by.toString());
-		out.writeBoolean(active);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    out.writeUTF(accounting.toString());
+    out.writeUTF(packageName.toString());
+    out.writeUTF(type);
+    out.writeNullUTF(description);
+    out.writeCompressedInt(quantity);
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+      if (rate != null && rate.getCurrency() == Currency.USD && rate.getScale() == 2) {
+        out.writeCompressedInt(SafeMath.castInt(rate.getUnscaledValue()));
+      } else {
+        out.writeCompressedInt(-1);
+      }
+    } else {
+      MoneyUtil.writeNullMoney(rate, out);
+    }
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+      out.writeLong(created.getTime());
+    } else {
+      SQLStreamables.writeTimestamp(created, out);
+    }
+    out.writeUTF(created_by.toString());
+    out.writeBoolean(active);
+  }
 }

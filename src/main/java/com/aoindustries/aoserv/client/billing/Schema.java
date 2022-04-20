@@ -34,80 +34,80 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final CurrencyTable Currency;
-	public CurrencyTable getCurrency() {return Currency;}
+  private final CurrencyTable Currency;
+  public CurrencyTable getCurrency() {return Currency;}
 
-	private final MonthlyChargeTable MonthlyCharge;
-	public MonthlyChargeTable getMonthlyCharge() {return MonthlyCharge;}
+  private final MonthlyChargeTable MonthlyCharge;
+  public MonthlyChargeTable getMonthlyCharge() {return MonthlyCharge;}
 
-	private final NoticeLogTable NoticeLog;
-	public NoticeLogTable getNoticeLog() {return NoticeLog;}
+  private final NoticeLogTable NoticeLog;
+  public NoticeLogTable getNoticeLog() {return NoticeLog;}
 
-	private final NoticeLogBalanceTable NoticeLogBalance;
-	public NoticeLogBalanceTable getNoticeLogBalance() {return NoticeLogBalance;}
+  private final NoticeLogBalanceTable NoticeLogBalance;
+  public NoticeLogBalanceTable getNoticeLogBalance() {return NoticeLogBalance;}
 
-	private final NoticeTypeTable NoticeType;
-	public NoticeTypeTable getNoticeType() {return NoticeType;}
+  private final NoticeTypeTable NoticeType;
+  public NoticeTypeTable getNoticeType() {return NoticeType;}
 
-	private final PackageTable Package;
-	public PackageTable getPackage() {return Package;}
+  private final PackageTable Package;
+  public PackageTable getPackage() {return Package;}
 
-	private final PackageCategoryTable PackageCategory;
-	public PackageCategoryTable getPackageCategory() {return PackageCategory;}
+  private final PackageCategoryTable PackageCategory;
+  public PackageCategoryTable getPackageCategory() {return PackageCategory;}
 
-	private final PackageDefinitionTable PackageDefinition;
-	public PackageDefinitionTable getPackageDefinition() {return PackageDefinition;}
+  private final PackageDefinitionTable PackageDefinition;
+  public PackageDefinitionTable getPackageDefinition() {return PackageDefinition;}
 
-	private final PackageDefinitionLimitTable PackageDefinitionLimit;
-	public PackageDefinitionLimitTable getPackageDefinitionLimit() {return PackageDefinitionLimit;}
+  private final PackageDefinitionLimitTable PackageDefinitionLimit;
+  public PackageDefinitionLimitTable getPackageDefinitionLimit() {return PackageDefinitionLimit;}
 
-	private final ResourceTable Resource;
-	public ResourceTable getResource() {return Resource;}
+  private final ResourceTable Resource;
+  public ResourceTable getResource() {return Resource;}
 
-	private final TransactionTable Transaction;
-	public TransactionTable getTransaction() {return Transaction;}
+  private final TransactionTable Transaction;
+  public TransactionTable getTransaction() {return Transaction;}
 
-	private final TransactionTypeTable TransactionType;
-	public TransactionTypeTable getTransactionType() {return TransactionType;}
+  private final TransactionTypeTable TransactionType;
+  public TransactionTypeTable getTransactionType() {return TransactionType;}
 
-	private final WhoisHistoryTable WhoisHistory;
-	public WhoisHistoryTable getWhoisHistory() {return WhoisHistory;}
+  private final WhoisHistoryTable WhoisHistory;
+  public WhoisHistoryTable getWhoisHistory() {return WhoisHistory;}
 
-	private final WhoisHistoryAccountTable WhoisHistoryAccount;
-	public WhoisHistoryAccountTable getWhoisHistoryAccount() {return WhoisHistoryAccount;}
+  private final WhoisHistoryAccountTable WhoisHistoryAccount;
+  public WhoisHistoryAccountTable getWhoisHistoryAccount() {return WhoisHistoryAccount;}
 
-	private final List<? extends AOServTable<?, ?>> tables;
+  private final List<? extends AOServTable<?, ?>> tables;
 
-	public Schema(AOServConnector connector) {
-		super(connector);
+  public Schema(AOServConnector connector) {
+    super(connector);
 
-		ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
-		newTables.add(Currency = new CurrencyTable(connector));
-		newTables.add(MonthlyCharge = new MonthlyChargeTable(connector));
-		newTables.add(NoticeLog = new NoticeLogTable(connector));
-		newTables.add(NoticeLogBalance = new NoticeLogBalanceTable(connector));
-		newTables.add(NoticeType = new NoticeTypeTable(connector));
-		newTables.add(Package = new PackageTable(connector));
-		newTables.add(PackageCategory = new PackageCategoryTable(connector));
-		newTables.add(PackageDefinition = new PackageDefinitionTable(connector));
-		newTables.add(PackageDefinitionLimit = new PackageDefinitionLimitTable(connector));
-		newTables.add(Resource = new ResourceTable(connector));
-		newTables.add(Transaction = new TransactionTable(connector));
-		newTables.add(TransactionType = new TransactionTypeTable(connector));
-		newTables.add(WhoisHistory = new WhoisHistoryTable(connector));
-		newTables.add(WhoisHistoryAccount = new WhoisHistoryAccountTable(connector));
-		newTables.trimToSize();
-		tables = Collections.unmodifiableList(newTables);
-	}
+    ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
+    newTables.add(Currency = new CurrencyTable(connector));
+    newTables.add(MonthlyCharge = new MonthlyChargeTable(connector));
+    newTables.add(NoticeLog = new NoticeLogTable(connector));
+    newTables.add(NoticeLogBalance = new NoticeLogBalanceTable(connector));
+    newTables.add(NoticeType = new NoticeTypeTable(connector));
+    newTables.add(Package = new PackageTable(connector));
+    newTables.add(PackageCategory = new PackageCategoryTable(connector));
+    newTables.add(PackageDefinition = new PackageDefinitionTable(connector));
+    newTables.add(PackageDefinitionLimit = new PackageDefinitionLimitTable(connector));
+    newTables.add(Resource = new ResourceTable(connector));
+    newTables.add(Transaction = new TransactionTable(connector));
+    newTables.add(TransactionType = new TransactionTypeTable(connector));
+    newTables.add(WhoisHistory = new WhoisHistoryTable(connector));
+    newTables.add(WhoisHistoryAccount = new WhoisHistoryAccountTable(connector));
+    newTables.trimToSize();
+    tables = Collections.unmodifiableList(newTables);
+  }
 
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
-	public List<? extends AOServTable<?, ?>> getTables() {
-		return tables;
-	}
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
+  public List<? extends AOServTable<?, ?>> getTables() {
+    return tables;
+  }
 
-	@Override
-	public String getName() {
-		return "billing";
-	}
+  @Override
+  public String getName() {
+    return "billing";
+  }
 }

@@ -67,65 +67,69 @@ import java.sql.SQLException;
 
 public final class TopLevelDomain extends GlobalObjectDomainNameKey<TopLevelDomain> {
 
-	static final int COLUMN_DOMAIN=0;
-	static final String COLUMN_DOMAIN_name = "domain";
+  static final int COLUMN_DOMAIN=0;
+  static final String COLUMN_DOMAIN_name = "domain";
 
-	private String description;
+  private String description;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public TopLevelDomain() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public TopLevelDomain() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		if(i==COLUMN_DOMAIN) return pkey;
-		if(i==1) return description;
-		throw new IllegalArgumentException("Invalid index: " + i);
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    if (i == COLUMN_DOMAIN) {
+      return pkey;
+    }
+    if (i == 1) {
+      return description;
+    }
+    throw new IllegalArgumentException("Invalid index: " + i);
+  }
 
-	public String getDescription() {
-		return description;
-	}
+  public String getDescription() {
+    return description;
+  }
 
-	public DomainName getDomain() {
-		return pkey;
-	}
+  public DomainName getDomain() {
+    return pkey;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.DNS_TLDS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.DNS_TLDS;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		try {
-			pkey=DomainName.valueOf(result.getString(1));
-			description=result.getString(2);
-		} catch(ValidationException e) {
-			throw new SQLException(e);
-		}
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    try {
+      pkey=DomainName.valueOf(result.getString(1));
+      description=result.getString(2);
+    } catch (ValidationException e) {
+      throw new SQLException(e);
+    }
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		try {
-			pkey=DomainName.valueOf(in.readUTF()).intern();
-			description=in.readUTF();
-		} catch(ValidationException e) {
-			throw new IOException(e);
-		}
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    try {
+      pkey=DomainName.valueOf(in.readUTF()).intern();
+      description=in.readUTF();
+    } catch (ValidationException e) {
+      throw new IOException(e);
+    }
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey.toString());
-		out.writeUTF(description);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey.toString());
+    out.writeUTF(description);
+  }
 }

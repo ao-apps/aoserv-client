@@ -48,112 +48,124 @@ import java.sql.SQLException;
  */
 public final class Worker extends CachedObjectIntegerKey<Worker> {
 
-	static final int
-		COLUMN_BIND = 0,
-		COLUMN_TOMCAT_SITE = 2
-	;
-	static final String COLUMN_BIND_name = "bind";
-	static final String COLUMN_NAME_name = "name";
+  static final int
+    COLUMN_BIND = 0,
+    COLUMN_TOMCAT_SITE = 2
+  ;
+  static final String COLUMN_BIND_name = "bind";
+  static final String COLUMN_NAME_name = "name";
 
-	private String name;
-	private int tomcatSite;
+  private String name;
+  private int tomcatSite;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public Worker() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public Worker() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_BIND: return pkey;
-			case 1: return name;
-			case COLUMN_TOMCAT_SITE: return tomcatSite == -1 ? null : tomcatSite;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_BIND: return pkey;
+      case 1: return name;
+      case COLUMN_TOMCAT_SITE: return tomcatSite == -1 ? null : tomcatSite;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	public int getBind_id() {
-		return pkey;
-	}
+  public int getBind_id() {
+    return pkey;
+  }
 
-	public Bind getBind() throws IOException, SQLException {
-		Bind obj = table.getConnector().getNet().getBind().get(pkey);
-		if(obj == null) throw new SQLException("Unable to find NetBind: " + pkey);
-		return obj;
-	}
+  public Bind getBind() throws IOException, SQLException {
+    Bind obj = table.getConnector().getNet().getBind().get(pkey);
+    if (obj == null) {
+      throw new SQLException("Unable to find NetBind: " + pkey);
+    }
+    return obj;
+  }
 
-	public String getName_code() {
-		return name;
-	}
+  public String getName_code() {
+    return name;
+  }
 
-	public WorkerName getName() throws SQLException, IOException {
-		WorkerName obj = table.getConnector().getWeb_tomcat().getWorkerName().get(name);
-		if(obj == null) throw new SQLException("Unable to find HttpdJKCode: " + name);
-		return obj;
-	}
+  public WorkerName getName() throws SQLException, IOException {
+    WorkerName obj = table.getConnector().getWeb_tomcat().getWorkerName().get(name);
+    if (obj == null) {
+      throw new SQLException("Unable to find HttpdJKCode: " + name);
+    }
+    return obj;
+  }
 
-	public int getTomcatSite_httpdSite() {
-		return tomcatSite;
-	}
+  public int getTomcatSite_httpdSite() {
+    return tomcatSite;
+  }
 
-	public Site getTomcatSite() throws SQLException, IOException {
-		if(tomcatSite == -1) return null;
-		Site obj = table.getConnector().getWeb_tomcat().getSite().get(tomcatSite);
-		if(obj == null) throw new SQLException("Unable to find HttpdTomcatSite: " + tomcatSite);
-		return obj;
-	}
+  public Site getTomcatSite() throws SQLException, IOException {
+    if (tomcatSite == -1) {
+      return null;
+    }
+    Site obj = table.getConnector().getWeb_tomcat().getSite().get(tomcatSite);
+    if (obj == null) {
+      throw new SQLException("Unable to find HttpdTomcatSite: " + tomcatSite);
+    }
+    return obj;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.HTTPD_WORKERS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.HTTPD_WORKERS;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		int pos = 1;
-		pkey = result.getInt(pos++);
-		name = result.getString(pos++);
-		tomcatSite = result.getInt(pos++);
-		if(result.wasNull()) tomcatSite = -1;
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    int pos = 1;
+    pkey = result.getInt(pos++);
+    name = result.getString(pos++);
+    tomcatSite = result.getInt(pos++);
+    if (result.wasNull()) {
+      tomcatSite = -1;
+    }
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey = in.readCompressedInt();
-		name = in.readUTF();
-		tomcatSite = in.readCompressedInt();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey = in.readCompressedInt();
+    name = in.readUTF();
+    tomcatSite = in.readCompressedInt();
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeUTF(name);
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_17) <= 0) {
-			out.writeCompressedInt(pkey);
-		}
-		out.writeCompressedInt(tomcatSite);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    out.writeUTF(name);
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_17) <= 0) {
+      out.writeCompressedInt(pkey);
+    }
+    out.writeCompressedInt(tomcatSite);
+  }
 
-	@Override
-	public String toStringImpl() {
-		return pkey+"|"+name;
-	}
+  @Override
+  public String toStringImpl() {
+    return pkey+"|"+name;
+  }
 
-	public JkProtocol getHttpdJKProtocol(AOServConnector connector) throws IOException, SQLException {
-		AppProtocol appProtocol = getBind().getAppProtocol();
-		JkProtocol obj = appProtocol.getHttpdJKProtocol(connector);
-		if(obj == null) throw new SQLException("Unable to find HttpdJKProtocol: " + appProtocol);
-		return obj;
-	}
+  public JkProtocol getHttpdJKProtocol(AOServConnector connector) throws IOException, SQLException {
+    AppProtocol appProtocol = getBind().getAppProtocol();
+    JkProtocol obj = appProtocol.getHttpdJKProtocol(connector);
+    if (obj == null) {
+      throw new SQLException("Unable to find HttpdJKProtocol: " + appProtocol);
+    }
+    return obj;
+  }
 
-	public SharedTomcat getHttpdSharedTomcat() throws SQLException, IOException {
-		return table.getConnector().getWeb_tomcat().getSharedTomcat().getHttpdSharedTomcat(this);
-	}
+  public SharedTomcat getHttpdSharedTomcat() throws SQLException, IOException {
+    return table.getConnector().getWeb_tomcat().getSharedTomcat().getHttpdSharedTomcat(this);
+  }
 }

@@ -40,26 +40,26 @@ import java.sql.SQLException;
  */
 public final class ActionTypeTable extends GlobalTableStringKey<ActionType> {
 
-	ActionTypeTable(AOServConnector connector) {
-		super(connector, ActionType.class);
-	}
+  ActionTypeTable(AOServConnector connector) {
+    super(connector, ActionType.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(ActionType.COLUMN_TYPE_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(ActionType.COLUMN_TYPE_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public ActionType get(String type) throws IOException, SQLException {
-		return getUniqueRow(ActionType.COLUMN_TYPE, type);
-	}
+  @Override
+  public ActionType get(String type) throws IOException, SQLException {
+    return getUniqueRow(ActionType.COLUMN_TYPE, type);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.TICKET_ACTION_TYPES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.TICKET_ACTION_TYPES;
+  }
 }

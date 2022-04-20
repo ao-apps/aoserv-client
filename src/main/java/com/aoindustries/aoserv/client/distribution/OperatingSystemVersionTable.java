@@ -38,39 +38,41 @@ import java.sql.SQLException;
  */
 public final class OperatingSystemVersionTable extends GlobalTableIntegerKey<OperatingSystemVersion> {
 
-	OperatingSystemVersionTable(AOServConnector connector) {
-		super(connector, OperatingSystemVersion.class);
-	}
+  OperatingSystemVersionTable(AOServConnector connector) {
+    super(connector, OperatingSystemVersion.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(OperatingSystemVersion.COLUMN_SORT_ORDER_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(OperatingSystemVersion.COLUMN_SORT_ORDER_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	OperatingSystemVersion getOperatingSystemVersion(OperatingSystem os, String version, Architecture architecture) throws IOException, SQLException {
-		String name=os.getName();
-		String arch=architecture.getName();
-		for(OperatingSystemVersion osv : getRows()) {
-			if(
-				osv.getVersionName().equals(name)
-				&& osv.getVersionNumber().equals(version)
-				&& osv.getArchitecture_name().equals(arch)
-			) return osv;
-		}
-		return null;
-	}
+  OperatingSystemVersion getOperatingSystemVersion(OperatingSystem os, String version, Architecture architecture) throws IOException, SQLException {
+    String name=os.getName();
+    String arch=architecture.getName();
+    for (OperatingSystemVersion osv : getRows()) {
+      if (
+        osv.getVersionName().equals(name)
+        && osv.getVersionNumber().equals(version)
+        && osv.getArchitecture_name().equals(arch)
+      ) {
+        return osv;
+      }
+    }
+    return null;
+  }
 
-	@Override
-	public OperatingSystemVersion get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(OperatingSystemVersion.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public OperatingSystemVersion get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(OperatingSystemVersion.COLUMN_PKEY, pkey);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.OPERATING_SYSTEM_VERSIONS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.OPERATING_SYSTEM_VERSIONS;
+  }
 }

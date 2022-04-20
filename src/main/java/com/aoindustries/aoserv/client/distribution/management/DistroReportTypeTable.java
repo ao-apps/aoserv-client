@@ -36,26 +36,26 @@ import java.sql.SQLException;
  */
 public final class DistroReportTypeTable extends GlobalTableStringKey<DistroReportType> {
 
-	DistroReportTypeTable(AOServConnector connector) {
-		super(connector, DistroReportType.class);
-	}
+  DistroReportTypeTable(AOServConnector connector) {
+    super(connector, DistroReportType.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(DistroReportType.COLUMN_NAME_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(DistroReportType.COLUMN_NAME_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public DistroReportType get(String name) throws IOException, SQLException {
-		return getUniqueRow(DistroReportType.COLUMN_NAME, name);
-	}
+  @Override
+  public DistroReportType get(String name) throws IOException, SQLException {
+    return getUniqueRow(DistroReportType.COLUMN_NAME, name);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.DISTRO_REPORT_TYPES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.DISTRO_REPORT_TYPES;
+  }
 }

@@ -38,17 +38,17 @@ import java.util.List;
  */
 public interface SQLExpression {
 
-	String getColumnName();
+  String getColumnName();
 
-	/**
-	 * Evaluates the expression on the given connector and object.
-	 */
-	Object evaluate(AOServConnector conn, AOServObject<?, ?> obj) throws IOException, SQLException;
+  /**
+   * Evaluates the expression on the given connector and object.
+   */
+  Object evaluate(AOServConnector conn, AOServObject<?, ?> obj) throws IOException, SQLException;
 
-	Type getType();
+  Type getType();
 
-	/**
-	 * Gets all of the tables referenced by this expression.
-	 */
-	void getReferencedTables(AOServConnector conn, List<Table> tables) throws IOException, SQLException;
+  /**
+   * Gets all of the tables referenced by this expression.
+   */
+  void getReferencedTables(AOServConnector conn, List<Table> tables) throws IOException, SQLException;
 }

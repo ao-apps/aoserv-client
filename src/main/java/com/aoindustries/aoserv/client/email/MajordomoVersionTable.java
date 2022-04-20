@@ -36,26 +36,26 @@ import java.sql.SQLException;
  */
 public final class MajordomoVersionTable extends GlobalTableStringKey<MajordomoVersion> {
 
-	MajordomoVersionTable(AOServConnector connector) {
-		super(connector, MajordomoVersion.class);
-	}
+  MajordomoVersionTable(AOServConnector connector) {
+    super(connector, MajordomoVersion.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(MajordomoVersion.COLUMN_VERSION_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(MajordomoVersion.COLUMN_VERSION_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public MajordomoVersion get(String version) throws IOException, SQLException {
-		return getUniqueRow(MajordomoVersion.COLUMN_VERSION, version);
-	}
+  @Override
+  public MajordomoVersion get(String version) throws IOException, SQLException {
+    return getUniqueRow(MajordomoVersion.COLUMN_VERSION, version);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.MAJORDOMO_VERSIONS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.MAJORDOMO_VERSIONS;
+  }
 }

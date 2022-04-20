@@ -47,77 +47,87 @@ import java.sql.SQLException;
  */
 public final class Version extends GlobalObjectIntegerKey<Version> {
 
-	static final int COLUMN_VERSION=0;
-	static final String COLUMN_VERSION_name = "version";
+  static final int COLUMN_VERSION=0;
+  static final String COLUMN_VERSION_name = "version";
 
-	private int tomcatVersion;
-	private String templateDir;
-	public static final String TECHNOLOGY_NAME="JBoss";
+  private int tomcatVersion;
+  private String templateDir;
+  public static final String TECHNOLOGY_NAME="JBoss";
 
-	public static final String
-		VERSION_2_2_2="2.2.2"
-	;
+  public static final String
+    VERSION_2_2_2="2.2.2"
+  ;
 
-	public static final String DEFAULT_VERSION=VERSION_2_2_2;
+  public static final String DEFAULT_VERSION=VERSION_2_2_2;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public Version() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public Version() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		if(i==COLUMN_VERSION) return pkey;
-		if(i==1) return tomcatVersion;
-		if(i==2) return templateDir;
-		throw new IllegalArgumentException("Invalid index: " + i);
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    if (i == COLUMN_VERSION) {
+      return pkey;
+    }
+    if (i == 1) {
+      return tomcatVersion;
+    }
+    if (i == 2) {
+      return templateDir;
+    }
+    throw new IllegalArgumentException("Invalid index: " + i);
+  }
 
-	public com.aoindustries.aoserv.client.web.tomcat.Version getHttpdTomcatVersion(AOServConnector connector) throws SQLException, IOException {
-		com.aoindustries.aoserv.client.web.tomcat.Version obj=connector.getWeb_tomcat().getVersion().get(tomcatVersion);
-		if(obj==null) throw new SQLException("Unable to find HttpdTomcatVersion: "+tomcatVersion);
-		return obj;
-	}
+  public com.aoindustries.aoserv.client.web.tomcat.Version getHttpdTomcatVersion(AOServConnector connector) throws SQLException, IOException {
+    com.aoindustries.aoserv.client.web.tomcat.Version obj=connector.getWeb_tomcat().getVersion().get(tomcatVersion);
+    if (obj == null) {
+      throw new SQLException("Unable to find HttpdTomcatVersion: "+tomcatVersion);
+    }
+    return obj;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.HTTPD_JBOSS_VERSIONS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.HTTPD_JBOSS_VERSIONS;
+  }
 
-	public SoftwareVersion getTechnologyVersion(AOServConnector connector) throws SQLException, IOException {
-		SoftwareVersion obj=connector.getDistribution().getSoftwareVersion().get(pkey);
-		if(obj==null) throw new SQLException("Unable to find TechnologyVersion: "+pkey);
-		return obj;
-	}
+  public SoftwareVersion getTechnologyVersion(AOServConnector connector) throws SQLException, IOException {
+    SoftwareVersion obj=connector.getDistribution().getSoftwareVersion().get(pkey);
+    if (obj == null) {
+      throw new SQLException("Unable to find TechnologyVersion: "+pkey);
+    }
+    return obj;
+  }
 
-	public String getTemplateDirectory() {
-		return templateDir;
-	}
+  public String getTemplateDirectory() {
+    return templateDir;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey=result.getInt(1);
-		tomcatVersion=result.getInt(2);
-		templateDir=result.getString(3);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey=result.getInt(1);
+    tomcatVersion=result.getInt(2);
+    templateDir=result.getString(3);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readCompressedInt();
-		tomcatVersion=in.readCompressedInt();
-		templateDir=in.readUTF();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readCompressedInt();
+    tomcatVersion=in.readCompressedInt();
+    templateDir=in.readUTF();
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeCompressedInt(tomcatVersion);
-		out.writeUTF(templateDir);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    out.writeCompressedInt(tomcatVersion);
+    out.writeUTF(templateDir);
+  }
 }

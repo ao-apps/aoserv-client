@@ -36,27 +36,27 @@ import java.sql.SQLException;
  */
 public final class RackTable extends CachedTableIntegerKey<Rack> {
 
-	RackTable(AOServConnector connector) {
-		super(connector, Rack.class);
-	}
+  RackTable(AOServConnector connector) {
+    super(connector, Rack.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(Rack.COLUMN_FARM_name, ASCENDING),
-		new OrderBy(Rack.COLUMN_NAME_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(Rack.COLUMN_FARM_name, ASCENDING),
+    new OrderBy(Rack.COLUMN_NAME_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public Rack get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(Rack.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public Rack get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(Rack.COLUMN_PKEY, pkey);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.RACKS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.RACKS;
+  }
 }

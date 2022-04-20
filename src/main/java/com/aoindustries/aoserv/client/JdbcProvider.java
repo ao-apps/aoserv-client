@@ -33,18 +33,18 @@ import java.sql.SQLException;
  */
 public interface JdbcProvider {
 
-	/**
-	 * Gets the classname of the driver used to contact the server.
-	 */
-	String getJdbcDriver() throws IOException, SQLException;
+  /**
+   * Gets the classname of the driver used to contact the server.
+   */
+  String getJdbcDriver() throws IOException, SQLException;
 
-	/**
-	 * Gets the URL that should be used for JDBC connections.
-	 */
-	String getJdbcUrl(boolean ipOnly) throws IOException, SQLException;
+  /**
+   * Gets the URL that should be used for JDBC connections.
+   */
+  String getJdbcUrl(boolean ipOnly) throws IOException, SQLException;
 
-	/**
-	 * Gets the URL of the JDBC documentation.
-	 */
-	String getJdbcDocumentationUrl() throws IOException, SQLException;
+  /**
+   * Gets the URL of the JDBC documentation.
+   */
+  String getJdbcDocumentationUrl() throws IOException, SQLException;
 }

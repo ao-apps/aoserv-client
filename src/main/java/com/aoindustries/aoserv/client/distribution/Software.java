@@ -42,107 +42,123 @@ import java.util.List;
  */
 public final class Software extends GlobalObjectStringKey<Software> {
 
-	static final int COLUMN_NAME = 0;
-	static final String COLUMN_NAME_name = "name";
+  static final int COLUMN_NAME = 0;
+  static final String COLUMN_NAME_name = "name";
 
-	public static final String MYSQL = "MySQL";
+  public static final String MYSQL = "MySQL";
 
-	public static final String PHP = "php";
+  public static final String PHP = "php";
 
-	private String image_filename;
-	private int image_width;
-	private int image_height;
-	private String image_alt;
-	private String home_page_url;
+  private String image_filename;
+  private int image_width;
+  private int image_height;
+  private String image_alt;
+  private String home_page_url;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public Software() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public Software() {
+    // Do nothing
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		if(i == COLUMN_NAME) return pkey;
-		if(i == 1) return image_filename;
-		if(i == 2) return image_width==-1?null:image_width;
-		if(i == 3) return image_height==-1?null:image_height;
-		if(i == 4) return image_alt;
-		if(i == 5) return home_page_url;
-		throw new IllegalArgumentException("Invalid index: " + i);
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    if (i == COLUMN_NAME) {
+      return pkey;
+    }
+    if (i == 1) {
+      return image_filename;
+    }
+    if (i == 2) {
+      return image_width == -1?null:image_width;
+    }
+    if (i == 3) {
+      return image_height == -1?null:image_height;
+    }
+    if (i == 4) {
+      return image_alt;
+    }
+    if (i == 5) {
+      return home_page_url;
+    }
+    throw new IllegalArgumentException("Invalid index: " + i);
+  }
 
-	public String getHomePageURL() {
-		return home_page_url;
-	}
+  public String getHomePageURL() {
+    return home_page_url;
+  }
 
-	public String getImageAlt() {
-		return image_alt;
-	}
+  public String getImageAlt() {
+    return image_alt;
+  }
 
-	public String getImageFilename() {
-		return image_filename;
-	}
+  public String getImageFilename() {
+    return image_filename;
+  }
 
-	public int getImageHeight() {
-		return image_height;
-	}
+  public int getImageHeight() {
+    return image_height;
+  }
 
-	public int getImageWidth() {
-		return image_width;
-	}
+  public int getImageWidth() {
+    return image_width;
+  }
 
-	public String getName() {
-		return pkey;
-	}
+  public String getName() {
+    return pkey;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.TECHNOLOGY_NAMES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.TECHNOLOGY_NAMES;
+  }
 
-	public List<SoftwareCategorization> getTechnologies(AOServConnector connector) throws IOException, SQLException {
-		return connector.getDistribution().getSoftwareCategorization().getTechnologies(this);
-	}
+  public List<SoftwareCategorization> getTechnologies(AOServConnector connector) throws IOException, SQLException {
+    return connector.getDistribution().getSoftwareCategorization().getTechnologies(this);
+  }
 
-	public SoftwareVersion getTechnologyVersion(AOServConnector connector, String version, OperatingSystemVersion osv) throws IOException, SQLException {
-		return connector.getDistribution().getSoftwareVersion().getTechnologyVersion(this, version, osv);
-	}
+  public SoftwareVersion getTechnologyVersion(AOServConnector connector, String version, OperatingSystemVersion osv) throws IOException, SQLException {
+    return connector.getDistribution().getSoftwareVersion().getTechnologyVersion(this, version, osv);
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey = result.getString(1);
-		image_filename=result.getString(2);
-		image_width=result.getInt(3);
-		if(result.wasNull()) image_width=-1;
-		image_height=result.getInt(4);
-		if(result.wasNull()) image_height=-1;
-		image_alt=result.getString(5);
-		home_page_url=result.getString(6);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey = result.getString(1);
+    image_filename=result.getString(2);
+    image_width=result.getInt(3);
+    if (result.wasNull()) {
+      image_width=-1;
+    }
+    image_height=result.getInt(4);
+    if (result.wasNull()) {
+      image_height=-1;
+    }
+    image_alt=result.getString(5);
+    home_page_url=result.getString(6);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey=in.readUTF().intern();
-		image_filename=in.readNullUTF();
-		image_width=in.readCompressedInt();
-		image_height=in.readCompressedInt();
-		image_alt=in.readNullUTF();
-		home_page_url=in.readNullUTF();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey=in.readUTF().intern();
+    image_filename=in.readNullUTF();
+    image_width=in.readCompressedInt();
+    image_height=in.readCompressedInt();
+    image_alt=in.readNullUTF();
+    home_page_url=in.readNullUTF();
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey);
-		out.writeNullUTF(image_filename);
-		out.writeCompressedInt(image_width);
-		out.writeCompressedInt(image_height);
-		out.writeNullUTF(image_alt);
-		out.writeNullUTF(home_page_url);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeUTF(pkey);
+    out.writeNullUTF(image_filename);
+    out.writeCompressedInt(image_width);
+    out.writeCompressedInt(image_height);
+    out.writeNullUTF(image_alt);
+    out.writeNullUTF(home_page_url);
+  }
 }

@@ -34,23 +34,23 @@ import java.sql.SQLException;
  */
 public abstract class GlobalTableDomainNameKey<V extends GlobalObjectDomainNameKey<V>> extends GlobalTable<DomainName, V> {
 
-	protected GlobalTableDomainNameKey(AOServConnector connector, Class<V> clazz) {
-		super(connector, clazz);
-	}
+  protected GlobalTableDomainNameKey(AOServConnector connector, Class<V> clazz) {
+    super(connector, clazz);
+  }
 
-	/**
-	 * Gets the object with the provided key.  The key must be a DomainName.
-	 *
-	 * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
-	 */
-	@Deprecated
-	@Override
-	public V get(Object pkey) throws IOException, SQLException {
-		return get((DomainName)pkey);
-	}
+  /**
+   * Gets the object with the provided key.  The key must be a DomainName.
+   *
+   * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
+   */
+  @Deprecated
+  @Override
+  public V get(Object pkey) throws IOException, SQLException {
+    return get((DomainName)pkey);
+  }
 
-	/**
-	 * @see  #get(java.lang.Object)
-	 */
-	public abstract V get(DomainName pkey) throws IOException, SQLException;
+  /**
+   * @see  #get(java.lang.Object)
+   */
+  public abstract V get(DomainName pkey) throws IOException, SQLException;
 }

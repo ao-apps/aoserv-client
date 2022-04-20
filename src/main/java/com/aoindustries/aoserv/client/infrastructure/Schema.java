@@ -34,48 +34,48 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final PhysicalServerTable PhysicalServer;
-	public PhysicalServerTable getPhysicalServer() {return PhysicalServer;}
+  private final PhysicalServerTable PhysicalServer;
+  public PhysicalServerTable getPhysicalServer() {return PhysicalServer;}
 
-	private final ProcessorTypeTable ProcessorType;
-	public ProcessorTypeTable getProcessorType() {return ProcessorType;}
+  private final ProcessorTypeTable ProcessorType;
+  public ProcessorTypeTable getProcessorType() {return ProcessorType;}
 
-	private final RackTable Rack;
-	public RackTable getRack() {return Rack;}
+  private final RackTable Rack;
+  public RackTable getRack() {return Rack;}
 
-	private final ServerFarmTable ServerFarm;
-	public ServerFarmTable getServerFarm() {return ServerFarm;}
+  private final ServerFarmTable ServerFarm;
+  public ServerFarmTable getServerFarm() {return ServerFarm;}
 
-	private final VirtualDiskTable VirtualDisk;
-	public VirtualDiskTable getVirtualDisk() {return VirtualDisk;}
+  private final VirtualDiskTable VirtualDisk;
+  public VirtualDiskTable getVirtualDisk() {return VirtualDisk;}
 
-	private final VirtualServerTable VirtualServer;
-	public VirtualServerTable getVirtualServer() {return VirtualServer;}
+  private final VirtualServerTable VirtualServer;
+  public VirtualServerTable getVirtualServer() {return VirtualServer;}
 
-	private final List<? extends AOServTable<?, ?>> tables;
+  private final List<? extends AOServTable<?, ?>> tables;
 
-	public Schema(AOServConnector connector) {
-		super(connector);
+  public Schema(AOServConnector connector) {
+    super(connector);
 
-		ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
-		newTables.add(PhysicalServer = new PhysicalServerTable(connector));
-		newTables.add(ProcessorType = new ProcessorTypeTable(connector));
-		newTables.add(Rack = new RackTable(connector));
-		newTables.add(ServerFarm = new ServerFarmTable(connector));
-		newTables.add(VirtualDisk = new VirtualDiskTable(connector));
-		newTables.add(VirtualServer = new VirtualServerTable(connector));
-		newTables.trimToSize();
-		tables = Collections.unmodifiableList(newTables);
-	}
+    ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
+    newTables.add(PhysicalServer = new PhysicalServerTable(connector));
+    newTables.add(ProcessorType = new ProcessorTypeTable(connector));
+    newTables.add(Rack = new RackTable(connector));
+    newTables.add(ServerFarm = new ServerFarmTable(connector));
+    newTables.add(VirtualDisk = new VirtualDiskTable(connector));
+    newTables.add(VirtualServer = new VirtualServerTable(connector));
+    newTables.trimToSize();
+    tables = Collections.unmodifiableList(newTables);
+  }
 
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
-	public List<? extends AOServTable<?, ?>> getTables() {
-		return tables;
-	}
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
+  public List<? extends AOServTable<?, ?>> getTables() {
+    return tables;
+  }
 
-	@Override
-	public String getName() {
-		return "infrastructure";
-	}
+  @Override
+  public String getName() {
+    return "infrastructure";
+  }
 }

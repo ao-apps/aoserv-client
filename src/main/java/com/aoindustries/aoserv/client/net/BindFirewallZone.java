@@ -40,73 +40,77 @@ import java.sql.SQLException;
  */
 public final class BindFirewallZone extends CachedObjectIntegerKey<BindFirewallZone> {
 
-	static final int
-		COLUMN_PKEY = 0,
-		COLUMN_NET_BIND = 1,
-		COLUMN_FIREWALLD_ZONE = 2
-	;
-	static final String COLUMN_NET_BIND_name = "net_bind";
-	static final String COLUMN_FIREWALLD_ZONE_name = "firewalld_zone";
+  static final int
+    COLUMN_PKEY = 0,
+    COLUMN_NET_BIND = 1,
+    COLUMN_FIREWALLD_ZONE = 2
+  ;
+  static final String COLUMN_NET_BIND_name = "net_bind";
+  static final String COLUMN_FIREWALLD_ZONE_name = "firewalld_zone";
 
-	private int net_bind;
-	private int firewalld_zone;
+  private int net_bind;
+  private int firewalld_zone;
 
-	/**
-	 * @deprecated  Only required for implementation, do not use directly.
-	 *
-	 * @see  #init(java.sql.ResultSet)
-	 * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
-	 */
-	@Deprecated/* Java 9: (forRemoval = true) */
-	public BindFirewallZone() {
-		// Do nothing
-	}
+  /**
+   * @deprecated  Only required for implementation, do not use directly.
+   *
+   * @see  #init(java.sql.ResultSet)
+   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   */
+  @Deprecated/* Java 9: (forRemoval = true) */
+  public BindFirewallZone() {
+    // Do nothing
+  }
 
-	public Bind getNetBind() throws SQLException, IOException {
-		Bind obj = table.getConnector().getNet().getBind().get(net_bind);
-		if(obj == null) throw new SQLException("Unable to find NetBind: " + net_bind);
-		return obj;
-	}
+  public Bind getNetBind() throws SQLException, IOException {
+    Bind obj = table.getConnector().getNet().getBind().get(net_bind);
+    if (obj == null) {
+      throw new SQLException("Unable to find NetBind: " + net_bind);
+    }
+    return obj;
+  }
 
-	public FirewallZone getFirewalldZone() throws SQLException, IOException {
-		FirewallZone obj = table.getConnector().getNet().getFirewallZone().get(firewalld_zone);
-		if(obj == null) throw new SQLException("Unable to find FirewalldZone: " + firewalld_zone);
-		return obj;
-	}
+  public FirewallZone getFirewalldZone() throws SQLException, IOException {
+    FirewallZone obj = table.getConnector().getNet().getFirewallZone().get(firewalld_zone);
+    if (obj == null) {
+      throw new SQLException("Unable to find FirewalldZone: " + firewalld_zone);
+    }
+    return obj;
+  }
 
-	@Override
-	protected Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_PKEY: return pkey;
-			case COLUMN_NET_BIND: return net_bind;
-			case COLUMN_FIREWALLD_ZONE: return firewalld_zone;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
+  @Override
+  protected Object getColumnImpl(int i) {
+    switch (i) {
+      case COLUMN_PKEY: return pkey;
+      case COLUMN_NET_BIND: return net_bind;
+      case COLUMN_FIREWALLD_ZONE: return firewalld_zone;
+      default: throw new IllegalArgumentException("Invalid index: " + i);
+    }
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.NET_BIND_FIREWALLD_ZONES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.NET_BIND_FIREWALLD_ZONES;
+  }
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		pkey = result.getInt(1);
-		net_bind = result.getInt(2);
-		firewalld_zone = result.getInt(3);
-	}
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    pkey = result.getInt(1);
+    net_bind = result.getInt(2);
+    firewalld_zone = result.getInt(3);
+  }
 
-	@Override
-	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-		pkey = in.readCompressedInt();
-		net_bind = in.readCompressedInt();
-		firewalld_zone = in.readCompressedInt();
-	}
+  @Override
+  public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
+    pkey = in.readCompressedInt();
+    net_bind = in.readCompressedInt();
+    firewalld_zone = in.readCompressedInt();
+  }
 
-	@Override
-	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeCompressedInt(net_bind);
-		out.writeCompressedInt(firewalld_zone);
-	}
+  @Override
+  public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
+    out.writeCompressedInt(pkey);
+    out.writeCompressedInt(net_bind);
+    out.writeCompressedInt(firewalld_zone);
+  }
 }

@@ -34,56 +34,56 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final BackupPartitionTable BackupPartition;
-	public BackupPartitionTable getBackupPartition() {return BackupPartition;}
+  private final BackupPartitionTable BackupPartition;
+  public BackupPartitionTable getBackupPartition() {return BackupPartition;}
 
-	private final BackupReportTable BackupReport;
-	public BackupReportTable getBackupReport() {return BackupReport;}
+  private final BackupReportTable BackupReport;
+  public BackupReportTable getBackupReport() {return BackupReport;}
 
-	private final BackupRetentionTable BackupRetention;
-	public BackupRetentionTable getBackupRetention() {return BackupRetention;}
+  private final BackupRetentionTable BackupRetention;
+  public BackupRetentionTable getBackupRetention() {return BackupRetention;}
 
-	private final FileReplicationTable FileReplication;
-	public FileReplicationTable getFileReplication() {return FileReplication;}
+  private final FileReplicationTable FileReplication;
+  public FileReplicationTable getFileReplication() {return FileReplication;}
 
-	private final FileReplicationLogTable FileReplicationLog;
-	public FileReplicationLogTable getFileReplicationLog() {return FileReplicationLog;}
+  private final FileReplicationLogTable FileReplicationLog;
+  public FileReplicationLogTable getFileReplicationLog() {return FileReplicationLog;}
 
-	private final FileReplicationScheduleTable FileReplicationSchedule;
-	public FileReplicationScheduleTable getFileReplicationSchedule() {return FileReplicationSchedule;}
+  private final FileReplicationScheduleTable FileReplicationSchedule;
+  public FileReplicationScheduleTable getFileReplicationSchedule() {return FileReplicationSchedule;}
 
-	private final FileReplicationSettingTable FileReplicationSetting;
-	public FileReplicationSettingTable getFileReplicationSetting() {return FileReplicationSetting;}
+  private final FileReplicationSettingTable FileReplicationSetting;
+  public FileReplicationSettingTable getFileReplicationSetting() {return FileReplicationSetting;}
 
-	private final MysqlReplicationTable MysqlReplication;
-	public MysqlReplicationTable getMysqlReplication() {return MysqlReplication;}
+  private final MysqlReplicationTable MysqlReplication;
+  public MysqlReplicationTable getMysqlReplication() {return MysqlReplication;}
 
-	private final List<? extends AOServTable<?, ?>> tables;
+  private final List<? extends AOServTable<?, ?>> tables;
 
-	public Schema(AOServConnector connector) {
-		super(connector);
+  public Schema(AOServConnector connector) {
+    super(connector);
 
-		ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
-		newTables.add(BackupPartition = new BackupPartitionTable(connector));
-		newTables.add(BackupReport = new BackupReportTable(connector));
-		newTables.add(BackupRetention = new BackupRetentionTable(connector));
-		newTables.add(FileReplication = new FileReplicationTable(connector));
-		newTables.add(FileReplicationLog = new FileReplicationLogTable(connector));
-		newTables.add(FileReplicationSchedule = new FileReplicationScheduleTable(connector));
-		newTables.add(FileReplicationSetting = new FileReplicationSettingTable(connector));
-		newTables.add(MysqlReplication = new MysqlReplicationTable(connector));
-		newTables.trimToSize();
-		tables = Collections.unmodifiableList(newTables);
-	}
+    ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
+    newTables.add(BackupPartition = new BackupPartitionTable(connector));
+    newTables.add(BackupReport = new BackupReportTable(connector));
+    newTables.add(BackupRetention = new BackupRetentionTable(connector));
+    newTables.add(FileReplication = new FileReplicationTable(connector));
+    newTables.add(FileReplicationLog = new FileReplicationLogTable(connector));
+    newTables.add(FileReplicationSchedule = new FileReplicationScheduleTable(connector));
+    newTables.add(FileReplicationSetting = new FileReplicationSettingTable(connector));
+    newTables.add(MysqlReplication = new MysqlReplicationTable(connector));
+    newTables.trimToSize();
+    tables = Collections.unmodifiableList(newTables);
+  }
 
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
-	public List<? extends AOServTable<?, ?>> getTables() {
-		return tables;
-	}
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
+  public List<? extends AOServTable<?, ?>> getTables() {
+    return tables;
+  }
 
-	@Override
-	public String getName() {
-		return "backup";
-	}
+  @Override
+  public String getName() {
+    return "backup";
+  }
 }

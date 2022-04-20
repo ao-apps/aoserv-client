@@ -28,11 +28,11 @@ package com.aoindustries.aoserv.client.dto;
  */
 public class MySQLUserName extends LinuxUserName {
 
-	public MySQLUserName() {
-		// Do nothing
-	}
+  public MySQLUserName() {
+    // Do nothing
+  }
 
-	public MySQLUserName(String name) {
-		super(name);
-	}
+  public MySQLUserName(String name) {
+    super(name);
+  }
 }

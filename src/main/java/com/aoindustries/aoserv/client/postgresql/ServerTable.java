@@ -44,147 +44,149 @@ import java.util.List;
  */
 public final class ServerTable extends CachedTableIntegerKey<Server> {
 
-	ServerTable(AOServConnector connector) {
-		super(connector, Server.class);
-	}
+  ServerTable(AOServConnector connector) {
+    super(connector, Server.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(Server.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(Server.COLUMN_AO_SERVER_name+'.'+com.aoindustries.aoserv.client.linux.Server.COLUMN_HOSTNAME_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(Server.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(Server.COLUMN_AO_SERVER_name+'.'+com.aoindustries.aoserv.client.linux.Server.COLUMN_HOSTNAME_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	int addPostgresServer(
-		Server.Name name,
-		com.aoindustries.aoserv.client.linux.Server aoServer,
-		Version version,
-		int maxConnections,
-		int sortMem,
-		int sharedBuffers,
-		boolean fsync
-	) throws IOException, SQLException {
-		return connector.requestIntQueryIL(
-			true,
-			AoservProtocol.CommandID.ADD,
-			Table.TableID.POSTGRES_SERVERS,
-			name,
-			aoServer.getPkey(),
-			version.getPkey(),
-			maxConnections,
-			sortMem,
-			sharedBuffers,
-			fsync
-		);
-	}
+  int addPostgresServer(
+    Server.Name name,
+    com.aoindustries.aoserv.client.linux.Server aoServer,
+    Version version,
+    int maxConnections,
+    int sortMem,
+    int sharedBuffers,
+    boolean fsync
+  ) throws IOException, SQLException {
+    return connector.requestIntQueryIL(
+      true,
+      AoservProtocol.CommandID.ADD,
+      Table.TableID.POSTGRES_SERVERS,
+      name,
+      aoServer.getPkey(),
+      version.getPkey(),
+      maxConnections,
+      sortMem,
+      sharedBuffers,
+      fsync
+    );
+  }
 
-	@Override
-	public Server get(int bind) throws IOException, SQLException {
-		return getUniqueRow(Server.COLUMN_BIND, bind);
-	}
+  @Override
+  public Server get(int bind) throws IOException, SQLException {
+    return getUniqueRow(Server.COLUMN_BIND, bind);
+  }
 
-	public Server getPostgresServer(Bind nb) throws IOException, SQLException {
-		return getUniqueRow(Server.COLUMN_BIND, nb.getId());
-	}
+  public Server getPostgresServer(Bind nb) throws IOException, SQLException {
+    return getUniqueRow(Server.COLUMN_BIND, nb.getId());
+  }
 
-	public List<Server> getPostgresServers(com.aoindustries.aoserv.client.linux.Server ao) throws IOException, SQLException {
-		return getIndexedRows(Server.COLUMN_AO_SERVER, ao.getPkey());
-	}
+  public List<Server> getPostgresServers(com.aoindustries.aoserv.client.linux.Server ao) throws IOException, SQLException {
+    return getIndexedRows(Server.COLUMN_AO_SERVER, ao.getPkey());
+  }
 
-	public Server getPostgresServer(Server.Name name, com.aoindustries.aoserv.client.linux.Server ao) throws IOException, SQLException {
-		// Use the index first
-		List<Server> table=getPostgresServers(ao);
-		int size=table.size();
-		for(int c=0;c<size;c++) {
-			Server ps=table.get(c);
-			if(ps.getName().equals(name)) return ps;
-		}
-		return null;
-	}
+  public Server getPostgresServer(Server.Name name, com.aoindustries.aoserv.client.linux.Server ao) throws IOException, SQLException {
+    // Use the index first
+    List<Server> table=getPostgresServers(ao);
+    int size=table.size();
+    for (int c=0;c<size;c++) {
+      Server ps=table.get(c);
+      if (ps.getName().equals(name)) {
+        return ps;
+      }
+    }
+    return null;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.POSTGRES_SERVERS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.POSTGRES_SERVERS;
+  }
 
-	@Override
-	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-		String command=args[0];
-		if(command.equalsIgnoreCase(Command.CHECK_POSTGRES_SERVER_NAME)) {
-			if(AOSH.checkParamCount(Command.CHECK_POSTGRES_SERVER_NAME, args, 1, err)) {
-				ValidationResult validationResult = Server.Name.validate(args[1]);
-				out.println(validationResult.isValid());
-				out.flush();
-				if(!validationResult.isValid()) {
-					err.print("aosh: "+Command.CHECK_POSTGRES_SERVER_NAME+": ");
-					err.println(validationResult.toString());
-					err.flush();
-				}
-			}
-			return true;
-		} else if(command.equalsIgnoreCase(Command.IS_POSTGRES_SERVER_NAME_AVAILABLE)) {
-			if(AOSH.checkParamCount(Command.IS_POSTGRES_SERVER_NAME_AVAILABLE, args, 2, err)) {
-				try {
-					out.println(
-						connector.getSimpleAOClient().isPostgresServerNameAvailable(
-							AOSH.parsePostgresServerName(args[1], "server_name"),
-							args[2]
-						)
-					);
-					out.flush();
-				} catch(IllegalArgumentException iae) {
-					err.print("aosh: "+Command.IS_POSTGRES_SERVER_NAME_AVAILABLE+": ");
-					err.println(iae.getMessage());
-					err.flush();
-				}
-			}
-			return true;
-		} else if(command.equalsIgnoreCase(Command.RESTART_POSTGRESQL)) {
-			if(AOSH.checkParamCount(Command.RESTART_POSTGRESQL, args, 2, err)) {
-				connector.getSimpleAOClient().restartPostgreSQL(
-					AOSH.parsePostgresServerName(args[1], "postgres_server"),
-					args[2]
-				);
-			}
-			return true;
-		} else if(command.equalsIgnoreCase(Command.START_POSTGRESQL)) {
-			if(AOSH.checkParamCount(Command.START_POSTGRESQL, args, 2, err)) {
-				connector.getSimpleAOClient().startPostgreSQL(
-					AOSH.parsePostgresServerName(args[1], "postgres_server"),
-					args[2]
-				);
-			}
-			return true;
-		} else if(command.equalsIgnoreCase(Command.STOP_POSTGRESQL)) {
-			if(AOSH.checkParamCount(Command.STOP_POSTGRESQL, args, 2, err)) {
-				connector.getSimpleAOClient().stopPostgreSQL(
-					AOSH.parsePostgresServerName(args[1], "postgres_server"),
-					args[2]
-				);
-			}
-			return true;
-		} else if(command.equalsIgnoreCase(Command.WAIT_FOR_POSTGRES_SERVER_REBUILD)) {
-			if(AOSH.checkParamCount(Command.WAIT_FOR_POSTGRES_SERVER_REBUILD, args, 1, err)) {
-				connector.getSimpleAOClient().waitForPostgresServerRebuild(args[1]);
-			}
-			return true;
-		}
-		return false;
-	}
+  @Override
+  public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
+    String command=args[0];
+    if (command.equalsIgnoreCase(Command.CHECK_POSTGRES_SERVER_NAME)) {
+      if (AOSH.checkParamCount(Command.CHECK_POSTGRES_SERVER_NAME, args, 1, err)) {
+        ValidationResult validationResult = Server.Name.validate(args[1]);
+        out.println(validationResult.isValid());
+        out.flush();
+        if (!validationResult.isValid()) {
+          err.print("aosh: "+Command.CHECK_POSTGRES_SERVER_NAME+": ");
+          err.println(validationResult.toString());
+          err.flush();
+        }
+      }
+      return true;
+    } else if (command.equalsIgnoreCase(Command.IS_POSTGRES_SERVER_NAME_AVAILABLE)) {
+      if (AOSH.checkParamCount(Command.IS_POSTGRES_SERVER_NAME_AVAILABLE, args, 2, err)) {
+        try {
+          out.println(
+            connector.getSimpleAOClient().isPostgresServerNameAvailable(
+              AOSH.parsePostgresServerName(args[1], "server_name"),
+              args[2]
+            )
+          );
+          out.flush();
+        } catch (IllegalArgumentException iae) {
+          err.print("aosh: "+Command.IS_POSTGRES_SERVER_NAME_AVAILABLE+": ");
+          err.println(iae.getMessage());
+          err.flush();
+        }
+      }
+      return true;
+    } else if (command.equalsIgnoreCase(Command.RESTART_POSTGRESQL)) {
+      if (AOSH.checkParamCount(Command.RESTART_POSTGRESQL, args, 2, err)) {
+        connector.getSimpleAOClient().restartPostgreSQL(
+          AOSH.parsePostgresServerName(args[1], "postgres_server"),
+          args[2]
+        );
+      }
+      return true;
+    } else if (command.equalsIgnoreCase(Command.START_POSTGRESQL)) {
+      if (AOSH.checkParamCount(Command.START_POSTGRESQL, args, 2, err)) {
+        connector.getSimpleAOClient().startPostgreSQL(
+          AOSH.parsePostgresServerName(args[1], "postgres_server"),
+          args[2]
+        );
+      }
+      return true;
+    } else if (command.equalsIgnoreCase(Command.STOP_POSTGRESQL)) {
+      if (AOSH.checkParamCount(Command.STOP_POSTGRESQL, args, 2, err)) {
+        connector.getSimpleAOClient().stopPostgreSQL(
+          AOSH.parsePostgresServerName(args[1], "postgres_server"),
+          args[2]
+        );
+      }
+      return true;
+    } else if (command.equalsIgnoreCase(Command.WAIT_FOR_POSTGRES_SERVER_REBUILD)) {
+      if (AOSH.checkParamCount(Command.WAIT_FOR_POSTGRES_SERVER_REBUILD, args, 1, err)) {
+        connector.getSimpleAOClient().waitForPostgresServerRebuild(args[1]);
+      }
+      return true;
+    }
+    return false;
+  }
 
-	public boolean isPostgresServerNameAvailable(Server.Name name, com.aoindustries.aoserv.client.linux.Server ao) throws IOException, SQLException {
-		return connector.requestBooleanQuery(true, AoservProtocol.CommandID.IS_POSTGRES_SERVER_NAME_AVAILABLE, name, ao.getPkey());
-	}
+  public boolean isPostgresServerNameAvailable(Server.Name name, com.aoindustries.aoserv.client.linux.Server ao) throws IOException, SQLException {
+    return connector.requestBooleanQuery(true, AoservProtocol.CommandID.IS_POSTGRES_SERVER_NAME_AVAILABLE, name, ao.getPkey());
+  }
 
-	public void waitForRebuild(com.aoindustries.aoserv.client.linux.Server aoServer) throws IOException, SQLException {
-		connector.requestUpdate(
-			true,
-			AoservProtocol.CommandID.WAIT_FOR_REBUILD,
-			Table.TableID.POSTGRES_SERVERS,
-			aoServer.getPkey()
-		);
-	}
+  public void waitForRebuild(com.aoindustries.aoserv.client.linux.Server aoServer) throws IOException, SQLException {
+    connector.requestUpdate(
+      true,
+      AoservProtocol.CommandID.WAIT_FOR_REBUILD,
+      Table.TableID.POSTGRES_SERVERS,
+      aoServer.getPkey()
+    );
+  }
 }

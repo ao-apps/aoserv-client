@@ -28,21 +28,21 @@ package com.aoindustries.aoserv.client.dto;
  */
 public class AccountName {
 
-	private String accounting;
+  private String accounting;
 
-	public AccountName() {
-		// Do nothing
-	}
+  public AccountName() {
+    // Do nothing
+  }
 
-	public AccountName(String accounting) {
-		this.accounting = accounting;
-	}
+  public AccountName(String accounting) {
+    this.accounting = accounting;
+  }
 
-	public String getAccounting() {
-		return accounting;
-	}
+  public String getAccounting() {
+    return accounting;
+  }
 
-	public void setAccounting(String accounting) {
-		this.accounting = accounting;
-	}
+  public void setAccounting(String accounting) {
+    this.accounting = accounting;
+  }
 }

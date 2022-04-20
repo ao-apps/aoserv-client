@@ -30,12 +30,12 @@ package com.aoindustries.aoserv.client;
  */
 public interface SingleTableObject<K, V extends AOServObject<K, V>> {
 
-	/**
-	 * Gets the <code>AOServTable</code> that contains this <code>AOServObject</code>.
-	 *
-	 * @return  the <code>AOServTable</code>.
-	 */
-	AOServTable<K, V> getTable();
+  /**
+   * Gets the <code>AOServTable</code> that contains this <code>AOServObject</code>.
+   *
+   * @return  the <code>AOServTable</code>.
+   */
+  AOServTable<K, V> getTable();
 
-	void setTable(AOServTable<K, V> table);
+  void setTable(AOServTable<K, V> table);
 }

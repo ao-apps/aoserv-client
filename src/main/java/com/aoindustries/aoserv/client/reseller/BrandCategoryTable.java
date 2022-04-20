@@ -39,35 +39,35 @@ import java.util.List;
  */
 public final class BrandCategoryTable extends CachedTableIntegerKey<BrandCategory> {
 
-	BrandCategoryTable(AOServConnector connector) {
-		super(connector, BrandCategory.class);
-	}
+  BrandCategoryTable(AOServConnector connector) {
+    super(connector, BrandCategory.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(BrandCategory.COLUMN_BRAND_name, ASCENDING),
-		new OrderBy(BrandCategory.COLUMN_CATEGORY_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(BrandCategory.COLUMN_BRAND_name, ASCENDING),
+    new OrderBy(BrandCategory.COLUMN_CATEGORY_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public BrandCategory get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(BrandCategory.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public BrandCategory get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(BrandCategory.COLUMN_PKEY, pkey);
+  }
 
-	List<BrandCategory> getTicketBrandCategories(Brand brand) throws IOException, SQLException {
-		return getIndexedRows(BrandCategory.COLUMN_BRAND, brand.getAccount_name());
-	}
+  List<BrandCategory> getTicketBrandCategories(Brand brand) throws IOException, SQLException {
+    return getIndexedRows(BrandCategory.COLUMN_BRAND, brand.getAccount_name());
+  }
 
-	List<BrandCategory> getTicketBrandCategories(Category category) throws IOException, SQLException {
-		return getIndexedRows(BrandCategory.COLUMN_CATEGORY, category.getPkey());
-	}
+  List<BrandCategory> getTicketBrandCategories(Category category) throws IOException, SQLException {
+    return getIndexedRows(BrandCategory.COLUMN_CATEGORY, category.getPkey());
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.TICKET_BRAND_CATEGORIES;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.TICKET_BRAND_CATEGORIES;
+  }
 }

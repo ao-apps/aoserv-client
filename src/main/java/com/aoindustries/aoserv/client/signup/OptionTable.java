@@ -36,28 +36,28 @@ import java.sql.SQLException;
  */
 public final class OptionTable extends CachedTableIntegerKey<Option> {
 
-	OptionTable(AOServConnector connector) {
-		super(connector, Option.class);
-	}
+  OptionTable(AOServConnector connector) {
+    super(connector, Option.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(Option.COLUMN_REQUEST_name+'.'+Request.COLUMN_BRAND_name, ASCENDING),
-		new OrderBy(Option.COLUMN_REQUEST_name+'.'+Request.COLUMN_TIME_name, ASCENDING),
-		new OrderBy(Option.COLUMN_NAME_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(Option.COLUMN_REQUEST_name+'.'+Request.COLUMN_BRAND_name, ASCENDING),
+    new OrderBy(Option.COLUMN_REQUEST_name+'.'+Request.COLUMN_TIME_name, ASCENDING),
+    new OrderBy(Option.COLUMN_NAME_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public Option get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(Option.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public Option get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(Option.COLUMN_PKEY, pkey);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.SIGNUP_REQUEST_OPTIONS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.SIGNUP_REQUEST_OPTIONS;
+  }
 }

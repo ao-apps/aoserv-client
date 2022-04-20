@@ -39,36 +39,36 @@ import java.util.List;
  */
 public final class ActionTable extends CachedTableIntegerKey<Action> {
 
-	ActionTable(AOServConnector connector) {
-		super(connector, Action.class);
-	}
+  ActionTable(AOServConnector connector) {
+    super(connector, Action.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(Action.COLUMN_TICKET_name, ASCENDING),
-		new OrderBy(Action.COLUMN_TIME_name, ASCENDING),
-		new OrderBy(Action.COLUMN_PKEY_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(Action.COLUMN_TICKET_name, ASCENDING),
+    new OrderBy(Action.COLUMN_TIME_name, ASCENDING),
+    new OrderBy(Action.COLUMN_PKEY_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public Action get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(Action.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public Action get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(Action.COLUMN_PKEY, pkey);
+  }
 
-	List<Action> getActions(Ticket ticket) throws IOException, SQLException {
-		return getIndexedRows(Action.COLUMN_TICKET, ticket.getTicketID());
-	}
+  List<Action> getActions(Ticket ticket) throws IOException, SQLException {
+    return getIndexedRows(Action.COLUMN_TICKET, ticket.getTicketID());
+  }
 
-	public List<Action> getActions(Administrator ba) throws IOException, SQLException {
-		return getIndexedRows(Action.COLUMN_ADMINISTRATOR, ba.getUsername_userId());
-	}
+  public List<Action> getActions(Administrator ba) throws IOException, SQLException {
+    return getIndexedRows(Action.COLUMN_ADMINISTRATOR, ba.getUsername_userId());
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.TICKET_ACTIONS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.TICKET_ACTIONS;
+  }
 }

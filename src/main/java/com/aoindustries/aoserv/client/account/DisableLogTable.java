@@ -40,68 +40,71 @@ import java.sql.SQLException;
  */
 public final class DisableLogTable extends CachedTableIntegerKey<DisableLog> {
 
-	DisableLogTable(AOServConnector connector) {
-		super(connector, DisableLog.class);
-	}
+  DisableLogTable(AOServConnector connector) {
+    super(connector, DisableLog.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(DisableLog.COLUMN_TIME_name, ASCENDING),
-		new OrderBy(DisableLog.COLUMN_ACCOUNTING_name, ASCENDING),
-		new OrderBy(DisableLog.COLUMN_PKEY_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(DisableLog.COLUMN_TIME_name, ASCENDING),
+    new OrderBy(DisableLog.COLUMN_ACCOUNTING_name, ASCENDING),
+    new OrderBy(DisableLog.COLUMN_PKEY_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	int addDisableLog(
-		final Account bu,
-		final String disableReason
-	) throws IOException, SQLException {
-		return connector.requestResult(
-			true,
-			AoservProtocol.CommandID.ADD,
-			// Java 9: new AOServConnector.ResultRequest<>
-			new AOServConnector.ResultRequest<Integer>() {
-				private IntList invalidateList;
-				private int result;
+  int addDisableLog(
+    final Account bu,
+    final String disableReason
+  ) throws IOException, SQLException {
+    return connector.requestResult(
+      true,
+      AoservProtocol.CommandID.ADD,
+      // Java 9: new AOServConnector.ResultRequest<>
+      new AOServConnector.ResultRequest<Integer>() {
+        private IntList invalidateList;
+        private int result;
 
-				@Override
-				public void writeRequest(StreamableOutput out) throws IOException {
-					out.writeCompressedInt(Table.TableID.DISABLE_LOG.ordinal());
-					out.writeUTF(bu.getName().toString());
-					out.writeBoolean(disableReason!=null); if(disableReason!=null) out.writeUTF(disableReason);
-				}
+        @Override
+        public void writeRequest(StreamableOutput out) throws IOException {
+          out.writeCompressedInt(Table.TableID.DISABLE_LOG.ordinal());
+          out.writeUTF(bu.getName().toString());
+          out.writeBoolean(disableReason != null);
+          if (disableReason != null) {
+            out.writeUTF(disableReason);
+          }
+        }
 
-				@Override
-				public void readResponse(StreamableInput in) throws IOException, SQLException {
-					int code=in.readByte();
-					if(code==AoservProtocol.DONE) {
-						result=in.readCompressedInt();
-						invalidateList=AOServConnector.readInvalidateList(in);
-					} else {
-						AoservProtocol.checkResult(code, in);
-						throw new IOException("Unexpected response code: "+code);
-					}
-				}
+        @Override
+        public void readResponse(StreamableInput in) throws IOException, SQLException {
+          int code=in.readByte();
+          if (code == AoservProtocol.DONE) {
+            result=in.readCompressedInt();
+            invalidateList=AOServConnector.readInvalidateList(in);
+          } else {
+            AoservProtocol.checkResult(code, in);
+            throw new IOException("Unexpected response code: "+code);
+          }
+        }
 
-				@Override
-				public Integer afterRelease() {
-					connector.tablesUpdated(invalidateList);
-					return result;
-				}
-			}
-		);
-	}
+        @Override
+        public Integer afterRelease() {
+          connector.tablesUpdated(invalidateList);
+          return result;
+        }
+      }
+    );
+  }
 
-	@Override
-	public DisableLog get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(DisableLog.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public DisableLog get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(DisableLog.COLUMN_PKEY, pkey);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.DISABLE_LOG;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.DISABLE_LOG;
+  }
 }

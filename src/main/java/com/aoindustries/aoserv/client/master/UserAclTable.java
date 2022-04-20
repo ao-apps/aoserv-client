@@ -36,27 +36,27 @@ import java.sql.SQLException;
  */
 public final class UserAclTable extends CachedTableIntegerKey<UserAcl> {
 
-	UserAclTable(AOServConnector connector) {
-		super(connector, UserAcl.class);
-	}
+  UserAclTable(AOServConnector connector) {
+    super(connector, UserAcl.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(UserAcl.COLUMN_USERNAME_name, ASCENDING),
-		new OrderBy(UserAcl.COLUMN_HOST_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(UserAcl.COLUMN_USERNAME_name, ASCENDING),
+    new OrderBy(UserAcl.COLUMN_HOST_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public UserAcl get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(UserAcl.COLUMN_PKEY, pkey);
-	}
+  @Override
+  public UserAcl get(int pkey) throws IOException, SQLException {
+    return getUniqueRow(UserAcl.COLUMN_PKEY, pkey);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.MASTER_HOSTS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.MASTER_HOSTS;
+  }
 }

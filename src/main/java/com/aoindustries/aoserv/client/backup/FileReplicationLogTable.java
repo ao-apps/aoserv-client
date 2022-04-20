@@ -42,84 +42,88 @@ import java.util.List;
  */
 public final class FileReplicationLogTable extends AOServTable<Integer, FileReplicationLog> {
 
-	FileReplicationLogTable(AOServConnector connector) {
-		super(connector, FileReplicationLog.class);
-	}
+  FileReplicationLogTable(AOServConnector connector) {
+    super(connector, FileReplicationLog.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(FileReplicationLog.COLUMN_END_TIME_name, DESCENDING),
-		new OrderBy(FileReplicationLog.COLUMN_REPLICATION_name+'.'+FileReplication.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(FileReplicationLog.COLUMN_REPLICATION_name+'.'+FileReplication.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(FileReplicationLog.COLUMN_REPLICATION_name+'.'+FileReplication.COLUMN_BACKUP_PARTITION_name+'.'+BackupPartition.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
-		new OrderBy(FileReplicationLog.COLUMN_REPLICATION_name+'.'+FileReplication.COLUMN_BACKUP_PARTITION_name+'.'+BackupPartition.COLUMN_PATH_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(FileReplicationLog.COLUMN_END_TIME_name, DESCENDING),
+    new OrderBy(FileReplicationLog.COLUMN_REPLICATION_name+'.'+FileReplication.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(FileReplicationLog.COLUMN_REPLICATION_name+'.'+FileReplication.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(FileReplicationLog.COLUMN_REPLICATION_name+'.'+FileReplication.COLUMN_BACKUP_PARTITION_name+'.'+BackupPartition.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
+    new OrderBy(FileReplicationLog.COLUMN_REPLICATION_name+'.'+FileReplication.COLUMN_BACKUP_PARTITION_name+'.'+BackupPartition.COLUMN_PATH_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	int addFailoverFileLog(
-		FileReplication replication,
-		long startTime,
-		long endTime,
-		int scanned,
-		int updated,
-		long bytes,
-		boolean isSuccessful
-	) throws IOException, SQLException {
-		return connector.requestIntQueryIL(
-			true,
-			AoservProtocol.CommandID.ADD,
-			Table.TableID.FAILOVER_FILE_LOG,
-			replication.getPkey(),
-			startTime,
-			endTime,
-			scanned,
-			updated,
-			bytes,
-			isSuccessful
-		);
-	}
+  int addFailoverFileLog(
+    FileReplication replication,
+    long startTime,
+    long endTime,
+    int scanned,
+    int updated,
+    long bytes,
+    boolean isSuccessful
+  ) throws IOException, SQLException {
+    return connector.requestIntQueryIL(
+      true,
+      AoservProtocol.CommandID.ADD,
+      Table.TableID.FAILOVER_FILE_LOG,
+      replication.getPkey(),
+      startTime,
+      endTime,
+      scanned,
+      updated,
+      bytes,
+      isSuccessful
+    );
+  }
 
-	/**
-	 * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
-	 */
-	@Deprecated
-	@Override
-	public FileReplicationLog get(Object pkey) throws IOException, SQLException {
-		if(pkey == null) return null;
-		return get(((Integer)pkey).intValue());
-	}
+  /**
+   * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
+   */
+  @Deprecated
+  @Override
+  public FileReplicationLog get(Object pkey) throws IOException, SQLException {
+    if (pkey == null) {
+      return null;
+    }
+    return get(((Integer)pkey).intValue());
+  }
 
-	/**
-	 * @see  #get(java.lang.Object)
-	 */
-	public FileReplicationLog get(int pkey) throws IOException, SQLException {
-		return getObject(true, AoservProtocol.CommandID.GET_OBJECT, Table.TableID.FAILOVER_FILE_LOG, pkey);
-	}
+  /**
+   * @see  #get(java.lang.Object)
+   */
+  public FileReplicationLog get(int pkey) throws IOException, SQLException {
+    return getObject(true, AoservProtocol.CommandID.GET_OBJECT, Table.TableID.FAILOVER_FILE_LOG, pkey);
+  }
 
-	@Override
-	public List<FileReplicationLog> getRowsCopy() throws IOException, SQLException {
-		List<FileReplicationLog> list = new ArrayList<>();
-		getObjects(true, list, AoservProtocol.CommandID.GET_TABLE, Table.TableID.FAILOVER_FILE_LOG);
-		return list;
-	}
+  @Override
+  public List<FileReplicationLog> getRowsCopy() throws IOException, SQLException {
+    List<FileReplicationLog> list = new ArrayList<>();
+    getObjects(true, list, AoservProtocol.CommandID.GET_TABLE, Table.TableID.FAILOVER_FILE_LOG);
+    return list;
+  }
 
-	List<FileReplicationLog> getFailoverFileLogs(FileReplication replication, int maxRows) throws IOException, SQLException {
-		List<FileReplicationLog> list=new ArrayList<>();
-		getObjectsNoProgress(true, list, AoservProtocol.CommandID.GET_FAILOVER_FILE_LOGS_FOR_REPLICATION, replication.getPkey(), maxRows);
-		return list;
-	}
+  List<FileReplicationLog> getFailoverFileLogs(FileReplication replication, int maxRows) throws IOException, SQLException {
+    List<FileReplicationLog> list=new ArrayList<>();
+    getObjectsNoProgress(true, list, AoservProtocol.CommandID.GET_FAILOVER_FILE_LOGS_FOR_REPLICATION, replication.getPkey(), maxRows);
+    return list;
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.FAILOVER_FILE_LOG;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.FAILOVER_FILE_LOG;
+  }
 
-	@Override
-	protected FileReplicationLog getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
-		if(col == FileReplicationLog.COLUMN_PKEY) return get(value);
-		throw new IllegalArgumentException("Not a unique column: " + col);
-	}
+  @Override
+  protected FileReplicationLog getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
+    if (col == FileReplicationLog.COLUMN_PKEY) {
+      return get(value);
+    }
+    throw new IllegalArgumentException("Not a unique column: " + col);
+  }
 }

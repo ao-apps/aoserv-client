@@ -41,95 +41,111 @@ import java.sql.SQLException;
  */
 public final class NestedInputStream extends InputStream {
 
-	private final StreamableInput in;
-	private boolean isDone=false;
-	private byte[] buffer=BufferManager.getBytes();
-	private int bufferFilled=0;
-	private int bufferRead=0;
+  private final StreamableInput in;
+  private boolean isDone=false;
+  private byte[] buffer=BufferManager.getBytes();
+  private int bufferFilled=0;
+  private int bufferRead=0;
 
-	public NestedInputStream(StreamableInput in) {
-		this.in=in;
-	}
+  public NestedInputStream(StreamableInput in) {
+    this.in=in;
+  }
 
-	@Override
-	public synchronized int available() {
-		return bufferRead-bufferFilled;
-	}
+  @Override
+  public synchronized int available() {
+    return bufferRead-bufferFilled;
+  }
 
-	private void loadNextBlock() throws IOException {
-		// Load the next block, if needed
-		while(!isDone && bufferRead>=bufferFilled) {
-			int code=in.read();
-			if(code==AoservProtocol.NEXT) {
-				bufferFilled=in.readShort();
-				in.readFully(buffer, 0, bufferFilled);
-				bufferRead=0;
-			} else {
-				isDone=true;
-				bufferFilled=bufferRead=0;
-				try {
-					AoservProtocol.checkResult(code, in);
-				} catch(SQLException err) {
-					throw new IOException(err.toString());
-				}
-			}
-		}
-	}
+  private void loadNextBlock() throws IOException {
+    // Load the next block, if needed
+    while (!isDone && bufferRead >= bufferFilled) {
+      int code=in.read();
+      if (code == AoservProtocol.NEXT) {
+        bufferFilled=in.readShort();
+        in.readFully(buffer, 0, bufferFilled);
+        bufferRead=0;
+      } else {
+        isDone=true;
+        bufferFilled=bufferRead=0;
+        try {
+          AoservProtocol.checkResult(code, in);
+        } catch (SQLException err) {
+          throw new IOException(err.toString());
+        }
+      }
+    }
+  }
 
-	@Override
-	public synchronized void close() throws IOException {
-		if(!isDone) {
-			// Read the rest of the underlying stream
-			int code;
-			while((code=in.read())==AoservProtocol.NEXT) {
-				int len=in.readShort();
-				while(len>0) {
-					int skipped=(int)in.skip(len);
-					len-=skipped;
-				}
-			}
-			isDone=true;
-			bufferFilled=bufferRead=0;
-			if(buffer!=null) {
-				BufferManager.release(buffer, false);
-				buffer=null;
-			}
-			try {
-				AoservProtocol.checkResult(code, in);
-			} catch(SQLException err) {
-				throw new IOException(err.toString());
-			}
-		}
-	}
+  @Override
+  public synchronized void close() throws IOException {
+    if (!isDone) {
+      // Read the rest of the underlying stream
+      int code;
+      while ((code=in.read()) == AoservProtocol.NEXT) {
+        int len=in.readShort();
+        while (len>0) {
+          int skipped=(int)in.skip(len);
+          len-=skipped;
+        }
+      }
+      isDone=true;
+      bufferFilled=bufferRead=0;
+      if (buffer != null) {
+        BufferManager.release(buffer, false);
+        buffer=null;
+      }
+      try {
+        AoservProtocol.checkResult(code, in);
+      } catch (SQLException err) {
+        throw new IOException(err.toString());
+      }
+    }
+  }
 
-	@Override
-	public synchronized int read() throws IOException {
-		if(isDone) return -1;
-		loadNextBlock();
-		if(isDone) return -1;
-		return buffer[bufferRead++] & 0xff;
-	}
+  @Override
+  public synchronized int read() throws IOException {
+    if (isDone) {
+      return -1;
+    }
+    loadNextBlock();
+    if (isDone) {
+      return -1;
+    }
+    return buffer[bufferRead++] & 0xff;
+  }
 
-	@Override
-	public synchronized int read(byte[] b, int off, int len) throws IOException {
-		if(isDone) return -1;
-		loadNextBlock();
-		if(isDone) return -1;
-		int bufferLeft=bufferFilled-bufferRead;
-		if(bufferLeft>len) bufferLeft=len;
-		System.arraycopy(buffer, bufferRead, b, off, bufferLeft);
-		bufferRead+=bufferLeft;
-		return bufferLeft;
-	}
+  @Override
+  public synchronized int read(byte[] b, int off, int len) throws IOException {
+    if (isDone) {
+      return -1;
+    }
+    loadNextBlock();
+    if (isDone) {
+      return -1;
+    }
+    int bufferLeft=bufferFilled-bufferRead;
+    if (bufferLeft>len) {
+      bufferLeft=len;
+    }
+    System.arraycopy(buffer, bufferRead, b, off, bufferLeft);
+    bufferRead+=bufferLeft;
+    return bufferLeft;
+  }
 
-	@Override
-	public synchronized long skip(long n) throws IOException {
-		if(isDone) return -1;
-		loadNextBlock();
-		if(isDone) return -1;
-		int bufferLeft=bufferFilled-bufferRead;
-		if(bufferLeft>n) bufferLeft=(int)n;
-		bufferRead+=bufferLeft;
-		return bufferLeft;
-	}
+  @Override
+  public synchronized long skip(long n) throws IOException {
+    if (isDone) {
+      return -1;
+    }
+    loadNextBlock();
+    if (isDone) {
+      return -1;
+    }
+    int bufferLeft=bufferFilled-bufferRead;
+    if (bufferLeft>n) {
+      bufferLeft=(int)n;
+    }
+    bufferRead+=bufferLeft;
+    return bufferLeft;
+  }
 }

@@ -42,104 +42,104 @@ import java.sql.SQLException;
  */
 public final class VirtualServerTable extends CachedTableIntegerKey<VirtualServer> {
 
-	VirtualServerTable(AOServConnector connector) {
-		super(connector, VirtualServer.class);
-	}
+  VirtualServerTable(AOServConnector connector) {
+    super(connector, VirtualServer.class);
+  }
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(VirtualServer.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(VirtualServer.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING)
-	};
-	@Override
-	@SuppressWarnings("ReturnOfCollectionOrArrayField")
-	protected OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+  private static final OrderBy[] defaultOrderBy = {
+    new OrderBy(VirtualServer.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+    new OrderBy(VirtualServer.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING)
+  };
+  @Override
+  @SuppressWarnings("ReturnOfCollectionOrArrayField")
+  protected OrderBy[] getDefaultOrderBy() {
+    return defaultOrderBy;
+  }
 
-	@Override
-	public VirtualServer get(int server) throws IOException, SQLException {
-		return getUniqueRow(VirtualServer.COLUMN_SERVER, server);
-	}
+  @Override
+  public VirtualServer get(int server) throws IOException, SQLException {
+    return getUniqueRow(VirtualServer.COLUMN_SERVER, server);
+  }
 
-	@Override
-	public Table.TableID getTableID() {
-		return Table.TableID.VIRTUAL_SERVERS;
-	}
+  @Override
+  public Table.TableID getTableID() {
+    return Table.TableID.VIRTUAL_SERVERS;
+  }
 
-	@Override
-	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-		String command=args[0];
-		if(command.equalsIgnoreCase(Command.CREATE_VIRTUAL_SERVER)) {
-			if(AOSH.checkParamCount(Command.CREATE_VIRTUAL_SERVER, args, 1, err)) {
-				out.print(connector.getSimpleAOClient().createVirtualServer(args[1]));
-				out.flush();
-			}
-			return true;
-		}
-		if(command.equalsIgnoreCase(Command.REBOOT_VIRTUAL_SERVER)) {
-			if(AOSH.checkParamCount(Command.REBOOT_VIRTUAL_SERVER, args, 1, err)) {
-				out.print(connector.getSimpleAOClient().rebootVirtualServer(args[1]));
-				out.flush();
-			}
-			return true;
-		}
-		if(command.equalsIgnoreCase(Command.SHUTDOWN_VIRTUAL_SERVER)) {
-			if(AOSH.checkParamCount(Command.SHUTDOWN_VIRTUAL_SERVER, args, 1, err)) {
-				out.print(connector.getSimpleAOClient().shutdownVirtualServer(args[1]));
-				out.flush();
-			}
-			return true;
-		}
-		if(command.equalsIgnoreCase(Command.DESTROY_VIRTUAL_SERVER)) {
-			if(AOSH.checkParamCount(Command.DESTROY_VIRTUAL_SERVER, args, 1, err)) {
-				out.print(connector.getSimpleAOClient().destroyVirtualServer(args[1]));
-				out.flush();
-			}
-			return true;
-		}
-		if(command.equalsIgnoreCase(Command.PAUSE_VIRTUAL_SERVER)) {
-			if(AOSH.checkParamCount(Command.PAUSE_VIRTUAL_SERVER, args, 1, err)) {
-				out.print(connector.getSimpleAOClient().pauseVirtualServer(args[1]));
-				out.flush();
-			}
-			return true;
-		}
-		if(command.equalsIgnoreCase(Command.UNPAUSE_VIRTUAL_SERVER)) {
-			if(AOSH.checkParamCount(Command.UNPAUSE_VIRTUAL_SERVER, args, 1, err)) {
-				out.print(connector.getSimpleAOClient().unpauseVirtualServer(args[1]));
-				out.flush();
-			}
-			return true;
-		}
-		if(command.equalsIgnoreCase(Command.GET_VIRTUAL_SERVER_STATUS)) {
-			if(AOSH.checkParamCount(Command.GET_VIRTUAL_SERVER_STATUS, args, 1, err)) {
-				out.println(
-					VirtualServer.getStatusList(
-						connector.getSimpleAOClient().getVirtualServerStatus(args[1])
-					)
-				);
-				out.flush();
-			}
-			return true;
-		}
-		if(command.equalsIgnoreCase(Command.GET_PRIMARY_PHYSICAL_SERVER)) {
-			if(AOSH.checkParamCount(Command.GET_PRIMARY_PHYSICAL_SERVER, args, 1, err)) {
-				out.println(
-					connector.getSimpleAOClient().getPrimaryVirtualServer(args[1])
-				);
-				out.flush();
-			}
-			return true;
-		}
-		if(command.equalsIgnoreCase(Command.GET_SECONDARY_PHYSICAL_SERVER)) {
-			if(AOSH.checkParamCount(Command.GET_SECONDARY_PHYSICAL_SERVER, args, 1, err)) {
-				out.println(
-					connector.getSimpleAOClient().getSecondaryVirtualServer(args[1])
-				);
-				out.flush();
-			}
-			return true;
-		}
-		return false;
-	}
+  @Override
+  public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
+    String command=args[0];
+    if (command.equalsIgnoreCase(Command.CREATE_VIRTUAL_SERVER)) {
+      if (AOSH.checkParamCount(Command.CREATE_VIRTUAL_SERVER, args, 1, err)) {
+        out.print(connector.getSimpleAOClient().createVirtualServer(args[1]));
+        out.flush();
+      }
+      return true;
+    }
+    if (command.equalsIgnoreCase(Command.REBOOT_VIRTUAL_SERVER)) {
+      if (AOSH.checkParamCount(Command.REBOOT_VIRTUAL_SERVER, args, 1, err)) {
+        out.print(connector.getSimpleAOClient().rebootVirtualServer(args[1]));
+        out.flush();
+      }
+      return true;
+    }
+    if (command.equalsIgnoreCase(Command.SHUTDOWN_VIRTUAL_SERVER)) {
+      if (AOSH.checkParamCount(Command.SHUTDOWN_VIRTUAL_SERVER, args, 1, err)) {
+        out.print(connector.getSimpleAOClient().shutdownVirtualServer(args[1]));
+        out.flush();
+      }
+      return true;
+    }
+    if (command.equalsIgnoreCase(Command.DESTROY_VIRTUAL_SERVER)) {
+      if (AOSH.checkParamCount(Command.DESTROY_VIRTUAL_SERVER, args, 1, err)) {
+        out.print(connector.getSimpleAOClient().destroyVirtualServer(args[1]));
+        out.flush();
+      }
+      return true;
+    }
+    if (command.equalsIgnoreCase(Command.PAUSE_VIRTUAL_SERVER)) {
+      if (AOSH.checkParamCount(Command.PAUSE_VIRTUAL_SERVER, args, 1, err)) {
+        out.print(connector.getSimpleAOClient().pauseVirtualServer(args[1]));
+        out.flush();
+      }
+      return true;
+    }
+    if (command.equalsIgnoreCase(Command.UNPAUSE_VIRTUAL_SERVER)) {
+      if (AOSH.checkParamCount(Command.UNPAUSE_VIRTUAL_SERVER, args, 1, err)) {
+        out.print(connector.getSimpleAOClient().unpauseVirtualServer(args[1]));
+        out.flush();
+      }
+      return true;
+    }
+    if (command.equalsIgnoreCase(Command.GET_VIRTUAL_SERVER_STATUS)) {
+      if (AOSH.checkParamCount(Command.GET_VIRTUAL_SERVER_STATUS, args, 1, err)) {
+        out.println(
+          VirtualServer.getStatusList(
+            connector.getSimpleAOClient().getVirtualServerStatus(args[1])
+          )
+        );
+        out.flush();
+      }
+      return true;
+    }
+    if (command.equalsIgnoreCase(Command.GET_PRIMARY_PHYSICAL_SERVER)) {
+      if (AOSH.checkParamCount(Command.GET_PRIMARY_PHYSICAL_SERVER, args, 1, err)) {
+        out.println(
+          connector.getSimpleAOClient().getPrimaryVirtualServer(args[1])
+        );
+        out.flush();
+      }
+      return true;
+    }
+    if (command.equalsIgnoreCase(Command.GET_SECONDARY_PHYSICAL_SERVER)) {
+      if (AOSH.checkParamCount(Command.GET_SECONDARY_PHYSICAL_SERVER, args, 1, err)) {
+        out.println(
+          connector.getSimpleAOClient().getSecondaryVirtualServer(args[1])
+        );
+        out.flush();
+      }
+      return true;
+    }
+    return false;
+  }
 }
