@@ -49,9 +49,10 @@ public final class LocationTable extends CachedTableIntegerKey<Location> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Location.COLUMN_HTTPD_SITE_name+'.'+Site.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(Location.COLUMN_HTTPD_SITE_name+'.'+Site.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
+      new OrderBy(Location.COLUMN_HTTPD_SITE_name + '.' + Site.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(Location.COLUMN_HTTPD_SITE_name + '.' + Site.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -59,27 +60,27 @@ public final class LocationTable extends CachedTableIntegerKey<Location> {
   }
 
   int addHttpdSiteAuthenticatedLocation(
-    Site hs,
-    String path,
-    boolean isRegularExpression,
-    String authName,
-    PosixPath authGroupFile,
-    PosixPath authUserFile,
-    String require,
-    String handler
+      Site hs,
+      String path,
+      boolean isRegularExpression,
+      String authName,
+      PosixPath authGroupFile,
+      PosixPath authUserFile,
+      String require,
+      String handler
   ) throws IOException, SQLException {
     return connector.requestIntQueryIL(
-      true,
-      AoservProtocol.CommandID.ADD,
-      Table.TableID.HTTPD_SITE_AUTHENTICATED_LOCATIONS,
-      hs.getPkey(),
-      path,
-      isRegularExpression,
-      authName,
-      authGroupFile == null ? "" : authGroupFile.toString(),
-      authUserFile == null ? "" : authUserFile.toString(),
-      require,
-      handler == null ? "" : handler
+        true,
+        AoservProtocol.CommandID.ADD,
+        Table.TableID.HTTPD_SITE_AUTHENTICATED_LOCATIONS,
+        hs.getPkey(),
+        path,
+        isRegularExpression,
+        authName,
+        authGroupFile == null ? "" : authGroupFile.toString(),
+        authUserFile == null ? "" : authUserFile.toString(),
+        require,
+        handler == null ? "" : handler
     );
   }
 
@@ -103,7 +104,24 @@ public final class LocationTable extends CachedTableIntegerKey<Location> {
     if (command.equalsIgnoreCase(Command.ADD_HTTPD_SITE_AUTHENTICATED_LOCATION)) {
       if (AOSH.checkParamCount(Command.ADD_HTTPD_SITE_AUTHENTICATED_LOCATION, args, 9, err)) {
         out.println(
-          connector.getSimpleAOClient().addHttpdSiteAuthenticatedLocation(
+            connector.getSimpleAOClient().addHttpdSiteAuthenticatedLocation(
+                args[1],
+                args[2],
+                args[3],
+                AOSH.parseBoolean(args[4], "is_regular_expression"),
+                args[5],
+                args[6].isEmpty() ? null : AOSH.parseUnixPath(args[6], "auth_group_file"),
+                args[7].isEmpty() ? null : AOSH.parseUnixPath(args[7], "auth_user_file"),
+                args[8],
+                args[9].isEmpty() ? null : args[9]
+            )
+        );
+        out.flush();
+      }
+      return true;
+    } else if (command.equalsIgnoreCase(Command.SET_HTTPD_SITE_AUTHENTICATED_LOCATION_ATTRIBUTES)) {
+      if (AOSH.checkParamCount(Command.SET_HTTPD_SITE_AUTHENTICATED_LOCATION_ATTRIBUTES, args, 9, err)) {
+        connector.getSimpleAOClient().setHttpdSiteAuthenticatedLocationAttributes(
             args[1],
             args[2],
             args[3],
@@ -113,23 +131,6 @@ public final class LocationTable extends CachedTableIntegerKey<Location> {
             args[7].isEmpty() ? null : AOSH.parseUnixPath(args[7], "auth_user_file"),
             args[8],
             args[9].isEmpty() ? null : args[9]
-          )
-        );
-        out.flush();
-      }
-      return true;
-    } else if (command.equalsIgnoreCase(Command.SET_HTTPD_SITE_AUTHENTICATED_LOCATION_ATTRIBUTES)) {
-      if (AOSH.checkParamCount(Command.SET_HTTPD_SITE_AUTHENTICATED_LOCATION_ATTRIBUTES, args, 9, err)) {
-        connector.getSimpleAOClient().setHttpdSiteAuthenticatedLocationAttributes(
-          args[1],
-          args[2],
-          args[3],
-          AOSH.parseBoolean(args[4], "is_regular_expression"),
-          args[5],
-          args[6].isEmpty() ? null : AOSH.parseUnixPath(args[6], "auth_group_file"),
-          args[7].isEmpty() ? null : AOSH.parseUnixPath(args[7], "auth_user_file"),
-          args[8],
-          args[9].isEmpty() ? null : args[9]
         );
       }
       return true;

@@ -40,8 +40,9 @@ public final class ShellTable extends GlobalTablePosixPathKey<Shell> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Shell.COLUMN_PATH_name, ASCENDING)
+      new OrderBy(Shell.COLUMN_PATH_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

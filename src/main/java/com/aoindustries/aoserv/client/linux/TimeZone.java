@@ -39,7 +39,7 @@ import java.sql.SQLException;
  */
 public final class TimeZone extends GlobalObjectStringKey<TimeZone> {
 
-  static final int COLUMN_NAME=0;
+  static final int COLUMN_NAME = 0;
   static final String COLUMN_NAME_name = "name";
 
   /**
@@ -48,7 +48,7 @@ public final class TimeZone extends GlobalObjectStringKey<TimeZone> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public TimeZone() {
     // Do nothing
   }
@@ -80,7 +80,7 @@ public final class TimeZone extends GlobalObjectStringKey<TimeZone> {
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readUTF().intern();
+    pkey = in.readUTF().intern();
   }
 
   @Override

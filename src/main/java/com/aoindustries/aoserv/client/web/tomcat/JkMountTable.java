@@ -51,11 +51,12 @@ public final class JkMountTable extends CachedTableIntegerKey<JkMount> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(JkMount.COLUMN_HTTPD_TOMCAT_SITE_name + '.' + Site.COLUMN_HTTPD_SITE_name + '.' + com.aoindustries.aoserv.client.web.Site.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(JkMount.COLUMN_HTTPD_TOMCAT_SITE_name + '.' + Site.COLUMN_HTTPD_SITE_name + '.' + com.aoindustries.aoserv.client.web.Site.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
-    new OrderBy(JkMount.COLUMN_MOUNT_name, DESCENDING), // JkMount before JkUnMount
-    new OrderBy(JkMount.COLUMN_PATH_name, ASCENDING)
+      new OrderBy(JkMount.COLUMN_HTTPD_TOMCAT_SITE_name + '.' + Site.COLUMN_HTTPD_SITE_name + '.' + com.aoindustries.aoserv.client.web.Site.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(JkMount.COLUMN_HTTPD_TOMCAT_SITE_name + '.' + Site.COLUMN_HTTPD_SITE_name + '.' + com.aoindustries.aoserv.client.web.Site.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
+      new OrderBy(JkMount.COLUMN_MOUNT_name, DESCENDING), // JkMount before JkUnMount
+      new OrderBy(JkMount.COLUMN_PATH_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -63,47 +64,47 @@ public final class JkMountTable extends CachedTableIntegerKey<JkMount> {
   }
 
   int addHttpdTomcatSiteJkMount(
-    final Site hts,
-    final String path,
-    final boolean mount
+      final Site hts,
+      final String path,
+      final boolean mount
   ) throws IOException, SQLException {
     if (!JkMount.isValidPath(path)) {
       throw new IllegalArgumentException("Invalid path: " + path);
     }
     return connector.requestResult(
-      true,
-      AoservProtocol.CommandID.ADD,
-      // Java 9: new AOServConnector.ResultRequest<>
-      new AOServConnector.ResultRequest<Integer>() {
-        private int pkey;
-        private IntList invalidateList;
+        true,
+        AoservProtocol.CommandID.ADD,
+        // Java 9: new AOServConnector.ResultRequest<>
+        new AOServConnector.ResultRequest<Integer>() {
+          private int pkey;
+          private IntList invalidateList;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(Table.TableID.HTTPD_TOMCAT_SITE_JK_MOUNTS.ordinal());
-          out.writeCompressedInt(hts.getPkey());
-          out.writeUTF(path);
-          out.writeBoolean(mount);
-        }
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(Table.TableID.HTTPD_TOMCAT_SITE_JK_MOUNTS.ordinal());
+            out.writeCompressedInt(hts.getPkey());
+            out.writeUTF(path);
+            out.writeBoolean(mount);
+          }
 
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code = in.readByte();
-          if (code == AoservProtocol.DONE) {
-            pkey = in.readCompressedInt();
-            invalidateList = AOServConnector.readInvalidateList(in);
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: " + code);
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              pkey = in.readCompressedInt();
+              invalidateList = AOServConnector.readInvalidateList(in);
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
+            }
+          }
+
+          @Override
+          public Integer afterRelease() {
+            connector.tablesUpdated(invalidateList);
+            return pkey;
           }
         }
-
-        @Override
-        public Integer afterRelease() {
-          connector.tablesUpdated(invalidateList);
-          return pkey;
-        }
-      }
     );
   }
 
@@ -127,12 +128,12 @@ public final class JkMountTable extends CachedTableIntegerKey<JkMount> {
     if (command.equalsIgnoreCase(Command.ADD_HTTPD_TOMCAT_SITE_JK_MOUNT)) {
       if (AOSH.checkParamCount(Command.ADD_HTTPD_TOMCAT_SITE_JK_MOUNT, args, 4, err)) {
         out.println(
-          connector.getSimpleAOClient().addHttpdTomcatSiteJkMount(
-            args[1],
-            args[2],
-            args[3],
-            AOSH.parseBoolean(args[4], "mount")
-          )
+            connector.getSimpleAOClient().addHttpdTomcatSiteJkMount(
+                args[1],
+                args[2],
+                args[3],
+                AOSH.parseBoolean(args[4], "mount")
+            )
         );
         out.flush();
       }
@@ -140,9 +141,9 @@ public final class JkMountTable extends CachedTableIntegerKey<JkMount> {
     } else if (command.equalsIgnoreCase(Command.REMOVE_HTTPD_TOMCAT_SITE_JK_MOUNT)) {
       if (AOSH.checkParamCount(Command.REMOVE_HTTPD_TOMCAT_SITE_JK_MOUNT, args, 3, err)) {
         connector.getSimpleAOClient().removeHttpdTomcatSiteJkMount(
-          args[1],
-          args[2],
-          args[3]
+            args[1],
+            args[2],
+            args[3]
         );
       }
       return true;

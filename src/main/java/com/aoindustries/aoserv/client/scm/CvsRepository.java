@@ -52,8 +52,8 @@ import java.util.List;
 public final class CvsRepository extends CachedObjectIntegerKey<CvsRepository> implements Removable, Disablable {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_LINUX_SERVER_ACCOUNT=2
+      COLUMN_PKEY = 0,
+      COLUMN_LINUX_SERVER_ACCOUNT = 2
   ;
   static final String COLUMN_LINUX_SERVER_ACCOUNT_name = "linux_server_account";
   static final String COLUMN_PATH_name = "path";
@@ -62,6 +62,7 @@ public final class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
    * The default directory containing CVS repositories.
    */
   public static final PosixPath DEFAULT_CVS_DIRECTORY;
+
   static {
     try {
       DEFAULT_CVS_DIRECTORY = PosixPath.valueOf("/var/cvs").intern();
@@ -76,14 +77,14 @@ public final class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
   public static final long DEFAULT_MODE = 02770;
 
   public static long[] getValidModes() {
-    return new long[] {
-      0700,
-      0750,
-      0770,
-      0755,
-      0775,
-      DEFAULT_MODE,
-      03770
+    return new long[]{
+        0700,
+        0750,
+        0770,
+        0755,
+        0775,
+        DEFAULT_MODE,
+        03770
     };
   }
 
@@ -102,13 +103,13 @@ public final class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
     for (int c = 1; c < len; c++) {
       char ch = pathStr.charAt(c);
       if (
-        (ch<'a' || ch>'z')
-        && (ch<'A' || ch>'Z')
-        && (ch<'0' || ch>'9')
-        && ch != '_'
-        && ch != '.'
-        && ch != '-'
-        && ch != '/'
+          (ch < 'a' || ch > 'z')
+              && (ch < 'A' || ch > 'Z')
+              && (ch < '0' || ch > '9')
+              && ch != '_'
+              && ch != '.'
+              && ch != '-'
+              && ch != '/'
       ) {
         return false;
       }
@@ -122,7 +123,7 @@ public final class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public CvsRepository() {
     // Do nothing
   }
@@ -141,7 +142,7 @@ public final class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 
   @Override
   public boolean canEnable() throws SQLException, IOException {
-    DisableLog dl=getDisableLog();
+    DisableLog dl = getDisableLog();
     if (dl == null) {
       return false;
     } else {
@@ -169,7 +170,7 @@ public final class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
       case 3: return linux_server_group;
       case 4: return mode;
       case 5: return created;
-      case 6: return disable_log == -1?null:disable_log;
+      case 6: return disable_log == -1 ? null : disable_log;
       default: throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
@@ -184,9 +185,9 @@ public final class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
     if (disable_log == -1) {
       return null;
     }
-    DisableLog obj=table.getConnector().getAccount().getDisableLog().get(disable_log);
+    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disable_log);
     if (obj == null) {
-      throw new SQLException("Unable to find DisableLog: "+disable_log);
+      throw new SQLException("Unable to find DisableLog: " + disable_log);
     }
     return obj;
   }
@@ -200,9 +201,9 @@ public final class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
   }
 
   public UserServer getLinuxServerAccount() throws SQLException, IOException {
-    UserServer lsa=table.getConnector().getLinux().getUserServer().get(linux_server_account);
+    UserServer lsa = table.getConnector().getLinux().getUserServer().get(linux_server_account);
     if (lsa == null) {
-      throw new SQLException("Unable to find LinuxServerAccount: "+linux_server_account);
+      throw new SQLException("Unable to find LinuxServerAccount: " + linux_server_account);
     }
     return lsa;
   }
@@ -212,9 +213,9 @@ public final class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
   }
 
   public GroupServer getLinuxServerGroup() throws SQLException, IOException {
-    GroupServer lsg=table.getConnector().getLinux().getGroupServer().get(linux_server_group);
+    GroupServer lsg = table.getConnector().getLinux().getGroupServer().get(linux_server_group);
     if (lsg == null) {
-      throw new SQLException("Unable to find LinuxServerGroup: "+linux_server_group);
+      throw new SQLException("Unable to find LinuxServerGroup: " + linux_server_group);
     }
     return lsg;
   }
@@ -236,15 +237,15 @@ public final class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
   @Override
   public void init(ResultSet result) throws SQLException {
     try {
-      pkey=result.getInt(1);
+      pkey = result.getInt(1);
       path = PosixPath.valueOf(result.getString(2));
-      linux_server_account=result.getInt(3);
-      linux_server_group=result.getInt(4);
-      mode=result.getLong(5);
+      linux_server_account = result.getInt(3);
+      linux_server_group = result.getInt(4);
+      mode = result.getLong(5);
       created = UnmodifiableTimestamp.valueOf(result.getTimestamp(6));
-      disable_log=result.getInt(7);
+      disable_log = result.getInt(7);
       if (result.wasNull()) {
-        disable_log=-1;
+        disable_log = -1;
       }
     } catch (ValidationException e) {
       throw new SQLException(e);
@@ -254,13 +255,13 @@ public final class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
-      pkey=in.readCompressedInt();
+      pkey = in.readCompressedInt();
       path = PosixPath.valueOf(in.readUTF());
-      linux_server_account=in.readCompressedInt();
-      linux_server_group=in.readCompressedInt();
-      mode=in.readLong();
+      linux_server_account = in.readCompressedInt();
+      linux_server_group = in.readCompressedInt();
+      mode = in.readLong();
       created = SQLStreamables.readUnmodifiableTimestamp(in);
-      disable_log=in.readCompressedInt();
+      disable_log = in.readCompressedInt();
     } catch (ValidationException e) {
       throw new IOException(e);
     }

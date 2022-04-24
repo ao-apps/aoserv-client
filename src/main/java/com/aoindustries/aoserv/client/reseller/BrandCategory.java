@@ -43,9 +43,9 @@ import java.sql.SQLException;
 public final class BrandCategory extends CachedObjectIntegerKey<BrandCategory> {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_BRAND=1,
-    COLUMN_CATEGORY=2
+      COLUMN_PKEY = 0,
+      COLUMN_BRAND = 1,
+      COLUMN_CATEGORY = 2
   ;
   static final String COLUMN_PKEY_name = "pkey";
   static final String COLUMN_BRAND_name = "brand";
@@ -61,7 +61,7 @@ public final class BrandCategory extends CachedObjectIntegerKey<BrandCategory> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public BrandCategory() {
     // Do nothing
   }
@@ -80,7 +80,7 @@ public final class BrandCategory extends CachedObjectIntegerKey<BrandCategory> {
   public Brand getBrand() throws SQLException, IOException {
     Brand br = table.getConnector().getReseller().getBrand().get(brand);
     if (br == null) {
-      throw new SQLException("Unable to find Brand: "+brand);
+      throw new SQLException("Unable to find Brand: " + brand);
     }
     return br;
   }
@@ -88,7 +88,7 @@ public final class BrandCategory extends CachedObjectIntegerKey<BrandCategory> {
   public Category getCategory() throws IOException, SQLException {
     Category tc = table.getConnector().getReseller().getCategory().get(category);
     if (tc == null) {
-      throw new SQLException("Unable to find TicketCategory: "+category);
+      throw new SQLException("Unable to find TicketCategory: " + category);
     }
     return tc;
   }
@@ -128,7 +128,7 @@ public final class BrandCategory extends CachedObjectIntegerKey<BrandCategory> {
 
   @Override
   public String toStringImpl() {
-    return brand+"|"+category+'|'+enabled;
+    return brand + "|" + category + '|' + enabled;
   }
 
   @Override

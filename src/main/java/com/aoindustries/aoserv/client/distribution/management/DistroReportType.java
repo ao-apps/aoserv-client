@@ -39,7 +39,7 @@ import java.sql.SQLException;
  */
 public final class DistroReportType extends GlobalObjectStringKey<DistroReportType> {
 
-  static final int COLUMN_NAME=0;
+  static final int COLUMN_NAME = 0;
   static final String COLUMN_NAME_name = "name";
 
   private String display;
@@ -48,20 +48,20 @@ public final class DistroReportType extends GlobalObjectStringKey<DistroReportTy
    * The different report types.
    */
   public static final String
-    BIG_DIRECTORY  = "BD",
-    DIGEST         = "DI",
-    EXTRA          = "EX",
-    GROUP_MISMATCH = "GR",
-    HIDDEN         = "HI",
-    LENGTH         = "LN",
-    MISSING        = "MI",
-    OWNER_MISMATCH = "OW",
-    NO_OWNER       = "NO",
-    NO_GROUP       = "NG",
-    PERMISSIONS    = "PR",
-    SETUID         = "SU",
-    SYMLINK        = "SY",
-    TYPE           = "TY"
+      BIG_DIRECTORY  = "BD",
+      DIGEST         = "DI",
+      EXTRA          = "EX",
+      GROUP_MISMATCH = "GR",
+      HIDDEN         = "HI",
+      LENGTH         = "LN",
+      MISSING        = "MI",
+      OWNER_MISMATCH = "OW",
+      NO_OWNER       = "NO",
+      NO_GROUP       = "NG",
+      PERMISSIONS    = "PR",
+      SETUID         = "SU",
+      SYMLINK        = "SY",
+      TYPE           = "TY"
   ;
 
   /**
@@ -70,7 +70,7 @@ public final class DistroReportType extends GlobalObjectStringKey<DistroReportTy
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public DistroReportType() {
     // Do nothing
   }
@@ -112,8 +112,8 @@ public final class DistroReportType extends GlobalObjectStringKey<DistroReportTy
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readUTF().intern();
-    display=in.readUTF();
+    pkey = in.readUTF().intern();
+    display = in.readUTF();
   }
 
   @Override

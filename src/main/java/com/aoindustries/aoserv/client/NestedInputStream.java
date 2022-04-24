@@ -42,31 +42,31 @@ import java.sql.SQLException;
 public final class NestedInputStream extends InputStream {
 
   private final StreamableInput in;
-  private boolean isDone=false;
-  private byte[] buffer=BufferManager.getBytes();
-  private int bufferFilled=0;
-  private int bufferRead=0;
+  private boolean isDone = false;
+  private byte[] buffer = BufferManager.getBytes();
+  private int bufferFilled = 0;
+  private int bufferRead = 0;
 
   public NestedInputStream(StreamableInput in) {
-    this.in=in;
+    this.in = in;
   }
 
   @Override
   public synchronized int available() {
-    return bufferRead-bufferFilled;
+    return bufferRead - bufferFilled;
   }
 
   private void loadNextBlock() throws IOException {
     // Load the next block, if needed
     while (!isDone && bufferRead >= bufferFilled) {
-      int code=in.read();
+      int code = in.read();
       if (code == AoservProtocol.NEXT) {
-        bufferFilled=in.readShort();
+        bufferFilled = in.readShort();
         in.readFully(buffer, 0, bufferFilled);
-        bufferRead=0;
+        bufferRead = 0;
       } else {
-        isDone=true;
-        bufferFilled=bufferRead=0;
+        isDone = true;
+        bufferFilled = bufferRead = 0;
         try {
           AoservProtocol.checkResult(code, in);
         } catch (SQLException err) {
@@ -81,18 +81,18 @@ public final class NestedInputStream extends InputStream {
     if (!isDone) {
       // Read the rest of the underlying stream
       int code;
-      while ((code=in.read()) == AoservProtocol.NEXT) {
-        int len=in.readShort();
-        while (len>0) {
-          int skipped=(int)in.skip(len);
-          len-=skipped;
+      while ((code = in.read()) == AoservProtocol.NEXT) {
+        int len = in.readShort();
+        while (len > 0) {
+          int skipped = (int) in.skip(len);
+          len -= skipped;
         }
       }
-      isDone=true;
-      bufferFilled=bufferRead=0;
+      isDone = true;
+      bufferFilled = bufferRead = 0;
       if (buffer != null) {
         BufferManager.release(buffer, false);
-        buffer=null;
+        buffer = null;
       }
       try {
         AoservProtocol.checkResult(code, in);
@@ -123,12 +123,12 @@ public final class NestedInputStream extends InputStream {
     if (isDone) {
       return -1;
     }
-    int bufferLeft=bufferFilled-bufferRead;
-    if (bufferLeft>len) {
-      bufferLeft=len;
+    int bufferLeft = bufferFilled - bufferRead;
+    if (bufferLeft > len) {
+      bufferLeft = len;
     }
     System.arraycopy(buffer, bufferRead, b, off, bufferLeft);
-    bufferRead+=bufferLeft;
+    bufferRead += bufferLeft;
     return bufferLeft;
   }
 
@@ -141,11 +141,11 @@ public final class NestedInputStream extends InputStream {
     if (isDone) {
       return -1;
     }
-    int bufferLeft=bufferFilled-bufferRead;
-    if (bufferLeft>n) {
-      bufferLeft=(int)n;
+    int bufferLeft = bufferFilled - bufferRead;
+    if (bufferLeft > n) {
+      bufferLeft = (int) n;
     }
-    bufferRead+=bufferLeft;
+    bufferRead += bufferLeft;
     return bufferLeft;
   }
 }

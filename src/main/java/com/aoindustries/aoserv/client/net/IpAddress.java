@@ -63,16 +63,16 @@ import java.util.concurrent.ConcurrentMap;
 public final class IpAddress extends CachedObjectIntegerKey<IpAddress> {
 
   static final int
-    COLUMN_ID = 0,
-    COLUMN_DEVICE = 2,
-    COLUMN_PACKAGE = 5
+      COLUMN_ID = 0,
+      COLUMN_DEVICE = 2,
+      COLUMN_PACKAGE = 5
   ;
   public static final String COLUMN_IP_ADDRESS_name = "inetAddress";
   public static final String COLUMN_DEVICE_name = "device";
 
   public static final String
-    LOOPBACK_IP="127.0.0.1",
-    WILDCARD_IP="0.0.0.0"
+      LOOPBACK_IP = "127.0.0.1",
+      WILDCARD_IP = "0.0.0.0"
   ;
 
   // TODO: Should have an upper bound to this cache to avoid memory leak
@@ -82,35 +82,35 @@ public final class IpAddress extends CachedObjectIntegerKey<IpAddress> {
     Integer result = intForIPAddressCache.get(ipAddress);
     if (result == null) {
       // There must be four octets with . between
-      List<String> octets=Strings.split(ipAddress, '.');
+      List<String> octets = Strings.split(ipAddress, '.');
       if (octets.size() != 4) {
-        throw new IllegalArgumentException("Invalid IP address: "+ipAddress);
+        throw new IllegalArgumentException("Invalid IP address: " + ipAddress);
       }
 
       // Each octet should be from 1 to 3 digits, all numbers
       // and should have a value between 0 and 255 inclusive
-      for (int c=0;c<4;c++) {
-        String tet=octets.get(c);
-        int tetLen=tet.length();
-        if (tetLen<1 || tetLen>3) {
-          throw new IllegalArgumentException("Invalid IP address: "+ipAddress);
+      for (int c = 0; c < 4; c++) {
+        String tet = octets.get(c);
+        int tetLen = tet.length();
+        if (tetLen < 1 || tetLen > 3) {
+          throw new IllegalArgumentException("Invalid IP address: " + ipAddress);
         }
-        for (int d=0;d<tetLen;d++) {
-          char ch=tet.charAt(d);
-          if (ch<'0' || ch>'9') {
-            throw new IllegalArgumentException("Invalid IP address: "+ipAddress);
+        for (int d = 0; d < tetLen; d++) {
+          char ch = tet.charAt(d);
+          if (ch < '0' || ch > '9') {
+            throw new IllegalArgumentException("Invalid IP address: " + ipAddress);
           }
         }
-        int val=Integer.parseInt(tet);
-        if (val<0 || val>255) {
-          throw new IllegalArgumentException("Invalid IP address: "+ipAddress);
+        int val = Integer.parseInt(tet);
+        if (val < 0 || val > 255) {
+          throw new IllegalArgumentException("Invalid IP address: " + ipAddress);
         }
       }
       result =
-        (Integer.parseInt(octets.get(0))<<24)
-        | (Integer.parseInt(octets.get(1))<<16)
-        | (Integer.parseInt(octets.get(2))<<8)
-        | (Integer.parseInt(octets.get(3))&255)
+          (Integer.parseInt(octets.get(0)) << 24)
+              | (Integer.parseInt(octets.get(1)) << 16)
+              | (Integer.parseInt(octets.get(2)) << 8)
+              | (Integer.parseInt(octets.get(3)) & 255)
       ;
       Integer existing = intForIPAddressCache.putIfAbsent(ipAddress, result);
       if (existing != null) {
@@ -122,15 +122,15 @@ public final class IpAddress extends CachedObjectIntegerKey<IpAddress> {
 
   public static String getIPAddressForInt(int i) {
     return
-      new StringBuilder(15)
-      .append((i>>>24)&255)
-      .append('.')
-      .append((i>>>16)&255)
-      .append('.')
-      .append((i>>>8)&255)
-      .append('.')
-      .append(i&255)
-      .toString()
+        new StringBuilder(15)
+            .append((i >>> 24) & 255)
+            .append('.')
+            .append((i >>> 16) & 255)
+            .append('.')
+            .append((i >>> 8) & 255)
+            .append('.')
+            .append(i & 255)
+            .toString()
     ;
   }
 
@@ -186,7 +186,7 @@ public final class IpAddress extends CachedObjectIntegerKey<IpAddress> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public IpAddress() {
     // Do nothing
   }
@@ -376,8 +376,8 @@ public final class IpAddress extends CachedObjectIntegerKey<IpAddress> {
     out.writeBoolean(isOverflow);
     out.writeBoolean(isDhcp);
     if (
-      protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30) >= 0
-      && protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_17) <= 0
+        protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30) >= 0
+            && protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_17) <= 0
     ) {
       out.writeBoolean(pingMonitorEnabled);
     }
@@ -426,7 +426,7 @@ public final class IpAddress extends CachedObjectIntegerKey<IpAddress> {
    */
   public void setPackage(Package pk) throws IOException, SQLException {
     if (isUsed()) {
-      throw new SQLException("Unable to set Package, IPAddress in use: #"+pkey);
+      throw new SQLException("Unable to set Package, IPAddress in use: #" + pkey);
     }
 
     table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_IP_ADDRESS_PACKAGE, pkey, pk.getName());

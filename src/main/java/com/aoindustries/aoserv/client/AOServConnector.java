@@ -89,30 +89,30 @@ public abstract class AOServConnector implements SchemaParent {
    * The delay for each retry attempt.
    */
   private static final long[] retryAttemptDelays = {
-    0,
-    1,
-    2,
-    3,
-    4,
-    6,
-    8,
-    12,
-    16,
-    24,
-    32,
-    48,
-    64,
-    96,
-    128,
-    192,
-    256,
-    384,
-    512,
-    768,
-    1024,
-    1536,
-    2048,
-    3072
+      0,
+      1,
+      2,
+      3,
+      4,
+      6,
+      8,
+      12,
+      16,
+      24,
+      32,
+      48,
+      64,
+      96,
+      128,
+      192,
+      256,
+      384,
+      512,
+      768,
+      1024,
+      1536,
+      2048,
+      3072
   };
 
   /**
@@ -125,25 +125,25 @@ public abstract class AOServConnector implements SchemaParent {
    */
   static boolean isImmediateFail(Throwable t) {
     if (
-      t instanceof ThreadDeath
-      || t instanceof InterruptedIOException
-      || t instanceof InterruptedException
-      || t instanceof ConfigurationException
+        t instanceof ThreadDeath
+            || t instanceof InterruptedIOException
+            || t instanceof InterruptedException
+            || t instanceof ConfigurationException
     ) {
       return true;
     } else {
       assert t != null;
       String message = t.getMessage();
       return
-        (t instanceof IOException)
-        && message != null
-        && (
-          message.equals("Connection attempted with invalid password")
-          || message.equals("Connection attempted with empty password")
-          || message.equals("Connection attempted with empty connect username")
-          || message.startsWith("Unable to find Administrator: ")
-          || message.startsWith("Not allowed to switch users from ")
-        )
+          (t instanceof IOException)
+              && message != null
+              && (
+              message.equals("Connection attempted with invalid password")
+                  || message.equals("Connection attempted with empty password")
+                  || message.equals("Connection attempted with empty connect username")
+                  || message.startsWith("Unable to find Administrator: ")
+                  || message.startsWith("Not allowed to switch users from ")
+          )
       ;
     }
   }
@@ -168,7 +168,9 @@ public abstract class AOServConnector implements SchemaParent {
    * @see  #getConnectorId()
    */
   // TODO: AtomicReference
-  protected static class IdLock {/* Empty lock class to help heap profile */}
+  protected static class IdLock {
+    // Empty lock class to help heap profile
+  }
   protected final IdLock idLock = new IdLock();
   protected Identifier id = null;
 
@@ -204,86 +206,166 @@ public abstract class AOServConnector implements SchemaParent {
 
   protected final String password;
 
-  private static class TestConnectLock {/* Empty lock class to help heap profile */}
-  private final TestConnectLock testConnectLock=new TestConnectLock();
+  private static class TestConnectLock {
+    // Empty lock class to help heap profile
+  }
+  private final TestConnectLock testConnectLock = new TestConnectLock();
 
   private final com.aoindustries.aoserv.client.account.Schema account;
-  public com.aoindustries.aoserv.client.account.Schema getAccount() {return account;}
+
+  public com.aoindustries.aoserv.client.account.Schema getAccount() {
+    return account;
+  }
 
   private final com.aoindustries.aoserv.client.accounting.Schema accounting;
-  public com.aoindustries.aoserv.client.accounting.Schema getAccounting() {return accounting;}
+
+  public com.aoindustries.aoserv.client.accounting.Schema getAccounting() {
+    return accounting;
+  }
 
   private final com.aoindustries.aoserv.client.aosh.Schema aosh;
-  public com.aoindustries.aoserv.client.aosh.Schema getAosh() {return aosh;}
+
+  public com.aoindustries.aoserv.client.aosh.Schema getAosh() {
+    return aosh;
+  }
 
   private final com.aoindustries.aoserv.client.backup.Schema backup;
-  public com.aoindustries.aoserv.client.backup.Schema getBackup() {return backup;}
+
+  public com.aoindustries.aoserv.client.backup.Schema getBackup() {
+    return backup;
+  }
 
   private final com.aoindustries.aoserv.client.billing.Schema billing;
-  public com.aoindustries.aoserv.client.billing.Schema getBilling() {return billing;}
+
+  public com.aoindustries.aoserv.client.billing.Schema getBilling() {
+    return billing;
+  }
 
   private final com.aoindustries.aoserv.client.distribution.Schema distribution;
-  public com.aoindustries.aoserv.client.distribution.Schema getDistribution() {return distribution;}
+
+  public com.aoindustries.aoserv.client.distribution.Schema getDistribution() {
+    return distribution;
+  }
 
   private final com.aoindustries.aoserv.client.distribution.management.Schema distribution_management;
-  public com.aoindustries.aoserv.client.distribution.management.Schema getDistribution_management() {return distribution_management;}
+
+  public com.aoindustries.aoserv.client.distribution.management.Schema getDistribution_management() {
+    return distribution_management;
+  }
 
   private final com.aoindustries.aoserv.client.dns.Schema dns;
-  public com.aoindustries.aoserv.client.dns.Schema getDns() {return dns;}
+
+  public com.aoindustries.aoserv.client.dns.Schema getDns() {
+    return dns;
+  }
 
   private final com.aoindustries.aoserv.client.email.Schema email;
-  public com.aoindustries.aoserv.client.email.Schema getEmail() {return email;}
+
+  public com.aoindustries.aoserv.client.email.Schema getEmail() {
+    return email;
+  }
 
   private final com.aoindustries.aoserv.client.ftp.Schema ftp;
-  public com.aoindustries.aoserv.client.ftp.Schema getFtp() {return ftp;}
+
+  public com.aoindustries.aoserv.client.ftp.Schema getFtp() {
+    return ftp;
+  }
 
   private final com.aoindustries.aoserv.client.infrastructure.Schema infrastructure;
-  public com.aoindustries.aoserv.client.infrastructure.Schema getInfrastructure() {return infrastructure;}
+
+  public com.aoindustries.aoserv.client.infrastructure.Schema getInfrastructure() {
+    return infrastructure;
+  }
 
   private final com.aoindustries.aoserv.client.linux.Schema linux;
-  public com.aoindustries.aoserv.client.linux.Schema getLinux() {return linux;}
+
+  public com.aoindustries.aoserv.client.linux.Schema getLinux() {
+    return linux;
+  }
 
   private final com.aoindustries.aoserv.client.master.Schema master;
-  public com.aoindustries.aoserv.client.master.Schema getMaster() {return master;}
+
+  public com.aoindustries.aoserv.client.master.Schema getMaster() {
+    return master;
+  }
 
   private final com.aoindustries.aoserv.client.mysql.Schema mysql;
-  public com.aoindustries.aoserv.client.mysql.Schema getMysql() {return mysql;}
+
+  public com.aoindustries.aoserv.client.mysql.Schema getMysql() {
+    return mysql;
+  }
 
   private final com.aoindustries.aoserv.client.net.Schema net;
-  public com.aoindustries.aoserv.client.net.Schema getNet() {return net;}
+
+  public com.aoindustries.aoserv.client.net.Schema getNet() {
+    return net;
+  }
 
   private final com.aoindustries.aoserv.client.payment.Schema payment;
-  public com.aoindustries.aoserv.client.payment.Schema getPayment() {return payment;}
+
+  public com.aoindustries.aoserv.client.payment.Schema getPayment() {
+    return payment;
+  }
 
   private final com.aoindustries.aoserv.client.pki.Schema pki;
-  public com.aoindustries.aoserv.client.pki.Schema getPki() {return pki;}
+
+  public com.aoindustries.aoserv.client.pki.Schema getPki() {
+    return pki;
+  }
 
   private final com.aoindustries.aoserv.client.postgresql.Schema postgresql;
-  public com.aoindustries.aoserv.client.postgresql.Schema getPostgresql() {return postgresql;}
+
+  public com.aoindustries.aoserv.client.postgresql.Schema getPostgresql() {
+    return postgresql;
+  }
 
   private final com.aoindustries.aoserv.client.reseller.Schema reseller;
-  public com.aoindustries.aoserv.client.reseller.Schema getReseller() {return reseller;}
+
+  public com.aoindustries.aoserv.client.reseller.Schema getReseller() {
+    return reseller;
+  }
 
   private final com.aoindustries.aoserv.client.schema.Schema schema;
-  public com.aoindustries.aoserv.client.schema.Schema getSchema() {return schema;}
+
+  public com.aoindustries.aoserv.client.schema.Schema getSchema() {
+    return schema;
+  }
 
   private final com.aoindustries.aoserv.client.scm.Schema scm;
-  public com.aoindustries.aoserv.client.scm.Schema getScm() {return scm;}
+
+  public com.aoindustries.aoserv.client.scm.Schema getScm() {
+    return scm;
+  }
 
   private final com.aoindustries.aoserv.client.signup.Schema signup;
-  public com.aoindustries.aoserv.client.signup.Schema getSignup() {return signup;}
+
+  public com.aoindustries.aoserv.client.signup.Schema getSignup() {
+    return signup;
+  }
 
   private final com.aoindustries.aoserv.client.ticket.Schema ticket;
-  public com.aoindustries.aoserv.client.ticket.Schema getTicket() {return ticket;}
+
+  public com.aoindustries.aoserv.client.ticket.Schema getTicket() {
+    return ticket;
+  }
 
   private final com.aoindustries.aoserv.client.web.Schema web;
-  public com.aoindustries.aoserv.client.web.Schema getWeb() {return web;}
+
+  public com.aoindustries.aoserv.client.web.Schema getWeb() {
+    return web;
+  }
 
   private final com.aoindustries.aoserv.client.web.jboss.Schema web_jboss;
-  public com.aoindustries.aoserv.client.web.jboss.Schema getWeb_jboss() {return web_jboss;}
+
+  public com.aoindustries.aoserv.client.web.jboss.Schema getWeb_jboss() {
+    return web_jboss;
+  }
 
   private final com.aoindustries.aoserv.client.web.tomcat.Schema web_tomcat;
-  public com.aoindustries.aoserv.client.web.tomcat.Schema getWeb_tomcat() {return web_tomcat;}
+
+  public com.aoindustries.aoserv.client.web.tomcat.Schema getWeb_tomcat() {
+    return web_tomcat;
+  }
 
   private final List<? extends Schema> schemas;
 
@@ -297,16 +379,19 @@ public abstract class AOServConnector implements SchemaParent {
   private final List<? extends AOServTable<?, ?>> tables;
 
   private final SimpleAOClient simpleAOClient;
-  public SimpleAOClient getSimpleAOClient() {return simpleAOClient;}
+
+  public SimpleAOClient getSimpleAOClient() {
+    return simpleAOClient;
+  }
 
   protected AOServConnector(
-    HostAddress hostname,
-    InetAddress local_ip,
-    Port port,
-    User.Name connectAs,
-    User.Name authenticateAs,
-    String password,
-    DomainName daemonServer
+      HostAddress hostname,
+      InetAddress local_ip,
+      Port port,
+      User.Name connectAs,
+      User.Name authenticateAs,
+      String password,
+      DomainName daemonServer
   ) {
     this.logger = Logger.getLogger(getClass().getName());
 
@@ -620,10 +705,10 @@ public abstract class AOServConnector implements SchemaParent {
     User.Name username = AOServClientConfiguration.getUsername();
     DomainName daemonServer = AOServClientConfiguration.getDaemonServer();
     return getConnector(
-      username,
-      username,
-      AOServClientConfiguration.getPassword(),
-      daemonServer
+        username,
+        username,
+        AOServClientConfiguration.getPassword(),
+        daemonServer
     );
   }
 
@@ -663,10 +748,10 @@ public abstract class AOServConnector implements SchemaParent {
    * @exception  ConfigurationException  if no connection can be established
    */
   public static AOServConnector getConnector(
-    User.Name connectAs,
-    User.Name authenticateAs,
-    String password,
-    DomainName daemonServer
+      User.Name connectAs,
+      User.Name authenticateAs,
+      String password,
+      DomainName daemonServer
   ) throws ConfigurationException {
     List<String> protocols = AOServClientConfiguration.getProtocols();
     int size = protocols.size();
@@ -676,38 +761,38 @@ public abstract class AOServConnector implements SchemaParent {
         AOServConnector connector;
         if (TCPConnector.TCP_PROTOCOL.equals(protocol)) {
           connector = TCPConnector.getTCPConnector(
-            AOServClientConfiguration.getTcpHostname(),
-            AOServClientConfiguration.getTcpLocalIp(),
-            AOServClientConfiguration.getTcpPort(),
-            connectAs,
-            authenticateAs,
-            password,
-            daemonServer,
-            AOServClientConfiguration.getTcpConnectionPoolSize(),
-            AOServClientConfiguration.getTcpConnectionMaxAge()
+              AOServClientConfiguration.getTcpHostname(),
+              AOServClientConfiguration.getTcpLocalIp(),
+              AOServClientConfiguration.getTcpPort(),
+              connectAs,
+              authenticateAs,
+              password,
+              daemonServer,
+              AOServClientConfiguration.getTcpConnectionPoolSize(),
+              AOServClientConfiguration.getTcpConnectionMaxAge()
           );
         } else if (SSLConnector.SSL_PROTOCOL.equals(protocol)) {
           connector = SSLConnector.getSSLConnector(
-            AOServClientConfiguration.getSslHostname(),
-            AOServClientConfiguration.getSslLocalIp(),
-            AOServClientConfiguration.getSslPort(),
-            connectAs,
-            authenticateAs,
-            password,
-            daemonServer,
-            AOServClientConfiguration.getSslConnectionPoolSize(),
-            AOServClientConfiguration.getSslConnectionMaxAge(),
-            AOServClientConfiguration.getSslTruststorePath(),
-            AOServClientConfiguration.getSslTruststorePassword()
+              AOServClientConfiguration.getSslHostname(),
+              AOServClientConfiguration.getSslLocalIp(),
+              AOServClientConfiguration.getSslPort(),
+              connectAs,
+              authenticateAs,
+              password,
+              daemonServer,
+              AOServClientConfiguration.getSslConnectionPoolSize(),
+              AOServClientConfiguration.getSslConnectionMaxAge(),
+              AOServClientConfiguration.getSslTruststorePath(),
+              AOServClientConfiguration.getSslTruststorePassword()
           );
-        /*
+          /*
         } else if ("http".equals(protocol)) {
           connector=new HTTPConnector();
         } else if ("https".equals(protocol)) {
           connector=new HTTPSConnector();
         */
         } else {
-          throw new ConfigurationException("Unknown protocol in aoserv.client.protocols: "+protocol);
+          throw new ConfigurationException("Unknown protocol in aoserv.client.protocols: " + protocol);
         }
 
         return connector;
@@ -802,10 +887,10 @@ public abstract class AOServConnector implements SchemaParent {
    * @see  Table
    */
   public final AOServTable<?, ?> getTable(int tableID) throws IllegalArgumentException {
-    if (tableID >= 0 && tableID<tables.size()) {
+    if (tableID >= 0 && tableID < tables.size()) {
       return tables.get(tableID);
     }
-    throw new IllegalArgumentException("Table not found for ID="+tableID);
+    throw new IllegalArgumentException("Table not found for ID=" + tableID);
   }
 
   /**
@@ -852,39 +937,39 @@ public abstract class AOServConnector implements SchemaParent {
    */
   public void invalidateTable(final int tableID, final int server) throws IOException, SQLException {
     requestUpdate(
-      true,
-      AoservProtocol.CommandID.INVALIDATE_TABLE,
-      new UpdateRequest() {
-        private IntList tableList;
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(tableID);
-          out.writeCompressedInt(server);
-        }
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            tableList=readInvalidateList(in);
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unknown response code: "+code);
+        true,
+        AoservProtocol.CommandID.INVALIDATE_TABLE,
+        new UpdateRequest() {
+          private IntList tableList;
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(tableID);
+            out.writeCompressedInt(server);
+          }
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              tableList = readInvalidateList(in);
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unknown response code: " + code);
+            }
+          }
+          @Override
+          public void afterRelease() {
+            tablesUpdated(tableList);
           }
         }
-        @Override
-        public void afterRelease() {
-          tablesUpdated(tableList);
-        }
-      }
     );
   }
 
   public static IntList readInvalidateList(StreamableInput in) throws IOException {
-    IntArrayList tableList=null;
+    IntArrayList tableList = null;
     int tableID;
-    while ((tableID=in.readCompressedInt()) != -1) {
+    while ((tableID = in.readCompressedInt()) != -1) {
       if (tableList == null) {
-        tableList=new IntArrayList();
+        tableList = new IntArrayList();
       }
       tableList.add(tableID);
     }
@@ -911,13 +996,13 @@ public abstract class AOServConnector implements SchemaParent {
    * @return  the connection latency in milliseconds
    */
   public final int ping() throws IOException, SQLException {
-    long startTime=System.currentTimeMillis();
+    long startTime = System.currentTimeMillis();
     requestUpdate(false, AoservProtocol.CommandID.PING);
-    long timeSpan=System.currentTimeMillis()-startTime;
-    if (timeSpan>Integer.MAX_VALUE) {
+    long timeSpan = System.currentTimeMillis() - startTime;
+    if (timeSpan > Integer.MAX_VALUE) {
       return Integer.MAX_VALUE;
     }
-    return (int)timeSpan;
+    return (int) timeSpan;
   }
 
   public abstract void printConnectionStatsHTML(Appendable out, boolean isXhtml) throws IOException;
@@ -948,93 +1033,93 @@ public abstract class AOServConnector implements SchemaParent {
       if (param == null) {
         throw new NullPointerException("param is null");
       } else if (param instanceof Integer) {
-        out.writeCompressedInt(((Integer)param));
+        out.writeCompressedInt(((Integer) param));
       } else if (param instanceof Table.TableID) {
-        out.writeCompressedInt(((Table.TableID)param).ordinal());
-      // Now passed while getting output stream: } else if (param instanceof AOServProtocol.CommandID) {
-      //                                           out.writeCompressedInt(((AOServProtocol.CommandID)param).ordinal());
+        out.writeCompressedInt(((Table.TableID) param).ordinal());
+        // Now passed while getting output stream: } else if (param instanceof AOServProtocol.CommandID) {
+        //                                           out.writeCompressedInt(((AOServProtocol.CommandID)param).ordinal());
       } else if (param instanceof String) {
-        out.writeUTF((String)param);
+        out.writeUTF((String) param);
       } else if (param instanceof Float) {
-        out.writeFloat((Float)param);
+        out.writeFloat((Float) param);
       } else if (param instanceof Long) {
-        out.writeLong((Long)param);
+        out.writeLong((Long) param);
       } else if (param instanceof Boolean) {
-        out.writeBoolean((Boolean)param);
+        out.writeBoolean((Boolean) param);
       } else if (param instanceof Short) {
-        out.writeShort((Short)param);
+        out.writeShort((Short) param);
       } else if (param instanceof Byte) {
-        out.writeByte((Byte)param);
+        out.writeByte((Byte) param);
       } else if (param instanceof Timestamp) {
-        SQLStreamables.writeTimestamp((Timestamp)param, out);
+        SQLStreamables.writeTimestamp((Timestamp) param, out);
       } else if (param instanceof Enum) {
-        out.writeEnum((Enum)param);
+        out.writeEnum((Enum) param);
       } else if (param instanceof byte[]) {
-        byte[] bytes=(byte[])param;
+        byte[] bytes = (byte[]) param;
         out.writeCompressedInt(bytes.length);
         out.write(bytes, 0, bytes.length);
-      /*
+        /*
        * Self-validating types
        */
       } else if (param instanceof Account.Name) {
-        out.writeUTF(((Account.Name)param).toString());
+        out.writeUTF(((Account.Name) param).toString());
       } else if (param instanceof Email) {
-        out.writeUTF(((Email)param).toString());
+        out.writeUTF(((Email) param).toString());
       } else if (param instanceof HostAddress) {
-        out.writeUTF(((HostAddress)param).toString());
+        out.writeUTF(((HostAddress) param).toString());
       } else if (param instanceof InetAddress) {
-        out.writeUTF(((InetAddress)param).toString());
+        out.writeUTF(((InetAddress) param).toString());
       } else if (param instanceof PosixPath) {
-        out.writeUTF(((PosixPath)param).toString());
+        out.writeUTF(((PosixPath) param).toString());
       } else if (param instanceof User.Name) {
-        out.writeUTF(((User.Name)param).toString());
+        out.writeUTF(((User.Name) param).toString());
       } else if (param instanceof DomainLabel) {
-        out.writeUTF(((DomainLabel)param).toString());
+        out.writeUTF(((DomainLabel) param).toString());
       } else if (param instanceof DomainLabels) {
-        out.writeUTF(((DomainLabels)param).toString());
+        out.writeUTF(((DomainLabels) param).toString());
       } else if (param instanceof DomainName) {
-        out.writeUTF(((DomainName)param).toString());
+        out.writeUTF(((DomainName) param).toString());
       } else if (param instanceof Gecos) {
-        out.writeUTF(((Gecos)param).toString());
+        out.writeUTF(((Gecos) param).toString());
       } else if (param instanceof Group.Name) {
-        out.writeUTF(((Group.Name)param).toString());
+        out.writeUTF(((Group.Name) param).toString());
       } else if (param instanceof HashedKey) {
-        out.writeUTF(((HashedKey)param).toString());
+        out.writeUTF(((HashedKey) param).toString());
       } else if (param instanceof HashedPassword) {
-        out.writeUTF(((HashedPassword)param).toString());
+        out.writeUTF(((HashedPassword) param).toString());
       } else if (param instanceof LinuxId) {
-        out.writeCompressedInt(((LinuxId)param).getId());
+        out.writeCompressedInt(((LinuxId) param).getId());
       } else if (param instanceof com.aoindustries.aoserv.client.linux.User.Name) {
-        out.writeUTF(((com.aoindustries.aoserv.client.linux.User.Name)param).toString());
+        out.writeUTF(((com.aoindustries.aoserv.client.linux.User.Name) param).toString());
       } else if (param instanceof MacAddress) {
-        out.writeUTF(((MacAddress)param).toString());
+        out.writeUTF(((MacAddress) param).toString());
       } else if (param instanceof com.aoindustries.aoserv.client.mysql.Database.Name) {
-        out.writeUTF(((com.aoindustries.aoserv.client.mysql.Database.Name)param).toString());
+        out.writeUTF(((com.aoindustries.aoserv.client.mysql.Database.Name) param).toString());
       } else if (param instanceof com.aoindustries.aoserv.client.mysql.Server.Name) {
-        out.writeUTF(((com.aoindustries.aoserv.client.mysql.Server.Name)param).toString());
+        out.writeUTF(((com.aoindustries.aoserv.client.mysql.Server.Name) param).toString());
       } else if (param instanceof com.aoindustries.aoserv.client.mysql.Table_Name) {
-        out.writeUTF(((com.aoindustries.aoserv.client.mysql.Table_Name)param).toString());
+        out.writeUTF(((com.aoindustries.aoserv.client.mysql.Table_Name) param).toString());
       } else if (param instanceof com.aoindustries.aoserv.client.mysql.User.Name) {
-        out.writeUTF(((com.aoindustries.aoserv.client.mysql.User.Name)param).toString());
+        out.writeUTF(((com.aoindustries.aoserv.client.mysql.User.Name) param).toString());
       } else if (param instanceof Port) {
-        Port port = (Port)param;
+        Port port = (Port) param;
         out.writeCompressedInt(port.getPort());
         out.writeEnum(port.getProtocol());
       } else if (param instanceof com.aoindustries.aoserv.client.postgresql.Database.Name) {
-        out.writeUTF(((com.aoindustries.aoserv.client.postgresql.Database.Name)param).toString());
+        out.writeUTF(((com.aoindustries.aoserv.client.postgresql.Database.Name) param).toString());
       } else if (param instanceof com.aoindustries.aoserv.client.postgresql.Server.Name) {
-        out.writeUTF(((com.aoindustries.aoserv.client.postgresql.Server.Name)param).toString());
+        out.writeUTF(((com.aoindustries.aoserv.client.postgresql.Server.Name) param).toString());
       } else if (param instanceof com.aoindustries.aoserv.client.postgresql.User.Name) {
-        out.writeUTF(((com.aoindustries.aoserv.client.postgresql.User.Name)param).toString());
-      /*
+        out.writeUTF(((com.aoindustries.aoserv.client.postgresql.User.Name) param).toString());
+        /*
        * Any other Writable
        */
       } else if (param instanceof AOServWritable) {
-        ((AOServWritable)param).write(out, AoservProtocol.Version.CURRENT_VERSION);
+        ((AOServWritable) param).write(out, AoservProtocol.Version.CURRENT_VERSION);
       } else if (param instanceof StreamWritable) {
-        ((StreamWritable)param).write(out, AoservProtocol.Version.CURRENT_VERSION.getVersion());
+        ((StreamWritable) param).write(out, AoservProtocol.Version.CURRENT_VERSION.getVersion());
       } else {
-        throw new IOException("Unknown class for param: "+param.getClass().getName());
+        throw new IOException("Unknown class for param: " + param.getClass().getName());
       }
     }
   }
@@ -1067,9 +1152,9 @@ public abstract class AOServConnector implements SchemaParent {
 
   @SuppressWarnings("SleepWhileInLoop")
   public final <T> T requestResult(
-    boolean allowRetry,
-    AoservProtocol.CommandID commID,
-    ResultRequest<T> resultRequest
+      boolean allowRetry,
+      AoservProtocol.CommandID commID,
+      ResultRequest<T> resultRequest
   ) throws IOException, SQLException {
     int attempt = 1;
     int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
@@ -1093,7 +1178,7 @@ public abstract class AOServConnector implements SchemaParent {
         }
       }
       try {
-        Thread.sleep(retryAttemptDelays[attempt-1]);
+        Thread.sleep(retryAttemptDelays[attempt - 1]);
       } catch (InterruptedException err) {
         // Restore the interrupted status
         Thread.currentThread().interrupt();
@@ -1119,13 +1204,13 @@ public abstract class AOServConnector implements SchemaParent {
             writeParams(params, out);
             out.flush();
 
-            StreamableInput in=connection.getResponseIn();
-            int code=in.readByte();
+            StreamableInput in = connection.getResponseIn();
+            int code = in.readByte();
             if (code == AoservProtocol.DONE) {
               return in.readBoolean();
             }
             AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+            throw new IOException("Unexpected response code: " + code);
           } catch (Error | RuntimeException | IOException err) {
             throw Throwables.wrap(connection.abort(err), IOException.class, IOException::new);
           }
@@ -1136,7 +1221,7 @@ public abstract class AOServConnector implements SchemaParent {
         }
       }
       try {
-        Thread.sleep(retryAttemptDelays[attempt-1]);
+        Thread.sleep(retryAttemptDelays[attempt - 1]);
       } catch (InterruptedException err) {
         // Restore the interrupted status
         Thread.currentThread().interrupt();
@@ -1164,14 +1249,14 @@ public abstract class AOServConnector implements SchemaParent {
             writeParams(params, out);
             out.flush();
 
-            StreamableInput in=connection.getResponseIn();
-            int code=in.readByte();
+            StreamableInput in = connection.getResponseIn();
+            int code = in.readByte();
             if (code == AoservProtocol.DONE) {
               result = in.readBoolean();
-              invalidateList=readInvalidateList(in);
+              invalidateList = readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
-              throw new IOException("Unexpected response code: "+code);
+              throw new IOException("Unexpected response code: " + code);
             }
           } catch (Error | RuntimeException | IOException err) {
             throw Throwables.wrap(connection.abort(err), IOException.class, IOException::new);
@@ -1185,7 +1270,7 @@ public abstract class AOServConnector implements SchemaParent {
         }
       }
       try {
-        Thread.sleep(retryAttemptDelays[attempt-1]);
+        Thread.sleep(retryAttemptDelays[attempt - 1]);
       } catch (InterruptedException err) {
         // Restore the interrupted status
         Thread.currentThread().interrupt();
@@ -1211,13 +1296,13 @@ public abstract class AOServConnector implements SchemaParent {
             writeParams(params, out);
             out.flush();
 
-            StreamableInput in=connection.getResponseIn();
-            int code=in.readByte();
+            StreamableInput in = connection.getResponseIn();
+            int code = in.readByte();
             if (code == AoservProtocol.DONE) {
               return in.readCompressedInt();
             }
             AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+            throw new IOException("Unexpected response code: " + code);
           } catch (Error | RuntimeException | IOException err) {
             throw Throwables.wrap(connection.abort(err), IOException.class, IOException::new);
           }
@@ -1228,7 +1313,7 @@ public abstract class AOServConnector implements SchemaParent {
         }
       }
       try {
-        Thread.sleep(retryAttemptDelays[attempt-1]);
+        Thread.sleep(retryAttemptDelays[attempt - 1]);
       } catch (InterruptedException err) {
         // Restore the interrupted status
         Thread.currentThread().interrupt();
@@ -1256,14 +1341,14 @@ public abstract class AOServConnector implements SchemaParent {
             writeParams(params, out);
             out.flush();
 
-            StreamableInput in=connection.getResponseIn();
-            int code=in.readByte();
+            StreamableInput in = connection.getResponseIn();
+            int code = in.readByte();
             if (code == AoservProtocol.DONE) {
-              result=in.readCompressedInt();
-              invalidateList=readInvalidateList(in);
+              result = in.readCompressedInt();
+              invalidateList = readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
-              throw new IOException("Unexpected response code: "+code);
+              throw new IOException("Unexpected response code: " + code);
             }
           } catch (Error | RuntimeException | IOException err) {
             throw Throwables.wrap(connection.abort(err), IOException.class, IOException::new);
@@ -1277,7 +1362,7 @@ public abstract class AOServConnector implements SchemaParent {
         }
       }
       try {
-        Thread.sleep(retryAttemptDelays[attempt-1]);
+        Thread.sleep(retryAttemptDelays[attempt - 1]);
       } catch (InterruptedException err) {
         // Restore the interrupted status
         Thread.currentThread().interrupt();
@@ -1303,13 +1388,13 @@ public abstract class AOServConnector implements SchemaParent {
             writeParams(params, out);
             out.flush();
 
-            StreamableInput in=connection.getResponseIn();
-            int code=in.readByte();
+            StreamableInput in = connection.getResponseIn();
+            int code = in.readByte();
             if (code == AoservProtocol.DONE) {
               return in.readLong();
             }
             AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+            throw new IOException("Unexpected response code: " + code);
           } catch (Error | RuntimeException | IOException err) {
             throw Throwables.wrap(connection.abort(err), IOException.class, IOException::new);
           }
@@ -1320,7 +1405,7 @@ public abstract class AOServConnector implements SchemaParent {
         }
       }
       try {
-        Thread.sleep(retryAttemptDelays[attempt-1]);
+        Thread.sleep(retryAttemptDelays[attempt - 1]);
       } catch (InterruptedException err) {
         // Restore the interrupted status
         Thread.currentThread().interrupt();
@@ -1346,13 +1431,13 @@ public abstract class AOServConnector implements SchemaParent {
             writeParams(params, out);
             out.flush();
 
-            StreamableInput in=connection.getResponseIn();
-            int code=in.readByte();
+            StreamableInput in = connection.getResponseIn();
+            int code = in.readByte();
             if (code == AoservProtocol.DONE) {
               return in.readShort();
             }
             AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+            throw new IOException("Unexpected response code: " + code);
           } catch (Error | RuntimeException | IOException err) {
             throw Throwables.wrap(connection.abort(err), IOException.class, IOException::new);
           }
@@ -1363,7 +1448,7 @@ public abstract class AOServConnector implements SchemaParent {
         }
       }
       try {
-        Thread.sleep(retryAttemptDelays[attempt-1]);
+        Thread.sleep(retryAttemptDelays[attempt - 1]);
       } catch (InterruptedException err) {
         // Restore the interrupted status
         Thread.currentThread().interrupt();
@@ -1391,14 +1476,14 @@ public abstract class AOServConnector implements SchemaParent {
             writeParams(params, out);
             out.flush();
 
-            StreamableInput in=connection.getResponseIn();
-            int code=in.readByte();
+            StreamableInput in = connection.getResponseIn();
+            int code = in.readByte();
             if (code == AoservProtocol.DONE) {
-              result=in.readShort();
-              invalidateList=readInvalidateList(in);
+              result = in.readShort();
+              invalidateList = readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
-              throw new IOException("Unexpected response code: "+code);
+              throw new IOException("Unexpected response code: " + code);
             }
           } catch (Error | RuntimeException | IOException err) {
             throw Throwables.wrap(connection.abort(err), IOException.class, IOException::new);
@@ -1412,7 +1497,7 @@ public abstract class AOServConnector implements SchemaParent {
         }
       }
       try {
-        Thread.sleep(retryAttemptDelays[attempt-1]);
+        Thread.sleep(retryAttemptDelays[attempt - 1]);
       } catch (InterruptedException err) {
         // Restore the interrupted status
         Thread.currentThread().interrupt();
@@ -1438,13 +1523,13 @@ public abstract class AOServConnector implements SchemaParent {
             writeParams(params, out);
             out.flush();
 
-            StreamableInput in=connection.getResponseIn();
-            int code=in.readByte();
+            StreamableInput in = connection.getResponseIn();
+            int code = in.readByte();
             if (code == AoservProtocol.DONE) {
               return in.readUTF();
             }
             AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+            throw new IOException("Unexpected response code: " + code);
           } catch (Error | RuntimeException | IOException err) {
             throw Throwables.wrap(connection.abort(err), IOException.class, IOException::new);
           }
@@ -1455,7 +1540,7 @@ public abstract class AOServConnector implements SchemaParent {
         }
       }
       try {
-        Thread.sleep(retryAttemptDelays[attempt-1]);
+        Thread.sleep(retryAttemptDelays[attempt - 1]);
       } catch (InterruptedException err) {
         // Restore the interrupted status
         Thread.currentThread().interrupt();
@@ -1484,13 +1569,13 @@ public abstract class AOServConnector implements SchemaParent {
             writeParams(params, out);
             out.flush();
 
-            StreamableInput in=connection.getResponseIn();
-            int code=in.readByte();
+            StreamableInput in = connection.getResponseIn();
+            int code = in.readByte();
             if (code == AoservProtocol.DONE) {
               return in.readLongUTF();
             }
             AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+            throw new IOException("Unexpected response code: " + code);
           } catch (Error | RuntimeException | IOException err) {
             throw Throwables.wrap(connection.abort(err), IOException.class, IOException::new);
           }
@@ -1501,7 +1586,7 @@ public abstract class AOServConnector implements SchemaParent {
         }
       }
       try {
-        Thread.sleep(retryAttemptDelays[attempt-1]);
+        Thread.sleep(retryAttemptDelays[attempt - 1]);
       } catch (InterruptedException err) {
         // Restore the interrupted status
         Thread.currentThread().interrupt();
@@ -1531,13 +1616,13 @@ public abstract class AOServConnector implements SchemaParent {
             writeParams(params, out);
             out.flush();
 
-            StreamableInput in=connection.getResponseIn();
-            int code=in.readByte();
+            StreamableInput in = connection.getResponseIn();
+            int code = in.readByte();
             if (code == AoservProtocol.DONE) {
               return in.readNullLongUTF();
             }
             AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+            throw new IOException("Unexpected response code: " + code);
           } catch (Error | RuntimeException | IOException err) {
             throw Throwables.wrap(connection.abort(err), IOException.class, IOException::new);
           }
@@ -1548,7 +1633,7 @@ public abstract class AOServConnector implements SchemaParent {
         }
       }
       try {
-        Thread.sleep(retryAttemptDelays[attempt-1]);
+        Thread.sleep(retryAttemptDelays[attempt - 1]);
       } catch (InterruptedException err) {
         // Restore the interrupted status
         Thread.currentThread().interrupt();
@@ -1588,9 +1673,9 @@ public abstract class AOServConnector implements SchemaParent {
 
   @SuppressWarnings("SleepWhileInLoop")
   public final void requestUpdate(
-    boolean allowRetry,
-    AoservProtocol.CommandID commID,
-    UpdateRequest updateRequest
+      boolean allowRetry,
+      AoservProtocol.CommandID commID,
+      UpdateRequest updateRequest
   ) throws IOException, SQLException {
     int attempt = 1;
     int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
@@ -1615,7 +1700,7 @@ public abstract class AOServConnector implements SchemaParent {
         }
       }
       try {
-        Thread.sleep(retryAttemptDelays[attempt-1]);
+        Thread.sleep(retryAttemptDelays[attempt - 1]);
       } catch (InterruptedException err) {
         // Restore the interrupted status
         Thread.currentThread().interrupt();
@@ -1641,8 +1726,8 @@ public abstract class AOServConnector implements SchemaParent {
             writeParams(params, out);
             out.flush();
 
-            StreamableInput in=connection.getResponseIn();
-            int code=in.readByte();
+            StreamableInput in = connection.getResponseIn();
+            int code = in.readByte();
             if (code != AoservProtocol.DONE) {
               AoservProtocol.checkResult(code, in);
             }
@@ -1657,7 +1742,7 @@ public abstract class AOServConnector implements SchemaParent {
         }
       }
       try {
-        Thread.sleep(retryAttemptDelays[attempt-1]);
+        Thread.sleep(retryAttemptDelays[attempt - 1]);
       } catch (InterruptedException err) {
         // Restore the interrupted status
         Thread.currentThread().interrupt();
@@ -1684,13 +1769,13 @@ public abstract class AOServConnector implements SchemaParent {
             writeParams(params, out);
             out.flush();
 
-            StreamableInput in=connection.getResponseIn();
-            int code=in.readByte();
+            StreamableInput in = connection.getResponseIn();
+            int code = in.readByte();
             if (code == AoservProtocol.DONE) {
-              invalidateList=readInvalidateList(in);
+              invalidateList = readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
-              throw new IOException("Unexpected response code: "+code);
+              throw new IOException("Unexpected response code: " + code);
             }
           } catch (Error | RuntimeException | IOException err) {
             throw Throwables.wrap(connection.abort(err), IOException.class, IOException::new);
@@ -1704,7 +1789,7 @@ public abstract class AOServConnector implements SchemaParent {
         }
       }
       try {
-        Thread.sleep(retryAttemptDelays[attempt-1]);
+        Thread.sleep(retryAttemptDelays[attempt - 1]);
       } catch (InterruptedException err) {
         // Restore the interrupted status
         Thread.currentThread().interrupt();
@@ -1722,17 +1807,17 @@ public abstract class AOServConnector implements SchemaParent {
 
   public final void tablesUpdated(IntList invalidateList) {
     if (invalidateList != null) {
-      int size=invalidateList.size();
+      int size = invalidateList.size();
 
       // Clear the caches
-      for (int c=0;c<size;c++) {
-        int tableID=invalidateList.getInt(c);
+      for (int c = 0; c < size; c++) {
+        int tableID = invalidateList.getInt(c);
         tables.get(tableID).clearCache();
       }
 
       // Then send the events
-      for (int c=0;c<size;c++) {
-        int tableID=invalidateList.getInt(c);
+      for (int c = 0; c < size; c++) {
+        int tableID = invalidateList.getInt(c);
         //System.err.println("DEBUG: AOServConnector: tablesUpdated: "+tableID+": "+SchemaTable.TableID.values()[tableID]);
         tables.get(tableID).tableUpdated();
       }
@@ -1749,33 +1834,33 @@ public abstract class AOServConnector implements SchemaParent {
   public final void testConnect() throws IOException, SQLException {
     synchronized (testConnectLock) {
       requestUpdate(
-        true,
-        AoservProtocol.CommandID.TEST_CONNECTION,
-        new UpdateRequest() {
-          @Override
-          public void writeRequest(StreamableOutput out) {
-            // Do nothing
-          }
-          @Override
-          public void readResponse(StreamableInput in) throws IOException, SQLException {
-            int code=in.readByte();
-            if (code != AoservProtocol.DONE) {
-              AoservProtocol.checkResult(code, in);
-              throw new IOException("Unexpected response code: "+code);
+          true,
+          AoservProtocol.CommandID.TEST_CONNECTION,
+          new UpdateRequest() {
+            @Override
+            public void writeRequest(StreamableOutput out) {
+              // Do nothing
+            }
+            @Override
+            public void readResponse(StreamableInput in) throws IOException, SQLException {
+              int code = in.readByte();
+              if (code != AoservProtocol.DONE) {
+                AoservProtocol.checkResult(code, in);
+                throw new IOException("Unexpected response code: " + code);
+              }
+            }
+            @Override
+            public void afterRelease() {
+              // Do nothing
             }
           }
-          @Override
-          public void afterRelease() {
-            // Do nothing
-          }
-        }
       );
     }
   }
 
   @Override
   public final String toString() {
-    return getClass().getName()+"?protocol="+getProtocol()+"&hostname="+hostname+"&local_ip="+local_ip+"&port="+port+"&connectAs="+connectAs+"&authenticateAs="+authenticateAs;
+    return getClass().getName() + "?protocol=" + getProtocol() + "&hostname=" + hostname + "&local_ip=" + local_ip + "&port=" + port + "&connectAs=" + connectAs + "&authenticateAs=" + authenticateAs;
   }
 
   /**
@@ -1791,36 +1876,36 @@ public abstract class AOServConnector implements SchemaParent {
    */
   public int getMasterEntropy(final byte[] buff, final int numBytes) throws IOException, SQLException {
     return requestResult(
-      true,
-      AoservProtocol.CommandID.GET_MASTER_ENTROPY,
-      // Java 9: new ResultRequest<>
-      new ResultRequest<Integer>() {
-        private int numObtained;
+        true,
+        AoservProtocol.CommandID.GET_MASTER_ENTROPY,
+        // Java 9: new ResultRequest<>
+        new ResultRequest<Integer>() {
+          private int numObtained;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(numBytes);
-        }
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(numBytes);
+          }
 
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            numObtained=in.readCompressedInt();
-            for (int c = 0; c < numObtained; c++) {
-              buff[c] = in.readByte();
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              numObtained = in.readCompressedInt();
+              for (int c = 0; c < numObtained; c++) {
+                buff[c] = in.readByte();
+              }
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
             }
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+          }
+
+          @Override
+          public Integer afterRelease() {
+            return numObtained;
           }
         }
-
-        @Override
-        public Integer afterRelease() {
-          return numObtained;
-        }
-      }
     );
   }
 
@@ -1836,63 +1921,63 @@ public abstract class AOServConnector implements SchemaParent {
    */
   public long addMasterEntropy(final byte[] buff, final int numBytes) throws IOException, SQLException {
     return requestResult(
-      true,
-      AoservProtocol.CommandID.ADD_MASTER_ENTROPY,
-      // Java 9: new ResultRequest<>
-      new ResultRequest<Long>() {
-        private long entropyNeeded;
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(numBytes);
-          out.write(buff, 0, numBytes);
-        }
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            entropyNeeded = in.readLong();
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+        true,
+        AoservProtocol.CommandID.ADD_MASTER_ENTROPY,
+        // Java 9: new ResultRequest<>
+        new ResultRequest<Long>() {
+          private long entropyNeeded;
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(numBytes);
+            out.write(buff, 0, numBytes);
+          }
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              entropyNeeded = in.readLong();
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
+            }
+          }
+          @Override
+          public Long afterRelease() {
+            return entropyNeeded;
           }
         }
-        @Override
-        public Long afterRelease() {
-          return entropyNeeded;
-        }
-      }
     );
   }
 
   public <K, T extends AOServObject<K, T>> void sort(
-    ComparisonSortAlgorithm<? super T> sortAlgorithm,
-    T[] list,
-    SQLExpression[] sortExpressions,
-    boolean[] sortOrders
+      ComparisonSortAlgorithm<? super T> sortAlgorithm,
+      T[] list,
+      SQLExpression[] sortExpressions,
+      boolean[] sortOrders
   ) {
     sortAlgorithm.sort(
-      list,
-      new SQLComparator<>(
-        this,
-        sortExpressions,
-        sortOrders
-      )
+        list,
+        new SQLComparator<>(
+            this,
+            sortExpressions,
+            sortOrders
+        )
     );
   }
 
   public <K, T extends AOServObject<K, T>> void sort(
-    ComparisonSortAlgorithm<? super T> sortAlgorithm,
-    List<T> list,
-    SQLExpression[] sortExpressions,
-    boolean[] sortOrders
+      ComparisonSortAlgorithm<? super T> sortAlgorithm,
+      List<T> list,
+      SQLExpression[] sortExpressions,
+      boolean[] sortOrders
   ) {
     sortAlgorithm.sort(
-      list,
-      new SQLComparator<>(
-        this,
-        sortExpressions,
-        sortOrders
-      )
+        list,
+        new SQLComparator<>(
+            this,
+            sortExpressions,
+            sortOrders
+        )
     );
   }
 }

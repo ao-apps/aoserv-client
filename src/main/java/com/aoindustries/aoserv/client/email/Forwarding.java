@@ -50,8 +50,8 @@ import java.util.List;
 public final class Forwarding extends CachedObjectIntegerKey<Forwarding> implements Removable {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_EMAIL_ADDRESS=1
+      COLUMN_PKEY = 0,
+      COLUMN_EMAIL_ADDRESS = 1
   ;
   static final String COLUMN_EMAIL_ADDRESS_name = "email_address";
   static final String COLUMN_DESTINATION_name = "destination";
@@ -65,7 +65,7 @@ public final class Forwarding extends CachedObjectIntegerKey<Forwarding> impleme
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Forwarding() {
     // Do nothing
   }
@@ -106,9 +106,9 @@ public final class Forwarding extends CachedObjectIntegerKey<Forwarding> impleme
   @Override
   public void init(ResultSet result) throws SQLException {
     try {
-      pkey=result.getInt(1);
-      email_address=result.getInt(2);
-      destination=Email.valueOf(result.getString(3));
+      pkey = result.getInt(1);
+      email_address = result.getInt(2);
+      destination = Email.valueOf(result.getString(3));
     } catch (ValidationException e) {
       throw new SQLException(e);
     }
@@ -117,9 +117,9 @@ public final class Forwarding extends CachedObjectIntegerKey<Forwarding> impleme
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
-      pkey=in.readCompressedInt();
-      email_address=in.readCompressedInt();
-      destination=Email.valueOf(in.readUTF());
+      pkey = in.readCompressedInt();
+      email_address = in.readCompressedInt();
+      destination = Email.valueOf(in.readUTF());
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -133,16 +133,16 @@ public final class Forwarding extends CachedObjectIntegerKey<Forwarding> impleme
   @Override
   public void remove() throws IOException, SQLException {
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.REMOVE,
-      Table.TableID.EMAIL_FORWARDING,
-      pkey
+        true,
+        AoservProtocol.CommandID.REMOVE,
+        Table.TableID.EMAIL_FORWARDING,
+        pkey
     );
   }
 
   @Override
   public String toStringImpl() throws SQLException, IOException {
-    return getEmailAddress().toStringImpl()+" -> "+destination;
+    return getEmailAddress().toStringImpl() + " -> " + destination;
   }
 
   @Override

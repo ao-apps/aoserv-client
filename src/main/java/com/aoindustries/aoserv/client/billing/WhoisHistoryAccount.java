@@ -42,9 +42,9 @@ import java.sql.SQLException;
 public final class WhoisHistoryAccount extends CachedObjectIntegerKey<WhoisHistoryAccount> {
 
   static final int
-    COLUMN_id = 0,
-    COLUMN_whoisHistory = 1,
-    COLUMN_account = 2
+      COLUMN_id = 0,
+      COLUMN_whoisHistory = 1,
+      COLUMN_account = 2
   ;
   static final String COLUMN_whoisHistory_name = "whoisHistory";
   static final String COLUMN_account_name = "account";
@@ -58,7 +58,7 @@ public final class WhoisHistoryAccount extends CachedObjectIntegerKey<WhoisHisto
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public WhoisHistoryAccount() {
     // Do nothing
   }
@@ -150,6 +150,6 @@ public final class WhoisHistoryAccount extends CachedObjectIntegerKey<WhoisHisto
 
   @Override
   public String toStringImpl() {
-    return pkey+"|"+whoisHistory+"|"+account;
+    return pkey + "|" + whoisHistory + "|" + account;
   }
 }

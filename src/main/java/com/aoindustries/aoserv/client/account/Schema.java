@@ -35,25 +35,46 @@ import java.util.List;
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
   private final AccountTable Account;
-  public AccountTable getAccount() {return Account;}
+
+  public AccountTable getAccount() {
+    return Account;
+  }
 
   private final AccountHostTable AccountHost;
-  public AccountHostTable getAccountHost() {return AccountHost;}
+
+  public AccountHostTable getAccountHost() {
+    return AccountHost;
+  }
 
   private final AdministratorTable Administrator;
-  public AdministratorTable getAdministrator() {return Administrator;}
+
+  public AdministratorTable getAdministrator() {
+    return Administrator;
+  }
 
   private final DisableLogTable DisableLog;
-  public DisableLogTable getDisableLog() {return DisableLog;}
+
+  public DisableLogTable getDisableLog() {
+    return DisableLog;
+  }
 
   private final ProfileTable Profile;
-  public ProfileTable getProfile() {return Profile;}
+
+  public ProfileTable getProfile() {
+    return Profile;
+  }
 
   private final UsStateTable UsState;
-  public UsStateTable getUsState() {return UsState;}
+
+  public UsStateTable getUsState() {
+    return UsState;
+  }
 
   private final UserTable User;
-  public UserTable getUser() {return User;}
+
+  public UserTable getUser() {
+    return User;
+  }
 
   private final List<? extends AOServTable<?, ?>> tables;
 

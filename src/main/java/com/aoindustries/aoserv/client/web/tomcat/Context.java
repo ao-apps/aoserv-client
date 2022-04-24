@@ -51,8 +51,8 @@ import java.util.Objects;
 public final class Context extends CachedObjectIntegerKey<Context> implements Removable {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_TOMCAT_SITE=1
+      COLUMN_PKEY = 0,
+      COLUMN_TOMCAT_SITE = 1
   ;
   static final String COLUMN_TOMCAT_SITE_name = "tomcat_site";
   static final String COLUMN_PATH_name = "path";
@@ -60,23 +60,23 @@ public final class Context extends CachedObjectIntegerKey<Context> implements Re
   /**
    * These are the default values for a new site.
    */
-  public static final String DEFAULT_CLASS_NAME=null;
-  public static final boolean DEFAULT_COOKIES=true;
-  public static final boolean DEFAULT_CROSS_CONTEXT=false;
-  public static final boolean DEFAULT_OVERRIDE=false;
-  public static final boolean DEFAULT_PRIVILEGED=false;
-  public static final boolean DEFAULT_RELOADABLE=false;
-  public static final boolean DEFAULT_USE_NAMING=true;
-  public static final String DEFAULT_WRAPPER_CLASS=null;
-  public static final int DEFAULT_DEBUG=0;
+  public static final String DEFAULT_CLASS_NAME = null;
+  public static final boolean DEFAULT_COOKIES = true;
+  public static final boolean DEFAULT_CROSS_CONTEXT = false;
+  public static final boolean DEFAULT_OVERRIDE = false;
+  public static final boolean DEFAULT_PRIVILEGED = false;
+  public static final boolean DEFAULT_RELOADABLE = false;
+  public static final boolean DEFAULT_USE_NAMING = true;
+  public static final String DEFAULT_WRAPPER_CLASS = null;
+  public static final int DEFAULT_DEBUG = 0;
   public static final PosixPath DEFAULT_WORK_DIR = null;
   public static final boolean DEFAULT_SERVER_XML_CONFIGURED = true;
 
   /**
    * The ROOT webapp details
    */
-  public static final String ROOT_PATH="";
-  public static final String ROOT_DOC_BASE="ROOT";
+  public static final String ROOT_PATH = "";
+  public static final String ROOT_DOC_BASE = "ROOT";
 
   private int tomcat_site;
   private String class_name;
@@ -99,33 +99,33 @@ public final class Context extends CachedObjectIntegerKey<Context> implements Re
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Context() {
     // Do nothing
   }
 
   public int addHttpdTomcatDataSource(
-    String name,
-    String driverClassName,
-    String url,
-    String username,
-    String password,
-    int maxActive,
-    int maxIdle,
-    int maxWait,
-    String validationQuery
+      String name,
+      String driverClassName,
+      String url,
+      String username,
+      String password,
+      int maxActive,
+      int maxIdle,
+      int maxWait,
+      String validationQuery
   ) throws IOException, SQLException {
     return table.getConnector().getWeb_tomcat().getContextDataSource().addHttpdTomcatDataSource(
-      this,
-      name,
-      driverClassName,
-      url,
-      username,
-      password,
-      maxActive,
-      maxIdle,
-      maxWait,
-      validationQuery
+        this,
+        name,
+        driverClassName,
+        url,
+        username,
+        password,
+        maxActive,
+        maxIdle,
+        maxWait,
+        validationQuery
     );
   }
 
@@ -135,7 +135,7 @@ public final class Context extends CachedObjectIntegerKey<Context> implements Re
 
   @Override
   public List<CannotRemoveReason<Context>> getCannotRemoveReasons() {
-    List<CannotRemoveReason<Context>> reasons=new ArrayList<>();
+    List<CannotRemoveReason<Context>> reasons = new ArrayList<>();
     if (path.length() == 0) {
       reasons.add(new CannotRemoveReason<>("Not allowed to remove the root context", this));
     }
@@ -169,9 +169,9 @@ public final class Context extends CachedObjectIntegerKey<Context> implements Re
   }
 
   public Site getHttpdTomcatSite() throws SQLException, IOException {
-    Site obj=table.getConnector().getWeb_tomcat().getSite().get(tomcat_site);
+    Site obj = table.getConnector().getWeb_tomcat().getSite().get(tomcat_site);
     if (obj == null) {
-      throw new SQLException("Unable to find HttpdTomcatSite: "+tomcat_site);
+      throw new SQLException("Unable to find HttpdTomcatSite: " + tomcat_site);
     }
     return obj;
   }
@@ -252,19 +252,19 @@ public final class Context extends CachedObjectIntegerKey<Context> implements Re
   @Override
   public void init(ResultSet result) throws SQLException {
     try {
-      pkey=result.getInt(1);
-      tomcat_site=result.getInt(2);
-      class_name=result.getString(3);
-      cookies=result.getBoolean(4);
-      cross_context=result.getBoolean(5);
+      pkey = result.getInt(1);
+      tomcat_site = result.getInt(2);
+      class_name = result.getString(3);
+      cookies = result.getBoolean(4);
+      cross_context = result.getBoolean(5);
       doc_base = PosixPath.valueOf(result.getString(6));
-      override=result.getBoolean(7);
-      path=result.getString(8);
-      privileged=result.getBoolean(9);
-      reloadable=result.getBoolean(10);
-      use_naming=result.getBoolean(11);
-      wrapper_class=result.getString(12);
-      debug=result.getInt(13);
+      override = result.getBoolean(7);
+      path = result.getString(8);
+      privileged = result.getBoolean(9);
+      reloadable = result.getBoolean(10);
+      use_naming = result.getBoolean(11);
+      wrapper_class = result.getString(12);
+      debug = result.getInt(13);
       work_dir = PosixPath.valueOf(result.getString(14));
       server_xml_configured = result.getBoolean(15);
     } catch (ValidationException e) {
@@ -275,27 +275,27 @@ public final class Context extends CachedObjectIntegerKey<Context> implements Re
   public static boolean isValidDocBase(PosixPath docBase) {
     String docBaseStr = docBase.toString();
     return
-      /* UnixPath checks these:
-      docBase.length()>1
-      && docBase.charAt(0) == '/'
-      && !docBase.contains("//")
-      && !docBase.contains("..")
-      */
-      docBaseStr.indexOf('"') == -1
-      && docBaseStr.indexOf('\\') == -1
-      && docBaseStr.indexOf('\n') == -1
-      && docBaseStr.indexOf('\r') == -1
+        /* UnixPath checks these:
+        docBase.length()>1
+        && docBase.charAt(0) == '/'
+        && !docBase.contains("//")
+        && !docBase.contains("..")
+        */
+        docBaseStr.indexOf('"') == -1
+            && docBaseStr.indexOf('\\') == -1
+            && docBaseStr.indexOf('\n') == -1
+            && docBaseStr.indexOf('\r') == -1
     ;
   }
 
   public static boolean isValidPath(String path) {
     try {
       return
-        path.length() == 0
-        || (
-          PosixPath.validate(path).isValid()
-          && isValidDocBase(PosixPath.valueOf(path))
-        );
+          path.length() == 0
+              || (
+              PosixPath.validate(path).isValid()
+                  && isValidDocBase(PosixPath.valueOf(path))
+          );
     } catch (ValidationException e) {
       throw new AssertionError("Already validated", e);
     }
@@ -308,19 +308,19 @@ public final class Context extends CachedObjectIntegerKey<Context> implements Re
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
-      pkey=in.readCompressedInt();
-      tomcat_site=in.readCompressedInt();
-      class_name=in.readNullUTF();
-      cookies=in.readBoolean();
-      cross_context=in.readBoolean();
+      pkey = in.readCompressedInt();
+      tomcat_site = in.readCompressedInt();
+      class_name = in.readNullUTF();
+      cookies = in.readBoolean();
+      cross_context = in.readBoolean();
       doc_base = PosixPath.valueOf(in.readUTF());
-      override=in.readBoolean();
-      path=in.readUTF();
-      privileged=in.readBoolean();
-      reloadable=in.readBoolean();
-      use_naming=in.readBoolean();
-      wrapper_class=in.readNullUTF();
-      debug=in.readCompressedInt();
+      override = in.readBoolean();
+      path = in.readUTF();
+      privileged = in.readBoolean();
+      reloadable = in.readBoolean();
+      use_naming = in.readBoolean();
+      wrapper_class = in.readNullUTF();
+      debug = in.readCompressedInt();
       work_dir = PosixPath.valueOf(in.readNullUTF());
       server_xml_configured = in.readBoolean();
     } catch (ValidationException e) {
@@ -329,60 +329,60 @@ public final class Context extends CachedObjectIntegerKey<Context> implements Re
   }
 
   public void setAttributes(
-    final String className,
-    final boolean cookies,
-    final boolean crossContext,
-    final PosixPath docBase,
-    final boolean override,
-    final String path,
-    final boolean privileged,
-    final boolean reloadable,
-    final boolean useNaming,
-    final String wrapperClass,
-    final int debug,
-    final PosixPath workDir,
-    final boolean serverXmlConfigured
+      final String className,
+      final boolean cookies,
+      final boolean crossContext,
+      final PosixPath docBase,
+      final boolean override,
+      final String path,
+      final boolean privileged,
+      final boolean reloadable,
+      final boolean useNaming,
+      final String wrapperClass,
+      final int debug,
+      final PosixPath workDir,
+      final boolean serverXmlConfigured
   ) throws IOException, SQLException {
     table.getConnector().requestUpdate(
-      true,
-      AoservProtocol.CommandID.SET_HTTPD_TOMCAT_CONTEXT_ATTRIBUTES,
-      new AOServConnector.UpdateRequest() {
-        private IntList invalidateList;
+        true,
+        AoservProtocol.CommandID.SET_HTTPD_TOMCAT_CONTEXT_ATTRIBUTES,
+        new AOServConnector.UpdateRequest() {
+          private IntList invalidateList;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(pkey);
-          out.writeNullUTF(className);
-          out.writeBoolean(cookies);
-          out.writeBoolean(crossContext);
-          out.writeUTF(docBase.toString());
-          out.writeBoolean(override);
-          out.writeUTF(path);
-          out.writeBoolean(privileged);
-          out.writeBoolean(reloadable);
-          out.writeBoolean(useNaming);
-          out.writeNullUTF(wrapperClass);
-          out.writeCompressedInt(debug);
-          out.writeNullUTF(Objects.toString(workDir, null));
-          out.writeBoolean(serverXmlConfigured);
-        }
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(pkey);
+            out.writeNullUTF(className);
+            out.writeBoolean(cookies);
+            out.writeBoolean(crossContext);
+            out.writeUTF(docBase.toString());
+            out.writeBoolean(override);
+            out.writeUTF(path);
+            out.writeBoolean(privileged);
+            out.writeBoolean(reloadable);
+            out.writeBoolean(useNaming);
+            out.writeNullUTF(wrapperClass);
+            out.writeCompressedInt(debug);
+            out.writeNullUTF(Objects.toString(workDir, null));
+            out.writeBoolean(serverXmlConfigured);
+          }
 
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            invalidateList=AOServConnector.readInvalidateList(in);
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              invalidateList = AOServConnector.readInvalidateList(in);
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
+            }
+          }
+
+          @Override
+          public void afterRelease() {
+            table.getConnector().tablesUpdated(invalidateList);
           }
         }
-
-        @Override
-        public void afterRelease() {
-          table.getConnector().tablesUpdated(invalidateList);
-        }
-      }
     );
   }
 

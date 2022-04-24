@@ -38,7 +38,7 @@ public abstract class CachedObjectStringKey<V extends CachedObjectStringKey<V>> 
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   protected CachedObjectStringKey() {
     // Do nothing
   }
@@ -46,9 +46,9 @@ public abstract class CachedObjectStringKey<V extends CachedObjectStringKey<V>> 
   @Override
   public boolean equals(Object obj) {
     return
-      obj != null
-      && obj.getClass() == getClass()
-      && ((CachedObjectStringKey)obj).pkey.equals(pkey)
+        obj != null
+            && obj.getClass() == getClass()
+            && ((CachedObjectStringKey) obj).pkey.equals(pkey)
     ;
   }
 

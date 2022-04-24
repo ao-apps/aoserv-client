@@ -52,13 +52,14 @@ public final class VirtualHostTable extends CachedTableIntegerKey<VirtualHost> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(VirtualHost.COLUMN_HTTPD_SITE_name+'.'+Site.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(VirtualHost.COLUMN_HTTPD_SITE_name+'.'+Site.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
-    new OrderBy(VirtualHost.COLUMN_HTTPD_BIND_name+'.'+HttpdBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_IP_ADDRESS_name+'.'+IpAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
-    new OrderBy(VirtualHost.COLUMN_HTTPD_BIND_name+'.'+HttpdBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_IP_ADDRESS_name+'.'+IpAddress.COLUMN_DEVICE_name+'.'+Device.COLUMN_DEVICE_ID_name, ASCENDING),
-    new OrderBy(VirtualHost.COLUMN_HTTPD_BIND_name+'.'+HttpdBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_PORT_name, ASCENDING),
-    new OrderBy(VirtualHost.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(VirtualHost.COLUMN_HTTPD_SITE_name + '.' + Site.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(VirtualHost.COLUMN_HTTPD_SITE_name + '.' + Site.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
+      new OrderBy(VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_IP_ADDRESS_name + '.' + IpAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
+      new OrderBy(VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_IP_ADDRESS_name + '.' + IpAddress.COLUMN_DEVICE_name + '.' + Device.COLUMN_DEVICE_ID_name, ASCENDING),
+      new OrderBy(VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_PORT_name, ASCENDING),
+      new OrderBy(VirtualHost.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -75,14 +76,14 @@ public final class VirtualHostTable extends CachedTableIntegerKey<VirtualHost> {
   }
 
   List<VirtualHost> getHttpdSiteBinds(Site site, HttpdServer server) throws SQLException, IOException {
-    int serverPKey=server.getPkey();
+    int serverPKey = server.getPkey();
 
     // Use the index first
-    List<VirtualHost> cached=getHttpdSiteBinds(site);
-    int size=cached.size();
-    List<VirtualHost> matches=new ArrayList<>(size);
-    for (int c=0;c<size;c++) {
-      VirtualHost siteBind=cached.get(c);
+    List<VirtualHost> cached = getHttpdSiteBinds(site);
+    int size = cached.size();
+    List<VirtualHost> matches = new ArrayList<>(size);
+    for (int c = 0; c < size; c++) {
+      VirtualHost siteBind = cached.get(c);
       if (siteBind.getHttpdBind().getHttpdServer_pkey() == serverPKey) {
         matches.add(siteBind);
       }
@@ -101,14 +102,14 @@ public final class VirtualHostTable extends CachedTableIntegerKey<VirtualHost> {
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
-    String command=args[0];
+    String command = args[0];
     if (command.equalsIgnoreCase(Command.DISABLE_HTTPD_SITE_BIND)) {
       if (AOSH.checkParamCount(Command.DISABLE_HTTPD_SITE_BIND, args, 2, err)) {
         out.println(
-          connector.getSimpleAOClient().disableHttpdSiteBind(
-            AOSH.parseInt(args[1], "pkey"),
-            args[2]
-          )
+            connector.getSimpleAOClient().disableHttpdSiteBind(
+                AOSH.parseInt(args[1], "pkey"),
+                args[2]
+            )
         );
         out.flush();
       }
@@ -121,16 +122,16 @@ public final class VirtualHostTable extends CachedTableIntegerKey<VirtualHost> {
     } else if (command.equalsIgnoreCase(Command.SET_HTTPD_SITE_BIND_IS_MANUAL)) {
       if (AOSH.checkParamCount(Command.SET_HTTPD_SITE_BIND_IS_MANUAL, args, 2, err)) {
         connector.getSimpleAOClient().setHttpdSiteBindIsManual(
-          AOSH.parseInt(args[1], "pkey"),
-          AOSH.parseBoolean(args[2], "is_manual")
+            AOSH.parseInt(args[1], "pkey"),
+            AOSH.parseBoolean(args[2], "is_manual")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_HTTPD_SITE_BIND_REDIRECT_TO_PRIMARY_HOSTNAME)) {
       if (AOSH.checkParamCount(Command.SET_HTTPD_SITE_BIND_REDIRECT_TO_PRIMARY_HOSTNAME, args, 2, err)) {
         connector.getSimpleAOClient().setHttpdSiteBindRedirectToPrimaryHostname(
-          AOSH.parseInt(args[1], "pkey"),
-          AOSH.parseBoolean(args[2], "redirect_to_primary_hostname")
+            AOSH.parseInt(args[1], "pkey"),
+            AOSH.parseBoolean(args[2], "redirect_to_primary_hostname")
         );
       }
       return true;

@@ -43,10 +43,11 @@ public final class FirewallZoneTable extends CachedTableIntegerKey<FirewallZone>
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(FirewallZone.COLUMN_SERVER_name + '.' + Host.COLUMN_PACKAGE_name + '.' + Package.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(FirewallZone.COLUMN_SERVER_name + '.' + Host.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(FirewallZone.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(FirewallZone.COLUMN_SERVER_name + '.' + Host.COLUMN_PACKAGE_name + '.' + Package.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(FirewallZone.COLUMN_SERVER_name + '.' + Host.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(FirewallZone.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

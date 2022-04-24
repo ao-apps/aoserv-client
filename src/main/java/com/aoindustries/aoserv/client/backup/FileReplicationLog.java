@@ -66,7 +66,7 @@ public final class FileReplicationLog extends AOServObject<Integer, FileReplicat
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public FileReplicationLog() {
     // Do nothing
   }
@@ -74,8 +74,8 @@ public final class FileReplicationLog extends AOServObject<Integer, FileReplicat
   @Override
   public boolean equals(Object obj) {
     return
-      (obj instanceof FileReplicationLog)
-      && ((FileReplicationLog)obj).pkey == pkey
+        (obj instanceof FileReplicationLog)
+            && ((FileReplicationLog) obj).pkey == pkey
     ;
   }
 
@@ -123,9 +123,9 @@ public final class FileReplicationLog extends AOServObject<Integer, FileReplicat
   }
 
   public FileReplication getFailoverFileReplication() throws SQLException, IOException {
-    FileReplication ffr=table.getConnector().getBackup().getFileReplication().get(replication);
+    FileReplication ffr = table.getConnector().getBackup().getFileReplication().get(replication);
     if (ffr == null) {
-      throw new SQLException("Unable to find FailoverFileReplication: "+replication);
+      throw new SQLException("Unable to find FailoverFileReplication: " + replication);
     }
     return ffr;
   }
@@ -151,14 +151,14 @@ public final class FileReplicationLog extends AOServObject<Integer, FileReplicat
 
   @Override
   public void init(ResultSet result) throws SQLException {
-    pkey=result.getInt(1);
-    replication=result.getInt(2);
+    pkey = result.getInt(1);
+    replication = result.getInt(2);
     startTime = UnmodifiableTimestamp.valueOf(result.getTimestamp(3));
     endTime = UnmodifiableTimestamp.valueOf(result.getTimestamp(4));
-    scanned=result.getInt(5);
-    updated=result.getInt(6);
-    bytes=result.getLong(7);
-    is_successful=result.getBoolean(8);
+    scanned = result.getInt(5);
+    updated = result.getInt(6);
+    bytes = result.getLong(7);
+    is_successful = result.getBoolean(8);
   }
 
   public boolean isSuccessful() {
@@ -167,14 +167,14 @@ public final class FileReplicationLog extends AOServObject<Integer, FileReplicat
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readCompressedInt();
-    replication=in.readCompressedInt();
+    pkey = in.readCompressedInt();
+    replication = in.readCompressedInt();
     startTime = SQLStreamables.readUnmodifiableTimestamp(in);
     endTime = SQLStreamables.readUnmodifiableTimestamp(in);
-    scanned=in.readCompressedInt();
-    updated=in.readCompressedInt();
-    bytes=in.readLong();
-    is_successful=in.readBoolean();
+    scanned = in.readCompressedInt();
+    updated = in.readCompressedInt();
+    bytes = in.readLong();
+    is_successful = in.readBoolean();
   }
 
   @Override
@@ -182,7 +182,7 @@ public final class FileReplicationLog extends AOServObject<Integer, FileReplicat
     if (this.table != null) {
       throw new IllegalStateException("table already set");
     }
-    this.table=table;
+    this.table = table;
   }
 
   @Override

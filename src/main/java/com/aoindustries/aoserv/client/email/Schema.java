@@ -35,79 +35,154 @@ import java.util.List;
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
   private final AddressTable Address;
-  public AddressTable getAddress() {return Address;}
+
+  public AddressTable getAddress() {
+    return Address;
+  }
 
   private final AttachmentBlockTable AttachmentBlock;
-  public AttachmentBlockTable getAttachmentBlock() {return AttachmentBlock;}
+
+  public AttachmentBlockTable getAttachmentBlock() {
+    return AttachmentBlock;
+  }
 
   private final AttachmentTypeTable AttachmentType;
-  public AttachmentTypeTable getAttachmentType() {return AttachmentType;}
+
+  public AttachmentTypeTable getAttachmentType() {
+    return AttachmentType;
+  }
 
   private final BlackholeAddressTable BlackholeAddress;
-  public BlackholeAddressTable getBlackholeAddress() {return BlackholeAddress;}
+
+  public BlackholeAddressTable getBlackholeAddress() {
+    return BlackholeAddress;
+  }
 
   private final CyrusImapdBindTable CyrusImapdBind;
-  public CyrusImapdBindTable getCyrusImapdBind() {return CyrusImapdBind;}
+
+  public CyrusImapdBindTable getCyrusImapdBind() {
+    return CyrusImapdBind;
+  }
 
   private final CyrusImapdServerTable CyrusImapdServer;
-  public CyrusImapdServerTable getCyrusImapdServer() {return CyrusImapdServer;}
+
+  public CyrusImapdServerTable getCyrusImapdServer() {
+    return CyrusImapdServer;
+  }
 
   private final DomainTable Domain;
-  public DomainTable getDomain() {return Domain;}
+
+  public DomainTable getDomain() {
+    return Domain;
+  }
 
   private final ForwardingTable Forwarding;
-  public ForwardingTable getForwarding() {return Forwarding;}
+
+  public ForwardingTable getForwarding() {
+    return Forwarding;
+  }
 
   private final InboxAddressTable InboxAddress;
-  public InboxAddressTable getInboxAddress() {return InboxAddress;}
+
+  public InboxAddressTable getInboxAddress() {
+    return InboxAddress;
+  }
 
   private final ListTable List;
-  public ListTable getList() {return List;}
+
+  public ListTable getList() {
+    return List;
+  }
 
   private final ListAddressTable ListAddress;
-  public ListAddressTable getListAddress() {return ListAddress;}
+
+  public ListAddressTable getListAddress() {
+    return ListAddress;
+  }
 
   private final MajordomoListTable MajordomoList;
-  public MajordomoListTable getMajordomoList() {return MajordomoList;}
+
+  public MajordomoListTable getMajordomoList() {
+    return MajordomoList;
+  }
 
   private final MajordomoServerTable MajordomoServer;
-  public MajordomoServerTable getMajordomoServer() {return MajordomoServer;}
+
+  public MajordomoServerTable getMajordomoServer() {
+    return MajordomoServer;
+  }
 
   private final MajordomoVersionTable MajordomoVersion;
-  public MajordomoVersionTable getMajordomoVersion() {return MajordomoVersion;}
+
+  public MajordomoVersionTable getMajordomoVersion() {
+    return MajordomoVersion;
+  }
 
   private final PipeTable Pipe;
-  public PipeTable getPipe() {return Pipe;}
+
+  public PipeTable getPipe() {
+    return Pipe;
+  }
 
   private final PipeAddressTable PipeAddress;
-  public PipeAddressTable getPipeAddress() {return PipeAddress;}
+
+  public PipeAddressTable getPipeAddress() {
+    return PipeAddress;
+  }
 
   private final SendmailBindTable SendmailBind;
-  public SendmailBindTable getSendmailBind() {return SendmailBind;}
+
+  public SendmailBindTable getSendmailBind() {
+    return SendmailBind;
+  }
 
   private final SendmailServerTable SendmailServer;
-  public SendmailServerTable getSendmailServer() {return SendmailServer;}
+
+  public SendmailServerTable getSendmailServer() {
+    return SendmailServer;
+  }
 
   private final SmtpRelayTable SmtpRelay;
-  public SmtpRelayTable getSmtpRelay() {return SmtpRelay;}
+
+  public SmtpRelayTable getSmtpRelay() {
+    return SmtpRelay;
+  }
 
   private final SmtpRelayTypeTable SmtpRelayType;
-  public SmtpRelayTypeTable getSmtpRelayType() {return SmtpRelayType;}
+
+  public SmtpRelayTypeTable getSmtpRelayType() {
+    return SmtpRelayType;
+  }
 
   private final SmtpSmartHostTable SmtpSmartHost;
-  public SmtpSmartHostTable getSmtpSmartHost() {return SmtpSmartHost;}
+
+  public SmtpSmartHostTable getSmtpSmartHost() {
+    return SmtpSmartHost;
+  }
 
   private final SmtpSmartHostDomainTable SmtpSmartHostDomain;
-  public SmtpSmartHostDomainTable getSmtpSmartHostDomain() {return SmtpSmartHostDomain;}
+
+  public SmtpSmartHostDomainTable getSmtpSmartHostDomain() {
+    return SmtpSmartHostDomain;
+  }
 
   private final SpamAssassinModeTable SpamAssassinMode;
-  public SpamAssassinModeTable getSpamAssassinMode() {return SpamAssassinMode;}
+
+  public SpamAssassinModeTable getSpamAssassinMode() {
+    return SpamAssassinMode;
+  }
 
   private final SpamMessageTable SpamMessage;
-  public SpamMessageTable getSpamMessage() {return SpamMessage;}
+
+  public SpamMessageTable getSpamMessage() {
+    return SpamMessage;
+  }
 
   private final SystemAliasTable SystemAlias;
-  public SystemAliasTable getSystemAlias() {return SystemAlias;}
+
+  public SystemAliasTable getSystemAlias() {
+    return SystemAlias;
+  }
 
   private final List<? extends AOServTable<?, ?>> tables;
 

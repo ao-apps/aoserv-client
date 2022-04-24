@@ -58,7 +58,7 @@ public final class Reseller extends CachedObjectAccountNameKey<Reseller> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Reseller() {
     // Do nothing
   }
@@ -79,7 +79,7 @@ public final class Reseller extends CachedObjectAccountNameKey<Reseller> {
   public Brand getBrand() throws SQLException, IOException {
     Brand br = table.getConnector().getReseller().getBrand().get(pkey);
     if (br == null) {
-      throw new SQLException("Unable to find Brand: "+pkey);
+      throw new SQLException("Unable to find Brand: " + pkey);
     }
     return br;
   }
@@ -107,7 +107,7 @@ public final class Reseller extends CachedObjectAccountNameKey<Reseller> {
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
-      pkey=Account.Name.valueOf(in.readUTF()).intern();
+      pkey = Account.Name.valueOf(in.readUTF()).intern();
       ticket_auto_escalate = in.readBoolean();
     } catch (ValidationException e) {
       throw new IOException(e);

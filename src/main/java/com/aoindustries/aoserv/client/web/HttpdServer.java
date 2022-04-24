@@ -55,9 +55,9 @@ import java.util.List;
 public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 
   static final int
-    COLUMN_PKEY = 0,
-    COLUMN_AO_SERVER = 1,
-    COLUMN_PACKAGE = 8
+      COLUMN_PKEY = 0,
+      COLUMN_AO_SERVER = 1,
+      COLUMN_PACKAGE = 8
   ;
   static final String COLUMN_AO_SERVER_name = "ao_server";
   static final String COLUMN_NAME_name = "name";
@@ -115,7 +115,7 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public HttpdServer() {
     // Do nothing
   }
@@ -195,9 +195,9 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
   }
 
   public UserServer getLinuxServerAccount() throws SQLException, IOException {
-    UserServer lsa=table.getConnector().getLinux().getUserServer().get(linux_server_account);
+    UserServer lsa = table.getConnector().getLinux().getUserServer().get(linux_server_account);
     if (lsa == null) {
-      throw new SQLException("Unable to find LinuxServerAccount: "+linux_server_account);
+      throw new SQLException("Unable to find LinuxServerAccount: " + linux_server_account);
     }
     return lsa;
   }
@@ -207,9 +207,9 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
   }
 
   public GroupServer getLinuxServerGroup() throws SQLException, IOException {
-    GroupServer lsg=table.getConnector().getLinux().getGroupServer().get(linux_server_group);
+    GroupServer lsg = table.getConnector().getLinux().getGroupServer().get(linux_server_group);
     if (lsg == null) {
-      throw new SQLException("Unable to find LinuxServerGroup: "+linux_server_group);
+      throw new SQLException("Unable to find LinuxServerGroup: " + linux_server_group);
     }
     return lsg;
   }
@@ -218,15 +218,15 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
     if (mod_php_version == -1) {
       return null;
     }
-    SoftwareVersion tv=table.getConnector().getDistribution().getSoftwareVersion().get(mod_php_version);
+    SoftwareVersion tv = table.getConnector().getDistribution().getSoftwareVersion().get(mod_php_version);
     if (tv == null) {
-      throw new SQLException("Unable to find TechnologyVersion: "+mod_php_version);
+      throw new SQLException("Unable to find TechnologyVersion: " + mod_php_version);
     }
     if (
-      tv.getOperatingSystemVersion(table.getConnector()).getPkey()
-      != getLinuxServer().getHost().getOperatingSystemVersion_id()
+        tv.getOperatingSystemVersion(table.getConnector()).getPkey()
+            != getLinuxServer().getHost().getOperatingSystemVersion_id()
     ) {
-      throw new SQLException("mod_php/operating system version mismatch on HttpdServer: #"+pkey);
+      throw new SQLException("mod_php/operating system version mismatch on HttpdServer: #" + pkey);
     }
     return tv;
   }
@@ -320,9 +320,9 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
   }
 
   public Server getLinuxServer() throws SQLException, IOException {
-    Server obj=table.getConnector().getLinux().getServer().get(ao_server);
+    Server obj = table.getConnector().getLinux().getServer().get(ao_server);
     if (obj == null) {
-      throw new SQLException("Unable to find linux.Server: "+ao_server);
+      throw new SQLException("Unable to find linux.Server: " + ao_server);
     }
     return obj;
   }
@@ -454,23 +454,23 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 
   @Override
   public void init(ResultSet result) throws SQLException {
-    int pos=1;
-    pkey=result.getInt(pos++);
-    ao_server=result.getInt(pos++);
+    int pos = 1;
+    pkey = result.getInt(pos++);
+    ao_server = result.getInt(pos++);
     name = result.getString(pos++);
-    can_add_sites=result.getBoolean(pos++);
-    linux_server_account=result.getInt(pos++);
-    linux_server_group=result.getInt(pos++);
-    mod_php_version=result.getInt(pos++);
+    can_add_sites = result.getBoolean(pos++);
+    linux_server_account = result.getInt(pos++);
+    linux_server_group = result.getInt(pos++);
+    mod_php_version = result.getInt(pos++);
     if (result.wasNull()) {
-      mod_php_version=-1;
+      mod_php_version = -1;
     }
-    use_suexec=result.getBoolean(pos++);
-    packageNum=result.getInt(pos++);
-    is_shared=result.getBoolean(pos++);
-    use_mod_perl=result.getBoolean(pos++);
-    timeout=result.getInt(pos++);
-    max_concurrency=result.getInt(pos++);
+    use_suexec = result.getBoolean(pos++);
+    packageNum = result.getInt(pos++);
+    is_shared = result.getBoolean(pos++);
+    use_mod_perl = result.getBoolean(pos++);
+    timeout = result.getInt(pos++);
+    max_concurrency = result.getInt(pos++);
     monitoring_concurrency_low = result.getInt(pos++);
     if (result.wasNull()) {
       monitoring_concurrency_low = -1;
@@ -487,123 +487,123 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
     if (result.wasNull()) {
       monitoring_concurrency_critical = -1;
     }
-    mod_access_compat=result.getBoolean(pos++);
+    mod_access_compat = result.getBoolean(pos++);
     if (result.wasNull()) {
       mod_access_compat = null;
     }
-    mod_actions=result.getBoolean(pos++);
+    mod_actions = result.getBoolean(pos++);
     if (result.wasNull()) {
       mod_actions = null;
     }
-    mod_alias=result.getBoolean(pos++);
+    mod_alias = result.getBoolean(pos++);
     if (result.wasNull()) {
       mod_alias = null;
     }
-    mod_auth_basic=result.getBoolean(pos++);
+    mod_auth_basic = result.getBoolean(pos++);
     if (result.wasNull()) {
       mod_auth_basic = null;
     }
-    mod_authn_core=result.getBoolean(pos++);
+    mod_authn_core = result.getBoolean(pos++);
     if (result.wasNull()) {
       mod_authn_core = null;
     }
-    mod_authn_file=result.getBoolean(pos++);
+    mod_authn_file = result.getBoolean(pos++);
     if (result.wasNull()) {
       mod_authn_file = null;
     }
-    mod_authz_core=result.getBoolean(pos++);
+    mod_authz_core = result.getBoolean(pos++);
     if (result.wasNull()) {
       mod_authz_core = null;
     }
-    mod_authz_groupfile=result.getBoolean(pos++);
+    mod_authz_groupfile = result.getBoolean(pos++);
     if (result.wasNull()) {
       mod_authz_groupfile = null;
     }
-    mod_authz_host=result.getBoolean(pos++);
+    mod_authz_host = result.getBoolean(pos++);
     if (result.wasNull()) {
       mod_authz_host = null;
     }
-    mod_authz_user=result.getBoolean(pos++);
+    mod_authz_user = result.getBoolean(pos++);
     if (result.wasNull()) {
       mod_authz_user = null;
     }
-    mod_autoindex=result.getBoolean(pos++);
+    mod_autoindex = result.getBoolean(pos++);
     if (result.wasNull()) {
       mod_autoindex = null;
     }
-    mod_deflate=result.getBoolean(pos++);
+    mod_deflate = result.getBoolean(pos++);
     if (result.wasNull()) {
       mod_deflate = null;
     }
-    mod_dir=result.getBoolean(pos++);
+    mod_dir = result.getBoolean(pos++);
     if (result.wasNull()) {
       mod_dir = null;
     }
-    mod_filter=result.getBoolean(pos++);
+    mod_filter = result.getBoolean(pos++);
     if (result.wasNull()) {
       mod_filter = null;
     }
-    mod_headers=result.getBoolean(pos++);
+    mod_headers = result.getBoolean(pos++);
     if (result.wasNull()) {
       mod_headers = null;
     }
-    mod_include=result.getBoolean(pos++);
+    mod_include = result.getBoolean(pos++);
     if (result.wasNull()) {
       mod_include = null;
     }
-    mod_jk=result.getBoolean(pos++);
+    mod_jk = result.getBoolean(pos++);
     if (result.wasNull()) {
       mod_jk = null;
     }
-    mod_log_config=result.getBoolean(pos++);
+    mod_log_config = result.getBoolean(pos++);
     if (result.wasNull()) {
       mod_log_config = null;
     }
-    mod_mime=result.getBoolean(pos++);
+    mod_mime = result.getBoolean(pos++);
     if (result.wasNull()) {
       mod_mime = null;
     }
-    mod_mime_magic=result.getBoolean(pos++);
+    mod_mime_magic = result.getBoolean(pos++);
     if (result.wasNull()) {
       mod_mime_magic = null;
     }
-    mod_negotiation=result.getBoolean(pos++);
+    mod_negotiation = result.getBoolean(pos++);
     if (result.wasNull()) {
       mod_negotiation = null;
     }
-    mod_proxy=result.getBoolean(pos++);
+    mod_proxy = result.getBoolean(pos++);
     if (result.wasNull()) {
       mod_proxy = null;
     }
-    mod_proxy_http=result.getBoolean(pos++);
+    mod_proxy_http = result.getBoolean(pos++);
     if (result.wasNull()) {
       mod_proxy_http = null;
     }
-    mod_reqtimeout=result.getBoolean(pos++);
+    mod_reqtimeout = result.getBoolean(pos++);
     if (result.wasNull()) {
       mod_reqtimeout = null;
     }
-    mod_rewrite=result.getBoolean(pos++);
+    mod_rewrite = result.getBoolean(pos++);
     if (result.wasNull()) {
       mod_rewrite = null;
     }
-    mod_setenvif=result.getBoolean(pos++);
+    mod_setenvif = result.getBoolean(pos++);
     if (result.wasNull()) {
       mod_setenvif = null;
     }
-    mod_socache_shmcb=result.getBoolean(pos++);
+    mod_socache_shmcb = result.getBoolean(pos++);
     if (result.wasNull()) {
       mod_socache_shmcb = null;
     }
-    mod_ssl=result.getBoolean(pos++);
+    mod_ssl = result.getBoolean(pos++);
     if (result.wasNull()) {
       mod_ssl = null;
     }
-    mod_status=result.getBoolean(pos++);
+    mod_status = result.getBoolean(pos++);
     if (result.wasNull()) {
       mod_status = null;
     }
-    mod_wsgi=result.getBoolean(pos++);
+    mod_wsgi = result.getBoolean(pos++);
     if (result.wasNull()) {
       mod_wsgi = null;
     }
@@ -611,19 +611,19 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readCompressedInt();
-    ao_server=in.readCompressedInt();
+    pkey = in.readCompressedInt();
+    ao_server = in.readCompressedInt();
     name = in.readNullUTF();
-    can_add_sites=in.readBoolean();
-    linux_server_account=in.readCompressedInt();
-    linux_server_group=in.readCompressedInt();
-    mod_php_version=in.readCompressedInt();
-    use_suexec=in.readBoolean();
-    packageNum=in.readCompressedInt();
-    is_shared=in.readBoolean();
-    use_mod_perl=in.readBoolean();
-    timeout=in.readCompressedInt();
-    max_concurrency=in.readCompressedInt();
+    can_add_sites = in.readBoolean();
+    linux_server_account = in.readCompressedInt();
+    linux_server_group = in.readCompressedInt();
+    mod_php_version = in.readCompressedInt();
+    use_suexec = in.readBoolean();
+    packageNum = in.readCompressedInt();
+    is_shared = in.readBoolean();
+    use_mod_perl = in.readBoolean();
+    timeout = in.readCompressedInt();
+    max_concurrency = in.readCompressedInt();
     monitoring_concurrency_low = in.readCompressedInt();
     monitoring_concurrency_medium = in.readCompressedInt();
     monitoring_concurrency_high = in.readCompressedInt();
@@ -746,9 +746,9 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
    */
   public int getConcurrency() throws IOException, SQLException {
     return table.getConnector().requestIntQuery(
-      true,
-      AoservProtocol.CommandID.GET_HTTPD_SERVER_CONCURRENCY,
-      pkey
+        true,
+        AoservProtocol.CommandID.GET_HTTPD_SERVER_CONCURRENCY,
+        pkey
     );
   }
 }

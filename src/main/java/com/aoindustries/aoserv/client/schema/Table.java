@@ -246,7 +246,7 @@ public final class Table extends GlobalObjectIntegerKey<Table> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Table() {
     // Do nothing
   }
@@ -379,8 +379,8 @@ public final class Table extends GlobalObjectIntegerKey<Table> {
         out.writeNullUTF(lastVersion);
       }
       if (
-        protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_4) >= 0
-        && protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30) <= 0
+          protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_4) >= 0
+              && protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30) <= 0
       ) {
         // default_order_by
         out.writeNullUTF(null);
@@ -425,18 +425,18 @@ public final class Table extends GlobalObjectIntegerKey<Table> {
     return connector.getSchema().getForeignKey().getSchemaForeignKeys(this);
   }
 
-  private static final String[] descColumns={
-    "column", "type", "null", "unique", "references", "referenced_by", "description"
+  private static final String[] descColumns = {
+      "column", "type", "null", "unique", "references", "referenced_by", "description"
   };
 
-  private static final boolean[] descRightAligns={
-    Type.alignRight(Type.STRING), // column
-    Type.alignRight(Type.STRING), // type
-    Type.alignRight(Type.BOOLEAN), // null
-    Type.alignRight(Type.BOOLEAN), // unique
-    Type.alignRight(Type.STRING), // references
-    Type.alignRight(Type.STRING), // referenced_by
-    Type.alignRight(Type.STRING) // description
+  private static final boolean[] descRightAligns = {
+      Type.alignRight(Type.STRING), // column
+      Type.alignRight(Type.STRING), // type
+      Type.alignRight(Type.BOOLEAN), // null
+      Type.alignRight(Type.BOOLEAN), // unique
+      Type.alignRight(Type.STRING), // references
+      Type.alignRight(Type.STRING), // referenced_by
+      Type.alignRight(Type.STRING) // description
   };
 
   private static String formatForeignKeys(AOServConnector connector, List<ForeignKey> fkeys, boolean foreign) throws IOException, SQLException {
@@ -448,9 +448,9 @@ public final class Table extends GlobalObjectIntegerKey<Table> {
         }
         Column other = foreign ? key.getForeignColumn(connector) : key.getColumn(connector);
         sb
-          .append(Parser.quote(other.getTable(connector).getName()))
-          .append('.')
-          .append(Parser.quote(other.getName()));
+            .append(Parser.quote(other.getTable(connector).getName()))
+            .append('.')
+            .append(Parser.quote(other.getName()));
       }
       return sb.toString();
     } else {
@@ -488,14 +488,14 @@ public final class Table extends GlobalObjectIntegerKey<Table> {
     // Build the rows
     List<Object[]> rows = new ArrayList<>(columns.size());
     for (Column column : columns) {
-      rows.add(new Object[] {
-        column.getName(),
-        column.getType(connector).getName(),
-        Boolean.toString(column.isNullable()),
-        Boolean.toString(column.isUnique()),
-        formatForeignKeys(connector, column.getReferences(connector), true),
-        formatForeignKeys(connector, column.getReferencedBy(connector), false),
-        column.getDescription()
+      rows.add(new Object[]{
+          column.getName(),
+          column.getType(connector).getName(),
+          Boolean.toString(column.isNullable()),
+          Boolean.toString(column.isUnique()),
+          formatForeignKeys(connector, column.getReferences(connector), true),
+          formatForeignKeys(connector, column.getReferencedBy(connector), false),
+          column.getDescription()
       });
     }
 

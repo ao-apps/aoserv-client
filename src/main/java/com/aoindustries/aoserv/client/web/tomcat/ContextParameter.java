@@ -46,8 +46,8 @@ import java.util.List;
 public final class ContextParameter extends CachedObjectIntegerKey<ContextParameter> implements Removable {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_TOMCAT_CONTEXT=1
+      COLUMN_PKEY = 0,
+      COLUMN_TOMCAT_CONTEXT = 1
   ;
   static final String COLUMN_TOMCAT_CONTEXT_name = "tomcat_context";
   static final String COLUMN_NAME_name = "name";
@@ -64,7 +64,7 @@ public final class ContextParameter extends CachedObjectIntegerKey<ContextParame
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public ContextParameter() {
     // Do nothing
   }
@@ -88,9 +88,9 @@ public final class ContextParameter extends CachedObjectIntegerKey<ContextParame
   }
 
   public Context getHttpdTomcatContext() throws SQLException, IOException {
-    Context obj=table.getConnector().getWeb_tomcat().getContext().get(tomcat_context);
+    Context obj = table.getConnector().getWeb_tomcat().getContext().get(tomcat_context);
     if (obj == null) {
-      throw new SQLException("Unable to find HttpdTomcatContext: "+tomcat_context);
+      throw new SQLException("Unable to find HttpdTomcatContext: " + tomcat_context);
     }
     return obj;
   }
@@ -118,22 +118,22 @@ public final class ContextParameter extends CachedObjectIntegerKey<ContextParame
 
   @Override
   public void init(ResultSet result) throws SQLException {
-    pkey=result.getInt(1);
-    tomcat_context=result.getInt(2);
-    name=result.getString(3);
-    value=result.getString(4);
-    override=result.getBoolean(5);
-    description=result.getString(6);
+    pkey = result.getInt(1);
+    tomcat_context = result.getInt(2);
+    name = result.getString(3);
+    value = result.getString(4);
+    override = result.getBoolean(5);
+    description = result.getString(6);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readCompressedInt();
-    tomcat_context=in.readCompressedInt();
-    name=in.readUTF();
-    value=in.readUTF();
-    override=in.readBoolean();
-    description=in.readNullUTF();
+    pkey = in.readCompressedInt();
+    tomcat_context = in.readCompressedInt();
+    name = in.readUTF();
+    value = in.readUTF();
+    override = in.readBoolean();
+    description = in.readNullUTF();
   }
 
   @Override
@@ -142,19 +142,19 @@ public final class ContextParameter extends CachedObjectIntegerKey<ContextParame
   }
 
   public void update(
-    String name,
-    String value,
-    boolean override,
-    String description
+      String name,
+      String value,
+      boolean override,
+      String description
   ) throws IOException, SQLException {
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.UPDATE_HTTPD_TOMCAT_PARAMETER,
-      pkey,
-      name,
-      value,
-      override,
-      description == null ? "" : description
+        true,
+        AoservProtocol.CommandID.UPDATE_HTTPD_TOMCAT_PARAMETER,
+        pkey,
+        name,
+        value,
+        override,
+        description == null ? "" : description
     );
   }
 

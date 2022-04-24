@@ -39,9 +39,9 @@ public class LinuxDaemonAcl extends AOServObject {
   }
 
   public LinuxDaemonAcl(
-    int pkey,
-    int aoServer,
-    HostAddress host
+      int pkey,
+      int aoServer,
+      HostAddress host
   ) {
     this.pkey = pkey;
     this.aoServer = aoServer;

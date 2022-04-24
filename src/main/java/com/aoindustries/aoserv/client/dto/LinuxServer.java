@@ -64,31 +64,31 @@ public class LinuxServer extends AOServObject {
   }
 
   public LinuxServer(
-    int server,
-    DomainName hostname,
-    Integer daemonBind,
-    int poolSize,
-    int distroHour,
-    Long lastDistroTime,
-    Integer failoverServer,
-    String daemonDeviceId,
-    Integer daemonConnectBind,
-    String timeZone,
-    Integer jilterBind,
-    boolean restrictOutboundEmail,
-    HostAddress daemonConnectAddress,
-    int failoverBatchSize,
-    Float monitoringLoadLow,
-    Float monitoringLoadMedium,
-    Float monitoringLoadHigh,
-    Float monitoringLoadCritical,
-    LinuxId uidMin,
-    LinuxId gidMin,
-    LinuxId uidMax,
-    LinuxId gidMax,
-    LinuxId lastUid,
-    LinuxId lastGid,
-    Long sftpUmask
+      int server,
+      DomainName hostname,
+      Integer daemonBind,
+      int poolSize,
+      int distroHour,
+      Long lastDistroTime,
+      Integer failoverServer,
+      String daemonDeviceId,
+      Integer daemonConnectBind,
+      String timeZone,
+      Integer jilterBind,
+      boolean restrictOutboundEmail,
+      HostAddress daemonConnectAddress,
+      int failoverBatchSize,
+      Float monitoringLoadLow,
+      Float monitoringLoadMedium,
+      Float monitoringLoadHigh,
+      Float monitoringLoadCritical,
+      LinuxId uidMin,
+      LinuxId gidMin,
+      LinuxId uidMax,
+      LinuxId gidMax,
+      LinuxId lastUid,
+      LinuxId lastGid,
+      Long sftpUmask
   ) {
     this.server = server;
     this.hostname = hostname;
@@ -159,8 +159,8 @@ public class LinuxServer extends AOServObject {
 
   public Calendar getLastDistroTime() {
     return DtoUtils.getCalendar(
-      lastDistroTime,
-      timeZone == null ? null : TimeZone.getTimeZone(timeZone)
+        lastDistroTime,
+        timeZone == null ? null : TimeZone.getTimeZone(timeZone)
     );
   }
 

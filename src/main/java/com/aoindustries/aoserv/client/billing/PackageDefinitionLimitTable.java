@@ -42,13 +42,14 @@ public final class PackageDefinitionLimitTable extends CachedTableIntegerKey<Pac
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(PackageDefinitionLimit.COLUMN_PACKAGE_DEFINITION_name+'.'+PackageDefinition.COLUMN_ACCOUNTING_name, ASCENDING),
-    new OrderBy(PackageDefinitionLimit.COLUMN_PACKAGE_DEFINITION_name+'.'+PackageDefinition.COLUMN_CATEGORY_name, ASCENDING),
-    new OrderBy(PackageDefinitionLimit.COLUMN_PACKAGE_DEFINITION_name+'.'+PackageDefinition.COLUMN_monthlyRate_name, ASCENDING),
-    new OrderBy(PackageDefinitionLimit.COLUMN_PACKAGE_DEFINITION_name+'.'+PackageDefinition.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(PackageDefinitionLimit.COLUMN_PACKAGE_DEFINITION_name+'.'+PackageDefinition.COLUMN_VERSION_name, ASCENDING),
-    new OrderBy(PackageDefinitionLimit.COLUMN_RESOURCE_name+'.'+Resource.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(PackageDefinitionLimit.COLUMN_PACKAGE_DEFINITION_name + '.' + PackageDefinition.COLUMN_ACCOUNTING_name, ASCENDING),
+      new OrderBy(PackageDefinitionLimit.COLUMN_PACKAGE_DEFINITION_name + '.' + PackageDefinition.COLUMN_CATEGORY_name, ASCENDING),
+      new OrderBy(PackageDefinitionLimit.COLUMN_PACKAGE_DEFINITION_name + '.' + PackageDefinition.COLUMN_monthlyRate_name, ASCENDING),
+      new OrderBy(PackageDefinitionLimit.COLUMN_PACKAGE_DEFINITION_name + '.' + PackageDefinition.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(PackageDefinitionLimit.COLUMN_PACKAGE_DEFINITION_name + '.' + PackageDefinition.COLUMN_VERSION_name, ASCENDING),
+      new OrderBy(PackageDefinitionLimit.COLUMN_RESOURCE_name + '.' + Resource.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -71,7 +72,7 @@ public final class PackageDefinitionLimitTable extends CachedTableIntegerKey<Pac
     if (resource == null) {
       throw new AssertionError("resource is null");
     }
-    String resourceName=resource.getName();
+    String resourceName = resource.getName();
     // Use the index first
     for (PackageDefinitionLimit limit : getPackageDefinitionLimits(packageDefinition)) {
       if (limit.getResource_name().equals(resourceName)) {

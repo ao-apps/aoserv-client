@@ -42,9 +42,10 @@ public final class HostTable extends CachedTableLongKey<Host> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Host.COLUMN_SET_name+'.'+Set.COLUMN_IDENTIFIER_name, ASCENDING),
-    new OrderBy(Host.COLUMN_HOST_name, ASCENDING)
+      new OrderBy(Host.COLUMN_SET_name + '.' + Set.COLUMN_IDENTIFIER_name, ASCENDING),
+      new OrderBy(Host.COLUMN_HOST_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

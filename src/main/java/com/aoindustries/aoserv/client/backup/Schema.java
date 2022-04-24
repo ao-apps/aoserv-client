@@ -35,28 +35,52 @@ import java.util.List;
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
   private final BackupPartitionTable BackupPartition;
-  public BackupPartitionTable getBackupPartition() {return BackupPartition;}
+
+  public BackupPartitionTable getBackupPartition() {
+    return BackupPartition;
+  }
 
   private final BackupReportTable BackupReport;
-  public BackupReportTable getBackupReport() {return BackupReport;}
+
+  public BackupReportTable getBackupReport() {
+    return BackupReport;
+  }
 
   private final BackupRetentionTable BackupRetention;
-  public BackupRetentionTable getBackupRetention() {return BackupRetention;}
+
+  public BackupRetentionTable getBackupRetention() {
+    return BackupRetention;
+  }
 
   private final FileReplicationTable FileReplication;
-  public FileReplicationTable getFileReplication() {return FileReplication;}
+
+  public FileReplicationTable getFileReplication() {
+    return FileReplication;
+  }
 
   private final FileReplicationLogTable FileReplicationLog;
-  public FileReplicationLogTable getFileReplicationLog() {return FileReplicationLog;}
+
+  public FileReplicationLogTable getFileReplicationLog() {
+    return FileReplicationLog;
+  }
 
   private final FileReplicationScheduleTable FileReplicationSchedule;
-  public FileReplicationScheduleTable getFileReplicationSchedule() {return FileReplicationSchedule;}
+
+  public FileReplicationScheduleTable getFileReplicationSchedule() {
+    return FileReplicationSchedule;
+  }
 
   private final FileReplicationSettingTable FileReplicationSetting;
-  public FileReplicationSettingTable getFileReplicationSetting() {return FileReplicationSetting;}
+
+  public FileReplicationSettingTable getFileReplicationSetting() {
+    return FileReplicationSetting;
+  }
 
   private final MysqlReplicationTable MysqlReplication;
-  public MysqlReplicationTable getMysqlReplication() {return MysqlReplication;}
+
+  public MysqlReplicationTable getMysqlReplication() {
+    return MysqlReplication;
+  }
 
   private final List<? extends AOServTable<?, ?>> tables;
 

@@ -48,9 +48,10 @@ public final class HttpdServerTable extends CachedTableIntegerKey<HttpdServer> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(HttpdServer.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
-    new OrderBy(HttpdServer.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(HttpdServer.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
+      new OrderBy(HttpdServer.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -81,12 +82,12 @@ public final class HttpdServerTable extends CachedTableIntegerKey<HttpdServer> {
     if (command.equalsIgnoreCase(Command.GET_HTTPD_SERVER_CONCURRENCY)) {
       if (AOSH.checkParamCount(Command.GET_HTTPD_SERVER_CONCURRENCY, args, 2, err)) {
         out.write(
-          Integer.toString(
-            connector.getSimpleAOClient().getHttpdServerConcurrency(
-              args[1],
-              args[2].isEmpty() ? null : args[2]
+            Integer.toString(
+                connector.getSimpleAOClient().getHttpdServerConcurrency(
+                    args[1],
+                    args[2].isEmpty() ? null : args[2]
+                )
             )
-          )
         );
         out.flush();
       }

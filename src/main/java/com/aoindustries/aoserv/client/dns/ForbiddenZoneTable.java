@@ -41,8 +41,9 @@ public final class ForbiddenZoneTable extends GlobalTableStringKey<ForbiddenZone
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(ForbiddenZone.COLUMN_ZONE_name, ASCENDING)
+      new OrderBy(ForbiddenZone.COLUMN_ZONE_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

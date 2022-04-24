@@ -51,7 +51,7 @@ public abstract class CachedTable<K, V extends CachedObject<K, V>> extends AOSer
    * The last time that the data was loaded, or
    * <code>-1</code> if not yet loaded.
    */
-  private long lastLoaded=-1;
+  private long lastLoaded = -1;
 
   /**
    * The internal objects are stored in <code>HashMaps</code>
@@ -81,35 +81,35 @@ public abstract class CachedTable<K, V extends CachedObject<K, V>> extends AOSer
   public List<V> getIndexedRows(int col, Object value) throws IOException, SQLException {
     synchronized (this) {
       validateCache();
-      int minLength=col+1;
+      int minLength = col + 1;
       if (indexHashes == null) {
-        indexHashes=new ArrayList<>(minLength);
-        indexesHashed=new BitSet(minLength);
+        indexHashes = new ArrayList<>(minLength);
+        indexesHashed = new BitSet(minLength);
       }
-      while (indexHashes.size()<minLength) {
+      while (indexHashes.size() < minLength) {
         indexHashes.add(null);
       }
-      Map<Object, List<V>> map=indexHashes.get(col);
+      Map<Object, List<V>> map = indexHashes.get(col);
       if (map == null) {
-        indexHashes.set(col, map=new HashMap<>());
+        indexHashes.set(col, map = new HashMap<>());
       }
       if (!indexesHashed.get(col)) {
         // Build the modifiable lists in a temporary Map
-        Map<Object, List<V>> modifiableIndexes=new HashMap<>();
+        Map<Object, List<V>> modifiableIndexes = new HashMap<>();
         for (V obj : tableData) {
-          Object cvalue=obj.getColumn(col);
-          List<V> list=modifiableIndexes.get(cvalue);
+          Object cvalue = obj.getColumn(col);
+          List<V> list = modifiableIndexes.get(cvalue);
           if (list == null) {
-            modifiableIndexes.put(cvalue, list=new ArrayList<>());
+            modifiableIndexes.put(cvalue, list = new ArrayList<>());
           }
           list.add(obj);
         }
         // Wrap each of the newly-created indexes to be unmodifiable
         map.clear();
-        Iterator<Object> keys=modifiableIndexes.keySet().iterator();
+        Iterator<Object> keys = modifiableIndexes.keySet().iterator();
         while (keys.hasNext()) {
-          Object key=keys.next();
-          List<V> list=modifiableIndexes.get(key);
+          Object key = keys.next();
+          List<V> list = modifiableIndexes.get(key);
           map.put(key, Collections.unmodifiableList(list));
         }
         indexesHashed.set(col);
@@ -130,33 +130,33 @@ public abstract class CachedTable<K, V extends CachedObject<K, V>> extends AOSer
     }
     synchronized (this) {
       validateCache();
-      int minLength=col+1;
+      int minLength = col + 1;
       if (columnHashes == null) {
-        columnHashes=new ArrayList<>(minLength);
-        columnsHashed=new BitSet(minLength);
+        columnHashes = new ArrayList<>(minLength);
+        columnsHashed = new BitSet(minLength);
       }
-      while (columnHashes.size()<minLength) {
+      while (columnHashes.size() < minLength) {
         columnHashes.add(null);
       }
-      Map<Object, V> map=columnHashes.get(col);
+      Map<Object, V> map = columnHashes.get(col);
       if (!columnsHashed.get(col)) {
-        List<V> table=tableData;
-        int size=table.size();
+        List<V> table = tableData;
+        int size = table.size();
         // Allow 25% growth before rehash
         if (map == null) {
           columnHashes.set(col, map = AoCollections.newHashMap((size * 5) >> 2));
         } else {
           map.clear();
         }
-        for (int c=0;c<size;c++) {
+        for (int c = 0; c < size; c++) {
           V row = table.get(c);
           Object cvalue = row.getColumn(col);
           if (cvalue != null) {
             Object old = map.put(cvalue, row);
             if (old != null) {
               throw new SQLException(
-                "Duplicate unique entry for table #" + getTableID() + " (" + getTableName()
-                + "), column " + col + ": " + cvalue
+                  "Duplicate unique entry for table #" + getTableID() + " (" + getTableName()
+                      + "), column " + col + ": " + cvalue
               );
             }
           }
@@ -189,8 +189,8 @@ public abstract class CachedTable<K, V extends CachedObject<K, V>> extends AOSer
    */
   boolean isHashed(int uniqueColumn) {
     return
-      columnsHashed != null
-      && columnsHashed.get(uniqueColumn)
+        columnsHashed != null
+            && columnsHashed.get(uniqueColumn)
     ;
   }
 
@@ -199,8 +199,8 @@ public abstract class CachedTable<K, V extends CachedObject<K, V>> extends AOSer
    */
   boolean isIndexed(int uniqueColumn) {
     return
-      indexesHashed != null
-      && indexesHashed.get(uniqueColumn)
+        indexesHashed != null
+            && indexesHashed.get(uniqueColumn)
     ;
   }
 
@@ -217,10 +217,10 @@ public abstract class CachedTable<K, V extends CachedObject<K, V>> extends AOSer
   public void clearCache() {
     super.clearCache();
     synchronized (this) {
-      lastLoaded=-1;
+      lastLoaded = -1;
       if (columnHashes != null) {
-        int len=columnHashes.size();
-        for (int c=0;c<len;c++) {
+        int len = columnHashes.size();
+        for (int c = 0; c < len; c++) {
           Map<Object, V> map = columnHashes.get(c);
           if (map != null) {
             map.clear();
@@ -231,9 +231,9 @@ public abstract class CachedTable<K, V extends CachedObject<K, V>> extends AOSer
         columnsHashed.clear();
       }
       if (indexHashes != null) {
-        int len=indexHashes.size();
-        for (int c=0;c<len;c++) {
-          Map<Object, List<V>> map=indexHashes.get(c);
+        int len = indexHashes.size();
+        for (int c = 0; c < len; c++) {
+          Map<Object, List<V>> map = indexHashes.get(c);
           if (map != null) {
             map.clear();
           }
@@ -249,18 +249,18 @@ public abstract class CachedTable<K, V extends CachedObject<K, V>> extends AOSer
    * Reloads the cache if the cache time has expired.  All accesses are already synchronized.
    */
   private void validateCache() throws IOException, SQLException {
-    long currentTime=System.currentTimeMillis();
+    long currentTime = System.currentTimeMillis();
     if (
-       // If cache never loaded
-       lastLoaded == -1
-       // If the system time was reset to previous time
-       || currentTime<lastLoaded
+        // If cache never loaded
+        lastLoaded == -1
+            // If the system time was reset to previous time
+            || currentTime < lastLoaded
     ) {
-      tableData=Collections.unmodifiableList(getObjects(true, AoservProtocol.CommandID.GET_TABLE, getTableID()));
-      lastLoaded=currentTime;
+      tableData = Collections.unmodifiableList(getObjects(true, AoservProtocol.CommandID.GET_TABLE, getTableID()));
+      lastLoaded = currentTime;
       if (columnHashes != null) {
-        int len=columnHashes.size();
-        for (int c=0;c<len;c++) {
+        int len = columnHashes.size();
+        for (int c = 0; c < len; c++) {
           Map<Object, V> map = columnHashes.get(c);
           if (map != null) {
             map.clear();
@@ -271,9 +271,9 @@ public abstract class CachedTable<K, V extends CachedObject<K, V>> extends AOSer
         columnsHashed.clear();
       }
       if (indexHashes != null) {
-        int len=indexHashes.size();
-        for (int c=0;c<len;c++) {
-          Map<Object, List<V>> map=indexHashes.get(c);
+        int len = indexHashes.size();
+        for (int c = 0; c < len; c++) {
+          Map<Object, List<V>> map = indexHashes.get(c);
           if (map != null) {
             map.clear();
           }

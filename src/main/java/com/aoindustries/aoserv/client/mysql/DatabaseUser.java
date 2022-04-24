@@ -49,9 +49,9 @@ import java.util.List;
 public final class DatabaseUser extends CachedObjectIntegerKey<DatabaseUser> implements Removable {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_MYSQL_DATABASE=1,
-    COLUMN_MYSQL_SERVER_USER=2
+      COLUMN_PKEY = 0,
+      COLUMN_MYSQL_DATABASE = 1,
+      COLUMN_MYSQL_SERVER_USER = 2
   ;
   static final String COLUMN_MYSQL_DATABASE_name = "mysql_database";
   static final String COLUMN_MYSQL_SERVER_USER_name = "mysql_server_user";
@@ -60,25 +60,25 @@ public final class DatabaseUser extends CachedObjectIntegerKey<DatabaseUser> imp
   private int mysql_server_user;
 
   private boolean
-    select_priv,
-    insert_priv,
-    update_priv,
-    delete_priv,
-    create_priv,
-    drop_priv,
-    grant_priv,
-    references_priv,
-    index_priv,
-    alter_priv,
-    create_tmp_table_priv,
-    lock_tables_priv,
-    create_view_priv,
-    show_view_priv,
-    create_routine_priv,
-    alter_routine_priv,
-    execute_priv,
-    event_priv,
-    trigger_priv
+      select_priv,
+      insert_priv,
+      update_priv,
+      delete_priv,
+      create_priv,
+      drop_priv,
+      grant_priv,
+      references_priv,
+      index_priv,
+      alter_priv,
+      create_tmp_table_priv,
+      lock_tables_priv,
+      create_view_priv,
+      show_view_priv,
+      create_routine_priv,
+      alter_routine_priv,
+      execute_priv,
+      event_priv,
+      trigger_priv
   ;
 
   /**
@@ -87,7 +87,7 @@ public final class DatabaseUser extends CachedObjectIntegerKey<DatabaseUser> imp
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public DatabaseUser() {
     // Do nothing
   }
@@ -218,54 +218,54 @@ public final class DatabaseUser extends CachedObjectIntegerKey<DatabaseUser> imp
 
   @Override
   public void init(ResultSet result) throws SQLException {
-    pkey=result.getInt(1);
-    mysql_database=result.getInt(2);
-    mysql_server_user=result.getInt(3);
-    select_priv=result.getBoolean(4);
-    insert_priv=result.getBoolean(5);
-    update_priv=result.getBoolean(6);
-    delete_priv=result.getBoolean(7);
-    create_priv=result.getBoolean(8);
-    drop_priv=result.getBoolean(9);
-    grant_priv=result.getBoolean(10);
-    references_priv=result.getBoolean(11);
-    index_priv=result.getBoolean(12);
-    alter_priv=result.getBoolean(13);
-    create_tmp_table_priv=result.getBoolean(14);
-    lock_tables_priv=result.getBoolean(15);
-    create_view_priv=result.getBoolean(16);
-    show_view_priv=result.getBoolean(17);
-    create_routine_priv=result.getBoolean(18);
-    alter_routine_priv=result.getBoolean(19);
-    execute_priv=result.getBoolean(20);
-    event_priv=result.getBoolean(21);
-    trigger_priv=result.getBoolean(22);
+    pkey = result.getInt(1);
+    mysql_database = result.getInt(2);
+    mysql_server_user = result.getInt(3);
+    select_priv = result.getBoolean(4);
+    insert_priv = result.getBoolean(5);
+    update_priv = result.getBoolean(6);
+    delete_priv = result.getBoolean(7);
+    create_priv = result.getBoolean(8);
+    drop_priv = result.getBoolean(9);
+    grant_priv = result.getBoolean(10);
+    references_priv = result.getBoolean(11);
+    index_priv = result.getBoolean(12);
+    alter_priv = result.getBoolean(13);
+    create_tmp_table_priv = result.getBoolean(14);
+    lock_tables_priv = result.getBoolean(15);
+    create_view_priv = result.getBoolean(16);
+    show_view_priv = result.getBoolean(17);
+    create_routine_priv = result.getBoolean(18);
+    alter_routine_priv = result.getBoolean(19);
+    execute_priv = result.getBoolean(20);
+    event_priv = result.getBoolean(21);
+    trigger_priv = result.getBoolean(22);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readCompressedInt();
-    mysql_database=in.readCompressedInt();
-    mysql_server_user=in.readCompressedInt();
-    select_priv=in.readBoolean();
-    insert_priv=in.readBoolean();
-    update_priv=in.readBoolean();
-    delete_priv=in.readBoolean();
-    create_priv=in.readBoolean();
-    drop_priv=in.readBoolean();
-    grant_priv=in.readBoolean();
-    references_priv=in.readBoolean();
-    index_priv=in.readBoolean();
-    alter_priv=in.readBoolean();
-    create_tmp_table_priv=in.readBoolean();
-    lock_tables_priv=in.readBoolean();
-    create_view_priv=in.readBoolean();
-    show_view_priv=in.readBoolean();
-    create_routine_priv=in.readBoolean();
-    alter_routine_priv=in.readBoolean();
-    execute_priv=in.readBoolean();
-    event_priv=in.readBoolean();
-    trigger_priv=in.readBoolean();
+    pkey = in.readCompressedInt();
+    mysql_database = in.readCompressedInt();
+    mysql_server_user = in.readCompressedInt();
+    select_priv = in.readBoolean();
+    insert_priv = in.readBoolean();
+    update_priv = in.readBoolean();
+    delete_priv = in.readBoolean();
+    create_priv = in.readBoolean();
+    drop_priv = in.readBoolean();
+    grant_priv = in.readBoolean();
+    references_priv = in.readBoolean();
+    index_priv = in.readBoolean();
+    alter_priv = in.readBoolean();
+    create_tmp_table_priv = in.readBoolean();
+    lock_tables_priv = in.readBoolean();
+    create_view_priv = in.readBoolean();
+    show_view_priv = in.readBoolean();
+    create_routine_priv = in.readBoolean();
+    alter_routine_priv = in.readBoolean();
+    execute_priv = in.readBoolean();
+    event_priv = in.readBoolean();
+    trigger_priv = in.readBoolean();
   }
 
   @Override
@@ -275,30 +275,30 @@ public final class DatabaseUser extends CachedObjectIntegerKey<DatabaseUser> imp
     if (msu.isSpecial()) {
       Server ms = msu.getMySQLServer();
       reasons.add(
-        new CannotRemoveReason<>(
-          "Not allowed to revoke access from a special MySQL user: "
-            + msu.getMySQLUser_username()
-            + " on "
-            + ms.getName()
-            + " on "
-            + ms.getLinuxServer().getHostname(),
-          this
-        )
+          new CannotRemoveReason<>(
+              "Not allowed to revoke access from a special MySQL user: "
+                  + msu.getMySQLUser_username()
+                  + " on "
+                  + ms.getName()
+                  + " on "
+                  + ms.getLinuxServer().getHostname(),
+              this
+          )
       );
     }
     Database md = getMySQLDatabase();
     if (md.isSpecial()) {
       Server ms = md.getMySQLServer();
       reasons.add(
-        new CannotRemoveReason<>(
-          "Not allowed to revoke access to a special MySQL database: "
-            + md.getName()
-            + " on "
-            + ms.getName()
-            + " on "
-            + ms.getLinuxServer().getHostname(),
-          this
-        )
+          new CannotRemoveReason<>(
+              "Not allowed to revoke access to a special MySQL database: "
+                  + md.getName()
+                  + " on "
+                  + ms.getName()
+                  + " on "
+                  + ms.getLinuxServer().getHostname(),
+              this
+          )
       );
     }
     return reasons;
@@ -310,31 +310,31 @@ public final class DatabaseUser extends CachedObjectIntegerKey<DatabaseUser> imp
     if (msu.isSpecial()) {
       Server ms = msu.getMySQLServer();
       throw new SQLException(
-        "Refusing to revoke access from a special MySQL user: "
-        + msu.getMySQLUser_username()
-        + " on "
-        + ms.getName()
-        + " on "
-        + ms.getLinuxServer().getHostname()
+          "Refusing to revoke access from a special MySQL user: "
+              + msu.getMySQLUser_username()
+              + " on "
+              + ms.getName()
+              + " on "
+              + ms.getLinuxServer().getHostname()
       );
     }
     Database md = getMySQLDatabase();
     if (md.isSpecial()) {
       Server ms = md.getMySQLServer();
       throw new SQLException(
-        "Refusing to revoke access to a special MySQL database: "
-        + md.getName()
-        + " on "
-        + ms.getName()
-        + " on "
-        + ms.getLinuxServer().getHostname()
+          "Refusing to revoke access to a special MySQL database: "
+              + md.getName()
+              + " on "
+              + ms.getName()
+              + " on "
+              + ms.getLinuxServer().getHostname()
       );
     }
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.REMOVE,
-      Table.TableID.MYSQL_DB_USERS,
-      pkey
+        true,
+        AoservProtocol.CommandID.REMOVE,
+        Table.TableID.MYSQL_DB_USERS,
+        pkey
     );
   }
 

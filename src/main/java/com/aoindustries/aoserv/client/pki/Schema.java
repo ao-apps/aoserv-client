@@ -35,16 +35,28 @@ import java.util.List;
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
   private final CertificateTable Certificate;
-  public CertificateTable getCertificate() {return Certificate;}
+
+  public CertificateTable getCertificate() {
+    return Certificate;
+  }
 
   private final CertificateNameTable CertificateName;
-  public CertificateNameTable getCertificateName() {return CertificateName;}
+
+  public CertificateNameTable getCertificateName() {
+    return CertificateName;
+  }
 
   private final CertificateOtherUseTable CertificateOtherUse;
-  public CertificateOtherUseTable getCertificateOtherUse() {return CertificateOtherUse;}
+
+  public CertificateOtherUseTable getCertificateOtherUse() {
+    return CertificateOtherUse;
+  }
 
   private final EncryptionKeyTable EncryptionKey;
-  public EncryptionKeyTable getEncryptionKey() {return EncryptionKey;}
+
+  public EncryptionKeyTable getEncryptionKey() {
+    return EncryptionKey;
+  }
 
   private final List<? extends AOServTable<?, ?>> tables;
 

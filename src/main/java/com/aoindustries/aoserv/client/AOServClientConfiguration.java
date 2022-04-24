@@ -52,7 +52,9 @@ public final class AOServClientConfiguration {
     throw new AssertionError();
   }
 
-  private static class PropsLock {/* Empty lock class to help heap profile */}
+  private static class PropsLock {
+    // Empty lock class to help heap profile
+  }
   private static final PropsLock propsLock = new PropsLock();
   private static Properties props;
 
@@ -61,8 +63,8 @@ public final class AOServClientConfiguration {
       synchronized (propsLock) {
         if (props == null) {
           props = PropertiesUtils.loadFromResource(
-            AOServClientConfiguration.class,
-            "/com/aoindustries/aoserv/client/aoserv-client.properties"
+              AOServClientConfiguration.class,
+              "/com/aoindustries/aoserv/client/aoserv-client.properties"
           );
         }
         return props.getProperty(name);
@@ -96,8 +98,8 @@ public final class AOServClientConfiguration {
   static InetAddress getTcpLocalIp() throws ConfigurationException {
     String s = getProperty("aoserv.client.tcp.local_ip");
     if (
-      s == null
-      || (s = s.trim()).length() == 0
+        s == null
+            || (s = s.trim()).length() == 0
     ) {
       return null;
     }
@@ -114,8 +116,8 @@ public final class AOServClientConfiguration {
   static Port getTcpPort() throws ConfigurationException {
     try {
       return Port.valueOf(
-        Integer.parseInt(getProperty("aoserv.client.tcp.port")),
-        com.aoapps.net.Protocol.TCP
+          Integer.parseInt(getProperty("aoserv.client.tcp.port")),
+          com.aoapps.net.Protocol.TCP
       );
     } catch (ValidationException e) {
       throw new ConfigurationException(e);
@@ -154,8 +156,8 @@ public final class AOServClientConfiguration {
   static InetAddress getSslLocalIp() throws ConfigurationException {
     String s = getProperty("aoserv.client.ssl.local_ip");
     if (
-      s == null
-      || (s = s.trim()).length() == 0
+        s == null
+            || (s = s.trim()).length() == 0
     ) {
       return null;
     }
@@ -172,8 +174,8 @@ public final class AOServClientConfiguration {
   static Port getSslPort() throws ConfigurationException {
     try {
       return Port.valueOf(
-        Integer.parseInt(getProperty("aoserv.client.ssl.port")),
-        com.aoapps.net.Protocol.TCP
+          Integer.parseInt(getProperty("aoserv.client.ssl.port")),
+          com.aoapps.net.Protocol.TCP
       );
     } catch (ValidationException e) {
       throw new ConfigurationException(e);
@@ -219,8 +221,8 @@ public final class AOServClientConfiguration {
   public static User.Name getUsername() throws ConfigurationException {
     String username = getProperty("aoserv.client.username");
     if (
-      username == null
-      || (username = username.trim()).isEmpty()
+        username == null
+            || (username = username.trim()).isEmpty()
     ) {
       return null;
     }
@@ -245,8 +247,8 @@ public final class AOServClientConfiguration {
   static DomainName getDaemonServer() throws ConfigurationException {
     String domainServer = getProperty("aoserv.client.daemon.server");
     if (
-      domainServer == null
-      || (domainServer = domainServer.trim()).isEmpty()
+        domainServer == null
+            || (domainServer = domainServer.trim()).isEmpty()
     ) {
       return null;
     }

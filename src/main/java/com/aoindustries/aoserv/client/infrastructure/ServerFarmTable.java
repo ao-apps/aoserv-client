@@ -41,8 +41,9 @@ public final class ServerFarmTable extends CachedTableStringKey<ServerFarm> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(ServerFarm.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(ServerFarm.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

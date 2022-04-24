@@ -41,8 +41,9 @@ public final class DeviceIdTable extends GlobalTableStringKey<DeviceId> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(DeviceId.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(DeviceId.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

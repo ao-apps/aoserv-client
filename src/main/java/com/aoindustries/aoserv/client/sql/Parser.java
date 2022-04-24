@@ -61,8 +61,8 @@ public final class Parser {
         // If followed by another quote while quoted, do not unquote
         if (quoted) {
           if (
-            i < (end - 1)
-            && expr.charAt(i + 1) == '"'
+              i < (end - 1)
+                  && expr.charAt(i + 1) == '"'
           ) {
             // Skip
             i++;
@@ -104,8 +104,8 @@ public final class Parser {
         // If followed by another quote while quoted, do not unquote
         if (quoted) {
           if (
-            i < (end - 1)
-            && expr.charAt(i + 1) == '"'
+              i < (end - 1)
+                  && expr.charAt(i + 1) == '"'
           ) {
             // Skip
             i++;
@@ -148,8 +148,8 @@ public final class Parser {
         // If followed by another quote while quoted, do not unquote
         if (quoted) {
           if (
-            i < (strLen - 1)
-            && str.charAt(i + 1) == '"'
+              i < (strLen - 1)
+                  && str.charAt(i + 1) == '"'
           ) {
             // Is escaped quote
             unquoted.append('"');

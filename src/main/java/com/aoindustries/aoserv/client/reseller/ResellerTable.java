@@ -48,8 +48,9 @@ public final class ResellerTable extends CachedTableAccountNameKey<Reseller> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Reseller.COLUMN_ACCOUNTING_name, ASCENDING)
+      new OrderBy(Reseller.COLUMN_ACCOUNTING_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -75,12 +76,13 @@ public final class ResellerTable extends CachedTableAccountNameKey<Reseller> {
   public Table.TableID getTableID() {
     return Table.TableID.RESELLERS;
   }
+
   /**
    * Gets the list of all resellers that either have a null parent (the
    * actual root of the business tree) or where the parent is inaccessible.
    */
   public List<Reseller> getTopLevelResellers() throws IOException, SQLException {
-    List<Reseller> matches=new ArrayList<>();
+    List<Reseller> matches = new ArrayList<>();
     for (Reseller reseller : getRows()) {
       if (reseller.getParent() == null) {
         matches.add(reseller);

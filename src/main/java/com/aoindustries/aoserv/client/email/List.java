@@ -54,8 +54,8 @@ import java.util.Collections;
 public final class List extends CachedObjectIntegerKey<List> implements Removable, Disablable {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_LINUX_SERVER_ACCOUNT=2
+      COLUMN_PKEY = 0,
+      COLUMN_LINUX_SERVER_ACCOUNT = 2
   ;
   static final String COLUMN_LINUX_SERVER_ACCOUNT_name = "linux_server_account";
   static final String COLUMN_PATH_name = "path";
@@ -63,12 +63,12 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
   /**
    * The directory that email lists are normally contained in.
    */
-  public static final String LIST_DIRECTORY="/etc/mail/lists";
+  public static final String LIST_DIRECTORY = "/etc/mail/lists";
 
   /**
    * The maximum length of an email list name.
    */
-  public static final int MAX_NAME_LENGTH=64;
+  public static final int MAX_NAME_LENGTH = 64;
 
   private PosixPath path;
   private int linux_server_account;
@@ -81,7 +81,7 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public List() {
     // Do nothing
   }
@@ -97,14 +97,14 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
 
   @Override
   public boolean canEnable() throws SQLException, IOException {
-    DisableLog dl=getDisableLog();
+    DisableLog dl = getDisableLog();
     if (dl == null) {
       return false;
     } else {
       return
-        dl.canEnable()
-        && !getLinuxServerGroup().getLinuxGroup().getPackage().isDisabled()
-        && !getLinuxServerAccount().isDisabled()
+          dl.canEnable()
+              && !getLinuxServerGroup().getLinuxGroup().getPackage().isDisabled()
+              && !getLinuxServerAccount().isDisabled()
       ;
     }
   }
@@ -132,11 +132,11 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
    * of non-blank lines.
    */
   public int getAddressListCount() throws IOException, SQLException {
-    String list=getAddressList();
-    java.util.List<String> lines=Strings.split(list, '\n');
-    int count=0;
+    String list = getAddressList();
+    java.util.List<String> lines = Strings.split(list, '\n');
+    int count = 0;
     for (String line : lines) {
-      if (line.trim().length()>0) {
+      if (line.trim().length() > 0) {
         count++;
       }
     }
@@ -150,7 +150,7 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
       case 1: return path;
       case COLUMN_LINUX_SERVER_ACCOUNT: return linux_server_account;
       case 3: return linux_server_group;
-      case 4: return disable_log == -1?null:disable_log;
+      case 4: return disable_log == -1 ? null : disable_log;
       default: throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
@@ -165,9 +165,9 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
     if (disable_log == -1) {
       return null;
     }
-    DisableLog obj=table.getConnector().getAccount().getDisableLog().get(disable_log);
+    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disable_log);
     if (obj == null) {
-      throw new SQLException("Unable to find DisableLog: "+disable_log);
+      throw new SQLException("Unable to find DisableLog: " + disable_log);
     }
     return obj;
   }
@@ -214,11 +214,11 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
       case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64 :
         if (name.length() > 1) {
           return PosixPath.valueOf(
-            LIST_DIRECTORY
-            + '/'
-            + Character.toLowerCase(name.charAt(0))
-            + '/'
-            + name
+              LIST_DIRECTORY
+                  + '/'
+                  + Character.toLowerCase(name.charAt(0))
+                  + '/'
+                  + name
           );
         } else {
           // This will always be invalid, exception expected
@@ -229,9 +229,9 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
       case OperatingSystemVersion.CENTOS_7_X86_64 :
         if (name.length() > 1) {
           return PosixPath.valueOf(
-            LIST_DIRECTORY
-            + '/'
-            + name
+              LIST_DIRECTORY
+                  + '/'
+                  + name
           );
         } else {
           // This will always be invalid, exception expected
@@ -264,9 +264,9 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
       path = PosixPath.valueOf(result.getString(2));
       linux_server_account = result.getInt(3);
       linux_server_group = result.getInt(4);
-      disable_log=result.getInt(5);
+      disable_log = result.getInt(5);
       if (result.wasNull()) {
-        disable_log=-1;
+        disable_log = -1;
       }
     } catch (ValidationException e) {
       throw new SQLException(e);
@@ -308,9 +308,9 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
           char ch = pathStr.charAt(c);
           if (c == 0) {
             if (
-              (ch < '0' || ch > '9')
-              && (ch < 'a' || ch > 'z')
-              && (ch < 'A' || ch > 'Z')
+                (ch < '0' || ch > '9')
+                    && (ch < 'a' || ch > 'z')
+                    && (ch < 'A' || ch > 'Z')
             ) {
               return false;
             }
@@ -319,12 +319,12 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
               return false;
             }
           } else if (
-            (ch < '0' || ch > '9')
-            && (ch < 'a' || ch > 'z')
-            && (ch < 'A' || ch > 'Z')
-            && ch != '.'
-            && ch != '-'
-            && ch != '_'
+              (ch < '0' || ch > '9')
+                  && (ch < 'a' || ch > 'z')
+                  && (ch < 'A' || ch > 'Z')
+                  && ch != '.'
+                  && ch != '-'
+                  && ch != '_'
           ) {
             return false;
           }
@@ -340,20 +340,20 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
           char ch = pathStr.charAt(c);
           if (c == 0) {
             if (
-              (ch < '0' || ch > '9')
-              && (ch < 'a' || ch > 'z')
-              && (ch < 'A' || ch > 'Z')
+                (ch < '0' || ch > '9')
+                    && (ch < 'a' || ch > 'z')
+                    && (ch < 'A' || ch > 'Z')
             ) {
               return false;
             }
           } else {
             if (
-              (ch < '0' || ch > '9')
-              && (ch < 'a' || ch > 'z')
-              && (ch < 'A' || ch > 'Z')
-              && ch != '.'
-              && ch != '-'
-              && ch != '_'
+                (ch < '0' || ch > '9')
+                    && (ch < 'a' || ch > 'z')
+                    && (ch < 'A' || ch > 'Z')
+                    && ch != '.'
+                    && ch != '-'
+                    && ch != '_'
             ) {
               return false;
             }
@@ -369,11 +369,11 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
-      pkey=in.readCompressedInt();
+      pkey = in.readCompressedInt();
       path = PosixPath.valueOf(in.readUTF());
-      linux_server_account=in.readCompressedInt();
-      linux_server_group=in.readCompressedInt();
-      disable_log=in.readCompressedInt();
+      linux_server_account = in.readCompressedInt();
+      linux_server_group = in.readCompressedInt();
+      disable_log = in.readCompressedInt();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -387,10 +387,10 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
   @Override
   public void remove() throws IOException, SQLException {
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.REMOVE,
-      Table.TableID.EMAIL_LISTS,
-      pkey
+        true,
+        AoservProtocol.CommandID.REMOVE,
+        Table.TableID.EMAIL_LISTS,
+        pkey
     );
   }
 

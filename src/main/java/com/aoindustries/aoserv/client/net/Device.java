@@ -49,8 +49,8 @@ import java.util.Objects;
 public final class Device extends CachedObjectIntegerKey<Device> {
 
   static final int
-    COLUMN_ID = 0,
-    COLUMN_SERVER = 1
+      COLUMN_ID = 0,
+      COLUMN_SERVER = 1
   ;
   public static final String COLUMN_SERVER_name = "server";
   public static final String COLUMN_DEVICE_ID_name = "deviceId";
@@ -76,7 +76,7 @@ public final class Device extends CachedObjectIntegerKey<Device> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Device() {
     // Do nothing
   }
@@ -207,18 +207,18 @@ public final class Device extends CachedObjectIntegerKey<Device> {
   public void init(ResultSet result) throws SQLException {
     try {
       int pos = 1;
-      pkey=result.getInt(pos++);
-      server=result.getInt(pos++);
+      pkey = result.getInt(pos++);
+      server = result.getInt(pos++);
       deviceId = result.getString(pos++);
-      description=result.getString(pos++);
-      delete_route=result.getString(pos++);
-      gateway=InetAddress.valueOf(result.getString(pos++));
-      network=InetAddress.valueOf(result.getString(pos++));
-      broadcast=InetAddress.valueOf(result.getString(pos++));
+      description = result.getString(pos++);
+      delete_route = result.getString(pos++);
+      gateway = InetAddress.valueOf(result.getString(pos++));
+      network = InetAddress.valueOf(result.getString(pos++));
+      broadcast = InetAddress.valueOf(result.getString(pos++));
       mac_address = MacAddress.valueOf(result.getString(pos++));
-      max_bit_rate=result.getLong(pos++);
+      max_bit_rate = result.getLong(pos++);
       if (result.wasNull()) {
-        max_bit_rate=-1;
+        max_bit_rate = -1;
       }
       monitoring_bit_rate_low = result.getLong(pos++);
       if (result.wasNull()) {
@@ -245,16 +245,16 @@ public final class Device extends CachedObjectIntegerKey<Device> {
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
-      pkey=in.readCompressedInt();
-      server=in.readCompressedInt();
+      pkey = in.readCompressedInt();
+      server = in.readCompressedInt();
       deviceId = in.readUTF().intern();
-      description=in.readUTF();
-      delete_route=InternUtils.intern(in.readNullUTF());
-      gateway=InternUtils.intern(InetAddress.valueOf(in.readNullUTF()));
-      network=InternUtils.intern(InetAddress.valueOf(in.readNullUTF()));
-      broadcast=InternUtils.intern(InetAddress.valueOf(in.readNullUTF()));
+      description = in.readUTF();
+      delete_route = InternUtils.intern(in.readNullUTF());
+      gateway = InternUtils.intern(InetAddress.valueOf(in.readNullUTF()));
+      network = InternUtils.intern(InetAddress.valueOf(in.readNullUTF()));
+      broadcast = InternUtils.intern(InetAddress.valueOf(in.readNullUTF()));
       mac_address = MacAddress.valueOf(in.readNullUTF());
-      max_bit_rate=in.readLong();
+      max_bit_rate = in.readLong();
       monitoring_bit_rate_low = in.readLong();
       monitoring_bit_rate_medium = in.readLong();
       monitoring_bit_rate_high = in.readLong();
@@ -304,7 +304,7 @@ public final class Device extends CachedObjectIntegerKey<Device> {
 
   @Override
   public String toStringImpl() throws SQLException, IOException {
-    return getHost().toStringImpl()+'|'+deviceId;
+    return getHost().toStringImpl() + '|' + deviceId;
   }
 
   public IpAddress getIPAddress(InetAddress inetAddress) throws IOException, SQLException {
@@ -316,18 +316,18 @@ public final class Device extends CachedObjectIntegerKey<Device> {
   }
 
   public IpAddress getPrimaryIPAddress() throws SQLException, IOException {
-    List<IpAddress> ips=getIPAddresses();
-    List<IpAddress> matches=new ArrayList<>();
+    List<IpAddress> ips = getIPAddresses();
+    List<IpAddress> matches = new ArrayList<>();
     for (IpAddress ip : ips) {
       if (!ip.isAlias()) {
         matches.add(ip);
       }
     }
     if (matches.isEmpty()) {
-      throw new SQLException("Unable to find primary IPAddress for NetDevice: "+deviceId+" on "+server);
+      throw new SQLException("Unable to find primary IPAddress for NetDevice: " + deviceId + " on " + server);
     }
-    if (matches.size()>1) {
-      throw new SQLException("Found more than one primary IPAddress for NetDevice: "+deviceId+" on "+server);
+    if (matches.size() > 1) {
+      throw new SQLException("Found more than one primary IPAddress for NetDevice: " + deviceId + " on " + server);
     }
     return matches.get(0);
   }

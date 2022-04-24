@@ -45,9 +45,10 @@ public final class AssignmentTable extends CachedTableIntegerKey<Assignment> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Assignment.COLUMN_TICKET_name, ASCENDING),
-    new OrderBy(Assignment.COLUMN_RESELLER_name, ASCENDING)
+      new OrderBy(Assignment.COLUMN_TICKET_name, ASCENDING),
+      new OrderBy(Assignment.COLUMN_RESELLER_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

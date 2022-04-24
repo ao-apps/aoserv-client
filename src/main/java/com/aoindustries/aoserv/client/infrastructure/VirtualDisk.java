@@ -66,7 +66,7 @@ public final class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public VirtualDisk() {
     // Do nothing
   }
@@ -89,9 +89,9 @@ public final class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
   }
 
   public VirtualServer getVirtualServer() throws SQLException, IOException {
-    VirtualServer vs=table.getConnector().getInfrastructure().getVirtualServer().get(virtualServer);
+    VirtualServer vs = table.getConnector().getInfrastructure().getVirtualServer().get(virtualServer);
     if (vs == null) {
-      throw new SQLException("Unable to find VirtualServer: "+virtualServer);
+      throw new SQLException("Unable to find VirtualServer: " + virtualServer);
     }
     return vs;
   }
@@ -203,7 +203,7 @@ public final class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
 
   @Override
   public String toStringImpl() throws SQLException, IOException {
-    return getVirtualServer().toStringImpl()+":/dev/"+device;
+    return getVirtualServer().toStringImpl() + ":/dev/" + device;
   }
 
   @Override

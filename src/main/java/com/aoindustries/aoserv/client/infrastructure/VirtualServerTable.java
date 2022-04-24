@@ -47,9 +47,10 @@ public final class VirtualServerTable extends CachedTableIntegerKey<VirtualServe
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(VirtualServer.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(VirtualServer.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(VirtualServer.COLUMN_SERVER_name + '.' + Host.COLUMN_PACKAGE_name + '.' + Package.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(VirtualServer.COLUMN_SERVER_name + '.' + Host.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -68,7 +69,7 @@ public final class VirtualServerTable extends CachedTableIntegerKey<VirtualServe
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-    String command=args[0];
+    String command = args[0];
     if (command.equalsIgnoreCase(Command.CREATE_VIRTUAL_SERVER)) {
       if (AOSH.checkParamCount(Command.CREATE_VIRTUAL_SERVER, args, 1, err)) {
         out.print(connector.getSimpleAOClient().createVirtualServer(args[1]));
@@ -114,9 +115,9 @@ public final class VirtualServerTable extends CachedTableIntegerKey<VirtualServe
     if (command.equalsIgnoreCase(Command.GET_VIRTUAL_SERVER_STATUS)) {
       if (AOSH.checkParamCount(Command.GET_VIRTUAL_SERVER_STATUS, args, 1, err)) {
         out.println(
-          VirtualServer.getStatusList(
-            connector.getSimpleAOClient().getVirtualServerStatus(args[1])
-          )
+            VirtualServer.getStatusList(
+                connector.getSimpleAOClient().getVirtualServerStatus(args[1])
+            )
         );
         out.flush();
       }
@@ -125,7 +126,7 @@ public final class VirtualServerTable extends CachedTableIntegerKey<VirtualServe
     if (command.equalsIgnoreCase(Command.GET_PRIMARY_PHYSICAL_SERVER)) {
       if (AOSH.checkParamCount(Command.GET_PRIMARY_PHYSICAL_SERVER, args, 1, err)) {
         out.println(
-          connector.getSimpleAOClient().getPrimaryVirtualServer(args[1])
+            connector.getSimpleAOClient().getPrimaryVirtualServer(args[1])
         );
         out.flush();
       }
@@ -134,7 +135,7 @@ public final class VirtualServerTable extends CachedTableIntegerKey<VirtualServe
     if (command.equalsIgnoreCase(Command.GET_SECONDARY_PHYSICAL_SERVER)) {
       if (AOSH.checkParamCount(Command.GET_SECONDARY_PHYSICAL_SERVER, args, 1, err)) {
         out.println(
-          connector.getSimpleAOClient().getSecondaryVirtualServer(args[1])
+            connector.getSimpleAOClient().getSecondaryVirtualServer(args[1])
         );
         out.flush();
       }

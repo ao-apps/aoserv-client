@@ -44,8 +44,8 @@ import java.util.List;
 public final class FileReplicationSetting extends CachedObjectIntegerKey<FileReplicationSetting> implements Removable {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_REPLICATION=1
+      COLUMN_PKEY = 0,
+      COLUMN_REPLICATION = 1
   ;
   static final String COLUMN_REPLICATION_name = "replication";
   static final String COLUMN_PATH_name = "path";
@@ -61,7 +61,7 @@ public final class FileReplicationSetting extends CachedObjectIntegerKey<FileRep
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public FileReplicationSetting() {
     // Do nothing
   }
@@ -86,7 +86,7 @@ public final class FileReplicationSetting extends CachedObjectIntegerKey<FileRep
   public FileReplication getReplication() throws SQLException, IOException {
     FileReplication ffr = table.getConnector().getBackup().getFileReplication().get(replication);
     if (ffr == null) {
-      throw new SQLException("Unable to find FailoverFileReplication: "+replication);
+      throw new SQLException("Unable to find FailoverFileReplication: " + replication);
     }
     return ffr;
   }
@@ -115,18 +115,18 @@ public final class FileReplicationSetting extends CachedObjectIntegerKey<FileRep
 
   @Override
   public void init(ResultSet result) throws SQLException {
-    pkey=result.getInt(1);
-    replication=result.getInt(2);
-    path=result.getString(3);
+    pkey = result.getInt(1);
+    replication = result.getInt(2);
+    path = result.getString(3);
     backup_enabled = result.getBoolean(4);
     required = result.getBoolean(5);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readCompressedInt();
-    replication=in.readCompressedInt();
-    path=in.readUTF();
+    pkey = in.readCompressedInt();
+    replication = in.readCompressedInt();
+    path = in.readUTF();
     backup_enabled = in.readBoolean();
     required = in.readBoolean();
   }
@@ -134,25 +134,25 @@ public final class FileReplicationSetting extends CachedObjectIntegerKey<FileRep
   @Override
   public void remove() throws IOException, SQLException {
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.REMOVE,
-      Table.TableID.FILE_BACKUP_SETTINGS,
-      pkey
+        true,
+        AoservProtocol.CommandID.REMOVE,
+        Table.TableID.FILE_BACKUP_SETTINGS,
+        pkey
     );
   }
 
   public void setSettings(
-    String path,
-    boolean backupEnabled,
-    boolean required
+      String path,
+      boolean backupEnabled,
+      boolean required
   ) throws IOException, SQLException {
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.SET_FILE_BACKUP_SETTINGS,
-      pkey,
-      path,
-      backupEnabled,
-      required
+        true,
+        AoservProtocol.CommandID.SET_FILE_BACKUP_SETTINGS,
+        pkey,
+        path,
+        backupEnabled,
+        required
     );
   }
 

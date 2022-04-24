@@ -63,9 +63,9 @@ import java.util.List;
 public final class AccountHost extends CachedObjectIntegerKey<AccountHost> implements Removable {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_ACCOUNTING=1,
-    COLUMN_SERVER=2
+      COLUMN_PKEY = 0,
+      COLUMN_ACCOUNTING = 1,
+      COLUMN_SERVER = 2
   ;
   static final String COLUMN_ACCOUNTING_name = "accounting";
   static final String COLUMN_SERVER_name = "server";
@@ -74,14 +74,14 @@ public final class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
   private int server;
   private boolean is_default;
   private boolean
-    can_control_apache,
-    can_control_cron,
-    can_control_mysql,
-    can_control_postgresql,
-    can_control_xfs,
-    can_control_xvfb,
-    can_vnc_console,
-    can_control_virtual_server
+      can_control_apache,
+      can_control_cron,
+      can_control_mysql,
+      can_control_postgresql,
+      can_control_xfs,
+      can_control_xvfb,
+      can_vnc_console,
+      can_control_virtual_server
   ;
 
   /**
@@ -90,7 +90,7 @@ public final class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public AccountHost() {
     // Do nothing
   }
@@ -163,31 +163,31 @@ public final class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
   }
 
   public Host getHost() throws IOException, SQLException {
-    Host obj=table.getConnector().getNet().getHost().get(server);
+    Host obj = table.getConnector().getNet().getHost().get(server);
     if (obj == null) {
-      throw new SQLException("Unable to find Host: "+server);
+      throw new SQLException("Unable to find Host: " + server);
     }
     return obj;
   }
 
   @Override
   public Table.TableID getTableID() {
-  return Table.TableID.BUSINESS_SERVERS;
+    return Table.TableID.BUSINESS_SERVERS;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     try {
-      pkey=result.getInt(1);
-      accounting=Account.Name.valueOf(result.getString(2));
-      server=result.getInt(3);
-      is_default=result.getBoolean(4);
-      can_control_apache=result.getBoolean(5);
-      can_control_cron=result.getBoolean(6);
-      can_control_mysql=result.getBoolean(7);
-      can_control_postgresql=result.getBoolean(8);
-      can_control_xfs=result.getBoolean(9);
-      can_control_xvfb=result.getBoolean(10);
+      pkey = result.getInt(1);
+      accounting = Account.Name.valueOf(result.getString(2));
+      server = result.getInt(3);
+      is_default = result.getBoolean(4);
+      can_control_apache = result.getBoolean(5);
+      can_control_cron = result.getBoolean(6);
+      can_control_mysql = result.getBoolean(7);
+      can_control_postgresql = result.getBoolean(8);
+      can_control_xfs = result.getBoolean(9);
+      can_control_xvfb = result.getBoolean(10);
       can_vnc_console = result.getBoolean(11);
       can_control_virtual_server = result.getBoolean(12);
     } catch (ValidationException e) {
@@ -202,16 +202,16 @@ public final class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
-      pkey=in.readCompressedInt();
-      accounting=Account.Name.valueOf(in.readUTF()).intern();
-      server=in.readCompressedInt();
-      is_default=in.readBoolean();
-      can_control_apache=in.readBoolean();
-      can_control_cron=in.readBoolean();
-      can_control_mysql=in.readBoolean();
-      can_control_postgresql=in.readBoolean();
-      can_control_xfs=in.readBoolean();
-      can_control_xvfb=in.readBoolean();
+      pkey = in.readCompressedInt();
+      accounting = Account.Name.valueOf(in.readUTF()).intern();
+      server = in.readCompressedInt();
+      is_default = in.readBoolean();
+      can_control_apache = in.readBoolean();
+      can_control_cron = in.readBoolean();
+      can_control_mysql = in.readBoolean();
+      can_control_postgresql = in.readBoolean();
+      can_control_xfs = in.readBoolean();
+      can_control_xvfb = in.readBoolean();
       can_vnc_console = in.readBoolean();
       can_control_virtual_server = in.readBoolean();
     } catch (ValidationException e) {
@@ -221,14 +221,14 @@ public final class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
 
   @Override
   public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws SQLException, IOException {
-    List<CannotRemoveReason<?>> reasons=new ArrayList<>();
+    List<CannotRemoveReason<?>> reasons = new ArrayList<>();
 
-    Account bu=getAccount();
+    Account bu = getAccount();
 
     // Do not remove the default unless it is the only one left
     if (
-      is_default
-      && bu.getAccountHosts().size()>1
+        is_default
+            && bu.getAccountHosts().size() > 1
     ) {
       reasons.add(new CannotRemoveReason<>("Not allowed to remove access to the default host while access to other hosts remains", bu));
     }
@@ -237,30 +237,30 @@ public final class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
     Server ao = se.getLinuxServer();
 
     // No children should be able to access the server
-    List<Account> bus=table.getConnector().getAccount().getAccount().getRows();
-    for (int c=0;c<bus.size();c++) {
+    List<Account> bus = table.getConnector().getAccount().getAccount().getRows();
+    for (int c = 0; c < bus.size(); c++) {
       if (bu.isAccountOrParentOf(bus.get(c))) {
-        Account bu2=bus.get(c);
+        Account bu2 = bus.get(c);
         if (!bu.equals(bu2) && bu2.getAccountHost(se) != null) {
-          reasons.add(new CannotRemoveReason<>("Child business "+bu2.getName()+" still has access to "+se, bu2));
+          reasons.add(new CannotRemoveReason<>("Child business " + bu2.getName() + " still has access to " + se, bu2));
         }
-        List<Package> pks=bu2.getPackages();
-        for (int d=0;d<pks.size();d++) {
-          Package pk=pks.get(d);
+        List<Package> pks = bu2.getPackages();
+        for (int d = 0; d < pks.size(); d++) {
+          Package pk = pks.get(d);
 
           // net_binds
           for (Bind nb : pk.getNetBinds()) {
             if (nb.getHost().equals(se)) {
-              String details=nb.getDetails();
+              String details = nb.getDetails();
               if (details != null) {
-                reasons.add(new CannotRemoveReason<>("Used for "+details+" on "+se.toStringImpl(), nb));
+                reasons.add(new CannotRemoveReason<>("Used for " + details + " on " + se.toStringImpl(), nb));
               } else {
-                IpAddress ia=nb.getIpAddress();
+                IpAddress ia = nb.getIpAddress();
                 Device nd = ia.getDevice();
                 if (nd != null) {
-                  reasons.add(new CannotRemoveReason<>("Used for port "+nb.getPort()+" on "+ia.getInetAddress()+" on "+nd.getDeviceId().getName()+" on "+se.toStringImpl(), nb));
+                  reasons.add(new CannotRemoveReason<>("Used for port " + nb.getPort() + " on " + ia.getInetAddress() + " on " + nd.getDeviceId().getName() + " on " + se.toStringImpl(), nb));
                 } else {
-                  reasons.add(new CannotRemoveReason<>("Used for port "+nb.getPort()+" on "+ia.getInetAddress()+" on "+se.toStringImpl(), nb));
+                  reasons.add(new CannotRemoveReason<>("Used for port " + nb.getPort() + " on " + ia.getInetAddress() + " on " + se.toStringImpl(), nb));
                 }
               }
             }
@@ -270,10 +270,10 @@ public final class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
           for (IpAddress ia : pk.getIPAddresses()) {
             Device nd = ia.getDevice();
             if (
-              nd != null
-              && se.equals(nd.getHost())
+                nd != null
+                    && se.equals(nd.getHost())
             ) {
-              reasons.add(new CannotRemoveReason<>("Used by IP address "+ia.getInetAddress()+" on "+nd.getDeviceId().getName()+" on "+se.toStringImpl(), ia));
+              reasons.add(new CannotRemoveReason<>("Used by IP address " + ia.getInetAddress() + " on " + nd.getDeviceId().getName() + " on " + se.toStringImpl(), ia));
             }
           }
 
@@ -281,45 +281,45 @@ public final class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
             // email_pipes
             for (Pipe ep : pk.getEmailPipes()) {
               if (ep.getLinuxServer().equals(ao)) {
-                reasons.add(new CannotRemoveReason<>("Used by email pipe '"+ep.getCommand()+"' on "+ao.getHostname(), ep));
+                reasons.add(new CannotRemoveReason<>("Used by email pipe '" + ep.getCommand() + "' on " + ao.getHostname(), ep));
               }
             }
 
             // httpd_sites
             for (Site hs : pk.getHttpdSites()) {
               if (hs.getLinuxServer().equals(ao)) {
-                reasons.add(new CannotRemoveReason<>("Used by website "+hs.getInstallDirectory()+" on "+ao.getHostname(), hs));
+                reasons.add(new CannotRemoveReason<>("Used by website " + hs.getInstallDirectory() + " on " + ao.getHostname(), hs));
               }
             }
 
             for (User un : pk.getUsernames()) {
               // linux_server_accounts
-              com.aoindustries.aoserv.client.linux.User la=un.getLinuxAccount();
+              com.aoindustries.aoserv.client.linux.User la = un.getLinuxAccount();
               if (la != null) {
-                UserServer lsa=la.getLinuxServerAccount(ao);
+                UserServer lsa = la.getLinuxServerAccount(ao);
                 if (lsa != null) {
-                  reasons.add(new CannotRemoveReason<>("Used by Linux account "+un.getUsername()+" on "+ao.getHostname(), lsa));
+                  reasons.add(new CannotRemoveReason<>("Used by Linux account " + un.getUsername() + " on " + ao.getHostname(), lsa));
                 }
               }
 
               // mysql_server_users
-              com.aoindustries.aoserv.client.mysql.User mu=un.getMySQLUser();
+              com.aoindustries.aoserv.client.mysql.User mu = un.getMySQLUser();
               if (mu != null) {
                 for (com.aoindustries.aoserv.client.mysql.Server ms : ao.getMySQLServers()) {
-                  com.aoindustries.aoserv.client.mysql.UserServer msu=mu.getMySQLServerUser(ms);
+                  com.aoindustries.aoserv.client.mysql.UserServer msu = mu.getMySQLServerUser(ms);
                   if (msu != null) {
-                    reasons.add(new CannotRemoveReason<>("Used by MySQL user "+un.getUsername()+" on "+ms.getName()+" on "+ao.getHostname(), msu));
+                    reasons.add(new CannotRemoveReason<>("Used by MySQL user " + un.getUsername() + " on " + ms.getName() + " on " + ao.getHostname(), msu));
                   }
                 }
               }
 
               // postgres_server_users
-              com.aoindustries.aoserv.client.postgresql.User pu=un.getPostgresUser();
+              com.aoindustries.aoserv.client.postgresql.User pu = un.getPostgresUser();
               if (pu != null) {
                 for (com.aoindustries.aoserv.client.postgresql.Server ps : ao.getPostgresServers()) {
-                  com.aoindustries.aoserv.client.postgresql.UserServer psu=pu.getPostgresServerUser(ps);
+                  com.aoindustries.aoserv.client.postgresql.UserServer psu = pu.getPostgresServerUser(ps);
                   if (psu != null) {
-                    reasons.add(new CannotRemoveReason<>("Used by PostgreSQL user "+un.getUsername()+" on "+ps.getName()+" on "+ao.getHostname(), psu));
+                    reasons.add(new CannotRemoveReason<>("Used by PostgreSQL user " + un.getUsername() + " on " + ps.getName() + " on " + ao.getHostname(), psu));
                   }
                 }
               }
@@ -327,39 +327,39 @@ public final class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
 
             for (Group lg : pk.getLinuxGroups()) {
               // linux_server_groups
-              GroupServer lsg=lg.getLinuxServerGroup(ao);
+              GroupServer lsg = lg.getLinuxServerGroup(ao);
               if (lsg != null) {
-                reasons.add(new CannotRemoveReason<>("Used by Linux group "+lg.getName()+" on "+ao.getHostname(), lsg));
+                reasons.add(new CannotRemoveReason<>("Used by Linux group " + lg.getName() + " on " + ao.getHostname(), lsg));
               }
             }
 
             // mysql_databases
             for (Database md : pk.getMySQLDatabases()) {
-              com.aoindustries.aoserv.client.mysql.Server ms=md.getMySQLServer();
+              com.aoindustries.aoserv.client.mysql.Server ms = md.getMySQLServer();
               if (ms.getLinuxServer().equals(ao)) {
-                reasons.add(new CannotRemoveReason<>("Used by MySQL database "+md.getName()+" on "+ms.getName()+" on "+ao.getHostname(), md));
+                reasons.add(new CannotRemoveReason<>("Used by MySQL database " + md.getName() + " on " + ms.getName() + " on " + ao.getHostname(), md));
               }
             }
 
             // postgres_databases
             for (com.aoindustries.aoserv.client.postgresql.Database pd : pk.getPostgresDatabases()) {
-              com.aoindustries.aoserv.client.postgresql.Server ps=pd.getPostgresServer();
+              com.aoindustries.aoserv.client.postgresql.Server ps = pd.getPostgresServer();
               if (ps.getLinuxServer().equals(ao)) {
-                reasons.add(new CannotRemoveReason<>("Used by PostgreSQL database "+pd.getName()+" on "+ps.getName()+" on "+ao.getHostname(), pd));
+                reasons.add(new CannotRemoveReason<>("Used by PostgreSQL database " + pd.getName() + " on " + ps.getName() + " on " + ao.getHostname(), pd));
               }
             }
 
             // email_domains
             for (Domain ed : pk.getEmailDomains()) {
               if (ed.getLinuxServer().equals(ao)) {
-                reasons.add(new CannotRemoveReason<>("Used by email domain "+ed.getDomain()+" on "+ao.getHostname(), ed));
+                reasons.add(new CannotRemoveReason<>("Used by email domain " + ed.getDomain() + " on " + ao.getHostname(), ed));
               }
             }
 
             // email_smtp_relays
             for (SmtpRelay esr : pk.getEmailSmtpRelays()) {
               if (esr.getLinuxServer().equals(ao)) {
-                reasons.add(new CannotRemoveReason<>("Used by email SMTP rule "+esr, esr));
+                reasons.add(new CannotRemoveReason<>("Used by email SMTP rule " + esr, esr));
               }
             }
           }

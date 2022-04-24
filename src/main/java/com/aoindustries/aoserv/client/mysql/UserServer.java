@@ -60,41 +60,41 @@ import java.util.List;
 public final class UserServer extends CachedObjectIntegerKey<UserServer> implements Removable, PasswordProtected, Disablable {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_USERNAME=1,
-    COLUMN_MYSQL_SERVER=2
+      COLUMN_PKEY = 0,
+      COLUMN_USERNAME = 1,
+      COLUMN_MYSQL_SERVER = 2
   ;
   static final String COLUMN_USERNAME_name = "username";
   static final String COLUMN_MYSQL_SERVER_name = "mysql_server";
 
   public static final int
-    UNLIMITED_QUESTIONS=0,
-    DEFAULT_MAX_QUESTIONS=UNLIMITED_QUESTIONS
+      UNLIMITED_QUESTIONS = 0,
+      DEFAULT_MAX_QUESTIONS = UNLIMITED_QUESTIONS
   ;
 
   public static final int
-    UNLIMITED_UPDATES=0,
-    DEFAULT_MAX_UPDATES=UNLIMITED_UPDATES
+      UNLIMITED_UPDATES = 0,
+      DEFAULT_MAX_UPDATES = UNLIMITED_UPDATES
   ;
 
   public static final int
-    UNLIMITED_CONNECTIONS=0,
-    DEFAULT_MAX_CONNECTIONS=UNLIMITED_CONNECTIONS
+      UNLIMITED_CONNECTIONS = 0,
+      DEFAULT_MAX_CONNECTIONS = UNLIMITED_CONNECTIONS
   ;
 
   public static final int
-    UNLIMITED_USER_CONNECTIONS=0,
-    DEFAULT_MAX_USER_CONNECTIONS=UNLIMITED_USER_CONNECTIONS
+      UNLIMITED_USER_CONNECTIONS = 0,
+      DEFAULT_MAX_USER_CONNECTIONS = UNLIMITED_USER_CONNECTIONS
   ;
 
-  public static final int MAX_HOST_LENGTH=60;
+  public static final int MAX_HOST_LENGTH = 60;
 
   /**
    * Convenience constants for the most commonly used host values.
    */
   public static final String
-    ANY_HOST="%",
-    ANY_LOCAL_HOST=null
+      ANY_HOST = "%",
+      ANY_LOCAL_HOST = null
   ;
 
   private User.Name username;
@@ -113,7 +113,7 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public UserServer() {
     // Do nothing
   }
@@ -124,8 +124,8 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
       throw new SQLException("Refusing to check if passwords set on special MySQL user: " + this);
     }
     return table.getConnector().requestBooleanQuery(true, AoservProtocol.CommandID.IS_MYSQL_SERVER_USER_PASSWORD_SET, pkey)
-      ? PasswordProtected.ALL
-      : PasswordProtected.NONE;
+        ? PasswordProtected.ALL
+        : PasswordProtected.NONE;
   }
 
   @Override
@@ -150,6 +150,7 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
   public List<PasswordChecker.Result> checkPassword(String password) throws IOException {
     return User.checkPassword(username, password);
   }
+
   /*
   public String checkPasswordDescribe(String password) {
     return MySQLUser.checkPasswordDescribe(username, password);
@@ -222,9 +223,9 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
   }
 
   public User getMySQLUser() throws SQLException, IOException {
-    User obj=table.getConnector().getMysql().getUser().get(username);
+    User obj = table.getConnector().getMysql().getUser().get(username);
     if (obj == null) {
-      throw new SQLException("Unable to find MySQLUser: "+username);
+      throw new SQLException("Unable to find MySQLUser: " + username);
     }
     return obj;
   }
@@ -257,7 +258,7 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
     return mysql_server;
   }
 
-  public Server getMySQLServer() throws IOException, SQLException{
+  public Server getMySQLServer() throws IOException, SQLException {
     // May be filtered
     return table.getConnector().getMysql().getServer().get(mysql_server);
   }
@@ -270,19 +271,19 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
   @Override
   public void init(ResultSet result) throws SQLException {
     try {
-      pkey=result.getInt(1);
+      pkey = result.getInt(1);
       username = User.Name.valueOf(result.getString(2));
-      mysql_server=result.getInt(3);
-      host=result.getString(4);
-      disable_log=result.getInt(5);
+      mysql_server = result.getInt(3);
+      host = result.getString(4);
+      disable_log = result.getInt(5);
       if (result.wasNull()) {
-        disable_log=-1;
+        disable_log = -1;
       }
-      predisable_password=result.getString(6);
-      max_questions=result.getInt(7);
-      max_updates=result.getInt(8);
-      max_connections=result.getInt(9);
-      max_user_connections=result.getInt(10);
+      predisable_password = result.getString(6);
+      max_questions = result.getInt(7);
+      max_updates = result.getInt(8);
+      max_connections = result.getInt(9);
+      max_user_connections = result.getInt(10);
     } catch (ValidationException e) {
       throw new SQLException(e);
     }
@@ -291,16 +292,16 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
-      pkey=in.readCompressedInt();
+      pkey = in.readCompressedInt();
       username = User.Name.valueOf(in.readUTF()).intern();
-      mysql_server=in.readCompressedInt();
-      host=InternUtils.intern(in.readNullUTF());
-      disable_log=in.readCompressedInt();
-      predisable_password=in.readNullUTF();
-      max_questions=in.readCompressedInt();
-      max_updates=in.readCompressedInt();
-      max_connections=in.readCompressedInt();
-      max_user_connections=in.readCompressedInt();
+      mysql_server = in.readCompressedInt();
+      host = InternUtils.intern(in.readNullUTF());
+      disable_log = in.readCompressedInt();
+      predisable_password = in.readNullUTF();
+      max_questions = in.readCompressedInt();
+      max_updates = in.readCompressedInt();
+      max_connections = in.readCompressedInt();
+      max_user_connections = in.readCompressedInt();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -308,19 +309,19 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
   @Override
   public List<CannotRemoveReason<UserServer>> getCannotRemoveReasons() throws SQLException, IOException {
-    List<CannotRemoveReason<UserServer>> reasons=new ArrayList<>();
+    List<CannotRemoveReason<UserServer>> reasons = new ArrayList<>();
     if (isSpecial()) {
       Server ms = getMySQLServer();
       reasons.add(
-        new CannotRemoveReason<>(
-          "Not allowed to remove a special MySQL user: "
-            + username
-            + " on "
-            + ms.getName()
-            + " on "
-            + ms.getLinuxServer().getHostname(),
-          this
-        )
+          new CannotRemoveReason<>(
+              "Not allowed to remove a special MySQL user: "
+                  + username
+                  + " on "
+                  + ms.getName()
+                  + " on "
+                  + ms.getLinuxServer().getHostname(),
+              this
+          )
       );
     }
     return reasons;
@@ -332,10 +333,10 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
       throw new SQLException("Refusing to remove special MySQL user: " + this);
     }
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.REMOVE,
-      Table.TableID.MYSQL_SERVER_USERS,
-      pkey
+        true,
+        AoservProtocol.CommandID.REMOVE,
+        Table.TableID.MYSQL_SERVER_USERS,
+        pkey
     );
   }
 
@@ -345,35 +346,35 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
       throw new SQLException("Refusing to set the password for a special MySQL user: " + this);
     }
 
-    AOServConnector connector=table.getConnector();
+    AOServConnector connector = table.getConnector();
     if (!connector.isSecure()) {
-      throw new IOException("Passwords for MySQL users may only be set when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure.");
+      throw new IOException("Passwords for MySQL users may only be set when using secure protocols.  Currently using the " + connector.getProtocol() + " protocol, which is not secure.");
     }
 
     connector.requestUpdate(
-      true,
-      AoservProtocol.CommandID.SET_MYSQL_SERVER_USER_PASSWORD,
-      new AOServConnector.UpdateRequest() {
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(pkey);
-          out.writeNullUTF(password);
-        }
+        true,
+        AoservProtocol.CommandID.SET_MYSQL_SERVER_USER_PASSWORD,
+        new AOServConnector.UpdateRequest() {
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(pkey);
+            out.writeNullUTF(password);
+          }
 
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code != AoservProtocol.DONE) {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code != AoservProtocol.DONE) {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
+            }
+          }
+
+          @Override
+          public void afterRelease() {
+            // Do nothing
           }
         }
-
-        @Override
-        public void afterRelease() {
-          // Do nothing
-        }
-      }
     );
   }
 
@@ -382,46 +383,46 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
       throw new SQLException("May not disable special MySQL user: " + username);
     }
     table.getConnector().requestUpdate(
-      true,
-      AoservProtocol.CommandID.SET_MYSQL_SERVER_USER_PREDISABLE_PASSWORD,
-      new AOServConnector.UpdateRequest() {
-        private IntList invalidateList;
+        true,
+        AoservProtocol.CommandID.SET_MYSQL_SERVER_USER_PREDISABLE_PASSWORD,
+        new AOServConnector.UpdateRequest() {
+          private IntList invalidateList;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(pkey);
-          out.writeNullUTF(password);
-        }
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(pkey);
+            out.writeNullUTF(password);
+          }
 
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            invalidateList=AOServConnector.readInvalidateList(in);
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              invalidateList = AOServConnector.readInvalidateList(in);
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
+            }
+          }
+
+          @Override
+          public void afterRelease() {
+            table.getConnector().tablesUpdated(invalidateList);
           }
         }
-
-        @Override
-        public void afterRelease() {
-          table.getConnector().tablesUpdated(invalidateList);
-        }
-      }
     );
   }
 
   @Override
   public String toStringImpl() throws IOException, SQLException {
-    return username+" on "+getMySQLServer().toStringImpl();
+    return username + " on " + getMySQLServer().toStringImpl();
   }
 
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
     out.writeUTF(username.toString());
-    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_4)<0) {
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_4) < 0) {
       out.writeCompressedInt(-1);
     } else {
       out.writeCompressedInt(mysql_server);

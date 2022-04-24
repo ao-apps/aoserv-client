@@ -52,11 +52,11 @@ import java.util.Objects;
 public final class SendmailServer extends CachedObjectIntegerKey<SendmailServer> {
 
   static final int
-    COLUMN_ID = 0,
-    COLUMN_AO_SERVER = 1,
-    COLUMN_PACKAGE = 3,
-    COLUMN_SERVER_CERTIFICATE = 5,
-    COLUMN_CLIENT_CERTIFICATE = 6
+      COLUMN_ID = 0,
+      COLUMN_AO_SERVER = 1,
+      COLUMN_PACKAGE = 3,
+      COLUMN_SERVER_CERTIFICATE = 5,
+      COLUMN_CLIENT_CERTIFICATE = 6
   ;
   static final String COLUMN_AO_SERVER_name = "ao_server";
   static final String COLUMN_NAME_name = "name";
@@ -142,7 +142,7 @@ public final class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public SendmailServer() {
     // Do nothing
   }

@@ -41,10 +41,11 @@ public final class OptionTable extends CachedTableIntegerKey<Option> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Option.COLUMN_REQUEST_name+'.'+Request.COLUMN_BRAND_name, ASCENDING),
-    new OrderBy(Option.COLUMN_REQUEST_name+'.'+Request.COLUMN_TIME_name, ASCENDING),
-    new OrderBy(Option.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(Option.COLUMN_REQUEST_name + '.' + Request.COLUMN_BRAND_name, ASCENDING),
+      new OrderBy(Option.COLUMN_REQUEST_name + '.' + Request.COLUMN_TIME_name, ASCENDING),
+      new OrderBy(Option.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

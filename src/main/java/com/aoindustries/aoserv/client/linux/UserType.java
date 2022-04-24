@@ -51,68 +51,68 @@ import java.util.List;
  */
 public final class UserType extends GlobalObjectStringKey<UserType> {
 
-  static final int COLUMN_NAME=0;
+  static final int COLUMN_NAME = 0;
   static final String COLUMN_DESCRIPTION_name = "description";
 
   /**
    * The different Linux account types.
    */
   public static final String
-    BACKUP="backup",
-    EMAIL="email",
-    FTPONLY="ftponly",
-    USER="user",
-    MERCENARY="mercenary",
-    SYSTEM="system",
-    APPLICATION="application"
+      BACKUP = "backup",
+      EMAIL = "email",
+      FTPONLY = "ftponly",
+      USER = "user",
+      MERCENARY = "mercenary",
+      SYSTEM = "system",
+      APPLICATION = "application"
   ;
 
-  private static final PosixPath[] backupShells={
-    Shell.BASH
+  private static final PosixPath[] backupShells = {
+      Shell.BASH
   };
 
-  private static final PosixPath[] emailShells={
-    Shell.PASSWD
+  private static final PosixPath[] emailShells = {
+      Shell.PASSWD
   };
 
-  private static final PosixPath[] ftpShells={
-    Shell.FTPONLY,
-    Shell.FTPPASSWD
+  private static final PosixPath[] ftpShells = {
+      Shell.FTPONLY,
+      Shell.FTPPASSWD
   };
 
-  private static final PosixPath[] mercenaryShells={
-    Shell.BASH
+  private static final PosixPath[] mercenaryShells = {
+      Shell.BASH
   };
 
-  private static final PosixPath[] systemShells={
-    Shell.BASH,
-    Shell.FALSE,
-    Shell.NOLOGIN,
-    Shell.SYNC,
-    Shell.HALT,
-    Shell.SHUTDOWN//,
-    //Shell.TRUE
+  private static final PosixPath[] systemShells = {
+      Shell.BASH,
+      Shell.FALSE,
+      Shell.NOLOGIN,
+      Shell.SYNC,
+      Shell.HALT,
+      Shell.SHUTDOWN//,
+  //Shell.TRUE
   };
 
-  private static final PosixPath[] applicationShells={
-    Shell.BASH,
-    Shell.FALSE//,
-    //Shell.NULL,
-    //Shell.TRUE
+  private static final PosixPath[] applicationShells = {
+      Shell.BASH,
+      Shell.FALSE//,
+  //Shell.NULL,
+  //Shell.TRUE
   };
 
-  private static final PosixPath[] userShells={
-    //Shell.ASH,
-    Shell.BASH,
-    //Shell.BASH2,
-    //Shell.BSH,
-    //Shell.CSH,
-    Shell.FALSE,
-    Shell.KSH,
-    Shell.SH,
-    Shell.TCSH,
-    Shell.GIT_SHELL//,
-    //Shell.TRUE
+  private static final PosixPath[] userShells = {
+      //Shell.ASH,
+      Shell.BASH,
+      //Shell.BASH2,
+      //Shell.BSH,
+      //Shell.CSH,
+      Shell.FALSE,
+      Shell.KSH,
+      Shell.SH,
+      Shell.TCSH,
+      Shell.GIT_SHELL//,
+  //Shell.TRUE
   };
 
   private String description;
@@ -124,7 +124,7 @@ public final class UserType extends GlobalObjectStringKey<UserType> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public UserType() {
     // Do nothing
   }
@@ -138,15 +138,15 @@ public final class UserType extends GlobalObjectStringKey<UserType> {
   }
 
   public List<Shell> getAllowedShells(AOServConnector connector) throws SQLException, IOException {
-    PosixPath[] paths=getShellList(pkey);
+    PosixPath[] paths = getShellList(pkey);
 
-    ShellTable shellTable=connector.getLinux().getShell();
-    int len=paths.length;
-    List<Shell> shells=new ArrayList<>(len);
-    for (int c=0;c<len;c++) {
-      Shell shell=shellTable.get(paths[c]);
+    ShellTable shellTable = connector.getLinux().getShell();
+    int len = paths.length;
+    List<Shell> shells = new ArrayList<>(len);
+    for (int c = 0; c < len; c++) {
+      Shell shell = shellTable.get(paths[c]);
       if (shell == null) {
-        throw new SQLException("Unable to find Shell: "+paths[c]);
+        throw new SQLException("Unable to find Shell: " + paths[c]);
       }
       shells.add(shell);
     }
@@ -198,7 +198,7 @@ public final class UserType extends GlobalObjectStringKey<UserType> {
     if (type.equals(APPLICATION)) {
       return applicationShells;
     }
-    throw new SQLException("Unknown type: "+type);
+    throw new SQLException("Unknown type: " + type);
   }
 
   @Override
@@ -219,8 +219,8 @@ public final class UserType extends GlobalObjectStringKey<UserType> {
 
   public static boolean canPostgresIdent(String type) {
     return
-      APPLICATION.equals(type)
-      || USER.equals(type);
+        APPLICATION.equals(type)
+            || USER.equals(type);
   }
 
   public boolean isAllowedShell(Shell shell) throws SQLException {
@@ -232,9 +232,9 @@ public final class UserType extends GlobalObjectStringKey<UserType> {
   }
 
   public static boolean isAllowedShell(String type, PosixPath path) throws SQLException {
-    PosixPath[] paths=getShellList(type);
-    int len=paths.length;
-    for (int c=0;c<len;c++) {
+    PosixPath[] paths = getShellList(type);
+    int len = paths.length;
+    for (int c = 0; c < len; c++) {
       if (paths[c].equals(path)) {
         return true;
       }
@@ -248,9 +248,9 @@ public final class UserType extends GlobalObjectStringKey<UserType> {
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readUTF().intern();
-    description=in.readUTF();
-    is_email=in.readBoolean();
+    pkey = in.readUTF().intern();
+    description = in.readUTF();
+    is_email = in.readBoolean();
   }
 
   @Override
@@ -267,10 +267,10 @@ public final class UserType extends GlobalObjectStringKey<UserType> {
 
   public static boolean canSetPassword(String type) {
     return
-      APPLICATION.equals(type)
-      || EMAIL.equals(type)
-      || FTPONLY.equals(type)
-      || USER.equals(type)
+        APPLICATION.equals(type)
+            || EMAIL.equals(type)
+            || FTPONLY.equals(type)
+            || USER.equals(type)
     ;
   }
 

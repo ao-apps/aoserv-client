@@ -48,8 +48,9 @@ public final class GroupTable extends CachedTableGroupNameKey<Group> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Group.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(Group.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -58,12 +59,12 @@ public final class GroupTable extends CachedTableGroupNameKey<Group> {
 
   public void addLinuxGroup(Group.Name name, Package packageObject, String type) throws IOException, SQLException {
     connector.requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.ADD,
-      Table.TableID.LINUX_GROUPS,
-      name,
-      packageObject.getName(),
-      type
+        true,
+        AoservProtocol.CommandID.ADD,
+        Table.TableID.LINUX_GROUPS,
+        name,
+        packageObject.getName(),
+        type
     );
   }
 
@@ -83,13 +84,13 @@ public final class GroupTable extends CachedTableGroupNameKey<Group> {
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-    String command=args[0];
+    String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_LINUX_GROUP)) {
       if (AOSH.checkParamCount(Command.ADD_LINUX_GROUP, args, 3, err)) {
         connector.getSimpleAOClient().addLinuxGroup(
-          AOSH.parseGroupName(args[1], "group"),
-          AOSH.parseAccountingCode(args[2], "package"),
-          args[3]
+            AOSH.parseGroupName(args[1], "group"),
+            AOSH.parseAccountingCode(args[2], "package"),
+            args[3]
         );
       }
       return true;
@@ -99,7 +100,7 @@ public final class GroupTable extends CachedTableGroupNameKey<Group> {
         out.println(validationResult.isValid());
         out.flush();
         if (!validationResult.isValid()) {
-          err.print("aosh: "+Command.CHECK_LINUX_GROUP_NAME+": ");
+          err.print("aosh: " + Command.CHECK_LINUX_GROUP_NAME + ": ");
           err.println(validationResult.toString());
           err.flush();
         }
@@ -109,13 +110,13 @@ public final class GroupTable extends CachedTableGroupNameKey<Group> {
       if (AOSH.checkParamCount(Command.IS_LINUX_GROUP_NAME_AVAILABLE, args, 1, err)) {
         try {
           out.println(
-            connector.getSimpleAOClient().isLinuxGroupNameAvailable(
-              AOSH.parseGroupName(args[1], "groupname")
-            )
+              connector.getSimpleAOClient().isLinuxGroupNameAvailable(
+                  AOSH.parseGroupName(args[1], "groupname")
+              )
           );
           out.flush();
         } catch (IllegalArgumentException iae) {
-          err.print("aosh: "+Command.IS_LINUX_GROUP_NAME_AVAILABLE+": ");
+          err.print("aosh: " + Command.IS_LINUX_GROUP_NAME_AVAILABLE + ": ");
           err.println(iae.getMessage());
           err.flush();
         }
@@ -124,7 +125,7 @@ public final class GroupTable extends CachedTableGroupNameKey<Group> {
     } else if (command.equalsIgnoreCase(Command.REMOVE_LINUX_GROUP)) {
       if (AOSH.checkParamCount(Command.REMOVE_LINUX_GROUP, args, 1, err)) {
         connector.getSimpleAOClient().removeLinuxGroup(
-          AOSH.parseGroupName(args[1], "group")
+            AOSH.parseGroupName(args[1], "group")
         );
       }
       return true;

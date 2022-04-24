@@ -51,9 +51,10 @@ public final class MajordomoServerTable extends CachedTableIntegerKey<MajordomoS
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(MajordomoServer.COLUMN_DOMAIN_name+'.'+Domain.COLUMN_DOMAIN_name, ASCENDING),
-    new OrderBy(MajordomoServer.COLUMN_DOMAIN_name+'.'+Domain.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
+      new OrderBy(MajordomoServer.COLUMN_DOMAIN_name + '.' + Domain.COLUMN_DOMAIN_name, ASCENDING),
+      new OrderBy(MajordomoServer.COLUMN_DOMAIN_name + '.' + Domain.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -61,19 +62,19 @@ public final class MajordomoServerTable extends CachedTableIntegerKey<MajordomoS
   }
 
   void addMajordomoServer(
-    Domain emailDomain,
-    UserServer linuxServerAccount,
-    GroupServer linuxServerGroup,
-    MajordomoVersion majordomoVersion
+      Domain emailDomain,
+      UserServer linuxServerAccount,
+      GroupServer linuxServerGroup,
+      MajordomoVersion majordomoVersion
   ) throws IOException, SQLException {
     connector.requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.ADD,
-      Table.TableID.MAJORDOMO_SERVERS,
-      emailDomain.getPkey(),
-      linuxServerAccount.getPkey(),
-      linuxServerGroup.getPkey(),
-      majordomoVersion.getVersion()
+        true,
+        AoservProtocol.CommandID.ADD,
+        Table.TableID.MAJORDOMO_SERVERS,
+        emailDomain.getPkey(),
+        linuxServerAccount.getPkey(),
+        linuxServerGroup.getPkey(),
+        majordomoVersion.getVersion()
     );
   }
 
@@ -83,12 +84,12 @@ public final class MajordomoServerTable extends CachedTableIntegerKey<MajordomoS
   }
 
   public List<MajordomoServer> getMajordomoServers(Server ao) throws IOException, SQLException {
-    int aoPKey=ao.getPkey();
-    List<MajordomoServer> cached=getRows();
-    int size=cached.size();
-    List<MajordomoServer> matches=new ArrayList<>(size);
-    for (int c=0;c<size;c++) {
-      MajordomoServer ms=cached.get(c);
+    int aoPKey = ao.getPkey();
+    List<MajordomoServer> cached = getRows();
+    int size = cached.size();
+    List<MajordomoServer> matches = new ArrayList<>(size);
+    for (int c = 0; c < size; c++) {
+      MajordomoServer ms = cached.get(c);
       if (ms.getDomain().getLinuxServer_host_id() == aoPKey) {
         matches.add(ms);
       }
@@ -103,23 +104,23 @@ public final class MajordomoServerTable extends CachedTableIntegerKey<MajordomoS
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-    String command=args[0];
+    String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_MAJORDOMO_SERVER)) {
       if (AOSH.checkParamCount(Command.ADD_MAJORDOMO_SERVER, args, 5, err)) {
         connector.getSimpleAOClient().addMajordomoServer(
-          AOSH.parseDomainName(args[1], "domain"),
-          args[2],
-          AOSH.parseLinuxUserName(args[3], "linux_account"),
-          AOSH.parseGroupName(args[4], "linux_group"),
-          args[5]
+            AOSH.parseDomainName(args[1], "domain"),
+            args[2],
+            AOSH.parseLinuxUserName(args[3], "linux_account"),
+            AOSH.parseGroupName(args[4], "linux_group"),
+            args[5]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.REMOVE_MAJORDOMO_SERVER)) {
       if (AOSH.checkParamCount(Command.REMOVE_MAJORDOMO_SERVER, args, 2, err)) {
         connector.getSimpleAOClient().removeMajordomoServer(
-          AOSH.parseDomainName(args[1], "domain"),
-          args[2]
+            AOSH.parseDomainName(args[1], "domain"),
+            args[2]
         );
       }
       return true;

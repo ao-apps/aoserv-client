@@ -42,8 +42,8 @@ public final class CertificateName extends CachedObjectIntegerKey<CertificateNam
   public static final String WILDCARD_PREFIX = "*.";
 
   static final int
-    COLUMN_PKEY = 0,
-    COLUMN_SSL_CERTIFICATE = 1
+      COLUMN_PKEY = 0,
+      COLUMN_SSL_CERTIFICATE = 1
   ;
   static final String COLUMN_SSL_CERTIFICATE_name = "ssl_certificate";
   static final String COLUMN_IS_COMMON_NAME_name = "is_common_name";
@@ -61,7 +61,7 @@ public final class CertificateName extends CachedObjectIntegerKey<CertificateNam
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public CertificateName() {
     // Do nothing
   }

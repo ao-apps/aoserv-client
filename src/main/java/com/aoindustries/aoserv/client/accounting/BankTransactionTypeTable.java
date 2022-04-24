@@ -41,8 +41,9 @@ public final class BankTransactionTypeTable extends CachedTableStringKey<BankTra
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(BankTransactionType.COLUMN_DISPLAY_name, ASCENDING)
+      new OrderBy(BankTransactionType.COLUMN_DISPLAY_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

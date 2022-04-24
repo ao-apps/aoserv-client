@@ -41,8 +41,9 @@ public final class PackageCategoryTable extends GlobalTableStringKey<PackageCate
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(PackageCategory.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(PackageCategory.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

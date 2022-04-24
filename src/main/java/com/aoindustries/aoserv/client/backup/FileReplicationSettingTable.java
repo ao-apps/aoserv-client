@@ -53,12 +53,13 @@ public final class FileReplicationSettingTable extends CachedTableIntegerKey<Fil
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(FileReplicationSetting.COLUMN_REPLICATION_name+'.'+FileReplication.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(FileReplicationSetting.COLUMN_REPLICATION_name+'.'+FileReplication.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(FileReplicationSetting.COLUMN_REPLICATION_name+'.'+FileReplication.COLUMN_BACKUP_PARTITION_name+'.'+BackupPartition.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
-    new OrderBy(FileReplicationSetting.COLUMN_REPLICATION_name+'.'+FileReplication.COLUMN_BACKUP_PARTITION_name+'.'+BackupPartition.COLUMN_PATH_name, ASCENDING),
-    new OrderBy(FileReplicationSetting.COLUMN_PATH_name, ASCENDING)
+      new OrderBy(FileReplicationSetting.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_SERVER_name + '.' + Host.COLUMN_PACKAGE_name + '.' + Package.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(FileReplicationSetting.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_SERVER_name + '.' + Host.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(FileReplicationSetting.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_BACKUP_PARTITION_name + '.' + BackupPartition.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
+      new OrderBy(FileReplicationSetting.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_BACKUP_PARTITION_name + '.' + BackupPartition.COLUMN_PATH_name, ASCENDING),
+      new OrderBy(FileReplicationSetting.COLUMN_PATH_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -67,13 +68,13 @@ public final class FileReplicationSettingTable extends CachedTableIntegerKey<Fil
 
   int addFileBackupSetting(FileReplication replication, String path, boolean backupEnabled, boolean required) throws IOException, SQLException {
     return connector.requestIntQueryIL(
-      true,
-      AoservProtocol.CommandID.ADD,
-      Table.TableID.FILE_BACKUP_SETTINGS,
-      replication.getPkey(),
-      path,
-      backupEnabled,
-      required
+        true,
+        AoservProtocol.CommandID.ADD,
+        Table.TableID.FILE_BACKUP_SETTINGS,
+        replication.getPkey(),
+        path,
+        backupEnabled,
+        required
     );
   }
 
@@ -103,16 +104,16 @@ public final class FileReplicationSettingTable extends CachedTableIntegerKey<Fil
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-    String command=args[0];
+    String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_FILE_BACKUP_SETTING)) {
       if (AOSH.checkParamCount(Command.ADD_FILE_BACKUP_SETTING, args, 4, err)) {
         out.println(
-          connector.getSimpleAOClient().addFileBackupSetting(
-            AOSH.parseInt(args[1], "replication"),
-            args[2],
-            AOSH.parseBoolean(args[3], "backup_enabled"),
-            AOSH.parseBoolean(args[4], "required")
-          )
+            connector.getSimpleAOClient().addFileBackupSetting(
+                AOSH.parseInt(args[1], "replication"),
+                args[2],
+                AOSH.parseBoolean(args[3], "backup_enabled"),
+                AOSH.parseBoolean(args[4], "required")
+            )
         );
         out.flush();
       }
@@ -120,18 +121,18 @@ public final class FileReplicationSettingTable extends CachedTableIntegerKey<Fil
     } else if (command.equalsIgnoreCase(Command.REMOVE_FILE_BACKUP_SETTING)) {
       if (AOSH.checkParamCount(Command.REMOVE_FILE_BACKUP_SETTING, args, 2, err)) {
         connector.getSimpleAOClient().removeFileBackupSetting(
-          AOSH.parseInt(args[1], "replication"),
-          args[2]
+            AOSH.parseInt(args[1], "replication"),
+            args[2]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_FILE_BACKUP_SETTING)) {
       if (AOSH.checkParamCount(Command.SET_FILE_BACKUP_SETTING, args, 4, err)) {
         connector.getSimpleAOClient().setFileBackupSetting(
-          AOSH.parseInt(args[1], "replication"),
-          args[2],
-          AOSH.parseBoolean(args[3], "backup_enabled"),
-          AOSH.parseBoolean(args[4], "required")
+            AOSH.parseInt(args[1], "replication"),
+            args[2],
+            AOSH.parseBoolean(args[3], "backup_enabled"),
+            AOSH.parseBoolean(args[4], "required")
         );
       }
       return true;
@@ -140,52 +141,52 @@ public final class FileReplicationSettingTable extends CachedTableIntegerKey<Fil
   }
 
   void setFileBackupSettings(
-    final FileReplication ffr,
-    final List<String> paths,
-    final List<Boolean> backupEnableds,
-    final List<Boolean> requireds
+      final FileReplication ffr,
+      final List<String> paths,
+      final List<Boolean> backupEnableds,
+      final List<Boolean> requireds
   ) throws IOException, SQLException {
     if (paths.size() != backupEnableds.size()) {
-      throw new IllegalArgumentException("paths.size() != backupEnableds.size(): "+paths.size()+" != "+backupEnableds.size());
+      throw new IllegalArgumentException("paths.size() != backupEnableds.size(): " + paths.size() + " != " + backupEnableds.size());
     }
     if (paths.size() != requireds.size()) {
-      throw new IllegalArgumentException("paths.size() != requireds.size(): "+paths.size()+" != "+requireds.size());
+      throw new IllegalArgumentException("paths.size() != requireds.size(): " + paths.size() + " != " + requireds.size());
     }
 
     connector.requestUpdate(
-      true,
-      AoservProtocol.CommandID.SET_FILE_BACKUP_SETTINGS_ALL_AT_ONCE,
-      new AOServConnector.UpdateRequest() {
-        private IntList invalidateList;
+        true,
+        AoservProtocol.CommandID.SET_FILE_BACKUP_SETTINGS_ALL_AT_ONCE,
+        new AOServConnector.UpdateRequest() {
+          private IntList invalidateList;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(ffr.getPkey());
-          int size = paths.size();
-          out.writeCompressedInt(size);
-          for (int c=0;c<size;c++) {
-            out.writeUTF(paths.get(c));
-            out.writeBoolean(backupEnableds.get(c));
-            out.writeBoolean(requireds.get(c));
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(ffr.getPkey());
+            int size = paths.size();
+            out.writeCompressedInt(size);
+            for (int c = 0; c < size; c++) {
+              out.writeUTF(paths.get(c));
+              out.writeBoolean(backupEnableds.get(c));
+              out.writeBoolean(requireds.get(c));
+            }
+          }
+
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              invalidateList = AOServConnector.readInvalidateList(in);
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
+            }
+          }
+
+          @Override
+          public void afterRelease() {
+            connector.tablesUpdated(invalidateList);
           }
         }
-
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            invalidateList=AOServConnector.readInvalidateList(in);
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
-          }
-        }
-
-        @Override
-        public void afterRelease() {
-          connector.tablesUpdated(invalidateList);
-        }
-      }
     );
   }
 }

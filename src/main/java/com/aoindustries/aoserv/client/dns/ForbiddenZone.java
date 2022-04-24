@@ -43,7 +43,7 @@ import java.sql.SQLException;
  */
 public final class ForbiddenZone extends GlobalObjectStringKey<ForbiddenZone> {
 
-  static final int COLUMN_ZONE=0;
+  static final int COLUMN_ZONE = 0;
   static final String COLUMN_ZONE_name = "zone";
 
   /**
@@ -52,7 +52,7 @@ public final class ForbiddenZone extends GlobalObjectStringKey<ForbiddenZone> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public ForbiddenZone() {
     // Do nothing
   }
@@ -76,12 +76,12 @@ public final class ForbiddenZone extends GlobalObjectStringKey<ForbiddenZone> {
 
   @Override
   public void init(ResultSet result) throws SQLException {
-    pkey=result.getString(1);
+    pkey = result.getString(1);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readUTF().intern();
+    pkey = in.readUTF().intern();
   }
 
   @Override

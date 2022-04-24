@@ -47,7 +47,7 @@ import java.util.List;
  */
 public final class BlackholeAddress extends CachedObjectIntegerKey<BlackholeAddress> implements Removable {
 
-  static final int COLUMN_EMAIL_ADDRESS=0;
+  static final int COLUMN_EMAIL_ADDRESS = 0;
   static final String COLUMN_EMAIL_ADDRESS_name = "email_address";
 
   /**
@@ -56,7 +56,7 @@ public final class BlackholeAddress extends CachedObjectIntegerKey<BlackholeAddr
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public BlackholeAddress() {
     // Do nothing
   }
@@ -89,7 +89,7 @@ public final class BlackholeAddress extends CachedObjectIntegerKey<BlackholeAddr
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readCompressedInt();
+    pkey = in.readCompressedInt();
   }
 
   @Override
@@ -100,10 +100,10 @@ public final class BlackholeAddress extends CachedObjectIntegerKey<BlackholeAddr
   @Override
   public void remove() throws IOException, SQLException {
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.REMOVE,
-      Table.TableID.BLACKHOLE_EMAIL_ADDRESSES,
-      pkey
+        true,
+        AoservProtocol.CommandID.REMOVE,
+        Table.TableID.BLACKHOLE_EMAIL_ADDRESSES,
+        pkey
     );
   }
 

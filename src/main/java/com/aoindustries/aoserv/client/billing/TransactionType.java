@@ -50,13 +50,13 @@ public final class TransactionType extends GlobalObjectStringKey<TransactionType
 
   private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, TransactionType.class);
 
-  static final int COLUMN_NAME=0;
+  static final int COLUMN_NAME = 0;
   static final String COLUMN_NAME_name = "name";
 
   public static final String
-    HTTPD="httpd",
-    PAYMENT="payment",
-    VIRTUAL="virtual"
+      HTTPD = "httpd",
+      PAYMENT = "payment",
+      VIRTUAL = "virtual"
   ;
 
   /**
@@ -71,7 +71,7 @@ public final class TransactionType extends GlobalObjectStringKey<TransactionType
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public TransactionType() {
     // Do nothing
   }

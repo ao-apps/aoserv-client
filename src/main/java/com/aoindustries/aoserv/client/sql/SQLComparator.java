@@ -42,39 +42,39 @@ public final class SQLComparator<T> implements Comparator<T> {
   private final boolean[] sortOrders;
 
   public SQLComparator(
-    AOServConnector connector,
-    SQLExpression[] exprs,
-    boolean[] sortOrders
+      AOServConnector connector,
+      SQLExpression[] exprs,
+      boolean[] sortOrders
   ) {
-    this.connector=connector;
-    this.exprs=exprs;
-    this.sortOrders=sortOrders;
+    this.connector = connector;
+    this.exprs = exprs;
+    this.sortOrders = sortOrders;
   }
 
   @Override
   public int compare(T o1, T o2) {
     try {
       if (o1 instanceof AOServObject) {
-        AOServObject<?, ?> ao1 = (AOServObject)o1;
+        AOServObject<?, ?> ao1 = (AOServObject) o1;
         if (o2 instanceof AOServObject) {
-          AOServObject<?, ?> ao2 = (AOServObject)o2;
+          AOServObject<?, ?> ao2 = (AOServObject) o2;
           return ao1.compareTo(connector, ao2, exprs, sortOrders);
         } else if (o2 instanceof Object[]) {
-          return ao1.compareTo(connector, (Object[])o2, exprs, sortOrders);
+          return ao1.compareTo(connector, (Object[]) o2, exprs, sortOrders);
         } else if (o2 instanceof Comparable) {
-          return ao1.compareTo(connector, (Comparable)o2, exprs, sortOrders);
+          return ao1.compareTo(connector, (Comparable) o2, exprs, sortOrders);
         } else {
           throw new IllegalArgumentException("O2 must be either AOServObject, Object[], or Comparable");
         }
       } else if (o1 instanceof Object[]) {
         @SuppressWarnings({"unchecked"})
-        T[] oa1 = (T[])o1;
+        T[] oa1 = (T[]) o1;
         if (o2 instanceof AOServObject) {
-          AOServObject<?, ?> ao2 = (AOServObject)o2;
+          AOServObject<?, ?> ao2 = (AOServObject) o2;
           return -ao2.compareTo(connector, oa1, exprs, sortOrders);
         } else if (o2 instanceof Object[]) {
           @SuppressWarnings({"unchecked"})
-          T[] oa2 = (T[])o2;
+          T[] oa2 = (T[]) o2;
           return compare(oa1, oa2);
         } else if (o2 instanceof Comparable) {
           throw new IllegalArgumentException("Comparing of Object[] and Comparable not supported.");
@@ -83,9 +83,9 @@ public final class SQLComparator<T> implements Comparator<T> {
         }
       } else if (o1 instanceof Comparable) {
         @SuppressWarnings({"unchecked"})
-        Comparable<Object> c1 = (Comparable)o1;
+        Comparable<Object> c1 = (Comparable) o1;
         if (o2 instanceof AOServObject) {
-          AOServObject<?, ?> ao2 = (AOServObject)o2;
+          AOServObject<?, ?> ao2 = (AOServObject) o2;
           return -ao2.compareTo(connector, c1, exprs, sortOrders);
         } else if (o2 instanceof Object[]) {
           throw new IllegalArgumentException("Comparing of Comparable and Object[] not supported.");

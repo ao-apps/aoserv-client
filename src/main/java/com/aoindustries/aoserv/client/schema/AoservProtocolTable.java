@@ -40,8 +40,9 @@ public final class AoservProtocolTable extends GlobalTableStringKey<AoservProtoc
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(AoservProtocol.COLUMN_CREATED_name, ASCENDING)
+      new OrderBy(AoservProtocol.COLUMN_CREATED_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

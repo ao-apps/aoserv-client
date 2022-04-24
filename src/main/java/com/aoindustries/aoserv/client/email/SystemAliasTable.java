@@ -43,9 +43,10 @@ public final class SystemAliasTable extends CachedTableIntegerKey<SystemAlias> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(SystemAlias.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
-    new OrderBy(SystemAlias.COLUMN_ADDRESS_name, ASCENDING)
+      new OrderBy(SystemAlias.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
+      new OrderBy(SystemAlias.COLUMN_ADDRESS_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

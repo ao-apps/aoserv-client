@@ -55,8 +55,8 @@ import java.util.List;
 public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implements Removable, Disablable {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_PACKAGE=1
+      COLUMN_PKEY = 0,
+      COLUMN_PACKAGE = 1
   ;
   static final String COLUMN_AO_SERVER_name = "ao_server";
   static final String COLUMN_HOST_name = "host";
@@ -65,7 +65,7 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
   /**
    * Keep the SMTP relay history for three months (92 days).
    */
-  public static final int HISTORY_DAYS=92;
+  public static final int HISTORY_DAYS = 92;
 
   private Account.Name packageName;
   private int ao_server;
@@ -83,7 +83,7 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public SmtpRelay() {
     // Do nothing
   }
@@ -99,7 +99,7 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 
   @Override
   public boolean canEnable() throws IOException, SQLException {
-    DisableLog dl=getDisableLog();
+    DisableLog dl = getDisableLog();
     if (dl == null) {
       return false;
     } else {
@@ -123,14 +123,14 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
     switch (i) {
       case COLUMN_PKEY: return pkey;
       case COLUMN_PACKAGE: return packageName;
-      case 2: return ao_server == -1?null:ao_server;
+      case 2: return ao_server == -1 ? null : ao_server;
       case 3: return host;
       case 4: return type;
       case 5: return created;
       case 6: return last_refreshed;
       case 7: return refresh_count;
       case 8: return expiration;
-      case 9: return disable_log == -1?null:disable_log;
+      case 9: return disable_log == -1 ? null : disable_log;
       default: throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
@@ -150,9 +150,9 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
     if (disable_log == -1) {
       return null;
     }
-    DisableLog obj=table.getConnector().getAccount().getDisableLog().get(disable_log);
+    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disable_log);
     if (obj == null) {
-      throw new SQLException("Unable to find DisableLog: "+disable_log);
+      throw new SQLException("Unable to find DisableLog: " + disable_log);
     }
     return obj;
   }
@@ -167,9 +167,9 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
   }
 
   public SmtpRelayType getType() throws SQLException, IOException {
-    SmtpRelayType esrt=table.getConnector().getEmail().getSmtpRelayType().get(type);
+    SmtpRelayType esrt = table.getConnector().getEmail().getSmtpRelayType().get(type);
     if (esrt == null) {
-      throw new SQLException("Unable to find EmailSmtpRelayType: "+type);
+      throw new SQLException("Unable to find EmailSmtpRelayType: " + type);
     }
     return esrt;
   }
@@ -200,9 +200,9 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
     if (ao_server == -1) {
       return null;
     }
-    Server ao=table.getConnector().getLinux().getServer().get(ao_server);
+    Server ao = table.getConnector().getLinux().getServer().get(ao_server);
     if (ao == null) {
-      throw new SQLException("Unable to find linux.Server: "+ao_server);
+      throw new SQLException("Unable to find linux.Server: " + ao_server);
     }
     return ao;
   }
@@ -219,21 +219,21 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
   @Override
   public void init(ResultSet result) throws SQLException {
     try {
-      pkey=result.getInt(1);
+      pkey = result.getInt(1);
       packageName = Account.Name.valueOf(result.getString(2));
-      ao_server=result.getInt(3);
+      ao_server = result.getInt(3);
       if (result.wasNull()) {
-        ao_server=-1;
+        ao_server = -1;
       }
-      host=HostAddress.valueOf(result.getString(4));
-      type=result.getString(5);
+      host = HostAddress.valueOf(result.getString(4));
+      type = result.getString(5);
       created = UnmodifiableTimestamp.valueOf(result.getTimestamp(6));
       last_refreshed = UnmodifiableTimestamp.valueOf(result.getTimestamp(7));
-      refresh_count=result.getInt(8);
+      refresh_count = result.getInt(8);
       expiration = UnmodifiableTimestamp.valueOf(result.getTimestamp(9));
-      disable_log=result.getInt(10);
+      disable_log = result.getInt(10);
       if (result.wasNull()) {
-        disable_log=-1;
+        disable_log = -1;
       }
     } catch (ValidationException e) {
       throw new SQLException(e);
@@ -260,10 +260,10 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 
   public void refresh(long minDuration) throws IOException, SQLException {
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.REFRESH_EMAIL_SMTP_RELAY,
-      pkey,
-      minDuration
+        true,
+        AoservProtocol.CommandID.REFRESH_EMAIL_SMTP_RELAY,
+        pkey,
+        minDuration
     );
   }
 
@@ -275,16 +275,16 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
   @Override
   public void remove() throws IOException, SQLException {
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.REMOVE,
-      Table.TableID.EMAIL_SMTP_RELAYS,
-      pkey
+        true,
+        AoservProtocol.CommandID.REMOVE,
+        Table.TableID.EMAIL_SMTP_RELAYS,
+        pkey
     );
   }
 
   @Override
   public String toStringImpl() throws SQLException, IOException {
-    return packageName+" "+getType().getVerb()+" from "+host+" to "+getLinuxServer().getHostname();
+    return packageName + " " + getType().getVerb() + " from " + host + " to " + getLinuxServer().getHostname();
   }
 
   @Override

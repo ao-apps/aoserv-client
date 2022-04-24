@@ -48,11 +48,12 @@ public final class ContextDataSourceTable extends CachedTableIntegerKey<ContextD
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(ContextDataSource.COLUMN_TOMCAT_CONTEXT_name+'.'+Context.COLUMN_TOMCAT_SITE_name+'.'+Site.COLUMN_HTTPD_SITE_name+'.'+com.aoindustries.aoserv.client.web.Site.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(ContextDataSource.COLUMN_TOMCAT_CONTEXT_name+'.'+Context.COLUMN_TOMCAT_SITE_name+'.'+Site.COLUMN_HTTPD_SITE_name+'.'+com.aoindustries.aoserv.client.web.Site.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
-    new OrderBy(ContextDataSource.COLUMN_TOMCAT_CONTEXT_name+'.'+Context.COLUMN_PATH_name, ASCENDING),
-    new OrderBy(ContextDataSource.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(ContextDataSource.COLUMN_TOMCAT_CONTEXT_name + '.' + Context.COLUMN_TOMCAT_SITE_name + '.' + Site.COLUMN_HTTPD_SITE_name + '.' + com.aoindustries.aoserv.client.web.Site.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(ContextDataSource.COLUMN_TOMCAT_CONTEXT_name + '.' + Context.COLUMN_TOMCAT_SITE_name + '.' + Site.COLUMN_HTTPD_SITE_name + '.' + com.aoindustries.aoserv.client.web.Site.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
+      new OrderBy(ContextDataSource.COLUMN_TOMCAT_CONTEXT_name + '.' + Context.COLUMN_PATH_name, ASCENDING),
+      new OrderBy(ContextDataSource.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -60,31 +61,31 @@ public final class ContextDataSourceTable extends CachedTableIntegerKey<ContextD
   }
 
   int addHttpdTomcatDataSource(
-    Context htc,
-    String name,
-    String driverClassName,
-    String url,
-    String username,
-    String password,
-    int maxActive,
-    int maxIdle,
-    int maxWait,
-    String validationQuery
+      Context htc,
+      String name,
+      String driverClassName,
+      String url,
+      String username,
+      String password,
+      int maxActive,
+      int maxIdle,
+      int maxWait,
+      String validationQuery
   ) throws IOException, SQLException {
     return connector.requestIntQueryIL(
-      true,
-      AoservProtocol.CommandID.ADD,
-      Table.TableID.HTTPD_TOMCAT_DATA_SOURCES,
-      htc.getPkey(),
-      name,
-      driverClassName,
-      url,
-      username,
-      password,
-      maxActive,
-      maxIdle,
-      maxWait,
-      validationQuery == null ? "" : validationQuery
+        true,
+        AoservProtocol.CommandID.ADD,
+        Table.TableID.HTTPD_TOMCAT_DATA_SOURCES,
+        htc.getPkey(),
+        name,
+        driverClassName,
+        url,
+        username,
+        password,
+        maxActive,
+        maxIdle,
+        maxWait,
+        validationQuery == null ? "" : validationQuery
     );
   }
 
@@ -99,7 +100,7 @@ public final class ContextDataSourceTable extends CachedTableIntegerKey<ContextD
 
   ContextDataSource getHttpdTomcatDataSource(Context htc, String name) throws IOException, SQLException {
     // Use index first
-    List<ContextDataSource> dataSources=getHttpdTomcatDataSources(htc);
+    List<ContextDataSource> dataSources = getHttpdTomcatDataSources(htc);
     for (ContextDataSource dataSource : dataSources) {
       if (dataSource.getName().equals(name)) {
         return dataSource;
@@ -115,24 +116,24 @@ public final class ContextDataSourceTable extends CachedTableIntegerKey<ContextD
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-    String command=args[0];
+    String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_HTTPD_TOMCAT_DATA_SOURCE)) {
       if (AOSH.checkParamCount(Command.ADD_HTTPD_TOMCAT_DATA_SOURCE, args, 12, err)) {
         out.println(
-          connector.getSimpleAOClient().addHttpdTomcatDataSource(
-            args[1],
-            args[2],
-            args[3],
-            args[4],
-            args[5],
-            args[6],
-            args[7],
-            args[8],
-            AOSH.parseInt(args[9], "max_active"),
-            AOSH.parseInt(args[10], "max_idle"),
-            AOSH.parseInt(args[11], "max_wait"),
-            args[12]
-          )
+            connector.getSimpleAOClient().addHttpdTomcatDataSource(
+                args[1],
+                args[2],
+                args[3],
+                args[4],
+                args[5],
+                args[6],
+                args[7],
+                args[8],
+                AOSH.parseInt(args[9], "max_active"),
+                AOSH.parseInt(args[10], "max_idle"),
+                AOSH.parseInt(args[11], "max_wait"),
+                args[12]
+            )
         );
         out.flush();
       }
@@ -145,19 +146,19 @@ public final class ContextDataSourceTable extends CachedTableIntegerKey<ContextD
     } else if (command.equalsIgnoreCase(Command.UPDATE_HTTPD_TOMCAT_DATA_SOURCE)) {
       if (AOSH.checkParamCount(Command.UPDATE_HTTPD_TOMCAT_DATA_SOURCE, args, 13, err)) {
         connector.getSimpleAOClient().updateHttpdTomcatDataSource(
-          args[1],
-          args[2],
-          args[3],
-          args[4],
-          args[5],
-          args[6],
-          args[7],
-          args[8],
-          args[9],
-          AOSH.parseInt(args[10], "max_active"),
-          AOSH.parseInt(args[11], "max_idle"),
-          AOSH.parseInt(args[12], "max_wait"),
-          args[13]
+            args[1],
+            args[2],
+            args[3],
+            args[4],
+            args[5],
+            args[6],
+            args[7],
+            args[8],
+            args[9],
+            AOSH.parseInt(args[10], "max_active"),
+            AOSH.parseInt(args[11], "max_idle"),
+            AOSH.parseInt(args[12], "max_wait"),
+            args[13]
         );
       }
       return true;

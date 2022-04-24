@@ -46,8 +46,8 @@ import java.util.List;
 public final class JkMount extends CachedObjectIntegerKey<JkMount> implements Removable {
 
   static final int
-    COLUMN_PKEY = 0,
-    COLUMN_HTTPD_TOMCAT_SITE = 1
+      COLUMN_PKEY = 0,
+      COLUMN_HTTPD_TOMCAT_SITE = 1
   ;
   static final String COLUMN_HTTPD_TOMCAT_SITE_name = "httpd_tomcat_site";
   static final String COLUMN_PATH_name = "path";
@@ -59,15 +59,15 @@ public final class JkMount extends CachedObjectIntegerKey<JkMount> implements Re
    */
   public static boolean isValidPath(String path) {
     return
-      path.length() > 1
-      && path.charAt(0) == '/'
-      && !path.contains("//")
-      && !path.contains("..")
-      && path.indexOf('"') == -1
-      && path.indexOf('\\') == -1
-      && path.indexOf('\n') == -1
-      && path.indexOf('\r') == -1
-      && path.indexOf('\0') == -1
+        path.length() > 1
+            && path.charAt(0) == '/'
+            && !path.contains("//")
+            && !path.contains("..")
+            && path.indexOf('"') == -1
+            && path.indexOf('\\') == -1
+            && path.indexOf('\n') == -1
+            && path.indexOf('\r') == -1
+            && path.indexOf('\0') == -1
     ;
   }
 
@@ -81,7 +81,7 @@ public final class JkMount extends CachedObjectIntegerKey<JkMount> implements Re
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public JkMount() {
     // Do nothing
   }

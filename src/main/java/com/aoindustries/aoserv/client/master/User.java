@@ -48,18 +48,18 @@ import java.sql.SQLException;
  */
 public final class User extends CachedObjectUserNameKey<User> {
 
-  static final int COLUMN_USERNAME=0;
+  static final int COLUMN_USERNAME = 0;
   static final String COLUMN_USERNAME_name = "username";
 
   private boolean
-    is_active,
-    can_access_accounting,
-    can_access_bank_account,
-    can_invalidate_tables,
-    can_access_admin_web,
-    is_dns_admin,
-    is_router,
-    is_cluster_admin
+      is_active,
+      can_access_accounting,
+      can_access_bank_account,
+      can_invalidate_tables,
+      can_access_admin_web,
+      is_dns_admin,
+      is_router,
+      is_cluster_admin
   ;
 
   /**
@@ -68,7 +68,7 @@ public final class User extends CachedObjectUserNameKey<User> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public User() {
     // Do nothing
   }
@@ -84,7 +84,7 @@ public final class User extends CachedObjectUserNameKey<User> {
       pkey                   = com.aoindustries.aoserv.client.account.User.Name.valueOf(result.getString(1));
       is_active              = result.getBoolean(2);
       can_access_accounting  = result.getBoolean(3);
-      can_access_bank_account= result.getBoolean(4);
+      can_access_bank_account = result.getBoolean(4);
       can_invalidate_tables  = result.getBoolean(5);
       can_access_admin_web   = result.getBoolean(6);
       is_dns_admin           = result.getBoolean(7);
@@ -107,7 +107,7 @@ public final class User extends CachedObjectUserNameKey<User> {
       out.writeBoolean(false);
     } // is_ticket_admin
     out.writeBoolean(is_dns_admin);
-    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_118)<0) {
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_118) < 0) {
       out.writeBoolean(false);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_65) >= 0) {

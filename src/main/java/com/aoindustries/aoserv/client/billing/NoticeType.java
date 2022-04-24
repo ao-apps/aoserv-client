@@ -40,17 +40,17 @@ import java.sql.SQLException;
  */
 public final class NoticeType extends GlobalObjectStringKey<NoticeType> {
 
-  static final int COLUMN_TYPE=0;
+  static final int COLUMN_TYPE = 0;
   static final String COLUMN_TYPE_name = "type";
 
   private String description;
 
   public static final String
-    NONPAY="nonpay",
-    BADCARD="badcard",
-    DISABLE_WARNING="disable_warning",
-    DISABLED="disabled",
-    ENABLED="enabled"
+      NONPAY = "nonpay",
+      BADCARD = "badcard",
+      DISABLE_WARNING = "disable_warning",
+      DISABLED = "disabled",
+      ENABLED = "enabled"
   ;
 
   /**
@@ -59,7 +59,7 @@ public final class NoticeType extends GlobalObjectStringKey<NoticeType> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public NoticeType() {
     // Do nothing
   }
@@ -96,8 +96,8 @@ public final class NoticeType extends GlobalObjectStringKey<NoticeType> {
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readUTF().intern();
-    description=in.readUTF();
+    pkey = in.readUTF().intern();
+    description = in.readUTF();
   }
 
   @Override

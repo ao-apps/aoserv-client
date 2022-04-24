@@ -48,11 +48,12 @@ public final class ListAddressTable extends CachedTableIntegerKey<ListAddress> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(ListAddress.COLUMN_EMAIL_ADDRESS_name+'.'+Address.COLUMN_DOMAIN_name+'.'+Domain.COLUMN_DOMAIN_name, ASCENDING),
-    new OrderBy(ListAddress.COLUMN_EMAIL_ADDRESS_name+'.'+Address.COLUMN_DOMAIN_name+'.'+Domain.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
-    new OrderBy(ListAddress.COLUMN_EMAIL_ADDRESS_name+'.'+Address.COLUMN_ADDRESS_name, ASCENDING),
-    new OrderBy(ListAddress.COLUMN_EMAIL_LIST_name+'.'+List.COLUMN_PATH_name, ASCENDING)
+      new OrderBy(ListAddress.COLUMN_EMAIL_ADDRESS_name + '.' + Address.COLUMN_DOMAIN_name + '.' + Domain.COLUMN_DOMAIN_name, ASCENDING),
+      new OrderBy(ListAddress.COLUMN_EMAIL_ADDRESS_name + '.' + Address.COLUMN_DOMAIN_name + '.' + Domain.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
+      new OrderBy(ListAddress.COLUMN_EMAIL_ADDRESS_name + '.' + Address.COLUMN_ADDRESS_name, ASCENDING),
+      new OrderBy(ListAddress.COLUMN_EMAIL_LIST_name + '.' + List.COLUMN_PATH_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -61,11 +62,11 @@ public final class ListAddressTable extends CachedTableIntegerKey<ListAddress> {
 
   int addEmailListAddress(Address emailAddressObject, List emailListObject) throws IOException, SQLException {
     return connector.requestIntQueryIL(
-      true,
-      AoservProtocol.CommandID.ADD,
-      Table.TableID.EMAIL_LIST_ADDRESSES,
-      emailAddressObject.getPkey(),
-      emailListObject.getPkey()
+        true,
+        AoservProtocol.CommandID.ADD,
+        Table.TableID.EMAIL_LIST_ADDRESSES,
+        emailAddressObject.getPkey(),
+        emailListObject.getPkey()
     );
   }
 
@@ -80,22 +81,22 @@ public final class ListAddressTable extends CachedTableIntegerKey<ListAddress> {
 
   java.util.List<Address> getEmailAddresses(List list) throws IOException, SQLException {
     // Use the index first
-    java.util.List<ListAddress> cached=getEmailListAddresses(list);
-    int len=cached.size();
-    java.util.List<Address> eas=new ArrayList<>(len);
-    for (int c=0;c<len;c++) {
+    java.util.List<ListAddress> cached = getEmailListAddresses(list);
+    int len = cached.size();
+    java.util.List<Address> eas = new ArrayList<>(len);
+    for (int c = 0; c < len; c++) {
       eas.add(cached.get(c).getEmailAddress());
     }
     return eas;
   }
 
   ListAddress getEmailListAddress(Address ea, List list) throws IOException, SQLException {
-    int pkey=ea.getPkey();
+    int pkey = ea.getPkey();
     // Use the index first
-    java.util.List<ListAddress> cached=getEmailListAddresses(list);
-    int size=cached.size();
+    java.util.List<ListAddress> cached = getEmailListAddresses(list);
+    int size = cached.size();
     for (int c = 0; c < size; c++) {
-      ListAddress ela=cached.get(c);
+      ListAddress ela = cached.get(c);
       if (ela.getEmailAddress_pkey() == pkey) {
         return ela;
       }
@@ -109,10 +110,10 @@ public final class ListAddressTable extends CachedTableIntegerKey<ListAddress> {
 
   java.util.List<List> getEmailLists(Address ea) throws IOException, SQLException {
     // Use the cache first
-    java.util.List<ListAddress> cached=getEmailListAddresses(ea);
-    int len=cached.size();
-    java.util.List<List> els=new ArrayList<>(len);
-    for (int c=0;c<len;c++) {
+    java.util.List<ListAddress> cached = getEmailListAddresses(ea);
+    int len = cached.size();
+    java.util.List<List> els = new ArrayList<>(len);
+    for (int c = 0; c < len; c++) {
       els.add(cached.get(c).getEmailList());
     }
     return els;
@@ -120,11 +121,11 @@ public final class ListAddressTable extends CachedTableIntegerKey<ListAddress> {
 
   java.util.List<ListAddress> getEnabledEmailListAddresses(Address ea) throws IOException, SQLException {
     // Use the cache first
-    java.util.List<ListAddress> cached=getEmailListAddresses(ea);
-    int size=cached.size();
-    java.util.List<ListAddress> matches=new ArrayList<>(size);
+    java.util.List<ListAddress> cached = getEmailListAddresses(ea);
+    int size = cached.size();
+    java.util.List<ListAddress> matches = new ArrayList<>(size);
     for (int c = 0; c < size; c++) {
-      ListAddress ela=cached.get(c);
+      ListAddress ela = cached.get(c);
       if (!ela.getEmailList().isDisabled()) {
         matches.add(ela);
       }
@@ -133,12 +134,12 @@ public final class ListAddressTable extends CachedTableIntegerKey<ListAddress> {
   }
 
   public java.util.List<ListAddress> getEmailListAddresses(Server ao) throws IOException, SQLException {
-    int aoPKey=ao.getPkey();
+    int aoPKey = ao.getPkey();
     java.util.List<ListAddress> cached = getRows();
     int len = cached.size();
-    java.util.List<ListAddress> matches=new ArrayList<>(len);
+    java.util.List<ListAddress> matches = new ArrayList<>(len);
     for (int c = 0; c < len; c++) {
-      ListAddress list=cached.get(c);
+      ListAddress list = cached.get(c);
       if (list.getEmailAddress().getDomain().getLinuxServer_host_id() == aoPKey) {
         matches.add(list);
       }
@@ -153,28 +154,28 @@ public final class ListAddressTable extends CachedTableIntegerKey<ListAddress> {
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-    String command=args[0];
+    String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_EMAIL_LIST_ADDRESS)) {
       if (AOSH.checkMinParamCount(Command.ADD_EMAIL_LIST_ADDRESS, args, 3, err)) {
-        if ((args.length%3) != 1) {
-          err.println("aosh: "+Command.ADD_EMAIL_LIST_ADDRESS+": must have multiples of three number of parameters");
+        if ((args.length % 3) != 1) {
+          err.println("aosh: " + Command.ADD_EMAIL_LIST_ADDRESS + ": must have multiples of three number of parameters");
           err.flush();
         } else {
-          for (int c=1;c<args.length;c+=3) {
-            String addr=args[c];
-            int pos=addr.indexOf('@');
+          for (int c = 1; c < args.length; c += 3) {
+            String addr = args[c];
+            int pos = addr.indexOf('@');
             if (pos == -1) {
-              err.print("aosh: "+Command.ADD_EMAIL_LIST_ADDRESS+": invalid email address: ");
+              err.print("aosh: " + Command.ADD_EMAIL_LIST_ADDRESS + ": invalid email address: ");
               err.println(addr);
               err.flush();
             } else {
               out.println(
-                connector.getSimpleAOClient().addEmailListAddress(
-                  addr.substring(0, pos),
-                  AOSH.parseDomainName(addr.substring(pos+1), "address"),
-                  AOSH.parseUnixPath(args[c+1], "path"),
-                  args[c+2]
-                )
+                  connector.getSimpleAOClient().addEmailListAddress(
+                      addr.substring(0, pos),
+                      AOSH.parseDomainName(addr.substring(pos + 1), "address"),
+                      AOSH.parseUnixPath(args[c + 1], "path"),
+                      args[c + 2]
+                  )
               );
               out.flush();
             }
@@ -184,18 +185,18 @@ public final class ListAddressTable extends CachedTableIntegerKey<ListAddress> {
       return true;
     } else if (command.equalsIgnoreCase(Command.REMOVE_EMAIL_LIST_ADDRESS)) {
       if (AOSH.checkParamCount(Command.REMOVE_EMAIL_LIST_ADDRESS, args, 3, err)) {
-        String addr=args[1];
-        int pos=addr.indexOf('@');
+        String addr = args[1];
+        int pos = addr.indexOf('@');
         if (pos == -1) {
-          err.print("aosh: "+Command.REMOVE_EMAIL_LIST_ADDRESS+": invalid email address: ");
+          err.print("aosh: " + Command.REMOVE_EMAIL_LIST_ADDRESS + ": invalid email address: ");
           err.println(addr);
           err.flush();
         } else {
           connector.getSimpleAOClient().removeEmailListAddress(
-            addr.substring(0, pos),
-            AOSH.parseDomainName(addr.substring(pos+1), "address"),
-            AOSH.parseUnixPath(args[2], "path"),
-            args[3]
+              addr.substring(0, pos),
+              AOSH.parseDomainName(addr.substring(pos + 1), "address"),
+              AOSH.parseUnixPath(args[2], "path"),
+              args[3]
           );
         }
       }

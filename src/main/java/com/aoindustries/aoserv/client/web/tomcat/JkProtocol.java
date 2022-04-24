@@ -47,12 +47,12 @@ import java.sql.SQLException;
  */
 public final class JkProtocol extends GlobalObjectStringKey<JkProtocol> {
 
-  static final int COLUMN_PROTOCOL=0;
+  static final int COLUMN_PROTOCOL = 0;
   static final String COLUMN_PROTOCOL_name = "protocol";
 
   public static final String
-    AJP12="ajp12",
-    AJP13="ajp13"
+      AJP12 = "ajp12",
+      AJP13 = "ajp13"
   ;
 
   /**
@@ -61,7 +61,7 @@ public final class JkProtocol extends GlobalObjectStringKey<JkProtocol> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public JkProtocol() {
     // Do nothing
   }
@@ -75,9 +75,9 @@ public final class JkProtocol extends GlobalObjectStringKey<JkProtocol> {
   }
 
   public AppProtocol getProtocol(AOServConnector connector) throws SQLException, IOException {
-    AppProtocol protocol=connector.getNet().getAppProtocol().get(pkey);
+    AppProtocol protocol = connector.getNet().getAppProtocol().get(pkey);
     if (protocol == null) {
-      throw new SQLException("Unable to find Protocol: "+pkey);
+      throw new SQLException("Unable to find Protocol: " + pkey);
     }
     return protocol;
   }
@@ -89,12 +89,12 @@ public final class JkProtocol extends GlobalObjectStringKey<JkProtocol> {
 
   @Override
   public void init(ResultSet result) throws SQLException {
-    pkey=result.getString(1);
+    pkey = result.getString(1);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readUTF().intern();
+    pkey = in.readUTF().intern();
   }
 
   @Override

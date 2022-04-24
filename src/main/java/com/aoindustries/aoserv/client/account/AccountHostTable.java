@@ -50,10 +50,11 @@ public final class AccountHostTable extends CachedTableIntegerKey<AccountHost> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(AccountHost.COLUMN_ACCOUNTING_name, ASCENDING),
-    new OrderBy(AccountHost.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(AccountHost.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(AccountHost.COLUMN_ACCOUNTING_name, ASCENDING),
+      new OrderBy(AccountHost.COLUMN_SERVER_name + '.' + Host.COLUMN_PACKAGE_name + '.' + Package.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(AccountHost.COLUMN_SERVER_name + '.' + Host.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -80,9 +81,9 @@ public final class AccountHostTable extends CachedTableIntegerKey<AccountHost> {
   public List<Account> getAccounts(Host server) throws IOException, SQLException {
     // Use the cache and convert
     List<AccountHost> cached = getAccountHosts(server);
-    int size=cached.size();
-    List<Account> businesses=new ArrayList<>(size);
-    for (int c=0;c<size;c++) {
+    int size = cached.size();
+    List<Account> businesses = new ArrayList<>(size);
+    for (int c = 0; c < size; c++) {
       businesses.add(cached.get(c).getAccount());
     }
     return businesses;
@@ -93,9 +94,9 @@ public final class AccountHostTable extends CachedTableIntegerKey<AccountHost> {
 
     // Use the index first
     List<AccountHost> cached = getAccountHosts(account);
-    int size=cached.size();
-    for (int c=0;c<size;c++) {
-      AccountHost bs=cached.get(c);
+    int size = cached.size();
+    for (int c = 0; c < size; c++) {
+      AccountHost bs = cached.get(c);
       if (bs.getHost_id() == host_id) {
         return bs;
       }
@@ -106,9 +107,9 @@ public final class AccountHostTable extends CachedTableIntegerKey<AccountHost> {
   Host getDefaultHost(Account business) throws IOException, SQLException {
     // Use index first
     List<AccountHost> cached = getAccountHosts(business);
-    int size=cached.size();
-    for (int c=0;c<size;c++) {
-      AccountHost bs=cached.get(c);
+    int size = cached.size();
+    for (int c = 0; c < size; c++) {
+      AccountHost bs = cached.get(c);
       if (bs.isDefault()) {
         return bs.getHost();
       }
@@ -123,14 +124,14 @@ public final class AccountHostTable extends CachedTableIntegerKey<AccountHost> {
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
-    String command=args[0];
+    String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_BUSINESS_SERVER)) {
       if (AOSH.checkParamCount(Command.ADD_BUSINESS_SERVER, args, 2, err)) {
         out.println(
-          connector.getSimpleAOClient().addAccountHost(
-            AOSH.parseAccountingCode(args[1], "business"),
-            args[2]
-          )
+            connector.getSimpleAOClient().addAccountHost(
+                AOSH.parseAccountingCode(args[1], "business"),
+                args[2]
+            )
         );
         out.flush();
       }
@@ -138,16 +139,16 @@ public final class AccountHostTable extends CachedTableIntegerKey<AccountHost> {
     } else if (command.equalsIgnoreCase(Command.REMOVE_BUSINESS_SERVER)) {
       if (AOSH.checkParamCount(Command.REMOVE_BUSINESS_SERVER, args, 2, err)) {
         connector.getSimpleAOClient().removeAccountHost(
-          AOSH.parseAccountingCode(args[1], "business"),
-          args[2]
+            AOSH.parseAccountingCode(args[1], "business"),
+            args[2]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_DEFAULT_BUSINESS_SERVER)) {
       if (AOSH.checkParamCount(Command.SET_DEFAULT_BUSINESS_SERVER, args, 2, err)) {
         connector.getSimpleAOClient().setDefaultAccountHost(
-          AOSH.parseAccountingCode(args[1], "business"),
-          args[2]
+            AOSH.parseAccountingCode(args[1], "business"),
+            args[2]
         );
       }
       return true;

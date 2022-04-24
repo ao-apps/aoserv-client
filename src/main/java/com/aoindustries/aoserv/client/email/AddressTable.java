@@ -51,10 +51,11 @@ public final class AddressTable extends CachedTableIntegerKey<Address> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Address.COLUMN_DOMAIN_name+'.'+Domain.COLUMN_DOMAIN_name, ASCENDING),
-    new OrderBy(Address.COLUMN_DOMAIN_name+'.'+Domain.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
-    new OrderBy(Address.COLUMN_ADDRESS_name, ASCENDING)
+      new OrderBy(Address.COLUMN_DOMAIN_name + '.' + Domain.COLUMN_DOMAIN_name, ASCENDING),
+      new OrderBy(Address.COLUMN_DOMAIN_name + '.' + Domain.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
+      new OrderBy(Address.COLUMN_ADDRESS_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -67,11 +68,11 @@ public final class AddressTable extends CachedTableIntegerKey<Address> {
       throw new SQLException("Invalid email address: " + result.toString());
     }
     return connector.requestIntQueryIL(
-      true,
-      AoservProtocol.CommandID.ADD,
-      Table.TableID.EMAIL_ADDRESSES,
-      address,
-      domainObject.getPkey()
+        true,
+        AoservProtocol.CommandID.ADD,
+        Table.TableID.EMAIL_ADDRESSES,
+        address,
+        domainObject.getPkey()
     );
   }
 
@@ -95,10 +96,10 @@ public final class AddressTable extends CachedTableIntegerKey<Address> {
   }
 
   public List<Address> getEmailAddresses(Server ao) throws IOException, SQLException {
-    int aoPKey=ao.getPkey();
+    int aoPKey = ao.getPkey();
     List<Address> addresses = getRows();
     int len = addresses.size();
-    List<Address> matches=new ArrayList<>(len);
+    List<Address> matches = new ArrayList<>(len);
     for (int c = 0; c < len; c++) {
       Address address = addresses.get(c);
       if (address.getDomain().getLinuxServer_host_id() == aoPKey) {
@@ -115,21 +116,21 @@ public final class AddressTable extends CachedTableIntegerKey<Address> {
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-    String command=args[0];
+    String command = args[0];
     if (command.equalsIgnoreCase(Command.CHECK_EMAIL_ADDRESS)) {
       if (AOSH.checkMinParamCount(Command.CHECK_EMAIL_ADDRESS, args, 1, err)) {
-        for (int c=1;c<args.length;c++) {
-          String addr=args[c];
+        for (int c = 1; c < args.length; c++) {
+          String addr = args[c];
           ValidationResult validationResult = Email.validate(addr);
-          if (args.length>2) {
+          if (args.length > 2) {
             out.print(addr);
             out.print(": ");
           }
           out.println(validationResult.isValid());
           out.flush();
           if (!validationResult.isValid()) {
-            err.print("aosh: "+Command.CHECK_EMAIL_ADDRESS+": invalid email address: ");
-            if (args.length>2) {
+            err.print("aosh: " + Command.CHECK_EMAIL_ADDRESS + ": invalid email address: ");
+            if (args.length > 2) {
               err.print(addr);
               err.print(": ");
             }
@@ -141,24 +142,24 @@ public final class AddressTable extends CachedTableIntegerKey<Address> {
       return true;
     } else if (command.equalsIgnoreCase(Command.REMOVE_EMAIL_ADDRESS)) {
       if (AOSH.checkMinParamCount(Command.REMOVE_EMAIL_ADDRESS, args, 2, err)) {
-        if ((args.length&1) != 0) {
-          for (int c=1;c<args.length;c+=2) {
-            String addr=args[c];
-            int pos=addr.indexOf('@');
+        if ((args.length & 1) != 0) {
+          for (int c = 1; c < args.length; c += 2) {
+            String addr = args[c];
+            int pos = addr.indexOf('@');
             if (pos == -1) {
-              err.print("aosh: "+Command.REMOVE_EMAIL_ADDRESS+": invalid email address: ");
+              err.print("aosh: " + Command.REMOVE_EMAIL_ADDRESS + ": invalid email address: ");
               err.println(addr);
               err.flush();
             } else {
               connector.getSimpleAOClient().removeEmailAddress(
-                addr.substring(0, pos),
-                AOSH.parseDomainName(addr.substring(pos+1), "address"),
-                args[c+1]
+                  addr.substring(0, pos),
+                  AOSH.parseDomainName(addr.substring(pos + 1), "address"),
+                  args[c + 1]
               );
             }
           }
         } else {
-          throw new IllegalArgumentException("aosh: "+Command.REMOVE_EMAIL_ADDRESS+": must have even number of parameters.");
+          throw new IllegalArgumentException("aosh: " + Command.REMOVE_EMAIL_ADDRESS + ": must have even number of parameters.");
         }
       }
       return true;

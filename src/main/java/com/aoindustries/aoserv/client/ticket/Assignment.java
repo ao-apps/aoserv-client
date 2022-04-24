@@ -45,10 +45,10 @@ import java.sql.SQLException;
 public final class Assignment extends CachedObjectIntegerKey<Assignment> {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_TICKET=1,
-    COLUMN_RESELLER=2,
-    COLUMN_ADMINISTRATOR=3
+      COLUMN_PKEY = 0,
+      COLUMN_TICKET = 1,
+      COLUMN_RESELLER = 2,
+      COLUMN_ADMINISTRATOR = 3
   ;
   static final String COLUMN_PKEY_name = "pkey";
   static final String COLUMN_TICKET_name = "ticket";
@@ -65,7 +65,7 @@ public final class Assignment extends CachedObjectIntegerKey<Assignment> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Assignment() {
     // Do nothing
   }
@@ -84,7 +84,7 @@ public final class Assignment extends CachedObjectIntegerKey<Assignment> {
   public Ticket getTicket() throws IOException, SQLException {
     Ticket t = table.getConnector().getTicket().getTicket().get(ticket);
     if (t == null) {
-      throw new SQLException("Unable to find Ticket: "+ticket);
+      throw new SQLException("Unable to find Ticket: " + ticket);
     }
     return t;
   }
@@ -92,7 +92,7 @@ public final class Assignment extends CachedObjectIntegerKey<Assignment> {
   public Reseller getReseller() throws IOException, SQLException {
     Reseller r = table.getConnector().getReseller().getReseller().get(reseller);
     if (r == null) {
-      throw new SQLException("Unable to find Reseller: "+reseller);
+      throw new SQLException("Unable to find Reseller: " + reseller);
     }
     return r;
   }
@@ -141,7 +141,7 @@ public final class Assignment extends CachedObjectIntegerKey<Assignment> {
 
   @Override
   public String toStringImpl() {
-    return ticket+"|"+pkey+'|'+reseller+'|'+administrator;
+    return ticket + "|" + pkey + '|' + reseller + '|' + administrator;
   }
 
   @Override

@@ -52,7 +52,7 @@ public final class ProcessorType extends GlobalObjectStringKey<ProcessorType> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public ProcessorType() {
     // Do nothing
   }
@@ -88,7 +88,7 @@ public final class ProcessorType extends GlobalObjectStringKey<ProcessorType> {
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readUTF().intern();
+    pkey = in.readUTF().intern();
     sortOrder = in.readShort();
   }
 

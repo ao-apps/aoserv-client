@@ -52,11 +52,11 @@ public abstract class CachedTableIntegerKey<V extends CachedObjectIntegerKey<V>>
     if (pkey == null) {
       return null;
     } else if (pkey instanceof Integer) {
-      return get(((Integer)pkey).intValue());
+      return get(((Integer) pkey).intValue());
     } else if (pkey instanceof String) {
-      return get(Integer.parseInt((String)pkey));
+      return get(Integer.parseInt((String) pkey));
     } else {
-      throw new IllegalArgumentException("pkey is neither an Integer nor a String: "+pkey);
+      throw new IllegalArgumentException("pkey is neither an Integer nor a String: " + pkey);
     }
   }
 

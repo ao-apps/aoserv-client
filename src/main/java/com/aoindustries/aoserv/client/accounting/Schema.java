@@ -35,19 +35,34 @@ import java.util.List;
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
   private final BankTable Bank;
-  public BankTable getBank() {return Bank;}
+
+  public BankTable getBank() {
+    return Bank;
+  }
 
   private final BankAccountTable BankAccount;
-  public BankAccountTable getBankAccount() {return BankAccount;}
+
+  public BankAccountTable getBankAccount() {
+    return BankAccount;
+  }
 
   private final BankTransactionTable BankTransaction;
-  public BankTransactionTable getBankTransaction() {return BankTransaction;}
+
+  public BankTransactionTable getBankTransaction() {
+    return BankTransaction;
+  }
 
   private final BankTransactionTypeTable BankTransactionType;
-  public BankTransactionTypeTable getBankTransactionType() {return BankTransactionType;}
+
+  public BankTransactionTypeTable getBankTransactionType() {
+    return BankTransactionType;
+  }
 
   private final ExpenseCategoryTable ExpenseCategory;
-  public ExpenseCategoryTable getExpenseCategory() {return ExpenseCategory;}
+
+  public ExpenseCategoryTable getExpenseCategory() {
+    return ExpenseCategory;
+  }
 
   private final List<? extends AOServTable<?, ?>> tables;
 

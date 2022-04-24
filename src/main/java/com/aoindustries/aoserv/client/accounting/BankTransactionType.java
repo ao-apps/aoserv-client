@@ -39,12 +39,12 @@ import java.sql.SQLException;
  */
 public final class BankTransactionType extends CachedObjectStringKey<BankTransactionType> {
 
-  static final int COLUMN_NAME=0;
+  static final int COLUMN_NAME = 0;
   static final String COLUMN_DISPLAY_name = "display";
 
   private String
-    display,
-    description
+      display,
+      description
   ;
 
   private boolean isNegative;
@@ -55,7 +55,7 @@ public final class BankTransactionType extends CachedObjectStringKey<BankTransac
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public BankTransactionType() {
     // Do nothing
   }
@@ -102,10 +102,10 @@ public final class BankTransactionType extends CachedObjectStringKey<BankTransac
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readUTF().intern();
-    display=in.readUTF();
-    description=in.readUTF();
-    isNegative=in.readBoolean();
+    pkey = in.readUTF().intern();
+    display = in.readUTF();
+    description = in.readUTF();
+    isNegative = in.readBoolean();
   }
 
   @Override

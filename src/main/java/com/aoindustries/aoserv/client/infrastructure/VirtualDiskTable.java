@@ -49,10 +49,11 @@ public final class VirtualDiskTable extends CachedTableIntegerKey<VirtualDisk> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(VirtualDisk.COLUMN_VIRTUAL_SERVER_name+'.'+VirtualServer.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(VirtualDisk.COLUMN_VIRTUAL_SERVER_name+'.'+VirtualServer.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(VirtualDisk.COLUMN_DEVICE_name, ASCENDING)
+      new OrderBy(VirtualDisk.COLUMN_VIRTUAL_SERVER_name + '.' + VirtualServer.COLUMN_SERVER_name + '.' + Host.COLUMN_PACKAGE_name + '.' + Package.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(VirtualDisk.COLUMN_VIRTUAL_SERVER_name + '.' + VirtualServer.COLUMN_SERVER_name + '.' + Host.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(VirtualDisk.COLUMN_DEVICE_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -76,7 +77,7 @@ public final class VirtualDiskTable extends CachedTableIntegerKey<VirtualDisk> {
   @Override
   @SuppressWarnings("deprecation")
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-    String command=args[0];
+    String command = args[0];
     if (command.equalsIgnoreCase(Command.VERIFY_VIRTUAL_DISK)) {
       if (AOSH.checkParamCount(Command.VERIFY_VIRTUAL_DISK, args, 2, err)) {
         long lastVerified = connector.getSimpleAOClient().verifyVirtualDisk(args[1], args[2]);

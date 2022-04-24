@@ -43,9 +43,10 @@ public final class ProcessorTable extends CachedTableStringKey<Processor> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Processor.COLUMN_ACCOUNTING_name, ASCENDING),
-    new OrderBy(Processor.COLUMN_PROVIDER_ID_name, ASCENDING)
+      new OrderBy(Processor.COLUMN_ACCOUNTING_name, ASCENDING),
+      new OrderBy(Processor.COLUMN_PROVIDER_ID_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

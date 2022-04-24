@@ -41,7 +41,7 @@ import java.sql.SQLException;
  */
 public final class ServerFarm extends CachedObjectStringKey<ServerFarm> {
 
-  static final int COLUMN_NAME=0;
+  static final int COLUMN_NAME = 0;
   static final String COLUMN_NAME_name = "name";
 
   private String description;
@@ -54,7 +54,7 @@ public final class ServerFarm extends CachedObjectStringKey<ServerFarm> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public ServerFarm() {
     // Do nothing
   }
@@ -105,9 +105,9 @@ public final class ServerFarm extends CachedObjectStringKey<ServerFarm> {
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readUTF().intern();
-    description=in.readUTF();
-    owner=in.readCompressedInt();
+    pkey = in.readUTF().intern();
+    description = in.readUTF();
+    owner = in.readCompressedInt();
     use_restricted_smtp_port = in.readBoolean();
   }
 

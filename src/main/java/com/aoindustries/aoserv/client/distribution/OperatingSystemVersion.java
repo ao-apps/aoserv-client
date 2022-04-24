@@ -45,19 +45,19 @@ import java.sql.SQLException;
  */
 public final class OperatingSystemVersion extends GlobalObjectIntegerKey<OperatingSystemVersion> {
 
-  static final int COLUMN_PKEY=0;
+  static final int COLUMN_PKEY = 0;
   static final String COLUMN_SORT_ORDER_name = "sort_order";
 
   public static final String
-    //VERSION_1_4="1.4",
-    //VERSION_7_2="7.2",
-    //VERSION_9_2="9.2",
-    VERSION_5="5",
-    VERSION_5_DOM0="5.dom0",
-    VERSION_7="7",
-    VERSION_7_DOM0="7.dom0",
-    VERSION_2006_0="2006.0",
-    VERSION_ES_4="ES 4"
+      //VERSION_1_4="1.4",
+      //VERSION_7_2="7.2",
+      //VERSION_9_2="9.2",
+      VERSION_5 = "5",
+      VERSION_5_DOM0 = "5.dom0",
+      VERSION_7 = "7",
+      VERSION_7_DOM0 = "7.dom0",
+      VERSION_2006_0 = "2006.0",
+      VERSION_ES_4 = "ES 4"
   ;
 
   /**
@@ -69,11 +69,11 @@ public final class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
   public static final String DEFAULT_OPERATING_SYSTEM_VERSION = VERSION_7;
 
   public static final int
-    CENTOS_5_DOM0_X86_64 = 63,
-    CENTOS_5_DOM0_I686 = 64,
-    CENTOS_5_I686_AND_X86_64 = 67,
-    CENTOS_7_DOM0_X86_64 = 69,
-    CENTOS_7_X86_64 = 70
+      CENTOS_5_DOM0_X86_64 = 63,
+      CENTOS_5_DOM0_I686 = 64,
+      CENTOS_5_I686_AND_X86_64 = 67,
+      CENTOS_7_DOM0_X86_64 = 69,
+      CENTOS_7_X86_64 = 70
   ;
 
   private String operating_system;
@@ -90,7 +90,7 @@ public final class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public OperatingSystemVersion() {
     // Do nothing
   }
@@ -127,9 +127,9 @@ public final class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
   }
 
   public Architecture getArchitecture(AOServConnector connector) throws SQLException, IOException {
-    Architecture ar=connector.getDistribution().getArchitecture().get(architecture);
+    Architecture ar = connector.getDistribution().getArchitecture().get(architecture);
     if (ar == null) {
-      throw new SQLException("Unable to find Architecture: "+architecture);
+      throw new SQLException("Unable to find Architecture: " + architecture);
     }
     return ar;
   }
@@ -207,6 +207,7 @@ public final class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
   }
 
   private static final PosixPath WWW, VAR_WWW;
+
   static {
     try {
       WWW = PosixPath.valueOf("/www").intern();
@@ -231,7 +232,7 @@ public final class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
       case CENTOS_7_DOM0_X86_64 :
         return null;
       default :
-        throw new AssertionError("Unexpected OperatingSystemVersion: "+osv);
+        throw new AssertionError("Unexpected OperatingSystemVersion: " + osv);
     }
   }
 
@@ -244,6 +245,7 @@ public final class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
   }
 
   private static final PosixPath WWWGROUP, VAR_OPT_APACHE_TOMCAT;
+
   static {
     try {
       WWWGROUP = PosixPath.valueOf("/wwwgroup").intern();
@@ -268,7 +270,7 @@ public final class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
       case CENTOS_7_DOM0_X86_64 :
         return null;
       default :
-        throw new AssertionError("Unexpected OperatingSystemVersion: "+osv);
+        throw new AssertionError("Unexpected OperatingSystemVersion: " + osv);
     }
   }
 
@@ -281,6 +283,7 @@ public final class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
   }
 
   private static final PosixPath LOGS, VAR_LOG_HTTPD_SITES;
+
   static {
     try {
       LOGS = PosixPath.valueOf("/logs").intern();
@@ -305,7 +308,7 @@ public final class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
       case CENTOS_7_DOM0_X86_64 :
         return null;
       default :
-        throw new AssertionError("Unexpected OperatingSystemVersion: "+osv);
+        throw new AssertionError("Unexpected OperatingSystemVersion: " + osv);
     }
   }
 

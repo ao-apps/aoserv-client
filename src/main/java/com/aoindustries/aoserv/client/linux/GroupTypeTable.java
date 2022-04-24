@@ -41,8 +41,9 @@ public final class GroupTypeTable extends GlobalTableStringKey<GroupType> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(GroupType.COLUMN_DESCRIPTION_name, ASCENDING)
+      new OrderBy(GroupType.COLUMN_DESCRIPTION_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

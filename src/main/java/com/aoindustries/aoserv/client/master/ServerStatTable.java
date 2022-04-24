@@ -57,10 +57,10 @@ public final class ServerStatTable extends AOServTable<String, ServerStat> {
     if (name == null) {
       return null;
     }
-    List<ServerStat> table=getRows();
-    int size=table.size();
-    for (int c=0;c<size;c++) {
-      ServerStat mss=table.get(c);
+    List<ServerStat> table = getRows();
+    int size = table.size();
+    for (int c = 0; c < size; c++) {
+      ServerStat mss = table.get(c);
       if (mss.getName().equals(name)) {
         return mss;
       }

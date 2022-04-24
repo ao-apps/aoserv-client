@@ -61,10 +61,10 @@ import java.util.concurrent.ConcurrentMap;
  */
 // TODO: Move to an ao-posix-types package, similar to ao-net-types
 public final class PosixPath implements
-  Comparable<PosixPath>,
-  Serializable,
-  DtoFactory<com.aoindustries.aoserv.client.dto.PosixPath>,
-  Internable<PosixPath>
+    Comparable<PosixPath>,
+    Serializable,
+    DtoFactory<com.aoindustries.aoserv.client.dto.PosixPath>,
+    Internable<PosixPath>
 {
 
   private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, PosixPath.class);
@@ -98,7 +98,7 @@ public final class PosixPath implements
       return new InvalidResult(RESOURCES, "validate.containsDot", i);
     }
     // Not end with / unless "/"
-    if (path.length()>1 && path.endsWith("/")) {
+    if (path.length() > 1 && path.endsWith("/")) {
       return new InvalidResult(RESOURCES, "validate.endsSlash");
     }
     // Not end with /.. or /.
@@ -171,8 +171,8 @@ public final class PosixPath implements
   @Override
   public boolean equals(Object obj) {
     return
-      (obj instanceof PosixPath)
-      && path.equals(((PosixPath)obj).path)
+        (obj instanceof PosixPath)
+            && path.equals(((PosixPath) obj).path)
     ;
   }
 

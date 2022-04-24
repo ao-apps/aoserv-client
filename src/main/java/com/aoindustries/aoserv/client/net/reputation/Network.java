@@ -42,12 +42,12 @@ import java.sql.SQLException;
 public final class Network extends CachedObjectLongKey<Network> {
 
   static final int
-    COLUMN_PKEY = 0,
-    COLUMN_SET  = 1
+      COLUMN_PKEY = 0,
+      COLUMN_SET  = 1
   ;
   static final String
-    COLUMN_SET_name      = "set",
-    COLUMN_NETWORK_name  = "network"
+      COLUMN_SET_name      = "set",
+      COLUMN_NETWORK_name  = "network"
   ;
 
   private int set;
@@ -60,7 +60,7 @@ public final class Network extends CachedObjectLongKey<Network> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Network() {
     // Do nothing
   }
@@ -126,10 +126,10 @@ public final class Network extends CachedObjectLongKey<Network> {
    */
   public InetAddress getNetworkAddress() {
     return InetAddress.valueOf(
-      LongLong.valueOf(
-        0,
-        network & 0x00000000ffffffffL
-      )
+        LongLong.valueOf(
+            0,
+            network & 0x00000000ffffffffL
+        )
     );
   }
 

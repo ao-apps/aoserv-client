@@ -35,25 +35,46 @@ import java.util.List;
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
   private final AdministratorPermissionTable AdministratorPermission;
-  public AdministratorPermissionTable getAdministratorPermission() {return AdministratorPermission;}
+
+  public AdministratorPermissionTable getAdministratorPermission() {
+    return AdministratorPermission;
+  }
 
   private final ProcessTable Process;
-  public ProcessTable getProcess() {return Process;}
+
+  public ProcessTable getProcess() {
+    return Process;
+  }
 
   private final ServerStatTable ServerStat;
-  public ServerStatTable getServerStat() {return ServerStat;}
+
+  public ServerStatTable getServerStat() {
+    return ServerStat;
+  }
 
   private final PermissionTable Permission;
-  public PermissionTable getPermission() {return Permission;}
+
+  public PermissionTable getPermission() {
+    return Permission;
+  }
 
   private final UserTable User;
-  public UserTable getUser() {return User;}
+
+  public UserTable getUser() {
+    return User;
+  }
 
   private final UserAclTable UserAcl;
-  public UserAclTable getUserAcl() {return UserAcl;}
+
+  public UserAclTable getUserAcl() {
+    return UserAcl;
+  }
 
   private final UserHostTable UserHost;
-  public UserHostTable getUserHost() {return UserHost;}
+
+  public UserHostTable getUserHost() {
+    return UserHost;
+  }
 
   private final List<? extends AOServTable<?, ?>> tables;
 

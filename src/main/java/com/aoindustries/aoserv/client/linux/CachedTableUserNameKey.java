@@ -47,7 +47,7 @@ public abstract class CachedTableUserNameKey<V extends CachedObjectUserNameKey<V
   @Deprecated
   @Override
   public V get(Object pkey) throws IOException, SQLException {
-    return get((User.Name)pkey);
+    return get((User.Name) pkey);
   }
 
   /**

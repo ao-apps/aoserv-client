@@ -48,9 +48,10 @@ public final class CertificateTable extends CachedTableIntegerKey<Certificate> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Certificate.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
-    new OrderBy(Certificate.COLUMN_CERT_FILE_name, ASCENDING)
+      new OrderBy(Certificate.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
+      new OrderBy(Certificate.COLUMN_CERT_FILE_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -81,28 +82,28 @@ public final class CertificateTable extends CachedTableIntegerKey<Certificate> {
     if (command.equalsIgnoreCase(Command.PKI_CERTIFICATE_CHECK)) {
       if (AOSH.checkParamCount(Command.PKI_CERTIFICATE_CHECK, args, 3, err)) {
         List<Certificate.Check> results = connector.getSimpleAOClient().checkSslCertificate(
-          args[1],
-          args[2],
-          AOSH.parseBoolean(args[3], "allowCached")
+            args[1],
+            args[2],
+            AOSH.parseBoolean(args[3], "allowCached")
         );
         int size = results.size();
         List<Object[]> rows = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
           Certificate.Check status = results.get(i);
-          rows.add(new Object[] {
-            status.getCheck(),
-            status.getValue(),
-            status.getAlertLevel(),
-            status.getMessage()
+          rows.add(new Object[]{
+              status.getCheck(),
+              status.getValue(),
+              status.getAlertLevel(),
+              status.getMessage()
           });
         }
         // Display as a table
         SQLUtility.printTable(
-          new String[] {"check", "value", "alert_level", "message"},
-          rows,
-          out,
-          isInteractive,
-          new boolean[] {false, false, false, false}
+            new String[]{"check", "value", "alert_level", "message"},
+            rows,
+            out,
+            isInteractive,
+            new boolean[]{false, false, false, false}
         );
         out.flush();
       }

@@ -74,11 +74,11 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
     if (pkey == null) {
       return null;
     } else if (pkey instanceof Integer) {
-      return get(((Number)pkey).intValue());
+      return get(((Number) pkey).intValue());
     } else if (pkey instanceof String) {
-      return get((String)pkey);
+      return get((String) pkey);
     } else if (pkey instanceof Table.TableID) {
-      return get((Table.TableID)pkey);
+      return get((Table.TableID) pkey);
     } else {
       throw new IllegalArgumentException("Must be an Integer, a String, or a SchemaTable.TableID");
     }
@@ -135,7 +135,7 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
           table.printDescription(connector, out, isInteractive);
           out.flush();
         } else {
-          err.print("aosh: "+Command.DESCRIBE+": table not found: ");
+          err.print("aosh: " + Command.DESCRIBE + ": table not found: ");
           err.println(Parser.quote(tableName));
           err.flush();
         }
@@ -150,7 +150,7 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
           selectRows(args, out, err, isInteractive);
         }
       } else if (argCount < 4) {
-        err.println("aosh: "+Command.SELECT+": not enough parameters");
+        err.println("aosh: " + Command.SELECT + ": not enough parameters");
         err.flush();
       }
       return true;
@@ -158,13 +158,13 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
       int argCount = args.length;
       if (argCount >= 2) {
         if ("tables".equalsIgnoreCase(args[1])) {
-          handleCommand(new String[] { "select", "name,", "description", "from", "schema_tables" }, in, out, err, isInteractive);
+          handleCommand(new String[]{"select", "name,", "description", "from", "schema_tables"}, in, out, err, isInteractive);
         } else {
-          err.println("aosh: "+Command.SHOW+": unknown parameter: " + args[1]);
+          err.println("aosh: " + Command.SHOW + ": unknown parameter: " + args[1]);
           err.flush();
         }
       } else {
-        err.println("aosh: "+Command.SHOW+": not enough parameters");
+        err.println("aosh: " + Command.SHOW + ": not enough parameters");
         err.flush();
       }
       return true;
@@ -179,11 +179,11 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
       Table table = connector.getSchema().getTable().get(tableName);
       if (table != null) {
         SQLUtility.printTable(
-          new String[] {"count"},
-          (Iterable<Object[]>)Collections.singleton(new Object[] {table.getAOServTable(connector).size()}),
-          out,
-          isInteractive,
-          new boolean[] {true}
+            new String[]{"count"},
+            (Iterable<Object[]>) Collections.singleton(new Object[]{table.getAOServTable(connector).size()}),
+            out,
+            isInteractive,
+            new boolean[]{true}
         );
         out.flush();
       } else {
@@ -275,19 +275,19 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
                     orderBy = orderBy.substring(commaPos + 1);
                   }
                   if (
-                    !orderExpressions.isEmpty()
-                    && (
-                      expr.equalsIgnoreCase("asc")
-                      || expr.equalsIgnoreCase("ascending")
-                    )
+                      !orderExpressions.isEmpty()
+                          && (
+                          expr.equalsIgnoreCase("asc")
+                              || expr.equalsIgnoreCase("ascending")
+                      )
                   ) {
                     sortOrders.set(sortOrders.size() - 1, AOServTable.ASCENDING);
                   } else if (
-                    !orderExpressions.isEmpty()
-                    && (
-                      expr.equalsIgnoreCase("desc")
-                      || expr.equalsIgnoreCase("descending")
-                    )
+                      !orderExpressions.isEmpty()
+                          && (
+                          expr.equalsIgnoreCase("desc")
+                              || expr.equalsIgnoreCase("descending")
+                      )
                   ) {
                     sortOrders.set(sortOrders.size() - 1, AOServTable.DESCENDING);
                   } else { // if (!expr.isEmpty()) {
@@ -339,11 +339,11 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
           for (int d = 0; d < orders.length; d++) {
             orders[d] = sortOrders.get(d);
           }
-          rows = (List<AOServObject>)aoServTable.getRowsCopy();
+          rows = (List<AOServObject>) aoServTable.getRowsCopy();
           rowsCopied = true;
           connector.sort(JavaSort.getInstance(), rows, exprs, orders);
         } else {
-          rows = (List<AOServObject>)aoServTable.getRows();
+          rows = (List<AOServObject>) aoServTable.getRows();
         }
         final List<AOServObject> finalRows = rows;
         final int numRows = rows.size();
@@ -365,14 +365,14 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
                 int maxPrecision = type.getMaxPrecision();
                 int current = precisions[col];
                 if (
-                  maxPrecision == -1
-                  || current == -1
-                  || current < maxPrecision
+                    maxPrecision == -1
+                        || current == -1
+                        || current < maxPrecision
                 ) {
                   int precision = type.getPrecision(valueExpressions[col].evaluate(connector, row));
                   if (
-                    precision != -1
-                    && (current == -1 || precision > current)
+                      precision != -1
+                          && (current == -1 || precision > current)
                   ) {
                     precisions[col] = precision;
                     if (maxPrecision != -1 && precision >= maxPrecision) {
@@ -396,49 +396,49 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
         }
         try {
           SQLUtility.printTable(
-            cnames,
-            // Java 9: new Iterator<>
-            (Iterable<String[]>)() -> new Iterator<String[]>() {
-              private int index = 0;
+              cnames,
+              // Java 9: new Iterator<>
+              (Iterable<String[]>) () -> new Iterator<String[]>() {
+                private int index = 0;
 
-              @Override
-              public boolean hasNext() {
-                return index < numRows;
-              }
-
-              @Override
-              public String[] next() throws NoSuchElementException {
-                if (index >= numRows) {
-                  throw new NoSuchElementException();
+                @Override
+                public boolean hasNext() {
+                  return index < numRows;
                 }
-                try {
-                  // Convert the results to strings
-                  AOServObject<?, ?> row = finalRows.get(index);
-                  String[] strings = new String[numExpressions];
-                  for (int col = 0; col < numExpressions; col++) {
-                    strings[col] = valueTypes[col].getString(
-                      valueExpressions[col].evaluate(connector, row),
-                      precisions[col]
-                    );
+
+                @Override
+                public String[] next() throws NoSuchElementException {
+                  if (index >= numRows) {
+                    throw new NoSuchElementException();
                   }
-                  index++;
-                  return strings;
-                } catch (IOException | SQLException e) {
-                  throw new WrappedException(e);
+                  try {
+                    // Convert the results to strings
+                    AOServObject<?, ?> row = finalRows.get(index);
+                    String[] strings = new String[numExpressions];
+                    for (int col = 0; col < numExpressions; col++) {
+                      strings[col] = valueTypes[col].getString(
+                          valueExpressions[col].evaluate(connector, row),
+                          precisions[col]
+                      );
+                    }
+                    index++;
+                    return strings;
+                  } catch (IOException | SQLException e) {
+                    throw new WrappedException(e);
+                  }
                 }
-              }
-            },
-            out,
-            isInteractive,
-            rightAligns
+              },
+              out,
+              isInteractive,
+              rightAligns
           );
         } catch (WrappedException e) {
           Throwable cause = e.getCause();
           if (cause instanceof IOException) {
-            throw (IOException)cause;
+            throw (IOException) cause;
           }
           if (cause instanceof SQLException) {
-            throw (SQLException)cause;
+            throw (SQLException) cause;
           }
           throw e;
         }
@@ -447,7 +447,7 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
       } finally {
         if (rowsCopied && rows instanceof AutoCloseable) {
           try {
-            ((AutoCloseable)rows).close();
+            ((AutoCloseable) rows).close();
           } catch (Throwable t) {
             t0 = Throwables.addSuppressed(t0, t);
           }
@@ -455,10 +455,10 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
       }
       if (t0 != null) {
         if (t0 instanceof IOException) {
-          throw (IOException)t0;
+          throw (IOException) t0;
         }
         if (t0 instanceof SQLException) {
-          throw (SQLException)t0;
+          throw (SQLException) t0;
         }
         throw Throwables.wrap(t0, WrappedException.class, WrappedException::new);
       }

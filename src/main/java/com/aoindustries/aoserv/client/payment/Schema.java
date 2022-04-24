@@ -35,19 +35,34 @@ import java.util.List;
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
   private final CountryCodeTable CountryCode;
-  public CountryCodeTable getCountryCode() {return CountryCode;}
+
+  public CountryCodeTable getCountryCode() {
+    return CountryCode;
+  }
 
   private final CreditCardTable CreditCard;
-  public CreditCardTable getCreditCard() {return CreditCard;}
+
+  public CreditCardTable getCreditCard() {
+    return CreditCard;
+  }
 
   private final PaymentTable Payment;
-  public PaymentTable getPayment() {return Payment;}
+
+  public PaymentTable getPayment() {
+    return Payment;
+  }
 
   private final PaymentTypeTable PaymentType;
-  public PaymentTypeTable getPaymentType() {return PaymentType;}
+
+  public PaymentTypeTable getPaymentType() {
+    return PaymentType;
+  }
 
   private final ProcessorTable Processor;
-  public ProcessorTable getProcessor() {return Processor;}
+
+  public ProcessorTable getProcessor() {
+    return Processor;
+  }
 
   private final List<? extends AOServTable<?, ?>> tables;
 

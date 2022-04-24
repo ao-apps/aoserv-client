@@ -40,7 +40,7 @@ public abstract class CachedObjectAccountNameKey<V extends CachedObjectAccountNa
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   protected CachedObjectAccountNameKey() {
     // Do nothing
   }
@@ -48,9 +48,9 @@ public abstract class CachedObjectAccountNameKey<V extends CachedObjectAccountNa
   @Override
   public boolean equals(Object obj) {
     return
-      obj != null
-      && obj.getClass() == getClass()
-      && ((CachedObjectAccountNameKey<?>)obj).pkey.equals(pkey)
+        obj != null
+            && obj.getClass() == getClass()
+            && ((CachedObjectAccountNameKey<?>) obj).pkey.equals(pkey)
     ;
   }
 

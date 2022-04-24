@@ -35,22 +35,40 @@ import java.util.List;
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
   private final PhysicalServerTable PhysicalServer;
-  public PhysicalServerTable getPhysicalServer() {return PhysicalServer;}
+
+  public PhysicalServerTable getPhysicalServer() {
+    return PhysicalServer;
+  }
 
   private final ProcessorTypeTable ProcessorType;
-  public ProcessorTypeTable getProcessorType() {return ProcessorType;}
+
+  public ProcessorTypeTable getProcessorType() {
+    return ProcessorType;
+  }
 
   private final RackTable Rack;
-  public RackTable getRack() {return Rack;}
+
+  public RackTable getRack() {
+    return Rack;
+  }
 
   private final ServerFarmTable ServerFarm;
-  public ServerFarmTable getServerFarm() {return ServerFarm;}
+
+  public ServerFarmTable getServerFarm() {
+    return ServerFarm;
+  }
 
   private final VirtualDiskTable VirtualDisk;
-  public VirtualDiskTable getVirtualDisk() {return VirtualDisk;}
+
+  public VirtualDiskTable getVirtualDisk() {
+    return VirtualDisk;
+  }
 
   private final VirtualServerTable VirtualServer;
-  public VirtualServerTable getVirtualServer() {return VirtualServer;}
+
+  public VirtualServerTable getVirtualServer() {
+    return VirtualServer;
+  }
 
   private final List<? extends AOServTable<?, ?>> tables;
 

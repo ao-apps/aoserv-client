@@ -189,19 +189,19 @@ public class ApacheEscapeTest {
       if (ch != '\t') {
         try {
           escape(null, ch + "Test");
-          fail("Control character allowed at beginning: " + (int)ch);
+          fail("Control character allowed at beginning: " + (int) ch);
         } catch (IllegalArgumentException e) {
           // Expected
         }
         try {
           escape(null, "Test" + ch + "test");
-          fail("Control character allowed in middle: " + (int)ch);
+          fail("Control character allowed in middle: " + (int) ch);
         } catch (IllegalArgumentException e) {
           // Expected
         }
         try {
           escape(null, "Test" + ch);
-          fail("Control character allowed at end: " + (int)ch);
+          fail("Control character allowed at end: " + (int) ch);
         } catch (IllegalArgumentException e) {
           // Expected
         }

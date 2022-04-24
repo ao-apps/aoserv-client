@@ -49,9 +49,10 @@ public final class CategoryTable extends CachedTableIntegerKey<Category> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Category.COLUMN_PARENT_name, ASCENDING),
-    new OrderBy(Category.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(Category.COLUMN_PARENT_name, ASCENDING),
+      new OrderBy(Category.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -67,11 +68,11 @@ public final class CategoryTable extends CachedTableIntegerKey<Category> {
    * Gets the list of all top-level categories that have a null parent.
    */
   public List<Category> getTopLevelCategories() throws IOException, SQLException {
-    List<Category> cached=getRows();
-    List<Category> matches=new ArrayList<>();
-    int size=cached.size();
-    for (int c=0;c<size;c++) {
-      Category tc=cached.get(c);
+    List<Category> cached = getRows();
+    List<Category> matches = new ArrayList<>();
+    int size = cached.size();
+    for (int c = 0; c < size; c++) {
+      Category tc = cached.get(c);
       if (tc.getParent_id() == null) {
         matches.add(tc);
       }

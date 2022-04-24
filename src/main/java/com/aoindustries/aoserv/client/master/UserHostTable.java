@@ -43,10 +43,11 @@ public final class UserHostTable extends CachedTableIntegerKey<UserHost> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(UserHost.COLUMN_USERNAME_name, ASCENDING),
-    new OrderBy(UserHost.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(UserHost.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(UserHost.COLUMN_USERNAME_name, ASCENDING),
+      new OrderBy(UserHost.COLUMN_SERVER_name + '.' + Host.COLUMN_PACKAGE_name + '.' + Package.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(UserHost.COLUMN_SERVER_name + '.' + Host.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

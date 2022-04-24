@@ -45,8 +45,8 @@ import java.sql.SQLException;
 public final class PackageDefinitionLimit extends CachedObjectIntegerKey<PackageDefinitionLimit> {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_PACKAGE_DEFINITION=1
+      COLUMN_PKEY = 0,
+      COLUMN_PACKAGE_DEFINITION = 1
   ;
   static final String COLUMN_RESOURCE_name = "resource";
   static final String COLUMN_PACKAGE_DEFINITION_name = "package_definition";
@@ -54,7 +54,7 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
   /**
    * Indicates a particular value is unlimited.
    */
-  public static final int UNLIMITED=-1;
+  public static final int UNLIMITED = -1;
 
   private int package_definition;
   private String resource;
@@ -69,19 +69,19 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public PackageDefinitionLimit() {
     // Do nothing
   }
 
   @SuppressWarnings("deprecation")
   public PackageDefinitionLimit(
-    PackageDefinition package_definition,
-    Resource resource,
-    int soft_limit,
-    int hard_limit,
-    Money additionalRate,
-    TransactionType additional_transaction_type
+      PackageDefinition package_definition,
+      Resource resource,
+      int soft_limit,
+      int hard_limit,
+      Money additionalRate,
+      TransactionType additional_transaction_type
   ) {
     this.pkey = -1;
     this.package_definition = package_definition.getPkey();
@@ -126,9 +126,9 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
   }
 
   public Resource getResource() throws SQLException, IOException {
-    Resource r=table.getConnector().getBilling().getResource().get(resource);
+    Resource r = table.getConnector().getBilling().getResource().get(resource);
     if (r == null) {
-      throw new SQLException("Unable to find Resource: "+resource);
+      throw new SQLException("Unable to find Resource: " + resource);
     }
     return r;
   }
@@ -183,9 +183,9 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
     if (additional_transaction_type == null) {
       return null;
     }
-    TransactionType tt=table.getConnector().getBilling().getTransactionType().get(additional_transaction_type);
+    TransactionType tt = table.getConnector().getBilling().getTransactionType().get(additional_transaction_type);
     if (tt == null) {
-      throw new SQLException("Unable to find TransactionType: "+additional_transaction_type);
+      throw new SQLException("Unable to find TransactionType: " + additional_transaction_type);
     }
     return tt;
   }

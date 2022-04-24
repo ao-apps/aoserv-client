@@ -47,7 +47,7 @@ public abstract class GlobalTablePosixPathKey<V extends GlobalObjectPosixPathKey
   @Deprecated
   @Override
   public V get(Object pkey) throws IOException, SQLException {
-    return get((PosixPath)pkey);
+    return get((PosixPath) pkey);
   }
 
   /**

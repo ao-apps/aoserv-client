@@ -35,22 +35,40 @@ import java.util.List;
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
   private final DatabaseTable Database;
-  public DatabaseTable getDatabase() {return Database;}
+
+  public DatabaseTable getDatabase() {
+    return Database;
+  }
 
   private final EncodingTable Encoding;
-  public EncodingTable getEncoding() {return Encoding;}
+
+  public EncodingTable getEncoding() {
+    return Encoding;
+  }
 
   private final ServerTable Server;
-  public ServerTable getServer() {return Server;}
+
+  public ServerTable getServer() {
+    return Server;
+  }
 
   private final UserTable User;
-  public UserTable getUser() {return User;}
+
+  public UserTable getUser() {
+    return User;
+  }
 
   private final UserServerTable UserServer;
-  public UserServerTable getUserServer() {return UserServer;}
+
+  public UserServerTable getUserServer() {
+    return UserServer;
+  }
 
   private final VersionTable Version;
-  public VersionTable getVersion() {return Version;}
+
+  public VersionTable getVersion() {
+    return Version;
+  }
 
   private final List<? extends AOServTable<?, ?>> tables;
 

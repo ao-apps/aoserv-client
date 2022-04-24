@@ -50,8 +50,9 @@ public final class ServerTable extends CachedTableIntegerKey<Server> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Server.COLUMN_HOSTNAME_name, ASCENDING)
+      new OrderBy(Server.COLUMN_HOSTNAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -68,9 +69,9 @@ public final class ServerTable extends CachedTableIntegerKey<Server> {
     if (pkey == null) {
       return null;
     } else if (pkey instanceof Integer) {
-      return get(((Integer)pkey).intValue());
+      return get(((Integer) pkey).intValue());
     } else if (pkey instanceof DomainName) {
-      return get((DomainName)pkey);
+      return get((DomainName) pkey);
     } else {
       throw new IllegalArgumentException("Must be an Integer or a DomainName");
     }
@@ -92,11 +93,11 @@ public final class ServerTable extends CachedTableIntegerKey<Server> {
   }
 
   public Server getAOServerByDaemonNetBind(Bind nb) throws IOException, SQLException {
-    int bind_id=nb.getId();
-    List<Server> servers=getRows();
-    int size=servers.size();
-    for (int c=0;c<size;c++) {
-      Server se=servers.get(c);
+    int bind_id = nb.getId();
+    List<Server> servers = getRows();
+    int size = servers.size();
+    for (int c = 0; c < size; c++) {
+      Server se = servers.get(c);
       Integer daemonBind_id = se.getDaemonBind_id();
       if (daemonBind_id != null && daemonBind_id == bind_id) {
         return se;
@@ -106,11 +107,11 @@ public final class ServerTable extends CachedTableIntegerKey<Server> {
   }
 
   public Server getAOServerByJilterNetBind(Bind nb) throws IOException, SQLException {
-    int bind_id=nb.getId();
-    List<Server> servers=getRows();
-    int size=servers.size();
-    for (int c=0;c<size;c++) {
-      Server se=servers.get(c);
+    int bind_id = nb.getId();
+    List<Server> servers = getRows();
+    int size = servers.size();
+    for (int c = 0; c < size; c++) {
+      Server se = servers.get(c);
       Integer jilterBind_id = se.getJilterBind_id();
       if (jilterBind_id != null && jilterBind_id == bind_id) {
         return se;
@@ -123,12 +124,12 @@ public final class ServerTable extends CachedTableIntegerKey<Server> {
    * @see  Server#getNestedServers()
    */
   List<Server> getNestedServers(Server server) throws IOException, SQLException {
-    int pkey=server.getPkey();
-    List<Server> servers=getRows();
-    int size=servers.size();
-    List<Server> objs=new ArrayList<>();
-    for (int c=0;c<size;c++) {
-      Server se=servers.get(c);
+    int pkey = server.getPkey();
+    List<Server> servers = getRows();
+    int size = servers.size();
+    List<Server> objs = new ArrayList<>();
+    for (int c = 0; c < size; c++) {
+      Server se = servers.get(c);
       Integer fs = se.getFailoverServer_server_pkey();
       if (fs != null && fs == pkey) {
         objs.add(se);
@@ -144,13 +145,13 @@ public final class ServerTable extends CachedTableIntegerKey<Server> {
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-    String command=args[0];
+    String command = args[0];
     if (command.equalsIgnoreCase(Command.GET_MRTG_FILE)) {
       if (AOSH.checkParamCount(Command.GET_MRTG_FILE, args, 2, err)) {
         connector.getSimpleAOClient().getMrtgFile(
-          args[1],
-          args[2],
-          new WriterOutputStream(out)
+            args[1],
+            args[2],
+            new WriterOutputStream(out)
         );
         out.flush();
       }
@@ -164,84 +165,84 @@ public final class ServerTable extends CachedTableIntegerKey<Server> {
     } else if (command.equalsIgnoreCase(Command.RESTART_APACHE)) {
       if (AOSH.checkParamCount(Command.RESTART_APACHE, args, 1, err)) {
         connector.getSimpleAOClient().restartApache(
-          args[1]
+            args[1]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.RESTART_CRON)) {
       if (AOSH.checkParamCount(Command.RESTART_CRON, args, 1, err)) {
         connector.getSimpleAOClient().restartCron(
-          args[1]
+            args[1]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.RESTART_XFS)) {
       if (AOSH.checkParamCount(Command.RESTART_XFS, args, 1, err)) {
         connector.getSimpleAOClient().restartXfs(
-          args[1]
+            args[1]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.RESTART_XVFB)) {
       if (AOSH.checkParamCount(Command.RESTART_XVFB, args, 1, err)) {
         connector.getSimpleAOClient().restartXvfb(
-          args[1]
+            args[1]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.START_APACHE)) {
       if (AOSH.checkParamCount(Command.START_APACHE, args, 1, err)) {
         connector.getSimpleAOClient().startApache(
-          args[1]
+            args[1]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.START_CRON)) {
       if (AOSH.checkParamCount(Command.START_CRON, args, 1, err)) {
         connector.getSimpleAOClient().startCron(
-          args[1]
+            args[1]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.START_XFS)) {
       if (AOSH.checkParamCount(Command.START_XFS, args, 1, err)) {
         connector.getSimpleAOClient().startXfs(
-          args[1]
+            args[1]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.START_XVFB)) {
       if (AOSH.checkParamCount(Command.START_XVFB, args, 1, err)) {
         connector.getSimpleAOClient().startXvfb(
-          args[1]
+            args[1]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.STOP_APACHE)) {
       if (AOSH.checkParamCount(Command.STOP_APACHE, args, 1, err)) {
         connector.getSimpleAOClient().stopApache(
-          args[1]
+            args[1]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.STOP_CRON)) {
       if (AOSH.checkParamCount(Command.STOP_CRON, args, 1, err)) {
         connector.getSimpleAOClient().stopCron(
-          args[1]
+            args[1]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.STOP_XFS)) {
       if (AOSH.checkParamCount(Command.STOP_XFS, args, 1, err)) {
         connector.getSimpleAOClient().stopXfs(
-          args[1]
+            args[1]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.STOP_XVFB)) {
       if (AOSH.checkParamCount(Command.STOP_XVFB, args, 1, err)) {
         connector.getSimpleAOClient().stopXvfb(
-          args[1]
+            args[1]
         );
       }
       return true;

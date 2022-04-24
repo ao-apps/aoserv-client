@@ -32,15 +32,16 @@ import java.beans.SimpleBeanInfo;
 public class SchemaBeanInfo extends SimpleBeanInfo {
 
   private static final PropertyDescriptor[] properties;
+
   static {
     try {
-      properties = new PropertyDescriptor[] {
-        new PropertyDescriptor("PhysicalServer", Schema.class, "getPhysicalServer", null),
-        new PropertyDescriptor("ProcessorType",  Schema.class, "getProcessorType",  null),
-        new PropertyDescriptor("Rack",           Schema.class, "getRack",           null),
-        new PropertyDescriptor("ServerFarm",     Schema.class, "getServerFarm",     null),
-        new PropertyDescriptor("VirtualDisk",    Schema.class, "getVirtualDisk",    null),
-        new PropertyDescriptor("VirtualServer",  Schema.class, "getVirtualServer",  null),
+      properties = new PropertyDescriptor[]{
+          new PropertyDescriptor("PhysicalServer", Schema.class, "getPhysicalServer", null),
+          new PropertyDescriptor("ProcessorType",  Schema.class, "getProcessorType",  null),
+          new PropertyDescriptor("Rack",           Schema.class, "getRack",           null),
+          new PropertyDescriptor("ServerFarm",     Schema.class, "getServerFarm",     null),
+          new PropertyDescriptor("VirtualDisk",    Schema.class, "getVirtualDisk",    null),
+          new PropertyDescriptor("VirtualServer",  Schema.class, "getVirtualServer",  null),
       };
     } catch (IntrospectionException err) {
       throw new ExceptionInInitializerError(err);
@@ -49,7 +50,7 @@ public class SchemaBeanInfo extends SimpleBeanInfo {
 
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField") // Not copying array for performance
-  public PropertyDescriptor[] getPropertyDescriptors () {
+  public PropertyDescriptor[] getPropertyDescriptors() {
     return properties;
   }
 
@@ -59,8 +60,8 @@ public class SchemaBeanInfo extends SimpleBeanInfo {
   @Override
   public BeanInfo[] getAdditionalBeanInfo() {
     try {
-      return new BeanInfo[] {
-        Introspector.getBeanInfo(Schema.class.getSuperclass())
+      return new BeanInfo[]{
+          Introspector.getBeanInfo(Schema.class.getSuperclass())
       };
     } catch (IntrospectionException err) {
       throw new AssertionError(err);

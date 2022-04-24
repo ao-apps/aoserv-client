@@ -62,7 +62,7 @@ public abstract class FilesystemCachedTable<K, V extends FilesystemCachedObject<
    * The last time that the data was loaded, or
    * <code>-1</code> if not yet loaded.
    */
-  private long lastLoaded=-1;
+  private long lastLoaded = -1;
 
   /**
    * One file list may exist per column.  Only the unique columns will have a non-null value.
@@ -100,9 +100,9 @@ public abstract class FilesystemCachedTable<K, V extends FilesystemCachedObject<
   public void clearCache() {
     super.clearCache();
     synchronized (this) {
-      lastLoaded=-1;
-      tableList=null;
-      unmodifiableTableList=null;
+      lastLoaded = -1;
+      tableList = null;
+      unmodifiableTableList = null;
       if (columnLists != null) {
         columnLists.clear();
       }
@@ -114,24 +114,24 @@ public abstract class FilesystemCachedTable<K, V extends FilesystemCachedObject<
    */
   private void validateCache() throws IOException, SQLException {
     assert Thread.holdsLock(this);
-    long currentTime=System.currentTimeMillis();
+    long currentTime = System.currentTimeMillis();
     if (
-       // If cache never loaded
-       lastLoaded == -1
-       // If the system time was reset to previous time
-       || currentTime<lastLoaded
+        // If cache never loaded
+        lastLoaded == -1
+            // If the system time was reset to previous time
+            || currentTime < lastLoaded
     ) {
       Table schemaTable = getTableSchema();
-      FileList<V> newTableList=new FileList<>(
-        schemaTable.getName(),
-        "rows",
-        getRecordLength(),
-        this
+      FileList<V> newTableList = new FileList<>(
+          schemaTable.getName(),
+          "rows",
+          getRecordLength(),
+          this
       );
       getObjects(true, newTableList, AoservProtocol.CommandID.GET_TABLE, getTableID());
-      tableList=newTableList;
-      unmodifiableTableList=Collections.unmodifiableList(tableList);
-      lastLoaded=currentTime;
+      tableList = newTableList;
+      unmodifiableTableList = Collections.unmodifiableList(tableList);
+      lastLoaded = currentTime;
 
       if (columnLists != null) {
         columnLists.clear();
@@ -163,10 +163,10 @@ public abstract class FilesystemCachedTable<K, V extends FilesystemCachedObject<
       validateCache();
       Table schemaTable = getTableSchema();
       FileList<V> newCopyList = new FileList<>(
-        schemaTable.getName(),
-        "rowsCopy",
-        tableList.getRecordLength(), // Use the same record length to support disk-to-disk copy
-        this
+          schemaTable.getName(),
+          "rowsCopy",
+          tableList.getRecordLength(), // Use the same record length to support disk-to-disk copy
+          this
       );
       // addAll will do a disk-to-disk copy of the objects
       newCopyList.addAll(tableList);
@@ -192,48 +192,48 @@ public abstract class FilesystemCachedTable<K, V extends FilesystemCachedObject<
     Table schemaTable = getTableSchema();
     Column schemaColumn = schemaTable.getSchemaColumn(connector, col);
     SQLComparator<V> vComparator = new SQLComparator<>(
-      connector,
-      new SQLExpression[] {
-        new SQLColumnValue(connector, schemaColumn)
-      },
-      new boolean[] {ASCENDING}
+        connector,
+        new SQLExpression[]{
+            new SQLColumnValue(connector, schemaColumn)
+        },
+        new boolean[]{ASCENDING}
     );
 
     SQLComparator<Object> oComparator = new SQLComparator<>(
-      connector,
-      new SQLExpression[] {
-        new SQLColumnValue(connector, schemaColumn)
-      },
-      new boolean[] {ASCENDING}
+        connector,
+        new SQLExpression[]{
+            new SQLColumnValue(connector, schemaColumn)
+        },
+        new boolean[]{ASCENDING}
     );
 
     synchronized (this) {
       validateCache();
       // Create any needed objects
-      int minLength=col+1;
+      int minLength = col + 1;
       if (columnLists == null) {
-        columnLists=new ArrayList<>(minLength);
+        columnLists = new ArrayList<>(minLength);
       } else {
-        while (columnLists.size()<minLength) {
+        while (columnLists.size() < minLength) {
           columnLists.add(null);
         }
       }
       List<V> unmodifiableSortedList = columnLists.get(col);
       if (unmodifiableSortedList == null) {
-        FileList<V> sortedFileList=new FileList<>(
-          schemaTable.getName() + '.' + schemaColumn.getName(),
-          "unique",
-          getRecordLength(),
-          tableList.getObjectFactory()
+        FileList<V> sortedFileList = new FileList<>(
+            schemaTable.getName() + '.' + schemaColumn.getName(),
+            "unique",
+            getRecordLength(),
+            tableList.getObjectFactory()
         );
         sortedFileList.addAll(tableList);
         getSortAlgorithm().sort(sortedFileList, vComparator);
-        unmodifiableSortedList=Collections.unmodifiableList(sortedFileList);
+        unmodifiableSortedList = Collections.unmodifiableList(sortedFileList);
         columnLists.set(col, unmodifiableSortedList);
       }
       int index = Collections.binarySearch(unmodifiableSortedList, value, oComparator);
       // TODO: Assertion to ensure unique, reading the record before and after to make sure has a different value?
-      return index<0?null:unmodifiableSortedList.get(index);
+      return index < 0 ? null : unmodifiableSortedList.get(index);
     }
   }
 
@@ -242,9 +242,9 @@ public abstract class FilesystemCachedTable<K, V extends FilesystemCachedObject<
    */
   boolean isSorted(int uniqueColumn) {
     return
-      columnLists != null
-      && columnLists.size()>uniqueColumn
-      && columnLists.get(uniqueColumn) != null
+        columnLists != null
+            && columnLists.size() > uniqueColumn
+            && columnLists.get(uniqueColumn) != null
     ;
   }
 
@@ -257,7 +257,7 @@ public abstract class FilesystemCachedTable<K, V extends FilesystemCachedObject<
   public V createInstance() throws IOException {
     V obj = getNewObject();
     if (obj instanceof SingleTableObject<?, ?>) {
-      ((SingleTableObject<K, V>)obj).setTable(this);
+      ((SingleTableObject<K, V>) obj).setTable(this);
     }
     return obj;
   }

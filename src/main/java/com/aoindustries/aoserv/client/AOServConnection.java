@@ -48,7 +48,7 @@ public abstract class AOServConnection implements Closeable {
    * Creates a new <code>AOServConnection</code>.
    */
   protected AOServConnection(AOServConnector connector) {
-    this.connector=connector;
+    this.connector = connector;
   }
 
   /**

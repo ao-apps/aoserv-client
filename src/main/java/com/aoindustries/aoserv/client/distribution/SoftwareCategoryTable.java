@@ -41,8 +41,9 @@ public final class SoftwareCategoryTable extends GlobalTableStringKey<SoftwareCa
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(SoftwareCategory.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(SoftwareCategory.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

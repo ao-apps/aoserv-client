@@ -40,7 +40,7 @@ import java.sql.SQLException;
  */
 public final class SmtpSmartHost extends CachedObjectIntegerKey<SmtpSmartHost> {
 
-  static final int COLUMN_NET_BIND=0;
+  static final int COLUMN_NET_BIND = 0;
   static final String COLUMN_NET_BIND_name = "net_bind";
 
   private int total_out_burst;
@@ -54,7 +54,7 @@ public final class SmtpSmartHost extends CachedObjectIntegerKey<SmtpSmartHost> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public SmtpSmartHost() {
     // Do nothing
   }
@@ -72,9 +72,9 @@ public final class SmtpSmartHost extends CachedObjectIntegerKey<SmtpSmartHost> {
   }
 
   public Bind getNetBind() throws IOException, SQLException {
-    Bind obj=table.getConnector().getNet().getBind().get(pkey);
+    Bind obj = table.getConnector().getNet().getBind().get(pkey);
     if (obj == null) {
-      throw new SQLException("Unable to find NetBind: "+pkey);
+      throw new SQLException("Unable to find NetBind: " + pkey);
     }
     return obj;
   }
@@ -120,19 +120,19 @@ public final class SmtpSmartHost extends CachedObjectIntegerKey<SmtpSmartHost> {
   public void init(ResultSet result) throws SQLException {
     int pos = 1;
     pkey = result.getInt(pos++);
-    total_out_burst=result.getInt(pos++);
+    total_out_burst = result.getInt(pos++);
     if (result.wasNull()) {
       total_out_burst = -1;
     }
-    total_out_rate=result.getFloat(pos++);
+    total_out_rate = result.getFloat(pos++);
     if (result.wasNull()) {
       total_out_rate = Float.NaN;
     }
-    default_domain_out_burst=result.getInt(pos++);
+    default_domain_out_burst = result.getInt(pos++);
     if (result.wasNull()) {
       default_domain_out_burst = -1;
     }
-    default_domain_out_rate=result.getFloat(pos++);
+    default_domain_out_rate = result.getFloat(pos++);
     if (result.wasNull()) {
       default_domain_out_rate = Float.NaN;
     }
@@ -141,10 +141,10 @@ public final class SmtpSmartHost extends CachedObjectIntegerKey<SmtpSmartHost> {
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readCompressedInt();
-    total_out_burst=in.readCompressedInt();
-    total_out_rate=in.readFloat();
-    default_domain_out_burst=in.readCompressedInt();
-    default_domain_out_rate=in.readFloat();
+    total_out_burst = in.readCompressedInt();
+    total_out_rate = in.readFloat();
+    default_domain_out_burst = in.readCompressedInt();
+    default_domain_out_rate = in.readFloat();
   }
 
   @Override

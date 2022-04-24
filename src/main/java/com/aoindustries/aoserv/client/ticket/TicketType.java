@@ -45,18 +45,18 @@ public final class TicketType extends GlobalObjectStringKey<TicketType> {
 
   private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, TicketType.class);
 
-  static final int COLUMN_TYPE=0;
+  static final int COLUMN_TYPE = 0;
   static final String COLUMN_TYPE_name = "type";
 
   /**
    * The types of <code>Ticket</code>s.
    */
   public static final String
-    CONTACT="contact",
-    LOGS="logs",
-    SUPPORT="support",
-    PROJECTS="projects",
-    INTERNAL="internal"
+      CONTACT = "contact",
+      LOGS = "logs",
+      SUPPORT = "support",
+      PROJECTS = "projects",
+      INTERNAL = "internal"
   ;
 
   /**
@@ -65,7 +65,7 @@ public final class TicketType extends GlobalObjectStringKey<TicketType> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public TicketType() {
     // Do nothing
   }
@@ -99,7 +99,7 @@ public final class TicketType extends GlobalObjectStringKey<TicketType> {
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readUTF().intern();
+    pkey = in.readUTF().intern();
   }
 
   @Override

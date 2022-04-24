@@ -45,7 +45,7 @@ public abstract class CachedTableStringKey<V extends CachedObjectStringKey<V>> e
   @Deprecated
   @Override
   public V get(Object pkey) throws IOException, SQLException {
-    return get((String)pkey);
+    return get((String) pkey);
   }
 
   /**

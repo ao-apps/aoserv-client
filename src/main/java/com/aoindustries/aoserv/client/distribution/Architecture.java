@@ -43,25 +43,25 @@ import java.sql.SQLException;
  */
 public final class Architecture extends GlobalObjectStringKey<Architecture> {
 
-  static final int COLUMN_NAME=0;
+  static final int COLUMN_NAME = 0;
   static final String COLUMN_NAME_name = "name";
 
   public static final String
-    ALPHA="alpha",
-    ARM="arm",
-    I386="i386",
-    I486="i486",
-    I586="i586",
-    I686="i686",
-    I686_AND_X86_64="i686,x86_64",
-    M68K="m68k",
-    MIPS="mips",
-    PPC="ppc",
-    SPARC="sparc",
-    X86_64="x86_64"
+      ALPHA = "alpha",
+      ARM = "arm",
+      I386 = "i386",
+      I486 = "i486",
+      I586 = "i586",
+      I686 = "i686",
+      I686_AND_X86_64 = "i686,x86_64",
+      M68K = "m68k",
+      MIPS = "mips",
+      PPC = "ppc",
+      SPARC = "sparc",
+      X86_64 = "x86_64"
   ;
 
-  public static final String DEFAULT_ARCHITECTURE=I686;
+  public static final String DEFAULT_ARCHITECTURE = I686;
 
   private int bits;
 
@@ -71,7 +71,7 @@ public final class Architecture extends GlobalObjectStringKey<Architecture> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Architecture() {
     // Do nothing
   }
@@ -100,14 +100,14 @@ public final class Architecture extends GlobalObjectStringKey<Architecture> {
 
   @Override
   public void init(ResultSet result) throws SQLException {
-    pkey=result.getString(1);
-    bits=result.getInt(2);
+    pkey = result.getString(1);
+    bits = result.getInt(2);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readUTF().intern();
-    bits=in.readCompressedInt();
+    pkey = in.readUTF().intern();
+    bits = in.readCompressedInt();
   }
 
   @Override

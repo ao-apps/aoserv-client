@@ -50,8 +50,9 @@ public final class GuestUserTable extends CachedTableUserNameKey<GuestUser> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(GuestUser.COLUMN_USERNAME_name, ASCENDING)
+      new OrderBy(GuestUser.COLUMN_USERNAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -60,19 +61,19 @@ public final class GuestUserTable extends CachedTableUserNameKey<GuestUser> {
 
   public void addFTPGuestUser(User.Name username) throws IOException, SQLException {
     connector.requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.ADD,
-      Table.TableID.FTP_GUEST_USERS,
-      username
+        true,
+        AoservProtocol.CommandID.ADD,
+        Table.TableID.FTP_GUEST_USERS,
+        username
     );
   }
 
   public List<GuestUser> getFTPGuestUsers(Server aoServer) throws IOException, SQLException {
-    List<GuestUser> cached=getRows();
-    int size=cached.size();
-    List<GuestUser> matches=new ArrayList<>(size);
-    for (int c=0;c<size;c++) {
-      GuestUser obj=cached.get(c);
+    List<GuestUser> cached = getRows();
+    int size = cached.size();
+    List<GuestUser> matches = new ArrayList<>(size);
+    for (int c = 0; c < size; c++) {
+      GuestUser obj = cached.get(c);
       if (obj.getLinuxAccount().getLinuxServerAccount(aoServer) != null) {
         matches.add(obj);
       }
@@ -92,18 +93,18 @@ public final class GuestUserTable extends CachedTableUserNameKey<GuestUser> {
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-    String command=args[0];
+    String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_FTP_GUEST_USER)) {
       if (AOSH.checkParamCount(Command.ADD_FTP_GUEST_USER, args, 1, err)) {
         connector.getSimpleAOClient().addFTPGuestUser(
-          AOSH.parseLinuxUserName(args[1], "username")
+            AOSH.parseLinuxUserName(args[1], "username")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.REMOVE_FTP_GUEST_USER)) {
       if (AOSH.checkParamCount(Command.REMOVE_FTP_GUEST_USER, args, 1, err)) {
         connector.getSimpleAOClient().removeFTPGuestUser(
-          AOSH.parseLinuxUserName(args[1], "username")
+            AOSH.parseLinuxUserName(args[1], "username")
         );
       }
       return true;

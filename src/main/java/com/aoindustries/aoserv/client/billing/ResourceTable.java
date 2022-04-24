@@ -41,8 +41,9 @@ public final class ResourceTable extends GlobalTableStringKey<Resource> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Resource.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(Resource.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

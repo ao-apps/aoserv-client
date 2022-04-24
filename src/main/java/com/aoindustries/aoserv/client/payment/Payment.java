@@ -56,8 +56,8 @@ import java.util.Objects;
 public final class Payment extends CachedObjectIntegerKey<Payment> {
 
   static final int
-    COLUMN_PKEY = 0,
-    COLUMN_PROCESSOR_ID = 1
+      COLUMN_PKEY = 0,
+      COLUMN_PROCESSOR_ID = 1
   ;
   static final String COLUMN_ACCOUNTING_name = "accounting";
   static final String COLUMN_AUTHORIZATION_TIME_name = "authorization_time";
@@ -172,7 +172,7 @@ public final class Payment extends CachedObjectIntegerKey<Payment> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Payment() {
     // Do nothing
   }
@@ -183,7 +183,7 @@ public final class Payment extends CachedObjectIntegerKey<Payment> {
   public Processor getCreditCardProcessor() throws SQLException, IOException {
     Processor ccp = table.getConnector().getPayment().getProcessor().get(processorId);
     if (ccp == null) {
-      throw new SQLException("Unable to find CreditCardProcessor: "+processorId);
+      throw new SQLException("Unable to find CreditCardProcessor: " + processorId);
     }
     return ccp;
   }
@@ -313,7 +313,7 @@ public final class Payment extends CachedObjectIntegerKey<Payment> {
     }
     CountryCode cc = table.getConnector().getPayment().getCountryCode().get(shippingCountryCode);
     if (cc == null) {
-      throw new SQLException("Unable to find CountryCode: "+shippingCountryCode);
+      throw new SQLException("Unable to find CountryCode: " + shippingCountryCode);
     }
     return cc;
   }
@@ -438,7 +438,7 @@ public final class Payment extends CachedObjectIntegerKey<Payment> {
   public CountryCode getCreditCardCountryCode() throws SQLException, IOException {
     CountryCode cc = table.getConnector().getPayment().getCountryCode().get(creditCardCountryCode);
     if (cc == null) {
-      throw new SQLException("Unable to find CountryCode: "+creditCardCountryCode);
+      throw new SQLException("Unable to find CountryCode: " + creditCardCountryCode);
     }
     return cc;
   }
@@ -669,7 +669,7 @@ public final class Payment extends CachedObjectIntegerKey<Payment> {
   }
 
   public String getDescription() {
-  return description;
+    return description;
   }
 
   @Override
@@ -1150,96 +1150,96 @@ public final class Payment extends CachedObjectIntegerKey<Payment> {
    * Called when a sale (combined authorization and capture) has been completed.
    */
   public void saleCompleted(
-    final String authorizationCommunicationResult,
-    final String authorizationProviderErrorCode,
-    final String authorizationErrorCode,
-    final String authorizationProviderErrorMessage,
-    final String authorizationProviderUniqueId,
-    final String authorizationResult_providerReplacementMaskedCardNumber,
-    final String authorizationResult_replacementMaskedCardNumber,
-    final String authorizationResult_providerReplacementExpiration,
-    final Byte authorizationResult_replacementExpirationMonth,
-    final Short authorizationResult_replacementExpirationYear,
-    final String providerApprovalResult,
-    final String approvalResult,
-    final String providerDeclineReason,
-    final String declineReason,
-    final String providerReviewReason,
-    final String reviewReason,
-    final String providerCvvResult,
-    final String cvvResult,
-    final String providerAvsResult,
-    final String avsResult,
-    final String approvalCode,
-    final Timestamp captureTime,
-    final String capturePrincipalName,
-    final String captureCommunicationResult,
-    final String captureProviderErrorCode,
-    final String captureErrorCode,
-    final String captureProviderErrorMessage,
-    final String captureProviderUniqueId,
-    final String status
+      final String authorizationCommunicationResult,
+      final String authorizationProviderErrorCode,
+      final String authorizationErrorCode,
+      final String authorizationProviderErrorMessage,
+      final String authorizationProviderUniqueId,
+      final String authorizationResult_providerReplacementMaskedCardNumber,
+      final String authorizationResult_replacementMaskedCardNumber,
+      final String authorizationResult_providerReplacementExpiration,
+      final Byte authorizationResult_replacementExpirationMonth,
+      final Short authorizationResult_replacementExpirationYear,
+      final String providerApprovalResult,
+      final String approvalResult,
+      final String providerDeclineReason,
+      final String declineReason,
+      final String providerReviewReason,
+      final String reviewReason,
+      final String providerCvvResult,
+      final String cvvResult,
+      final String providerAvsResult,
+      final String avsResult,
+      final String approvalCode,
+      final Timestamp captureTime,
+      final String capturePrincipalName,
+      final String captureCommunicationResult,
+      final String captureProviderErrorCode,
+      final String captureErrorCode,
+      final String captureProviderErrorMessage,
+      final String captureProviderUniqueId,
+      final String status
   ) throws IOException, SQLException {
     if (!table.getConnector().isSecure()) {
-      throw new IOException("Credit card transactions may only be updated when using secure protocols.  Currently using the "+table.getConnector().getProtocol()+" protocol, which is not secure.");
+      throw new IOException("Credit card transactions may only be updated when using secure protocols.  Currently using the " + table.getConnector().getProtocol() + " protocol, which is not secure.");
     }
 
     table.getConnector().requestUpdate(
-      true,
-      AoservProtocol.CommandID.CREDIT_CARD_TRANSACTION_SALE_COMPLETED,
-      new AOServConnector.UpdateRequest() {
-        private IntList invalidateList;
+        true,
+        AoservProtocol.CommandID.CREDIT_CARD_TRANSACTION_SALE_COMPLETED,
+        new AOServConnector.UpdateRequest() {
+          private IntList invalidateList;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(pkey);
-          out.writeNullUTF(authorizationCommunicationResult);
-          out.writeNullUTF(authorizationProviderErrorCode);
-          out.writeNullUTF(authorizationErrorCode);
-          out.writeNullUTF(authorizationProviderErrorMessage);
-          out.writeNullUTF(authorizationProviderUniqueId);
-          out.writeNullUTF(authorizationResult_providerReplacementMaskedCardNumber);
-          out.writeNullUTF(authorizationResult_replacementMaskedCardNumber);
-          out.writeNullUTF(authorizationResult_providerReplacementExpiration);
-          out.writeNullByte(authorizationResult_replacementExpirationMonth);
-          out.writeNullShort(authorizationResult_replacementExpirationYear);
-          out.writeNullUTF(providerApprovalResult);
-          out.writeNullUTF(approvalResult);
-          out.writeNullUTF(providerDeclineReason);
-          out.writeNullUTF(declineReason);
-          out.writeNullUTF(providerReviewReason);
-          out.writeNullUTF(reviewReason);
-          out.writeNullUTF(providerCvvResult);
-          out.writeNullUTF(cvvResult);
-          out.writeNullUTF(providerAvsResult);
-          out.writeNullUTF(avsResult);
-          out.writeNullUTF(approvalCode);
-          SQLStreamables.writeNullTimestamp(captureTime, out);
-          out.writeNullUTF(capturePrincipalName);
-          out.writeNullUTF(captureCommunicationResult);
-          out.writeNullUTF(captureProviderErrorCode);
-          out.writeNullUTF(captureErrorCode);
-          out.writeNullUTF(captureProviderErrorMessage);
-          out.writeNullUTF(captureProviderUniqueId);
-          out.writeNullUTF(status);
-        }
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(pkey);
+            out.writeNullUTF(authorizationCommunicationResult);
+            out.writeNullUTF(authorizationProviderErrorCode);
+            out.writeNullUTF(authorizationErrorCode);
+            out.writeNullUTF(authorizationProviderErrorMessage);
+            out.writeNullUTF(authorizationProviderUniqueId);
+            out.writeNullUTF(authorizationResult_providerReplacementMaskedCardNumber);
+            out.writeNullUTF(authorizationResult_replacementMaskedCardNumber);
+            out.writeNullUTF(authorizationResult_providerReplacementExpiration);
+            out.writeNullByte(authorizationResult_replacementExpirationMonth);
+            out.writeNullShort(authorizationResult_replacementExpirationYear);
+            out.writeNullUTF(providerApprovalResult);
+            out.writeNullUTF(approvalResult);
+            out.writeNullUTF(providerDeclineReason);
+            out.writeNullUTF(declineReason);
+            out.writeNullUTF(providerReviewReason);
+            out.writeNullUTF(reviewReason);
+            out.writeNullUTF(providerCvvResult);
+            out.writeNullUTF(cvvResult);
+            out.writeNullUTF(providerAvsResult);
+            out.writeNullUTF(avsResult);
+            out.writeNullUTF(approvalCode);
+            SQLStreamables.writeNullTimestamp(captureTime, out);
+            out.writeNullUTF(capturePrincipalName);
+            out.writeNullUTF(captureCommunicationResult);
+            out.writeNullUTF(captureProviderErrorCode);
+            out.writeNullUTF(captureErrorCode);
+            out.writeNullUTF(captureProviderErrorMessage);
+            out.writeNullUTF(captureProviderUniqueId);
+            out.writeNullUTF(status);
+          }
 
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            invalidateList=AOServConnector.readInvalidateList(in);
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unknown response code: "+code);
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              invalidateList = AOServConnector.readInvalidateList(in);
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unknown response code: " + code);
+            }
+          }
+
+          @Override
+          public void afterRelease() {
+            table.getConnector().tablesUpdated(invalidateList);
           }
         }
-
-        @Override
-        public void afterRelease() {
-          table.getConnector().tablesUpdated(invalidateList);
-        }
-      }
     );
   }
 
@@ -1247,82 +1247,82 @@ public final class Payment extends CachedObjectIntegerKey<Payment> {
    * Called when an authorization has been completed.
    */
   public void authorizeCompleted(
-    final String authorizationCommunicationResult,
-    final String authorizationProviderErrorCode,
-    final String authorizationErrorCode,
-    final String authorizationProviderErrorMessage,
-    final String authorizationProviderUniqueId,
-    final String authorizationResult_providerReplacementMaskedCardNumber,
-    final String authorizationResult_replacementMaskedCardNumber,
-    final String authorizationResult_providerReplacementExpiration,
-    final Byte authorizationResult_replacementExpirationMonth,
-    final Short authorizationResult_replacementExpirationYear,
-    final String providerApprovalResult,
-    final String approvalResult,
-    final String providerDeclineReason,
-    final String declineReason,
-    final String providerReviewReason,
-    final String reviewReason,
-    final String providerCvvResult,
-    final String cvvResult,
-    final String providerAvsResult,
-    final String avsResult,
-    final String approvalCode,
-    final String status
+      final String authorizationCommunicationResult,
+      final String authorizationProviderErrorCode,
+      final String authorizationErrorCode,
+      final String authorizationProviderErrorMessage,
+      final String authorizationProviderUniqueId,
+      final String authorizationResult_providerReplacementMaskedCardNumber,
+      final String authorizationResult_replacementMaskedCardNumber,
+      final String authorizationResult_providerReplacementExpiration,
+      final Byte authorizationResult_replacementExpirationMonth,
+      final Short authorizationResult_replacementExpirationYear,
+      final String providerApprovalResult,
+      final String approvalResult,
+      final String providerDeclineReason,
+      final String declineReason,
+      final String providerReviewReason,
+      final String reviewReason,
+      final String providerCvvResult,
+      final String cvvResult,
+      final String providerAvsResult,
+      final String avsResult,
+      final String approvalCode,
+      final String status
   ) throws IOException, SQLException {
     if (!table.getConnector().isSecure()) {
-      throw new IOException("Credit card transactions may only be updated when using secure protocols.  Currently using the "+table.getConnector().getProtocol()+" protocol, which is not secure.");
+      throw new IOException("Credit card transactions may only be updated when using secure protocols.  Currently using the " + table.getConnector().getProtocol() + " protocol, which is not secure.");
     }
 
     table.getConnector().requestUpdate(
-      true,
-      AoservProtocol.CommandID.CREDIT_CARD_TRANSACTION_AUTHORIZE_COMPLETED,
-      new AOServConnector.UpdateRequest() {
-        private IntList invalidateList;
+        true,
+        AoservProtocol.CommandID.CREDIT_CARD_TRANSACTION_AUTHORIZE_COMPLETED,
+        new AOServConnector.UpdateRequest() {
+          private IntList invalidateList;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(pkey);
-          out.writeNullUTF(authorizationCommunicationResult);
-          out.writeNullUTF(authorizationProviderErrorCode);
-          out.writeNullUTF(authorizationErrorCode);
-          out.writeNullUTF(authorizationProviderErrorMessage);
-          out.writeNullUTF(authorizationProviderUniqueId);
-          out.writeNullUTF(authorizationResult_providerReplacementMaskedCardNumber);
-          out.writeNullUTF(authorizationResult_replacementMaskedCardNumber);
-          out.writeNullUTF(authorizationResult_providerReplacementExpiration);
-          out.writeNullByte(authorizationResult_replacementExpirationMonth);
-          out.writeNullShort(authorizationResult_replacementExpirationYear);
-          out.writeNullUTF(providerApprovalResult);
-          out.writeNullUTF(approvalResult);
-          out.writeNullUTF(providerDeclineReason);
-          out.writeNullUTF(declineReason);
-          out.writeNullUTF(providerReviewReason);
-          out.writeNullUTF(reviewReason);
-          out.writeNullUTF(providerCvvResult);
-          out.writeNullUTF(cvvResult);
-          out.writeNullUTF(providerAvsResult);
-          out.writeNullUTF(avsResult);
-          out.writeNullUTF(approvalCode);
-          out.writeNullUTF(status);
-        }
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(pkey);
+            out.writeNullUTF(authorizationCommunicationResult);
+            out.writeNullUTF(authorizationProviderErrorCode);
+            out.writeNullUTF(authorizationErrorCode);
+            out.writeNullUTF(authorizationProviderErrorMessage);
+            out.writeNullUTF(authorizationProviderUniqueId);
+            out.writeNullUTF(authorizationResult_providerReplacementMaskedCardNumber);
+            out.writeNullUTF(authorizationResult_replacementMaskedCardNumber);
+            out.writeNullUTF(authorizationResult_providerReplacementExpiration);
+            out.writeNullByte(authorizationResult_replacementExpirationMonth);
+            out.writeNullShort(authorizationResult_replacementExpirationYear);
+            out.writeNullUTF(providerApprovalResult);
+            out.writeNullUTF(approvalResult);
+            out.writeNullUTF(providerDeclineReason);
+            out.writeNullUTF(declineReason);
+            out.writeNullUTF(providerReviewReason);
+            out.writeNullUTF(reviewReason);
+            out.writeNullUTF(providerCvvResult);
+            out.writeNullUTF(cvvResult);
+            out.writeNullUTF(providerAvsResult);
+            out.writeNullUTF(avsResult);
+            out.writeNullUTF(approvalCode);
+            out.writeNullUTF(status);
+          }
 
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            invalidateList=AOServConnector.readInvalidateList(in);
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unknown response code: "+code);
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              invalidateList = AOServConnector.readInvalidateList(in);
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unknown response code: " + code);
+            }
+          }
+
+          @Override
+          public void afterRelease() {
+            table.getConnector().tablesUpdated(invalidateList);
           }
         }
-
-        @Override
-        public void afterRelease() {
-          table.getConnector().tablesUpdated(invalidateList);
-        }
-      }
     );
   }
 }

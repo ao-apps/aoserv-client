@@ -41,8 +41,9 @@ public final class BackupRetentionTable extends GlobalTable<Short, BackupRetenti
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(BackupRetention.COLUMN_DAYS_name, ASCENDING)
+      new OrderBy(BackupRetention.COLUMN_DAYS_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -58,7 +59,7 @@ public final class BackupRetentionTable extends GlobalTable<Short, BackupRetenti
     if (days == null) {
       return null;
     }
-    return get(((Short)days).shortValue());
+    return get(((Short) days).shortValue());
   }
 
   /**

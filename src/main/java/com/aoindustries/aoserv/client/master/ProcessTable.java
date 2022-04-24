@@ -61,7 +61,7 @@ public final class ProcessTable extends AOServTable<SmallIdentifier, Process> {
     if (id == null) {
       return null;
     }
-    return get((SmallIdentifier)id);
+    return get((SmallIdentifier) id);
   }
 
   /**

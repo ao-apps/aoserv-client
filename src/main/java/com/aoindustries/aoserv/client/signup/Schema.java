@@ -35,10 +35,16 @@ import java.util.List;
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
   private final OptionTable Option;
-  public OptionTable getOption() {return Option;}
+
+  public OptionTable getOption() {
+    return Option;
+  }
 
   private final RequestTable Request;
-  public RequestTable getRequest() {return Request;}
+
+  public RequestTable getRequest() {
+    return Request;
+  }
 
   private final List<? extends AOServTable<?, ?>> tables;
 

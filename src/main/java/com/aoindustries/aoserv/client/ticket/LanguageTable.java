@@ -41,8 +41,9 @@ public final class LanguageTable extends GlobalTableStringKey<Language> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Language.COLUMN_CODE_name, ASCENDING)
+      new OrderBy(Language.COLUMN_CODE_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

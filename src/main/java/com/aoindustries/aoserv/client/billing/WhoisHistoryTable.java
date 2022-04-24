@@ -42,9 +42,10 @@ public final class WhoisHistoryTable extends CachedTableIntegerKey<WhoisHistory>
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(WhoisHistory.COLUMN_registrableDomain_name, ASCENDING),
-    new OrderBy(WhoisHistory.COLUMN_time_name, ASCENDING)
+      new OrderBy(WhoisHistory.COLUMN_registrableDomain_name, ASCENDING),
+      new OrderBy(WhoisHistory.COLUMN_time_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

@@ -49,9 +49,10 @@ public final class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(NoticeLog.COLUMN_CREATE_TIME_name, ASCENDING),
-    new OrderBy(NoticeLog.COLUMN_PKEY_name, ASCENDING)
+      new OrderBy(NoticeLog.COLUMN_CREATE_TIME_name, ASCENDING),
+      new OrderBy(NoticeLog.COLUMN_PKEY_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -59,21 +60,21 @@ public final class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
   }
 
   public int addNoticeLog(
-    final Account account,
-    final String billingContact,
-    final Email emailAddress,
-    final NoticeType type,
-    final Transaction trans
+      final Account account,
+      final String billingContact,
+      final Email emailAddress,
+      final NoticeType type,
+      final Transaction trans
   ) throws IOException, SQLException {
     return connector.requestIntQueryIL(
-      true,
-      AoservProtocol.CommandID.ADD,
-      Table.TableID.NOTICE_LOG,
-      account.getName().toString(),
-      billingContact,
-      emailAddress,
-      type.getType(),
-      trans == null ? NoticeLog.NO_TRANSACTION : trans.getTransid()
+        true,
+        AoservProtocol.CommandID.ADD,
+        Table.TableID.NOTICE_LOG,
+        account.getName().toString(),
+        billingContact,
+        emailAddress,
+        type.getType(),
+        trans == null ? NoticeLog.NO_TRANSACTION : trans.getTransid()
     );
   }
 
@@ -97,13 +98,13 @@ public final class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
     if (command.equalsIgnoreCase(Command.ADD_NOTICE_LOG)) {
       if (AOSH.checkParamCount(Command.ADD_NOTICE_LOG, args, 5, err)) {
         out.println(
-          connector.getSimpleAOClient().addNoticeLog(
-            AOSH.parseAccountingCode(args[1], "business"),
-            args[2],
-            AOSH.parseEmail(args[3], "email_address"),
-            args[4],
-            args[5].isEmpty() ? NoticeLog.NO_TRANSACTION : AOSH.parseInt(args[5], "transid")
-          )
+            connector.getSimpleAOClient().addNoticeLog(
+                AOSH.parseAccountingCode(args[1], "business"),
+                args[2],
+                AOSH.parseEmail(args[3], "email_address"),
+                args[4],
+                args[5].isEmpty() ? NoticeLog.NO_TRANSACTION : AOSH.parseInt(args[5], "transid")
+            )
         );
         out.flush();
       }

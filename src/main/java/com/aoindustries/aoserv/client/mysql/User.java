@@ -76,7 +76,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
    * @author  AO Industries, Inc.
    */
   public static final class Name extends com.aoindustries.aoserv.client.linux.User.Name implements
-    FastExternalizable
+      FastExternalizable
   {
 
     /**
@@ -96,9 +96,9 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
         return new InvalidResult(RESOURCES, "Name.validate.isNull");
       }
       if (
-        // Allow specific system users that otherwise do not match our allowed username pattern
-        !"mysql.sys".equals(name)
-        && !"mysql.session".equals(name)
+          // Allow specific system users that otherwise do not match our allowed username pattern
+          !"mysql.sys".equals(name)
+              && !"mysql.session".equals(name)
       ) {
         int len = name.length();
         if (len == 0) {
@@ -111,8 +111,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
         // The first character must be [a-z] or [0-9]
         char ch = name.charAt(0);
         if (
-          (ch < 'a' || ch > 'z')
-          && (ch<'0' || ch>'9')
+            (ch < 'a' || ch > 'z')
+                && (ch < '0' || ch > '9')
         ) {
           return new InvalidResult(RESOURCES, "Name.validate.startAtoZor0to9");
         }
@@ -121,9 +121,9 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
         for (int c = 1; c < len; c++) {
           ch = name.charAt(c);
           if (
-            (ch<'a' || ch>'z')
-            && (ch<'0' || ch>'9')
-            && ch != '_'
+              (ch < 'a' || ch > 'z')
+                  && (ch < '0' || ch > '9')
+                  && ch != '_'
           ) {
             return new InvalidResult(RESOURCES, "Name.validate.illegalCharacter");
           }
@@ -194,7 +194,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
      *
      * @see  FastExternalizable
      */
-    @Deprecated/* Java 9: (forRemoval = false) */
+    @Deprecated // Java 9: (forRemoval = false)
     public Name() {
       // Do nothing
     }
@@ -206,7 +206,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
     // </editor-fold>
   }
 
-  static final int COLUMN_USERNAME=0;
+  static final int COLUMN_USERNAME = 0;
   static final String COLUMN_USERNAME_name = "username";
 
   /**
@@ -221,14 +221,14 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
    * The username of the MySQL special users.
    */
   public static final Name
-    /** The username of the MySQL super user. */
-    ROOT,
-    /** The username of the MySQL <code>mysql.session</code> user added in MySQL 5.7. */
-    MYSQL_SESSION,
-    /** The username of the MySQL <code>mysql.sys</code> user added in MySQL 5.7. */
-    MYSQL_SYS,
-    /** Monitoring */
-    MYSQLMON;
+      /** The username of the MySQL super user. */
+      ROOT,
+      /** The username of the MySQL <code>mysql.session</code> user added in MySQL 5.7. */
+      MYSQL_SESSION,
+      /** The username of the MySQL <code>mysql.sys</code> user added in MySQL 5.7. */
+      MYSQL_SYS,
+      /** Monitoring */
+      MYSQLMON;
 
   static {
     try {
@@ -250,53 +250,53 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
    */
   public static boolean isSpecial(Name username) {
     return
-      // The username of the MySQL super user.
-      username.equals(ROOT)
-      // The username of the MySQL <code>mysql.session</code> user added in MySQL 5.7.
-      || username.equals(MYSQL_SESSION)
-      // The username of the MySQL <code>mysql.sys</code> user added in MySQL 5.7.
-      || username.equals(MYSQL_SYS)
-      // Monitoring
-      || username.equals(MYSQLMON);
+        // The username of the MySQL super user.
+        username.equals(ROOT)
+            // The username of the MySQL <code>mysql.session</code> user added in MySQL 5.7.
+            || username.equals(MYSQL_SESSION)
+            // The username of the MySQL <code>mysql.sys</code> user added in MySQL 5.7.
+            || username.equals(MYSQL_SYS)
+            // Monitoring
+            || username.equals(MYSQLMON);
   }
 
   /**
    * A password may be set to null, which means that the account will
    * be disabled.
    */
-  public static final String NO_PASSWORD=null;
+  public static final String NO_PASSWORD = null;
 
-  public static final String NO_PASSWORD_DB_VALUE="*";
+  public static final String NO_PASSWORD_DB_VALUE = "*";
 
   private boolean
-    select_priv,
-    insert_priv,
-    update_priv,
-    delete_priv,
-    create_priv,
-    drop_priv,
-    reload_priv,
-    shutdown_priv,
-    process_priv,
-    file_priv,
-    grant_priv,
-    references_priv,
-    index_priv,
-    alter_priv,
-    show_db_priv,
-    super_priv,
-    create_tmp_table_priv,
-    lock_tables_priv,
-    execute_priv,
-    repl_slave_priv,
-    repl_client_priv,
-    create_view_priv,
-    show_view_priv,
-    create_routine_priv,
-    alter_routine_priv,
-    create_user_priv,
-    event_priv,
-    trigger_priv
+      select_priv,
+      insert_priv,
+      update_priv,
+      delete_priv,
+      create_priv,
+      drop_priv,
+      reload_priv,
+      shutdown_priv,
+      process_priv,
+      file_priv,
+      grant_priv,
+      references_priv,
+      index_priv,
+      alter_priv,
+      show_db_priv,
+      super_priv,
+      create_tmp_table_priv,
+      lock_tables_priv,
+      execute_priv,
+      repl_slave_priv,
+      repl_client_priv,
+      create_view_priv,
+      show_view_priv,
+      create_routine_priv,
+      alter_routine_priv,
+      create_user_priv,
+      event_priv,
+      trigger_priv
   ;
 
   private int disable_log;
@@ -307,7 +307,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public User() {
     // Do nothing
   }
@@ -569,10 +569,11 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
   public Name getUsername_id() {
     return pkey;
   }
+
   public com.aoindustries.aoserv.client.account.User getUsername() throws SQLException, IOException {
-    com.aoindustries.aoserv.client.account.User obj=table.getConnector().getAccount().getUser().get(pkey);
+    com.aoindustries.aoserv.client.account.User obj = table.getConnector().getAccount().getUser().get(pkey);
     if (obj == null) {
-      throw new SQLException("Unable to find Username: "+pkey);
+      throw new SQLException("Unable to find Username: " + pkey);
     }
     return obj;
   }
@@ -585,34 +586,34 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
   public void init(ResultSet result) throws SQLException {
     try {
       pkey = Name.valueOf(result.getString(1));
-      select_priv=result.getBoolean(2);
-      insert_priv=result.getBoolean(3);
-      update_priv=result.getBoolean(4);
-      delete_priv=result.getBoolean(5);
-      create_priv=result.getBoolean(6);
-      drop_priv=result.getBoolean(7);
-      reload_priv=result.getBoolean(8);
-      shutdown_priv=result.getBoolean(9);
-      process_priv=result.getBoolean(10);
-      file_priv=result.getBoolean(11);
-      grant_priv=result.getBoolean(12);
-      references_priv=result.getBoolean(13);
-      index_priv=result.getBoolean(14);
-      alter_priv=result.getBoolean(15);
-      show_db_priv=result.getBoolean(16);
-      super_priv=result.getBoolean(17);
-      create_tmp_table_priv=result.getBoolean(18);
-      lock_tables_priv=result.getBoolean(19);
-      execute_priv=result.getBoolean(20);
-      repl_slave_priv=result.getBoolean(21);
-      repl_client_priv=result.getBoolean(22);
-      create_view_priv=result.getBoolean(23);
-      show_view_priv=result.getBoolean(24);
-      create_routine_priv=result.getBoolean(25);
-      alter_routine_priv=result.getBoolean(26);
-      create_user_priv=result.getBoolean(27);
-      event_priv=result.getBoolean(28);
-      trigger_priv=result.getBoolean(29);
+      select_priv = result.getBoolean(2);
+      insert_priv = result.getBoolean(3);
+      update_priv = result.getBoolean(4);
+      delete_priv = result.getBoolean(5);
+      create_priv = result.getBoolean(6);
+      drop_priv = result.getBoolean(7);
+      reload_priv = result.getBoolean(8);
+      shutdown_priv = result.getBoolean(9);
+      process_priv = result.getBoolean(10);
+      file_priv = result.getBoolean(11);
+      grant_priv = result.getBoolean(12);
+      references_priv = result.getBoolean(13);
+      index_priv = result.getBoolean(14);
+      alter_priv = result.getBoolean(15);
+      show_db_priv = result.getBoolean(16);
+      super_priv = result.getBoolean(17);
+      create_tmp_table_priv = result.getBoolean(18);
+      lock_tables_priv = result.getBoolean(19);
+      execute_priv = result.getBoolean(20);
+      repl_slave_priv = result.getBoolean(21);
+      repl_client_priv = result.getBoolean(22);
+      create_view_priv = result.getBoolean(23);
+      show_view_priv = result.getBoolean(24);
+      create_routine_priv = result.getBoolean(25);
+      alter_routine_priv = result.getBoolean(26);
+      create_user_priv = result.getBoolean(27);
+      event_priv = result.getBoolean(28);
+      trigger_priv = result.getBoolean(29);
       disable_log = result.getInt(30);
       if (result.wasNull()) {
         disable_log = -1;
@@ -626,34 +627,34 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
       pkey = Name.valueOf(in.readUTF()).intern();
-      select_priv=in.readBoolean();
-      insert_priv=in.readBoolean();
-      update_priv=in.readBoolean();
-      delete_priv=in.readBoolean();
-      create_priv=in.readBoolean();
-      drop_priv=in.readBoolean();
-      reload_priv=in.readBoolean();
-      shutdown_priv=in.readBoolean();
-      process_priv=in.readBoolean();
-      file_priv=in.readBoolean();
-      grant_priv=in.readBoolean();
-      references_priv=in.readBoolean();
-      index_priv=in.readBoolean();
-      alter_priv=in.readBoolean();
-      show_db_priv=in.readBoolean();
-      super_priv=in.readBoolean();
-      create_tmp_table_priv=in.readBoolean();
-      lock_tables_priv=in.readBoolean();
-      execute_priv=in.readBoolean();
-      repl_slave_priv=in.readBoolean();
-      repl_client_priv=in.readBoolean();
-      create_view_priv=in.readBoolean();
-      show_view_priv=in.readBoolean();
-      create_routine_priv=in.readBoolean();
-      alter_routine_priv=in.readBoolean();
-      create_user_priv=in.readBoolean();
-      event_priv=in.readBoolean();
-      trigger_priv=in.readBoolean();
+      select_priv = in.readBoolean();
+      insert_priv = in.readBoolean();
+      update_priv = in.readBoolean();
+      delete_priv = in.readBoolean();
+      create_priv = in.readBoolean();
+      drop_priv = in.readBoolean();
+      reload_priv = in.readBoolean();
+      shutdown_priv = in.readBoolean();
+      process_priv = in.readBoolean();
+      file_priv = in.readBoolean();
+      grant_priv = in.readBoolean();
+      references_priv = in.readBoolean();
+      index_priv = in.readBoolean();
+      alter_priv = in.readBoolean();
+      show_db_priv = in.readBoolean();
+      super_priv = in.readBoolean();
+      create_tmp_table_priv = in.readBoolean();
+      lock_tables_priv = in.readBoolean();
+      execute_priv = in.readBoolean();
+      repl_slave_priv = in.readBoolean();
+      repl_client_priv = in.readBoolean();
+      create_view_priv = in.readBoolean();
+      show_view_priv = in.readBoolean();
+      create_routine_priv = in.readBoolean();
+      alter_routine_priv = in.readBoolean();
+      create_user_priv = in.readBoolean();
+      event_priv = in.readBoolean();
+      trigger_priv = in.readBoolean();
       disable_log = in.readCompressedInt();
     } catch (ValidationException e) {
       throw new IOException(e);
@@ -662,13 +663,13 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
 
   @Override
   public List<CannotRemoveReason<User>> getCannotRemoveReasons() {
-    List<CannotRemoveReason<User>> reasons=new ArrayList<>();
+    List<CannotRemoveReason<User>> reasons = new ArrayList<>();
     if (isSpecial()) {
       reasons.add(
-        new CannotRemoveReason<>(
-          "Not allowed to remove a special MySQL user: " + pkey,
-          this
-        )
+          new CannotRemoveReason<>(
+              "Not allowed to remove a special MySQL user: " + pkey,
+              this
+          )
       );
     }
     return reasons;
@@ -680,10 +681,10 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       throw new SQLException("Refusing to remove special MySQL user: " + this);
     }
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.REMOVE,
-      Table.TableID.MYSQL_USERS,
-      pkey
+        true,
+        AoservProtocol.CommandID.REMOVE,
+        Table.TableID.MYSQL_USERS,
+        pkey
     );
   }
 

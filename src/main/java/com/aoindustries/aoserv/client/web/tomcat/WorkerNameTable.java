@@ -41,8 +41,9 @@ public final class WorkerNameTable extends GlobalTableStringKey<WorkerName> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(WorkerName.COLUMN_CODE_name, ASCENDING)
+      new OrderBy(WorkerName.COLUMN_CODE_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

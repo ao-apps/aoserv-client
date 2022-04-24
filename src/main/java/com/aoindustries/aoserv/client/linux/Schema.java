@@ -35,37 +35,70 @@ import java.util.List;
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
   private final DaemonAclTable DaemonAcl;
-  public DaemonAclTable getDaemonAcl() {return DaemonAcl;}
+
+  public DaemonAclTable getDaemonAcl() {
+    return DaemonAcl;
+  }
 
   private final GroupTable Group;
-  public GroupTable getGroup() {return Group;}
+
+  public GroupTable getGroup() {
+    return Group;
+  }
 
   private final GroupServerTable GroupServer;
-  public GroupServerTable getGroupServer() {return GroupServer;}
+
+  public GroupServerTable getGroupServer() {
+    return GroupServer;
+  }
 
   private final GroupTypeTable GroupType;
-  public GroupTypeTable getGroupType() {return GroupType;}
+
+  public GroupTypeTable getGroupType() {
+    return GroupType;
+  }
 
   private final GroupUserTable GroupUser;
-  public GroupUserTable getGroupUser() {return GroupUser;}
+
+  public GroupUserTable getGroupUser() {
+    return GroupUser;
+  }
 
   private final ServerTable Server;
-  public ServerTable getServer() {return Server;}
+
+  public ServerTable getServer() {
+    return Server;
+  }
 
   private final ShellTable Shell;
-  public ShellTable getShell() {return Shell;}
+
+  public ShellTable getShell() {
+    return Shell;
+  }
 
   private final TimeZoneTable TimeZone;
-  public TimeZoneTable getTimeZone() {return TimeZone;}
+
+  public TimeZoneTable getTimeZone() {
+    return TimeZone;
+  }
 
   private final UserTable User;
-  public UserTable getUser() {return User;}
+
+  public UserTable getUser() {
+    return User;
+  }
 
   private final UserServerTable UserServer;
-  public UserServerTable getUserServer() {return UserServer;}
+
+  public UserServerTable getUserServer() {
+    return UserServer;
+  }
 
   private final UserTypeTable UserType;
-  public UserTypeTable getUserType() {return UserType;}
+
+  public UserTypeTable getUserType() {
+    return UserType;
+  }
 
   private final List<? extends AOServTable<?, ?>> tables;
 

@@ -43,12 +43,12 @@ import java.sql.SQLException;
 public final class Host extends CachedObjectLongKey<Host> {
 
   static final int
-    COLUMN_PKEY = 0,
-    COLUMN_SET = 1
+      COLUMN_PKEY = 0,
+      COLUMN_SET = 1
   ;
   static final String
-    COLUMN_SET_name  = "set",
-    COLUMN_HOST_name = "host"
+      COLUMN_SET_name  = "set",
+      COLUMN_HOST_name = "host"
   ;
 
   private int set;
@@ -62,7 +62,7 @@ public final class Host extends CachedObjectLongKey<Host> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Host() {
     // Do nothing
   }
@@ -132,10 +132,10 @@ public final class Host extends CachedObjectLongKey<Host> {
    */
   public InetAddress getHostAddress() {
     return InetAddress.valueOf(
-      LongLong.valueOf(
-        0,
-        host & 0x00000000ffffffffL
-      )
+        LongLong.valueOf(
+            0,
+            host & 0x00000000ffffffffL
+        )
     );
   }
 

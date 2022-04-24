@@ -41,8 +41,9 @@ public final class PaymentTypeTable extends GlobalTableStringKey<PaymentType> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(PaymentType.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(PaymentType.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -70,26 +71,26 @@ public final class PaymentTypeTable extends GlobalTableStringKey<PaymentType> {
     }
 
     // Get card type
-    PaymentType paymentType=null;
+    PaymentType paymentType = null;
     if (
-      numbers.length() >= 2
-      && numbers.charAt(0) == '3'
-      && (numbers.charAt(1) == '4' || numbers.charAt(1) == '7')
+        numbers.length() >= 2
+            && numbers.charAt(0) == '3'
+            && (numbers.charAt(1) == '4' || numbers.charAt(1) == '7')
     ) {
       paymentType = get(PaymentType.AMEX);
     } else if (
-      numbers.length() >= 4
-      && numbers.charAt(0) == '6'
-      && numbers.charAt(1) == '0'
-      && numbers.charAt(2) == '1'
-      && numbers.charAt(3) == '1'
+        numbers.length() >= 4
+            && numbers.charAt(0) == '6'
+            && numbers.charAt(1) == '0'
+            && numbers.charAt(2) == '1'
+            && numbers.charAt(3) == '1'
     ) {
       paymentType = get(PaymentType.DISCOVER);
     } else if (
-      numbers.length() >= 2
-      && numbers.charAt(0) == '5'
-      && numbers.charAt(1) >= '1'
-      && numbers.charAt(1) <= '5'
+        numbers.length() >= 2
+            && numbers.charAt(0) == '5'
+            && numbers.charAt(1) >= '1'
+            && numbers.charAt(1) <= '5'
     ) {
       paymentType = get(PaymentType.MASTERCARD);
     } else if (numbers.length() >= 1 && numbers.charAt(0) == '4') {

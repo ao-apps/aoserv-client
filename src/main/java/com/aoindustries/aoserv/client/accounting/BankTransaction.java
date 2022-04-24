@@ -56,14 +56,14 @@ public final class BankTransaction extends AOServObject<Integer, BankTransaction
   private int id;
   private UnmodifiableTimestamp time;
   private String
-    account,
-    processor;
+      account,
+      processor;
   private User.Name administrator;
   private String
-    type,
-    expenseCategory,
-    description,
-    checkNo
+      type,
+      expenseCategory,
+      description,
+      checkNo
   ;
   private int amount;
   private boolean confirmed;
@@ -74,7 +74,7 @@ public final class BankTransaction extends AOServObject<Integer, BankTransaction
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public BankTransaction() {
     // Do nothing
   }
@@ -82,8 +82,8 @@ public final class BankTransaction extends AOServObject<Integer, BankTransaction
   @Override
   public boolean equals(Object obj) {
     return
-      (obj instanceof BankTransaction)
-      && ((BankTransaction)obj).id == id
+        (obj instanceof BankTransaction)
+            && ((BankTransaction) obj).id == id
     ;
   }
 
@@ -146,7 +146,7 @@ public final class BankTransaction extends AOServObject<Integer, BankTransaction
     if (expenseCategory == null) {
       return null;
     }
-    ExpenseCategory cat=table.getConnector().getAccounting().getExpenseCategory().get(expenseCategory);
+    ExpenseCategory cat = table.getConnector().getAccounting().getExpenseCategory().get(expenseCategory);
     if (cat == null) {
       throw new SQLException("ExpenseCategory not found: " + expenseCategory);
     }
@@ -241,12 +241,12 @@ public final class BankTransaction extends AOServObject<Integer, BankTransaction
     if (this.table != null) {
       throw new IllegalStateException("table already set");
     }
-    this.table=table;
+    this.table = table;
   }
 
   @Override
   public String toStringImpl() {
-    return id+"|"+administrator+'|'+type+'|'+SQLUtility.formatDecimal2(amount);
+    return id + "|" + administrator + '|' + type + '|' + SQLUtility.formatDecimal2(amount);
   }
 
   @Override
@@ -263,7 +263,7 @@ public final class BankTransaction extends AOServObject<Integer, BankTransaction
       }
     }
     out.writeUTF(account);
-    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_29)<0) {
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_29) < 0) {
       out.writeNullUTF(null);
     } else {
       out.writeNullUTF(processor);

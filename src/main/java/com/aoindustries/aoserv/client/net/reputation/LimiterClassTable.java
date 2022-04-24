@@ -45,12 +45,13 @@ public final class LimiterClassTable extends CachedTableIntegerKey<LimiterClass>
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(LimiterClass.COLUMN_LIMITER_name+'.'+Limiter.COLUMN_NET_DEVICE_name+'.'+Device.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(LimiterClass.COLUMN_LIMITER_name+'.'+Limiter.COLUMN_NET_DEVICE_name+'.'+Device.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(LimiterClass.COLUMN_LIMITER_name+'.'+Limiter.COLUMN_NET_DEVICE_name+'.'+Device.COLUMN_DEVICE_ID_name, ASCENDING),
-    new OrderBy(LimiterClass.COLUMN_LIMITER_name+'.'+Limiter.COLUMN_IDENTIFIER_name, ASCENDING),
-    new OrderBy(LimiterClass.COLUMN_CLASS_name, ASCENDING)
+      new OrderBy(LimiterClass.COLUMN_LIMITER_name + '.' + Limiter.COLUMN_NET_DEVICE_name + '.' + Device.COLUMN_SERVER_name + '.' + Host.COLUMN_PACKAGE_name + '.' + Package.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(LimiterClass.COLUMN_LIMITER_name + '.' + Limiter.COLUMN_NET_DEVICE_name + '.' + Device.COLUMN_SERVER_name + '.' + Host.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(LimiterClass.COLUMN_LIMITER_name + '.' + Limiter.COLUMN_NET_DEVICE_name + '.' + Device.COLUMN_DEVICE_ID_name, ASCENDING),
+      new OrderBy(LimiterClass.COLUMN_LIMITER_name + '.' + Limiter.COLUMN_IDENTIFIER_name, ASCENDING),
+      new OrderBy(LimiterClass.COLUMN_CLASS_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

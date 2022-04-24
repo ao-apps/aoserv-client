@@ -44,8 +44,8 @@ import java.sql.SQLException;
  */
 public final class SoftwareCategorization extends GlobalObjectIntegerKey<SoftwareCategorization> {
 
-  static final int COLUMN_PKEY=0;
-  static final int COLUMN_NAME=1;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_NAME = 1;
   static final String COLUMN_NAME_name = "name";
   static final String COLUMN_CLASS_name = "class";
 
@@ -58,7 +58,7 @@ public final class SoftwareCategorization extends GlobalObjectIntegerKey<Softwar
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public SoftwareCategorization() {
     // Do nothing
   }

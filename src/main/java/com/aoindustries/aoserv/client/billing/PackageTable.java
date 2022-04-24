@@ -49,8 +49,9 @@ public final class PackageTable extends CachedTableIntegerKey<Package> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Package.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(Package.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -58,17 +59,17 @@ public final class PackageTable extends CachedTableIntegerKey<Package> {
   }
 
   public int addPackage(
-    Account.Name name,
-    Account business,
-    PackageDefinition packageDefinition
+      Account.Name name,
+      Account business,
+      PackageDefinition packageDefinition
   ) throws IOException, SQLException {
     return connector.requestIntQueryIL(
-      true,
-      AoservProtocol.CommandID.ADD,
-      Table.TableID.PACKAGES,
-      name,
-      business.getName(),
-      packageDefinition.getPkey()
+        true,
+        AoservProtocol.CommandID.ADD,
+        Table.TableID.PACKAGES,
+        name,
+        business.getName(),
+        packageDefinition.getPkey()
     );
   }
 
@@ -84,10 +85,10 @@ public final class PackageTable extends CachedTableIntegerKey<Package> {
       return null;
     }
     if (pkey instanceof Integer) {
-      return get(((Integer)pkey).intValue());
+      return get(((Integer) pkey).intValue());
     }
     if (pkey instanceof Account.Name) {
-      return get((Account.Name)pkey);
+      return get((Account.Name) pkey);
     }
     throw new IllegalArgumentException("pkey must be either an Integer or an AccountingCode");
   }
@@ -130,20 +131,20 @@ public final class PackageTable extends CachedTableIntegerKey<Package> {
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
-    String command=args[0];
+    String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_PACKAGE)) {
       if (AOSH.checkParamCount(Command.ADD_PACKAGE, args, 3, err)) {
         try {
           out.println(
-            connector.getSimpleAOClient().addPackage(
-              AOSH.parseAccountingCode(args[1], "package"),
-              AOSH.parseAccountingCode(args[2], "business"),
-              AOSH.parseInt(args[3], "package_definition")
-            )
+              connector.getSimpleAOClient().addPackage(
+                  AOSH.parseAccountingCode(args[1], "package"),
+                  AOSH.parseAccountingCode(args[2], "business"),
+                  AOSH.parseInt(args[3], "package_definition")
+              )
           );
           out.flush();
         } catch (IllegalArgumentException iae) {
-          err.print("aosh: "+Command.ADD_PACKAGE+": ");
+          err.print("aosh: " + Command.ADD_PACKAGE + ": ");
           err.println(iae.getMessage());
           err.flush();
         }
@@ -152,10 +153,10 @@ public final class PackageTable extends CachedTableIntegerKey<Package> {
     } else if (command.equalsIgnoreCase(Command.DISABLE_PACKAGE)) {
       if (AOSH.checkParamCount(Command.DISABLE_PACKAGE, args, 2, err)) {
         out.println(
-          connector.getSimpleAOClient().disablePackage(
-            AOSH.parseAccountingCode(args[1], "name"),
-            args[2]
-          )
+            connector.getSimpleAOClient().disablePackage(
+                AOSH.parseAccountingCode(args[1], "name"),
+                args[2]
+            )
         );
         out.flush();
       }
@@ -163,16 +164,16 @@ public final class PackageTable extends CachedTableIntegerKey<Package> {
     } else if (command.equalsIgnoreCase(Command.ENABLE_PACKAGE)) {
       if (AOSH.checkParamCount(Command.ENABLE_PACKAGE, args, 1, err)) {
         connector.getSimpleAOClient().enablePackage(
-          AOSH.parseAccountingCode(args[1], "name")
+            AOSH.parseAccountingCode(args[1], "name")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.GENERATE_PACKAGE_NAME)) {
       if (AOSH.checkParamCount(Command.GENERATE_PACKAGE_NAME, args, 1, err)) {
         out.println(
-          connector.getSimpleAOClient().generatePackageName(
-            AOSH.parseAccountingCode(args[1], "template")
-          )
+            connector.getSimpleAOClient().generatePackageName(
+                AOSH.parseAccountingCode(args[1], "template")
+            )
         );
         out.flush();
       }
@@ -181,13 +182,13 @@ public final class PackageTable extends CachedTableIntegerKey<Package> {
       if (AOSH.checkParamCount(Command.IS_PACKAGE_NAME_AVAILABLE, args, 1, err)) {
         try {
           out.println(
-            connector.getSimpleAOClient().isPackageNameAvailable(
-              AOSH.parseAccountingCode(args[1], "package")
-            )
+              connector.getSimpleAOClient().isPackageNameAvailable(
+                  AOSH.parseAccountingCode(args[1], "package")
+              )
           );
           out.flush();
         } catch (IllegalArgumentException iae) {
-          err.print("aosh: "+Command.IS_PACKAGE_NAME_AVAILABLE+": ");
+          err.print("aosh: " + Command.IS_PACKAGE_NAME_AVAILABLE + ": ");
           err.println(iae.getMessage());
           err.flush();
         }

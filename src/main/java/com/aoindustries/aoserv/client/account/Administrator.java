@@ -69,31 +69,31 @@ import java.util.List;
  */
 public final class Administrator extends CachedObjectUserNameKey<Administrator> implements PasswordProtected, Removable, Disablable, Comparable<Administrator> {
 
-  static final int COLUMN_USERNAME=0;
+  static final int COLUMN_USERNAME = 0;
   static final String COLUMN_USERNAME_name = "username";
 
   private HashedPassword password;
   private String
-    name,
-    title
+      name,
+      title
   ;
   private long birthday;
   private boolean isPreferred;
   private boolean isPrivate;
   private UnmodifiableTimestamp created;
   private String
-    work_phone,
-    home_phone,
-    cell_phone,
-    fax;
+      work_phone,
+      home_phone,
+      cell_phone,
+      fax;
   private Email email;
   private String
-    address1,
-    address2,
-    city,
-    state,
-    country,
-    zip
+      address1,
+      address2,
+      city,
+      state,
+      country,
+      zip
   ;
   private int disable_log;
   private boolean can_switch_users;
@@ -105,7 +105,7 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Administrator() {
     // Do nothing
   }
@@ -113,9 +113,9 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
   @Override
   public int arePasswordsSet() throws IOException, SQLException {
     return table.getConnector().requestBooleanQuery(
-      true,
-      AoservProtocol.CommandID.IS_BUSINESS_ADMINISTRATOR_PASSWORD_SET,
-      pkey
+        true,
+        AoservProtocol.CommandID.IS_BUSINESS_ADMINISTRATOR_PASSWORD_SET,
+        pkey
     ) ? PasswordProtected.ALL : PasswordProtected.NONE;
   }
 
@@ -143,7 +143,7 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
 
   @Override
   public boolean canEnable() throws SQLException, IOException {
-    DisableLog dl=getDisableLog();
+    DisableLog dl = getDisableLog();
     if (dl == null) {
       return false;
     } else {
@@ -253,7 +253,7 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
     if (country == null) {
       return null;
     }
-    CountryCode countryCode=table.getConnector().getPayment().getCountryCode().get(country);
+    CountryCode countryCode = table.getConnector().getPayment().getCountryCode().get(country);
     if (countryCode == null) {
       throw new SQLException("CountryCode not found: " + country);
     }
@@ -279,9 +279,9 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
     if (disable_log == -1) {
       return null;
     }
-    DisableLog obj=table.getConnector().getAccount().getDisableLog().get(disable_log);
+    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disable_log);
     if (obj == null) {
-      throw new SQLException("Unable to find DisableLog: "+disable_log);
+      throw new SQLException("Unable to find DisableLog: " + disable_log);
     }
     return obj;
   }
@@ -363,47 +363,47 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
   }
 
   public boolean isActiveAccounting() throws IOException, SQLException {
-    com.aoindustries.aoserv.client.master.User user=getMasterUser();
+    com.aoindustries.aoserv.client.master.User user = getMasterUser();
     return
-      user != null
-      && user.isActive()
-      && user.canAccessAccounting()
+        user != null
+            && user.isActive()
+            && user.canAccessAccounting()
     ;
   }
 
   public boolean isActiveBankAccounting() throws IOException, SQLException {
-    com.aoindustries.aoserv.client.master.User user=getMasterUser();
+    com.aoindustries.aoserv.client.master.User user = getMasterUser();
     return
-      user != null
-      && user.isActive()
-      && user.canAccessBankAccount()
+        user != null
+            && user.isActive()
+            && user.canAccessBankAccount()
     ;
   }
 
   public boolean isActiveDNSAdmin() throws IOException, SQLException {
-    com.aoindustries.aoserv.client.master.User user=getMasterUser();
+    com.aoindustries.aoserv.client.master.User user = getMasterUser();
     return
-      user != null
-      && user.isActive()
-      && user.isDNSAdmin()
+        user != null
+            && user.isActive()
+            && user.isDNSAdmin()
     ;
   }
 
   public boolean isActiveTableInvalidator() throws IOException, SQLException {
-    com.aoindustries.aoserv.client.master.User user=getMasterUser();
+    com.aoindustries.aoserv.client.master.User user = getMasterUser();
     return
-      user != null
-      && user.isActive()
-      && user.canInvalidateTables()
+        user != null
+            && user.isActive()
+            && user.canInvalidateTables()
     ;
   }
 
   public boolean isActiveWebAdmin() throws IOException, SQLException {
-    com.aoindustries.aoserv.client.master.User user=getMasterUser();
+    com.aoindustries.aoserv.client.master.User user = getMasterUser();
     return
-      user != null
-      && user.isActive()
-      && user.isWebAdmin()
+        user != null
+            && user.isActive()
+            && user.isWebAdmin()
     ;
   }
 
@@ -420,10 +420,10 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
     try {
       pkey = User.Name.valueOf(result.getString("username"));
       password = HashedPassword.valueOf(
-        HashedPassword.Algorithm.findAlgorithm(result.getString("password.algorithm")),
-        result.getBytes("password.salt"),
-        result.getInt  ("password.iterations"),
-        result.getBytes("password.hash")
+          HashedPassword.Algorithm.findAlgorithm(result.getString("password.algorithm")),
+          result.getBytes("password.salt"),
+          result.getInt  ("password.iterations"),
+          result.getBytes("password.hash")
       );
       name = result.getString("name");
       title = result.getString("title");
@@ -443,11 +443,11 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
       state = result.getString("state");
       country = result.getString("country");
       zip = result.getString("zip");
-      disable_log=result.getInt("disable_log");
+      disable_log = result.getInt("disable_log");
       if (result.wasNull()) {
-        disable_log=-1;
+        disable_log = -1;
       }
-      can_switch_users=result.getBoolean("can_switch_users");
+      can_switch_users = result.getBoolean("can_switch_users");
       support_code = result.getString("support_code");
     } catch (ValidationException e) {
       throw new SQLException(e);
@@ -486,27 +486,27 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
 
   @Override
   public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws SQLException, IOException {
-    List<CannotRemoveReason<?>> reasons=new ArrayList<>();
+    List<CannotRemoveReason<?>> reasons = new ArrayList<>();
 
-    AOServConnector conn=table.getConnector();
+    AOServConnector conn = table.getConnector();
 
     if (equals(conn.getCurrentAdministrator())) {
       reasons.add(new CannotRemoveReason<>("Not allowed to remove self", this));
     }
 
-    List<Action> actions=getTicketActions();
+    List<Action> actions = getTicketActions();
     if (!actions.isEmpty()) {
-      reasons.add(new CannotRemoveReason<>("Author of "+actions.size()+" ticket "+(actions.size() == 1?"action":"actions"), actions));
+      reasons.add(new CannotRemoveReason<>("Author of " + actions.size() + " ticket " + (actions.size() == 1 ? "action" : "actions"), actions));
     }
 
-    List<Ticket> tickets=getCreatedTickets();
+    List<Ticket> tickets = getCreatedTickets();
     if (!tickets.isEmpty()) {
-      reasons.add(new CannotRemoveReason<>("Author of "+tickets.size()+' '+(tickets.size() == 1?"ticket":"tickets"), tickets));
+      reasons.add(new CannotRemoveReason<>("Author of " + tickets.size() + ' ' + (tickets.size() == 1 ? "ticket" : "tickets"), tickets));
     }
 
-    List<Transaction> trs=getTransactions();
+    List<Transaction> trs = getTransactions();
     if (!trs.isEmpty()) {
-      reasons.add(new CannotRemoveReason<>("Created "+trs.size()+' '+(trs.size() == 1?"transaction":"transactions"), trs));
+      reasons.add(new CannotRemoveReason<>("Created " + trs.size() + ' ' + (trs.size() == 1 ? "transaction" : "transactions"), trs));
     }
 
     return reasons;
@@ -515,10 +515,10 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
   @Override
   public void remove() throws IOException, SQLException {
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.REMOVE,
-      Table.TableID.BUSINESS_ADMINISTRATORS,
-      pkey
+        true,
+        AoservProtocol.CommandID.REMOVE,
+        Table.TableID.BUSINESS_ADMINISTRATORS,
+        pkey
     );
   }
 
@@ -529,142 +529,142 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
    */
   @Override
   public void setPassword(String plaintext) throws IOException, SQLException {
-    AOServConnector connector=table.getConnector();
+    AOServConnector connector = table.getConnector();
     if (!connector.isSecure()) {
-      throw new IOException("Passwords for business_administrators may only be set when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure.");
+      throw new IOException("Passwords for business_administrators may only be set when using secure protocols.  Currently using the " + connector.getProtocol() + " protocol, which is not secure.");
     }
     connector.requestUpdateIL(true, AoservProtocol.CommandID.SET_BUSINESS_ADMINISTRATOR_PASSWORD, pkey, plaintext);
   }
 
   public void setProfile(
-    final String name,
-    String title,
-    final Date birthday,
-    final boolean isPrivate,
-    final String workPhone,
-    String homePhone,
-    String cellPhone,
-    String fax,
-    final Email email,
-    String address1,
-    String address2,
-    String city,
-    String state,
-    String country,
-    String zip
+      final String name,
+      String title,
+      final Date birthday,
+      final boolean isPrivate,
+      final String workPhone,
+      String homePhone,
+      String cellPhone,
+      String fax,
+      final Email email,
+      String address1,
+      String address2,
+      String city,
+      String state,
+      String country,
+      String zip
   ) throws IOException, SQLException {
     if (title != null && title.length() == 0) {
-      title=null;
+      title = null;
     }
     final String finalTitle = title;
     if (homePhone != null && homePhone.length() == 0) {
-      homePhone=null;
+      homePhone = null;
     }
     final String finalHomePhone = homePhone;
     if (cellPhone != null && cellPhone.length() == 0) {
-      cellPhone=null;
+      cellPhone = null;
     }
     final String finalCellPhone = cellPhone;
     if (fax != null && fax.length() == 0) {
-      fax=null;
+      fax = null;
     }
     final String finalFax = fax;
     if (address1 != null && address1.length() == 0) {
-      address1=null;
+      address1 = null;
     }
     final String finalAddress1 = address1;
     if (address2 != null && address2.length() == 0) {
-      address2=null;
+      address2 = null;
     }
     final String finalAddress2 = address2;
     if (city != null && city.length() == 0) {
-      city=null;
+      city = null;
     }
     final String finalCity = city;
     if (state != null && state.length() == 0) {
-      state=null;
+      state = null;
     }
     final String finalState = state;
     if (country != null && country.length() == 0) {
-      country=null;
+      country = null;
     }
     final String finalCountry = country;
     if (zip != null && zip.length() == 0) {
-      zip=null;
+      zip = null;
     }
     final String finalZip = zip;
     table.getConnector().requestUpdate(
-      true,
-      AoservProtocol.CommandID.SET_BUSINESS_ADMINISTRATOR_PROFILE,
-      new AOServConnector.UpdateRequest() {
-        private IntList invalidateList;
+        true,
+        AoservProtocol.CommandID.SET_BUSINESS_ADMINISTRATOR_PROFILE,
+        new AOServConnector.UpdateRequest() {
+          private IntList invalidateList;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeUTF(pkey.toString());
-          out.writeUTF(name);
-          out.writeBoolean(finalTitle != null);
-          if (finalTitle != null) {
-            out.writeUTF(finalTitle);
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeUTF(pkey.toString());
+            out.writeUTF(name);
+            out.writeBoolean(finalTitle != null);
+            if (finalTitle != null) {
+              out.writeUTF(finalTitle);
+            }
+            out.writeLong(birthday == null ? -1 : birthday.getTime());
+            out.writeBoolean(isPrivate);
+            out.writeUTF(workPhone);
+            out.writeBoolean(finalHomePhone != null);
+            if (finalHomePhone != null) {
+              out.writeUTF(finalHomePhone);
+            }
+            out.writeBoolean(finalCellPhone != null);
+            if (finalCellPhone != null) {
+              out.writeUTF(finalCellPhone);
+            }
+            out.writeBoolean(finalFax != null);
+            if (finalFax != null) {
+              out.writeUTF(finalFax);
+            }
+            out.writeUTF(email.toString());
+            out.writeBoolean(finalAddress1 != null);
+            if (finalAddress1 != null) {
+              out.writeUTF(finalAddress1);
+            }
+            out.writeBoolean(finalAddress2 != null);
+            if (finalAddress2 != null) {
+              out.writeUTF(finalAddress2);
+            }
+            out.writeBoolean(finalCity != null);
+            if (finalCity != null) {
+              out.writeUTF(finalCity);
+            }
+            out.writeBoolean(finalState != null);
+            if (finalState != null) {
+              out.writeUTF(finalState);
+            }
+            out.writeBoolean(finalCountry != null);
+            if (finalCountry != null) {
+              out.writeUTF(finalCountry);
+            }
+            out.writeBoolean(finalZip != null);
+            if (finalZip != null) {
+              out.writeUTF(finalZip);
+            }
           }
-          out.writeLong(birthday == null ? -1 : birthday.getTime());
-          out.writeBoolean(isPrivate);
-          out.writeUTF(workPhone);
-          out.writeBoolean(finalHomePhone != null);
-          if (finalHomePhone != null) {
-            out.writeUTF(finalHomePhone);
+
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              invalidateList = AOServConnector.readInvalidateList(in);
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
+            }
           }
-          out.writeBoolean(finalCellPhone != null);
-          if (finalCellPhone != null) {
-            out.writeUTF(finalCellPhone);
-          }
-          out.writeBoolean(finalFax != null);
-          if (finalFax != null) {
-            out.writeUTF(finalFax);
-          }
-          out.writeUTF(email.toString());
-          out.writeBoolean(finalAddress1 != null);
-          if (finalAddress1 != null) {
-            out.writeUTF(finalAddress1);
-          }
-          out.writeBoolean(finalAddress2 != null);
-          if (finalAddress2 != null) {
-            out.writeUTF(finalAddress2);
-          }
-          out.writeBoolean(finalCity != null);
-          if (finalCity != null) {
-            out.writeUTF(finalCity);
-          }
-          out.writeBoolean(finalState != null);
-          if (finalState != null) {
-            out.writeUTF(finalState);
-          }
-          out.writeBoolean(finalCountry != null);
-          if (finalCountry != null) {
-            out.writeUTF(finalCountry);
-          }
-          out.writeBoolean(finalZip != null);
-          if (finalZip != null) {
-            out.writeUTF(finalZip);
+
+          @Override
+          public void afterRelease() {
+            table.getConnector().tablesUpdated(invalidateList);
           }
         }
-
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            invalidateList=AOServConnector.readInvalidateList(in);
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
-          }
-        }
-
-        @Override
-        public void afterRelease() {
-          table.getConnector().tablesUpdated(invalidateList);
-        }
-      }
     );
   }
 

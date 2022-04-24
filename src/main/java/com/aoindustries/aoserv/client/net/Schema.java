@@ -35,12 +35,19 @@ import java.util.List;
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
   private final com.aoindustries.aoserv.client.net.monitoring.Schema monitoring;
-  public com.aoindustries.aoserv.client.net.monitoring.Schema getMonitoring() {return monitoring;}
+
+  public com.aoindustries.aoserv.client.net.monitoring.Schema getMonitoring() {
+    return monitoring;
+  }
 
   private final com.aoindustries.aoserv.client.net.reputation.Schema reputation;
-  public com.aoindustries.aoserv.client.net.reputation.Schema getReputation() {return reputation;}
+
+  public com.aoindustries.aoserv.client.net.reputation.Schema getReputation() {
+    return reputation;
+  }
 
   private final List<? extends com.aoindustries.aoserv.client.Schema> schemas;
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
   public List<? extends com.aoindustries.aoserv.client.Schema> getSchemas() {
@@ -48,31 +55,58 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
   }
 
   private final AppProtocolTable AppProtocol;
-  public AppProtocolTable getAppProtocol() {return AppProtocol;}
+
+  public AppProtocolTable getAppProtocol() {
+    return AppProtocol;
+  }
 
   private final BindTable Bind;
-  public BindTable getBind() {return Bind;}
+
+  public BindTable getBind() {
+    return Bind;
+  }
 
   private final BindFirewallZoneTable BindFirewallZone;
-  public BindFirewallZoneTable getBindFirewallZone() {return BindFirewallZone;}
+
+  public BindFirewallZoneTable getBindFirewallZone() {
+    return BindFirewallZone;
+  }
 
   private final DeviceTable Device;
-  public DeviceTable getDevice() {return Device;}
+
+  public DeviceTable getDevice() {
+    return Device;
+  }
 
   private final DeviceIdTable DeviceId;
-  public DeviceIdTable getDeviceId() {return DeviceId;}
+
+  public DeviceIdTable getDeviceId() {
+    return DeviceId;
+  }
 
   private final FirewallZoneTable FirewallZone;
-  public FirewallZoneTable getFirewallZone() {return FirewallZone;}
+
+  public FirewallZoneTable getFirewallZone() {
+    return FirewallZone;
+  }
 
   private final HostTable Host;
-  public HostTable getHost() {return Host;}
+
+  public HostTable getHost() {
+    return Host;
+  }
 
   private final IpAddressTable IpAddress;
-  public IpAddressTable getIpAddress() {return IpAddress;}
+
+  public IpAddressTable getIpAddress() {
+    return IpAddress;
+  }
 
   private final TcpRedirectTable TcpRedirect;
-  public TcpRedirectTable getTcpRedirect() {return TcpRedirect;}
+
+  public TcpRedirectTable getTcpRedirect() {
+    return TcpRedirect;
+  }
 
   private final List<? extends AOServTable<?, ?>> tables;
 

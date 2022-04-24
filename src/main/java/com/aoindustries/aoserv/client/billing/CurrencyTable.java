@@ -41,8 +41,9 @@ public final class CurrencyTable extends GlobalTableStringKey<Currency> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Currency.COLUMN_currencyCode_name, ASCENDING)
+      new OrderBy(Currency.COLUMN_currencyCode_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -77,9 +78,9 @@ public final class CurrencyTable extends GlobalTableStringKey<Currency> {
       return null;
     }
     if (pkey instanceof String) {
-      return get((String)pkey);
+      return get((String) pkey);
     } else if (pkey instanceof java.util.Currency) {
-      return get((java.util.Currency)pkey);
+      return get((java.util.Currency) pkey);
     } else {
       throw new IllegalArgumentException("pkey is neither a String nor a Currency: " + pkey);
     }

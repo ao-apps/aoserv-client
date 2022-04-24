@@ -49,8 +49,8 @@ import java.util.List;
 public final class Record extends CachedObjectIntegerKey<Record> implements Removable {
 
   static final int
-    COLUMN_ID = 0,
-    COLUMN_ZONE = 1
+      COLUMN_ID = 0,
+      COLUMN_ZONE = 1
   ;
   static final String COLUMN_ZONE_name        = "zone";
   static final String COLUMN_DOMAIN_name      = "domain";
@@ -90,7 +90,7 @@ public final class Record extends CachedObjectIntegerKey<Record> implements Remo
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Record() {
     // Do nothing
   }
@@ -304,9 +304,9 @@ public final class Record extends CachedObjectIntegerKey<Record> implements Remo
     for (int i = 0; i < len; i++) {
       char ch = destination.charAt(i);
       if (
-        ch != '"'
-        && ch >= ' '
-        && ch < (char)0x7f
+          ch != '"'
+              && ch >= ' '
+              && ch < (char) 0x7f
       ) {
         txt.append(ch);
       }
@@ -341,17 +341,17 @@ public final class Record extends CachedObjectIntegerKey<Record> implements Remo
     if (domain1.equals(domain2)) {
       // If either (or both) are CNAME, there is a conflict
       if (
-        type.equals(RecordType.CNAME)
-        || other.type.equals(RecordType.CNAME)
+          type.equals(RecordType.CNAME)
+              || other.type.equals(RecordType.CNAME)
       ) {
         return true;
       }
       // If both are TXT types, and v=spf1, there is a conflict
       if (
-        type.equals(RecordType.TXT)
-        && other.type.equals(RecordType.TXT)
-        && isSpf1(destination)
-        && isSpf1(other.destination)
+          type.equals(RecordType.TXT)
+              && other.type.equals(RecordType.TXT)
+              && isSpf1(destination)
+              && isSpf1(other.destination)
       ) {
         return true;
       }

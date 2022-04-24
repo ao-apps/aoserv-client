@@ -41,8 +41,9 @@ public final class SmtpRelayTypeTable extends GlobalTableStringKey<SmtpRelayType
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(SmtpRelayType.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(SmtpRelayType.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

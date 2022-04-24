@@ -47,32 +47,32 @@ import java.sql.SQLException;
  */
 public final class RecordType extends GlobalObjectStringKey<RecordType> {
 
-  static final int COLUMN_TYPE=0;
+  static final int COLUMN_TYPE = 0;
   static final String COLUMN_DESCRIPTION_name = "description";
 
   /**
    * The possible <code>DNSType</code>s.
    */
   public static final String
-    A     = "A",
-    AAAA  = "AAAA",
-    CNAME = "CNAME",
-    CAA   = "CAA",
-    MX    = "MX",
-    NS    = "NS",
-    PTR   = "PTR",
-    SRV   = "SRV",
-    TXT   = "TXT"
+      A     = "A",
+      AAAA  = "AAAA",
+      CNAME = "CNAME",
+      CAA   = "CAA",
+      MX    = "MX",
+      NS    = "NS",
+      PTR   = "PTR",
+      SRV   = "SRV",
+      TXT   = "TXT"
   ;
 
   private String description;
   private boolean
-    has_priority,
-    has_weight,
-    has_port,
-    has_flag,
-    has_tag,
-    param_ip
+      has_priority,
+      has_weight,
+      has_port,
+      has_flag,
+      has_tag,
+      param_ip
   ;
 
   /**
@@ -81,7 +81,7 @@ public final class RecordType extends GlobalObjectStringKey<RecordType> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public RecordType() {
     // Do nothing
   }
@@ -101,7 +101,7 @@ public final class RecordType extends GlobalObjectStringKey<RecordType> {
       try {
         InetAddress parsed = InetAddress.valueOf(destination);
         if (parsed.getAddressFamily() != com.aoapps.net.AddressFamily.INET) {
-          throw new IllegalArgumentException("A type requires IPv4 address: "+destination);
+          throw new IllegalArgumentException("A type requires IPv4 address: " + destination);
         }
       } catch (ValidationException e) {
         throw new IllegalArgumentException(e.getLocalizedMessage(), e);
@@ -110,7 +110,7 @@ public final class RecordType extends GlobalObjectStringKey<RecordType> {
       try {
         InetAddress parsed = InetAddress.valueOf(destination);
         if (parsed.getAddressFamily() != com.aoapps.net.AddressFamily.INET6) {
-          throw new IllegalArgumentException("AAAA type requires IPv6 address: "+destination);
+          throw new IllegalArgumentException("AAAA type requires IPv6 address: " + destination);
         }
       } catch (ValidationException e) {
         throw new IllegalArgumentException(e.getLocalizedMessage(), e);
@@ -138,14 +138,14 @@ public final class RecordType extends GlobalObjectStringKey<RecordType> {
       // TODO: What are the rules for what is allowed in TXT?  Where do we enforce this currently?
     } else {
       // May end with a single .
-      if (destination.charAt(destination.length()-1) == '.') {
-        destination=destination.substring(0, destination.length()-1);
+      if (destination.charAt(destination.length() - 1) == '.') {
+        destination = destination.substring(0, destination.length() - 1);
       }
       if (
-        !ZoneTable.isValidHostnamePart(destination)
-        && !DomainName.validate(destination).isValid()
+          !ZoneTable.isValidHostnamePart(destination)
+              && !DomainName.validate(destination).isValid()
       ) {
-        throw new IllegalArgumentException("Invalid destination hostname: "+origDest);
+        throw new IllegalArgumentException("Invalid destination hostname: " + origDest);
       }
     }
   }

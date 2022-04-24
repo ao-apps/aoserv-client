@@ -52,11 +52,11 @@ public abstract class CachedTableLongKey<V extends CachedObjectLongKey<V>> exten
     if (pkey == null) {
       return null;
     } else if (pkey instanceof Long) {
-      return get(((Long)pkey).longValue());
+      return get(((Long) pkey).longValue());
     } else if (pkey instanceof String) {
-      return get(Long.parseLong((String)pkey));
+      return get(Long.parseLong((String) pkey));
     } else {
-      throw new IllegalArgumentException("pkey is neither a Long nor a String: "+pkey);
+      throw new IllegalArgumentException("pkey is neither a Long nor a String: " + pkey);
     }
   }
 

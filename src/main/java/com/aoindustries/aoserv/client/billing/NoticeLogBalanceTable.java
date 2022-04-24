@@ -42,10 +42,11 @@ public final class NoticeLogBalanceTable extends CachedTableIntegerKey<NoticeLog
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(NoticeLogBalance.COLUMN_noticeLog_name + '.' + NoticeLog.COLUMN_CREATE_TIME_name, ASCENDING),
-    new OrderBy(NoticeLogBalance.COLUMN_noticeLog_name + '.' + NoticeLog.COLUMN_PKEY_name, ASCENDING),
-    new OrderBy(NoticeLogBalance.COLUMN_balance_name, ASCENDING),
+      new OrderBy(NoticeLogBalance.COLUMN_noticeLog_name + '.' + NoticeLog.COLUMN_CREATE_TIME_name, ASCENDING),
+      new OrderBy(NoticeLogBalance.COLUMN_noticeLog_name + '.' + NoticeLog.COLUMN_PKEY_name, ASCENDING),
+      new OrderBy(NoticeLogBalance.COLUMN_balance_name, ASCENDING),
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

@@ -32,17 +32,18 @@ import java.beans.SimpleBeanInfo;
 public class SchemaBeanInfo extends SimpleBeanInfo {
 
   private static final PropertyDescriptor[] properties;
+
   static {
     try {
-      properties = new PropertyDescriptor[] {
-        new PropertyDescriptor("Action",     Schema.class, "getAction",     null),
-        new PropertyDescriptor("ActionType", Schema.class, "getActionType", null),
-        new PropertyDescriptor("Assignment", Schema.class, "getAssignment", null),
-        new PropertyDescriptor("Language",   Schema.class, "getLanguage",   null),
-        new PropertyDescriptor("Priority",   Schema.class, "getPriority",   null),
-        new PropertyDescriptor("Status",     Schema.class, "getStatus",     null),
-        new PropertyDescriptor("Ticket",     Schema.class, "getTicket",     null),
-        new PropertyDescriptor("TicketType", Schema.class, "getTicketType", null),
+      properties = new PropertyDescriptor[]{
+          new PropertyDescriptor("Action",     Schema.class, "getAction",     null),
+          new PropertyDescriptor("ActionType", Schema.class, "getActionType", null),
+          new PropertyDescriptor("Assignment", Schema.class, "getAssignment", null),
+          new PropertyDescriptor("Language",   Schema.class, "getLanguage",   null),
+          new PropertyDescriptor("Priority",   Schema.class, "getPriority",   null),
+          new PropertyDescriptor("Status",     Schema.class, "getStatus",     null),
+          new PropertyDescriptor("Ticket",     Schema.class, "getTicket",     null),
+          new PropertyDescriptor("TicketType", Schema.class, "getTicketType", null),
       };
     } catch (IntrospectionException err) {
       throw new ExceptionInInitializerError(err);
@@ -51,7 +52,7 @@ public class SchemaBeanInfo extends SimpleBeanInfo {
 
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField") // Not copying array for performance
-  public PropertyDescriptor[] getPropertyDescriptors () {
+  public PropertyDescriptor[] getPropertyDescriptors() {
     return properties;
   }
 
@@ -61,8 +62,8 @@ public class SchemaBeanInfo extends SimpleBeanInfo {
   @Override
   public BeanInfo[] getAdditionalBeanInfo() {
     try {
-      return new BeanInfo[] {
-        Introspector.getBeanInfo(Schema.class.getSuperclass())
+      return new BeanInfo[]{
+          Introspector.getBeanInfo(Schema.class.getSuperclass())
       };
     } catch (IntrospectionException err) {
       throw new AssertionError(err);

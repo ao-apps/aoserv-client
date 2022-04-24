@@ -42,9 +42,10 @@ public final class SoftwareCategorizationTable extends GlobalTableIntegerKey<Sof
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(SoftwareCategorization.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(SoftwareCategorization.COLUMN_CLASS_name, ASCENDING)
+      new OrderBy(SoftwareCategorization.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(SoftwareCategorization.COLUMN_CLASS_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

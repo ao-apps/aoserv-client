@@ -47,12 +47,13 @@ public final class FileReplicationLogTable extends AOServTable<Integer, FileRepl
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(FileReplicationLog.COLUMN_END_TIME_name, DESCENDING),
-    new OrderBy(FileReplicationLog.COLUMN_REPLICATION_name+'.'+FileReplication.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(FileReplicationLog.COLUMN_REPLICATION_name+'.'+FileReplication.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(FileReplicationLog.COLUMN_REPLICATION_name+'.'+FileReplication.COLUMN_BACKUP_PARTITION_name+'.'+BackupPartition.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
-    new OrderBy(FileReplicationLog.COLUMN_REPLICATION_name+'.'+FileReplication.COLUMN_BACKUP_PARTITION_name+'.'+BackupPartition.COLUMN_PATH_name, ASCENDING)
+      new OrderBy(FileReplicationLog.COLUMN_END_TIME_name, DESCENDING),
+      new OrderBy(FileReplicationLog.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_SERVER_name + '.' + Host.COLUMN_PACKAGE_name + '.' + Package.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(FileReplicationLog.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_SERVER_name + '.' + Host.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(FileReplicationLog.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_BACKUP_PARTITION_name + '.' + BackupPartition.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
+      new OrderBy(FileReplicationLog.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_BACKUP_PARTITION_name + '.' + BackupPartition.COLUMN_PATH_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -60,25 +61,25 @@ public final class FileReplicationLogTable extends AOServTable<Integer, FileRepl
   }
 
   int addFailoverFileLog(
-    FileReplication replication,
-    long startTime,
-    long endTime,
-    int scanned,
-    int updated,
-    long bytes,
-    boolean isSuccessful
+      FileReplication replication,
+      long startTime,
+      long endTime,
+      int scanned,
+      int updated,
+      long bytes,
+      boolean isSuccessful
   ) throws IOException, SQLException {
     return connector.requestIntQueryIL(
-      true,
-      AoservProtocol.CommandID.ADD,
-      Table.TableID.FAILOVER_FILE_LOG,
-      replication.getPkey(),
-      startTime,
-      endTime,
-      scanned,
-      updated,
-      bytes,
-      isSuccessful
+        true,
+        AoservProtocol.CommandID.ADD,
+        Table.TableID.FAILOVER_FILE_LOG,
+        replication.getPkey(),
+        startTime,
+        endTime,
+        scanned,
+        updated,
+        bytes,
+        isSuccessful
     );
   }
 
@@ -91,7 +92,7 @@ public final class FileReplicationLogTable extends AOServTable<Integer, FileRepl
     if (pkey == null) {
       return null;
     }
-    return get(((Integer)pkey).intValue());
+    return get(((Integer) pkey).intValue());
   }
 
   /**
@@ -109,7 +110,7 @@ public final class FileReplicationLogTable extends AOServTable<Integer, FileRepl
   }
 
   List<FileReplicationLog> getFailoverFileLogs(FileReplication replication, int maxRows) throws IOException, SQLException {
-    List<FileReplicationLog> list=new ArrayList<>();
+    List<FileReplicationLog> list = new ArrayList<>();
     getObjectsNoProgress(true, list, AoservProtocol.CommandID.GET_FAILOVER_FILE_LOGS_FOR_REPLICATION, replication.getPkey(), maxRows);
     return list;
   }

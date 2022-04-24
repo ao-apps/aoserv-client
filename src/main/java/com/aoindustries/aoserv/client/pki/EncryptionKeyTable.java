@@ -43,9 +43,10 @@ public final class EncryptionKeyTable extends CachedTableIntegerKey<EncryptionKe
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(EncryptionKey.COLUMN_ACCOUNTING_name, ASCENDING),
-    new OrderBy(EncryptionKey.COLUMN_ID_name, ASCENDING)
+      new OrderBy(EncryptionKey.COLUMN_ACCOUNTING_name, ASCENDING),
+      new OrderBy(EncryptionKey.COLUMN_ID_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

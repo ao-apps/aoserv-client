@@ -45,10 +45,11 @@ public final class DisableLogTable extends CachedTableIntegerKey<DisableLog> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(DisableLog.COLUMN_TIME_name, ASCENDING),
-    new OrderBy(DisableLog.COLUMN_ACCOUNTING_name, ASCENDING),
-    new OrderBy(DisableLog.COLUMN_PKEY_name, ASCENDING)
+      new OrderBy(DisableLog.COLUMN_TIME_name, ASCENDING),
+      new OrderBy(DisableLog.COLUMN_ACCOUNTING_name, ASCENDING),
+      new OrderBy(DisableLog.COLUMN_PKEY_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -56,45 +57,45 @@ public final class DisableLogTable extends CachedTableIntegerKey<DisableLog> {
   }
 
   int addDisableLog(
-    final Account bu,
-    final String disableReason
+      final Account bu,
+      final String disableReason
   ) throws IOException, SQLException {
     return connector.requestResult(
-      true,
-      AoservProtocol.CommandID.ADD,
-      // Java 9: new AOServConnector.ResultRequest<>
-      new AOServConnector.ResultRequest<Integer>() {
-        private IntList invalidateList;
-        private int result;
+        true,
+        AoservProtocol.CommandID.ADD,
+        // Java 9: new AOServConnector.ResultRequest<>
+        new AOServConnector.ResultRequest<Integer>() {
+          private IntList invalidateList;
+          private int result;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(Table.TableID.DISABLE_LOG.ordinal());
-          out.writeUTF(bu.getName().toString());
-          out.writeBoolean(disableReason != null);
-          if (disableReason != null) {
-            out.writeUTF(disableReason);
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(Table.TableID.DISABLE_LOG.ordinal());
+            out.writeUTF(bu.getName().toString());
+            out.writeBoolean(disableReason != null);
+            if (disableReason != null) {
+              out.writeUTF(disableReason);
+            }
+          }
+
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              result = in.readCompressedInt();
+              invalidateList = AOServConnector.readInvalidateList(in);
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
+            }
+          }
+
+          @Override
+          public Integer afterRelease() {
+            connector.tablesUpdated(invalidateList);
+            return result;
           }
         }
-
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            result=in.readCompressedInt();
-            invalidateList=AOServConnector.readInvalidateList(in);
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
-          }
-        }
-
-        @Override
-        public Integer afterRelease() {
-          connector.tablesUpdated(invalidateList);
-          return result;
-        }
-      }
     );
   }
 

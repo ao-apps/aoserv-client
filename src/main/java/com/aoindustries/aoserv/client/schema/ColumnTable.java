@@ -45,9 +45,10 @@ public final class ColumnTable extends GlobalTableIntegerKey<Column> {
   /**
    * The columns for tables are cached for faster lookups.
    */
-  private static final List<List<Column>> tableColumns=new ArrayList<>(numTables);
+  private static final List<List<Column>> tableColumns = new ArrayList<>(numTables);
+
   static {
-    for (int c=0;c<numTables;c++) {
+    for (int c = 0; c < numTables; c++) {
       tableColumns.add(null);
     }
   }
@@ -55,9 +56,10 @@ public final class ColumnTable extends GlobalTableIntegerKey<Column> {
   /**
    * The nameToColumns are cached for faster lookups.
    */
-  private static final List<Map<String, Column>> nameToColumns=new ArrayList<>(numTables);
+  private static final List<Map<String, Column>> nameToColumns = new ArrayList<>(numTables);
+
   static {
-    for (int c=0;c<numTables;c++) {
+    for (int c = 0; c < numTables; c++) {
       nameToColumns.add(null);
     }
   }
@@ -78,17 +80,17 @@ public final class ColumnTable extends GlobalTableIntegerKey<Column> {
   }
 
   Column getSchemaColumn(Table table, String columnName) throws IOException, SQLException {
-    int tableID=table.getId();
+    int tableID = table.getId();
     synchronized (nameToColumns) {
-      Map<String, Column> map=nameToColumns.get(tableID);
+      Map<String, Column> map = nameToColumns.get(tableID);
       if (map == null || map.isEmpty()) {
-        List<Column> cols=getSchemaColumns(table);
-        int len=cols.size();
+        List<Column> cols = getSchemaColumns(table);
+        int len = cols.size();
         if (map == null) {
           nameToColumns.set(tableID, map = AoCollections.newHashMap(len));
         }
-        for (int c=0;c<len;c++) {
-          Column col=cols.get(c);
+        for (int c = 0; c < len; c++) {
+          Column col = cols.get(c);
           map.put(col.getName(), col);
         }
       }
@@ -101,24 +103,24 @@ public final class ColumnTable extends GlobalTableIntegerKey<Column> {
   }
 
   List<Column> getSchemaColumns(Table table) throws IOException, SQLException {
-    int tableID=table.getId();
+    int tableID = table.getId();
     synchronized (tableColumns) {
-      List<Column> cols=tableColumns.get(tableID);
+      List<Column> cols = tableColumns.get(tableID);
       if (cols != null) {
         return cols;
       }
 
-      String name=table.getName();
-      List<Column> cached=getRows();
-      List<Column> matches=new ArrayList<>();
-      int size=cached.size();
-      for (int c=0;c<size;c++) {
-        Column col=cached.get(c);
+      String name = table.getName();
+      List<Column> cached = getRows();
+      List<Column> matches = new ArrayList<>();
+      int size = cached.size();
+      for (int c = 0; c < size; c++) {
+        Column col = cached.get(c);
         if (col.getTable_name().equals(name)) {
           matches.add(col);
         }
       }
-      matches=Collections.unmodifiableList(matches);
+      matches = Collections.unmodifiableList(matches);
       tableColumns.set(tableID, matches);
       return matches;
     }
@@ -134,12 +136,12 @@ public final class ColumnTable extends GlobalTableIntegerKey<Column> {
   public void clearCache() {
     super.clearCache();
     synchronized (this) {
-      for (int c=0;c<numTables;c++) {
+      for (int c = 0; c < numTables; c++) {
         synchronized (tableColumns) {
           tableColumns.set(c, null);
         }
         synchronized (nameToColumns) {
-          Map<String, Column> map=nameToColumns.get(c);
+          Map<String, Column> map = nameToColumns.get(c);
           if (map != null) {
             map.clear();
           }

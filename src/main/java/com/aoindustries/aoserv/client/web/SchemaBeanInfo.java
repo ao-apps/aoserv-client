@@ -32,18 +32,19 @@ import java.beans.SimpleBeanInfo;
 public class SchemaBeanInfo extends SimpleBeanInfo {
 
   private static final PropertyDescriptor[] properties;
+
   static {
     try {
-      properties = new PropertyDescriptor[] {
-        new PropertyDescriptor("Header",          Schema.class, "getHeader",          null),
-        new PropertyDescriptor("HttpdBind",       Schema.class, "getHttpdBind",       null),
-        new PropertyDescriptor("HttpdServer",     Schema.class, "getHttpdServer",     null),
-        new PropertyDescriptor("Location",        Schema.class, "getLocation",        null),
-        new PropertyDescriptor("RewriteRule",     Schema.class, "getRewriteRule",     null),
-        new PropertyDescriptor("Site",            Schema.class, "getSite",            null),
-        new PropertyDescriptor("StaticSite",      Schema.class, "getStaticSite",      null),
-        new PropertyDescriptor("VirtualHost",     Schema.class, "getVirtualHost",     null),
-        new PropertyDescriptor("VirtualHostName", Schema.class, "getVirtualHostName", null),
+      properties = new PropertyDescriptor[]{
+          new PropertyDescriptor("Header",          Schema.class, "getHeader",          null),
+          new PropertyDescriptor("HttpdBind",       Schema.class, "getHttpdBind",       null),
+          new PropertyDescriptor("HttpdServer",     Schema.class, "getHttpdServer",     null),
+          new PropertyDescriptor("Location",        Schema.class, "getLocation",        null),
+          new PropertyDescriptor("RewriteRule",     Schema.class, "getRewriteRule",     null),
+          new PropertyDescriptor("Site",            Schema.class, "getSite",            null),
+          new PropertyDescriptor("StaticSite",      Schema.class, "getStaticSite",      null),
+          new PropertyDescriptor("VirtualHost",     Schema.class, "getVirtualHost",     null),
+          new PropertyDescriptor("VirtualHostName", Schema.class, "getVirtualHostName", null),
       };
     } catch (IntrospectionException err) {
       throw new ExceptionInInitializerError(err);
@@ -52,7 +53,7 @@ public class SchemaBeanInfo extends SimpleBeanInfo {
 
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField") // Not copying array for performance
-  public PropertyDescriptor[] getPropertyDescriptors () {
+  public PropertyDescriptor[] getPropertyDescriptors() {
     return properties;
   }
 
@@ -62,8 +63,8 @@ public class SchemaBeanInfo extends SimpleBeanInfo {
   @Override
   public BeanInfo[] getAdditionalBeanInfo() {
     try {
-      return new BeanInfo[] {
-        Introspector.getBeanInfo(Schema.class.getSuperclass())
+      return new BeanInfo[]{
+          Introspector.getBeanInfo(Schema.class.getSuperclass())
       };
     } catch (IntrospectionException err) {
       throw new AssertionError(err);

@@ -197,6 +197,7 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
     public static final Version CURRENT_VERSION = VERSION_1_86_0;
 
     private static final Map<String, Version> versionMap = new HashMap<>();
+
     static {
       for (Version version : values()) {
         versionMap.put(version.getVersion(), version);
@@ -235,16 +236,16 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
   }
 
   public static final byte
-    NEXT = 0,
-    DONE = 1,
-    IO_EXCEPTION = 2,
-    SQL_EXCEPTION = 3
+      NEXT = 0,
+      DONE = 1,
+      IO_EXCEPTION = 2,
+      SQL_EXCEPTION = 3
   ;
 
   public static final int
-    FALSE = 0,
-    TRUE = 1,
-    SERVER_DOWN = 2
+      FALSE = 0,
+      TRUE = 1,
+      SERVER_DOWN = 2
   ;
 
   /**
@@ -266,30 +267,30 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
     // Other commands
     ADD_FILE_BACKUPS,
     @Deprecated
-    UNUSED_BACKUP_INTERBASE_DATABASE, // No longer used
+        UNUSED_BACKUP_INTERBASE_DATABASE, // No longer used
     @Deprecated
-    UNUSED_BACKUP_MYSQL_DATABASE, // No longer used
+        UNUSED_BACKUP_MYSQL_DATABASE, // No longer used
     @Deprecated
-    UNUSED_BACKUP_POSTGRES_DATABASE, // No longer used
+        UNUSED_BACKUP_POSTGRES_DATABASE, // No longer used
     @Deprecated
-    UNUSED_BOUNCE_TICKET, // No longer used
+        UNUSED_BOUNCE_TICKET, // No longer used
     CANCEL_BUSINESS,
     CHANGE_TICKET_ADMIN_PRIORITY,
     CHANGE_TICKET_CLIENT_PRIORITY,
     @Deprecated
-    UNUSED_CHANGE_TICKET_DEADLINE, // No longer used
+        UNUSED_CHANGE_TICKET_DEADLINE, // No longer used
     @Deprecated
-    UNUSED_CHANGE_TICKET_TECHNOLOGY, // No longer used
+        UNUSED_CHANGE_TICKET_TECHNOLOGY, // No longer used
     CHANGE_TICKET_TYPE,
     COMPARE_LINUX_SERVER_ACCOUNT_PASSWORD,
     @Deprecated
-    UNUSED_COMPLETE_TICKET, // No longer used
+        UNUSED_COMPLETE_TICKET, // No longer used
     COPY_HOME_DIRECTORY,
     COPY_LINUX_SERVER_ACCOUNT_PASSWORD,
     CREDIT_CARD_DECLINED,
     DISABLE,
     @Deprecated
-    UNUSED_DUMP_INTERBASE_DATABASE, // No longer used
+        UNUSED_DUMP_INTERBASE_DATABASE, // No longer used
     DUMP_MYSQL_DATABASE,
     DUMP_POSTGRES_DATABASE,
     ENABLE,
@@ -301,80 +302,80 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
     FLAG_FILE_BACKUPS_AS_DELETED,
     GENERATE_ACCOUNTING_CODE,
     @Deprecated
-    UNUSED_GENERATE_INTERBASE_DATABASE_NAME, // No longer used
+        UNUSED_GENERATE_INTERBASE_DATABASE_NAME, // No longer used
     @Deprecated
-    UNUSED_GENERATE_INTERBASE_DB_GROUP_NAME, // No longer used
+        UNUSED_GENERATE_INTERBASE_DB_GROUP_NAME, // No longer used
     GENERATE_MYSQL_DATABASE_NAME,
     GENERATE_PACKAGE_NAME,
     GENERATE_POSTGRES_DATABASE_NAME,
     GENERATE_SHARED_TOMCAT_NAME,
     GENERATE_SITE_NAME,
     @Deprecated
-    GET_ACCOUNT_BALANCE_BEFORE, // Protocol compatibility
+        GET_ACCOUNT_BALANCE_BEFORE, // Protocol compatibility
     @Deprecated
-    GET_ACCOUNT_BALANCE, // Protocol compatibility
+        GET_ACCOUNT_BALANCE, // Protocol compatibility
     @Deprecated
-    UNUSED_GET_ACTIONS_TICKET, // No longer used
+        UNUSED_GET_ACTIONS_TICKET, // No longer used
     GET_AUTORESPONDER_CONTENT,
     @Deprecated
-    UNUSED_GET_BACKUP_DATA, // No longer used
+        UNUSED_GET_BACKUP_DATA, // No longer used
     @Deprecated
-    UNUSED_GET_BACKUP_DATA_PKEYS, // No longer used
+        UNUSED_GET_BACKUP_DATA_PKEYS, // No longer used
     @Deprecated
-    UNUSED_GET_BACKUP_DATAS_PKEYS, // No longer used
+        UNUSED_GET_BACKUP_DATAS_PKEYS, // No longer used
     GET_BACKUP_PARTITION_DISK_TOTAL_SIZE,
     GET_BACKUP_PARTITION_DISK_USED_SIZE,
     GET_BANK_TRANSACTIONS_ACCOUNT,
     GET_CACHED_ROW_COUNT,
     @Deprecated
-    GET_CONFIRMED_ACCOUNT_BALANCE_BEFORE, // Protocol compatibility
+        GET_CONFIRMED_ACCOUNT_BALANCE_BEFORE, // Protocol compatibility
     @Deprecated
-    GET_CONFIRMED_ACCOUNT_BALANCE, // Protocol compatibility
+        GET_CONFIRMED_ACCOUNT_BALANCE, // Protocol compatibility
     GET_CRON_TABLE,
     GET_EMAIL_LIST_ADDRESS_LIST,
     @Deprecated
-    UNUSED_GET_FILE_BACKUPS_PKEYS, // No longer used
+        UNUSED_GET_FILE_BACKUPS_PKEYS, // No longer used
     @Deprecated
-    UNUSED_GET_FILE_BACKUPS_SERVER, // No longer used
+        UNUSED_GET_FILE_BACKUPS_SERVER, // No longer used
     @Deprecated
-    UNUSED_GET_FILE_BACKUP_CHILDREN, // No longer used
+        UNUSED_GET_FILE_BACKUP_CHILDREN, // No longer used
     @Deprecated
-    UNUSED_GET_FILE_BACKUP_SET_SERVER, // No longer used
+        UNUSED_GET_FILE_BACKUP_SET_SERVER, // No longer used
     @Deprecated
-    UNUSED_GET_FILE_BACKUP_VERSIONS, // No longer used
+        UNUSED_GET_FILE_BACKUP_VERSIONS, // No longer used
     @Deprecated
-    UNUSED_GET_FILENAME_FOR_BACKUP_DATA, // No longer used
+        UNUSED_GET_FILENAME_FOR_BACKUP_DATA, // No longer used
     GET_INBOX_ATTRIBUTES,
     GET_LATEST_FILE_BACKUP_SET,
     GET_MAJORDOMO_INFO_FILE,
     GET_MAJORDOMO_INTRO_FILE,
     GET_MRTG_FILE,
     @Deprecated
-    UNUSED_GET_PENDING_PAYMENTS, // No longer used
+        UNUSED_GET_PENDING_PAYMENTS, // No longer used
     GET_ROOT_BUSINESS,
     GET_SPAM_EMAIL_MESSAGES_FOR_EMAIL_SMTP_RELAY,
     @Deprecated
-    UNUSED_GET_TICKETS_BUSINESS_ADMINISTRATOR, // No longer used
+        UNUSED_GET_TICKETS_BUSINESS_ADMINISTRATOR, // No longer used
     @Deprecated
-    UNUSED_GET_TICKETS_BUSINESS, // No longer used
+        UNUSED_GET_TICKETS_BUSINESS, // No longer used
     @Deprecated
-    GET_TRANSACTIONS_BUSINESS, // Protocol compatibility
+        GET_TRANSACTIONS_BUSINESS, // Protocol compatibility
     @Deprecated
-    GET_TRANSACTIONS_SEARCH, // Protocol compatibility
+        GET_TRANSACTIONS_SEARCH, // Protocol compatibility
     @Deprecated
-    UNUSED_HOLD_TICKET, // No longer used
+        UNUSED_HOLD_TICKET, // No longer used
     @Deprecated
-    UNUSED_INITIALIZE_HTTPD_SITE_PASSWD_FILE, // No longer used
+        UNUSED_INITIALIZE_HTTPD_SITE_PASSWD_FILE, // No longer used
     IS_ACCOUNTING_AVAILABLE,
     IS_BUSINESS_ADMINISTRATOR_PASSWORD_SET,
     IS_DNS_ZONE_AVAILABLE,
     IS_EMAIL_DOMAIN_AVAILABLE,
     @Deprecated
-    UNUSED_IS_INTERBASE_DATABASE_NAME_AVAILABLE, // No longer used
+        UNUSED_IS_INTERBASE_DATABASE_NAME_AVAILABLE, // No longer used
     @Deprecated
-    UNUSED_IS_INTERBASE_DB_GROUP_NAME_AVAILABLE, // No longer used
+        UNUSED_IS_INTERBASE_DB_GROUP_NAME_AVAILABLE, // No longer used
     @Deprecated
-    UNUSED_IS_INTERBASE_SERVER_USER_PASSWORD_SET, // No longer used
+        UNUSED_IS_INTERBASE_SERVER_USER_PASSWORD_SET, // No longer used
     IS_LINUX_GROUP_NAME_AVAILABLE,
     IS_LINUX_SERVER_ACCOUNT_PASSWORD_SET,
     IS_MYSQL_DATABASE_NAME_AVAILABLE,
@@ -387,31 +388,31 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
     IS_SHARED_TOMCAT_NAME_AVAILABLE,
     IS_USERNAME_AVAILABLE,
     @Deprecated
-    UNUSED_KILL_TICKET, // No longer used
+        UNUSED_KILL_TICKET, // No longer used
     MOVE_IP_ADDRESS,
     @Deprecated
-    UNUSED_REACTIVATE_TICKET, // No longer used
+        UNUSED_REACTIVATE_TICKET, // No longer used
     REFRESH_EMAIL_SMTP_RELAY,
     @Deprecated
-    UNUSED_REMOVE_EXPIRED_FILE_BACKUPS, // No longer used
+        UNUSED_REMOVE_EXPIRED_FILE_BACKUPS, // No longer used
     @Deprecated
-    UNUSED_REMOVE_EXPIRED_MYSQL_BACKUPS, // No longer used
+        UNUSED_REMOVE_EXPIRED_MYSQL_BACKUPS, // No longer used
     @Deprecated
-    UNUSED_REMOVE_EXPIRED_POSTGRES_BACKUPS, // No longer used
+        UNUSED_REMOVE_EXPIRED_POSTGRES_BACKUPS, // No longer used
     @Deprecated
-    UNUSED_REMOVE_UNUSED_BACKUP_DATAS, // No longer used
+        UNUSED_REMOVE_UNUSED_BACKUP_DATAS, // No longer used
     @Deprecated
-    UNUSED_REQUEST_DAEMON_ACCESS, // No longer used
+        UNUSED_REQUEST_DAEMON_ACCESS, // No longer used
     RESTART_APACHE,
     RESTART_CRON,
     @Deprecated
-    UNUSED_RESTART_INTERBASE, // No longer used
+        UNUSED_RESTART_INTERBASE, // No longer used
     RESTART_MYSQL,
     RESTART_POSTGRESQL,
     RESTART_XFS,
     RESTART_XVFB,
     @Deprecated
-    UNUSED_SEND_BACKUP_DATA, // No longer used
+        UNUSED_SEND_BACKUP_DATA, // No longer used
     SET_AUTORESPONDER,
     SET_BACKUP_RETENTION,
     SET_BUSINESS_ACCOUNTING,
@@ -429,7 +430,7 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
     SET_HTTPD_SITE_SERVER_ADMIN,
     SET_HTTPD_TOMCAT_CONTEXT_ATTRIBUTES,
     @Deprecated
-    UNUSED_SET_INTERBASE_SERVER_USER_PASSWORD, // No longer used
+        UNUSED_SET_INTERBASE_SERVER_USER_PASSWORD, // No longer used
     SET_IP_ADDRESS_DHCP_ADDRESS,
     SET_IP_ADDRESS_HOSTNAME,
     SET_IP_ADDRESS_PACKAGE,
@@ -457,7 +458,7 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
     START_CRON,
     START_DISTRO,
     @Deprecated
-    UNUSED_START_INTERBASE, // No longer used
+        UNUSED_START_INTERBASE, // No longer used
     START_JVM,
     START_MYSQL,
     START_POSTGRESQL,
@@ -466,7 +467,7 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
     STOP_APACHE,
     STOP_CRON,
     @Deprecated
-    UNUSED_STOP_INTERBASE, // No longer used
+        UNUSED_STOP_INTERBASE, // No longer used
     STOP_JVM,
     STOP_MYSQL,
     STOP_POSTGRESQL,
@@ -478,22 +479,22 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
     WAIT_FOR_REBUILD,
     ADD_BACKUP_SERVER,
     @Deprecated
-    UNUSED_SET_NET_BIND_OPEN_FIREWALL, // No longer used
+        UNUSED_SET_NET_BIND_OPEN_FIREWALL, // No longer used
     SET_NET_BIND_MONITORING,
     @Deprecated
-    UNUSED_GET_BACKUP_DATAS_FOR_BACKUP_PARTITION, // No longer used
+        UNUSED_GET_BACKUP_DATAS_FOR_BACKUP_PARTITION, // No longer used
     @Deprecated
-    UNUSED_REMOVE_EXPIRED_INTERBASE_BACKUPS, // No longer used
+        UNUSED_REMOVE_EXPIRED_INTERBASE_BACKUPS, // No longer used
     @Deprecated
-    UNUSED_SET_INTERBASE_SERVER_USER_PREDISABLE_PASSWORD, // No longer used
+        UNUSED_SET_INTERBASE_SERVER_USER_PREDISABLE_PASSWORD, // No longer used
     @Deprecated
-    GET_TRANSACTIONS_BUSINESS_ADMINISTRATOR, // Protocol compatibility
+        GET_TRANSACTIONS_BUSINESS_ADMINISTRATOR, // Protocol compatibility
     @Deprecated
-    UNUSED_GET_ACTIONS_BUSINESS_ADMINISTRATOR, // No longer used
+        UNUSED_GET_ACTIONS_BUSINESS_ADMINISTRATOR, // No longer used
     @Deprecated
-    UNUSED_GET_TICKETS_CREATED_BUSINESS_ADMINISTRATOR, // No longer used
+        UNUSED_GET_TICKETS_CREATED_BUSINESS_ADMINISTRATOR, // No longer used
     @Deprecated
-    UNUSED_GET_TICKETS_CLOSED_BUSINESS_ADMINISTRATOR, // No longer used
+        UNUSED_GET_TICKETS_CLOSED_BUSINESS_ADMINISTRATOR, // No longer used
     GET_MASTER_ENTROPY,
     GET_MASTER_ENTROPY_NEEDED,
     ADD_MASTER_ENTROPY,
@@ -502,7 +503,7 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
     SET_LINUX_SERVER_ACCOUNT_EMAIL_SPAMASSASSIN_INTEGRATION_MODE,
     GET_IMAP_FOLDER_SIZES,
     @Deprecated
-    UNUSED_SET_IMAP_FOLDER_SUBSCRIBED, // No longer used
+        UNUSED_SET_IMAP_FOLDER_SUBSCRIBED, // No longer used
     SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_REQUIRED_SCORE,
     SET_TICKET_ASSIGNED_TO,
     SET_TICKET_CONTACT_EMAILS,
@@ -590,7 +591,7 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
     SET_HTTPD_SITE_ENABLE_FOLLOW_SYMLINKS,
     SET_HTTPD_SITE_ENABLE_ANONYMOUS_FTP,
     @Deprecated
-    UNUSED_SET_HTTPD_TOMCAT_SITE_USE_APACHE, // No longer used
+        UNUSED_SET_HTTPD_TOMCAT_SITE_USE_APACHE, // No longer used
     SET_HTTPD_SHARED_TOMCAT_MAX_POST_SIZE,
     SET_HTTPD_SHARED_TOMCAT_UNPACK_WARS,
     SET_HTTPD_SHARED_TOMCAT_AUTO_DEPLOY,
@@ -631,7 +632,7 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
       throw new EOFException("End of file while reading response code");
     }
     if (code != AoservProtocol.DONE) {
-      throw new IOException("Unknown status code: "+code);
+      throw new IOException("Unknown status code: " + code);
     }
   }
 
@@ -645,7 +646,7 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public AoservProtocol() {
     // Do nothing
   }

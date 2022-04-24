@@ -43,8 +43,9 @@ public final class TimeZoneTable extends GlobalTableStringKey<TimeZone> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(TimeZone.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(TimeZone.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

@@ -54,10 +54,11 @@ public final class DatabaseTable extends CachedTableIntegerKey<Database> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Database.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(Database.COLUMN_POSTGRES_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(Database.COLUMN_POSTGRES_SERVER_name+'.'+Server.COLUMN_AO_SERVER_name+'.'+com.aoindustries.aoserv.client.linux.Server.COLUMN_HOSTNAME_name, ASCENDING)
+      new OrderBy(Database.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(Database.COLUMN_POSTGRES_SERVER_name + '.' + Server.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(Database.COLUMN_POSTGRES_SERVER_name + '.' + Server.COLUMN_AO_SERVER_name + '.' + com.aoindustries.aoserv.client.linux.Server.COLUMN_HOSTNAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -65,24 +66,24 @@ public final class DatabaseTable extends CachedTableIntegerKey<Database> {
   }
 
   int addPostgresDatabase(
-    Database.Name name,
-    Server postgresServer,
-    UserServer datdba,
-    Encoding encoding,
-    boolean enablePostgis
+      Database.Name name,
+      Server postgresServer,
+      UserServer datdba,
+      Encoding encoding,
+      boolean enablePostgis
   ) throws IOException, SQLException {
     if (Database.isSpecial(name)) {
       throw new SQLException("Refusing to add special PostgreSQL database: " + name + " on " + postgresServer);
     }
     return connector.requestIntQueryIL(
-      true,
-      AoservProtocol.CommandID.ADD,
-      Table.TableID.POSTGRES_DATABASES,
-      name,
-      postgresServer.getBind_id(),
-      datdba.getPkey(),
-      encoding.getPkey(),
-      enablePostgis
+        true,
+        AoservProtocol.CommandID.ADD,
+        Table.TableID.POSTGRES_DATABASES,
+        name,
+        postgresServer.getBind_id(),
+        datdba.getPkey(),
+        encoding.getPkey(),
+        enablePostgis
     );
   }
 
@@ -112,11 +113,11 @@ public final class DatabaseTable extends CachedTableIntegerKey<Database> {
   public List<Database> getPostgresDatabases(Package pack) throws IOException, SQLException {
     Account.Name name = pack.getName();
 
-    List<Database> cached=getRows();
-    int size=cached.size();
-    List<Database> matches=new ArrayList<>(size);
-    for (int c=0;c<size;c++) {
-      Database pd=cached.get(c);
+    List<Database> cached = getRows();
+    int size = cached.size();
+    List<Database> matches = new ArrayList<>(size);
+    for (int c = 0; c < size; c++) {
+      Database pd = cached.get(c);
       if (pd.getDatDBA().getPostgresUser().getUsername().getPackage_name().equals(name)) {
         matches.add(pd);
       }
@@ -140,18 +141,18 @@ public final class DatabaseTable extends CachedTableIntegerKey<Database> {
   @Override
   @SuppressWarnings("UseOfSystemOutOrSystemErr")
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
-    String command=args[0];
+    String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_POSTGRES_DATABASE)) {
       if (AOSH.checkParamCount(Command.ADD_POSTGRES_DATABASE, args, 6, err)) {
         out.println(
-          connector.getSimpleAOClient().addPostgresDatabase(
-            AOSH.parsePostgresDatabaseName(args[1], "database_name"),
-            AOSH.parsePostgresServerName(args[2], "postgres_server"),
-            args[3],
-            AOSH.parsePostgresUserName(args[4], "datdba"),
-            args[5],
-            AOSH.parseBoolean(args[6], "enable_postgis")
-          )
+            connector.getSimpleAOClient().addPostgresDatabase(
+                AOSH.parsePostgresDatabaseName(args[1], "database_name"),
+                AOSH.parsePostgresServerName(args[2], "postgres_server"),
+                args[3],
+                AOSH.parsePostgresUserName(args[4], "datdba"),
+                args[5],
+                AOSH.parseBoolean(args[6], "enable_postgis")
+            )
         );
         out.flush();
       }
@@ -162,7 +163,7 @@ public final class DatabaseTable extends CachedTableIntegerKey<Database> {
         out.println(validationResult.isValid());
         out.flush();
         if (!validationResult.isValid()) {
-          err.print("aosh: "+Command.CHECK_POSTGRES_DATABASE_NAME+": ");
+          err.print("aosh: " + Command.CHECK_POSTGRES_DATABASE_NAME + ": ");
           err.println(validationResult.toString());
           err.flush();
         }
@@ -176,33 +177,33 @@ public final class DatabaseTable extends CachedTableIntegerKey<Database> {
           String aoServer = args[3];
           if (AOSH.parseBoolean(args[4], "gzip")) {
             connector.getSimpleAOClient().dumpPostgresDatabase(
-              dbName,
-              serverName,
-              aoServer,
-              true,
-              new StreamHandler() {
-                @Override
-                public void onDumpSize(long dumpSize) {
-                  // Do nothing
+                dbName,
+                serverName,
+                aoServer,
+                true,
+                new StreamHandler() {
+                  @Override
+                  public void onDumpSize(long dumpSize) {
+                    // Do nothing
+                  }
+                  @Override
+                  public OutputStream getOut() {
+                    return System.out; // By-pass TerminalWriter stuff to avoid possible encoding issues.
+                  }
                 }
-                @Override
-                public OutputStream getOut() {
-                  return System.out; // By-pass TerminalWriter stuff to avoid possible encoding issues.
-                }
-              }
             );
             System.out.flush();
           } else {
             connector.getSimpleAOClient().dumpPostgresDatabase(
-              dbName,
-              serverName,
-              aoServer,
-              out
+                dbName,
+                serverName,
+                aoServer,
+                out
             );
             out.flush();
           }
         } catch (IllegalArgumentException iae) {
-          err.print("aosh: "+Command.DUMP_POSTGRES_DATABASE+": ");
+          err.print("aosh: " + Command.DUMP_POSTGRES_DATABASE + ": ");
           err.println(iae.getMessage());
           err.flush();
         }
@@ -218,15 +219,15 @@ public final class DatabaseTable extends CachedTableIntegerKey<Database> {
       if (AOSH.checkParamCount(Command.IS_POSTGRES_DATABASE_NAME_AVAILABLE, args, 3, err)) {
         try {
           out.println(
-            connector.getSimpleAOClient().isPostgresDatabaseNameAvailable(
-              AOSH.parsePostgresDatabaseName(args[1], "database_name"),
-              AOSH.parsePostgresServerName(args[2], "postgres_server"),
-              args[3]
-            )
+              connector.getSimpleAOClient().isPostgresDatabaseNameAvailable(
+                  AOSH.parsePostgresDatabaseName(args[1], "database_name"),
+                  AOSH.parsePostgresServerName(args[2], "postgres_server"),
+                  args[3]
+              )
           );
           out.flush();
         } catch (IllegalArgumentException iae) {
-          err.print("aosh: "+Command.IS_POSTGRES_DATABASE_NAME_AVAILABLE+": ");
+          err.print("aosh: " + Command.IS_POSTGRES_DATABASE_NAME_AVAILABLE + ": ");
           err.println(iae.getMessage());
           err.flush();
         }
@@ -235,9 +236,9 @@ public final class DatabaseTable extends CachedTableIntegerKey<Database> {
     } else if (command.equalsIgnoreCase(Command.REMOVE_POSTGRES_DATABASE)) {
       if (AOSH.checkParamCount(Command.REMOVE_POSTGRES_DATABASE, args, 3, err)) {
         connector.getSimpleAOClient().removePostgresDatabase(
-          AOSH.parsePostgresDatabaseName(args[1], "database_name"),
-          AOSH.parsePostgresServerName(args[2], "postgres_server"),
-          args[3]
+            AOSH.parsePostgresDatabaseName(args[1], "database_name"),
+            AOSH.parsePostgresServerName(args[2], "postgres_server"),
+            args[3]
         );
       }
       return true;
@@ -252,19 +253,19 @@ public final class DatabaseTable extends CachedTableIntegerKey<Database> {
 
   boolean isPostgresDatabaseNameAvailable(Database.Name name, Server postgresServer) throws IOException, SQLException {
     return connector.requestBooleanQuery(
-      true,
-      AoservProtocol.CommandID.IS_POSTGRES_DATABASE_NAME_AVAILABLE,
-      name,
-      postgresServer.getBind_id()
+        true,
+        AoservProtocol.CommandID.IS_POSTGRES_DATABASE_NAME_AVAILABLE,
+        name,
+        postgresServer.getBind_id()
     );
   }
 
   public void waitForRebuild(com.aoindustries.aoserv.client.linux.Server aoServer) throws IOException, SQLException {
     connector.requestUpdate(
-      true,
-      AoservProtocol.CommandID.WAIT_FOR_REBUILD,
-      Table.TableID.POSTGRES_DATABASES,
-      aoServer.getPkey()
+        true,
+        AoservProtocol.CommandID.WAIT_FOR_REBUILD,
+        Table.TableID.POSTGRES_DATABASES,
+        aoServer.getPkey()
     );
   }
 }

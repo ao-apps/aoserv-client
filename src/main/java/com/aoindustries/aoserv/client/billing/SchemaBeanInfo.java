@@ -32,23 +32,24 @@ import java.beans.SimpleBeanInfo;
 public class SchemaBeanInfo extends SimpleBeanInfo {
 
   private static final PropertyDescriptor[] properties;
+
   static {
     try {
-      properties = new PropertyDescriptor[] {
-        new PropertyDescriptor("Currency",               Schema.class, "getCurrency",               null),
-        new PropertyDescriptor("MonthlyCharge",          Schema.class, "getMonthlyCharge",          null),
-        new PropertyDescriptor("NoticeLog",              Schema.class, "getNoticeLog",              null),
-        new PropertyDescriptor("NoticeLog.balance",      Schema.class, "getNoticeLogBalance",       null),
-        new PropertyDescriptor("NoticeType",             Schema.class, "getNoticeType",             null),
-        new PropertyDescriptor("Package",                Schema.class, "getPackage",                null),
-        new PropertyDescriptor("PackageCategory",        Schema.class, "getPackageCategory",        null),
-        new PropertyDescriptor("PackageDefinition",      Schema.class, "getPackageDefinition",      null),
-        new PropertyDescriptor("PackageDefinitionLimit", Schema.class, "getPackageDefinitionLimit", null),
-        new PropertyDescriptor("Resource",               Schema.class, "getResource",               null),
-        new PropertyDescriptor("Transaction",            Schema.class, "getTransaction",            null),
-        new PropertyDescriptor("TransactionType",        Schema.class, "getTransactionType",        null),
-        new PropertyDescriptor("WhoisHistory",           Schema.class, "getWhoisHistory",           null),
-        new PropertyDescriptor("WhoisHistoryAccount",    Schema.class, "getWhoisHistoryAccount",    null),
+      properties = new PropertyDescriptor[]{
+          new PropertyDescriptor("Currency",               Schema.class, "getCurrency",               null),
+          new PropertyDescriptor("MonthlyCharge",          Schema.class, "getMonthlyCharge",          null),
+          new PropertyDescriptor("NoticeLog",              Schema.class, "getNoticeLog",              null),
+          new PropertyDescriptor("NoticeLog.balance",      Schema.class, "getNoticeLogBalance",       null),
+          new PropertyDescriptor("NoticeType",             Schema.class, "getNoticeType",             null),
+          new PropertyDescriptor("Package",                Schema.class, "getPackage",                null),
+          new PropertyDescriptor("PackageCategory",        Schema.class, "getPackageCategory",        null),
+          new PropertyDescriptor("PackageDefinition",      Schema.class, "getPackageDefinition",      null),
+          new PropertyDescriptor("PackageDefinitionLimit", Schema.class, "getPackageDefinitionLimit", null),
+          new PropertyDescriptor("Resource",               Schema.class, "getResource",               null),
+          new PropertyDescriptor("Transaction",            Schema.class, "getTransaction",            null),
+          new PropertyDescriptor("TransactionType",        Schema.class, "getTransactionType",        null),
+          new PropertyDescriptor("WhoisHistory",           Schema.class, "getWhoisHistory",           null),
+          new PropertyDescriptor("WhoisHistoryAccount",    Schema.class, "getWhoisHistoryAccount",    null),
       };
     } catch (IntrospectionException err) {
       throw new ExceptionInInitializerError(err);
@@ -57,7 +58,7 @@ public class SchemaBeanInfo extends SimpleBeanInfo {
 
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField") // Not copying array for performance
-  public PropertyDescriptor[] getPropertyDescriptors () {
+  public PropertyDescriptor[] getPropertyDescriptors() {
     return properties;
   }
 
@@ -67,8 +68,8 @@ public class SchemaBeanInfo extends SimpleBeanInfo {
   @Override
   public BeanInfo[] getAdditionalBeanInfo() {
     try {
-      return new BeanInfo[] {
-        Introspector.getBeanInfo(Schema.class.getSuperclass())
+      return new BeanInfo[]{
+          Introspector.getBeanInfo(Schema.class.getSuperclass())
       };
     } catch (IntrospectionException err) {
       throw new AssertionError(err);

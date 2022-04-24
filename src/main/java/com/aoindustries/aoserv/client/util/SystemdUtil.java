@@ -59,14 +59,14 @@ public final class SystemdUtil {
         // '/' to '-'
         escaped.append('-');
       } else if (
-        b == '_'
-        || (b >= 'A' && b <= 'Z')
-        || (b >= 'a' && b <= 'z')
-        || (b >= '0' && b <= '9')
-        || (b == '.' && i > 0) // '.' only escaped at beginning of string
+          b == '_'
+              || (b >= 'A' && b <= 'Z')
+              || (b >= 'a' && b <= 'z')
+              || (b >= '0' && b <= '9')
+              || (b == '.' && i > 0) // '.' only escaped at beginning of string
       ) {
         // '_' or alphanumeric
-        escaped.append((char)b);
+        escaped.append((char) b);
       } else {
         if (b == 0) {
           throw new IllegalStateException("Illegal null character in systemd encoding");

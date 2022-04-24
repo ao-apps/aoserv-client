@@ -44,17 +44,18 @@ import java.util.Map;
  */
 public final class CommandTable extends GlobalTableStringKey<Command> {
 
-  private static final String GLOBAL_COMMANDS="[[GLOBAL]]";
+  private static final String GLOBAL_COMMANDS = "[[GLOBAL]]";
 
-  private final Map<String, List<Command>> tableCommands=new HashMap<>();
+  private final Map<String, List<Command>> tableCommands = new HashMap<>();
 
   CommandTable(AOServConnector connector) {
     super(connector, Command.class);
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Command.COLUMN_COMMAND_name, ASCENDING)
+      new OrderBy(Command.COLUMN_COMMAND_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -65,25 +66,25 @@ public final class CommandTable extends GlobalTableStringKey<Command> {
     synchronized (this) {
       // Table might be null
       String name = (table == null) ? GLOBAL_COMMANDS : table.getName();
-      List<Command> list=tableCommands.get(name);
+      List<Command> list = tableCommands.get(name);
       if (list != null) {
         return list;
       }
 
-      List<Command> cached=getRows();
-      List<Command> matches=new ArrayList<>();
-      int size=cached.size();
-      for (int c=0;c<size;c++) {
-        Command command=cached.get(c);
+      List<Command> cached = getRows();
+      List<Command> matches = new ArrayList<>();
+      int size = cached.size();
+      for (int c = 0; c < size; c++) {
+        Command command = cached.get(c);
         if (
-          table == null
-          ?command.getTable_name() == null
-          :name.equals(command.getTable_name())
+            table == null
+                ? command.getTable_name() == null
+                : name.equals(command.getTable_name())
         ) {
           matches.add(command);
         }
       }
-      matches=Collections.unmodifiableList(matches);
+      matches = Collections.unmodifiableList(matches);
       tableCommands.put(name, matches);
       return matches;
     }
@@ -105,12 +106,12 @@ public final class CommandTable extends GlobalTableStringKey<Command> {
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IOException, SQLException {
-    String command=args[0];
+    String command = args[0];
     if (command.equalsIgnoreCase(Command.HELP) || command.equals("?")) {
-      int argCount=args.length;
+      int argCount = args.length;
       if (argCount == 1) {
-        TableTable schemaTableTable=connector.getSchema().getTable();
-        for (int c=-1;c<numTables;c++) {
+        TableTable schemaTableTable = connector.getSchema().getTable();
+        for (int c = -1; c < numTables; c++) {
           String title;
           List<Command> commands;
           if (c == -1) {
@@ -126,8 +127,8 @@ public final class CommandTable extends GlobalTableStringKey<Command> {
         out.flush();
       } else if (argCount == 2) {
         if (args[1].equalsIgnoreCase("syntax")) {
-          TableTable schemaTableTable=connector.getSchema().getTable();
-          for (int c=-1;c<numTables;c++) {
+          TableTable schemaTableTable = connector.getSchema().getTable();
+          for (int c = -1; c < numTables; c++) {
             String title;
             List<Command> commands;
             if (c == -1) {
@@ -174,22 +175,22 @@ public final class CommandTable extends GlobalTableStringKey<Command> {
   }
 
   private void printHelpList(TerminalWriter out, String title, List<Command> commands, boolean shortOrSchema, boolean println) throws IOException {
-    int len=commands.size();
-    if (len>0) {
+    int len = commands.size();
+    if (len > 0) {
       if (println) {
         out.println();
       }
       out.boldOn();
       out.println(title);
       out.attributesOff();
-      for (int c=0;c<len;c++) {
-        Command aoshCom=commands.get(c);
-        String command=aoshCom.getCommand();
+      for (int c = 0; c < len; c++) {
+        Command aoshCom = commands.get(c);
+        String command = aoshCom.getCommand();
         out.print("    ");
         out.print(command);
-        int space=Math.max(1, 40-command.length());
-        for (int d=0;d<space;d++) {
-          out.print(d>0 && d<(space-1)?'.':' ');
+        int space = Math.max(1, 40 - command.length());
+        for (int d = 0; d < space; d++) {
+          out.print(d > 0 && d < (space - 1) ? '.' : ' ');
         }
         // Print the description without the HTML tags
         String desc = shortOrSchema ? aoshCom.getDescription() : aoshCom.getSyntax();

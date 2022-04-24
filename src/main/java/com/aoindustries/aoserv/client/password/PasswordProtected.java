@@ -38,17 +38,17 @@ public interface PasswordProtected {
   /**
    * Indicates that none of the passwords are set.
    */
-  int NONE=0;
+  int NONE = 0;
 
   /**
    * Indicates that some of the passwords are set.
    */
-  int SOME=1;
+  int SOME = 1;
 
   /**
    * Indicates that all of the passwords are set.
    */
-  int ALL=2;
+  int ALL = 2;
 
   List<PasswordChecker.Result> checkPassword(String password) throws IOException, SQLException;
 

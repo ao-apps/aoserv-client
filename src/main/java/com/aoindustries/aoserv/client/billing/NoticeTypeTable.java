@@ -41,8 +41,9 @@ public final class NoticeTypeTable extends GlobalTableStringKey<NoticeType> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(NoticeType.COLUMN_TYPE_name, ASCENDING)
+      new OrderBy(NoticeType.COLUMN_TYPE_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

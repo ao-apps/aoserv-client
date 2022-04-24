@@ -58,10 +58,10 @@ public final class Action extends CachedObjectIntegerKey<Action> {
   private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Action.class);
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_TICKET=1,
-    COLUMN_ADMINISTRATOR=2,
-    COLUMN_TIME=3
+      COLUMN_PKEY = 0,
+      COLUMN_TICKET = 1,
+      COLUMN_ADMINISTRATOR = 2,
+      COLUMN_TIME = 3
   ;
   static final String COLUMN_TICKET_name = "ticket";
   static final String COLUMN_TIME_name = "time";
@@ -100,7 +100,7 @@ public final class Action extends CachedObjectIntegerKey<Action> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Action() {
     // Do nothing
   }
@@ -139,7 +139,7 @@ public final class Action extends CachedObjectIntegerKey<Action> {
   public Ticket getTicket() throws IOException, SQLException {
     Ticket t = table.getConnector().getTicket().getTicket().get(ticket);
     if (t == null) {
-      throw new SQLException("Unable to find Ticket: "+ticket);
+      throw new SQLException("Unable to find Ticket: " + ticket);
     }
     return t;
   }
@@ -157,9 +157,9 @@ public final class Action extends CachedObjectIntegerKey<Action> {
   }
 
   public ActionType getTicketActionType() throws SQLException, IOException {
-    ActionType type=table.getConnector().getTicket().getActionType().get(action_type);
+    ActionType type = table.getConnector().getTicket().getActionType().get(action_type);
     if (type == null) {
-      throw new SQLException("Unable to find TicketActionType: "+action_type);
+      throw new SQLException("Unable to find TicketActionType: " + action_type);
     }
     return type;
   }
@@ -190,7 +190,7 @@ public final class Action extends CachedObjectIntegerKey<Action> {
     }
     Priority tp = table.getConnector().getTicket().getPriority().get(old_priority);
     if (tp == null) {
-      throw new SQLException("Unable to find TicketPriority: "+old_priority);
+      throw new SQLException("Unable to find TicketPriority: " + old_priority);
     }
     return tp;
   }
@@ -201,7 +201,7 @@ public final class Action extends CachedObjectIntegerKey<Action> {
     }
     Priority tp = table.getConnector().getTicket().getPriority().get(new_priority);
     if (tp == null) {
-      throw new SQLException("Unable to find TicketPriority: "+new_priority);
+      throw new SQLException("Unable to find TicketPriority: " + new_priority);
     }
     return tp;
   }
@@ -212,7 +212,7 @@ public final class Action extends CachedObjectIntegerKey<Action> {
     }
     TicketType tt = table.getConnector().getTicket().getTicketType().get(old_type);
     if (tt == null) {
-      throw new SQLException("Unable to find TicketType: "+old_type);
+      throw new SQLException("Unable to find TicketType: " + old_type);
     }
     return tt;
   }
@@ -223,7 +223,7 @@ public final class Action extends CachedObjectIntegerKey<Action> {
     }
     TicketType tt = table.getConnector().getTicket().getTicketType().get(new_type);
     if (tt == null) {
-      throw new SQLException("Unable to find TicketType: "+new_type);
+      throw new SQLException("Unable to find TicketType: " + new_type);
     }
     return tt;
   }
@@ -234,7 +234,7 @@ public final class Action extends CachedObjectIntegerKey<Action> {
     }
     Status ts = table.getConnector().getTicket().getStatus().get(old_status);
     if (ts == null) {
-      throw new SQLException("Unable to find TicketStatus: "+old_status);
+      throw new SQLException("Unable to find TicketStatus: " + old_status);
     }
     return ts;
   }
@@ -245,7 +245,7 @@ public final class Action extends CachedObjectIntegerKey<Action> {
     }
     Status ts = table.getConnector().getTicket().getStatus().get(new_status);
     if (ts == null) {
-      throw new SQLException("Unable to find TicketStatus: "+new_status);
+      throw new SQLException("Unable to find TicketStatus: " + new_status);
     }
     return ts;
   }
@@ -276,7 +276,7 @@ public final class Action extends CachedObjectIntegerKey<Action> {
     }
     Category tc = table.getConnector().getReseller().getCategory().get(old_category);
     if (tc == null) {
-      throw new SQLException("Unable to find TicketCategory: "+old_category);
+      throw new SQLException("Unable to find TicketCategory: " + old_category);
     }
     return tc;
   }
@@ -287,7 +287,7 @@ public final class Action extends CachedObjectIntegerKey<Action> {
     }
     Category tc = table.getConnector().getReseller().getCategory().get(new_category);
     if (tc == null) {
-      throw new SQLException("Unable to find TicketCategory: "+new_category);
+      throw new SQLException("Unable to find TicketCategory: " + new_category);
     }
     return tc;
   }
@@ -296,10 +296,10 @@ public final class Action extends CachedObjectIntegerKey<Action> {
     if (!oldValueLoaded) {
       // Only perform the query for action types that have old values
       if (
-        action_type.equals(ActionType.SET_CONTACT_EMAILS)
-        || action_type.equals(ActionType.SET_CONTACT_PHONE_NUMBERS)
-        || action_type.equals(ActionType.SET_SUMMARY)
-        || action_type.equals(ActionType.SET_INTERNAL_NOTES)
+          action_type.equals(ActionType.SET_CONTACT_EMAILS)
+              || action_type.equals(ActionType.SET_CONTACT_PHONE_NUMBERS)
+              || action_type.equals(ActionType.SET_SUMMARY)
+              || action_type.equals(ActionType.SET_INTERNAL_NOTES)
       ) {
         old_value = table.getConnector().requestNullLongStringQuery(true, AoservProtocol.CommandID.GET_TICKET_ACTION_OLD_VALUE, pkey);
       } else {
@@ -314,10 +314,10 @@ public final class Action extends CachedObjectIntegerKey<Action> {
     if (!newValueLoaded) {
       // Only perform the query for action types that have new values
       if (
-        action_type.equals(ActionType.SET_CONTACT_EMAILS)
-        || action_type.equals(ActionType.SET_CONTACT_PHONE_NUMBERS)
-        || action_type.equals(ActionType.SET_SUMMARY)
-        || action_type.equals(ActionType.SET_INTERNAL_NOTES)
+          action_type.equals(ActionType.SET_CONTACT_EMAILS)
+              || action_type.equals(ActionType.SET_CONTACT_PHONE_NUMBERS)
+              || action_type.equals(ActionType.SET_SUMMARY)
+              || action_type.equals(ActionType.SET_INTERNAL_NOTES)
       ) {
         new_value = table.getConnector().requestNullLongStringQuery(true, AoservProtocol.CommandID.GET_TICKET_ACTION_NEW_VALUE, pkey);
       } else {
@@ -381,7 +381,7 @@ public final class Action extends CachedObjectIntegerKey<Action> {
         newValue = getNewValue();
         break;
       default:
-        throw new SQLException("Unexpected value for action_type: "+action_type);
+        throw new SQLException("Unexpected value for action_type: " + action_type);
     }
     return getTicketActionType().generateSummary(table.getConnector(), oldValue, newValue);
   }
@@ -488,7 +488,7 @@ public final class Action extends CachedObjectIntegerKey<Action> {
 
   @Override
   public String toStringImpl() {
-    return ticket+"|"+pkey+'|'+action_type+'|'+administrator;
+    return ticket + "|" + pkey + '|' + action_type + '|' + administrator;
   }
 
   @Override

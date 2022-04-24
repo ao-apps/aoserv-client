@@ -88,10 +88,10 @@ public final class Server extends CachedObjectIntegerKey<Server> {
    * @author  AO Industries, Inc.
    */
   public static final class Name implements
-    Comparable<Name>,
-    Serializable,
-    DtoFactory<com.aoindustries.aoserv.client.dto.MySQLServerName>,
-    Internable<Name>
+      Comparable<Name>,
+      Serializable,
+      DtoFactory<com.aoindustries.aoserv.client.dto.MySQLServerName>,
+      Internable<Name>
   {
 
     private static final long serialVersionUID = 6148467549389988813L;
@@ -116,8 +116,8 @@ public final class Server extends CachedObjectIntegerKey<Server> {
       // The first character must be [a-z] or [0-9]
       char ch = name.charAt(0);
       if (
-        (ch < 'a' || ch > 'z')
-        && (ch<'0' || ch>'9')
+          (ch < 'a' || ch > 'z')
+              && (ch < '0' || ch > '9')
       ) {
         return new InvalidResult(RESOURCES, "Name.validate.startAtoZor0to9");
       }
@@ -126,11 +126,11 @@ public final class Server extends CachedObjectIntegerKey<Server> {
       for (int c = 1; c < len; c++) {
         ch = name.charAt(c);
         if (
-          (ch<'a' || ch>'z')
-          && (ch<'0' || ch>'9')
-          && ch != '.'
-          && ch != '-'
-          && ch != '_'
+            (ch < 'a' || ch > 'z')
+                && (ch < '0' || ch > '9')
+                && ch != '.'
+                && ch != '-'
+                && ch != '_'
         ) {
           return new InvalidResult(RESOURCES, "Name.validate.illegalCharacter");
         }
@@ -194,8 +194,8 @@ public final class Server extends CachedObjectIntegerKey<Server> {
     @Override
     public boolean equals(Object obj) {
       return
-        (obj instanceof Name)
-        && name.equals(((Name)obj).name)
+          (obj instanceof Name)
+              && name.equals(((Name) obj).name)
       ;
     }
 
@@ -245,6 +245,7 @@ public final class Server extends CachedObjectIntegerKey<Server> {
    * The default MySQL port.
    */
   public static final Port DEFAULT_PORT;
+
   static {
     try {
       DEFAULT_PORT = Port.valueOf(3306, com.aoapps.net.Protocol.TCP);
@@ -257,19 +258,20 @@ public final class Server extends CachedObjectIntegerKey<Server> {
    * The supported versions of MySQL.
    */
   public static final String
-    VERSION_8_0_PREFIX = "8.0.",
-    VERSION_5_7_PREFIX = "5.7.",
-    VERSION_5_6_PREFIX = "5.6.",
-    VERSION_5_1_PREFIX = "5.1.",
-    VERSION_5_0_PREFIX = "5.0.",
-    VERSION_4_1_PREFIX = "4.1.",
-    VERSION_4_0_PREFIX = "4.0."
+      VERSION_8_0_PREFIX = "8.0.",
+      VERSION_5_7_PREFIX = "5.7.",
+      VERSION_5_6_PREFIX = "5.6.",
+      VERSION_5_1_PREFIX = "5.1.",
+      VERSION_5_0_PREFIX = "5.0.",
+      VERSION_4_1_PREFIX = "4.1.",
+      VERSION_4_0_PREFIX = "4.0."
   ;
 
   /**
    * The directory that contains the MySQL data files.
    */
   public static final PosixPath DATA_BASE_DIR;
+
   static {
     try {
       DATA_BASE_DIR = PosixPath.valueOf("/var/lib/mysql");
@@ -284,15 +286,15 @@ public final class Server extends CachedObjectIntegerKey<Server> {
    * preferred.
    */
   public static final List<String> PREFERRED_VERSION_PREFIXES = Collections.unmodifiableList(
-    Arrays.asList(
-      VERSION_8_0_PREFIX,
-      VERSION_5_7_PREFIX,
-      VERSION_5_6_PREFIX,
-      VERSION_5_1_PREFIX,
-      VERSION_5_0_PREFIX,
-      VERSION_4_1_PREFIX,
-      VERSION_4_0_PREFIX
-    )
+      Arrays.asList(
+          VERSION_8_0_PREFIX,
+          VERSION_5_7_PREFIX,
+          VERSION_5_6_PREFIX,
+          VERSION_5_1_PREFIX,
+          VERSION_5_0_PREFIX,
+          VERSION_4_1_PREFIX,
+          VERSION_4_0_PREFIX
+      )
   );
 
   /**
@@ -555,8 +557,8 @@ public final class Server extends CachedObjectIntegerKey<Server> {
   // </editor-fold>
 
   static final int
-    COLUMN_BIND = 0,
-    COLUMN_AO_SERVER = 2
+      COLUMN_BIND = 0,
+      COLUMN_AO_SERVER = 2
   ;
   public static final String COLUMN_AO_SERVER_name = "ao_server";
   public static final String COLUMN_NAME_name = "name";
@@ -582,7 +584,7 @@ public final class Server extends CachedObjectIntegerKey<Server> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Server() {
     // Do nothing
   }
@@ -628,15 +630,15 @@ public final class Server extends CachedObjectIntegerKey<Server> {
   }
 
   public SoftwareVersion getVersion() throws SQLException, IOException {
-    SoftwareVersion obj=table.getConnector().getDistribution().getSoftwareVersion().get(version);
+    SoftwareVersion obj = table.getConnector().getDistribution().getSoftwareVersion().get(version);
     if (obj == null) {
-      throw new SQLException("Unable to find TechnologyVersion: "+version);
+      throw new SQLException("Unable to find TechnologyVersion: " + version);
     }
     if (
-      obj.getOperatingSystemVersion(table.getConnector()).getPkey()
-      != getLinuxServer().getHost().getOperatingSystemVersion_id()
+        obj.getOperatingSystemVersion(table.getConnector()).getPkey()
+            != getLinuxServer().getHost().getOperatingSystemVersion_id()
     ) {
-      throw new SQLException("resource/operating system version mismatch on MySQLServer: #"+pkey);
+      throw new SQLException("resource/operating system version mismatch on MySQLServer: #" + pkey);
     }
     return obj;
   }
@@ -690,13 +692,13 @@ public final class Server extends CachedObjectIntegerKey<Server> {
   }
 
   public int addMySQLDatabase(
-    Database.Name name,
-    Package pack
+      Database.Name name,
+      Package pack
   ) throws IOException, SQLException {
     return table.getConnector().getMysql().getDatabase().addMySQLDatabase(
-      name,
-      this,
-      pack
+        name,
+        this,
+        pack
     );
   }
 
@@ -713,12 +715,12 @@ public final class Server extends CachedObjectIntegerKey<Server> {
    * directory under /usr/mysql/X.X[-max] or /opt/mysql-X.X[-max]
    */
   public String getMinorVersion() throws SQLException, IOException {
-    String techVersion=getVersion().getVersion();
-    int pos=techVersion.indexOf('.');
+    String techVersion = getVersion().getVersion();
+    int pos = techVersion.indexOf('.');
     if (pos == -1) {
       return techVersion;
     }
-    int pos2=techVersion.indexOf('.', pos+1);
+    int pos2 = techVersion.indexOf('.', pos + 1);
     if (pos2 == -1) {
       return techVersion;
     }
@@ -754,10 +756,10 @@ public final class Server extends CachedObjectIntegerKey<Server> {
   }
 
   public List<User> getMySQLUsers() throws IOException, SQLException {
-    List<UserServer> psu=getMySQLServerUsers();
-    int len=psu.size();
-    List<User> pu=new ArrayList<>(len);
-    for (int c=0;c<len;c++) {
+    List<UserServer> psu = getMySQLServerUsers();
+    int len = psu.size();
+    List<User> pu = new ArrayList<>(len);
+    for (int c = 0; c < len; c++) {
       pu.add(psu.get(c).getMySQLUser());
     }
     return pu;
@@ -786,7 +788,7 @@ public final class Server extends CachedObjectIntegerKey<Server> {
 
   @Override
   public String toStringImpl() throws SQLException, IOException {
-    return name+" on "+getLinuxServer().getHostname();
+    return name + " on " + getLinuxServer().getHostname();
   }
 
   public static final class MasterStatus {
@@ -795,11 +797,11 @@ public final class Server extends CachedObjectIntegerKey<Server> {
     private final String position;
 
     public MasterStatus(
-      String file,
-      String position
+        String file,
+        String position
     ) {
-      this.file=file;
-      this.position=position;
+      this.file = file;
+      this.position = position;
     }
 
     public String getFile() {
@@ -817,38 +819,38 @@ public final class Server extends CachedObjectIntegerKey<Server> {
    */
   public MasterStatus getMasterStatus() throws IOException, SQLException {
     return table.getConnector().requestResult(
-      true,
-      AoservProtocol.CommandID.GET_MYSQL_MASTER_STATUS,
-      // Java 9: new AOServConnector.ResultRequest<>
-      new AOServConnector.ResultRequest<MasterStatus>() {
-        private MasterStatus result;
+        true,
+        AoservProtocol.CommandID.GET_MYSQL_MASTER_STATUS,
+        // Java 9: new AOServConnector.ResultRequest<>
+        new AOServConnector.ResultRequest<MasterStatus>() {
+          private MasterStatus result;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(pkey);
-        }
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(pkey);
+          }
 
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.NEXT) {
-            result = new MasterStatus(
-              in.readNullUTF(),
-              in.readNullUTF()
-            );
-          } else if (code == AoservProtocol.DONE) {
-            result = null;
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.NEXT) {
+              result = new MasterStatus(
+                  in.readNullUTF(),
+                  in.readNullUTF()
+              );
+            } else if (code == AoservProtocol.DONE) {
+              result = null;
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
+            }
+          }
+
+          @Override
+          public MasterStatus afterRelease() {
+            return result;
           }
         }
-
-        @Override
-        public MasterStatus afterRelease() {
-          return result;
-        }
-      }
     );
   }
 }

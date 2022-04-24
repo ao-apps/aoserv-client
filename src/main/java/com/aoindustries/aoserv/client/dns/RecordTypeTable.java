@@ -41,8 +41,9 @@ public final class RecordTypeTable extends GlobalTableStringKey<RecordType> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(RecordType.COLUMN_DESCRIPTION_name, ASCENDING)
+      new OrderBy(RecordType.COLUMN_DESCRIPTION_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

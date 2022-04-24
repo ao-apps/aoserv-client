@@ -49,8 +49,8 @@ import java.sql.SQLException;
 public final class Worker extends CachedObjectIntegerKey<Worker> {
 
   static final int
-    COLUMN_BIND = 0,
-    COLUMN_TOMCAT_SITE = 2
+      COLUMN_BIND = 0,
+      COLUMN_TOMCAT_SITE = 2
   ;
   static final String COLUMN_BIND_name = "bind";
   static final String COLUMN_NAME_name = "name";
@@ -64,7 +64,7 @@ public final class Worker extends CachedObjectIntegerKey<Worker> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Worker() {
     // Do nothing
   }
@@ -153,7 +153,7 @@ public final class Worker extends CachedObjectIntegerKey<Worker> {
 
   @Override
   public String toStringImpl() {
-    return pkey+"|"+name;
+    return pkey + "|" + name;
   }
 
   public JkProtocol getHttpdJKProtocol(AOServConnector connector) throws IOException, SQLException {

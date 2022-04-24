@@ -45,9 +45,10 @@ public final class SendmailServerTable extends CachedTableIntegerKey<SendmailSer
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(SendmailServer.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
-    new OrderBy(SendmailServer.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(SendmailServer.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
+      new OrderBy(SendmailServer.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

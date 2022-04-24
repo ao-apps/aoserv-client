@@ -58,7 +58,7 @@ public final class Currency extends GlobalObjectStringKey<Currency> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Currency() {
     // Do nothing
   }
@@ -100,8 +100,8 @@ public final class Currency extends GlobalObjectStringKey<Currency> {
     pkey = results.getString("currencyCode");
     fractionDigits = results.getShort("fractionDigits");
     autoEnableMinimumPayment = new Money(
-      java.util.Currency.getInstance(pkey),
-      results.getBigDecimal("autoEnableMinimumPayment")
+        java.util.Currency.getInstance(pkey),
+        results.getBigDecimal("autoEnableMinimumPayment")
     );
   }
 
@@ -110,9 +110,9 @@ public final class Currency extends GlobalObjectStringKey<Currency> {
     pkey = in.readUTF().intern();
     fractionDigits = in.readShort();
     autoEnableMinimumPayment = new Money(
-      java.util.Currency.getInstance(pkey),
-      in.readLong(),
-      in.readCompressedInt()
+        java.util.Currency.getInstance(pkey),
+        in.readLong(),
+        in.readCompressedInt()
     );
   }
 

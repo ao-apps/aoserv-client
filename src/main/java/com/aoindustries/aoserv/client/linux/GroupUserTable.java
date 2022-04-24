@@ -64,9 +64,10 @@ public final class GroupUserTable extends CachedTableIntegerKey<GroupUser> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(GroupUser.COLUMN_GROUP_name, ASCENDING),
-    new OrderBy(GroupUser.COLUMN_USER_name, ASCENDING)
+      new OrderBy(GroupUser.COLUMN_GROUP_name, ASCENDING),
+      new OrderBy(GroupUser.COLUMN_USER_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -74,15 +75,15 @@ public final class GroupUserTable extends CachedTableIntegerKey<GroupUser> {
   }
 
   int addLinuxGroupAccount(
-    Group groupObject,
-    User userObject
+      Group groupObject,
+      User userObject
   ) throws IOException, SQLException {
-    int pkey=connector.requestIntQueryIL(
-      true,
-      AoservProtocol.CommandID.ADD,
-      Table.TableID.LINUX_GROUP_ACCOUNTS,
-      groupObject.getName(),
-      userObject.getUsername()
+    int pkey = connector.requestIntQueryIL(
+        true,
+        AoservProtocol.CommandID.ADD,
+        Table.TableID.LINUX_GROUP_ACCOUNTS,
+        groupObject.getName(),
+        userObject.getUsername()
     );
     return pkey;
   }
@@ -93,8 +94,8 @@ public final class GroupUserTable extends CachedTableIntegerKey<GroupUser> {
   }
 
   public List<GroupUser> getLinuxGroupAccounts(
-    Group.Name group,
-    User.Name user
+      Group.Name group,
+      User.Name user
   ) throws IOException, SQLException {
     synchronized (hash) {
       if (!hashBuilt) {
@@ -110,7 +111,7 @@ public final class GroupUserTable extends CachedTableIntegerKey<GroupUser> {
         // Make entries unmodifiable
         for (Map.Entry<Tuple2<Group.Name, User.Name>, List<GroupUser>> entry : hash.entrySet()) {
           entry.setValue(
-            AoCollections.optimalUnmodifiableList(entry.getValue())
+              AoCollections.optimalUnmodifiableList(entry.getValue())
           );
         }
         hashBuilt = true;
@@ -156,16 +157,16 @@ public final class GroupUserTable extends CachedTableIntegerKey<GroupUser> {
             Group.Name groupName = lga.getGroup_name();
             Group.Name existing = primaryHash.put(username, groupName);
             if (
-              existing != null
-              && !existing.equals(groupName)
+                existing != null
+                    && !existing.equals(groupName)
             ) {
               throw new SQLException(
-                "Conflicting primary groups for "
-                  + username
-                  + ": "
-                  + existing
-                  + " and "
-                  + groupName
+                  "Conflicting primary groups for "
+                      + username
+                      + ": "
+                      + existing
+                      + " and "
+                      + groupName
               );
             }
           }
@@ -188,14 +189,14 @@ public final class GroupUserTable extends CachedTableIntegerKey<GroupUser> {
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-    String command=args[0];
+    String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_LINUX_GROUP_ACCOUNT)) {
       if (AOSH.checkParamCount(Command.ADD_LINUX_GROUP_ACCOUNT, args, 2, err)) {
         out.println(
-          connector.getSimpleAOClient().addLinuxGroupAccount(
-            AOSH.parseGroupName(args[1], "group"),
-            AOSH.parseLinuxUserName(args[2], "username")
-          )
+            connector.getSimpleAOClient().addLinuxGroupAccount(
+                AOSH.parseGroupName(args[1], "group"),
+                AOSH.parseLinuxUserName(args[2], "username")
+            )
         );
         out.flush();
       }
@@ -203,16 +204,16 @@ public final class GroupUserTable extends CachedTableIntegerKey<GroupUser> {
     } else if (command.equalsIgnoreCase(Command.REMOVE_LINUX_GROUP_ACCOUNT)) {
       if (AOSH.checkParamCount(Command.REMOVE_LINUX_GROUP_ACCOUNT, args, 2, err)) {
         connector.getSimpleAOClient().removeLinuxGroupAccount(
-          AOSH.parseGroupName(args[1], "group"),
-          AOSH.parseLinuxUserName(args[2], "username")
+            AOSH.parseGroupName(args[1], "group"),
+            AOSH.parseLinuxUserName(args[2], "username")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_PRIMARY_LINUX_GROUP_ACCOUNT)) {
       if (AOSH.checkParamCount(Command.SET_PRIMARY_LINUX_GROUP_ACCOUNT, args, 2, err)) {
         connector.getSimpleAOClient().setPrimaryLinuxGroupAccount(
-          AOSH.parseGroupName(args[1], "group"),
-          AOSH.parseLinuxUserName(args[2], "username")
+            AOSH.parseGroupName(args[1], "group"),
+            AOSH.parseLinuxUserName(args[2], "username")
         );
       }
       return true;

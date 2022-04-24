@@ -78,10 +78,10 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
   // TODO: Update for IEEE Std 1003.1.2001 "3.426 User Name"? https://paulgorman.org/technical/presentations/linux_username_conventions.pdf
   // TODO: Combined with "UserName" as "PosixName" (and an associated "PosixPortableFilename")?
   public static final class Name implements
-    Comparable<Name>,
-    Serializable,
-    DtoFactory<com.aoindustries.aoserv.client.dto.LinuxGroupName>,
-    Internable<Name>
+      Comparable<Name>,
+      Serializable,
+      DtoFactory<com.aoindustries.aoserv.client.dto.LinuxGroupName>,
+      Internable<Name>
   {
 
     private static final long serialVersionUID = 5758732021942097608L;
@@ -115,7 +115,7 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
         if (ch == ' ') {
           return new InvalidResult(RESOURCES, "Name.validate.noSpace");
         }
-        if (ch <= 0x21 || ch>0x7f) {
+        if (ch <= 0x21 || ch > 0x7f) {
           return new InvalidResult(RESOURCES, "Name.validate.specialCharacter");
         }
         if (ch >= 'A' && ch <= 'Z') {
@@ -197,8 +197,8 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
     @Override
     public boolean equals(Object obj) {
       return
-        (obj instanceof Name)
-        && name.equals(((Name)obj).name)
+          (obj instanceof Name)
+              && name.equals(((Name) obj).name)
       ;
     }
 
@@ -244,8 +244,8 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
   }
 
   static final int
-    COLUMN_NAME=0,
-    COLUMN_PACKAGE=1
+      COLUMN_NAME = 0,
+      COLUMN_PACKAGE = 1
   ;
   static final String COLUMN_NAME_name = "name";
 
@@ -253,86 +253,86 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
    * Some commonly used system and application groups.
    */
   public static final Name
-    ADM,
-    AOADMIN,
-    AOSERV_JILTER,
-    AOSERV_XEN_MIGRATION,
-    APACHE,
-    AUDIO,
-    AVAHI_AUTOIPD,
-    AWSTATS,
-    BIN,
-    BIRD,
-    CDROM,
-    CENTOS, // Amazon EC2 cloud-init
-    CGRED,
-    CHRONY,
-    CLAMSCAN,
-    CLAMUPDATE,
-    DAEMON,
-    DBUS,
-    DHCPD,
-    DIALOUT,
-    DIP,
-    DISK,
-    FLOPPY,
-    FTP,
-    FTPONLY,
-    GAMES,
-    INPUT,
-    JENKINS,
-    KMEM,
-    LOCK,
-    LP,
-    MAIL,
-    MAILNULL,
-    MAILONLY,
-    MAN,
-    MEM,
-    MEMCACHED,
-    MYSQL,
-    NAMED,
-    NFSNOBODY,
-    NGINX,
-    NOBODY,
-    NOGROUP,
-    POLKITD,
-    POSTGRES,
-    REDIS,
-    ROOT,
-    RPC,
-    RPCUSER,
-    SASLAUTH,
-    SCREEN,
-    SMMSP,
-    SONARQUBE,
-    SSH_KEYS,
-    SSHD,
-    SYS,
-    SYSTEMD_BUS_PROXY,
-    SYSTEMD_JOURNAL,
-    SYSTEMD_NETWORK,
-    TAPE,
-    TCPDUMP,
-    TSS,
-    TTY,
-    UNBOUND,
-    USERS,
-    UTEMPTER,
-    UTMP,
-    VIDEO,
-    VIRUSGROUP,
-    WHEEL,
-    // AOServ Master:
-    AOSERV_MASTER,
-    // AOServ Schema:
-    ACCOUNTING,
-    BILLING,
-    DISTRIBUTION,
-    INFRASTRUCTURE,
-    MANAGEMENT,
-    MONITORING,
-    RESELLER;
+      ADM,
+      AOADMIN,
+      AOSERV_JILTER,
+      AOSERV_XEN_MIGRATION,
+      APACHE,
+      AUDIO,
+      AVAHI_AUTOIPD,
+      AWSTATS,
+      BIN,
+      BIRD,
+      CDROM,
+      CENTOS, // Amazon EC2 cloud-init
+      CGRED,
+      CHRONY,
+      CLAMSCAN,
+      CLAMUPDATE,
+      DAEMON,
+      DBUS,
+      DHCPD,
+      DIALOUT,
+      DIP,
+      DISK,
+      FLOPPY,
+      FTP,
+      FTPONLY,
+      GAMES,
+      INPUT,
+      JENKINS,
+      KMEM,
+      LOCK,
+      LP,
+      MAIL,
+      MAILNULL,
+      MAILONLY,
+      MAN,
+      MEM,
+      MEMCACHED,
+      MYSQL,
+      NAMED,
+      NFSNOBODY,
+      NGINX,
+      NOBODY,
+      NOGROUP,
+      POLKITD,
+      POSTGRES,
+      REDIS,
+      ROOT,
+      RPC,
+      RPCUSER,
+      SASLAUTH,
+      SCREEN,
+      SMMSP,
+      SONARQUBE,
+      SSH_KEYS,
+      SSHD,
+      SYS,
+      SYSTEMD_BUS_PROXY,
+      SYSTEMD_JOURNAL,
+      SYSTEMD_NETWORK,
+      TAPE,
+      TCPDUMP,
+      TSS,
+      TTY,
+      UNBOUND,
+      USERS,
+      UTEMPTER,
+      UTMP,
+      VIDEO,
+      VIRUSGROUP,
+      WHEEL,
+      // AOServ Master:
+      AOSERV_MASTER,
+      // AOServ Schema:
+      ACCOUNTING,
+      BILLING,
+      DISTRIBUTION,
+      INFRASTRUCTURE,
+      MANAGEMENT,
+      MONITORING,
+      RESELLER;
 
   /**
    * @deprecated  Group httpd no longer used.
@@ -438,7 +438,7 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Group() {
     // Do nothing
   }
@@ -511,7 +511,7 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
     try {
       pkey = Name.valueOf(in.readUTF()).intern();
       packageName = Account.Name.valueOf(in.readUTF()).intern();
-      type=in.readUTF().intern();
+      type = in.readUTF().intern();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -519,12 +519,12 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
 
   @Override
   public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws IOException, SQLException {
-    List<CannotRemoveReason<?>> reasons=new ArrayList<>();
+    List<CannotRemoveReason<?>> reasons = new ArrayList<>();
 
     // Cannot be the primary group for any linux accounts
     for (GroupUser lga : table.getConnector().getLinux().getGroupUser().getRows()) {
       if (lga.isPrimary() && equals(lga.getGroup())) {
-        reasons.add(new CannotRemoveReason<>("Used as primary group for Linux account "+lga.getUser().getUsername().getUsername(), lga));
+        reasons.add(new CannotRemoveReason<>("Used as primary group for Linux account " + lga.getUser().getUsername().getUsername(), lga));
       }
     }
 
@@ -539,10 +539,10 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
   @Override
   public void remove() throws IOException, SQLException {
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.REMOVE,
-      Table.TableID.LINUX_GROUPS,
-      pkey
+        true,
+        AoservProtocol.CommandID.REMOVE,
+        Table.TableID.LINUX_GROUPS,
+        pkey
     );
   }
 

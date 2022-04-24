@@ -63,9 +63,9 @@ import java.util.List;
 public final class Domain extends CachedObjectIntegerKey<Domain> implements Removable {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_AO_SERVER=2,
-    COLUMN_PACKAGE=3
+      COLUMN_PKEY = 0,
+      COLUMN_AO_SERVER = 2,
+      COLUMN_PACKAGE = 3
   ;
   static final String COLUMN_AO_SERVER_name = "ao_server";
   static final String COLUMN_DOMAIN_name = "domain";
@@ -80,7 +80,7 @@ public final class Domain extends CachedObjectIntegerKey<Domain> implements Remo
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Domain() {
     // Do nothing
   }
@@ -90,15 +90,15 @@ public final class Domain extends CachedObjectIntegerKey<Domain> implements Remo
   }
 
   public void addMajordomoServer(
-    UserServer linuxServerAccount,
-    GroupServer linuxServerGroup,
-    MajordomoVersion majordomoVersion
+      UserServer linuxServerAccount,
+      GroupServer linuxServerGroup,
+      MajordomoVersion majordomoVersion
   ) throws IOException, SQLException {
     table.getConnector().getEmail().getMajordomoServer().addMajordomoServer(
-      this,
-      linuxServerAccount,
-      linuxServerGroup,
-      majordomoVersion
+        this,
+        linuxServerAccount,
+        linuxServerGroup,
+        majordomoVersion
     );
   }
 
@@ -142,9 +142,9 @@ public final class Domain extends CachedObjectIntegerKey<Domain> implements Remo
   }
 
   public Server getLinuxServer() throws SQLException, IOException {
-    Server ao=table.getConnector().getLinux().getServer().get(ao_server);
+    Server ao = table.getConnector().getLinux().getServer().get(ao_server);
     if (ao == null) {
-      throw new SQLException("Unable to find linux.Server: "+ao_server);
+      throw new SQLException("Unable to find linux.Server: " + ao_server);
     }
     return ao;
   }
@@ -157,9 +157,9 @@ public final class Domain extends CachedObjectIntegerKey<Domain> implements Remo
   @Override
   public void init(ResultSet result) throws SQLException {
     try {
-      pkey=result.getInt(1);
-      domain=DomainName.valueOf(result.getString(2));
-      ao_server=result.getInt(3);
+      pkey = result.getInt(1);
+      domain = DomainName.valueOf(result.getString(2));
+      ao_server = result.getInt(3);
       packageName = Account.Name.valueOf(result.getString(4));
     } catch (ValidationException e) {
       throw new SQLException(e);
@@ -180,12 +180,12 @@ public final class Domain extends CachedObjectIntegerKey<Domain> implements Remo
 
   @Override
   public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws SQLException, IOException {
-    List<CannotRemoveReason<?>> reasons=new ArrayList<>();
+    List<CannotRemoveReason<?>> reasons = new ArrayList<>();
 
-    MajordomoServer ms=getMajordomoServer();
+    MajordomoServer ms = getMajordomoServer();
     if (ms != null) {
-      Domain ed=ms.getDomain();
-      reasons.add(new CannotRemoveReason<>("Used by Majordomo server "+ed.getDomain()+" on "+ed.getLinuxServer().getHostname(), ms));
+      Domain ed = ms.getDomain();
+      reasons.add(new CannotRemoveReason<>("Used by Majordomo server " + ed.getDomain() + " on " + ed.getLinuxServer().getHostname(), ms));
     }
 
     for (Address ea : getEmailAddresses()) {
@@ -198,10 +198,10 @@ public final class Domain extends CachedObjectIntegerKey<Domain> implements Remo
   @Override
   public void remove() throws IOException, SQLException {
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.REMOVE,
-      Table.TableID.EMAIL_DOMAINS,
-      pkey
+        true,
+        AoservProtocol.CommandID.REMOVE,
+        Table.TableID.EMAIL_DOMAINS,
+        pkey
     );
   }
 

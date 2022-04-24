@@ -48,9 +48,10 @@ public final class AdministratorPermissionTable extends CachedTableIntegerKey<Ad
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(AdministratorPermission.COLUMN_USERNAME_name, ASCENDING),
-    new OrderBy(AdministratorPermission.COLUMN_PERMISSION_name+'.'+Permission.COLUMN_SORT_ORDER_name, ASCENDING)
+      new OrderBy(AdministratorPermission.COLUMN_USERNAME_name, ASCENDING),
+      new OrderBy(AdministratorPermission.COLUMN_PERMISSION_name + '.' + Permission.COLUMN_SORT_ORDER_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

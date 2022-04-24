@@ -42,8 +42,8 @@ import java.sql.SQLException;
 public final class SmtpSmartHostDomain extends CachedObjectIntegerKey<SmtpSmartHostDomain> {
 
   static final int
-    COLUMN_PKEY = 0,
-    COLUMN_SMART_HOST = 1
+      COLUMN_PKEY = 0,
+      COLUMN_SMART_HOST = 1
   ;
   static final String COLUMN_SMART_HOST_name = "smart_host";
   static final String COLUMN_DOMAIN_name = "domain";
@@ -59,7 +59,7 @@ public final class SmtpSmartHostDomain extends CachedObjectIntegerKey<SmtpSmartH
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public SmtpSmartHostDomain() {
     // Do nothing
   }
@@ -79,7 +79,7 @@ public final class SmtpSmartHostDomain extends CachedObjectIntegerKey<SmtpSmartH
   public SmtpSmartHost getEmailSmtpSmartHost() throws SQLException, IOException {
     SmtpSmartHost obj = table.getConnector().getEmail().getSmtpSmartHost().get(smart_host);
     if (obj == null) {
-      throw new SQLException("Unable to find EmailSmtpSmartHost: "+smart_host);
+      throw new SQLException("Unable to find EmailSmtpSmartHost: " + smart_host);
     }
     return obj;
   }
@@ -116,11 +116,11 @@ public final class SmtpSmartHostDomain extends CachedObjectIntegerKey<SmtpSmartH
       pkey = result.getInt(pos++);
       smart_host = result.getInt(pos++);
       domain = DomainName.valueOf(result.getString(pos++));
-      domain_out_burst=result.getInt(pos++);
+      domain_out_burst = result.getInt(pos++);
       if (result.wasNull()) {
         domain_out_burst = -1;
       }
-      domain_out_rate=result.getFloat(pos++);
+      domain_out_rate = result.getFloat(pos++);
       if (result.wasNull()) {
         domain_out_rate = Float.NaN;
       }
@@ -135,8 +135,8 @@ public final class SmtpSmartHostDomain extends CachedObjectIntegerKey<SmtpSmartH
       pkey = in.readCompressedInt();
       smart_host = in.readCompressedInt();
       domain = DomainName.valueOf(in.readUTF());
-      domain_out_burst=in.readCompressedInt();
-      domain_out_rate=in.readFloat();
+      domain_out_burst = in.readCompressedInt();
+      domain_out_rate = in.readFloat();
     } catch (ValidationException e) {
       throw new IOException(e);
     }

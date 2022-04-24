@@ -42,8 +42,8 @@ public final class SQLCast implements SQLExpression {
   private final Type castToType;
 
   public SQLCast(SQLExpression expression, Type castToType) {
-    this.expression=expression;
-    this.castToType=castToType;
+    this.expression = expression;
+    this.castToType = castToType;
   }
 
   @Override

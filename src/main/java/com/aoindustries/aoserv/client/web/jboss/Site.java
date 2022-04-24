@@ -67,7 +67,7 @@ public final class Site extends CachedObjectIntegerKey<Site> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Site() {
     // Do nothing
   }
@@ -99,17 +99,17 @@ public final class Site extends CachedObjectIntegerKey<Site> {
   }
 
   public Version getHttpdJBossVersion() throws SQLException, IOException {
-    Version obj=table.getConnector().getWeb_jboss().getVersion().get(version);
+    Version obj = table.getConnector().getWeb_jboss().getVersion().get(version);
     if (obj == null) {
-      throw new SQLException("Unable to find HttpdJBossVersion: "+version);
+      throw new SQLException("Unable to find HttpdJBossVersion: " + version);
     }
     return obj;
   }
 
   public com.aoindustries.aoserv.client.web.tomcat.Site getHttpdTomcatSite() throws SQLException, IOException {
-    com.aoindustries.aoserv.client.web.tomcat.Site obj=table.getConnector().getWeb_tomcat().getSite().get(pkey);
+    com.aoindustries.aoserv.client.web.tomcat.Site obj = table.getConnector().getWeb_tomcat().getSite().get(pkey);
     if (obj == null) {
-      throw new SQLException("Unable to find HttpdTomcatSite: "+pkey);
+      throw new SQLException("Unable to find HttpdTomcatSite: " + pkey);
     }
     return obj;
   }
@@ -119,9 +119,9 @@ public final class Site extends CachedObjectIntegerKey<Site> {
   }
 
   public Bind getHypersonicBind() throws IOException, SQLException {
-    Bind obj=table.getConnector().getNet().getBind().get(hypersonicBind);
+    Bind obj = table.getConnector().getNet().getBind().get(hypersonicBind);
     if (obj == null) {
-      throw new SQLException("Unable to find NetBind: "+hypersonicBind);
+      throw new SQLException("Unable to find NetBind: " + hypersonicBind);
     }
     return obj;
   }
@@ -131,9 +131,9 @@ public final class Site extends CachedObjectIntegerKey<Site> {
   }
 
   public Bind getJmxBind() throws IOException, SQLException {
-    Bind obj=table.getConnector().getNet().getBind().get(jmxBind);
+    Bind obj = table.getConnector().getNet().getBind().get(jmxBind);
     if (obj == null) {
-      throw new SQLException("Unable to find NetBind: "+jmxBind);
+      throw new SQLException("Unable to find NetBind: " + jmxBind);
     }
     return obj;
   }
@@ -143,9 +143,9 @@ public final class Site extends CachedObjectIntegerKey<Site> {
   }
 
   public Bind getJnpBind() throws IOException, SQLException {
-    Bind obj=table.getConnector().getNet().getBind().get(jnpBind);
+    Bind obj = table.getConnector().getNet().getBind().get(jnpBind);
     if (obj == null) {
-      throw new SQLException("Unable to find NetBind: "+jnpBind);
+      throw new SQLException("Unable to find NetBind: " + jnpBind);
     }
     return obj;
   }
@@ -155,9 +155,9 @@ public final class Site extends CachedObjectIntegerKey<Site> {
   }
 
   public Bind getRmiBind() throws SQLException, IOException {
-    Bind obj=table.getConnector().getNet().getBind().get(rmiBind);
+    Bind obj = table.getConnector().getNet().getBind().get(rmiBind);
     if (obj == null) {
-      throw new SQLException("Unable to find NetBind: "+rmiBind);
+      throw new SQLException("Unable to find NetBind: " + rmiBind);
     }
     return obj;
   }
@@ -172,33 +172,33 @@ public final class Site extends CachedObjectIntegerKey<Site> {
   }
 
   public Bind getWebserverBind() throws IOException, SQLException {
-    Bind obj=table.getConnector().getNet().getBind().get(webserverBind);
+    Bind obj = table.getConnector().getNet().getBind().get(webserverBind);
     if (obj == null) {
-      throw new SQLException("Unable to find NetBind: "+webserverBind);
+      throw new SQLException("Unable to find NetBind: " + webserverBind);
     }
     return obj;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
-    pkey=result.getInt(1);
-    version=result.getInt(2);
-    jnpBind=result.getInt(3);
-    webserverBind=result.getInt(4);
-    rmiBind=result.getInt(5);
-    hypersonicBind=result.getInt(6);
-    jmxBind=result.getInt(7);
+    pkey = result.getInt(1);
+    version = result.getInt(2);
+    jnpBind = result.getInt(3);
+    webserverBind = result.getInt(4);
+    rmiBind = result.getInt(5);
+    hypersonicBind = result.getInt(6);
+    jmxBind = result.getInt(7);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readCompressedInt();
-    version=in.readCompressedInt();
-    jnpBind=in.readCompressedInt();
-    webserverBind=in.readCompressedInt();
-    rmiBind=in.readCompressedInt();
-    hypersonicBind=in.readCompressedInt();
-    jmxBind=in.readCompressedInt();
+    pkey = in.readCompressedInt();
+    version = in.readCompressedInt();
+    jnpBind = in.readCompressedInt();
+    webserverBind = in.readCompressedInt();
+    rmiBind = in.readCompressedInt();
+    hypersonicBind = in.readCompressedInt();
+    jmxBind = in.readCompressedInt();
   }
 
   @Override

@@ -59,10 +59,10 @@ import java.util.List;
 public final class Zone extends CachedObjectStringKey<Zone> implements Removable, Dumpable {
 
   static final int
-    COLUMN_ZONE=0,
-    COLUMN_PACKAGE=2
+      COLUMN_ZONE = 0,
+      COLUMN_PACKAGE = 2
   ;
-  static final String COLUMN_ZONE_name= "zone";
+  static final String COLUMN_ZONE_name = "zone";
 
   public static final int DEFAULT_TTL = 3600;
 
@@ -74,12 +74,12 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
   /**
    * The zone that is in charge of the API.
    */
-  public static final String API_ZONE="aoindustries.com.";
+  public static final String API_ZONE = "aoindustries.com.";
 
   /**
    * The hostmaster that is placed in a newly created <code>DNSZone</code>.
    */
-  public static final String DEFAULT_HOSTMASTER="hostmaster."+API_ZONE;
+  public static final String DEFAULT_HOSTMASTER = "hostmaster." + API_ZONE;
 
   /**
    * The default priority for new MX records.
@@ -113,21 +113,21 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Zone() {
     // Do nothing
   }
 
   public int addDNSRecord(
-    String domain,
-    RecordType type,
-    int priority,
-    int weight,
-    int port,
-    short flag,
-    String tag,
-    String destination,
-    int ttl
+      String domain,
+      RecordType type,
+      int priority,
+      int weight,
+      int port,
+      short flag,
+      String tag,
+      String destination,
+      int ttl
   ) throws IOException, SQLException {
     return table.getConnector().getDns().getRecord().addDNSRecord(this, domain, type, priority, weight, port, flag, tag, destination, ttl);
   }
@@ -138,23 +138,23 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
   }
 
   public RecordType[] getAllowedDNSTypes() throws IOException, SQLException {
-    RecordTypeTable tt=table.getConnector().getDns().getRecordType();
+    RecordTypeTable tt = table.getConnector().getDns().getRecordType();
     if (isArpa()) {
-      RecordType[] types={
-        tt.get(RecordType.NS),
-        tt.get(RecordType.PTR)
+      RecordType[] types = {
+          tt.get(RecordType.NS),
+          tt.get(RecordType.PTR)
       };
       return types;
     } else {
-      RecordType[] types={
-        tt.get(RecordType.A),
-        tt.get(RecordType.AAAA),
-        tt.get(RecordType.CAA),
-        tt.get(RecordType.CNAME),
-        tt.get(RecordType.MX),
-        tt.get(RecordType.NS),
-        tt.get(RecordType.SRV),
-        tt.get(RecordType.TXT)
+      RecordType[] types = {
+          tt.get(RecordType.A),
+          tt.get(RecordType.AAAA),
+          tt.get(RecordType.CAA),
+          tt.get(RecordType.CNAME),
+          tt.get(RecordType.MX),
+          tt.get(RecordType.NS),
+          tt.get(RecordType.SRV),
+          tt.get(RecordType.TXT)
       };
       return types;
     }
@@ -169,23 +169,23 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
         if (netmask.equals("255.255.255.0")) {
           int pos = ipStr.indexOf('.');
           int oct1 = Integer.parseInt(ipStr.substring(0, pos));
-          int pos2 = ipStr.indexOf('.', pos+1);
-          int oct2 = Integer.parseInt(ipStr.substring(pos+1, pos2));
-          pos = ipStr.indexOf('.', pos2+1);
-          int oct3 = Integer.parseInt(ipStr.substring(pos2+1, pos));
-          return oct3+"."+oct2+"."+oct1+".in-addr.arpa";
+          int pos2 = ipStr.indexOf('.', pos + 1);
+          int oct2 = Integer.parseInt(ipStr.substring(pos + 1, pos2));
+          pos = ipStr.indexOf('.', pos2 + 1);
+          int oct3 = Integer.parseInt(ipStr.substring(pos2 + 1, pos));
+          return oct3 + "." + oct2 + "." + oct1 + ".in-addr.arpa";
         } else if (netmask.equals("255.255.255.128")) {
           // Hurricane Electric compatible
           int pos = ipStr.indexOf('.');
           int oct1 = Integer.parseInt(ipStr.substring(0, pos));
-          int pos2 = ipStr.indexOf('.', pos+1);
-          int oct2 = Integer.parseInt(ipStr.substring(pos+1, pos2));
-          pos = ipStr.indexOf('.', pos2+1);
-          int oct3 = Integer.parseInt(ipStr.substring(pos2+1, pos));
-          int oct4 = Integer.parseInt(ipStr.substring(pos+1));
-          return "subnet"+(oct4&128)+"."+oct3+"."+oct2+"."+oct1+".in-addr.arpa";
+          int pos2 = ipStr.indexOf('.', pos + 1);
+          int oct2 = Integer.parseInt(ipStr.substring(pos + 1, pos2));
+          pos = ipStr.indexOf('.', pos2 + 1);
+          int oct3 = Integer.parseInt(ipStr.substring(pos2 + 1, pos));
+          int oct4 = Integer.parseInt(ipStr.substring(pos + 1));
+          return "subnet" + (oct4 & 128) + "." + oct3 + "." + oct2 + "." + oct1 + ".in-addr.arpa";
         } else {
-          throw new IllegalArgumentException("Unsupported netmask: "+netmask);
+          throw new IllegalArgumentException("Unsupported netmask: " + netmask);
         }
       }
       case INET6 :
@@ -211,10 +211,10 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
   public static long getCurrentSerial() {
     GregorianCalendar gcal = new GregorianCalendar(Type.DATE_TIME_ZONE);
     return
-      gcal.get(Calendar.YEAR) * 1000000L
-      + (gcal.get(Calendar.MONTH) + 1) * 10000
-      + gcal.get(Calendar.DATE) * 100
-      + 01;
+        gcal.get(Calendar.YEAR) * 1000000L
+            + (gcal.get(Calendar.MONTH) + 1) * 10000
+            + gcal.get(Calendar.DATE) * 100
+            + 01;
   }
 
   public List<Record> getDNSRecords() throws IOException, SQLException {
@@ -234,9 +234,9 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
   }
 
   public Package getPackage() throws SQLException, IOException {
-    Package obj=table.getConnector().getBilling().getPackage().get(packageName);
+    Package obj = table.getConnector().getBilling().getPackage().get(packageName);
     if (obj == null) {
-      throw new SQLException("Unable to find Package: "+packageName);
+      throw new SQLException("Unable to find Package: " + packageName);
     }
     return obj;
   }
@@ -259,8 +259,8 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
   }
 
   public String getZoneFile() throws SQLException, IOException {
-    ByteArrayOutputStream bout=new ByteArrayOutputStream();
-    PrintWriter out=new PrintWriter(bout);
+    ByteArrayOutputStream bout = new ByteArrayOutputStream();
+    PrintWriter out = new PrintWriter(bout);
     printZoneFile(out);
     out.flush();
     return new String(bout.toByteArray());
@@ -269,27 +269,27 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
   @Override
   public void init(ResultSet result) throws SQLException {
     try {
-      pkey=result.getString(1);
-      file=result.getString(2);
+      pkey = result.getString(1);
+      file = result.getString(2);
       packageName = Account.Name.valueOf(result.getString(3));
-      hostmaster=result.getString(4);
-      serial=result.getLong(5);
-      ttl=result.getInt(6);
+      hostmaster = result.getString(4);
+      serial = result.getLong(5);
+      ttl = result.getInt(6);
     } catch (ValidationException e) {
       throw new SQLException(e);
     }
   }
 
   public boolean isArpa() {
-    return pkey.length()>13 && pkey.substring(pkey.length()-13).equals(".in-addr.arpa");
+    return pkey.length() > 13 && pkey.substring(pkey.length() - 13).equals(".in-addr.arpa");
   }
 
   /**
    * Checks that the line is not too long, prints the line, and clears the buffer.
    */
   private static void printLine(StringBuilder line, PrintWriter out) {
-    if (line.length()>MAX_LINE_LENGTH) {
-      throw new IllegalStateException("Line too long: "+line);
+    if (line.length() > MAX_LINE_LENGTH) {
+      throw new IllegalStateException("Line too long: " + line);
     }
     out.print(line);
     out.print('\n');
@@ -297,42 +297,42 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
   }
 
   private static void printRecord(
-    String linePrefix,
-    StringBuilder line,
-    PrintWriter out,
-    String domain,
-    int ttl,
-    int recordTtl,
-    String type,
-    int priority,
-    int weight,
-    int port,
-    short flag,
-    String tag,
-    String destination
+      String linePrefix,
+      StringBuilder line,
+      PrintWriter out,
+      String domain,
+      int ttl,
+      int recordTtl,
+      String type,
+      int priority,
+      int weight,
+      int port,
+      short flag,
+      String tag,
+      String destination
   ) {
     line.append(linePrefix);
     line.append(domain);
-    int count=Math.max(1, 24-domain.length());
-    for (int d=0;d<count;d++) {
+    int count = Math.max(1, 24 - domain.length());
+    for (int d = 0; d < count; d++) {
       line.append(' ');
     }
     if (recordTtl != Record.NO_TTL) {
-      String s=String.valueOf(recordTtl);
+      String s = String.valueOf(recordTtl);
       line.append(s);
-      count=Math.max(1, 24-s.length());
+      count = Math.max(1, 24 - s.length());
     } else {
-      String s=String.valueOf(ttl);
+      String s = String.valueOf(ttl);
       line.append(s);
-      count=Math.max(1, 24-s.length());
+      count = Math.max(1, 24 - s.length());
     }
-    for (int d=0;d<count;d++) {
+    for (int d = 0; d < count; d++) {
       line.append(' ');
     }
     line.append("IN   ");
     line.append(type);
-    count=Math.max(1, 8-type.length());
-    for (int d=0;d<count;d++) {
+    count = Math.max(1, 8 - type.length());
+    for (int d = 0; d < count; d++) {
       line.append(' ');
     }
     if (priority != Record.NO_PRIORITY) {
@@ -371,10 +371,10 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
         final int charsPerLine = MAX_LINE_LENGTH - (linePrefix.length() + 2);
         for (int lineStart = 0; lineStart < txt.length(); lineStart += charsPerLine) {
           line
-            .append(linePrefix)
-            .append('"')
-            .append(txt, lineStart, Math.min(txt.length(), lineStart + charsPerLine))
-            .append('"');
+              .append(linePrefix)
+              .append('"')
+              .append(txt, lineStart, Math.min(txt.length(), lineStart + charsPerLine))
+              .append('"');
           printLine(line, out);
         }
         // End parenthesis
@@ -389,7 +389,7 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
 
   public void printZoneFile(PrintWriter out) throws SQLException, IOException {
     StringBuilder line = new StringBuilder(); // Buffers each line to ensure not too long
-    List<Record> records=getDNSRecords();
+    List<Record> records = getDNSRecords();
     line.append("$TTL    ").append(ttl);
     printLine(line, out);
     if (!isArpa()) {
@@ -442,24 +442,24 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
         }
       }
       printRecord(
-        hasConflictAbove ? "; Disabled due to conflict: " : "",
-        line,
-        out,
-        rec.getDomain(),
-        ttl,
-        rec.getTtl(),
-        rec.getType_type(),
-        rec.getPriority(),
-        rec.getWeight(),
-        rec.getPort(),
-        rec.getFlag(),
-        rec.getTag(),
-        rec.getDestination()
+          hasConflictAbove ? "; Disabled due to conflict: " : "",
+          line,
+          out,
+          rec.getDomain(),
+          ttl,
+          rec.getTtl(),
+          rec.getType_type(),
+          rec.getPriority(),
+          rec.getWeight(),
+          rec.getPort(),
+          rec.getFlag(),
+          rec.getTag(),
+          rec.getDestination()
       );
       // Allow the first one when there is a conflict
       if (!hasConflictAbove) {
         boolean hasConflictBelow = false;
-        for (int d=c+1;d<len;d++) {
+        for (int d = c + 1; d < len; d++) {
           if (rec.hasConflict(records.get(d))) {
             hasConflictBelow = true;
             break;
@@ -476,12 +476,12 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
-      pkey=in.readUTF().intern();
-      file=in.readUTF();
+      pkey = in.readUTF().intern();
+      file = in.readUTF();
       packageName = Account.Name.valueOf(in.readUTF()).intern();
-      hostmaster=in.readUTF().intern();
-      serial=in.readLong();
-      ttl=in.readCompressedInt();
+      hostmaster = in.readUTF().intern();
+      serial = in.readLong();
+      ttl = in.readCompressedInt();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -489,9 +489,9 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
 
   @Override
   public List<CannotRemoveReason<Zone>> getCannotRemoveReasons() {
-    List<CannotRemoveReason<Zone>> reasons=new ArrayList<>();
+    List<CannotRemoveReason<Zone>> reasons = new ArrayList<>();
     if (pkey.equals(API_ZONE)) {
-      reasons.add(new CannotRemoveReason<>("Not allowed to remove the API Zone: "+API_ZONE, this));
+      reasons.add(new CannotRemoveReason<>("Not allowed to remove the API Zone: " + API_ZONE, this));
     }
     return reasons;
   }
@@ -503,7 +503,7 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
 
   public void setTTL(int ttl) throws IOException, SQLException {
     table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_DNS_ZONE_TTL, pkey, ttl);
-    this.ttl=ttl;
+    this.ttl = ttl;
   }
 
   @Override

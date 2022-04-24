@@ -47,18 +47,18 @@ import java.sql.SQLException;
  */
 public final class Version extends GlobalObjectIntegerKey<Version> {
 
-  static final int COLUMN_VERSION=0;
+  static final int COLUMN_VERSION = 0;
   static final String COLUMN_VERSION_name = "version";
 
   private int tomcatVersion;
   private String templateDir;
-  public static final String TECHNOLOGY_NAME="JBoss";
+  public static final String TECHNOLOGY_NAME = "JBoss";
 
   public static final String
-    VERSION_2_2_2="2.2.2"
+      VERSION_2_2_2 = "2.2.2"
   ;
 
-  public static final String DEFAULT_VERSION=VERSION_2_2_2;
+  public static final String DEFAULT_VERSION = VERSION_2_2_2;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -66,7 +66,7 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Version() {
     // Do nothing
   }
@@ -86,9 +86,9 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
   }
 
   public com.aoindustries.aoserv.client.web.tomcat.Version getHttpdTomcatVersion(AOServConnector connector) throws SQLException, IOException {
-    com.aoindustries.aoserv.client.web.tomcat.Version obj=connector.getWeb_tomcat().getVersion().get(tomcatVersion);
+    com.aoindustries.aoserv.client.web.tomcat.Version obj = connector.getWeb_tomcat().getVersion().get(tomcatVersion);
     if (obj == null) {
-      throw new SQLException("Unable to find HttpdTomcatVersion: "+tomcatVersion);
+      throw new SQLException("Unable to find HttpdTomcatVersion: " + tomcatVersion);
     }
     return obj;
   }
@@ -99,9 +99,9 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
   }
 
   public SoftwareVersion getTechnologyVersion(AOServConnector connector) throws SQLException, IOException {
-    SoftwareVersion obj=connector.getDistribution().getSoftwareVersion().get(pkey);
+    SoftwareVersion obj = connector.getDistribution().getSoftwareVersion().get(pkey);
     if (obj == null) {
-      throw new SQLException("Unable to find TechnologyVersion: "+pkey);
+      throw new SQLException("Unable to find TechnologyVersion: " + pkey);
     }
     return obj;
   }
@@ -112,16 +112,16 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
 
   @Override
   public void init(ResultSet result) throws SQLException {
-    pkey=result.getInt(1);
-    tomcatVersion=result.getInt(2);
-    templateDir=result.getString(3);
+    pkey = result.getInt(1);
+    tomcatVersion = result.getInt(2);
+    templateDir = result.getString(3);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readCompressedInt();
-    tomcatVersion=in.readCompressedInt();
-    templateDir=in.readUTF();
+    pkey = in.readCompressedInt();
+    tomcatVersion = in.readCompressedInt();
+    templateDir = in.readUTF();
   }
 
   @Override

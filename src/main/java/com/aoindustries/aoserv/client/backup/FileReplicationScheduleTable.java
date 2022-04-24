@@ -49,13 +49,14 @@ public final class FileReplicationScheduleTable extends CachedTableIntegerKey<Fi
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(FileReplicationSchedule.COLUMN_REPLICATION_name+'.'+FileReplication.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(FileReplicationSchedule.COLUMN_REPLICATION_name+'.'+FileReplication.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(FileReplicationSchedule.COLUMN_REPLICATION_name+'.'+FileReplication.COLUMN_BACKUP_PARTITION_name+'.'+BackupPartition.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
-    new OrderBy(FileReplicationSchedule.COLUMN_REPLICATION_name+'.'+FileReplication.COLUMN_BACKUP_PARTITION_name+'.'+BackupPartition.COLUMN_PATH_name, ASCENDING),
-    new OrderBy(FileReplicationSchedule.COLUMN_HOUR_name, ASCENDING),
-    new OrderBy(FileReplicationSchedule.COLUMN_MINUTE_name, ASCENDING)
+      new OrderBy(FileReplicationSchedule.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_SERVER_name + '.' + Host.COLUMN_PACKAGE_name + '.' + Package.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(FileReplicationSchedule.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_SERVER_name + '.' + Host.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(FileReplicationSchedule.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_BACKUP_PARTITION_name + '.' + BackupPartition.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
+      new OrderBy(FileReplicationSchedule.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_BACKUP_PARTITION_name + '.' + BackupPartition.COLUMN_PATH_name, ASCENDING),
+      new OrderBy(FileReplicationSchedule.COLUMN_HOUR_name, ASCENDING),
+      new OrderBy(FileReplicationSchedule.COLUMN_MINUTE_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -78,42 +79,42 @@ public final class FileReplicationScheduleTable extends CachedTableIntegerKey<Fi
 
   void setFailoverFileSchedules(final FileReplication ffr, final List<Short> hours, final List<Short> minutes) throws IOException, SQLException {
     if (hours.size() != minutes.size()) {
-      throw new IllegalArgumentException("hours.size() != minutes.size(): "+hours.size()+" != "+minutes.size());
+      throw new IllegalArgumentException("hours.size() != minutes.size(): " + hours.size() + " != " + minutes.size());
     }
 
     connector.requestUpdate(
-      true,
-      AoservProtocol.CommandID.SET_FAILOVER_FILE_SCHEDULES,
-      new AOServConnector.UpdateRequest() {
-        private IntList invalidateList;
+        true,
+        AoservProtocol.CommandID.SET_FAILOVER_FILE_SCHEDULES,
+        new AOServConnector.UpdateRequest() {
+          private IntList invalidateList;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(ffr.getPkey());
-          int size = hours.size();
-          out.writeCompressedInt(size);
-          for (int c=0;c<size;c++) {
-            out.writeShort(hours.get(c));
-            out.writeShort(minutes.get(c));
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(ffr.getPkey());
+            int size = hours.size();
+            out.writeCompressedInt(size);
+            for (int c = 0; c < size; c++) {
+              out.writeShort(hours.get(c));
+              out.writeShort(minutes.get(c));
+            }
+          }
+
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              invalidateList = AOServConnector.readInvalidateList(in);
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
+            }
+          }
+
+          @Override
+          public void afterRelease() {
+            connector.tablesUpdated(invalidateList);
           }
         }
-
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            invalidateList=AOServConnector.readInvalidateList(in);
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
-          }
-        }
-
-        @Override
-        public void afterRelease() {
-          connector.tablesUpdated(invalidateList);
-        }
-      }
     );
   }
 }

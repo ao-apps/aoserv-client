@@ -47,7 +47,7 @@ public abstract class CachedTableGroupNameKey<V extends CachedObjectGroupNameKey
   @Deprecated
   @Override
   public V get(Object pkey) throws IOException, SQLException {
-    return get((Group.Name)pkey);
+    return get((Group.Name) pkey);
   }
 
   /**

@@ -61,10 +61,10 @@ import java.sql.SQLException;
 public final class Transaction extends CachedObjectIntegerKey<Transaction> {
 
   static final int
-    COLUMN_TRANSID = 1,
-    COLUMN_ACCOUNTING = 2,
-    COLUMN_SOURCE_ACCOUNTING = 3,
-    COLUMN_ADMINISTRATOR = 4
+      COLUMN_TRANSID = 1,
+      COLUMN_ACCOUNTING = 2,
+      COLUMN_SOURCE_ACCOUNTING = 3,
+      COLUMN_ADMINISTRATOR = 4
   ;
   static final String COLUMN_TIME_name = "time";
   static final String COLUMN_TRANSID_name = "transid";
@@ -100,9 +100,10 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
   /**
    * The text to display for different confirmation statuses.
    */
-  private static final String[] paymentConfirmedLabels = { "Pending", "Confirmed", "Failed" };
+  private static final String[] paymentConfirmedLabels = {"Pending", "Confirmed", "Failed"};
 
   public static final int NUM_PAYMENT_CONFIRMATION_STATES = 3;
+
   static {
     assert paymentConfirmedLabels.length == NUM_PAYMENT_CONFIRMATION_STATES;
   }
@@ -115,7 +116,7 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Transaction() {
     // Do nothing
   }
@@ -125,34 +126,34 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
    */
   public void approved(final int creditCardTransaction, final String paymentInfo) throws IOException, SQLException {
     table.getConnector().requestUpdate(
-      true,
-      AoservProtocol.CommandID.TRANSACTION_APPROVED,
-      new AOServConnector.UpdateRequest() {
-        private IntList invalidateList;
+        true,
+        AoservProtocol.CommandID.TRANSACTION_APPROVED,
+        new AOServConnector.UpdateRequest() {
+          private IntList invalidateList;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(pkey);
-          out.writeCompressedInt(creditCardTransaction);
-          out.writeNullUTF(paymentInfo);
-        }
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(pkey);
+            out.writeCompressedInt(creditCardTransaction);
+            out.writeNullUTF(paymentInfo);
+          }
 
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            invalidateList=AOServConnector.readInvalidateList(in);
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              invalidateList = AOServConnector.readInvalidateList(in);
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
+            }
+          }
+
+          @Override
+          public void afterRelease() {
+            table.getConnector().tablesUpdated(invalidateList);
           }
         }
-
-        @Override
-        public void afterRelease() {
-          table.getConnector().tablesUpdated(invalidateList);
-        }
-      }
     );
   }
 
@@ -171,34 +172,34 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
    */
   public void declined(final int creditCardTransaction, final String paymentInfo) throws IOException, SQLException {
     table.getConnector().requestUpdate(
-      true,
-      AoservProtocol.CommandID.TRANSACTION_DECLINED,
-      new AOServConnector.UpdateRequest() {
-        private IntList invalidateList;
+        true,
+        AoservProtocol.CommandID.TRANSACTION_DECLINED,
+        new AOServConnector.UpdateRequest() {
+          private IntList invalidateList;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(pkey);
-          out.writeCompressedInt(creditCardTransaction);
-          out.writeNullUTF(paymentInfo);
-        }
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(pkey);
+            out.writeCompressedInt(creditCardTransaction);
+            out.writeNullUTF(paymentInfo);
+          }
 
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            invalidateList=AOServConnector.readInvalidateList(in);
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              invalidateList = AOServConnector.readInvalidateList(in);
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
+            }
+          }
+
+          @Override
+          public void afterRelease() {
+            table.getConnector().tablesUpdated(invalidateList);
           }
         }
-
-        @Override
-        public void afterRelease() {
-          table.getConnector().tablesUpdated(invalidateList);
-        }
-      }
     );
   }
 
@@ -217,34 +218,34 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
    */
   public void held(final int creditCardTransaction, final String paymentInfo) throws IOException, SQLException {
     table.getConnector().requestUpdate(
-      true,
-      AoservProtocol.CommandID.TRANSACTION_HELD,
-      new AOServConnector.UpdateRequest() {
-        private IntList invalidateList;
+        true,
+        AoservProtocol.CommandID.TRANSACTION_HELD,
+        new AOServConnector.UpdateRequest() {
+          private IntList invalidateList;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(pkey);
-          out.writeCompressedInt(creditCardTransaction);
-          out.writeNullUTF(paymentInfo);
-        }
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(pkey);
+            out.writeCompressedInt(creditCardTransaction);
+            out.writeNullUTF(paymentInfo);
+          }
 
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            invalidateList=AOServConnector.readInvalidateList(in);
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              invalidateList = AOServConnector.readInvalidateList(in);
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
+            }
+          }
+
+          @Override
+          public void afterRelease() {
+            table.getConnector().tablesUpdated(invalidateList);
           }
         }
-
-        @Override
-        public void afterRelease() {
-          table.getConnector().tablesUpdated(invalidateList);
-        }
-      }
     );
   }
 
@@ -458,11 +459,11 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
       }
       String typeString = result.getString("payment_confirmed");
       if ("Y".equals(typeString)) {
-        payment_confirmed=CONFIRMED;
+        payment_confirmed = CONFIRMED;
       } else if ("N".equals(typeString)) {
-        payment_confirmed=NOT_CONFIRMED;
+        payment_confirmed = NOT_CONFIRMED;
       } else if ("W".equals(typeString)) {
-        payment_confirmed=WAITING_CONFIRMATION;
+        payment_confirmed = WAITING_CONFIRMATION;
       } else {
         throw new SQLException("Unknown payment_confirmed '" + typeString + "' for transid=" + pkey);
       }
@@ -496,23 +497,23 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
   @Override
   public String toStringImpl() {
     return
-      pkey
-      + "|"
-      + accounting
-      + '|'
-      + source_accounting
-      + '|'
-      + type
-      + '|'
-      + SQLUtility.formatDecimal3(quantity)
-      + '×'
-      + rate
-      + '|'
-      + (
-        payment_confirmed == CONFIRMED ? 'Y'
-        : payment_confirmed == NOT_CONFIRMED ? 'N'
-        : 'W'
-      )
+        pkey
+            + "|"
+            + accounting
+            + '|'
+            + source_accounting
+            + '|'
+            + type
+            + '|'
+            + SQLUtility.formatDecimal3(quantity)
+            + '×'
+            + rate
+            + '|'
+            + (
+            payment_confirmed == CONFIRMED ? 'Y'
+                : payment_confirmed == NOT_CONFIRMED ? 'N'
+                : 'W'
+        )
     ;
   }
 
@@ -541,15 +542,15 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
     }
     out.writeNullUTF(payment_type);
     out.writeNullUTF(payment_info);
-    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_29)<0) {
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_29) < 0) {
       out.writeNullUTF(null);
     } else {
       out.writeNullUTF(processor);
       out.writeCompressedInt(creditCardTransaction);
     }
-    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_128)<0) {
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_128) < 0) {
       out.writeCompressedInt(-1);
-    } else if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_29)<0) {
+    } else if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_29) < 0) {
       out.writeNullUTF(null);
     }
     out.writeByte(payment_confirmed);

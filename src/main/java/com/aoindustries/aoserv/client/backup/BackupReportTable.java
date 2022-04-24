@@ -46,11 +46,12 @@ public final class BackupReportTable extends AOServTable<Integer, BackupReport> 
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(BackupReport.COLUMN_DATE_name, DESCENDING),
-    new OrderBy(BackupReport.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(BackupReport.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(BackupReport.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(BackupReport.COLUMN_DATE_name, DESCENDING),
+      new OrderBy(BackupReport.COLUMN_SERVER_name + '.' + Host.COLUMN_PACKAGE_name + '.' + Package.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(BackupReport.COLUMN_SERVER_name + '.' + Host.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(BackupReport.COLUMN_PACKAGE_name + '.' + Package.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -66,7 +67,7 @@ public final class BackupReportTable extends AOServTable<Integer, BackupReport> 
     if (pkey == null) {
       return null;
     }
-    return get(((Integer)pkey).intValue());
+    return get(((Integer) pkey).intValue());
   }
 
   /**
@@ -78,11 +79,11 @@ public final class BackupReportTable extends AOServTable<Integer, BackupReport> 
 
   public List<BackupReport> getBackupReports(Package pk) throws IOException, SQLException {
     int package_id = pk.getPkey();
-    List<BackupReport> cached=getRows();
-    int size=cached.size();
-    List<BackupReport> matches=new ArrayList<>(size);
-    for (int c=0;c<size;c++) {
-      BackupReport br=cached.get(c);
+    List<BackupReport> cached = getRows();
+    int size = cached.size();
+    List<BackupReport> matches = new ArrayList<>(size);
+    for (int c = 0; c < size; c++) {
+      BackupReport br = cached.get(c);
       if (br.getPackage_id() == package_id) {
         matches.add(br);
       }
@@ -92,11 +93,11 @@ public final class BackupReportTable extends AOServTable<Integer, BackupReport> 
 
   public List<BackupReport> getBackupReports(Host host) throws IOException, SQLException {
     int hots_id = host.getPkey();
-    List<BackupReport> cached=getRows();
-    int size=cached.size();
-    List<BackupReport> matches=new ArrayList<>(size);
-    for (int c=0;c<size;c++) {
-      BackupReport br=cached.get(c);
+    List<BackupReport> cached = getRows();
+    int size = cached.size();
+    List<BackupReport> matches = new ArrayList<>(size);
+    for (int c = 0; c < size; c++) {
+      BackupReport br = cached.get(c);
       if (br.getHost_id() == hots_id) {
         matches.add(br);
       }
@@ -123,4 +124,4 @@ public final class BackupReportTable extends AOServTable<Integer, BackupReport> 
     }
     throw new IllegalArgumentException("Not a unique column: " + col);
   }
- }
+}

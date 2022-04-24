@@ -61,7 +61,7 @@ public final class Software extends GlobalObjectStringKey<Software> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Software() {
     // Do nothing
   }
@@ -75,10 +75,10 @@ public final class Software extends GlobalObjectStringKey<Software> {
       return image_filename;
     }
     if (i == 2) {
-      return image_width == -1?null:image_width;
+      return image_width == -1 ? null : image_width;
     }
     if (i == 3) {
-      return image_height == -1?null:image_height;
+      return image_height == -1 ? null : image_height;
     }
     if (i == 4) {
       return image_alt;
@@ -129,27 +129,27 @@ public final class Software extends GlobalObjectStringKey<Software> {
   @Override
   public void init(ResultSet result) throws SQLException {
     pkey = result.getString(1);
-    image_filename=result.getString(2);
-    image_width=result.getInt(3);
+    image_filename = result.getString(2);
+    image_width = result.getInt(3);
     if (result.wasNull()) {
-      image_width=-1;
+      image_width = -1;
     }
-    image_height=result.getInt(4);
+    image_height = result.getInt(4);
     if (result.wasNull()) {
-      image_height=-1;
+      image_height = -1;
     }
-    image_alt=result.getString(5);
-    home_page_url=result.getString(6);
+    image_alt = result.getString(5);
+    home_page_url = result.getString(6);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readUTF().intern();
-    image_filename=in.readNullUTF();
-    image_width=in.readCompressedInt();
-    image_height=in.readCompressedInt();
-    image_alt=in.readNullUTF();
-    home_page_url=in.readNullUTF();
+    pkey = in.readUTF().intern();
+    image_filename = in.readNullUTF();
+    image_width = in.readCompressedInt();
+    image_height = in.readCompressedInt();
+    image_alt = in.readNullUTF();
+    home_page_url = in.readNullUTF();
   }
 
   @Override

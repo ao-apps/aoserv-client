@@ -49,8 +49,9 @@ public final class SpamMessageTable extends AOServTable<Integer, SpamMessage> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(SpamMessage.COLUMN_PKEY_name, ASCENDING)
+      new OrderBy(SpamMessage.COLUMN_PKEY_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -59,11 +60,11 @@ public final class SpamMessageTable extends AOServTable<Integer, SpamMessage> {
 
   int addSpamEmailMessage(SmtpRelay esr, String message) throws IOException, SQLException {
     return connector.requestIntQueryIL(
-      true,
-      AoservProtocol.CommandID.ADD,
-      Table.TableID.SPAM_EMAIL_MESSAGES,
-      esr.getPkey(),
-      message
+        true,
+        AoservProtocol.CommandID.ADD,
+        Table.TableID.SPAM_EMAIL_MESSAGES,
+        esr.getPkey(),
+        message
     );
   }
 
@@ -88,7 +89,7 @@ public final class SpamMessageTable extends AOServTable<Integer, SpamMessage> {
     if (pkey == null) {
       return null;
     }
-    return get(((Integer)pkey).intValue());
+    return get(((Integer) pkey).intValue());
   }
 
   /**
@@ -109,7 +110,7 @@ public final class SpamMessageTable extends AOServTable<Integer, SpamMessage> {
   @Override
   public List<SpamMessage> getIndexedRows(int col, Object value) throws IOException, SQLException {
     if (col == SpamMessage.COLUMN_PKEY) {
-      SpamMessage sem=get(value);
+      SpamMessage sem = get(value);
       if (sem == null) {
         return Collections.emptyList();
       } else {
@@ -117,9 +118,9 @@ public final class SpamMessageTable extends AOServTable<Integer, SpamMessage> {
       }
     }
     if (col == SpamMessage.COLUMN_EMAIL_RELAY) {
-      return getSpamEmailMessages(((Integer)value));
+      return getSpamEmailMessages(((Integer) value));
     }
-    throw new UnsupportedOperationException("Not an indexed column: "+col);
+    throw new UnsupportedOperationException("Not an indexed column: " + col);
   }
 
   @Override
@@ -132,14 +133,14 @@ public final class SpamMessageTable extends AOServTable<Integer, SpamMessage> {
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-    String command=args[0];
+    String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_SPAM_EMAIL_MESSAGE)) {
       if (AOSH.checkParamCount(Command.ADD_SPAM_EMAIL_MESSAGE, args, 2, err)) {
         out.println(
-          connector.getSimpleAOClient().addSpamEmailMessage(
-            AOSH.parseInt(args[1], "email_relay"),
-            args[2]
-          )
+            connector.getSimpleAOClient().addSpamEmailMessage(
+                AOSH.parseInt(args[1], "email_relay"),
+                args[2]
+            )
         );
         out.flush();
       }

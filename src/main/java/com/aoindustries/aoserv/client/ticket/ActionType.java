@@ -55,18 +55,18 @@ public final class ActionType extends GlobalObjectStringKey<ActionType> {
   private boolean visible_admin_only;
 
   public static final String
-    SET_BUSINESS="set_business",
-    SET_CONTACT_EMAILS="set_contact_emails",
-    SET_CONTACT_PHONE_NUMBERS="set_contact_phone_numbers",
-    SET_CLIENT_PRIORITY="set_client_priority",
-    SET_SUMMARY="set_summary",
-    ADD_ANNOTATION="add_annotation",
-    SET_STATUS="set_status",
-    SET_ADMIN_PRIORITY="set_admin_priority",
-    ASSIGN="assign",
-    SET_CATEGORY="set_category",
-    SET_INTERNAL_NOTES="set_internal_notes",
-    SET_TYPE="set_type"
+      SET_BUSINESS = "set_business",
+      SET_CONTACT_EMAILS = "set_contact_emails",
+      SET_CONTACT_PHONE_NUMBERS = "set_contact_phone_numbers",
+      SET_CLIENT_PRIORITY = "set_client_priority",
+      SET_SUMMARY = "set_summary",
+      ADD_ANNOTATION = "add_annotation",
+      SET_STATUS = "set_status",
+      SET_ADMIN_PRIORITY = "set_admin_priority",
+      ASSIGN = "assign",
+      SET_CATEGORY = "set_category",
+      SET_INTERNAL_NOTES = "set_internal_notes",
+      SET_TYPE = "set_type"
   ;
 
   /**
@@ -75,7 +75,7 @@ public final class ActionType extends GlobalObjectStringKey<ActionType> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public ActionType() {
     // Do nothing
   }

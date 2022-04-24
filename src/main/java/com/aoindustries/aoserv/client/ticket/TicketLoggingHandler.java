@@ -113,10 +113,10 @@ public class TicketLoggingHandler extends QueuedHandler {
           iter.remove();
         } else {
           if (
-            handler == null // Duplicates in list are possible, since the list is added-to by the protected / public constructors, too
-            && h.connector == connector
-            && Objects.equals(h.summaryPrefix, summaryPrefix)
-            && Objects.equals(h.categoryDotPath, categoryDotPath)
+              handler == null // Duplicates in list are possible, since the list is added-to by the protected / public constructors, too
+                  && h.connector == connector
+                  && Objects.equals(h.summaryPrefix, summaryPrefix)
+                  && Objects.equals(h.categoryDotPath, categoryDotPath)
           ) {
             handler = h;
           }
@@ -124,9 +124,9 @@ public class TicketLoggingHandler extends QueuedHandler {
       }
       if (handler == null) {
         handler = new TicketLoggingHandler(
-          summaryPrefix,
-          connector,
-          categoryDotPath
+            summaryPrefix,
+            connector,
+            categoryDotPath
         );
       }
       return handler;
@@ -171,20 +171,20 @@ public class TicketLoggingHandler extends QueuedHandler {
       String cname = getClass().getName();
 
       this.summaryPrefix = Strings.trimNullIfEmpty(
-        manager.getProperty(cname + ".summaryPrefix")
+          manager.getProperty(cname + ".summaryPrefix")
       );
 
       User.Name username = User.Name.valueOf(
-        Strings.trimNullIfEmpty(
-          manager.getProperty(cname + ".username")
-        )
+          Strings.trimNullIfEmpty(
+              manager.getProperty(cname + ".username")
+          )
       );
       if (username == null) {
         username = AOServClientConfiguration.getUsername();
       }
 
       String password = Strings.trimNullIfEmpty(
-        manager.getProperty(cname + ".password")
+          manager.getProperty(cname + ".password")
       );
       if (password == null) {
         password = AOServClientConfiguration.getPassword();
@@ -193,7 +193,7 @@ public class TicketLoggingHandler extends QueuedHandler {
       this.connector = AOServConnector.getConnector(username, password);
 
       this.categoryDotPath = Strings.trimNullIfEmpty(
-        manager.getProperty(cname + ".categoryDotPath")
+          manager.getProperty(cname + ".categoryDotPath")
       );
     } catch (ValidationException e) {
       throw new ConfigurationException(e);
@@ -227,10 +227,10 @@ public class TicketLoggingHandler extends QueuedHandler {
         WeakReference<TicketLoggingHandler> ref = iter.next();
         TicketLoggingHandler handler = ref.get();
         if (
-          // Garbage collected
-          handler == null
-          // This one
-          || handler == this
+            // Garbage collected
+            handler == null
+                // This one
+                || handler == this
         ) {
           iter.remove();
         } else {
@@ -286,16 +286,16 @@ public class TicketLoggingHandler extends QueuedHandler {
     for (Ticket ticket : connector.getTicket().getTicket()) {
       String status = ticket.getStatus().getStatus();
       if (
-        (
-          Status.OPEN.equals(status)
-          || Status.HOLD.equals(status)
-          || Status.BOUNCED.equals(status)
-        ) && brand.equals(ticket.getBrand())
-        && account.equals(ticket.getAccount())
-        && language.equals(ticket.getLanguage())
-        && ticketType.equals(ticket.getTicketType())
-        && ticket.getSummary().equals(summary) // level, prefix, classname, and method
-        && Objects.equals(category, ticket.getCategory())
+          (
+              Status.OPEN.equals(status)
+                  || Status.HOLD.equals(status)
+                  || Status.BOUNCED.equals(status)
+          ) && brand.equals(ticket.getBrand())
+              && account.equals(ticket.getAccount())
+              && language.equals(ticket.getLanguage())
+              && ticketType.equals(ticket.getTicketType())
+              && ticket.getSummary().equals(summary) // level, prefix, classname, and method
+              && Objects.equals(category, ticket.getCategory())
       ) {
         existingTicket = ticket;
         break;
@@ -303,8 +303,8 @@ public class TicketLoggingHandler extends QueuedHandler {
     }
     if (existingTicket != null) {
       existingTicket.addAnnotation(
-        generateActionSummary(formatter, rec),
-        fullReport
+          generateActionSummary(formatter, rec),
+          fullReport
       );
     } else {
       // The priority depends on the log level
@@ -314,17 +314,17 @@ public class TicketLoggingHandler extends QueuedHandler {
         throw new SQLException("Unable to find TicketPriority: " + priorityName);
       }
       connector.getTicket().getTicket().addTicket(
-        brand,
-        account,
-        language,
-        category,
-        ticketType,
-        null,
-        summary,
-        fullReport,
-        priority,
-        Collections.emptySet(),
-        ""
+          brand,
+          account,
+          language,
+          category,
+          ticketType,
+          null,
+          summary,
+          fullReport,
+          priority,
+          Collections.emptySet(),
+          ""
       );
     }
   }
@@ -341,7 +341,7 @@ public class TicketLoggingHandler extends QueuedHandler {
         message = message.substring(0, eol).trim();
         doEllipsis = true;
       }
-      if (message.length()>0) {
+      if (message.length() > 0) {
         tempSB.append(message);
         if (doEllipsis) {
           tempSB.append('\u2026');

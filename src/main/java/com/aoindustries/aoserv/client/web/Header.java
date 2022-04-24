@@ -44,8 +44,8 @@ import java.sql.SQLException;
 public final class Header extends CachedObjectIntegerKey<Header> {
 
   static final int
-    COLUMN_PKEY = 0,
-    COLUMN_HTTPD_SITE_BIND = 1
+      COLUMN_PKEY = 0,
+      COLUMN_HTTPD_SITE_BIND = 1
   ;
   static final String COLUMN_HTTPD_SITE_BIND_name = "httpd_site_bind";
   static final String COLUMN_SORT_ORDER_name = "sort_order";
@@ -74,7 +74,7 @@ public final class Header extends CachedObjectIntegerKey<Header> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Header() {
     // Do nothing
   }

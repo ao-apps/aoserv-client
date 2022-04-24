@@ -44,8 +44,8 @@ import java.util.Locale;
 public final class RewriteRule extends CachedObjectIntegerKey<RewriteRule> {
 
   static final int
-    COLUMN_id = 0,
-    COLUMN_virtualHost = 1
+      COLUMN_id = 0,
+      COLUMN_virtualHost = 1
   ;
   static final String COLUMN_virtualHost_name = "virtualHost";
   static final String COLUMN_sortOrder_name = "sortOrder";
@@ -63,7 +63,7 @@ public final class RewriteRule extends CachedObjectIntegerKey<RewriteRule> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public RewriteRule() {
     // Do nothing
   }
@@ -135,12 +135,12 @@ public final class RewriteRule extends CachedObjectIntegerKey<RewriteRule> {
     String flagsUC = flags.toUpperCase(Locale.ROOT);
     String flagUC = flag.toUpperCase(Locale.ROOT);
     return
-      flagsUC.equals(flagUC)                   // flag
-      || flagsUC.startsWith(flagUC + ',')      // flag,...
-      || flagsUC.startsWith(flagUC + '=')      // flag=...
-      || flagsUC.endsWith(',' + flagUC)        // ...,flag
-      || flagsUC.contains(',' + flagUC + ',')  // ...,flag,...
-      || flagsUC.contains(',' + flagUC + '='); // ...,flag=...
+        flagsUC.equals(flagUC)                   // flag
+            || flagsUC.startsWith(flagUC + ',')      // flag,...
+            || flagsUC.startsWith(flagUC + '=')      // flag=...
+            || flagsUC.endsWith(',' + flagUC)        // ...,flag
+            || flagsUC.contains(',' + flagUC + ',')  // ...,flag,...
+            || flagsUC.contains(',' + flagUC + '='); // ...,flag=...
   }
 
   /**
@@ -202,10 +202,10 @@ public final class RewriteRule extends CachedObjectIntegerKey<RewriteRule> {
   public String getApacheDirective(String dollarVariable) {
     StringBuilder sb = new StringBuilder();
     sb
-      .append("RewriteRule ")
-      .append(ApacheEscape.escape(dollarVariable, pattern))
-      .append(' ')
-      .append(ApacheEscape.escape(dollarVariable, substitution));
+        .append("RewriteRule ")
+        .append(ApacheEscape.escape(dollarVariable, pattern))
+        .append(' ')
+        .append(ApacheEscape.escape(dollarVariable, substitution));
     if (flags != null) {
       sb.append(' ').append(ApacheEscape.escape(dollarVariable, '[' + flags + ']'));
     }
@@ -233,8 +233,8 @@ public final class RewriteRule extends CachedObjectIntegerKey<RewriteRule> {
     }
     out.writeNullUTF(comment);
     if (
-      protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_4) >= 0
-      && protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_20) <= 0
+        protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_4) >= 0
+            && protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_20) <= 0
     ) {
       // noEscape
       out.writeBoolean(hasFlag("NE", "noescape"));

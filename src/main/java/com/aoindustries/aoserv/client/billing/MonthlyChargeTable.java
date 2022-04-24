@@ -60,12 +60,13 @@ public final class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    // new OrderBy(MonthlyCharge.COLUMN_ACCOUNTING_name, ASCENDING),
-    new OrderBy(MonthlyCharge.COLUMN_PACKAGE_name, ASCENDING),
-    new OrderBy(MonthlyCharge.COLUMN_PKEY_name, ASCENDING),
-    new OrderBy(MonthlyCharge.COLUMN_TYPE_name, ASCENDING),
-    new OrderBy(MonthlyCharge.COLUMN_CREATED_name, ASCENDING)
+      // new OrderBy(MonthlyCharge.COLUMN_ACCOUNTING_name, ASCENDING),
+      new OrderBy(MonthlyCharge.COLUMN_PACKAGE_name, ASCENDING),
+      new OrderBy(MonthlyCharge.COLUMN_PKEY_name, ASCENDING),
+      new OrderBy(MonthlyCharge.COLUMN_TYPE_name, ASCENDING),
+      new OrderBy(MonthlyCharge.COLUMN_CREATED_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -95,19 +96,19 @@ public final class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
     // Add the entries in the monthly_charges table that apply to this business
     List<MonthlyCharge> charges;
     {
-      List<MonthlyCharge> cached=super.getRows();
-      int len=cached.size();
-      charges=new ArrayList<>(len);
-      for (int c=0;c<len;c++) {
-        MonthlyCharge mc=cached.get(c);
+      List<MonthlyCharge> cached = super.getRows();
+      int len = cached.size();
+      charges = new ArrayList<>(len);
+      for (int c = 0; c < len; c++) {
+        MonthlyCharge mc = cached.get(c);
         if (
-          (
-            sourceAccount == null
-            || sourceAccount.getName().equals(mc.getPackage().getAccount_name())
-          ) && (
-            billingAccount == null
-            || billingAccount.equals(mc.getAccount().getBillingAccount())
-          )
+            (
+                sourceAccount == null
+                    || sourceAccount.getName().equals(mc.getPackage().getAccount_name())
+            ) && (
+                billingAccount == null
+                    || billingAccount.equals(mc.getAccount().getBillingAccount())
+            )
         ) {
           charges.add(mc);
         }
@@ -149,21 +150,21 @@ public final class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
     Map<Package, Integer> usersPerPackage = new HashMap<>();
     {
       for (UserServer lsa : connector.getLinux().getUserServer().getRows()) {
-        com.aoindustries.aoserv.client.linux.User.Name username=lsa.getLinuxAccount_username_id();
+        com.aoindustries.aoserv.client.linux.User.Name username = lsa.getLinuxAccount_username_id();
         if (!username.equals(com.aoindustries.aoserv.client.linux.User.MAIL)) {
           Map<Package, Integer> map;
-          com.aoindustries.aoserv.client.linux.User la=lsa.getLinuxAccount();
+          com.aoindustries.aoserv.client.linux.User la = lsa.getLinuxAccount();
           if (la.getType().getName().equals(UserType.EMAIL)) {
-            map=emailsPerPackage;
+            map = emailsPerPackage;
           } else {
-            map=usersPerPackage;
+            map = usersPerPackage;
           }
 
           addCount(map, la.getUsername().getPackage(), 1);
         }
       }
     }
-    Map<Package, Integer> javavmsPerPackage=new HashMap<>();
+    Map<Package, Integer> javavmsPerPackage = new HashMap<>();
     {
       // HttpdSharedTomcats
       for (SharedTomcat hst : connector.getWeb_tomcat().getSharedTomcat().getRows()) {
@@ -173,16 +174,16 @@ public final class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
       }
       // HttpdJBossSites
       for (com.aoindustries.aoserv.client.web.jboss.Site hjs : connector.getWeb_jboss().getSite().getRows()) {
-        com.aoindustries.aoserv.client.web.tomcat.Site hts=hjs.getHttpdTomcatSite();
-        Site hs=hts.getHttpdSite();
+        com.aoindustries.aoserv.client.web.tomcat.Site hts = hjs.getHttpdTomcatSite();
+        Site hs = hts.getHttpdSite();
         if (!hs.isDisabled()) {
           addCount(javavmsPerPackage, hs.getPackage(), 1);
         }
       }
       // HttpdTomcatStdSites
       for (PrivateTomcatSite htss : connector.getWeb_tomcat().getPrivateTomcatSite().getRows()) {
-        com.aoindustries.aoserv.client.web.tomcat.Site hts=htss.getHttpdTomcatSite();
-        Site hs=hts.getHttpdSite();
+        com.aoindustries.aoserv.client.web.tomcat.Site hts = htss.getHttpdTomcatSite();
+        Site hs = hts.getHttpdSite();
         if (!hs.isDisabled()) {
           addCount(javavmsPerPackage, hs.getPackage(), 1);
         }
@@ -195,27 +196,27 @@ public final class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
       boolean active = packAccount.getCanceled() == null;
       Account packBillingAccount = packAccount.getBillingAccount();
       if (
-        billingAccount == null
-        || billingAccount.equals(packBillingAccount)
+          billingAccount == null
+              || billingAccount.equals(packBillingAccount)
       ) {
         // Add the package billing to the top level business account
-        PackageDefinition packageDefinition=pack.getPackageDefinition();
+        PackageDefinition packageDefinition = pack.getPackageDefinition();
         Money rate = packageDefinition.getMonthlyRate();
         // We're now including entries for zero-billed packages, too.
         // This will trigger the sending of zero-balance invoices, which will remind people they're getting something for free.
         //if (rate.getUnscaledValue() != 0) {
         charges.add(
-          new MonthlyCharge(
-            this,
-            packBillingAccount,
-            pack,
-            packageDefinition.getMonthlyRateTransactionType(),
-            packageDefinition.getDisplay(),
-            1000,
-            rate,
-            administrator,
-            active
-          )
+            new MonthlyCharge(
+                this,
+                packBillingAccount,
+                pack,
+                packageDefinition.getMonthlyRateTransactionType(),
+                packageDefinition.getDisplay(),
+                1000,
+                rate,
+                administrator,
+                active
+            )
         );
         //}
 
@@ -229,34 +230,34 @@ public final class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 
         // Add the httpd_servers
         {
-          PackageDefinitionLimit limit=packageDefinition.getLimit(httpdResource);
+          PackageDefinitionLimit limit = packageDefinition.getLimit(httpdResource);
           if (limit == null || limit.getSoftLimit() != PackageDefinitionLimit.UNLIMITED) {
-            List<HttpdServer> hss=pack.getHttpdServers();
+            List<HttpdServer> hss = pack.getHttpdServers();
             if (!hss.isEmpty()) {
               if (limit == null) {
-                throw new SQLException("HttpdServers exist, but no limit defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
+                throw new SQLException("HttpdServers exist, but no limit defined for Package=" + pack.getPkey() + ", PackageDefinition=" + packageDefinition.getPkey());
               }
-              if (hss.size()>limit.getSoftLimit()) {
+              if (hss.size() > limit.getSoftLimit()) {
                 Money addRate = limit.getAdditionalRate();
                 if (addRate == null) {
-                  throw new SQLException("Additional HttpdServers exist, but no additional rate defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
+                  throw new SQLException("Additional HttpdServers exist, but no additional rate defined for Package=" + pack.getPkey() + ", PackageDefinition=" + packageDefinition.getPkey());
                 }
-                TransactionType addType=limit.getAdditionalTransactionType();
+                TransactionType addType = limit.getAdditionalTransactionType();
                 if (addType == null) {
-                  throw new SQLException("Additional HttpdServers exist, but no additional TransactionType defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
+                  throw new SQLException("Additional HttpdServers exist, but no additional TransactionType defined for Package=" + pack.getPkey() + ", PackageDefinition=" + packageDefinition.getPkey());
                 }
                 charges.add(
-                  new MonthlyCharge(
-                    this,
-                    packBillingAccount,
-                    pack,
-                    addType,
-                    "Additional HTTP Servers ("+limit.getSoftLimit()+" included with package, have "+hss.size()+")",
-                    (hss.size()-limit.getSoftLimit())*1000,
-                    addRate,
-                    administrator,
-                    active
-                  )
+                    new MonthlyCharge(
+                        this,
+                        packBillingAccount,
+                        pack,
+                        addType,
+                        "Additional HTTP Servers (" + limit.getSoftLimit() + " included with package, have " + hss.size() + ")",
+                        (hss.size() - limit.getSoftLimit()) * 1000,
+                        addRate,
+                        administrator,
+                        active
+                    )
                 );
               }
             }
@@ -265,44 +266,44 @@ public final class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 
         // Add the ip addresses
         {
-          PackageDefinitionLimit limit=packageDefinition.getLimit(ipResource);
+          PackageDefinitionLimit limit = packageDefinition.getLimit(ipResource);
           if (limit == null || limit.getSoftLimit() != PackageDefinitionLimit.UNLIMITED) {
-            List<IpAddress> ips=pack.getIPAddresses();
+            List<IpAddress> ips = pack.getIPAddresses();
             if (!ips.isEmpty()) {
               ips = ips.stream()
-                .filter(ip -> {
-                  InetAddress ia = ip.getInetAddress();
-                  return
-                    !ia.isLoopback()
-                    && !ia.isUnspecified()
-                    && !ia.isUniqueLocal();
-                })
-                .collect(Collectors.toList());
+                  .filter(ip -> {
+                    InetAddress ia = ip.getInetAddress();
+                    return
+                        !ia.isLoopback()
+                            && !ia.isUnspecified()
+                            && !ia.isUniqueLocal();
+                  })
+                  .collect(Collectors.toList());
               if (!ips.isEmpty()) {
                 if (limit == null) {
-                  throw new SQLException("IPAddresses exist, but no limit defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
+                  throw new SQLException("IPAddresses exist, but no limit defined for Package=" + pack.getPkey() + ", PackageDefinition=" + packageDefinition.getPkey());
                 }
-                if (ips.size()>limit.getSoftLimit()) {
+                if (ips.size() > limit.getSoftLimit()) {
                   Money addRate = limit.getAdditionalRate();
                   if (addRate == null) {
-                    throw new SQLException("Additional IPAddresses exist, but no additional rate defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
+                    throw new SQLException("Additional IPAddresses exist, but no additional rate defined for Package=" + pack.getPkey() + ", PackageDefinition=" + packageDefinition.getPkey());
                   }
-                  TransactionType addType=limit.getAdditionalTransactionType();
+                  TransactionType addType = limit.getAdditionalTransactionType();
                   if (addType == null) {
-                    throw new SQLException("Additional IPAddresses exist, but no additional TransactionType defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
+                    throw new SQLException("Additional IPAddresses exist, but no additional TransactionType defined for Package=" + pack.getPkey() + ", PackageDefinition=" + packageDefinition.getPkey());
                   }
                   charges.add(
-                    new MonthlyCharge(
-                      this,
-                      packBillingAccount,
-                      pack,
-                      addType,
-                      "Additional IP Addresses ("+limit.getSoftLimit()+" included with package, have "+ips.size()+")",
-                      (ips.size()-limit.getSoftLimit())*1000,
-                      addRate,
-                      administrator,
-                      active
-                    )
+                      new MonthlyCharge(
+                          this,
+                          packBillingAccount,
+                          pack,
+                          addType,
+                          "Additional IP Addresses (" + limit.getSoftLimit() + " included with package, have " + ips.size() + ")",
+                          (ips.size() - limit.getSoftLimit()) * 1000,
+                          addRate,
+                          administrator,
+                          active
+                      )
                   );
                 }
               }
@@ -312,36 +313,36 @@ public final class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 
         // Add javavm
         {
-          PackageDefinitionLimit limit=packageDefinition.getLimit(javavmResource);
+          PackageDefinitionLimit limit = packageDefinition.getLimit(javavmResource);
           if (limit == null || limit.getSoftLimit() != PackageDefinitionLimit.UNLIMITED) {
             Integer i = javavmsPerPackage.get(pack);
             if (i != null) {
               int javavmCount = i;
               if (javavmCount > 0) {
                 if (limit == null) {
-                  throw new SQLException("Java virtual machines exist, but no limit defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
+                  throw new SQLException("Java virtual machines exist, but no limit defined for Package=" + pack.getPkey() + ", PackageDefinition=" + packageDefinition.getPkey());
                 }
-                if (javavmCount>limit.getSoftLimit()) {
+                if (javavmCount > limit.getSoftLimit()) {
                   Money addRate = limit.getAdditionalRate();
                   if (addRate == null) {
-                    throw new SQLException("Additional Java virtual machines exist, but no additional rate defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
+                    throw new SQLException("Additional Java virtual machines exist, but no additional rate defined for Package=" + pack.getPkey() + ", PackageDefinition=" + packageDefinition.getPkey());
                   }
-                  TransactionType addType=limit.getAdditionalTransactionType();
+                  TransactionType addType = limit.getAdditionalTransactionType();
                   if (addType == null) {
-                    throw new SQLException("Additional Java virtual machines exist, but no additional TransactionType defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
+                    throw new SQLException("Additional Java virtual machines exist, but no additional TransactionType defined for Package=" + pack.getPkey() + ", PackageDefinition=" + packageDefinition.getPkey());
                   }
                   charges.add(
-                    new MonthlyCharge(
-                      this,
-                      packBillingAccount,
-                      pack,
-                      addType,
-                      "Additional Java Virtual Machines ("+limit.getSoftLimit()+" included with package, have "+javavmCount+")",
-                      (javavmCount-limit.getSoftLimit())*1000,
-                      addRate,
-                      administrator,
-                      active
-                    )
+                      new MonthlyCharge(
+                          this,
+                          packBillingAccount,
+                          pack,
+                          addType,
+                          "Additional Java Virtual Machines (" + limit.getSoftLimit() + " included with package, have " + javavmCount + ")",
+                          (javavmCount - limit.getSoftLimit()) * 1000,
+                          addRate,
+                          administrator,
+                          active
+                      )
                   );
                 }
               }
@@ -351,34 +352,34 @@ public final class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 
         // Add the mysql_replications
         {
-          PackageDefinitionLimit limit=packageDefinition.getLimit(mysqlReplicationResource);
+          PackageDefinitionLimit limit = packageDefinition.getLimit(mysqlReplicationResource);
           if (limit == null || limit.getSoftLimit() != PackageDefinitionLimit.UNLIMITED) {
             List<MysqlReplication> fmrs = pack.getFailoverMySQLReplications();
             if (!fmrs.isEmpty()) {
               if (limit == null) {
-                throw new SQLException("FailoverMySQLReplications exist, but no limit defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
+                throw new SQLException("FailoverMySQLReplications exist, but no limit defined for Package=" + pack.getPkey() + ", PackageDefinition=" + packageDefinition.getPkey());
               }
-              if (fmrs.size()>limit.getSoftLimit()) {
+              if (fmrs.size() > limit.getSoftLimit()) {
                 Money addRate = limit.getAdditionalRate();
                 if (addRate == null) {
-                  throw new SQLException("Additional FailoverMySQLReplications exist, but no additional rate defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
+                  throw new SQLException("Additional FailoverMySQLReplications exist, but no additional rate defined for Package=" + pack.getPkey() + ", PackageDefinition=" + packageDefinition.getPkey());
                 }
-                TransactionType addType=limit.getAdditionalTransactionType();
+                TransactionType addType = limit.getAdditionalTransactionType();
                 if (addType == null) {
-                  throw new SQLException("Additional FailoverMySQLReplications exist, but no additional TransactionType defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
+                  throw new SQLException("Additional FailoverMySQLReplications exist, but no additional TransactionType defined for Package=" + pack.getPkey() + ", PackageDefinition=" + packageDefinition.getPkey());
                 }
                 charges.add(
-                  new MonthlyCharge(
-                    this,
-                    packBillingAccount,
-                    pack,
-                    addType,
-                    "Additional MySQL Replications ("+limit.getSoftLimit()+" included with package, have "+fmrs.size()+")",
-                    (fmrs.size()-limit.getSoftLimit())*1000,
-                    addRate,
-                    administrator,
-                    active
-                  )
+                    new MonthlyCharge(
+                        this,
+                        packBillingAccount,
+                        pack,
+                        addType,
+                        "Additional MySQL Replications (" + limit.getSoftLimit() + " included with package, have " + fmrs.size() + ")",
+                        (fmrs.size() - limit.getSoftLimit()) * 1000,
+                        addRate,
+                        administrator,
+                        active
+                    )
                 );
               }
             }
@@ -387,36 +388,36 @@ public final class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 
         // Add Email accounts
         {
-          PackageDefinitionLimit limit=packageDefinition.getLimit(emailResource);
+          PackageDefinitionLimit limit = packageDefinition.getLimit(emailResource);
           if (limit == null || limit.getSoftLimit() != PackageDefinitionLimit.UNLIMITED) {
             Integer i = emailsPerPackage.get(pack);
             if (i != null) {
               int emailCount = i;
               if (emailCount > 0) {
                 if (limit == null) {
-                  throw new SQLException("Email inboxes exist, but no limit defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
+                  throw new SQLException("Email inboxes exist, but no limit defined for Package=" + pack.getPkey() + ", PackageDefinition=" + packageDefinition.getPkey());
                 }
-                if (emailCount>limit.getSoftLimit()) {
+                if (emailCount > limit.getSoftLimit()) {
                   Money addRate = limit.getAdditionalRate();
                   if (addRate == null) {
-                    throw new SQLException("Additional Email inboxes exist, but no additional rate defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
+                    throw new SQLException("Additional Email inboxes exist, but no additional rate defined for Package=" + pack.getPkey() + ", PackageDefinition=" + packageDefinition.getPkey());
                   }
-                  TransactionType addType=limit.getAdditionalTransactionType();
+                  TransactionType addType = limit.getAdditionalTransactionType();
                   if (addType == null) {
-                    throw new SQLException("Additional Email inboxes exist, but no additional TransactionType defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
+                    throw new SQLException("Additional Email inboxes exist, but no additional TransactionType defined for Package=" + pack.getPkey() + ", PackageDefinition=" + packageDefinition.getPkey());
                   }
                   charges.add(
-                    new MonthlyCharge(
-                      this,
-                      packBillingAccount,
-                      pack,
-                      addType,
-                      "Additional Email Inboxes ("+limit.getSoftLimit()+" included with package, have "+emailCount+")",
-                      (emailCount-limit.getSoftLimit())*1000,
-                      addRate,
-                      administrator,
-                      active
-                    )
+                      new MonthlyCharge(
+                          this,
+                          packBillingAccount,
+                          pack,
+                          addType,
+                          "Additional Email Inboxes (" + limit.getSoftLimit() + " included with package, have " + emailCount + ")",
+                          (emailCount - limit.getSoftLimit()) * 1000,
+                          addRate,
+                          administrator,
+                          active
+                      )
                   );
                 }
               }
@@ -428,34 +429,34 @@ public final class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 
         // Add sites
         {
-          PackageDefinitionLimit limit=packageDefinition.getLimit(siteResource);
+          PackageDefinitionLimit limit = packageDefinition.getLimit(siteResource);
           if (limit == null || limit.getSoftLimit() != PackageDefinitionLimit.UNLIMITED) {
-            List<Site> hss=pack.getHttpdSites();
+            List<Site> hss = pack.getHttpdSites();
             if (!hss.isEmpty()) {
               if (limit == null) {
-                throw new SQLException("HttpdSites exist, but no limit defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
+                throw new SQLException("HttpdSites exist, but no limit defined for Package=" + pack.getPkey() + ", PackageDefinition=" + packageDefinition.getPkey());
               }
-              if (hss.size()>limit.getSoftLimit()) {
+              if (hss.size() > limit.getSoftLimit()) {
                 Money addRate = limit.getAdditionalRate();
                 if (addRate == null) {
-                  throw new SQLException("Additional HttpdSites exist, but no additional rate defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
+                  throw new SQLException("Additional HttpdSites exist, but no additional rate defined for Package=" + pack.getPkey() + ", PackageDefinition=" + packageDefinition.getPkey());
                 }
-                TransactionType addType=limit.getAdditionalTransactionType();
+                TransactionType addType = limit.getAdditionalTransactionType();
                 if (addType == null) {
-                  throw new SQLException("Additional HttpdSites exist, but no additional TransactionType defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
+                  throw new SQLException("Additional HttpdSites exist, but no additional TransactionType defined for Package=" + pack.getPkey() + ", PackageDefinition=" + packageDefinition.getPkey());
                 }
                 charges.add(
-                  new MonthlyCharge(
-                    this,
-                    packBillingAccount,
-                    pack,
-                    addType,
-                    "Additional Web Sites ("+limit.getSoftLimit()+" included with package, have "+hss.size()+")",
-                    (hss.size()-limit.getSoftLimit())*1000,
-                    addRate,
-                    administrator,
-                    active
-                  )
+                    new MonthlyCharge(
+                        this,
+                        packBillingAccount,
+                        pack,
+                        addType,
+                        "Additional Web Sites (" + limit.getSoftLimit() + " included with package, have " + hss.size() + ")",
+                        (hss.size() - limit.getSoftLimit()) * 1000,
+                        addRate,
+                        administrator,
+                        active
+                    )
                 );
               }
             }
@@ -466,36 +467,36 @@ public final class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 
         // Add user accounts
         {
-          PackageDefinitionLimit limit=packageDefinition.getLimit(userResource);
+          PackageDefinitionLimit limit = packageDefinition.getLimit(userResource);
           if (limit == null || limit.getSoftLimit() != PackageDefinitionLimit.UNLIMITED) {
             Integer i = usersPerPackage.get(pack);
             if (i != null) {
               int userCount = i;
               if (userCount > 0) {
                 if (limit == null) {
-                  throw new SQLException("Shell accounts exist, but no limit defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
+                  throw new SQLException("Shell accounts exist, but no limit defined for Package=" + pack.getPkey() + ", PackageDefinition=" + packageDefinition.getPkey());
                 }
-                if (userCount>limit.getSoftLimit()) {
+                if (userCount > limit.getSoftLimit()) {
                   Money addRate = limit.getAdditionalRate();
                   if (addRate == null) {
-                    throw new SQLException("Additional Shell accounts exist, but no additional rate defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
+                    throw new SQLException("Additional Shell accounts exist, but no additional rate defined for Package=" + pack.getPkey() + ", PackageDefinition=" + packageDefinition.getPkey());
                   }
-                  TransactionType addType=limit.getAdditionalTransactionType();
+                  TransactionType addType = limit.getAdditionalTransactionType();
                   if (addType == null) {
-                    throw new SQLException("Additional Shell accounts exist, but no additional TransactionType defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
+                    throw new SQLException("Additional Shell accounts exist, but no additional TransactionType defined for Package=" + pack.getPkey() + ", PackageDefinition=" + packageDefinition.getPkey());
                   }
                   charges.add(
-                    new MonthlyCharge(
-                      this,
-                      packBillingAccount,
-                      pack,
-                      addType,
-                      "Additional Shell Accounts ("+limit.getSoftLimit()+" included with package, have "+userCount+")",
-                      (userCount-limit.getSoftLimit())*1000,
-                      addRate,
-                      administrator,
-                      active
-                    )
+                      new MonthlyCharge(
+                          this,
+                          packBillingAccount,
+                          pack,
+                          addType,
+                          "Additional Shell Accounts (" + limit.getSoftLimit() + " included with package, have " + userCount + ")",
+                          (userCount - limit.getSoftLimit()) * 1000,
+                          addRate,
+                          administrator,
+                          active
+                      )
                   );
                 }
               }

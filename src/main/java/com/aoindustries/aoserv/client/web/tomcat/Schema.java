@@ -35,40 +35,76 @@ import java.util.List;
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
   private final ContextTable Context;
-  public ContextTable getContext() {return Context;}
+
+  public ContextTable getContext() {
+    return Context;
+  }
 
   private final ContextDataSourceTable ContextDataSource;
-  public ContextDataSourceTable getContextDataSource() {return ContextDataSource;}
+
+  public ContextDataSourceTable getContextDataSource() {
+    return ContextDataSource;
+  }
 
   private final ContextParameterTable ContextParameter;
-  public ContextParameterTable getContextParameter() {return ContextParameter;}
+
+  public ContextParameterTable getContextParameter() {
+    return ContextParameter;
+  }
 
   private final JkMountTable JkMount;
-  public JkMountTable getJkMount() {return JkMount;}
+
+  public JkMountTable getJkMount() {
+    return JkMount;
+  }
 
   private final JkProtocolTable JkProtocol;
-  public JkProtocolTable getJkProtocol() {return JkProtocol;}
+
+  public JkProtocolTable getJkProtocol() {
+    return JkProtocol;
+  }
 
   private final PrivateTomcatSiteTable PrivateTomcatSite;
-  public PrivateTomcatSiteTable getPrivateTomcatSite() {return PrivateTomcatSite;}
+
+  public PrivateTomcatSiteTable getPrivateTomcatSite() {
+    return PrivateTomcatSite;
+  }
 
   private final SharedTomcatTable SharedTomcat;
-  public SharedTomcatTable getSharedTomcat() {return SharedTomcat;}
+
+  public SharedTomcatTable getSharedTomcat() {
+    return SharedTomcat;
+  }
 
   private final SharedTomcatSiteTable SharedTomcatSite;
-  public SharedTomcatSiteTable getSharedTomcatSite() {return SharedTomcatSite;}
+
+  public SharedTomcatSiteTable getSharedTomcatSite() {
+    return SharedTomcatSite;
+  }
 
   private final SiteTable Site;
-  public SiteTable getSite() {return Site;}
+
+  public SiteTable getSite() {
+    return Site;
+  }
 
   private final VersionTable Version;
-  public VersionTable getVersion() {return Version;}
+
+  public VersionTable getVersion() {
+    return Version;
+  }
 
   private final WorkerTable Worker;
-  public WorkerTable getWorker() {return Worker;}
+
+  public WorkerTable getWorker() {
+    return Worker;
+  }
 
   private final WorkerNameTable WorkerName;
-  public WorkerNameTable getWorkerName() {return WorkerName;}
+
+  public WorkerNameTable getWorkerName() {
+    return WorkerName;
+  }
 
   private final List<? extends AOServTable<?, ?>> tables;
 

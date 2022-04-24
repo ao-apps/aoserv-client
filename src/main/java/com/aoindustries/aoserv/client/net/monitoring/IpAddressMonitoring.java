@@ -56,7 +56,7 @@ public final class IpAddressMonitoring extends CachedObjectIntegerKey<IpAddressM
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public IpAddressMonitoring() {
     // Do nothing
   }
@@ -115,10 +115,10 @@ public final class IpAddressMonitoring extends CachedObjectIntegerKey<IpAddressM
 
   public void setEnabled(boolean enabled) throws IOException, SQLException {
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.SET_IP_ADDRESS_MONITORING_ENABLED,
-      pkey,
-      enabled
+        true,
+        AoservProtocol.CommandID.SET_IP_ADDRESS_MONITORING_ENABLED,
+        pkey,
+        enabled
     );
   }
 

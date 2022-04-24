@@ -53,8 +53,8 @@ import java.util.Set;
 public final class Host extends CachedObjectIntegerKey<Host> implements Comparable<Host> {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_PACKAGE=4
+      COLUMN_PKEY = 0,
+      COLUMN_PACKAGE = 4
   ;
   public static final String COLUMN_PACKAGE_name = "package";
   public static final String COLUMN_NAME_name = "name";
@@ -63,7 +63,7 @@ public final class Host extends CachedObjectIntegerKey<Host> implements Comparab
    * The daemon key is only available to <code>MasterUser</code>s.  This value is used
    * in place of the key when not accessible.
    */
-  public static final String HIDDEN_PASSWORD="*";
+  public static final String HIDDEN_PASSWORD = "*";
 
   private String farm;
   private String description;
@@ -78,49 +78,49 @@ public final class Host extends CachedObjectIntegerKey<Host> implements Comparab
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Host() {
     // Do nothing
   }
 
   // TODO: No longer add to a server by default, move this method to correct place
   public void addAccount(
-    Account.Name accounting,
-    String contractVersion,
-    Account parent,
-    boolean can_add_backup_servers,
-    boolean can_add_businesses,
-    boolean can_see_prices,
-    boolean billParent
+      Account.Name accounting,
+      String contractVersion,
+      Account parent,
+      boolean can_add_backup_servers,
+      boolean can_add_businesses,
+      boolean can_see_prices,
+      boolean billParent
   ) throws IOException, SQLException {
     table.getConnector().getAccount().getAccount().addAccount(
-      accounting,
-      contractVersion,
-      this,
-      parent.getName(),
-      can_add_backup_servers,
-      can_add_businesses,
-      can_see_prices,
-      billParent
+        accounting,
+        contractVersion,
+        this,
+        parent.getName(),
+        can_add_backup_servers,
+        can_add_businesses,
+        can_see_prices,
+        billParent
     );
   }
 
   public int addNetBind(
-    Package pk,
-    IpAddress ia,
-    Port port,
-    AppProtocol appProtocol,
-    boolean monitoringEnabled,
-    Set<FirewallZone.Name> firewalldZones
+      Package pk,
+      IpAddress ia,
+      Port port,
+      AppProtocol appProtocol,
+      boolean monitoringEnabled,
+      Set<FirewallZone.Name> firewalldZones
   ) throws IOException, SQLException {
     return table.getConnector().getNet().getBind().addNetBind(
-      this,
-      pk,
-      ia,
-      port,
-      appProtocol,
-      monitoringEnabled,
-      firewalldZones
+        this,
+        pk,
+        ia,
+        port,
+        appProtocol,
+        monitoringEnabled,
+        firewalldZones
     );
   }
 
@@ -162,9 +162,9 @@ public final class Host extends CachedObjectIntegerKey<Host> implements Comparab
     if (operating_system_version == -1) {
       return null;
     }
-    OperatingSystemVersion osv=table.getConnector().getDistribution().getOperatingSystemVersion().get(operating_system_version);
+    OperatingSystemVersion osv = table.getConnector().getDistribution().getOperatingSystemVersion().get(operating_system_version);
     if (osv == null) {
-      throw new SQLException("Unable to find OperatingSystemVersion: "+operating_system_version);
+      throw new SQLException("Unable to find OperatingSystemVersion: " + operating_system_version);
     }
     return osv;
   }
@@ -196,9 +196,9 @@ public final class Host extends CachedObjectIntegerKey<Host> implements Comparab
   }
 
   public ServerFarm getServerFarm() throws SQLException, IOException {
-    ServerFarm sf=table.getConnector().getInfrastructure().getServerFarm().get(farm);
+    ServerFarm sf = table.getConnector().getInfrastructure().getServerFarm().get(farm);
     if (sf == null) {
-      throw new SQLException("Unable to find ServerFarm: "+farm);
+      throw new SQLException("Unable to find ServerFarm: " + farm);
     }
     return sf;
   }
@@ -217,7 +217,7 @@ public final class Host extends CachedObjectIntegerKey<Host> implements Comparab
     pkey = result.getInt(1);
     farm = result.getString(2);
     description = result.getString(3);
-    operating_system_version=result.getInt(4);
+    operating_system_version = result.getInt(4);
     if (result.wasNull()) {
       operating_system_version = -1;
     }
@@ -228,10 +228,10 @@ public final class Host extends CachedObjectIntegerKey<Host> implements Comparab
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readCompressedInt();
-    farm=in.readUTF().intern();
+    pkey = in.readCompressedInt();
+    farm = in.readUTF().intern();
     description = in.readUTF();
-    operating_system_version=in.readCompressedInt();
+    operating_system_version = in.readCompressedInt();
     packageId = in.readCompressedInt();
     name = in.readUTF();
     monitoring_enabled = in.readBoolean();
@@ -245,7 +245,7 @@ public final class Host extends CachedObjectIntegerKey<Host> implements Comparab
     }
     Package pk = getPackage();
     if (pk != null) {
-      return pk.getName().toString()+'/'+name;
+      return pk.getName().toString() + '/' + name;
     }
     return Integer.toString(pkey);
   }
@@ -275,14 +275,14 @@ public final class Host extends CachedObjectIntegerKey<Host> implements Comparab
       out.writeCompressedInt(operating_system_version);
     }
     if (
-      protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_108) >= 0
-      && protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30) <= 0
+        protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_108) >= 0
+            && protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30) <= 0
     ) {
       out.writeNullUTF(null); // asset_label
     }
     if (
-      protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_16) >= 0
-      && protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30) <= 0
+        protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_16) >= 0
+            && protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30) <= 0
     ) {
       out.writeFloat(Float.NaN); // minimum_power
       out.writeFloat(Float.NaN); // maximum_power
@@ -338,9 +338,9 @@ public final class Host extends CachedObjectIntegerKey<Host> implements Comparab
   public IpAddress getAvailableIPAddress() throws SQLException, IOException {
     for (IpAddress ip : getIPAddresses()) {
       if (
-        ip.isAvailable()
-        && ip.isAlias()
-        && !ip.getDevice().getDeviceId().isLoopback()
+          ip.isAvailable()
+              && ip.isAlias()
+              && !ip.getDevice().getDeviceId().isLoopback()
       ) {
         return ip;
       }
@@ -356,7 +356,7 @@ public final class Host extends CachedObjectIntegerKey<Host> implements Comparab
       if (pk1 == null || pk2 == null) {
         int id1 = getPackageId();
         int id2 = o.getPackageId();
-        return (id1<id2 ? -1 : (id1 == id2 ? 0 : 1));
+        return (id1 < id2 ? -1 : (id1 == id2 ? 0 : 1));
       } else {
         int diff = pk1.compareTo(pk2);
         if (diff != 0) {

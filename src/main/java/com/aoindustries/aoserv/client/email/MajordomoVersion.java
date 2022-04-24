@@ -46,13 +46,13 @@ import java.sql.SQLException;
  */
 public final class MajordomoVersion extends GlobalObjectStringKey<MajordomoVersion> {
 
-  static final int COLUMN_VERSION=0;
+  static final int COLUMN_VERSION = 0;
   static final String COLUMN_VERSION_name = "version";
 
   /**
    * The default Majordomo version.
    */
-  public static final String DEFAULT_VERSION="1.94.5";
+  public static final String DEFAULT_VERSION = "1.94.5";
 
   private UnmodifiableTimestamp created;
 
@@ -62,7 +62,7 @@ public final class MajordomoVersion extends GlobalObjectStringKey<MajordomoVersi
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public MajordomoVersion() {
     // Do nothing
   }
@@ -95,13 +95,13 @@ public final class MajordomoVersion extends GlobalObjectStringKey<MajordomoVersi
 
   @Override
   public void init(ResultSet result) throws SQLException {
-    pkey=result.getString(1);
+    pkey = result.getString(1);
     created = UnmodifiableTimestamp.valueOf(result.getTimestamp(2));
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readUTF().intern();
+    pkey = in.readUTF().intern();
     created = SQLStreamables.readUnmodifiableTimestamp(in);
   }
 

@@ -77,10 +77,10 @@ import java.util.List;
 public final class Package extends CachedObjectIntegerKey<Package> implements Disablable, Comparable<Package> {
 
   static final int
-    COLUMN_PKEY = 0,
-    COLUMN_NAME = 1,
-    COLUMN_ACCOUNTING = 2,
-    COLUMN_PACKAGE_DEFINITION = 3
+      COLUMN_PKEY = 0,
+      COLUMN_NAME = 1,
+      COLUMN_ACCOUNTING = 2,
+      COLUMN_PACKAGE_DEFINITION = 3
   ;
   public static final String COLUMN_NAME_name = "name";
 
@@ -133,7 +133,7 @@ public final class Package extends CachedObjectIntegerKey<Package> implements Di
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Package() {
     // Do nothing
   }
@@ -212,7 +212,7 @@ public final class Package extends CachedObjectIntegerKey<Package> implements Di
 
   @Override
   public boolean canEnable() throws SQLException, IOException {
-    DisableLog dl=getDisableLog();
+    DisableLog dl = getDisableLog();
     if (dl == null) {
       return false;
     } else {
@@ -416,7 +416,7 @@ public final class Package extends CachedObjectIntegerKey<Package> implements Di
   public PackageDefinition getPackageDefinition() throws SQLException, IOException {
     PackageDefinition pd = table.getConnector().getBilling().getPackageDefinition().get(package_definition);
     if (pd == null) {
-      throw new SQLException("Unable to find PackageDefinition: "+package_definition);
+      throw new SQLException("Unable to find PackageDefinition: " + package_definition);
     }
     return pd;
   }
@@ -472,31 +472,31 @@ public final class Package extends CachedObjectIntegerKey<Package> implements Di
       package_definition = result.getInt(pos++);
       created = UnmodifiableTimestamp.valueOf(result.getTimestamp(pos++));
       created_by = com.aoindustries.aoserv.client.account.User.Name.valueOf(result.getString(pos++));
-      disable_log=result.getInt(pos++);
+      disable_log = result.getInt(pos++);
       if (result.wasNull()) {
         disable_log = -1;
       }
-      email_in_burst=result.getInt(pos++);
+      email_in_burst = result.getInt(pos++);
       if (result.wasNull()) {
         email_in_burst = -1;
       }
-      email_in_rate=result.getFloat(pos++);
+      email_in_rate = result.getFloat(pos++);
       if (result.wasNull()) {
         email_in_rate = Float.NaN;
       }
-      email_out_burst=result.getInt(pos++);
+      email_out_burst = result.getInt(pos++);
       if (result.wasNull()) {
         email_out_burst = -1;
       }
-      email_out_rate=result.getFloat(pos++);
+      email_out_rate = result.getFloat(pos++);
       if (result.wasNull()) {
         email_out_rate = Float.NaN;
       }
-      email_relay_burst=result.getInt(pos++);
+      email_relay_burst = result.getInt(pos++);
       if (result.wasNull()) {
         email_relay_burst = -1;
       }
-      email_relay_rate=result.getFloat(pos++);
+      email_relay_rate = result.getFloat(pos++);
       if (result.wasNull()) {
         email_relay_rate = Float.NaN;
       }
@@ -508,7 +508,7 @@ public final class Package extends CachedObjectIntegerKey<Package> implements Di
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
-      pkey=in.readCompressedInt();
+      pkey = in.readCompressedInt();
       name = Account.Name.valueOf(in.readUTF()).intern();
       account = Account.Name.valueOf(in.readUTF()).intern();
       package_definition = in.readCompressedInt();

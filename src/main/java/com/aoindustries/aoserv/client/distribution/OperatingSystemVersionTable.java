@@ -43,8 +43,9 @@ public final class OperatingSystemVersionTable extends GlobalTableIntegerKey<Ope
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(OperatingSystemVersion.COLUMN_SORT_ORDER_name, ASCENDING)
+      new OrderBy(OperatingSystemVersion.COLUMN_SORT_ORDER_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -52,13 +53,13 @@ public final class OperatingSystemVersionTable extends GlobalTableIntegerKey<Ope
   }
 
   OperatingSystemVersion getOperatingSystemVersion(OperatingSystem os, String version, Architecture architecture) throws IOException, SQLException {
-    String name=os.getName();
-    String arch=architecture.getName();
+    String name = os.getName();
+    String arch = architecture.getName();
     for (OperatingSystemVersion osv : getRows()) {
       if (
-        osv.getVersionName().equals(name)
-        && osv.getVersionNumber().equals(version)
-        && osv.getArchitecture_name().equals(arch)
+          osv.getVersionName().equals(name)
+              && osv.getVersionNumber().equals(version)
+              && osv.getArchitecture_name().equals(arch)
       ) {
         return osv;
       }

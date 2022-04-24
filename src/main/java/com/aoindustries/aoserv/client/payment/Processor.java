@@ -44,8 +44,8 @@ import java.util.List;
 public final class Processor extends CachedObjectStringKey<Processor> {
 
   static final int
-    COLUMN_PROVIDER_ID=0,
-    COLUMN_ACCOUNTING=1
+      COLUMN_PROVIDER_ID = 0,
+      COLUMN_ACCOUNTING = 1
   ;
   static final String COLUMN_ACCOUNTING_name = "accounting";
   static final String COLUMN_PROVIDER_ID_name = "provider_id";
@@ -68,7 +68,7 @@ public final class Processor extends CachedObjectStringKey<Processor> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Processor() {
     // Do nothing
   }
@@ -150,7 +150,7 @@ public final class Processor extends CachedObjectStringKey<Processor> {
     }
     EncryptionKey ek = table.getConnector().getPki().getEncryptionKey().get(encryption_from);
     if (ek == null) {
-      throw new SQLException("Unable to find EncryptionKey: "+encryption_from);
+      throw new SQLException("Unable to find EncryptionKey: " + encryption_from);
     }
     return ek;
   }
@@ -165,7 +165,7 @@ public final class Processor extends CachedObjectStringKey<Processor> {
     }
     EncryptionKey ek = table.getConnector().getPki().getEncryptionKey().get(encryption_recipient);
     if (ek == null) {
-      throw new SQLException("Unable to find EncryptionKey: "+encryption_recipient);
+      throw new SQLException("Unable to find EncryptionKey: " + encryption_recipient);
     }
     return ek;
   }
@@ -205,8 +205,8 @@ public final class Processor extends CachedObjectStringKey<Processor> {
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
-      pkey=in.readUTF().intern();
-      accounting=Account.Name.valueOf(in.readUTF()).intern();
+      pkey = in.readUTF().intern();
+      accounting = Account.Name.valueOf(in.readUTF()).intern();
       className = in.readUTF();
       param1 = in.readNullUTF();
       param2 = in.readNullUTF();

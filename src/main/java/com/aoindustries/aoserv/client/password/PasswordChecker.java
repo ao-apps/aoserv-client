@@ -52,18 +52,18 @@ public final class PasswordChecker {
   /**
    * The different ways months may be represented in the English
    */
-  private static final String[] months={
-    "jan", "january",
-    "feb", "february",
-    "mar", "march",
-    "apr", "april",
-    "may",
-    "jun", "june",
-    "jul", "july",
-    "aug", "august",
-    "sep", "september",
-    "nov", "november",
-    "dec", "december"
+  private static final String[] months = {
+      "jan", "january",
+      "feb", "february",
+      "mar", "march",
+      "apr", "april",
+      "may",
+      "jun", "june",
+      "jul", "july",
+      "aug", "august",
+      "sep", "september",
+      "nov", "november",
+      "dec", "december"
   };
 
   private static final String GOOD_KEY = "good";
@@ -71,14 +71,14 @@ public final class PasswordChecker {
   /**
    * The categories that are checked.
    */
-  private static final String[] categoryKeys={
-    "category.length",
-    "category.characters",
-    "category.case",
-    "category.dates",
-    "category.dictionary"
+  private static final String[] categoryKeys = {
+      "category.length",
+      "category.characters",
+      "category.case",
+      "category.dates",
+      "category.dictionary"
   };
-  public static final int NUM_CATEGORIES=categoryKeys.length;
+  public static final int NUM_CATEGORIES = categoryKeys.length;
 
   private static byte[] cachedWords;
 
@@ -101,13 +101,13 @@ public final class PasswordChecker {
 
     @Override
     public String toString() {
-      return category+": "+result;
+      return category + ": " + result;
     }
   }
 
   public static List<Result> getAllGoodResults() {
     List<Result> results = new ArrayList<>(NUM_CATEGORIES);
-    for (int c=0;c<NUM_CATEGORIES;c++) {
+    for (int c = 0; c < NUM_CATEGORIES; c++) {
       results.add(new Result(RESOURCES.getMessage(categoryKeys[c])));
     }
     return results;
@@ -131,7 +131,7 @@ public final class PasswordChecker {
        *
        * Must be at least eight characters
        */
-      if (passwordLen < (strength == PasswordStrength.SUPER_LAX?6:8)) {
+      if (passwordLen < (strength == PasswordStrength.SUPER_LAX ? 6 : 8)) {
         results.get(0).result = RESOURCES.getMessage(strength == PasswordStrength.SUPER_LAX ? "length.atLeastSix" : "length.atLeastEight");
       }
 
@@ -176,12 +176,12 @@ public final class PasswordChecker {
        * If more than one letter exists, force different case
        */
       if (
-        strength != PasswordStrength.SUPER_LAX
-        && (
-          (lowercount > 1 && uppercount == 0)
-          || (uppercount > 1 && lowercount == 0)
-          || (lowercount == 0 && uppercount == 0)
-        )
+          strength != PasswordStrength.SUPER_LAX
+              && (
+              (lowercount > 1 && uppercount == 0)
+                  || (uppercount > 1 && lowercount == 0)
+                  || (lowercount == 0 && uppercount == 0)
+          )
       ) {
         results.get(2).result = RESOURCES.getMessage("case.capitalAndLower");
       }
@@ -282,24 +282,25 @@ public final class PasswordChecker {
     }
     return results;
   }
-/*
- * TODO: Need to pull the values from ApplicationResources here based on locales.
- *
-  public static String checkPasswordDescribe(String username, String password, boolean strict, boolean superLax) {
-  String[] results=checkPassword(username, password, strict, superLax);
-  StringBuilder sb = new StringBuilder();
-  for (int c=0;c<NUM_CATEGORIES;c++) {
-      String desc=results[c];
-      if (desc != null) {
-        if (sb.length()>0) {
-          sb.append('\n');
+
+  /*
+   * TODO: Need to pull the values from ApplicationResources here based on locales.
+   *
+    public static String checkPasswordDescribe(String username, String password, boolean strict, boolean superLax) {
+    String[] results=checkPassword(username, password, strict, superLax);
+    StringBuilder sb = new StringBuilder();
+    for (int c=0;c<NUM_CATEGORIES;c++) {
+        String desc=results[c];
+        if (desc != null) {
+          if (sb.length()>0) {
+            sb.append('\n');
+          }
+          sb.append(categories[c]).append(": ").append(desc);
         }
-        sb.append(categories[c]).append(": ").append(desc);
-      }
-  }
-  return sb.length() == 0 ? null : sb.toString();
-  }
-*/
+    }
+    return sb.length() == 0 ? null : sb.toString();
+    }
+  */
 
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   private static synchronized byte[] getDictionary() throws IOException {
@@ -307,7 +308,7 @@ public final class PasswordChecker {
       try (
         InputStream in = new CorrectedGZIPInputStream(PasswordChecker.class.getResourceAsStream("linux.words.gz"));
         ByteArrayOutputStream bout = new ByteArrayOutputStream()
-      ) {
+          ) {
         IoUtils.copy(in, bout);
         cachedWords = bout.toByteArray();
       }
@@ -329,19 +330,19 @@ public final class PasswordChecker {
   }
 
   public static int indexOfIgnoreCase(String string, byte[] buffer, int wordstart, int wordlen) {
-    int endpos=string.length()-wordlen;
-    int wordend=wordstart+wordlen;
+    int endpos = string.length() - wordlen;
+    int wordend = wordstart + wordlen;
     Loop:
-    for (int c=0;c <= endpos;c++) {
-      int spos=c;
-      for (int wpos=wordstart;wpos<wordend;wpos++) {
-        int ch1=string.charAt(spos++);
-        int ch2=buffer[wpos];
+    for (int c = 0; c <= endpos; c++) {
+      int spos = c;
+      for (int wpos = wordstart; wpos < wordend; wpos++) {
+        int ch1 = string.charAt(spos++);
+        int ch2 = buffer[wpos];
         if (ch1 >= 'A' && ch1 <= 'Z') {
-          ch1+='a'-'A';
+          ch1 += 'a' - 'A';
         }
         if (ch2 >= 'A' && ch2 <= 'Z') {
-          ch2+='a'-'A';
+          ch2 += 'a' - 'A';
         }
         if (ch1 != ch2) {
           continue Loop;
@@ -354,7 +355,7 @@ public final class PasswordChecker {
 
   public static String yearOf(int year) {
     if (year >= 0 && year <= 9) {
-      return "0"+year;
+      return "0" + year;
     }
     return String.valueOf(year);
   }
@@ -379,7 +380,7 @@ public final class PasswordChecker {
   @SuppressWarnings("deprecation")
   public static void printResultsHtml(List<Result> results, Appendable out, boolean isXhtml) throws IOException {
     out.append("    <table style=\"border:0px\" cellspacing=\"0\" cellpadding=\"4\">\n"
-      + "      <tbody>\n");
+        + "      <tbody>\n");
     for (Result result : results) {
       out.append("        <tr><td style=\"white-space:nowrap\">");
       com.aoapps.hodgepodge.util.EncodingUtils.encodeHtml(result.getCategory(), out, isXhtml);
@@ -388,7 +389,7 @@ public final class PasswordChecker {
       out.append("</td></tr>\n");
     }
     out.append("      </tbody>\n"
-      + "    </table>\n");
+        + "    </table>\n");
   }
 
   /**
@@ -407,10 +408,10 @@ public final class PasswordChecker {
     StringBuilder sb = new StringBuilder();
     for (Result result : results) {
       sb
-        .append(result.getCategory())
-        .append(": ")
-        .append(result.getResult())
-        .append('\n');
+          .append(result.getCategory())
+          .append(": ")
+          .append(result.getResult())
+          .append('\n');
     }
     return sb.toString();
   }

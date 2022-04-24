@@ -48,8 +48,8 @@ import java.sql.SQLException;
 public final class SpamMessage extends AOServObject<Integer, SpamMessage> implements SingleTableObject<Integer, SpamMessage> {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_EMAIL_RELAY=1
+      COLUMN_PKEY = 0,
+      COLUMN_EMAIL_RELAY = 1
   ;
   static final String COLUMN_PKEY_name = "pkey";
 
@@ -66,7 +66,7 @@ public final class SpamMessage extends AOServObject<Integer, SpamMessage> implem
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public SpamMessage() {
     // Do nothing
   }
@@ -74,8 +74,8 @@ public final class SpamMessage extends AOServObject<Integer, SpamMessage> implem
   @Override
   public boolean equals(Object obj) {
     return
-      (obj instanceof SpamMessage)
-      && ((SpamMessage)obj).getPkey() == pkey
+        (obj instanceof SpamMessage)
+            && ((SpamMessage) obj).getPkey() == pkey
     ;
   }
 
@@ -84,9 +84,9 @@ public final class SpamMessage extends AOServObject<Integer, SpamMessage> implem
   }
 
   public SmtpRelay getEmailSmtpRelay() throws SQLException, IOException {
-    SmtpRelay er=table.getConnector().getEmail().getSmtpRelay().get(email_relay);
+    SmtpRelay er = table.getConnector().getEmail().getSmtpRelay().get(email_relay);
     if (er == null) {
-      throw new SQLException("Unable to find EmailSmtpRelay: "+email_relay);
+      throw new SQLException("Unable to find EmailSmtpRelay: " + email_relay);
     }
     return er;
   }
@@ -134,10 +134,10 @@ public final class SpamMessage extends AOServObject<Integer, SpamMessage> implem
 
   @Override
   public void init(ResultSet result) throws SQLException {
-    pkey=result.getInt(1);
-    email_relay=result.getInt(2);
+    pkey = result.getInt(1);
+    email_relay = result.getInt(2);
     time = UnmodifiableTimestamp.valueOf(result.getTimestamp(3));
-    message=result.getString(4);
+    message = result.getString(4);
   }
 
   @Override
@@ -153,7 +153,7 @@ public final class SpamMessage extends AOServObject<Integer, SpamMessage> implem
     if (this.table != null) {
       throw new IllegalStateException("table already set");
     }
-    this.table=table;
+    this.table = table;
   }
 
   @Override

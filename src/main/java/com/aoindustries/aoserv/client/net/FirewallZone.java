@@ -86,10 +86,10 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
    * @author  AO Industries, Inc.
    */
   public static final class Name implements
-    Comparable<Name>,
-    Serializable,
-    DtoFactory<com.aoindustries.aoserv.client.dto.FirewallZoneName>,
-    Internable<Name>
+      Comparable<Name>,
+      Serializable,
+      DtoFactory<com.aoindustries.aoserv.client.dto.FirewallZoneName>,
+      Internable<Name>
   {
 
     private static final long serialVersionUID = 1L;
@@ -118,12 +118,12 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
       for (int c = 0; c < len; c++) {
         char ch = name.charAt(c);
         if (
-          (ch<'a' || ch>'z')
-          && (ch < 'A' || ch > 'Z')
-          && (ch < '0' || ch > '9')
-          && ch != '_'
-          && ch != '-'
-          && ch != '/'
+            (ch < 'a' || ch > 'z')
+                && (ch < 'A' || ch > 'Z')
+                && (ch < '0' || ch > '9')
+                && ch != '_'
+                && ch != '-'
+                && ch != '/'
         ) {
           return new InvalidResult(RESOURCES, "Name.validate.illegalCharacter");
         }
@@ -200,8 +200,8 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
     @Override
     public boolean equals(Object obj) {
       return
-        (obj instanceof Name)
-        && name.equals(((Name)obj).name)
+          (obj instanceof Name)
+              && name.equals(((Name) obj).name)
       ;
     }
 
@@ -250,13 +250,14 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
    * Some Firewalld Zone names used within code.
    */
   public static final Name
-    DMZ,
-    EXTERNAL,
-    HOME,
-    INTERNAL,
-    PUBLIC,
-    WORK
+      DMZ,
+      EXTERNAL,
+      HOME,
+      INTERNAL,
+      PUBLIC,
+      WORK
   ;
+
   static {
     try {
       DMZ = Name.valueOf("dmz");
@@ -271,8 +272,8 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
   }
 
   static final int
-    COLUMN_PKEY = 0,
-    COLUMN_SERVER = 1
+      COLUMN_PKEY = 0,
+      COLUMN_SERVER = 1
   ;
   static final String COLUMN_SERVER_name = "server";
   static final String COLUMN_NAME_name = "name";
@@ -289,7 +290,7 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public FirewallZone() {
     // Do nothing
   }

@@ -59,9 +59,9 @@ import java.util.List;
 public final class GroupServer extends CachedObjectIntegerKey<GroupServer> implements Removable {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_NAME=1,
-    COLUMN_AO_SERVER=2
+      COLUMN_PKEY = 0,
+      COLUMN_NAME = 1,
+      COLUMN_AO_SERVER = 2
   ;
   static final String COLUMN_NAME_name = "name";
   static final String COLUMN_AO_SERVER_name = "ao_server";
@@ -77,7 +77,7 @@ public final class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public GroupServer() {
     // Do nothing
   }
@@ -125,9 +125,9 @@ public final class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
   }
 
   public Server getServer() throws SQLException, IOException {
-    Server ao=table.getConnector().getLinux().getServer().get(ao_server);
+    Server ao = table.getConnector().getLinux().getServer().get(ao_server);
     if (ao == null) {
-      throw new SQLException("Unable to find linux.Server: "+ao_server);
+      throw new SQLException("Unable to find linux.Server: " + ao_server);
     }
     return ao;
   }
@@ -153,9 +153,9 @@ public final class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
-      pkey=in.readCompressedInt();
+      pkey = in.readCompressedInt();
       name = Group.Name.valueOf(in.readUTF()).intern();
-      ao_server=in.readCompressedInt();
+      ao_server = in.readCompressedInt();
       gid = LinuxId.valueOf(in.readCompressedInt());
       created = SQLStreamables.readUnmodifiableTimestamp(in);
     } catch (ValidationException e) {
@@ -165,19 +165,19 @@ public final class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
 
   @Override
   public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws SQLException, IOException {
-    List<CannotRemoveReason<?>> reasons=new ArrayList<>();
+    List<CannotRemoveReason<?>> reasons = new ArrayList<>();
 
     Server ao = getServer();
 
     for (CvsRepository cr : ao.getCvsRepositories()) {
       if (cr.getLinuxServerGroup_pkey() == pkey) {
-        reasons.add(new CannotRemoveReason<>("Used by CVS repository "+cr.getPath()+" on "+cr.getLinuxServerGroup().getServer().getHostname(), cr));
+        reasons.add(new CannotRemoveReason<>("Used by CVS repository " + cr.getPath() + " on " + cr.getLinuxServerGroup().getServer().getHostname(), cr));
       }
     }
 
     for (com.aoindustries.aoserv.client.email.List el : table.getConnector().getEmail().getList().getRows()) {
       if (el.getLinuxServerGroup_pkey() == pkey) {
-        reasons.add(new CannotRemoveReason<>("Used by email list "+el.getPath()+" on "+el.getLinuxServerGroup().getServer().getHostname(), el));
+        reasons.add(new CannotRemoveReason<>("Used by email list " + el.getPath() + " on " + el.getLinuxServerGroup().getServer().getHostname(), el));
       }
     }
 
@@ -185,33 +185,33 @@ public final class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
       if (hs.getLinuxServerGroup_pkey() == pkey) {
         String hs_name = hs.getName();
         reasons.add(
-          new CannotRemoveReason<>(
-            hs_name == null
-              ? "Used by Apache HTTP Server on " + hs.getLinuxServer().getHostname()
-              : "Used by Apache HTTP Server (" + hs_name + ") on " + hs.getLinuxServer().getHostname(),
-            hs
-          )
+            new CannotRemoveReason<>(
+                hs_name == null
+                    ? "Used by Apache HTTP Server on " + hs.getLinuxServer().getHostname()
+                    : "Used by Apache HTTP Server (" + hs_name + ") on " + hs.getLinuxServer().getHostname(),
+                hs
+            )
         );
       }
     }
 
     for (SharedTomcat hst : ao.getHttpdSharedTomcats()) {
       if (hst.getLinuxServerGroup_pkey() == pkey) {
-        reasons.add(new CannotRemoveReason<>("Used by Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getLinuxServer().getHostname(), hst));
+        reasons.add(new CannotRemoveReason<>("Used by Multi-Site Tomcat JVM " + hst.getInstallDirectory() + " on " + hst.getLinuxServer().getHostname(), hst));
       }
     }
 
     // httpd_sites
     for (Site site : ao.getHttpdSites()) {
       if (site.getLinuxGroup_name().equals(name)) {
-        reasons.add(new CannotRemoveReason<>("Used by website "+site.getInstallDirectory()+" on "+site.getLinuxServer().getHostname(), site));
+        reasons.add(new CannotRemoveReason<>("Used by website " + site.getInstallDirectory() + " on " + site.getLinuxServer().getHostname(), site));
       }
     }
 
     for (MajordomoServer ms : ao.getMajordomoServers()) {
       if (ms.getLinuxServerGroup_pkey() == pkey) {
-        Domain ed=ms.getDomain();
-        reasons.add(new CannotRemoveReason<>("Used by Majordomo server "+ed.getDomain()+" on "+ed.getLinuxServer().getHostname(), ms));
+        Domain ed = ms.getDomain();
+        reasons.add(new CannotRemoveReason<>("Used by Majordomo server " + ed.getDomain() + " on " + ed.getLinuxServer().getHostname(), ms));
       }
     }
 
@@ -227,10 +227,10 @@ public final class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
   @Override
   public void remove() throws IOException, SQLException {
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.REMOVE,
-      Table.TableID.LINUX_SERVER_GROUPS,
-      pkey
+        true,
+        AoservProtocol.CommandID.REMOVE,
+        Table.TableID.LINUX_SERVER_GROUPS,
+        pkey
     );
   }
 

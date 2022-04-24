@@ -51,11 +51,11 @@ import java.util.List;
 public final class Set extends CachedObjectIntegerKey<Set> {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_ACCOUNTING=1,
-    COLUMN_IDENTIFIER=2
+      COLUMN_PKEY = 0,
+      COLUMN_ACCOUNTING = 1,
+      COLUMN_IDENTIFIER = 2
   ;
-  static final String COLUMN_IDENTIFIER_name= "identifier";
+  static final String COLUMN_IDENTIFIER_name = "identifier";
 
   private Account.Name accounting;
   private String identifier;
@@ -77,7 +77,7 @@ public final class Set extends CachedObjectIntegerKey<Set> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Set() {
     // Do nothing
   }
@@ -296,11 +296,11 @@ public final class Set extends CachedObjectIntegerKey<Set> {
   // Note: toChar must never be 'N', since that would conflict with 'N' used for "Network".
   public enum ConfidenceType {
     UNCERTAIN {
-      @Override
-      public char toChar() {
-        return 'U';
-      }
-    },
+    @Override
+    public char toChar() {
+      return 'U';
+    }
+  },
     DEFINITE {
       @Override
       public char toChar() {
@@ -321,11 +321,11 @@ public final class Set extends CachedObjectIntegerKey<Set> {
 
   public enum ReputationType {
     GOOD {
-      @Override
-      public char toChar() {
-        return 'G';
-      }
-    },
+    @Override
+    public char toChar() {
+      return 'G';
+    }
+  },
     BAD {
       @Override
       public char toChar() {
@@ -351,10 +351,10 @@ public final class Set extends CachedObjectIntegerKey<Set> {
     final short score;
 
     public AddReputation(
-      int host,
-      ConfidenceType confidence,
-      ReputationType reputationType,
-      short score
+        int host,
+        ConfidenceType confidence,
+        ReputationType reputationType,
+        short score
     ) {
       this.host = host;
       this.confidence = confidence;
@@ -381,54 +381,54 @@ public final class Set extends CachedObjectIntegerKey<Set> {
 
   public void addReputation(int host, ConfidenceType confidence, ReputationType reputationType, short score) throws IOException, SQLException {
     addReputation(
-      Collections.singletonList(
-        new AddReputation(host, confidence, reputationType, score)
-      )
+        Collections.singletonList(
+            new AddReputation(host, confidence, reputationType, score)
+        )
     );
   }
 
   public void addReputation(final Collection<AddReputation> addReputations) throws IOException, SQLException {
     final int size = addReputations.size();
-    if (size>0) {
+    if (size > 0) {
       table.getConnector().requestUpdate(
-        true,
-        AoservProtocol.CommandID.ADD_IP_REPUTATION,
-        new AOServConnector.UpdateRequest() {
-          private IntList invalidateList;
+          true,
+          AoservProtocol.CommandID.ADD_IP_REPUTATION,
+          new AOServConnector.UpdateRequest() {
+            private IntList invalidateList;
 
-          @Override
-          public void writeRequest(StreamableOutput out) throws IOException {
-            out.writeCompressedInt(pkey);
-            out.writeCompressedInt(size);
-            int count = 0;
-            for (AddReputation addRep : addReputations) {
-              out.writeInt(addRep.host);
-              out.writeChar(addRep.confidence.toChar());
-              out.writeChar(addRep.reputationType.toChar());
-              out.writeShort(addRep.score);
-              count++;
+            @Override
+            public void writeRequest(StreamableOutput out) throws IOException {
+              out.writeCompressedInt(pkey);
+              out.writeCompressedInt(size);
+              int count = 0;
+              for (AddReputation addRep : addReputations) {
+                out.writeInt(addRep.host);
+                out.writeChar(addRep.confidence.toChar());
+                out.writeChar(addRep.reputationType.toChar());
+                out.writeShort(addRep.score);
+                count++;
+              }
+              if (count != size) {
+                throw new ConcurrentModificationException("size != count: " + size + " != " + count);
+              }
             }
-            if (count != size) {
-              throw new ConcurrentModificationException("size != count: " + size + " != " + count);
+
+            @Override
+            public void readResponse(StreamableInput in) throws IOException, SQLException {
+              int code = in.readByte();
+              if (code == AoservProtocol.DONE) {
+                invalidateList = AOServConnector.readInvalidateList(in);
+              } else {
+                AoservProtocol.checkResult(code, in);
+                throw new IOException("Unexpected response code: " + code);
+              }
+            }
+
+            @Override
+            public void afterRelease() {
+              table.getConnector().tablesUpdated(invalidateList);
             }
           }
-
-          @Override
-          public void readResponse(StreamableInput in) throws IOException, SQLException {
-            int code=in.readByte();
-            if (code == AoservProtocol.DONE) {
-              invalidateList=AOServConnector.readInvalidateList(in);
-            } else {
-              AoservProtocol.checkResult(code, in);
-              throw new IOException("Unexpected response code: "+code);
-            }
-          }
-
-          @Override
-          public void afterRelease() {
-            table.getConnector().tablesUpdated(invalidateList);
-          }
-        }
       );
     }
   }

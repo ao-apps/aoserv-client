@@ -180,13 +180,13 @@ public final class SimpleAOClient {
    * @see  SSLConnector#getSSLConnector
    */
   public SimpleAOClient(AOServConnector connector) {
-    this.connector=connector;
+    this.connector = connector;
   }
 
   private Architecture getArchitecture(String architecture) throws IllegalArgumentException, IOException, SQLException {
-    Architecture ar=connector.getDistribution().getArchitecture().get(architecture);
+    Architecture ar = connector.getDistribution().getArchitecture().get(architecture);
     if (ar == null) {
-      throw new IllegalArgumentException("Unable to find Architecture: "+architecture);
+      throw new IllegalArgumentException("Unable to find Architecture: " + architecture);
     }
     return ar;
   }
@@ -213,17 +213,17 @@ public final class SimpleAOClient {
   }
 
   private Zone getZone(String zone) throws IllegalArgumentException, IOException, SQLException {
-    Zone dz=connector.getDns().getZone().get(zone);
+    Zone dz = connector.getDns().getZone().get(zone);
     if (dz == null) {
-      throw new IllegalArgumentException("Unable to find Zone: "+zone);
+      throw new IllegalArgumentException("Unable to find Zone: " + zone);
     }
     return dz;
   }
 
   private Address getEmailAddress(String aoServer, DomainName domain, String address) throws IllegalArgumentException, IOException, SQLException {
-    Address ea=getEmailDomain(aoServer, domain).getEmailAddress(address);
+    Address ea = getEmailDomain(aoServer, domain).getEmailAddress(address);
     if (ea == null) {
-      throw new IllegalArgumentException("Unable to find EmailAddress: "+address+'@'+domain+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find EmailAddress: " + address + '@' + domain + " on " + aoServer);
     }
     return ea;
   }
@@ -231,7 +231,7 @@ public final class SimpleAOClient {
   private Domain getEmailDomain(String aoServer, DomainName domain) throws IllegalArgumentException, IOException, SQLException {
     Domain ed = getLinuxServer(aoServer).getEmailDomain(domain);
     if (ed == null) {
-      throw new IllegalArgumentException("Unable to find EmailDomain: "+domain+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find EmailDomain: " + domain + " on " + aoServer);
     }
     return ed;
   }
@@ -239,15 +239,15 @@ public final class SimpleAOClient {
   private com.aoindustries.aoserv.client.email.List getEmailList(String aoServer, PosixPath path) throws IllegalArgumentException, IOException, SQLException {
     com.aoindustries.aoserv.client.email.List el = getLinuxServer(aoServer).getEmailList(path);
     if (el == null) {
-      throw new IllegalArgumentException("Unable to find EmailList: "+path+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find EmailList: " + path + " on " + aoServer);
     }
     return el;
   }
 
   private SpamAssassinMode getEmailSpamAssassinIntegrationMode(String mode) throws IllegalArgumentException, IOException, SQLException {
-    SpamAssassinMode esaim=connector.getEmail().getSpamAssassinMode().get(mode);
+    SpamAssassinMode esaim = connector.getEmail().getSpamAssassinMode().get(mode);
     if (esaim == null) {
-      throw new IllegalArgumentException("Unable to find EmailSpamAssassinIntegrationMode: "+mode);
+      throw new IllegalArgumentException("Unable to find EmailSpamAssassinIntegrationMode: " + mode);
     }
     return esaim;
   }
@@ -256,7 +256,7 @@ public final class SimpleAOClient {
     Host fromSe = getHost(fromServer);
     BackupPartition bp = getLinuxServer(toServer).getBackupPartitionForPath(path);
     if (bp == null) {
-      throw new IllegalArgumentException("Unable to find BackupPartition: "+path+" on "+toServer);
+      throw new IllegalArgumentException("Unable to find BackupPartition: " + path + " on " + toServer);
     }
     FileReplication replication = null;
     for (FileReplication ffr : fromSe.getFailoverFileReplications()) {
@@ -266,7 +266,7 @@ public final class SimpleAOClient {
       }
     }
     if (replication == null) {
-      throw new IllegalArgumentException("Unable to find FailoverFileReplication: From "+fromServer+" to "+toServer+" at "+path);
+      throw new IllegalArgumentException("Unable to find FailoverFileReplication: From " + fromServer + " to " + toServer + " at " + path);
     }
     return replication;
   }
@@ -283,7 +283,7 @@ public final class SimpleAOClient {
   private SharedTomcat getHttpdSharedTomcat(String aoServer, String name) throws IllegalArgumentException, IOException, SQLException {
     SharedTomcat hst = getLinuxServer(aoServer).getHttpdSharedTomcat(name);
     if (hst == null) {
-      throw new IllegalArgumentException("Unable to find HttpdSharedTomcat: "+name+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find HttpdSharedTomcat: " + name + " on " + aoServer);
     }
     return hst;
   }
@@ -291,15 +291,15 @@ public final class SimpleAOClient {
   private Site getHttpdSite(String aoServer, String siteName) throws IllegalArgumentException, IOException, SQLException {
     Site hs = getLinuxServer(aoServer).getHttpdSite(siteName);
     if (hs == null) {
-      throw new IllegalArgumentException("Unable to find Site: "+siteName+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find Site: " + siteName + " on " + aoServer);
     }
     return hs;
   }
 
   private IpAddress getIPAddress(String server, String netDevice, InetAddress ipAddress) throws IllegalArgumentException, SQLException, IOException {
-    IpAddress ia=getNetDevice(server, netDevice).getIPAddress(ipAddress);
+    IpAddress ia = getNetDevice(server, netDevice).getIPAddress(ipAddress);
     if (ia == null) {
-      throw new IllegalArgumentException("Unable to find IPAddress: "+ipAddress+" on "+netDevice+" on "+server);
+      throw new IllegalArgumentException("Unable to find IPAddress: " + ipAddress + " on " + netDevice + " on " + server);
     }
     return ia;
   }
@@ -307,7 +307,7 @@ public final class SimpleAOClient {
   private Language getLanguage(String code) throws IllegalArgumentException, IOException, SQLException {
     Language la = connector.getTicket().getLanguage().get(code);
     if (la == null) {
-      throw new IllegalArgumentException("Unable to find Language: "+code);
+      throw new IllegalArgumentException("Unable to find Language: " + code);
     }
     return la;
   }
@@ -321,9 +321,9 @@ public final class SimpleAOClient {
   }
 
   private Group getLinuxGroup(Group.Name name) throws IllegalArgumentException, IOException, SQLException {
-    Group lg=connector.getLinux().getGroup().get(name);
+    Group lg = connector.getLinux().getGroup().get(name);
     if (lg == null) {
-      throw new IllegalArgumentException("Unable to find LinuxGroup: "+name);
+      throw new IllegalArgumentException("Unable to find LinuxGroup: " + name);
     }
     return lg;
   }
@@ -331,7 +331,7 @@ public final class SimpleAOClient {
   private UserServer getLinuxServerAccount(String aoServer, com.aoindustries.aoserv.client.linux.User.Name username) throws IllegalArgumentException, IOException, SQLException {
     UserServer lsa = getLinuxServer(aoServer).getLinuxServerAccount(username);
     if (lsa == null) {
-      throw new IllegalArgumentException("Unable to find LinuxServerAccount: "+username+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find LinuxServerAccount: " + username + " on " + aoServer);
     }
     return lsa;
   }
@@ -339,7 +339,7 @@ public final class SimpleAOClient {
   private GroupServer getLinuxServerGroup(String server, Group.Name name) throws IllegalArgumentException, IOException, SQLException {
     GroupServer lsg = getLinuxServer(server).getLinuxServerGroup(name);
     if (lsg == null) {
-      throw new IllegalArgumentException("Unable to find LinuxServerGroup: "+name+" on "+server);
+      throw new IllegalArgumentException("Unable to find LinuxServerGroup: " + name + " on " + server);
     }
     return lsg;
   }
@@ -347,24 +347,24 @@ public final class SimpleAOClient {
   private com.aoindustries.aoserv.client.mysql.Server getMySQLServer(String aoServer, com.aoindustries.aoserv.client.mysql.Server.Name name) throws IllegalArgumentException, IOException, SQLException {
     com.aoindustries.aoserv.client.mysql.Server ms = getLinuxServer(aoServer).getMySQLServer(name);
     if (ms == null) {
-      throw new IllegalArgumentException("Unable to find MySQLServer: "+name+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find MySQLServer: " + name + " on " + aoServer);
     }
     return ms;
   }
 
   private com.aoindustries.aoserv.client.mysql.Database getMySQLDatabase(String aoServer, com.aoindustries.aoserv.client.mysql.Server.Name mysqlServer, com.aoindustries.aoserv.client.mysql.Database.Name name) throws IllegalArgumentException, IOException, SQLException {
-    com.aoindustries.aoserv.client.mysql.Server ms=getMySQLServer(aoServer, mysqlServer);
-    com.aoindustries.aoserv.client.mysql.Database md=ms.getMySQLDatabase(name);
+    com.aoindustries.aoserv.client.mysql.Server ms = getMySQLServer(aoServer, mysqlServer);
+    com.aoindustries.aoserv.client.mysql.Database md = ms.getMySQLDatabase(name);
     if (md == null) {
-      throw new IllegalArgumentException("Unable to find MySQLDatabase: "+name+" on "+mysqlServer+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find MySQLDatabase: " + name + " on " + mysqlServer + " on " + aoServer);
     }
     return md;
   }
 
   private com.aoindustries.aoserv.client.mysql.UserServer getMySQLServerUser(String aoServer, com.aoindustries.aoserv.client.mysql.Server.Name mysqlServer, com.aoindustries.aoserv.client.mysql.User.Name username) throws IllegalArgumentException, IOException, SQLException {
-    com.aoindustries.aoserv.client.mysql.UserServer msu=getMySQLServer(aoServer, mysqlServer).getMySQLServerUser(username);
+    com.aoindustries.aoserv.client.mysql.UserServer msu = getMySQLServer(aoServer, mysqlServer).getMySQLServerUser(username);
     if (msu == null) {
-      throw new IllegalArgumentException("Unable to find MySQLServerUser: "+username+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find MySQLServerUser: " + username + " on " + aoServer);
     }
     return msu;
   }
@@ -378,9 +378,9 @@ public final class SimpleAOClient {
   }
 
   private Bind getNetBind(int pkey) throws IllegalArgumentException, IOException, SQLException {
-    Bind nb=connector.getNet().getBind().get(pkey);
+    Bind nb = connector.getNet().getBind().get(pkey);
     if (nb == null) {
-      throw new IllegalArgumentException("Unable to find NetBind: "+pkey);
+      throw new IllegalArgumentException("Unable to find NetBind: " + pkey);
     }
     return nb;
   }
@@ -388,48 +388,48 @@ public final class SimpleAOClient {
   private Device getNetDevice(String server, String netDevice) throws IllegalArgumentException, SQLException, IOException {
     Device nd = getHost(server).getNetDevice(netDevice);
     if (nd == null) {
-      throw new IllegalArgumentException("Unable to find NetDevice: "+netDevice+" on "+server);
+      throw new IllegalArgumentException("Unable to find NetDevice: " + netDevice + " on " + server);
     }
     return nd;
   }
 
   private OperatingSystem getOperatingSystem(String name) throws IllegalArgumentException, IOException, SQLException {
-    OperatingSystem os=connector.getDistribution().getOperatingSystem().get(name);
+    OperatingSystem os = connector.getDistribution().getOperatingSystem().get(name);
     if (os == null) {
-      throw new IllegalArgumentException("Unable to find OperatingSystem: "+name);
+      throw new IllegalArgumentException("Unable to find OperatingSystem: " + name);
     }
     return os;
   }
 
   private OperatingSystemVersion getOperatingSystemVersion(String name, String version, Architecture architecture) throws IllegalArgumentException, IOException, SQLException {
-    OperatingSystemVersion ov=getOperatingSystem(name).getOperatingSystemVersion(connector, version, architecture);
+    OperatingSystemVersion ov = getOperatingSystem(name).getOperatingSystemVersion(connector, version, architecture);
     if (ov == null) {
-      throw new IllegalArgumentException("Unable to find OperatingSystemVersion: "+name+" version "+version+" for architecture of "+architecture);
+      throw new IllegalArgumentException("Unable to find OperatingSystemVersion: " + name + " version " + version + " for architecture of " + architecture);
     }
     return ov;
   }
 
   private PackageDefinition getPackageDefinition(int packageDefinition) throws IllegalArgumentException, IOException, SQLException {
-    PackageDefinition pd=connector.getBilling().getPackageDefinition().get(packageDefinition);
+    PackageDefinition pd = connector.getBilling().getPackageDefinition().get(packageDefinition);
     if (pd == null) {
-      throw new IllegalArgumentException("Unable to find PackageDefinition: "+packageDefinition);
+      throw new IllegalArgumentException("Unable to find PackageDefinition: " + packageDefinition);
     }
     return pd;
   }
 
   private Package getPackage(Account.Name name) throws IllegalArgumentException, IOException, SQLException {
-    Package pk=connector.getBilling().getPackage().get(name);
+    Package pk = connector.getBilling().getPackage().get(name);
     if (pk == null) {
-      throw new IllegalArgumentException("Unable to find Package: "+name);
+      throw new IllegalArgumentException("Unable to find Package: " + name);
     }
     return pk;
   }
 
   private com.aoindustries.aoserv.client.postgresql.Database getPostgresDatabase(String aoServer, com.aoindustries.aoserv.client.postgresql.Server.Name postgres_server, com.aoindustries.aoserv.client.postgresql.Database.Name name) throws IllegalArgumentException, IOException, SQLException {
-    com.aoindustries.aoserv.client.postgresql.Server ps=getPostgresServer(aoServer, postgres_server);
-    com.aoindustries.aoserv.client.postgresql.Database pd=ps.getPostgresDatabase(name);
+    com.aoindustries.aoserv.client.postgresql.Server ps = getPostgresServer(aoServer, postgres_server);
+    com.aoindustries.aoserv.client.postgresql.Database pd = ps.getPostgresDatabase(name);
     if (pd == null) {
-      throw new IllegalArgumentException("Unable to find PostgresDatabase: "+name+" on "+postgres_server+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find PostgresDatabase: " + name + " on " + postgres_server + " on " + aoServer);
     }
     return pd;
   }
@@ -437,15 +437,15 @@ public final class SimpleAOClient {
   private com.aoindustries.aoserv.client.postgresql.Server getPostgresServer(String aoServer, com.aoindustries.aoserv.client.postgresql.Server.Name name) throws IllegalArgumentException, IOException, SQLException {
     com.aoindustries.aoserv.client.postgresql.Server ps = getLinuxServer(aoServer).getPostgresServer(name);
     if (ps == null) {
-      throw new IllegalArgumentException("Unable to find PostgresServer: "+name+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find PostgresServer: " + name + " on " + aoServer);
     }
     return ps;
   }
 
   private com.aoindustries.aoserv.client.postgresql.UserServer getPostgresServerUser(String aoServer, com.aoindustries.aoserv.client.postgresql.Server.Name postgres_server, com.aoindustries.aoserv.client.postgresql.User.Name username) throws IllegalArgumentException, IOException, SQLException {
-    com.aoindustries.aoserv.client.postgresql.UserServer psu=getPostgresServer(aoServer, postgres_server).getPostgresServerUser(username);
+    com.aoindustries.aoserv.client.postgresql.UserServer psu = getPostgresServer(aoServer, postgres_server).getPostgresServerUser(username);
     if (psu == null) {
-      throw new IllegalArgumentException("Unable to find PostgresServerUser: "+username+" on "+postgres_server+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find PostgresServerUser: " + username + " on " + postgres_server + " on " + aoServer);
     }
     return psu;
   }
@@ -459,7 +459,7 @@ public final class SimpleAOClient {
   }
 
   private Host getHost(String server) throws IllegalArgumentException, SQLException, IOException {
-    Host se=connector.getNet().getHost().get(server);
+    Host se = connector.getNet().getHost().get(server);
     if (se == null) {
       throw new IllegalArgumentException("Unable to find Host: " + server);
     }
@@ -467,9 +467,9 @@ public final class SimpleAOClient {
   }
 
   private ServerFarm getServerFarm(String name) throws IllegalArgumentException, SQLException, IOException {
-    ServerFarm sf=connector.getInfrastructure().getServerFarm().get(name);
+    ServerFarm sf = connector.getInfrastructure().getServerFarm().get(name);
     if (sf == null) {
-      throw new IllegalArgumentException("Unable to find ServerFarm: "+name);
+      throw new IllegalArgumentException("Unable to find ServerFarm: " + name);
     }
     return sf;
   }
@@ -477,8 +477,8 @@ public final class SimpleAOClient {
   private Certificate getSslCertificate(String aoServer, String keyFileOrCertbotName) throws IllegalArgumentException, SQLException, IOException {
     for (Certificate cert : getLinuxServer(aoServer).getSslCertificates()) {
       if (
-        cert.getKeyFile().toString().equals(keyFileOrCertbotName)
-        || keyFileOrCertbotName.equals(cert.getCertbotName())
+          cert.getKeyFile().toString().equals(keyFileOrCertbotName)
+              || keyFileOrCertbotName.equals(cert.getCertbotName())
       ) {
         return cert;
       }
@@ -495,15 +495,15 @@ public final class SimpleAOClient {
       Category newTc = connector.getReseller().getCategory().getTicketCategory(tc, name);
       if (newTc == null) {
         if (tc == null) {
-          throw new IllegalArgumentException("Unable to find top-level TicketCategory: "+name);
+          throw new IllegalArgumentException("Unable to find top-level TicketCategory: " + name);
         } else {
-          throw new IllegalArgumentException("Unable to TicketCategory: "+name+" in "+tc);
+          throw new IllegalArgumentException("Unable to TicketCategory: " + name + " in " + tc);
         }
       }
       tc = newTc;
     }
     if (tc == null) {
-      throw new IllegalArgumentException("Unable to find TicketCategory: "+path);
+      throw new IllegalArgumentException("Unable to find TicketCategory: " + path);
     }
     return tc;
   }
@@ -511,7 +511,7 @@ public final class SimpleAOClient {
   private Priority getTicketPriority(String priority) throws IllegalArgumentException, IOException, SQLException {
     Priority tp = connector.getTicket().getPriority().get(priority);
     if (tp == null) {
-      throw new IllegalArgumentException("Unable to find TicketPriority: "+priority);
+      throw new IllegalArgumentException("Unable to find TicketPriority: " + priority);
     }
     return tp;
   }
@@ -519,15 +519,15 @@ public final class SimpleAOClient {
   private TicketType getTicketType(String type) throws IllegalArgumentException, IOException, SQLException {
     TicketType tt = connector.getTicket().getTicketType().get(type);
     if (tt == null) {
-      throw new IllegalArgumentException("Unable to find TicketType: "+type);
+      throw new IllegalArgumentException("Unable to find TicketType: " + type);
     }
     return tt;
   }
 
   private com.aoindustries.aoserv.client.account.User getUsername(com.aoindustries.aoserv.client.account.User.Name username) throws IllegalArgumentException, IOException, SQLException {
-    com.aoindustries.aoserv.client.account.User un=connector.getAccount().getUser().get(username);
+    com.aoindustries.aoserv.client.account.User un = connector.getAccount().getUser().get(username);
     if (un == null) {
-      throw new IllegalArgumentException("Unable to find User: "+username);
+      throw new IllegalArgumentException("Unable to find User: " + username);
     }
     return un;
   }
@@ -536,7 +536,7 @@ public final class SimpleAOClient {
     Host se = getHost(virtualServer);
     VirtualServer vs = se.getVirtualServer();
     if (vs == null) {
-      throw new IllegalArgumentException("Unable to find VirtualServer: "+virtualServer);
+      throw new IllegalArgumentException("Unable to find VirtualServer: " + virtualServer);
     }
     return vs;
   }
@@ -545,7 +545,7 @@ public final class SimpleAOClient {
     VirtualServer vs = getVirtualServer(virtualServer);
     VirtualDisk vd = vs.getVirtualDisk(device);
     if (vd == null) {
-      throw new IllegalArgumentException("Unable to find VirtualDisk: "+virtualServer+":/dev/"+device);
+      throw new IllegalArgumentException("Unable to find VirtualDisk: " + virtualServer + ":/dev/" + device);
     }
     return vd;
   }
@@ -553,7 +553,7 @@ public final class SimpleAOClient {
   private com.aoindustries.aoserv.client.net.reputation.Set getIpReputationSet(String identifier) throws IllegalArgumentException, SQLException, IOException {
     com.aoindustries.aoserv.client.net.reputation.Set set = connector.getNet().getReputation().getSet().get(identifier);
     if (set == null) {
-      throw new IllegalArgumentException("Unable to find IpReputationSet: "+identifier);
+      throw new IllegalArgumentException("Unable to find IpReputationSet: " + identifier);
     }
     return set;
   }
@@ -585,30 +585,30 @@ public final class SimpleAOClient {
    * @see  HostTable#addBackupHost(java.lang.String, com.aoindustries.aoserv.client.infrastructure.ServerFarm, com.aoindustries.aoserv.client.billing.Package, java.lang.String, int, com.aoindustries.aoserv.client.distribution.OperatingSystemVersion, com.aoindustries.aoserv.client.account.User.Name, java.lang.String, java.lang.String, java.lang.String)
    */
   public int addBackupHost(
-    String hostname,
-    String farm,
-    Account.Name owner,
-    String description,
-    int backup_hour,
-    String os_type,
-    String os_version,
-    String architecture,
-    com.aoindustries.aoserv.client.account.User.Name username,
-    String password,
-    String contact_phone,
-    String contact_email
+      String hostname,
+      String farm,
+      Account.Name owner,
+      String description,
+      int backup_hour,
+      String os_type,
+      String os_version,
+      String architecture,
+      com.aoindustries.aoserv.client.account.User.Name username,
+      String password,
+      String contact_phone,
+      String contact_email
   ) throws IllegalArgumentException, IOException, SQLException {
     return connector.getNet().getHost().addBackupHost(
-      hostname,
-      getServerFarm(farm),
-      getPackage(owner),
-      description,
-      backup_hour,
-      getOperatingSystemVersion(os_type, os_version, getArchitecture(architecture)),
-      username,
-      password,
-      contact_phone,
-      contact_email
+        hostname,
+        getServerFarm(farm),
+        getPackage(owner),
+        description,
+        backup_hour,
+        getOperatingSystemVersion(os_type, os_version, getArchitecture(architecture)),
+        username,
+        password,
+        contact_phone,
+        contact_email
     );
   }
 
@@ -634,26 +634,26 @@ public final class SimpleAOClient {
    * @see  Host#addAccount
    */
   public void addAccount(
-    Account.Name accounting,
-    String contractVersion,
-    String defaultServer,
-    Account.Name parent,
-    boolean can_add_backup_servers,
-    boolean can_add_businesses,
-    boolean can_see_prices,
-    boolean billParent
+      Account.Name accounting,
+      String contractVersion,
+      String defaultServer,
+      Account.Name parent,
+      boolean can_add_backup_servers,
+      boolean can_add_businesses,
+      boolean can_see_prices,
+      boolean billParent
   ) throws IllegalArgumentException, SQLException, IOException {
     if (contractVersion != null && contractVersion.length() == 0) {
-      contractVersion=null;
+      contractVersion = null;
     }
     getHost(defaultServer).addAccount(
-      accounting,
-      contractVersion,
-      getAccount(parent),
-      can_add_backup_servers,
-      can_add_businesses,
-      can_see_prices,
-      billParent
+        accounting,
+        contractVersion,
+        getAccount(parent),
+        can_add_backup_servers,
+        can_add_businesses,
+        can_see_prices,
+        billParent
     );
   }
 
@@ -669,41 +669,41 @@ public final class SimpleAOClient {
    * @see  User#addAdministrator
    */
   public void addAdministrator(
-    com.aoindustries.aoserv.client.account.User.Name username,
-    String name,
-    String title,
-    Date birthday,
-    boolean isPrivate,
-    String workPhone,
-    String homePhone,
-    String cellPhone,
-    String fax,
-    Email email,
-    String address1,
-    String address2,
-    String city,
-    String state,
-    String country,
-    String zip,
-    boolean enableEmailSupport
+      com.aoindustries.aoserv.client.account.User.Name username,
+      String name,
+      String title,
+      Date birthday,
+      boolean isPrivate,
+      String workPhone,
+      String homePhone,
+      String cellPhone,
+      String fax,
+      Email email,
+      String address1,
+      String address2,
+      String city,
+      String state,
+      String country,
+      String zip,
+      boolean enableEmailSupport
   ) throws IllegalArgumentException, IOException, SQLException {
     getUsername(username).addAdministrator(
-      name,
-      title,
-      birthday,
-      isPrivate,
-      workPhone,
-      homePhone,
-      cellPhone,
-      fax,
-      email,
-      address1,
-      address2,
-      city,
-      state,
-      country,
-      zip,
-      enableEmailSupport
+        name,
+        title,
+        birthday,
+        isPrivate,
+        workPhone,
+        homePhone,
+        cellPhone,
+        fax,
+        email,
+        address1,
+        address2,
+        city,
+        state,
+        country,
+        zip,
+        enableEmailSupport
     );
   }
 
@@ -720,43 +720,43 @@ public final class SimpleAOClient {
    * @see  Account#addProfile
    */
   public int addProfile(
-    Account.Name business,
-    String name,
-    boolean isPrivate,
-    String phone,
-    String fax,
-    String address1,
-    String address2,
-    String city,
-    String state,
-    String country,
-    String zip,
-    boolean sendInvoice,
-    String billingContact,
-    Set<Email> billingEmail,
-    String billingEmailFormat,
-    String technicalContact,
-    Set<Email> technicalEmail,
-    String technicalEmailFormat
+      Account.Name business,
+      String name,
+      boolean isPrivate,
+      String phone,
+      String fax,
+      String address1,
+      String address2,
+      String city,
+      String state,
+      String country,
+      String zip,
+      boolean sendInvoice,
+      String billingContact,
+      Set<Email> billingEmail,
+      String billingEmailFormat,
+      String technicalContact,
+      Set<Email> technicalEmail,
+      String technicalEmailFormat
   ) throws IllegalArgumentException, IOException, SQLException {
     return getAccount(business).addProfile(
-      name,
-      isPrivate,
-      phone,
-      fax,
-      address1,
-      address2,
-      city,
-      state,
-      country,
-      zip,
-      sendInvoice,
-      billingContact,
-      billingEmail,
-      Profile.EmailFormat.valueOf(billingEmailFormat.toUpperCase(Locale.ROOT)),
-      technicalContact,
-      technicalEmail,
-      Profile.EmailFormat.valueOf(technicalEmailFormat.toUpperCase(Locale.ROOT))
+        name,
+        isPrivate,
+        phone,
+        fax,
+        address1,
+        address2,
+        city,
+        state,
+        country,
+        zip,
+        sendInvoice,
+        billingContact,
+        billingEmail,
+        Profile.EmailFormat.valueOf(billingEmailFormat.toUpperCase(Locale.ROOT)),
+        technicalContact,
+        technicalEmail,
+        Profile.EmailFormat.valueOf(technicalEmailFormat.toUpperCase(Locale.ROOT))
     );
   }
 
@@ -777,8 +777,8 @@ public final class SimpleAOClient {
    * @see  Account#addAccountHost
    */
   public int addAccountHost(
-    Account.Name accounting,
-    String host
+      Account.Name accounting,
+      String host
   ) throws IllegalArgumentException, SQLException, IOException {
     return getAccount(accounting).addAccountHost(getHost(host));
   }
@@ -803,18 +803,18 @@ public final class SimpleAOClient {
    * @see  Server#addCvsRepository
    */
   public int addCvsRepository(
-    String aoServer,
-    PosixPath path,
-    com.aoindustries.aoserv.client.linux.User.Name username,
-    Group.Name group,
-    long mode
+      String aoServer,
+      PosixPath path,
+      com.aoindustries.aoserv.client.linux.User.Name username,
+      Group.Name group,
+      long mode
   ) throws IllegalArgumentException, IOException, SQLException {
     Server ao = getLinuxServer(aoServer);
     return ao.addCvsRepository(
-      path,
-      getLinuxServerAccount(aoServer, username),
-      getLinuxServerGroup(aoServer, group),
-      mode
+        path,
+        getLinuxServerAccount(aoServer, username),
+        getLinuxServerGroup(aoServer, group),
+        mode
     );
   }
 
@@ -855,61 +855,61 @@ public final class SimpleAOClient {
    * @see  RecordType#checkDestination
    */
   public int addDNSRecord(
-    String zone,
-    String domain,
-    String type,
-    int priority,
-    int weight,
-    int port,
-    short flag,
-    String tag,
-    String destination,
-    int ttl
+      String zone,
+      String domain,
+      String type,
+      int priority,
+      int weight,
+      int port,
+      short flag,
+      String tag,
+      String destination,
+      int ttl
   ) throws IllegalArgumentException, IOException, SQLException {
-    Zone nz=getZone(zone);
+    Zone nz = getZone(zone);
 
     // Must be a valid type
-    RecordType nt=connector.getDns().getRecordType().get(type);
+    RecordType nt = connector.getDns().getRecordType().get(type);
     if (nt == null) {
-      throw new IllegalArgumentException("Unable to find RecordType: "+type);
+      throw new IllegalArgumentException("Unable to find RecordType: " + type);
     }
 
     // Must have appropriate priority
     if (nt.hasPriority()) {
       if (priority == Record.NO_PRIORITY) {
-        throw new IllegalArgumentException("priority required for type="+type);
+        throw new IllegalArgumentException("priority required for type=" + type);
       } else if (priority <= 0) {
-        throw new IllegalArgumentException("Invalid priority: "+priority);
+        throw new IllegalArgumentException("Invalid priority: " + priority);
       }
     } else {
       if (priority != Record.NO_PRIORITY) {
-        throw new IllegalArgumentException("No priority allowed for type="+type);
+        throw new IllegalArgumentException("No priority allowed for type=" + type);
       }
     }
 
     // Must have appropriate weight
     if (nt.hasWeight()) {
       if (weight == Record.NO_WEIGHT) {
-        throw new IllegalArgumentException("weight required for type="+type);
+        throw new IllegalArgumentException("weight required for type=" + type);
       } else if (weight <= 0) {
-        throw new IllegalArgumentException("Invalid weight: "+weight);
+        throw new IllegalArgumentException("Invalid weight: " + weight);
       }
     } else {
       if (weight != Record.NO_WEIGHT) {
-        throw new IllegalArgumentException("No weight allowed for type="+type);
+        throw new IllegalArgumentException("No weight allowed for type=" + type);
       }
     }
 
     // Must have appropriate port
     if (nt.hasPort()) {
       if (port == Record.NO_PORT) {
-        throw new IllegalArgumentException("port required for type="+type);
-      } else if (port<1 || port>65535) {
-        throw new IllegalArgumentException("Invalid port: "+port);
+        throw new IllegalArgumentException("port required for type=" + type);
+      } else if (port < 1 || port > 65535) {
+        throw new IllegalArgumentException("Invalid port: " + port);
       }
     } else {
       if (port != Record.NO_PORT) {
-        throw new IllegalArgumentException("No port allowed for type="+type);
+        throw new IllegalArgumentException("No port allowed for type=" + type);
       }
     }
 
@@ -941,15 +941,15 @@ public final class SimpleAOClient {
     nt.checkDestination(tag, destination);
 
     return nz.addDNSRecord(
-      domain,
-      nt,
-      priority,
-      weight,
-      port,
-      flag,
-      tag,
-      destination,
-      ttl
+        domain,
+        nt,
+        priority,
+        weight,
+        port,
+        flag,
+        tag,
+        destination,
+        ttl
     );
   }
 
@@ -975,13 +975,13 @@ public final class SimpleAOClient {
    * @see  TopLevelDomain
    */
   public void addDNSZone(
-    Account.Name packageName,
-    String zone,
-    InetAddress ip,
-    int ttl
+      Account.Name packageName,
+      String zone,
+      InetAddress ip,
+      int ttl
   ) throws IllegalArgumentException, IOException, SQLException {
     if (!connector.getDns().getZone().checkDNSZone(zone)) {
-      throw new IllegalArgumentException("Invalid zone: "+zone);
+      throw new IllegalArgumentException("Invalid zone: " + zone);
     }
     getPackage(packageName).addDNSZone(zone, ip, ttl);
   }
@@ -1005,17 +1005,17 @@ public final class SimpleAOClient {
    * @see  Domain
    */
   public int addEmailForwarding(
-    String address,
-    DomainName domain,
-    String aoServer,
-    Email destination
+      String address,
+      DomainName domain,
+      String aoServer,
+      Email destination
   ) throws IllegalArgumentException, IOException, SQLException {
-    Domain sd=getEmailDomain(aoServer, domain);
-    Address ea=sd.getEmailAddress(address);
-    boolean added=false;
+    Domain sd = getEmailDomain(aoServer, domain);
+    Address ea = sd.getEmailAddress(address);
+    boolean added = false;
     if (ea == null) {
-      ea=connector.getEmail().getAddress().get(sd.addEmailAddress(address));
-      added=true;
+      ea = connector.getEmail().getAddress().get(sd.addEmailAddress(address));
+      added = true;
     }
     try {
       return ea.addEmailForwarding(destination);
@@ -1075,15 +1075,15 @@ public final class SimpleAOClient {
    * @see  GroupServer
    */
   public int addEmailList(
-    String aoServer,
-    PosixPath path,
-    com.aoindustries.aoserv.client.linux.User.Name username,
-    Group.Name group
+      String aoServer,
+      PosixPath path,
+      com.aoindustries.aoserv.client.linux.User.Name username,
+      Group.Name group
   ) throws IllegalArgumentException, IOException, SQLException {
     return connector.getEmail().getList().addEmailList(
-      path,
-      getLinuxServerAccount(aoServer, username),
-      getLinuxServerGroup(aoServer, group)
+        path,
+        getLinuxServerAccount(aoServer, username),
+        getLinuxServerGroup(aoServer, group)
     );
   }
 
@@ -1108,18 +1108,18 @@ public final class SimpleAOClient {
    * @see  Domain
    */
   public int addEmailListAddress(
-    String address,
-    DomainName domain,
-    PosixPath path,
-    String aoServer
+      String address,
+      DomainName domain,
+      PosixPath path,
+      String aoServer
   ) throws IllegalArgumentException, IOException, SQLException {
-    Domain sd=getEmailDomain(aoServer, domain);
-    com.aoindustries.aoserv.client.email.List el=getEmailList(aoServer, path);
-    Address ea=sd.getEmailAddress(address);
-    boolean added=false;
+    Domain sd = getEmailDomain(aoServer, domain);
+    com.aoindustries.aoserv.client.email.List el = getEmailList(aoServer, path);
+    Address ea = sd.getEmailAddress(address);
+    boolean added = false;
     if (ea == null) {
-      ea=connector.getEmail().getAddress().get(connector.getEmail().getAddress().addEmailAddress(address, sd));
-      added=true;
+      ea = connector.getEmail().getAddress().get(connector.getEmail().getAddress().addEmailAddress(address, sd));
+      added = true;
     }
     try {
       return el.addEmailAddress(ea);
@@ -1163,14 +1163,14 @@ public final class SimpleAOClient {
    * @see  Server#addEmailPipe
    */
   public int addEmailPipe(
-    String aoServer,
-    String command,
-    Account.Name packageName
+      String aoServer,
+      String command,
+      Account.Name packageName
   ) throws IllegalArgumentException, IOException, SQLException {
     return connector.getEmail().getPipe().addEmailPipe(
-      getLinuxServer(aoServer),
-      command,
-      getPackage(packageName)
+        getLinuxServer(aoServer),
+        command,
+        getPackage(packageName)
     );
   }
 
@@ -1194,24 +1194,24 @@ public final class SimpleAOClient {
    * @see  Domain
    */
   public int addEmailPipeAddress(
-    String address,
-    DomainName domain,
-    int pkey
+      String address,
+      DomainName domain,
+      int pkey
   ) throws IllegalArgumentException, IOException, SQLException {
-    Pipe ep=connector.getEmail().getPipe().get(pkey);
+    Pipe ep = connector.getEmail().getPipe().get(pkey);
     if (ep == null) {
-      throw new IllegalArgumentException("Unable to find EmailPipe: "+ep);
+      throw new IllegalArgumentException("Unable to find EmailPipe: " + ep);
     }
     Server ao = ep.getLinuxServer();
-    Domain sd=ao.getEmailDomain(domain);
+    Domain sd = ao.getEmailDomain(domain);
     if (sd == null) {
-      throw new IllegalArgumentException("Unable to find EmailDomain: "+domain+" on "+ao.getHostname());
+      throw new IllegalArgumentException("Unable to find EmailDomain: " + domain + " on " + ao.getHostname());
     }
-    Address ea=sd.getEmailAddress(address);
-    boolean added=false;
+    Address ea = sd.getEmailAddress(address);
+    boolean added = false;
     if (ea == null) {
       ea = connector.getEmail().getAddress().get(sd.addEmailAddress(address));
-      added=true;
+      added = true;
     }
     try {
       return ep.addEmailAddress(ea);
@@ -1252,19 +1252,19 @@ public final class SimpleAOClient {
    * @see  FileReplicationSetting
    */
   public int addFileBackupSetting(
-    int replication,
-    String path,
-    boolean backupEnabled,
-    boolean required
+      int replication,
+      String path,
+      boolean backupEnabled,
+      boolean required
   ) throws IllegalArgumentException, IOException, SQLException {
     FileReplication ffr = getConnector().getBackup().getFileReplication().get(replication);
     if (ffr == null) {
-      throw new IllegalArgumentException("Unable to find FailoverFileReplication: "+replication);
+      throw new IllegalArgumentException("Unable to find FailoverFileReplication: " + replication);
     }
     return ffr.addFileBackupSetting(
-      path,
-      backupEnabled,
-      required
+        path,
+        backupEnabled,
+        required
     );
   }
 
@@ -1284,7 +1284,7 @@ public final class SimpleAOClient {
    * @see  com.aoindustries.aoserv.client.linux.User#addFTPGuestUser()
    */
   public void addFTPGuestUser(
-    com.aoindustries.aoserv.client.linux.User.Name username
+      com.aoindustries.aoserv.client.linux.User.Name username
   ) throws IllegalArgumentException, IOException, SQLException {
     getLinuxAccount(username).addFTPGuestUser();
   }
@@ -1304,12 +1304,12 @@ public final class SimpleAOClient {
     List<SoftwareVersion> matches = new ArrayList<>();
     for (SoftwareVersion tv : connector.getDistribution().getSoftwareVersion()) {
       if (
-        tv.getOperatingSystemVersion_id() == osvId
-        && tv.getTechnologyName_name().equals(Software.PHP)
-        && (
-          tv.getVersion().equals(phpVersion)
-          || tv.getVersion().startsWith(prefix)
-        )
+          tv.getOperatingSystemVersion_id() == osvId
+              && tv.getTechnologyName_name().equals(Software.PHP)
+              && (
+              tv.getVersion().equals(phpVersion)
+                  || tv.getVersion().startsWith(prefix)
+          )
       ) {
         matches.add(tv);
       }
@@ -1347,11 +1347,11 @@ public final class SimpleAOClient {
     for (com.aoindustries.aoserv.client.web.tomcat.Version htv : connector.getWeb_tomcat().getVersion()) {
       SoftwareVersion tv = htv.getTechnologyVersion(connector);
       if (
-        tv.getOperatingSystemVersion_id() == osvId
-        && (
-          tv.getVersion().equals(version)
-          || tv.getVersion().startsWith(prefix)
-        )
+          tv.getOperatingSystemVersion_id() == osvId
+              && (
+              tv.getVersion().equals(version)
+                  || tv.getVersion().startsWith(prefix)
+          )
       ) {
         matches.add(htv);
       }
@@ -1413,48 +1413,48 @@ public final class SimpleAOClient {
    * @see  Site
    */
   public int addHttpdJBossSite(
-    String aoServer,
-    String siteName,
-    Account.Name packageName,
-    com.aoindustries.aoserv.client.linux.User.Name jvmUsername,
-    Group.Name groupName,
-    Email serverAdmin,
-    boolean useApache,
-    InetAddress ipAddress,
-    String netDevice,
-    DomainName primaryHttpHostname,
-    DomainName[] altHttpHostnames,
-    String jBossVersion
+      String aoServer,
+      String siteName,
+      Account.Name packageName,
+      com.aoindustries.aoserv.client.linux.User.Name jvmUsername,
+      Group.Name groupName,
+      Email serverAdmin,
+      boolean useApache,
+      InetAddress ipAddress,
+      String netDevice,
+      DomainName primaryHttpHostname,
+      DomainName[] altHttpHostnames,
+      String jBossVersion
   ) throws IllegalArgumentException, SQLException, IOException {
     Server ao = getLinuxServer(aoServer);
     checkSiteName(siteName);
 
     IpAddress ip;
-    if (netDevice != null && (netDevice=netDevice.trim()).length() == 0) {
-      netDevice=null;
+    if (netDevice != null && (netDevice = netDevice.trim()).length() == 0) {
+      netDevice = null;
     }
     if (ipAddress != null && netDevice != null) {
-      ip=getIPAddress(aoServer, netDevice, ipAddress);
+      ip = getIPAddress(aoServer, netDevice, ipAddress);
     } else if (ipAddress == null && netDevice == null) {
-      ip=null;
+      ip = null;
     } else {
       throw new IllegalArgumentException("ip_address and net_device must both be null or both be not null");
     }
-    com.aoindustries.aoserv.client.web.jboss.Version hjv=connector.getWeb_jboss().getVersion().getHttpdJBossVersion(jBossVersion, ao.getHost().getOperatingSystemVersion());
+    com.aoindustries.aoserv.client.web.jboss.Version hjv = connector.getWeb_jboss().getVersion().getHttpdJBossVersion(jBossVersion, ao.getHost().getOperatingSystemVersion());
     if (hjv == null) {
-      throw new IllegalArgumentException("Unable to find HttpdJBossVersion: "+jBossVersion);
+      throw new IllegalArgumentException("Unable to find HttpdJBossVersion: " + jBossVersion);
     }
     return ao.addHttpdJBossSite(
-      siteName,
-      getPackage(packageName),
-      getLinuxServerAccount(aoServer, jvmUsername).getLinuxAccount(),
-      getLinuxServerGroup(aoServer, groupName).getLinuxGroup(),
-      serverAdmin,
-      useApache,
-      ip,
-      primaryHttpHostname,
-      altHttpHostnames,
-      hjv
+        siteName,
+        getPackage(packageName),
+        getLinuxServerAccount(aoServer, jvmUsername).getLinuxAccount(),
+        getLinuxServerGroup(aoServer, groupName).getLinuxGroup(),
+        serverAdmin,
+        useApache,
+        ip,
+        primaryHttpHostname,
+        altHttpHostnames,
+        hjv
     );
   }
 
@@ -1472,18 +1472,18 @@ public final class SimpleAOClient {
    * @see  Host
    */
   public int addHttpdSharedTomcat(
-    String name,
-    String aoServer,
-    String version,
-    com.aoindustries.aoserv.client.linux.User.Name linuxServerAccount,
-    Group.Name linuxServerGroup
+      String name,
+      String aoServer,
+      String version,
+      com.aoindustries.aoserv.client.linux.User.Name linuxServerAccount,
+      Group.Name linuxServerGroup
   ) throws IllegalArgumentException, SQLException, IOException {
     Server ao = getLinuxServer(aoServer);
     return ao.addHttpdSharedTomcat(
-      name,
-      findTomcatVersion(ao, version),
-      getLinuxServerAccount(aoServer, linuxServerAccount),
-      getLinuxServerGroup(aoServer, linuxServerGroup)
+        name,
+        findTomcatVersion(ao, version),
+        getLinuxServerAccount(aoServer, linuxServerAccount),
+        getLinuxServerGroup(aoServer, linuxServerGroup)
     );
   }
 
@@ -1495,12 +1495,12 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link VirtualHost}
    */
   public int addHttpdSiteURL(
-    int hsbPKey,
-    DomainName hostname
+      int hsbPKey,
+      DomainName hostname
   ) throws IllegalArgumentException, IOException, SQLException {
-    VirtualHost hsb=connector.getWeb().getVirtualHost().get(hsbPKey);
+    VirtualHost hsb = connector.getWeb().getVirtualHost().get(hsbPKey);
     if (hsb == null) {
-      throw new IllegalArgumentException("Unable to find HttpdSiteBind: "+hsbPKey);
+      throw new IllegalArgumentException("Unable to find HttpdSiteBind: " + hsbPKey);
     }
     return hsb.addHttpdSiteURL(hostname);
   }
@@ -1513,15 +1513,15 @@ public final class SimpleAOClient {
    * @throws IllegalArgumentException if unable to find the {@link Site}
    */
   public int addHttpdSiteAuthenticatedLocation(
-    String siteName,
-    String aoServer,
-    String path,
-    boolean isRegularExpression,
-    String authName,
-    PosixPath authGroupFile,
-    PosixPath authUserFile,
-    String require,
-    String handler
+      String siteName,
+      String aoServer,
+      String path,
+      boolean isRegularExpression,
+      String authName,
+      PosixPath authGroupFile,
+      PosixPath authUserFile,
+      String require,
+      String handler
   ) throws IllegalArgumentException, IOException, SQLException {
     Site hs = getLinuxServer(aoServer).getHttpdSite(siteName);
     if (hs == null) {
@@ -1538,15 +1538,15 @@ public final class SimpleAOClient {
    * @throws IllegalArgumentException if unable to find the {@link Site}
    */
   public void setHttpdSiteAuthenticatedLocationAttributes(
-    String siteName,
-    String aoServer,
-    String path,
-    boolean isRegularExpression,
-    String authName,
-    PosixPath authGroupFile,
-    PosixPath authUserFile,
-    String require,
-    String handler
+      String siteName,
+      String aoServer,
+      String path,
+      boolean isRegularExpression,
+      String authName,
+      PosixPath authGroupFile,
+      PosixPath authUserFile,
+      String require,
+      String handler
   ) throws IllegalArgumentException, IOException, SQLException {
     Site hs = getLinuxServer(aoServer).getHttpdSite(siteName);
     if (hs == null) {
@@ -1574,41 +1574,41 @@ public final class SimpleAOClient {
    *                                  or {@link com.aoindustries.aoserv.client.web.tomcat.Site}
    */
   public int addHttpdTomcatContext(
-    String siteName,
-    String aoServer,
-    String className,
-    boolean cookies,
-    boolean crossContext,
-    PosixPath docBase,
-    boolean override,
-    String path,
-    boolean privileged,
-    boolean reloadable,
-    boolean useNaming,
-    String wrapperClass,
-    int debug,
-    PosixPath workDir,
-    boolean serverXmlConfigured
+      String siteName,
+      String aoServer,
+      String className,
+      boolean cookies,
+      boolean crossContext,
+      PosixPath docBase,
+      boolean override,
+      String path,
+      boolean privileged,
+      boolean reloadable,
+      boolean useNaming,
+      String wrapperClass,
+      int debug,
+      PosixPath workDir,
+      boolean serverXmlConfigured
   ) throws IllegalArgumentException, IOException, SQLException {
-    Site hs=getHttpdSite(aoServer, siteName);
-    com.aoindustries.aoserv.client.web.tomcat.Site hts=hs.getHttpdTomcatSite();
+    Site hs = getHttpdSite(aoServer, siteName);
+    com.aoindustries.aoserv.client.web.tomcat.Site hts = hs.getHttpdTomcatSite();
     if (hts == null) {
-      throw new IllegalArgumentException("Unable to find HttpdTomcatSite: "+siteName+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find HttpdTomcatSite: " + siteName + " on " + aoServer);
     }
     return hts.addHttpdTomcatContext(
-      className == null || (className=className.trim()).length() == 0?null:className,
-      cookies,
-      crossContext,
-      docBase,
-      override,
-      path,
-      privileged,
-      reloadable,
-      useNaming,
-      wrapperClass == null || (wrapperClass=wrapperClass.trim()).length() == 0?null:wrapperClass,
-      debug,
-      workDir,
-      serverXmlConfigured
+        className == null || (className = className.trim()).length() == 0 ? null : className,
+        cookies,
+        crossContext,
+        docBase,
+        override,
+        path,
+        privileged,
+        reloadable,
+        useNaming,
+        wrapperClass == null || (wrapperClass = wrapperClass.trim()).length() == 0 ? null : wrapperClass,
+        debug,
+        workDir,
+        serverXmlConfigured
     );
   }
 
@@ -1621,38 +1621,38 @@ public final class SimpleAOClient {
    *                                  {@link com.aoindustries.aoserv.client.web.tomcat.Site} or {@link Context}.
    */
   public int addHttpdTomcatDataSource(
-    String siteName,
-    String aoServer,
-    String path,
-    String name,
-    String driverClassName,
-    String url,
-    String username,
-    String password,
-    int maxActive,
-    int maxIdle,
-    int maxWait,
-    String validationQuery
+      String siteName,
+      String aoServer,
+      String path,
+      String name,
+      String driverClassName,
+      String url,
+      String username,
+      String password,
+      int maxActive,
+      int maxIdle,
+      int maxWait,
+      String validationQuery
   ) throws IllegalArgumentException, IOException, SQLException {
-    Site hs=getHttpdSite(aoServer, siteName);
-    com.aoindustries.aoserv.client.web.tomcat.Site hts=hs.getHttpdTomcatSite();
+    Site hs = getHttpdSite(aoServer, siteName);
+    com.aoindustries.aoserv.client.web.tomcat.Site hts = hs.getHttpdTomcatSite();
     if (hts == null) {
-      throw new IllegalArgumentException("Unable to find HttpdTomcatSite: "+siteName+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find HttpdTomcatSite: " + siteName + " on " + aoServer);
     }
-    Context htc=hts.getHttpdTomcatContext(path);
+    Context htc = hts.getHttpdTomcatContext(path);
     if (htc == null) {
-      throw new IllegalArgumentException("Unable to find HttpdTomcatContext: "+siteName+" on "+aoServer+" path='"+path+'\'');
+      throw new IllegalArgumentException("Unable to find HttpdTomcatContext: " + siteName + " on " + aoServer + " path='" + path + '\'');
     }
     return htc.addHttpdTomcatDataSource(
-      name,
-      driverClassName,
-      url,
-      username,
-      password,
-      maxActive,
-      maxIdle,
-      maxWait,
-      validationQuery
+        name,
+        driverClassName,
+        url,
+        username,
+        password,
+        maxActive,
+        maxIdle,
+        maxWait,
+        validationQuery
     );
   }
 
@@ -1665,28 +1665,28 @@ public final class SimpleAOClient {
    *                                  {@link com.aoindustries.aoserv.client.web.tomcat.Site} or {@link Context}.
    */
   public int addHttpdTomcatParameter(
-    String siteName,
-    String aoServer,
-    String path,
-    String name,
-    String value,
-    boolean override,
-    String description
+      String siteName,
+      String aoServer,
+      String path,
+      String name,
+      String value,
+      boolean override,
+      String description
   ) throws IllegalArgumentException, IOException, SQLException {
-    Site hs=getHttpdSite(aoServer, siteName);
-    com.aoindustries.aoserv.client.web.tomcat.Site hts=hs.getHttpdTomcatSite();
+    Site hs = getHttpdSite(aoServer, siteName);
+    com.aoindustries.aoserv.client.web.tomcat.Site hts = hs.getHttpdTomcatSite();
     if (hts == null) {
-      throw new IllegalArgumentException("Unable to find HttpdTomcatSite: "+siteName+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find HttpdTomcatSite: " + siteName + " on " + aoServer);
     }
-    Context htc=hts.getHttpdTomcatContext(path);
+    Context htc = hts.getHttpdTomcatContext(path);
     if (htc == null) {
-      throw new IllegalArgumentException("Unable to find HttpdTomcatContext: "+siteName+" on "+aoServer+" path='"+path+'\'');
+      throw new IllegalArgumentException("Unable to find HttpdTomcatContext: " + siteName + " on " + aoServer + " path='" + path + '\'');
     }
     return htc.addHttpdTomcatParameter(
-      name,
-      value,
-      override,
-      description
+        name,
+        value,
+        override,
+        description
     );
   }
 
@@ -1701,10 +1701,10 @@ public final class SimpleAOClient {
    * @see  com.aoindustries.aoserv.client.web.tomcat.Site#addJkMount(java.lang.String, boolean)
    */
   public int addHttpdTomcatSiteJkMount(
-    String siteName,
-    String aoServer,
-    String path,
-    boolean mount
+      String siteName,
+      String aoServer,
+      String path,
+      boolean mount
   ) throws IllegalArgumentException, IOException, SQLException {
     Site hs = getHttpdSite(aoServer, siteName);
     com.aoindustries.aoserv.client.web.tomcat.Site hts = hs.getHttpdTomcatSite();
@@ -1725,9 +1725,9 @@ public final class SimpleAOClient {
    * @see  JkMount#remove()
    */
   public void removeHttpdTomcatSiteJkMount(
-    String siteName,
-    String aoServer,
-    String path
+      String siteName,
+      String aoServer,
+      String path
   ) throws IllegalArgumentException, IOException, SQLException {
     Site hs = getHttpdSite(aoServer, siteName);
     com.aoindustries.aoserv.client.web.tomcat.Site hts = hs.getHttpdTomcatSite();
@@ -1788,30 +1788,30 @@ public final class SimpleAOClient {
    * @see  com.aoindustries.aoserv.client.web.tomcat.Site
    */
   public int addHttpdTomcatSharedSite(
-    String aoServer,
-    String siteName,
-    Account.Name packageName,
-    com.aoindustries.aoserv.client.linux.User.Name jvmUsername,
-    Group.Name groupName,
-    Email serverAdmin,
-    boolean useApache,
-    InetAddress ipAddress,
-    String netDevice,
-    DomainName primaryHttpHostname,
-    DomainName[] altHttpHostnames,
-    String sharedTomcatName
+      String aoServer,
+      String siteName,
+      Account.Name packageName,
+      com.aoindustries.aoserv.client.linux.User.Name jvmUsername,
+      Group.Name groupName,
+      Email serverAdmin,
+      boolean useApache,
+      InetAddress ipAddress,
+      String netDevice,
+      DomainName primaryHttpHostname,
+      DomainName[] altHttpHostnames,
+      String sharedTomcatName
   ) throws IllegalArgumentException, SQLException, IOException {
     Server ao = getLinuxServer(aoServer);
     checkSiteName(siteName);
 
     IpAddress ip;
-    if (netDevice != null && (netDevice=netDevice.trim()).length() == 0) {
-      netDevice=null;
+    if (netDevice != null && (netDevice = netDevice.trim()).length() == 0) {
+      netDevice = null;
     }
     if (ipAddress != null && netDevice != null) {
-      ip=getIPAddress(aoServer, netDevice, ipAddress);
+      ip = getIPAddress(aoServer, netDevice, ipAddress);
     } else if (ipAddress == null && netDevice == null) {
-      ip=null;
+      ip = null;
     } else {
       throw new IllegalArgumentException("ip_address and net_device must both be null or both be not null");
     }
@@ -1821,16 +1821,16 @@ public final class SimpleAOClient {
     }
 
     return ao.addHttpdTomcatSharedSite(
-      siteName,
-      getPackage(packageName),
-      getLinuxServerAccount(aoServer, jvmUsername).getLinuxAccount(),
-      getLinuxServerGroup(aoServer, groupName).getLinuxGroup(),
-      serverAdmin,
-      useApache,
-      ip,
-      primaryHttpHostname,
-      altHttpHostnames,
-      sharedTomcatName
+        siteName,
+        getPackage(packageName),
+        getLinuxServerAccount(aoServer, jvmUsername).getLinuxAccount(),
+        getLinuxServerGroup(aoServer, groupName).getLinuxGroup(),
+        serverAdmin,
+        useApache,
+        ip,
+        primaryHttpHostname,
+        altHttpHostnames,
+        sharedTomcatName
     );
   }
 
@@ -1876,44 +1876,44 @@ public final class SimpleAOClient {
    * @see  Site
    */
   public int addHttpdTomcatStdSite(
-    String aoServer,
-    String siteName,
-    Account.Name packageName,
-    com.aoindustries.aoserv.client.linux.User.Name jvmUsername,
-    Group.Name groupName,
-    Email serverAdmin,
-    boolean useApache,
-    InetAddress ipAddress,
-    String netDevice,
-    DomainName primaryHttpHostname,
-    DomainName[] altHttpHostnames,
-    String tomcatVersion
+      String aoServer,
+      String siteName,
+      Account.Name packageName,
+      com.aoindustries.aoserv.client.linux.User.Name jvmUsername,
+      Group.Name groupName,
+      Email serverAdmin,
+      boolean useApache,
+      InetAddress ipAddress,
+      String netDevice,
+      DomainName primaryHttpHostname,
+      DomainName[] altHttpHostnames,
+      String tomcatVersion
   ) throws IllegalArgumentException, SQLException, IOException {
     Server ao = getLinuxServer(aoServer);
     checkSiteName(siteName);
 
     IpAddress ip;
-    if (netDevice != null && (netDevice=netDevice.trim()).length() == 0) {
-      netDevice=null;
+    if (netDevice != null && (netDevice = netDevice.trim()).length() == 0) {
+      netDevice = null;
     }
     if (ipAddress != null && netDevice != null) {
-      ip=getIPAddress(aoServer, netDevice, ipAddress);
+      ip = getIPAddress(aoServer, netDevice, ipAddress);
     } else if (ipAddress == null && netDevice == null) {
-      ip=null;
+      ip = null;
     } else {
       throw new IllegalArgumentException("ip_address and net_device must both be null or both be not null");
     }
     return ao.addHttpdTomcatStdSite(
-      siteName,
-      getPackage(packageName),
-      getLinuxServerAccount(aoServer, jvmUsername).getLinuxAccount(),
-      getLinuxServerGroup(aoServer, groupName).getLinuxGroup(),
-      serverAdmin,
-      useApache,
-      ip,
-      primaryHttpHostname,
-      altHttpHostnames,
-      findTomcatVersion(ao, tomcatVersion)
+        siteName,
+        getPackage(packageName),
+        getLinuxServerAccount(aoServer, jvmUsername).getLinuxAccount(),
+        getLinuxServerGroup(aoServer, groupName).getLinuxGroup(),
+        serverAdmin,
+        useApache,
+        ip,
+        primaryHttpHostname,
+        altHttpHostnames,
+        findTomcatVersion(ao, tomcatVersion)
     );
   }
 
@@ -1943,20 +1943,20 @@ public final class SimpleAOClient {
    * @see  Address
    */
   public int addLinuxAccAddress(
-    String address,
-    DomainName domain,
-    String aoServer,
-    com.aoindustries.aoserv.client.linux.User.Name username
+      String address,
+      DomainName domain,
+      String aoServer,
+      com.aoindustries.aoserv.client.linux.User.Name username
   ) throws IllegalArgumentException, IOException, SQLException {
-    Domain sd=getEmailDomain(aoServer, domain);
-    UserServer lsa=getLinuxServerAccount(aoServer, username);
-    Address ea=sd.getEmailAddress(address);
+    Domain sd = getEmailDomain(aoServer, domain);
+    UserServer lsa = getLinuxServerAccount(aoServer, username);
+    Address ea = sd.getEmailAddress(address);
     boolean added;
     if (ea == null) {
-      ea=connector.getEmail().getAddress().get(sd.addEmailAddress(address));
-      added=true;
+      ea = connector.getEmail().getAddress().get(sd.addEmailAddress(address));
+      added = true;
     } else {
-      added=false;
+      added = false;
     }
     try {
       return lsa.addEmailAddress(ea);
@@ -2008,34 +2008,34 @@ public final class SimpleAOClient {
    * @see  UserServer
    */
   public void addLinuxAccount(
-    com.aoindustries.aoserv.client.linux.User.Name username,
-    Group.Name primary_group,
-    Gecos name,
-    Gecos office_location,
-    Gecos office_phone,
-    Gecos home_phone,
-    String type,
-    PosixPath shell
+      com.aoindustries.aoserv.client.linux.User.Name username,
+      Group.Name primary_group,
+      Gecos name,
+      Gecos office_location,
+      Gecos office_phone,
+      Gecos home_phone,
+      String type,
+      PosixPath shell
   ) throws IllegalArgumentException, IOException, SQLException {
     com.aoindustries.aoserv.client.account.User un = getUsername(username);
     // Make sure group exists
-    Group lg=getLinuxGroup(primary_group);
-    UserType lat=connector.getLinux().getUserType().get(type);
+    Group lg = getLinuxGroup(primary_group);
+    UserType lat = connector.getLinux().getUserType().get(type);
     if (lat == null) {
-      throw new IllegalArgumentException("Unable to find LinuxAccountType: "+type);
+      throw new IllegalArgumentException("Unable to find LinuxAccountType: " + type);
     }
-    Shell sh=connector.getLinux().getShell().get(shell);
+    Shell sh = connector.getLinux().getShell().get(shell);
     if (sh == null) {
-      throw new IllegalArgumentException("Unable to find Shell: "+shell);
+      throw new IllegalArgumentException("Unable to find Shell: " + shell);
     }
     un.addLinuxAccount(
-      primary_group,
-      name,
-      office_location,
-      office_phone,
-      home_phone,
-      type,
-      shell
+        primary_group,
+        name,
+        office_location,
+        office_phone,
+        home_phone,
+        type,
+        shell
     );
   }
 
@@ -2062,18 +2062,18 @@ public final class SimpleAOClient {
    * @see  #addLinuxGroupAccount
    */
   public void addLinuxGroup(
-    Group.Name name,
-    Account.Name packageName,
-    String type
+      Group.Name name,
+      Account.Name packageName,
+      String type
   ) throws IllegalArgumentException, IOException, SQLException {
-    GroupType lgt=connector.getLinux().getGroupType().get(type);
+    GroupType lgt = connector.getLinux().getGroupType().get(type);
     if (lgt == null) {
-      throw new IllegalArgumentException("Unable to find LinuxGroupType: "+type);
+      throw new IllegalArgumentException("Unable to find LinuxGroupType: " + type);
     }
     connector.getLinux().getGroup().addLinuxGroup(
-      name,
-      getPackage(packageName),
-      type
+        name,
+        getPackage(packageName),
+        type
     );
   }
 
@@ -2099,8 +2099,8 @@ public final class SimpleAOClient {
    * @see  GroupServer
    */
   public int addLinuxGroupAccount(
-    Group.Name group,
-    com.aoindustries.aoserv.client.linux.User.Name username
+      Group.Name group,
+      com.aoindustries.aoserv.client.linux.User.Name username
   ) throws IllegalArgumentException, IOException, SQLException {
     return getLinuxGroup(group).addLinuxAccount(getLinuxAccount(username));
   }
@@ -2129,11 +2129,11 @@ public final class SimpleAOClient {
    * @see  Server
    */
   public int addLinuxServerAccount(
-    com.aoindustries.aoserv.client.linux.User.Name username,
-    String aoServer,
-    PosixPath home
+      com.aoindustries.aoserv.client.linux.User.Name username,
+      String aoServer,
+      PosixPath home
   ) throws IllegalArgumentException, IOException, SQLException {
-    com.aoindustries.aoserv.client.linux.User la=getLinuxAccount(username);
+    com.aoindustries.aoserv.client.linux.User la = getLinuxAccount(username);
     Server ao = getLinuxServer(aoServer);
     if (home == null) {
       home = UserServer.getDefaultHomeDirectory(username);
@@ -2162,8 +2162,8 @@ public final class SimpleAOClient {
    * @see  Host
    */
   public int addLinuxServerGroup(
-    Group.Name group,
-    String aoServer
+      Group.Name group,
+      String aoServer
   ) throws IllegalArgumentException, IOException, SQLException {
     return getLinuxGroup(group).addLinuxServerGroup(getLinuxServer(aoServer));
   }
@@ -2188,14 +2188,14 @@ public final class SimpleAOClient {
    * @see  #removeEmailList
    */
   public int addMajordomoList(
-    DomainName domain,
-    String aoServer,
-    String listName
+      DomainName domain,
+      String aoServer,
+      String listName
   ) throws IllegalArgumentException, IOException, SQLException {
-    Domain ed=getEmailDomain(aoServer, domain);
-    MajordomoServer ms=ed.getMajordomoServer();
+    Domain ed = getEmailDomain(aoServer, domain);
+    MajordomoServer ms = ed.getMajordomoServer();
     if (ms == null) {
-      throw new IllegalArgumentException("Unable to find MajordomoServer: "+domain+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find MajordomoServer: " + domain + " on " + aoServer);
     }
     checkMajordomoListName(listName);
     return ms.addMajordomoList(listName);
@@ -2218,21 +2218,21 @@ public final class SimpleAOClient {
    * @see  #removeMajordomoServer
    */
   public void addMajordomoServer(
-    DomainName domain,
-    String aoServer,
-    com.aoindustries.aoserv.client.linux.User.Name linux_account,
-    Group.Name linux_group,
-    String version
+      DomainName domain,
+      String aoServer,
+      com.aoindustries.aoserv.client.linux.User.Name linux_account,
+      Group.Name linux_group,
+      String version
   ) throws IllegalArgumentException, IOException, SQLException {
-    Domain ed=getEmailDomain(aoServer, domain);
-    MajordomoVersion mv=connector.getEmail().getMajordomoVersion().get(version);
+    Domain ed = getEmailDomain(aoServer, domain);
+    MajordomoVersion mv = connector.getEmail().getMajordomoVersion().get(version);
     if (mv == null) {
-      throw new IllegalArgumentException("Unable to find MajordomoVersion: "+version);
+      throw new IllegalArgumentException("Unable to find MajordomoVersion: " + version);
     }
     ed.addMajordomoServer(
-      getLinuxServerAccount(aoServer, linux_account),
-      getLinuxServerGroup(aoServer, linux_group),
-      mv
+        getLinuxServerAccount(aoServer, linux_account),
+        getLinuxServerGroup(aoServer, linux_group),
+        mv
     );
   }
 
@@ -2261,15 +2261,15 @@ public final class SimpleAOClient {
    * @see  #waitForMySQLDatabaseRebuild
    */
   public int addMySQLDatabase(
-    com.aoindustries.aoserv.client.mysql.Database.Name name,
-    com.aoindustries.aoserv.client.mysql.Server.Name mysqlServer,
-    String aoServer,
-    Account.Name packageName
+      com.aoindustries.aoserv.client.mysql.Database.Name name,
+      com.aoindustries.aoserv.client.mysql.Server.Name mysqlServer,
+      String aoServer,
+      Account.Name packageName
   ) throws IllegalArgumentException, IOException, SQLException {
     return connector.getMysql().getDatabase().addMySQLDatabase(
-      name,
-      getMySQLServer(aoServer, mysqlServer),
-      getPackage(packageName)
+        name,
+        getMySQLServer(aoServer, mysqlServer),
+        getPackage(packageName)
     );
   }
 
@@ -2303,51 +2303,51 @@ public final class SimpleAOClient {
    * @see  #addMySQLDatabase
    */
   public int addMySQLDBUser(
-    com.aoindustries.aoserv.client.mysql.Database.Name name,
-    com.aoindustries.aoserv.client.mysql.Server.Name mysqlServer,
-    String aoServer,
-    com.aoindustries.aoserv.client.mysql.User.Name username,
-    boolean canSelect,
-    boolean canInsert,
-    boolean canUpdate,
-    boolean canDelete,
-    boolean canCreate,
-    boolean canDrop,
-    boolean canReference,
-    boolean canIndex,
-    boolean canAlter,
-    boolean canCreateTempTable,
-    boolean canLockTables,
-    boolean canCreateView,
-    boolean canShowView,
-    boolean canCreateRoutine,
-    boolean canAlterRoutine,
-    boolean canExecute,
-    boolean canEvent,
-    boolean canTrigger
+      com.aoindustries.aoserv.client.mysql.Database.Name name,
+      com.aoindustries.aoserv.client.mysql.Server.Name mysqlServer,
+      String aoServer,
+      com.aoindustries.aoserv.client.mysql.User.Name username,
+      boolean canSelect,
+      boolean canInsert,
+      boolean canUpdate,
+      boolean canDelete,
+      boolean canCreate,
+      boolean canDrop,
+      boolean canReference,
+      boolean canIndex,
+      boolean canAlter,
+      boolean canCreateTempTable,
+      boolean canLockTables,
+      boolean canCreateView,
+      boolean canShowView,
+      boolean canCreateRoutine,
+      boolean canAlterRoutine,
+      boolean canExecute,
+      boolean canEvent,
+      boolean canTrigger
   ) throws IllegalArgumentException, IOException, SQLException {
-    com.aoindustries.aoserv.client.mysql.Database md=getMySQLDatabase(aoServer, mysqlServer, name);
+    com.aoindustries.aoserv.client.mysql.Database md = getMySQLDatabase(aoServer, mysqlServer, name);
     return connector.getMysql().getDatabaseUser().addMySQLDBUser(
-      md,
-      getMySQLServerUser(aoServer, mysqlServer, username),
-      canSelect,
-      canInsert,
-      canUpdate,
-      canDelete,
-      canCreate,
-      canDrop,
-      canReference,
-      canIndex,
-      canAlter,
-      canCreateTempTable,
-      canLockTables,
-      canCreateView,
-      canShowView,
-      canCreateRoutine,
-      canAlterRoutine,
-      canExecute,
-      canEvent,
-      canTrigger
+        md,
+        getMySQLServerUser(aoServer, mysqlServer, username),
+        canSelect,
+        canInsert,
+        canUpdate,
+        canDelete,
+        canCreate,
+        canDrop,
+        canReference,
+        canIndex,
+        canAlter,
+        canCreateTempTable,
+        canLockTables,
+        canCreateView,
+        canShowView,
+        canCreateRoutine,
+        canAlterRoutine,
+        canExecute,
+        canEvent,
+        canTrigger
     );
   }
 
@@ -2373,12 +2373,12 @@ public final class SimpleAOClient {
    * @see  #addMySQLDBUser
    */
   public int addMySQLServerUser(
-    com.aoindustries.aoserv.client.mysql.User.Name username,
-    com.aoindustries.aoserv.client.mysql.Server.Name mysqlServer,
-    String aoServer,
-    String host
+      com.aoindustries.aoserv.client.mysql.User.Name username,
+      com.aoindustries.aoserv.client.mysql.Server.Name mysqlServer,
+      String aoServer,
+      String host
   ) throws IllegalArgumentException, IOException, SQLException {
-    return getMySQLUser(username).addMySQLServerUser(getMySQLServer(aoServer, mysqlServer), host == null || host.length() == 0?null:host);
+    return getMySQLUser(username).addMySQLServerUser(getMySQLServer(aoServer, mysqlServer), host == null || host.length() == 0 ? null : host);
   }
 
   /**
@@ -2405,7 +2405,7 @@ public final class SimpleAOClient {
    * @see  User
    */
   public void addMySQLUser(
-    com.aoindustries.aoserv.client.mysql.User.Name username
+      com.aoindustries.aoserv.client.mysql.User.Name username
   ) throws IllegalArgumentException, IOException, SQLException {
     getUsername(username).addMySQLUser();
   }
@@ -2420,27 +2420,27 @@ public final class SimpleAOClient {
    * @see  Host#addNetBind
    */
   public int addNetBind(
-    String server,
-    Account.Name packageName,
-    InetAddress ipAddress,
-    String net_device,
-    Port port,
-    String appProtocol,
-    boolean monitoringEnabled,
-    Set<FirewallZone.Name> firewalldZoneNames
+      String server,
+      Account.Name packageName,
+      InetAddress ipAddress,
+      String net_device,
+      Port port,
+      String appProtocol,
+      boolean monitoringEnabled,
+      Set<FirewallZone.Name> firewalldZoneNames
   ) throws IllegalArgumentException, SQLException, IOException {
-    IpAddress ia=getIPAddress(server, net_device, ipAddress);
-    AppProtocol appProt=connector.getNet().getAppProtocol().get(appProtocol);
+    IpAddress ia = getIPAddress(server, net_device, ipAddress);
+    AppProtocol appProt = connector.getNet().getAppProtocol().get(appProtocol);
     if (appProt == null) {
-      throw new IllegalArgumentException("Unable to find Protocol: "+appProtocol);
+      throw new IllegalArgumentException("Unable to find Protocol: " + appProtocol);
     }
     return getHost(server).addNetBind(
-      getPackage(packageName),
-      ia,
-      port,
-      appProt,
-      monitoringEnabled,
-      firewalldZoneNames
+        getPackage(packageName),
+        ia,
+        port,
+        appProt,
+        monitoringEnabled,
+        firewalldZoneNames
     );
   }
 
@@ -2467,11 +2467,11 @@ public final class SimpleAOClient {
    * @see  Transaction
    */
   public int addNoticeLog(
-    Account.Name accounting,
-    String billingContact,
-    Email emailAddress,
-    String type,
-    int transid
+      Account.Name accounting,
+      String billingContact,
+      Email emailAddress,
+      String type,
+      int transid
   ) throws IllegalArgumentException, IOException, SQLException {
     Account account = getAccount(accounting);
     NoticeType nt = connector.getBilling().getNoticeType().get(type);
@@ -2488,11 +2488,11 @@ public final class SimpleAOClient {
       trans = null;
     }
     return connector.getBilling().getNoticeLog().addNoticeLog(
-      account,
-      billingContact,
-      emailAddress,
-      nt,
-      trans
+        account,
+        billingContact,
+        emailAddress,
+        nt,
+        trans
     );
   }
 
@@ -2525,12 +2525,12 @@ public final class SimpleAOClient {
    * @see  PackageDefinition
    */
   public int addPackage(
-    Account.Name packageName,
-    Account.Name accounting,
-    int packageDefinition
+      Account.Name packageName,
+      Account.Name accounting,
+      int packageDefinition
   ) throws IllegalArgumentException, IOException, SQLException {
-    Account business=getAccount(accounting);
-    PackageDefinition pd=getPackageDefinition(packageDefinition);
+    Account business = getAccount(accounting);
+    PackageDefinition pd = getPackageDefinition(packageDefinition);
 
     return business.addPackage(packageName, pd);
   }
@@ -2562,28 +2562,28 @@ public final class SimpleAOClient {
    * @see  Encoding
    */
   public int addPostgresDatabase(
-    com.aoindustries.aoserv.client.postgresql.Database.Name name,
-    com.aoindustries.aoserv.client.postgresql.Server.Name postgres_server,
-    String aoServer,
-    com.aoindustries.aoserv.client.postgresql.User.Name datdba,
-    String encoding,
-    boolean enablePostgis
+      com.aoindustries.aoserv.client.postgresql.Database.Name name,
+      com.aoindustries.aoserv.client.postgresql.Server.Name postgres_server,
+      String aoServer,
+      com.aoindustries.aoserv.client.postgresql.User.Name datdba,
+      String encoding,
+      boolean enablePostgis
   ) throws IllegalArgumentException, SQLException, IOException {
-    com.aoindustries.aoserv.client.postgresql.UserServer psu=getPostgresServerUser(aoServer, postgres_server, datdba);
-    com.aoindustries.aoserv.client.postgresql.Server ps=psu.getPostgresServer();
-    com.aoindustries.aoserv.client.postgresql.Version pv=ps.getVersion();
-    Encoding pe=pv.getPostgresEncoding(connector, encoding);
+    com.aoindustries.aoserv.client.postgresql.UserServer psu = getPostgresServerUser(aoServer, postgres_server, datdba);
+    com.aoindustries.aoserv.client.postgresql.Server ps = psu.getPostgresServer();
+    com.aoindustries.aoserv.client.postgresql.Version pv = ps.getVersion();
+    Encoding pe = pv.getPostgresEncoding(connector, encoding);
     if (pe == null) {
-      throw new IllegalArgumentException("Unable to find PostgresEncoding for PostgresVersion "+pv.getTechnologyVersion(connector).getVersion()+": "+encoding);
+      throw new IllegalArgumentException("Unable to find PostgresEncoding for PostgresVersion " + pv.getTechnologyVersion(connector).getVersion() + ": " + encoding);
     }
     if (enablePostgis && pv.getPostgisVersion(connector) == null) {
-      throw new IllegalArgumentException("Unable to enable PostGIS, PostgresVersion "+pv.getTechnologyVersion(connector).getVersion()+" doesn't support PostGIS");
+      throw new IllegalArgumentException("Unable to enable PostGIS, PostgresVersion " + pv.getTechnologyVersion(connector).getVersion() + " doesn't support PostGIS");
     }
     return ps.addPostgresDatabase(
-      name,
-      psu,
-      pe,
-      enablePostgis
+        name,
+        psu,
+        pe,
+        enablePostgis
     );
   }
 
@@ -2605,9 +2605,9 @@ public final class SimpleAOClient {
    * @see  #addPostgresUser
    */
   public int addPostgresServerUser(
-    com.aoindustries.aoserv.client.postgresql.User.Name username,
-    com.aoindustries.aoserv.client.postgresql.Server.Name postgresServer,
-    String aoServer
+      com.aoindustries.aoserv.client.postgresql.User.Name username,
+      com.aoindustries.aoserv.client.postgresql.Server.Name postgresServer,
+      String aoServer
   ) throws IllegalArgumentException, IOException, SQLException {
     return getPostgresUser(username).addPostgresServerUser(getPostgresServer(aoServer, postgresServer));
   }
@@ -2635,7 +2635,7 @@ public final class SimpleAOClient {
    * @see  User
    */
   public void addPostgresUser(
-    com.aoindustries.aoserv.client.postgresql.User.Name username
+      com.aoindustries.aoserv.client.postgresql.User.Name username
   ) throws IllegalArgumentException, IOException, SQLException {
     getUsername(username).addPostgresUser();
   }
@@ -2664,9 +2664,9 @@ public final class SimpleAOClient {
    * @see  #addLinuxAccAddress
    */
   public int addEmailDomain(
-    DomainName domain,
-    String aoServer,
-    Account.Name packageName
+      DomainName domain,
+      String aoServer,
+      Account.Name packageName
   ) throws IllegalArgumentException, IOException, SQLException {
     return getLinuxServer(aoServer).addEmailDomain(domain, getPackage(packageName));
   }
@@ -2690,24 +2690,24 @@ public final class SimpleAOClient {
    * @see  Package#addEmailSmtpRelay
    */
   public int addEmailSmtpRelay(
-    Account.Name packageName,
-    String aoServer,
-    HostAddress host,
-    String type,
-    long duration
+      Account.Name packageName,
+      String aoServer,
+      HostAddress host,
+      String type,
+      long duration
   ) throws IllegalArgumentException, SQLException, IOException {
     Server ao;
-    if (aoServer != null && (aoServer=aoServer.trim()).length() == 0) {
-      aoServer=null;
+    if (aoServer != null && (aoServer = aoServer.trim()).length() == 0) {
+      aoServer = null;
     }
     if (aoServer == null) {
-      ao=null;
+      ao = null;
     } else {
       ao = getLinuxServer(aoServer);
     }
-    SmtpRelayType esrt=connector.getEmail().getSmtpRelayType().get(type);
+    SmtpRelayType esrt = connector.getEmail().getSmtpRelayType().get(type);
     if (esrt == null) {
-      throw new SQLException("Unable to find EmailSmtpRelayType: "+type);
+      throw new SQLException("Unable to find EmailSmtpRelayType: " + type);
     }
 
     return getPackage(packageName).addEmailSmtpRelay(ao, host, esrt, duration);
@@ -2726,12 +2726,12 @@ public final class SimpleAOClient {
    * @see  SmtpRelay#addSpamEmailMessage
    */
   public int addSpamEmailMessage(
-    int email_relay,
-    String message
+      int email_relay,
+      String message
   ) throws IllegalArgumentException, IOException, SQLException {
-    SmtpRelay esr=connector.getEmail().getSmtpRelay().get(email_relay);
+    SmtpRelay esr = connector.getEmail().getSmtpRelay().get(email_relay);
     if (esr == null) {
-      throw new IllegalArgumentException("Unable to find EmailSmtpRelay: "+email_relay);
+      throw new IllegalArgumentException("Unable to find EmailSmtpRelay: " + email_relay);
     }
     return esr.addSpamEmailMessage(message);
   }
@@ -2860,65 +2860,65 @@ public final class SimpleAOClient {
    * @see  TransactionType
    */
   public int addTransaction(
-    int timeType,
-    Timestamp time,
-    Account.Name account,
-    Account.Name sourceAccount,
-    com.aoindustries.aoserv.client.account.User.Name administrator,
-    String type,
-    String description,
-    int quantity,
-    Money rate,
-    String paymentType,
-    String paymentInfo,
-    String processor,
-    byte payment_confirmed
+      int timeType,
+      Timestamp time,
+      Account.Name account,
+      Account.Name sourceAccount,
+      com.aoindustries.aoserv.client.account.User.Name administrator,
+      String type,
+      String description,
+      int quantity,
+      Money rate,
+      String paymentType,
+      String paymentInfo,
+      String processor,
+      byte payment_confirmed
   ) throws IllegalArgumentException, IOException, SQLException {
-    Account bu=getAccount(account);
-    Account sourceBU=getAccount(sourceAccount);
+    Account bu = getAccount(account);
+    Account sourceBU = getAccount(sourceAccount);
     Administrator pe = connector.getAccount().getAdministrator().get(administrator);
     if (pe == null) {
       throw new IllegalArgumentException("Unable to find Administrator: " + administrator);
     }
-    TransactionType tt=connector.getBilling().getTransactionType().get(type);
+    TransactionType tt = connector.getBilling().getTransactionType().get(type);
     if (tt == null) {
-      throw new IllegalArgumentException("Unable to find TransactionType: "+type);
+      throw new IllegalArgumentException("Unable to find TransactionType: " + type);
     }
     PaymentType pt;
     if (paymentType == null || paymentType.length() == 0) {
-      pt=null;
+      pt = null;
     } else {
-      pt=connector.getPayment().getPaymentType().get(paymentType);
+      pt = connector.getPayment().getPaymentType().get(paymentType);
       if (pt == null) {
-        throw new IllegalArgumentException("Unable to find PaymentType: "+paymentType);
+        throw new IllegalArgumentException("Unable to find PaymentType: " + paymentType);
       }
     }
     if (paymentInfo != null && paymentInfo.length() == 0) {
-      paymentInfo=null;
+      paymentInfo = null;
     }
     Processor ccProcessor;
     if (processor == null || processor.length() == 0) {
-      ccProcessor=null;
+      ccProcessor = null;
     } else {
       ccProcessor = connector.getPayment().getProcessor().get(processor);
       if (ccProcessor == null) {
-        throw new IllegalArgumentException("Unable to find CreditCardProcessor: "+processor);
+        throw new IllegalArgumentException("Unable to find CreditCardProcessor: " + processor);
       }
     }
     return connector.getBilling().getTransaction().add(
-      timeType,
-      time,
-      bu,
-      sourceBU,
-      pe,
-      tt,
-      description,
-      quantity,
-      rate,
-      pt,
-      paymentInfo,
-      ccProcessor,
-      payment_confirmed
+        timeType,
+        time,
+        bu,
+        sourceBU,
+        pe,
+        tt,
+        description,
+        quantity,
+        rate,
+        pt,
+        paymentInfo,
+        ccProcessor,
+        payment_confirmed
     );
   }
 
@@ -2943,8 +2943,8 @@ public final class SimpleAOClient {
    * @see  Package
    */
   public void addUsername(
-    Account.Name packageName,
-    com.aoindustries.aoserv.client.account.User.Name username
+      Account.Name packageName,
+      com.aoindustries.aoserv.client.account.User.Name username
   ) throws IllegalArgumentException, IOException, SQLException {
     getPackage(packageName).addUsername(username);
   }
@@ -2967,7 +2967,7 @@ public final class SimpleAOClient {
    * @see  PasswordProtected
    */
   public int areLinuxAccountPasswordsSet(
-    com.aoindustries.aoserv.client.linux.User.Name username
+      com.aoindustries.aoserv.client.linux.User.Name username
   ) throws IllegalArgumentException, IOException, SQLException {
     return getLinuxAccount(username).arePasswordsSet();
   }
@@ -2990,7 +2990,7 @@ public final class SimpleAOClient {
    * @see  PasswordProtected
    */
   public int areMySQLUserPasswordsSet(
-    com.aoindustries.aoserv.client.mysql.User.Name username
+      com.aoindustries.aoserv.client.mysql.User.Name username
   ) throws IllegalArgumentException, IOException, SQLException {
     return getMySQLUser(username).arePasswordsSet();
   }
@@ -3013,7 +3013,7 @@ public final class SimpleAOClient {
    * @see  PasswordProtected
    */
   public int arePostgresUserPasswordsSet(
-    com.aoindustries.aoserv.client.postgresql.User.Name username
+      com.aoindustries.aoserv.client.postgresql.User.Name username
   ) throws IllegalArgumentException, IOException, SQLException {
     return getPostgresUser(username).arePasswordsSet();
   }
@@ -3036,7 +3036,7 @@ public final class SimpleAOClient {
    * @see  PasswordProtected
    */
   public int areUsernamePasswordsSet(
-    com.aoindustries.aoserv.client.account.User.Name username
+      com.aoindustries.aoserv.client.account.User.Name username
   ) throws IllegalArgumentException, IOException, SQLException {
     return getUsername(username).arePasswordsSet();
   }
@@ -3089,8 +3089,8 @@ public final class SimpleAOClient {
    * @see  Account#cancel
    */
   public void cancelAccount(
-    Account.Name accounting,
-    String reason
+      Account.Name accounting,
+      String reason
   ) throws IllegalArgumentException, IOException, SQLException {
     getAccount(accounting).cancel(reason);
   }
@@ -3242,8 +3242,8 @@ public final class SimpleAOClient {
    * @see  Administrator#checkPassword
    */
   public static List<PasswordChecker.Result> checkAdministratorPassword(
-    com.aoindustries.aoserv.client.account.User.Name username,
-    String password
+      com.aoindustries.aoserv.client.account.User.Name username,
+      String password
   ) throws IOException {
     return Administrator.checkPassword(username, password);
   }
@@ -3263,10 +3263,10 @@ public final class SimpleAOClient {
    * @see  Zone
    */
   public void checkDNSZone(
-    String zone
+      String zone
   ) throws IllegalArgumentException, IOException, SQLException {
     if (!connector.getDns().getZone().checkDNSZone(zone)) {
-      throw new IllegalArgumentException("Invalid DNS zone: "+zone);
+      throw new IllegalArgumentException("Invalid DNS zone: " + zone);
     }
   }
 
@@ -3281,15 +3281,15 @@ public final class SimpleAOClient {
    * @see  com.aoindustries.aoserv.client.email.List#isValidRegularPath
    */
   public void checkEmailListPath(
-    String aoServer,
-    PosixPath path
+      String aoServer,
+      PosixPath path
   ) throws IllegalArgumentException, IOException, SQLException {
     Server ao = getLinuxServer(aoServer);
     if (
-      !com.aoindustries.aoserv.client.email.List.isValidRegularPath(
-        path,
-        ao.getHost().getOperatingSystemVersion_id()
-      )
+        !com.aoindustries.aoserv.client.email.List.isValidRegularPath(
+            path,
+            ao.getHost().getOperatingSystemVersion_id()
+        )
     ) {
       throw new IllegalArgumentException("Invalid EmailList path: " + path + " on " + ao);
     }
@@ -3316,8 +3316,8 @@ public final class SimpleAOClient {
    * @see  PasswordChecker
    */
   public List<PasswordChecker.Result> checkLinuxAccountPassword(
-    com.aoindustries.aoserv.client.linux.User.Name username,
-    String password
+      com.aoindustries.aoserv.client.linux.User.Name username,
+      String password
   ) throws IllegalArgumentException, IOException, SQLException {
     return getLinuxAccount(username).checkPassword(password);
   }
@@ -3340,8 +3340,8 @@ public final class SimpleAOClient {
    * @see  com.aoindustries.aoserv.client.mysql.User#checkPassword
    */
   public static List<PasswordChecker.Result> checkMySQLPassword(
-    com.aoindustries.aoserv.client.mysql.User.Name username,
-    String password
+      com.aoindustries.aoserv.client.mysql.User.Name username,
+      String password
   ) throws IOException {
     return com.aoindustries.aoserv.client.mysql.User.checkPassword(username, password);
   }
@@ -3364,8 +3364,8 @@ public final class SimpleAOClient {
    * @see  com.aoindustries.aoserv.client.postgresql.User#checkPassword
    */
   public static List<PasswordChecker.Result> checkPostgresPassword(
-    com.aoindustries.aoserv.client.postgresql.User.Name username,
-    String password
+      com.aoindustries.aoserv.client.postgresql.User.Name username,
+      String password
   ) throws IOException {
     return com.aoindustries.aoserv.client.postgresql.User.checkPassword(username, password);
   }
@@ -3379,10 +3379,10 @@ public final class SimpleAOClient {
    * @see  #addMajordomoList
    */
   public static void checkMajordomoListName(
-    String listName
+      String listName
   ) throws IllegalArgumentException {
     if (!MajordomoList.isValidListName(listName)) {
-      throw new IllegalArgumentException("Invalid Majordomo list name: "+listName);
+      throw new IllegalArgumentException("Invalid Majordomo list name: " + listName);
     }
   }
 
@@ -3398,10 +3398,10 @@ public final class SimpleAOClient {
    * @see  #addHttpdTomcatSharedSite
    */
   public static void checkSharedTomcatName(
-    String tomcatName
+      String tomcatName
   ) throws IllegalArgumentException {
     if (!SharedTomcat.isValidSharedTomcatName(tomcatName)) {
-      throw new IllegalArgumentException("Invalid shared Tomcat name: "+tomcatName);
+      throw new IllegalArgumentException("Invalid shared Tomcat name: " + tomcatName);
     }
   }
 
@@ -3416,10 +3416,10 @@ public final class SimpleAOClient {
    * @see  #addHttpdTomcatStdSite
    */
   public static void checkSiteName(
-    String siteName
+      String siteName
   ) throws IllegalArgumentException {
     if (!Site.isValidSiteName(siteName)) {
-      throw new IllegalArgumentException("Invalid site name: "+siteName);
+      throw new IllegalArgumentException("Invalid site name: " + siteName);
     }
   }
 
@@ -3442,8 +3442,8 @@ public final class SimpleAOClient {
    * @see  User#checkPassword
    */
   public List<PasswordChecker.Result> checkUsernamePassword(
-    com.aoindustries.aoserv.client.account.User.Name username,
-    String password
+      com.aoindustries.aoserv.client.account.User.Name username,
+      String password
   ) throws IllegalArgumentException, IOException, SQLException {
     return getUsername(username).checkPassword(password);
   }
@@ -3465,9 +3465,9 @@ public final class SimpleAOClient {
    * @see  #addLinuxServerAccount
    */
   public boolean compareLinuxServerAccountPassword(
-    com.aoindustries.aoserv.client.linux.User.Name username,
-    String aoServer,
-    String password
+      com.aoindustries.aoserv.client.linux.User.Name username,
+      String aoServer,
+      String password
   ) throws IllegalArgumentException, IOException, SQLException {
     return getLinuxServerAccount(aoServer, username).passwordMatches(password);
   }
@@ -3527,9 +3527,9 @@ public final class SimpleAOClient {
    * @see  #removeLinuxServerAccount
    */
   public long copyHomeDirectory(
-    com.aoindustries.aoserv.client.linux.User.Name username,
-    String from_ao_server,
-    String to_ao_server
+      com.aoindustries.aoserv.client.linux.User.Name username,
+      String from_ao_server,
+      String to_ao_server
   ) throws IllegalArgumentException, IOException, SQLException {
     return getLinuxServerAccount(from_ao_server, username).copyHomeDirectory(getLinuxServer(to_ao_server));
   }
@@ -3551,10 +3551,10 @@ public final class SimpleAOClient {
    * @see  #removeLinuxServerAccount
    */
   public void copyLinuxServerAccountPassword(
-    com.aoindustries.aoserv.client.linux.User.Name from_username,
-    String from_ao_server,
-    com.aoindustries.aoserv.client.linux.User.Name to_username,
-    String to_ao_server
+      com.aoindustries.aoserv.client.linux.User.Name from_username,
+      String from_ao_server,
+      com.aoindustries.aoserv.client.linux.User.Name to_username,
+      String to_ao_server
   ) throws IllegalArgumentException, IOException, SQLException {
     getLinuxServerAccount(from_ao_server, from_username).copyPassword(getLinuxServerAccount(to_ao_server, to_username));
   }
@@ -3595,12 +3595,12 @@ public final class SimpleAOClient {
    * @see  CreditCard
    */
   public void declineCreditCard(
-    int pkey,
-    String reason
+      int pkey,
+      String reason
   ) throws IllegalArgumentException, IOException, SQLException {
-    CreditCard card=connector.getPayment().getCreditCard().get(pkey);
+    CreditCard card = connector.getPayment().getCreditCard().get(pkey);
     if (card == null) {
-      throw new IllegalArgumentException("Unable to find CreditCard: "+pkey);
+      throw new IllegalArgumentException("Unable to find CreditCard: " + pkey);
     }
     card.declined(reason);
   }
@@ -3619,8 +3619,8 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the necessary {@link AOServObject}s
    */
   public int disableAccount(Account.Name accounting, String disableReason) throws IllegalArgumentException, IOException, SQLException {
-    Account bu=getAccount(accounting);
-    DisableLog dl=connector.getAccount().getDisableLog().get(bu.addDisableLog(disableReason));
+    Account bu = getAccount(accounting);
+    DisableLog dl = connector.getAccount().getDisableLog().get(bu.addDisableLog(disableReason));
     for (Package pk : bu.getPackages()) {
       if (!pk.isDisabled()) {
         disablePackage(dl, pk);
@@ -3644,11 +3644,12 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the necessary {@link AOServObject}s
    */
   public int disablePackage(Account.Name name, String disableReason) throws IllegalArgumentException, SQLException, IOException {
-    Package pk=getPackage(name);
-    DisableLog dl=connector.getAccount().getDisableLog().get(pk.getAccount().addDisableLog(disableReason));
+    Package pk = getPackage(name);
+    DisableLog dl = connector.getAccount().getDisableLog().get(pk.getAccount().addDisableLog(disableReason));
     disablePackage(dl, pk);
     return dl.getPkey();
   }
+
   private void disablePackage(DisableLog dl, Package pk) throws IOException, SQLException {
     /*
      * Email stuff
@@ -3672,11 +3673,11 @@ public final class SimpleAOClient {
     /*
      * HTTP stuff
      */
-    List<Server> httpdServers=new SortedArrayList<>();
+    List<Server> httpdServers = new SortedArrayList<>();
     for (SharedTomcat hst : pk.getHttpdSharedTomcats()) {
       if (!hst.isDisabled()) {
         hst.disable(dl);
-        Server ao=hst.getLinuxServer();
+        Server ao = hst.getLinuxServer();
         if (!httpdServers.contains(ao)) {
           httpdServers.add(ao);
         }
@@ -3685,7 +3686,7 @@ public final class SimpleAOClient {
     for (Site hs : pk.getHttpdSites()) {
       if (!hs.isDisabled()) {
         disableHttpdSite(dl, hs);
-        Server ao=hs.getLinuxServer();
+        Server ao = hs.getLinuxServer();
         if (!httpdServers.contains(ao)) {
           httpdServers.add(ao);
         }
@@ -3720,12 +3721,12 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link Server}, or {@link SharedTomcat}
    */
   public int disableHttpdSharedTomcat(
-    String name,
-    String aoServer,
-    String disableReason
+      String name,
+      String aoServer,
+      String disableReason
   ) throws IllegalArgumentException, IOException, SQLException {
-    SharedTomcat hst=getHttpdSharedTomcat(aoServer, name);
-    DisableLog dl=connector.getAccount().getDisableLog().get(hst.getLinuxServerGroup().getLinuxGroup().getPackage().getAccount().addDisableLog(disableReason));
+    SharedTomcat hst = getHttpdSharedTomcat(aoServer, name);
+    DisableLog dl = connector.getAccount().getDisableLog().get(hst.getLinuxServerGroup().getLinuxGroup().getPackage().getAccount().addDisableLog(disableReason));
     hst.disable(dl);
     return dl.getPkey();
   }
@@ -3744,14 +3745,14 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link Pipe}
    */
   public int disableEmailPipe(
-    int pkey,
-    String disableReason
+      int pkey,
+      String disableReason
   ) throws IllegalArgumentException, SQLException, IOException {
-    Pipe ep=connector.getEmail().getPipe().get(pkey);
+    Pipe ep = connector.getEmail().getPipe().get(pkey);
     if (ep == null) {
-      throw new IllegalArgumentException("Unable to find EmailPipe: "+pkey);
+      throw new IllegalArgumentException("Unable to find EmailPipe: " + pkey);
     }
-    DisableLog dl=connector.getAccount().getDisableLog().get(ep.getPackage().getAccount().addDisableLog(disableReason));
+    DisableLog dl = connector.getAccount().getDisableLog().get(ep.getPackage().getAccount().addDisableLog(disableReason));
     ep.disable(dl);
     return dl.getPkey();
   }
@@ -3771,15 +3772,16 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link Server}, or {@link Site}
    */
   public int disableHttpdSite(
-    String name,
-    String aoServer,
-    String disableReason
+      String name,
+      String aoServer,
+      String disableReason
   ) throws IllegalArgumentException, SQLException, IOException {
-    Site hs=getHttpdSite(aoServer, name);
-    DisableLog dl=connector.getAccount().getDisableLog().get(hs.getPackage().getAccount().addDisableLog(disableReason));
+    Site hs = getHttpdSite(aoServer, name);
+    DisableLog dl = connector.getAccount().getDisableLog().get(hs.getPackage().getAccount().addDisableLog(disableReason));
     disableHttpdSite(dl, hs);
     return dl.getPkey();
   }
+
   private void disableHttpdSite(DisableLog dl, Site hs) throws IOException, SQLException {
     for (VirtualHost hsb : hs.getHttpdSiteBinds()) {
       if (!hsb.isDisabled()) {
@@ -3803,14 +3805,14 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link VirtualHost}
    */
   public int disableHttpdSiteBind(
-    int pkey,
-    String disableReason
+      int pkey,
+      String disableReason
   ) throws IllegalArgumentException, SQLException, IOException {
-    VirtualHost hsb=connector.getWeb().getVirtualHost().get(pkey);
+    VirtualHost hsb = connector.getWeb().getVirtualHost().get(pkey);
     if (hsb == null) {
-      throw new IllegalArgumentException("Unable to find HttpdSiteBind: "+pkey);
+      throw new IllegalArgumentException("Unable to find HttpdSiteBind: " + pkey);
     }
-    DisableLog dl=connector.getAccount().getDisableLog().get(hsb.getHttpdSite().getPackage().getAccount().addDisableLog(disableReason));
+    DisableLog dl = connector.getAccount().getDisableLog().get(hsb.getHttpdSite().getPackage().getAccount().addDisableLog(disableReason));
     hsb.disable(dl);
     return dl.getPkey();
   }
@@ -3830,12 +3832,12 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link com.aoindustries.aoserv.client.email.List}
    */
   public int disableEmailList(
-    PosixPath path,
-    String aoServer,
-    String disableReason
+      PosixPath path,
+      String aoServer,
+      String disableReason
   ) throws IllegalArgumentException, SQLException, IOException {
-    com.aoindustries.aoserv.client.email.List el=getEmailList(aoServer, path);
-    DisableLog dl=connector.getAccount().getDisableLog().get(el.getLinuxServerGroup().getLinuxGroup().getPackage().getAccount().addDisableLog(disableReason));
+    com.aoindustries.aoserv.client.email.List el = getEmailList(aoServer, path);
+    DisableLog dl = connector.getAccount().getDisableLog().get(el.getLinuxServerGroup().getLinuxGroup().getPackage().getAccount().addDisableLog(disableReason));
     el.disable(dl);
     return dl.getPkey();
   }
@@ -3854,14 +3856,14 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link SmtpRelay}
    */
   public int disableEmailSmtpRelay(
-    int pkey,
-    String disableReason
+      int pkey,
+      String disableReason
   ) throws IllegalArgumentException, SQLException, IOException {
-    SmtpRelay ssr=connector.getEmail().getSmtpRelay().get(pkey);
+    SmtpRelay ssr = connector.getEmail().getSmtpRelay().get(pkey);
     if (ssr == null) {
-      throw new IllegalArgumentException("Unable to find EmailSmtpRelay: "+pkey);
+      throw new IllegalArgumentException("Unable to find EmailSmtpRelay: " + pkey);
     }
-    DisableLog dl=connector.getAccount().getDisableLog().get(ssr.getPackage().getAccount().addDisableLog(disableReason));
+    DisableLog dl = connector.getAccount().getDisableLog().get(ssr.getPackage().getAccount().addDisableLog(disableReason));
     ssr.disable(dl);
     return dl.getPkey();
   }
@@ -3880,26 +3882,27 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link User}
    */
   public int disableUsername(
-    com.aoindustries.aoserv.client.account.User.Name username,
-    String disableReason
+      com.aoindustries.aoserv.client.account.User.Name username,
+      String disableReason
   ) throws IllegalArgumentException, SQLException, IOException {
     com.aoindustries.aoserv.client.account.User un = getUsername(username);
-    DisableLog dl=connector.getAccount().getDisableLog().get(un.getPackage().getAccount().addDisableLog(disableReason));
+    DisableLog dl = connector.getAccount().getDisableLog().get(un.getPackage().getAccount().addDisableLog(disableReason));
     disableUsername(dl, un);
     return dl.getPkey();
   }
+
   private void disableUsername(DisableLog dl, com.aoindustries.aoserv.client.account.User un) throws IOException, SQLException {
-    com.aoindustries.aoserv.client.linux.User la=un.getLinuxAccount();
+    com.aoindustries.aoserv.client.linux.User la = un.getLinuxAccount();
     if (la != null && !la.isDisabled()) {
       disableLinuxAccount(dl, la);
     }
 
-    com.aoindustries.aoserv.client.mysql.User mu=un.getMySQLUser();
+    com.aoindustries.aoserv.client.mysql.User mu = un.getMySQLUser();
     if (mu != null && !mu.isDisabled()) {
       disableMySQLUser(dl, mu);
     }
 
-    com.aoindustries.aoserv.client.postgresql.User pu=un.getPostgresUser();
+    com.aoindustries.aoserv.client.postgresql.User pu = un.getPostgresUser();
     if (pu != null && !pu.isDisabled()) {
       disablePostgresUser(dl, pu);
     }
@@ -3921,14 +3924,15 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link User} or {@link com.aoindustries.aoserv.client.linux.User}
    */
   public int disableLinuxAccount(
-    com.aoindustries.aoserv.client.linux.User.Name username,
-    String disableReason
+      com.aoindustries.aoserv.client.linux.User.Name username,
+      String disableReason
   ) throws IllegalArgumentException, SQLException, IOException {
-    com.aoindustries.aoserv.client.linux.User la=getLinuxAccount(username);
-    DisableLog dl=connector.getAccount().getDisableLog().get(la.getUsername().getPackage().getAccount().addDisableLog(disableReason));
+    com.aoindustries.aoserv.client.linux.User la = getLinuxAccount(username);
+    DisableLog dl = connector.getAccount().getDisableLog().get(la.getUsername().getPackage().getAccount().addDisableLog(disableReason));
     disableLinuxAccount(dl, la);
     return dl.getPkey();
   }
+
   private void disableLinuxAccount(DisableLog dl, com.aoindustries.aoserv.client.linux.User la) throws IOException, SQLException {
     for (UserServer lsa : la.getLinuxServerAccounts()) {
       if (!lsa.isDisabled()) {
@@ -3955,15 +3959,16 @@ public final class SimpleAOClient {
    *                                  {@link com.aoindustries.aoserv.client.linux.User}, or {@link UserServer}
    */
   public int disableLinuxServerAccount(
-    com.aoindustries.aoserv.client.linux.User.Name username,
-    String aoServer,
-    String disableReason
+      com.aoindustries.aoserv.client.linux.User.Name username,
+      String aoServer,
+      String disableReason
   ) throws IllegalArgumentException, SQLException, IOException {
-    UserServer lsa=getLinuxServerAccount(aoServer, username);
-    DisableLog dl=connector.getAccount().getDisableLog().get(lsa.getLinuxAccount().getUsername().getPackage().getAccount().addDisableLog(disableReason));
+    UserServer lsa = getLinuxServerAccount(aoServer, username);
+    DisableLog dl = connector.getAccount().getDisableLog().get(lsa.getLinuxAccount().getUsername().getPackage().getAccount().addDisableLog(disableReason));
     disableLinuxServerAccount(dl, lsa);
     return dl.getPkey();
   }
+
   private void disableLinuxServerAccount(DisableLog dl, UserServer lsa) throws IOException, SQLException {
     for (CvsRepository cr : lsa.getCvsRepositories()) {
       if (!cr.isDisabled()) {
@@ -3987,23 +3992,23 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link CvsRepository}
    */
   public int disableCvsRepository(
-    int pkey,
-    String disableReason
+      int pkey,
+      String disableReason
   ) throws IllegalArgumentException, SQLException, IOException {
-    CvsRepository cr=connector.getScm().getCvsRepository().get(pkey);
+    CvsRepository cr = connector.getScm().getCvsRepository().get(pkey);
     if (cr == null) {
-      throw new IllegalArgumentException("Unable to find CvsRepository: "+pkey);
+      throw new IllegalArgumentException("Unable to find CvsRepository: " + pkey);
     }
-    DisableLog dl=connector.getAccount().getDisableLog()
-      .get(
-        cr
-        .getLinuxServerAccount()
-        .getLinuxAccount()
-        .getUsername()
-        .getPackage()
-        .getAccount()
-        .addDisableLog(disableReason)
-      )
+    DisableLog dl = connector.getAccount().getDisableLog()
+        .get(
+            cr
+                .getLinuxServerAccount()
+                .getLinuxAccount()
+                .getUsername()
+                .getPackage()
+                .getAccount()
+                .addDisableLog(disableReason)
+        )
     ;
     cr.disable(dl);
     return dl.getPkey();
@@ -4023,14 +4028,15 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link User} or {@link com.aoindustries.aoserv.client.mysql.User}
    */
   public int disableMySQLUser(
-    com.aoindustries.aoserv.client.mysql.User.Name username,
-    String disableReason
+      com.aoindustries.aoserv.client.mysql.User.Name username,
+      String disableReason
   ) throws IllegalArgumentException, SQLException, IOException {
-    com.aoindustries.aoserv.client.mysql.User mu=getMySQLUser(username);
-    DisableLog dl=connector.getAccount().getDisableLog().get(mu.getUsername().getPackage().getAccount().addDisableLog(disableReason));
+    com.aoindustries.aoserv.client.mysql.User mu = getMySQLUser(username);
+    DisableLog dl = connector.getAccount().getDisableLog().get(mu.getUsername().getPackage().getAccount().addDisableLog(disableReason));
     disableMySQLUser(dl, mu);
     return dl.getPkey();
   }
+
   private void disableMySQLUser(DisableLog dl, com.aoindustries.aoserv.client.mysql.User mu) throws IOException, SQLException {
     for (com.aoindustries.aoserv.client.mysql.UserServer msu : mu.getMySQLServerUsers()) {
       if (!msu.isDisabled()) {
@@ -4055,13 +4061,13 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link Server} or {@link com.aoindustries.aoserv.client.mysql.User}
    */
   public int disableMySQLServerUser(
-    com.aoindustries.aoserv.client.mysql.User.Name username,
-    com.aoindustries.aoserv.client.mysql.Server.Name mysqlServer,
-    String aoServer,
-    String disableReason
+      com.aoindustries.aoserv.client.mysql.User.Name username,
+      com.aoindustries.aoserv.client.mysql.Server.Name mysqlServer,
+      String aoServer,
+      String disableReason
   ) throws IllegalArgumentException, SQLException, IOException {
-    com.aoindustries.aoserv.client.mysql.UserServer msu=getMySQLServerUser(aoServer, mysqlServer, username);
-    DisableLog dl=connector.getAccount().getDisableLog().get(msu.getMySQLUser().getUsername().getPackage().getAccount().addDisableLog(disableReason));
+    com.aoindustries.aoserv.client.mysql.UserServer msu = getMySQLServerUser(aoServer, mysqlServer, username);
+    DisableLog dl = connector.getAccount().getDisableLog().get(msu.getMySQLUser().getUsername().getPackage().getAccount().addDisableLog(disableReason));
     msu.disable(dl);
     return dl.getPkey();
   }
@@ -4080,15 +4086,16 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link User} or {@link com.aoindustries.aoserv.client.postgresql.User}
    */
   public int disablePostgresUser(
-    com.aoindustries.aoserv.client.postgresql.User.Name username,
-    String disableReason
+      com.aoindustries.aoserv.client.postgresql.User.Name username,
+      String disableReason
   ) throws IllegalArgumentException, SQLException, IOException {
     com.aoindustries.aoserv.client.postgresql.User pu = getPostgresUser(username);
-    DisableLog dl=connector.getAccount().getDisableLog().get(pu.getUsername().getPackage().getAccount().addDisableLog(disableReason));
+    DisableLog dl = connector.getAccount().getDisableLog().get(pu.getUsername().getPackage().getAccount().addDisableLog(disableReason));
     disablePostgresUser(dl, pu);
     return dl.getPkey();
   }
-  private void disablePostgresUser(DisableLog dl, com.aoindustries.aoserv.client.postgresql.User pu) throws IOException, SQLException{
+
+  private void disablePostgresUser(DisableLog dl, com.aoindustries.aoserv.client.postgresql.User pu) throws IOException, SQLException {
     for (com.aoindustries.aoserv.client.postgresql.UserServer psu : pu.getPostgresServerUsers()) {
       if (!psu.isDisabled()) {
         psu.disable(dl);
@@ -4113,21 +4120,21 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link Server} or {@link com.aoindustries.aoserv.client.postgresql.User}
    */
   public int disablePostgresServerUser(
-    com.aoindustries.aoserv.client.postgresql.User.Name username,
-    com.aoindustries.aoserv.client.postgresql.Server.Name postgresServer,
-    String aoServer,
-    String disableReason
+      com.aoindustries.aoserv.client.postgresql.User.Name username,
+      com.aoindustries.aoserv.client.postgresql.Server.Name postgresServer,
+      String aoServer,
+      String disableReason
   ) throws IllegalArgumentException, SQLException, IOException {
-    com.aoindustries.aoserv.client.postgresql.UserServer psu=getPostgresServerUser(aoServer, postgresServer, username);
-    DisableLog dl=connector.getAccount().getDisableLog()
-      .get(
-        psu
-        .getPostgresUser()
-        .getUsername()
-        .getPackage()
-        .getAccount()
-        .addDisableLog(disableReason)
-      )
+    com.aoindustries.aoserv.client.postgresql.UserServer psu = getPostgresServerUser(aoServer, postgresServer, username);
+    DisableLog dl = connector.getAccount().getDisableLog()
+        .get(
+            psu
+                .getPostgresUser()
+                .getUsername()
+                .getPackage()
+                .getAccount()
+                .addDisableLog(disableReason)
+        )
     ;
     psu.disable(dl);
     return dl.getPkey();
@@ -4147,15 +4154,15 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link User} or {@link Administrator}
    */
   public int disableAdministrator(
-    com.aoindustries.aoserv.client.account.User.Name username,
-    String disableReason
+      com.aoindustries.aoserv.client.account.User.Name username,
+      String disableReason
   ) throws IllegalArgumentException, SQLException, IOException {
-    com.aoindustries.aoserv.client.account.User un=getUsername(username);
-    Administrator administrator=un.getAdministrator();
+    com.aoindustries.aoserv.client.account.User un = getUsername(username);
+    Administrator administrator = un.getAdministrator();
     if (administrator == null) {
       throw new IllegalArgumentException("Unable to find Administrator: " + username);
     }
-    DisableLog dl=connector.getAccount().getDisableLog().get(un.getPackage().getAccount().addDisableLog(disableReason));
+    DisableLog dl = connector.getAccount().getDisableLog().get(un.getPackage().getAccount().addDisableLog(disableReason));
     administrator.disable(dl);
     return dl.getPkey();
   }
@@ -4171,10 +4178,10 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the necessary {@link Account accounts}
    */
   public void enableAccount(Account.Name accounting) throws IllegalArgumentException, IOException, SQLException {
-    Account bu=getAccount(accounting);
-    DisableLog dl=bu.getDisableLog();
+    Account bu = getAccount(accounting);
+    DisableLog dl = bu.getDisableLog();
     if (dl == null) {
-      throw new IllegalArgumentException("Account not disabled: "+accounting);
+      throw new IllegalArgumentException("Account not disabled: " + accounting);
     }
     bu.enable();
     for (Package pk : bu.getPackages()) {
@@ -4195,13 +4202,14 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the necessary {@link AOServObject}s
    */
   public void enablePackage(Account.Name name) throws IllegalArgumentException, SQLException, IOException {
-    Package pk=getPackage(name);
-    DisableLog dl=pk.getDisableLog();
+    Package pk = getPackage(name);
+    DisableLog dl = pk.getDisableLog();
     if (dl == null) {
-      throw new IllegalArgumentException("Package not disabled: "+name);
+      throw new IllegalArgumentException("Package not disabled: " + name);
     }
     enablePackage(dl, pk);
   }
+
   private void enablePackage(DisableLog dl, Package pk) throws IOException, SQLException {
     pk.enable();
 
@@ -4225,17 +4233,17 @@ public final class SimpleAOClient {
     }
 
     // Various accounts
-    List<Server> linuxAccountServers=new SortedArrayList<>();
-    List<Server> mysqlServers=new SortedArrayList<>();
-    List<Server> postgresServers=new SortedArrayList<>();
+    List<Server> linuxAccountServers = new SortedArrayList<>();
+    List<Server> mysqlServers = new SortedArrayList<>();
+    List<Server> postgresServers = new SortedArrayList<>();
     for (com.aoindustries.aoserv.client.account.User un : pk.getUsernames()) {
       if (dl.equals(un.getDisableLog())) {
         enableUsername(
-          dl,
-          un,
-          linuxAccountServers,
-          mysqlServers,
-          postgresServers
+            dl,
+            un,
+            linuxAccountServers,
+            mysqlServers,
+            postgresServers
         );
       }
     }
@@ -4277,13 +4285,13 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link Server}, or {@link SharedTomcat}
    */
   public void enableHttpdSharedTomcat(
-    String name,
-    String aoServer
+      String name,
+      String aoServer
   ) throws IllegalArgumentException, SQLException, IOException {
-    SharedTomcat hst=getHttpdSharedTomcat(aoServer, name);
-    DisableLog dl=hst.getDisableLog();
+    SharedTomcat hst = getHttpdSharedTomcat(aoServer, name);
+    DisableLog dl = hst.getDisableLog();
     if (dl == null) {
-      throw new IllegalArgumentException("HttpdSharedTomcat not disabled: "+name+" on "+aoServer);
+      throw new IllegalArgumentException("HttpdSharedTomcat not disabled: " + name + " on " + aoServer);
     }
     hst.enable();
   }
@@ -4299,15 +4307,15 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link Pipe}
    */
   public void enableEmailPipe(
-    int pkey
+      int pkey
   ) throws IllegalArgumentException, SQLException, IOException {
-    Pipe ep=connector.getEmail().getPipe().get(pkey);
+    Pipe ep = connector.getEmail().getPipe().get(pkey);
     if (ep == null) {
-      throw new IllegalArgumentException("Unable to find EmailPipe: "+pkey);
+      throw new IllegalArgumentException("Unable to find EmailPipe: " + pkey);
     }
-    DisableLog dl=ep.getDisableLog();
+    DisableLog dl = ep.getDisableLog();
     if (dl == null) {
-      throw new IllegalArgumentException("EmailPipe not disabled: "+pkey);
+      throw new IllegalArgumentException("EmailPipe not disabled: " + pkey);
     }
     ep.enable();
   }
@@ -4324,16 +4332,17 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link Server}, or {@link Site}
    */
   public void enableHttpdSite(
-    String name,
-    String aoServer
+      String name,
+      String aoServer
   ) throws IllegalArgumentException, SQLException, IOException {
-    Site hs=getHttpdSite(aoServer, name);
-    DisableLog dl=hs.getDisableLog();
+    Site hs = getHttpdSite(aoServer, name);
+    DisableLog dl = hs.getDisableLog();
     if (dl == null) {
-      throw new IllegalArgumentException("HttpdSite not disabled: "+name+" on "+aoServer);
+      throw new IllegalArgumentException("HttpdSite not disabled: " + name + " on " + aoServer);
     }
     enableHttpdSite(dl, hs);
   }
+
   private void enableHttpdSite(DisableLog dl, Site hs) throws IOException, SQLException {
     hs.enable();
     for (VirtualHost hsb : hs.getHttpdSiteBinds()) {
@@ -4354,15 +4363,15 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link VirtualHost}
    */
   public void enableHttpdSiteBind(
-    int pkey
+      int pkey
   ) throws IllegalArgumentException, SQLException, IOException {
-    VirtualHost hsb=connector.getWeb().getVirtualHost().get(pkey);
+    VirtualHost hsb = connector.getWeb().getVirtualHost().get(pkey);
     if (hsb == null) {
-      throw new IllegalArgumentException("Unable to find HttpdSiteBind: "+pkey);
+      throw new IllegalArgumentException("Unable to find HttpdSiteBind: " + pkey);
     }
-    DisableLog dl=hsb.getDisableLog();
+    DisableLog dl = hsb.getDisableLog();
     if (dl == null) {
-      throw new IllegalArgumentException("HttpdSiteBind not disabled: "+pkey);
+      throw new IllegalArgumentException("HttpdSiteBind not disabled: " + pkey);
     }
     hsb.enable();
   }
@@ -4379,13 +4388,13 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link com.aoindustries.aoserv.client.email.List}
    */
   public void enableEmailList(
-    PosixPath path,
-    String aoServer
+      PosixPath path,
+      String aoServer
   ) throws IllegalArgumentException, SQLException, IOException {
-    com.aoindustries.aoserv.client.email.List el=getEmailList(aoServer, path);
-    DisableLog dl=el.getDisableLog();
+    com.aoindustries.aoserv.client.email.List el = getEmailList(aoServer, path);
+    DisableLog dl = el.getDisableLog();
     if (dl == null) {
-      throw new IllegalArgumentException("EmailList not disabled: "+path+" on "+aoServer);
+      throw new IllegalArgumentException("EmailList not disabled: " + path + " on " + aoServer);
     }
     el.enable();
   }
@@ -4401,15 +4410,15 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link SmtpRelay}
    */
   public void enableEmailSmtpRelay(
-    int pkey
+      int pkey
   ) throws IllegalArgumentException, IOException, SQLException {
-    SmtpRelay ssr=connector.getEmail().getSmtpRelay().get(pkey);
+    SmtpRelay ssr = connector.getEmail().getSmtpRelay().get(pkey);
     if (ssr == null) {
-      throw new IllegalArgumentException("Unable to find EmailSmtpRelay: "+pkey);
+      throw new IllegalArgumentException("Unable to find EmailSmtpRelay: " + pkey);
     }
-    DisableLog dl=ssr.getDisableLog();
+    DisableLog dl = ssr.getDisableLog();
     if (dl == null) {
-      throw new IllegalArgumentException("EmailSmtpRelay not disabled: "+pkey);
+      throw new IllegalArgumentException("EmailSmtpRelay not disabled: " + pkey);
     }
     ssr.enable();
   }
@@ -4425,40 +4434,41 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link User}
    */
   public void enableUsername(
-    com.aoindustries.aoserv.client.account.User.Name username
+      com.aoindustries.aoserv.client.account.User.Name username
   ) throws IllegalArgumentException, SQLException, IOException {
-    com.aoindustries.aoserv.client.account.User un=getUsername(username);
-    DisableLog dl=un.getDisableLog();
+    com.aoindustries.aoserv.client.account.User un = getUsername(username);
+    DisableLog dl = un.getDisableLog();
     if (dl == null) {
-      throw new IllegalArgumentException("Username not disabled: "+username);
+      throw new IllegalArgumentException("Username not disabled: " + username);
     }
     enableUsername(dl, un, null, null, null);
   }
+
   private void enableUsername(
-    DisableLog dl,
-    com.aoindustries.aoserv.client.account.User un,
-    List<Server> linuxAccountServers,
-    List<Server> mysqlServers,
-    List<Server> postgresServers
+      DisableLog dl,
+      com.aoindustries.aoserv.client.account.User un,
+      List<Server> linuxAccountServers,
+      List<Server> mysqlServers,
+      List<Server> postgresServers
   ) throws IOException, SQLException {
     un.enable();
 
-    Administrator ba=un.getAdministrator();
+    Administrator ba = un.getAdministrator();
     if (ba != null && dl.equals(ba.getDisableLog())) {
       ba.enable();
     }
 
-    com.aoindustries.aoserv.client.linux.User la=un.getLinuxAccount();
+    com.aoindustries.aoserv.client.linux.User la = un.getLinuxAccount();
     if (la != null && dl.equals(la.getDisableLog())) {
       enableLinuxAccount(dl, la, linuxAccountServers);
     }
 
-    com.aoindustries.aoserv.client.mysql.User mu=un.getMySQLUser();
+    com.aoindustries.aoserv.client.mysql.User mu = un.getMySQLUser();
     if (mu != null && dl.equals(mu.getDisableLog())) {
       enableMySQLUser(dl, mu, mysqlServers);
     }
 
-    com.aoindustries.aoserv.client.postgresql.User pu=un.getPostgresUser();
+    com.aoindustries.aoserv.client.postgresql.User pu = un.getPostgresUser();
     if (pu != null && dl.equals(pu.getDisableLog())) {
       enablePostgresUser(dl, pu, postgresServers);
     }
@@ -4475,15 +4485,16 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link User} or {@link com.aoindustries.aoserv.client.linux.User}
    */
   public void enableLinuxAccount(
-    com.aoindustries.aoserv.client.linux.User.Name username
+      com.aoindustries.aoserv.client.linux.User.Name username
   ) throws IllegalArgumentException, SQLException, IOException {
-    com.aoindustries.aoserv.client.linux.User la=getLinuxAccount(username);
-    DisableLog dl=la.getDisableLog();
+    com.aoindustries.aoserv.client.linux.User la = getLinuxAccount(username);
+    DisableLog dl = la.getDisableLog();
     if (dl == null) {
-      throw new IllegalArgumentException("LinuxAccount not disabled: "+username);
+      throw new IllegalArgumentException("LinuxAccount not disabled: " + username);
     }
     enableLinuxAccount(dl, la, null);
   }
+
   private void enableLinuxAccount(DisableLog dl, com.aoindustries.aoserv.client.linux.User la, List<Server> linuxAccountServers) throws SQLException, IOException {
     la.enable();
 
@@ -4491,7 +4502,7 @@ public final class SimpleAOClient {
       if (dl.equals(lsa.getDisableLog())) {
         enableLinuxServerAccount(dl, lsa);
         if (linuxAccountServers != null) {
-          Server ao=lsa.getServer();
+          Server ao = lsa.getServer();
           if (!linuxAccountServers.contains(ao)) {
             linuxAccountServers.add(ao);
           }
@@ -4513,16 +4524,17 @@ public final class SimpleAOClient {
    *                                  {@link com.aoindustries.aoserv.client.linux.User}, or {@link UserServer}
    */
   public void enableLinuxServerAccount(
-    com.aoindustries.aoserv.client.linux.User.Name username,
-    String aoServer
+      com.aoindustries.aoserv.client.linux.User.Name username,
+      String aoServer
   ) throws IllegalArgumentException, SQLException, IOException {
-    UserServer lsa=getLinuxServerAccount(aoServer, username);
-    DisableLog dl=lsa.getDisableLog();
+    UserServer lsa = getLinuxServerAccount(aoServer, username);
+    DisableLog dl = lsa.getDisableLog();
     if (dl == null) {
-      throw new IllegalArgumentException("LinuxServerAccount not disabled: "+username+" on "+aoServer);
+      throw new IllegalArgumentException("LinuxServerAccount not disabled: " + username + " on " + aoServer);
     }
     enableLinuxServerAccount(dl, lsa);
   }
+
   private void enableLinuxServerAccount(DisableLog dl, UserServer lsa) throws IOException, SQLException {
     lsa.enable();
     for (CvsRepository cr : lsa.getCvsRepositories()) {
@@ -4543,15 +4555,15 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link CvsRepository}
    */
   public void enableCvsRepository(
-    int pkey
+      int pkey
   ) throws IllegalArgumentException, SQLException, IOException {
-    CvsRepository cr=connector.getScm().getCvsRepository().get(pkey);
+    CvsRepository cr = connector.getScm().getCvsRepository().get(pkey);
     if (cr == null) {
-      throw new IllegalArgumentException("Unable to find CvsRepository: "+pkey);
+      throw new IllegalArgumentException("Unable to find CvsRepository: " + pkey);
     }
-    DisableLog dl=cr.getDisableLog();
+    DisableLog dl = cr.getDisableLog();
     if (dl == null) {
-      throw new IllegalArgumentException("CvsRepository not disabled: "+pkey);
+      throw new IllegalArgumentException("CvsRepository not disabled: " + pkey);
     }
     cr.enable();
   }
@@ -4567,22 +4579,23 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link User} or {@link com.aoindustries.aoserv.client.mysql.User}
    */
   public void enableMySQLUser(
-    com.aoindustries.aoserv.client.mysql.User.Name username
+      com.aoindustries.aoserv.client.mysql.User.Name username
   ) throws IllegalArgumentException, SQLException, IOException {
-    com.aoindustries.aoserv.client.mysql.User mu=getMySQLUser(username);
-    DisableLog dl=mu.getDisableLog();
+    com.aoindustries.aoserv.client.mysql.User mu = getMySQLUser(username);
+    DisableLog dl = mu.getDisableLog();
     if (dl == null) {
-      throw new IllegalArgumentException("MySQLUser not disabled: "+username);
+      throw new IllegalArgumentException("MySQLUser not disabled: " + username);
     }
     enableMySQLUser(dl, mu, null);
   }
+
   private void enableMySQLUser(DisableLog dl, com.aoindustries.aoserv.client.mysql.User mu, List<Server> mysqlServers) throws IOException, SQLException {
     mu.enable();
     for (com.aoindustries.aoserv.client.mysql.UserServer msu : mu.getMySQLServerUsers()) {
       if (dl.equals(msu.getDisableLog())) {
         msu.enable();
         if (mysqlServers != null) {
-          Server ao=msu.getMySQLServer().getLinuxServer();
+          Server ao = msu.getMySQLServer().getLinuxServer();
           if (!mysqlServers.contains(ao)) {
             mysqlServers.add(ao);
           }
@@ -4603,14 +4616,14 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link Server} or {@link com.aoindustries.aoserv.client.mysql.User}
    */
   public void enableMySQLServerUser(
-    com.aoindustries.aoserv.client.mysql.User.Name username,
-    com.aoindustries.aoserv.client.mysql.Server.Name mysqlServer,
-    String aoServer
+      com.aoindustries.aoserv.client.mysql.User.Name username,
+      com.aoindustries.aoserv.client.mysql.Server.Name mysqlServer,
+      String aoServer
   ) throws IllegalArgumentException, SQLException, IOException {
-    com.aoindustries.aoserv.client.mysql.UserServer msu=getMySQLServerUser(aoServer, mysqlServer, username);
-    DisableLog dl=msu.getDisableLog();
+    com.aoindustries.aoserv.client.mysql.UserServer msu = getMySQLServerUser(aoServer, mysqlServer, username);
+    DisableLog dl = msu.getDisableLog();
     if (dl == null) {
-      throw new IllegalArgumentException("MySQLServerUser not disabled: "+username+" on "+mysqlServer+" on "+aoServer);
+      throw new IllegalArgumentException("MySQLServerUser not disabled: " + username + " on " + mysqlServer + " on " + aoServer);
     }
     msu.enable();
   }
@@ -4626,15 +4639,16 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link User} or {@link com.aoindustries.aoserv.client.postgresql.User}
    */
   public void enablePostgresUser(
-    com.aoindustries.aoserv.client.postgresql.User.Name username
+      com.aoindustries.aoserv.client.postgresql.User.Name username
   ) throws IllegalArgumentException, SQLException, IOException {
     com.aoindustries.aoserv.client.postgresql.User pu = getPostgresUser(username);
-    DisableLog dl=pu.getDisableLog();
+    DisableLog dl = pu.getDisableLog();
     if (dl == null) {
-      throw new IllegalArgumentException("PostgresUser not disabled: "+username);
+      throw new IllegalArgumentException("PostgresUser not disabled: " + username);
     }
     enablePostgresUser(dl, pu, null);
   }
+
   private void enablePostgresUser(DisableLog dl, com.aoindustries.aoserv.client.postgresql.User pu, List<Server> postgresServers) throws IOException, SQLException {
     pu.enable();
 
@@ -4642,7 +4656,7 @@ public final class SimpleAOClient {
       if (dl.equals(psu.getDisableLog())) {
         psu.enable();
         if (postgresServers != null) {
-          Server ao=psu.getPostgresServer().getLinuxServer();
+          Server ao = psu.getPostgresServer().getLinuxServer();
           if (!postgresServers.contains(ao)) {
             postgresServers.add(ao);
           }
@@ -4664,14 +4678,14 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link Server} or {@link com.aoindustries.aoserv.client.postgresql.User}
    */
   public void enablePostgresServerUser(
-    com.aoindustries.aoserv.client.postgresql.User.Name username,
-    com.aoindustries.aoserv.client.postgresql.Server.Name postgresServer,
-    String aoServer
+      com.aoindustries.aoserv.client.postgresql.User.Name username,
+      com.aoindustries.aoserv.client.postgresql.Server.Name postgresServer,
+      String aoServer
   ) throws IllegalArgumentException, IOException, SQLException {
-    com.aoindustries.aoserv.client.postgresql.UserServer psu=getPostgresServerUser(aoServer, postgresServer, username);
-    DisableLog dl=psu.getDisableLog();
+    com.aoindustries.aoserv.client.postgresql.UserServer psu = getPostgresServerUser(aoServer, postgresServer, username);
+    DisableLog dl = psu.getDisableLog();
     if (dl == null) {
-      throw new IllegalArgumentException("PostgresServerUser not disabled: "+username+" on "+aoServer);
+      throw new IllegalArgumentException("PostgresServerUser not disabled: " + username + " on " + aoServer);
     }
     psu.enable();
   }
@@ -4687,16 +4701,16 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link User} or {@link Administrator}
    */
   public void enableAdministrator(
-    com.aoindustries.aoserv.client.account.User.Name username
+      com.aoindustries.aoserv.client.account.User.Name username
   ) throws IllegalArgumentException, SQLException, IOException {
-    com.aoindustries.aoserv.client.account.User un=getUsername(username);
-    Administrator ba=un.getAdministrator();
+    com.aoindustries.aoserv.client.account.User un = getUsername(username);
+    Administrator ba = un.getAdministrator();
     if (ba == null) {
       throw new IllegalArgumentException("Unable to find Administrator: " + username);
     }
-    DisableLog dl=ba.getDisableLog();
+    DisableLog dl = ba.getDisableLog();
     if (dl == null) {
-      throw new IllegalArgumentException("Administrator not disabled: "+username);
+      throw new IllegalArgumentException("Administrator not disabled: " + username);
     }
     ba.enable();
   }
@@ -4718,10 +4732,10 @@ public final class SimpleAOClient {
    * @see  com.aoindustries.aoserv.client.mysql.Database
    */
   public void dumpMySQLDatabase(
-    com.aoindustries.aoserv.client.mysql.Database.Name name,
-    com.aoindustries.aoserv.client.mysql.Server.Name mysqlServer,
-    String aoServer,
-    Writer out
+      com.aoindustries.aoserv.client.mysql.Database.Name name,
+      com.aoindustries.aoserv.client.mysql.Server.Name mysqlServer,
+      String aoServer,
+      Writer out
   ) throws IllegalArgumentException, IOException, SQLException {
     getMySQLDatabase(aoServer, mysqlServer, name).dump(out);
   }
@@ -4743,11 +4757,11 @@ public final class SimpleAOClient {
    * @see  com.aoindustries.aoserv.client.mysql.Database
    */
   public void dumpMySQLDatabase(
-    com.aoindustries.aoserv.client.mysql.Database.Name name,
-    com.aoindustries.aoserv.client.mysql.Server.Name mysqlServer,
-    String aoServer,
-    boolean gzip,
-    StreamHandler streamHandler
+      com.aoindustries.aoserv.client.mysql.Database.Name name,
+      com.aoindustries.aoserv.client.mysql.Server.Name mysqlServer,
+      String aoServer,
+      boolean gzip,
+      StreamHandler streamHandler
   ) throws IllegalArgumentException, IOException, SQLException {
     getMySQLDatabase(aoServer, mysqlServer, name).dump(gzip, streamHandler);
   }
@@ -4770,10 +4784,10 @@ public final class SimpleAOClient {
    * @see  com.aoindustries.aoserv.client.postgresql.Database
    */
   public void dumpPostgresDatabase(
-    com.aoindustries.aoserv.client.postgresql.Database.Name name,
-    com.aoindustries.aoserv.client.postgresql.Server.Name postgresServer,
-    String aoServer,
-    Writer out
+      com.aoindustries.aoserv.client.postgresql.Database.Name name,
+      com.aoindustries.aoserv.client.postgresql.Server.Name postgresServer,
+      String aoServer,
+      Writer out
   ) throws IllegalArgumentException, IOException, SQLException {
     getPostgresDatabase(aoServer, postgresServer, name).dump(out);
   }
@@ -4796,11 +4810,11 @@ public final class SimpleAOClient {
    * @see  com.aoindustries.aoserv.client.postgresql.Database
    */
   public void dumpPostgresDatabase(
-    com.aoindustries.aoserv.client.postgresql.Database.Name name,
-    com.aoindustries.aoserv.client.postgresql.Server.Name postgresServer,
-    String aoServer,
-    boolean gzip,
-    StreamHandler streamHandler
+      com.aoindustries.aoserv.client.postgresql.Database.Name name,
+      com.aoindustries.aoserv.client.postgresql.Server.Name postgresServer,
+      String aoServer,
+      boolean gzip,
+      StreamHandler streamHandler
   ) throws IllegalArgumentException, IOException, SQLException {
     getPostgresDatabase(aoServer, postgresServer, name).dump(gzip, streamHandler);
   }
@@ -4820,7 +4834,7 @@ public final class SimpleAOClient {
    * @see  Account
    */
   public Account.Name generateAccountingCode(
-    Account.Name accountingTemplate
+      Account.Name accountingTemplate
   ) throws IOException, SQLException {
     return connector.getAccount().getAccount().generateAccountingCode(accountingTemplate);
   }
@@ -4842,8 +4856,8 @@ public final class SimpleAOClient {
    * @see  com.aoindustries.aoserv.client.mysql.Database
    */
   public com.aoindustries.aoserv.client.mysql.Database.Name generateMySQLDatabaseName(
-    String template_base,
-    String template_added
+      String template_base,
+      String template_added
   ) throws IOException, SQLException {
     return connector.getMysql().getDatabase().generateMySQLDatabaseName(template_base, template_added);
   }
@@ -4863,7 +4877,7 @@ public final class SimpleAOClient {
    * @see  Package
    */
   public Account.Name generatePackageName(
-    Account.Name template
+      Account.Name template
   ) throws IOException, SQLException {
     return connector.getBilling().getPackage().generatePackageName(template);
   }
@@ -4897,8 +4911,8 @@ public final class SimpleAOClient {
    * @see  com.aoindustries.aoserv.client.postgresql.Database
    */
   public com.aoindustries.aoserv.client.postgresql.Database.Name generatePostgresDatabaseName(
-    String template_base,
-    String template_added
+      String template_base,
+      String template_added
   ) throws IOException, SQLException {
     return connector.getPostgresql().getDatabase().generatePostgresDatabaseName(template_base, template_added);
   }
@@ -4919,7 +4933,7 @@ public final class SimpleAOClient {
    * @see  Site
    */
   public String generateSharedTomcatName(
-    String template
+      String template
   ) throws IOException, SQLException {
     return connector.getWeb_tomcat().getSharedTomcat().generateSharedTomcatName(template);
   }
@@ -4939,7 +4953,7 @@ public final class SimpleAOClient {
    * @see  Site
    */
   public String generateSiteName(
-    String template
+      String template
   ) throws IOException, SQLException {
     return connector.getWeb().getSite().generateSiteName(template);
   }
@@ -4960,8 +4974,8 @@ public final class SimpleAOClient {
    * @see  #setAutoresponder
    */
   public String getAutoresponderContent(
-    com.aoindustries.aoserv.client.linux.User.Name username,
-    String aoServer
+      com.aoindustries.aoserv.client.linux.User.Name username,
+      String aoServer
   ) throws IllegalArgumentException, IOException, SQLException {
     return getLinuxServerAccount(aoServer, username).getAutoresponderContent();
   }
@@ -4991,8 +5005,8 @@ public final class SimpleAOClient {
    * @see  #removeLinuxServerAccount
    */
   public String getCronTable(
-    com.aoindustries.aoserv.client.linux.User.Name username,
-    String aoServer
+      com.aoindustries.aoserv.client.linux.User.Name username,
+      String aoServer
   ) throws IllegalArgumentException, IOException, SQLException {
     return getLinuxServerAccount(aoServer, username).getCronTable();
   }
@@ -5015,8 +5029,8 @@ public final class SimpleAOClient {
    * @see  List
    */
   public String getEmailListAddressList(
-    PosixPath path,
-    String aoServer
+      PosixPath path,
+      String aoServer
   ) throws IllegalArgumentException, IOException, SQLException {
     return getEmailList(aoServer, path).getAddressList();
   }
@@ -5034,12 +5048,12 @@ public final class SimpleAOClient {
    * @see  BackupPartition#getDiskTotalSize
    */
   public long getBackupPartitionTotalSize(
-    String aoServer,
-    String path
+      String aoServer,
+      String path
   ) throws IllegalArgumentException, IOException, SQLException {
     BackupPartition bp = getLinuxServer(aoServer).getBackupPartitionForPath(path);
     if (bp == null) {
-      throw new IllegalArgumentException("Unable to find BackupPartition: "+path+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find BackupPartition: " + path + " on " + aoServer);
     }
     return bp.getDiskTotalSize();
   }
@@ -5057,12 +5071,12 @@ public final class SimpleAOClient {
    * @see  BackupPartition#getDiskUsedSize
    */
   public long getBackupPartitionUsedSize(
-    String aoServer,
-    String path
+      String aoServer,
+      String path
   ) throws IllegalArgumentException, IOException, SQLException {
     BackupPartition bp = getLinuxServer(aoServer).getBackupPartitionForPath(path);
     if (bp == null) {
-      throw new IllegalArgumentException("Unable to find BackupPartition: "+path+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find BackupPartition: " + path + " on " + aoServer);
     }
     return bp.getDiskUsedSize();
   }
@@ -5081,9 +5095,9 @@ public final class SimpleAOClient {
    * @see  FileReplication#getActivity()
    */
   public FileReplication.Activity getFailoverFileReplicationActivity(
-    String fromServer,
-    String toServer,
-    String path
+      String fromServer,
+      String toServer,
+      String path
   ) throws IllegalArgumentException, IOException, SQLException {
     return getFailoverFileReplication(fromServer, toServer, path).getActivity();
   }
@@ -5099,8 +5113,8 @@ public final class SimpleAOClient {
    * @throws IllegalArgumentException if unable to find the {@link Host}, {@link Server}, or {@link HttpdServer}
    */
   public int getHttpdServerConcurrency(
-    String aoServer,
-    String name
+      String aoServer,
+      String name
   ) throws IllegalArgumentException, IOException, SQLException {
     return getHttpdServer(aoServer, name).getConcurrency();
   }
@@ -5118,8 +5132,8 @@ public final class SimpleAOClient {
    * @see  UserServer#getInboxAttributes
    */
   public InboxAttributes getInboxAttributes(
-    com.aoindustries.aoserv.client.linux.User.Name username,
-    String aoServer
+      com.aoindustries.aoserv.client.linux.User.Name username,
+      String aoServer
   ) throws IllegalArgumentException, IOException, SQLException {
     return getLinuxServerAccount(aoServer, username).getInboxAttributes();
   }
@@ -5138,9 +5152,9 @@ public final class SimpleAOClient {
    * @see  UserServer#getImapFolderSizes
    */
   public long[] getImapFolderSizes(
-    com.aoindustries.aoserv.client.linux.User.Name username,
-    String aoServer,
-    String[] folderNames
+      com.aoindustries.aoserv.client.linux.User.Name username,
+      String aoServer,
+      String[] folderNames
   ) throws IllegalArgumentException, IOException, SQLException {
     return getLinuxServerAccount(aoServer, username).getImapFolderSizes(folderNames);
   }
@@ -5164,18 +5178,18 @@ public final class SimpleAOClient {
    * @see  #removeEmailList
    */
   public String getMajordomoInfoFile(
-    DomainName domain,
-    String aoServer,
-    String listName
+      DomainName domain,
+      String aoServer,
+      String listName
   ) throws IllegalArgumentException, IOException, SQLException {
-    Domain ed=getEmailDomain(aoServer, domain);
-    MajordomoServer ms=ed.getMajordomoServer();
+    Domain ed = getEmailDomain(aoServer, domain);
+    MajordomoServer ms = ed.getMajordomoServer();
     if (ms == null) {
-      throw new IllegalArgumentException("Unable to find MajordomoServer: "+domain+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find MajordomoServer: " + domain + " on " + aoServer);
     }
-    MajordomoList ml=ms.getMajordomoList(listName);
+    MajordomoList ml = ms.getMajordomoList(listName);
     if (ml == null) {
-      throw new IllegalArgumentException("Unable to find MajordomoList: "+listName+'@'+domain+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find MajordomoList: " + listName + '@' + domain + " on " + aoServer);
     }
     return ml.getInfoFile();
   }
@@ -5199,18 +5213,18 @@ public final class SimpleAOClient {
    * @see  #removeEmailList
    */
   public String getMajordomoIntroFile(
-    DomainName domain,
-    String aoServer,
-    String listName
+      DomainName domain,
+      String aoServer,
+      String listName
   ) throws IllegalArgumentException, IOException, SQLException {
-    Domain ed=getEmailDomain(aoServer, domain);
-    MajordomoServer ms=ed.getMajordomoServer();
+    Domain ed = getEmailDomain(aoServer, domain);
+    MajordomoServer ms = ed.getMajordomoServer();
     if (ms == null) {
-      throw new IllegalArgumentException("Unable to find MajordomoServer: "+domain+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find MajordomoServer: " + domain + " on " + aoServer);
     }
-    MajordomoList ml=ms.getMajordomoList(listName);
+    MajordomoList ml = ms.getMajordomoList(listName);
     if (ml == null) {
-      throw new IllegalArgumentException("Unable to find MajordomoList: "+listName+'@'+domain+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find MajordomoList: " + listName + '@' + domain + " on " + aoServer);
     }
     return ml.getIntroFile();
   }
@@ -5229,9 +5243,9 @@ public final class SimpleAOClient {
    * @see  Server#getMrtgFile
    */
   public void getMrtgFile(
-    String aoServer,
-    String filename,
-    OutputStream out
+      String aoServer,
+      String filename,
+      OutputStream out
   ) throws IllegalArgumentException, IOException, SQLException {
     getLinuxServer(aoServer).getMrtgFile(filename, out);
   }
@@ -5248,7 +5262,7 @@ public final class SimpleAOClient {
    * @see  Server#getMrtgFile
    */
   public String getUpsStatus(
-    String aoServer
+      String aoServer
   ) throws IllegalArgumentException, IOException, SQLException {
     return getLinuxServer(aoServer).getUpsStatus();
   }
@@ -5269,11 +5283,11 @@ public final class SimpleAOClient {
    * @see  Site#getAWStatsFile
    */
   public void getAWStatsFile(
-    String siteName,
-    String aoServer,
-    String path,
-    String queryString,
-    OutputStream out
+      String siteName,
+      String aoServer,
+      String path,
+      String queryString,
+      OutputStream out
   ) throws IllegalArgumentException, IOException, SQLException {
     getHttpdSite(aoServer, siteName).getAWStatsFile(path, queryString, out);
   }
@@ -5370,22 +5384,22 @@ public final class SimpleAOClient {
    * @see  Administrator#isActiveTableInvalidator
    */
   public void invalidate(
-    int tableID,
-    String server
+      int tableID,
+      String server
   ) throws IllegalArgumentException, SQLException, IOException {
-    if (tableID<0 || tableID >= numTables) {
-      throw new IllegalArgumentException("Invalid table ID: "+tableID);
+    if (tableID < 0 || tableID >= numTables) {
+      throw new IllegalArgumentException("Invalid table ID: " + tableID);
     }
     Host se;
     if (server != null && server.length() == 0) {
-      server=null;
+      server = null;
     }
     if (server == null) {
-      se=null;
+      se = null;
     } else {
       se = connector.getNet().getHost().get(server);
       if (se == null) {
-        throw new IllegalArgumentException("Unable to find Host: "+server);
+        throw new IllegalArgumentException("Unable to find Host: " + server);
       }
     }
     connector.invalidateTable(tableID, se == null ? -1 : se.pkey);
@@ -5407,7 +5421,7 @@ public final class SimpleAOClient {
    * @see  Account
    */
   public boolean isAccountingAvailable(
-    Account.Name accounting
+      Account.Name accounting
   ) throws SQLException, IOException {
     return connector.getAccount().getAccount().isAccountingAvailable(accounting);
   }
@@ -5428,9 +5442,9 @@ public final class SimpleAOClient {
    * @see  Administrator
    */
   public boolean isAdministratorPasswordSet(
-    com.aoindustries.aoserv.client.account.User.Name username
+      com.aoindustries.aoserv.client.account.User.Name username
   ) throws IllegalArgumentException, IOException, SQLException {
-    Administrator ba=connector.getAccount().getAdministrator().get(username);
+    Administrator ba = connector.getAccount().getAdministrator().get(username);
     if (ba == null) {
       throw new IllegalArgumentException("Unable to find Administrator: " + username);
     }
@@ -5452,7 +5466,7 @@ public final class SimpleAOClient {
    * @see  Zone
    */
   public boolean isDNSZoneAvailable(
-    String zone
+      String zone
   ) throws IOException, SQLException {
     return connector.getDns().getZone().isDNSZoneAvailable(zone);
   }
@@ -5472,9 +5486,9 @@ public final class SimpleAOClient {
    * @see  #setIPAddressPackage
    */
   public boolean isIPAddressUsed(
-    InetAddress ipAddress,
-    String server,
-    String net_device
+      InetAddress ipAddress,
+      String server,
+      String net_device
   ) throws IllegalArgumentException, IOException, SQLException {
     return getIPAddress(server, net_device, ipAddress).isUsed();
   }
@@ -5494,7 +5508,7 @@ public final class SimpleAOClient {
    * @see  Group
    */
   public boolean isLinuxGroupNameAvailable(
-    Group.Name groupname
+      Group.Name groupname
   ) throws IOException, SQLException {
     return connector.getLinux().getGroup().isLinuxGroupNameAvailable(groupname);
   }
@@ -5516,8 +5530,8 @@ public final class SimpleAOClient {
    * @see  UserServer
    */
   public boolean isLinuxServerAccountPasswordSet(
-    com.aoindustries.aoserv.client.linux.User.Name username,
-    String aoServer
+      com.aoindustries.aoserv.client.linux.User.Name username,
+      String aoServer
   ) throws IllegalArgumentException, IOException, SQLException {
     return getLinuxServerAccount(aoServer, username).arePasswordsSet() == PasswordProtected.ALL;
   }
@@ -5539,8 +5553,8 @@ public final class SimpleAOClient {
    * @see  UserServer
    */
   public int isLinuxServerAccountProcmailManual(
-    com.aoindustries.aoserv.client.linux.User.Name username,
-    String aoServer
+      com.aoindustries.aoserv.client.linux.User.Name username,
+      String aoServer
   ) throws IllegalArgumentException, IOException, SQLException {
     return getLinuxServerAccount(aoServer, username).isProcmailManual();
   }
@@ -5562,9 +5576,9 @@ public final class SimpleAOClient {
    * @see  com.aoindustries.aoserv.client.mysql.Server#isMySQLDatabaseNameAvailable
    */
   public boolean isMySQLDatabaseNameAvailable(
-    com.aoindustries.aoserv.client.mysql.Database.Name name,
-    com.aoindustries.aoserv.client.mysql.Server.Name mysqlServer,
-    String aoServer
+      com.aoindustries.aoserv.client.mysql.Database.Name name,
+      com.aoindustries.aoserv.client.mysql.Server.Name mysqlServer,
+      String aoServer
   ) throws IllegalArgumentException, IOException, SQLException {
     return getMySQLServer(aoServer, mysqlServer).isMySQLDatabaseNameAvailable(name);
   }
@@ -5586,8 +5600,8 @@ public final class SimpleAOClient {
    * @see  Server#isMySQLServerNameAvailable
    */
   public boolean isMySQLServerNameAvailable(
-    com.aoindustries.aoserv.client.mysql.Server.Name name,
-    String aoServer
+      com.aoindustries.aoserv.client.mysql.Server.Name name,
+      String aoServer
   ) throws IllegalArgumentException, IOException, SQLException {
     return getLinuxServer(aoServer).isMySQLServerNameAvailable(name);
   }
@@ -5609,9 +5623,9 @@ public final class SimpleAOClient {
    * @see  UserServer
    */
   public boolean isMySQLServerUserPasswordSet(
-    com.aoindustries.aoserv.client.mysql.User.Name username,
-    com.aoindustries.aoserv.client.mysql.Server.Name mysqlServer,
-    String aoServer
+      com.aoindustries.aoserv.client.mysql.User.Name username,
+      com.aoindustries.aoserv.client.mysql.Server.Name mysqlServer,
+      String aoServer
   ) throws IllegalArgumentException, IOException, SQLException {
     return getMySQLServerUser(aoServer, mysqlServer, username).arePasswordsSet() == PasswordProtected.ALL;
   }
@@ -5632,7 +5646,7 @@ public final class SimpleAOClient {
    * @see  Package
    */
   public boolean isPackageNameAvailable(
-    Account.Name packageName
+      Account.Name packageName
   ) throws IOException, SQLException {
     return connector.getBilling().getPackage().isPackageNameAvailable(packageName);
   }
@@ -5655,9 +5669,9 @@ public final class SimpleAOClient {
    * @see  com.aoindustries.aoserv.client.postgresql.Server#isPostgresDatabaseNameAvailable
    */
   public boolean isPostgresDatabaseNameAvailable(
-    com.aoindustries.aoserv.client.postgresql.Database.Name name,
-    com.aoindustries.aoserv.client.postgresql.Server.Name postgresServer,
-    String aoServer
+      com.aoindustries.aoserv.client.postgresql.Database.Name name,
+      com.aoindustries.aoserv.client.postgresql.Server.Name postgresServer,
+      String aoServer
   ) throws IllegalArgumentException, IOException, SQLException {
     return getPostgresServer(aoServer, postgresServer).isPostgresDatabaseNameAvailable(name);
   }
@@ -5679,8 +5693,8 @@ public final class SimpleAOClient {
    * @see  Server#isPostgresServerNameAvailable
    */
   public boolean isPostgresServerNameAvailable(
-    com.aoindustries.aoserv.client.postgresql.Server.Name name,
-    String aoServer
+      com.aoindustries.aoserv.client.postgresql.Server.Name name,
+      String aoServer
   ) throws IllegalArgumentException, IOException, SQLException {
     return getLinuxServer(aoServer).isPostgresServerNameAvailable(name);
   }
@@ -5703,9 +5717,9 @@ public final class SimpleAOClient {
    * @see  UserServer
    */
   public boolean isPostgresServerUserPasswordSet(
-    com.aoindustries.aoserv.client.postgresql.User.Name username,
-    com.aoindustries.aoserv.client.postgresql.Server.Name postgresServer,
-    String aoServer
+      com.aoindustries.aoserv.client.postgresql.User.Name username,
+      com.aoindustries.aoserv.client.postgresql.Server.Name postgresServer,
+      String aoServer
   ) throws IllegalArgumentException, IOException, SQLException {
     return getPostgresServerUser(aoServer, postgresServer, username).arePasswordsSet() == PasswordProtected.ALL;
   }
@@ -5727,8 +5741,8 @@ public final class SimpleAOClient {
    * @see  Domain
    */
   public boolean isEmailDomainAvailable(
-    DomainName domain,
-    String aoServer
+      DomainName domain,
+      String aoServer
   ) throws IllegalArgumentException, IOException, SQLException {
     return getLinuxServer(aoServer).isEmailDomainAvailable(domain);
   }
@@ -5748,8 +5762,8 @@ public final class SimpleAOClient {
    * @see  SharedTomcat
    */
   public boolean isSharedTomcatNameAvailable(
-    String name
-  ) throws IOException, SQLException{
+      String name
+  ) throws IOException, SQLException {
     return connector.getWeb_tomcat().getSharedTomcat().isSharedTomcatNameAvailable(name);
   }
 
@@ -5767,7 +5781,7 @@ public final class SimpleAOClient {
    * @see  SiteTable#isSiteNameAvailable
    */
   public boolean isSiteNameAvailable(
-    String siteName
+      String siteName
   ) throws IllegalArgumentException, IOException, SQLException {
     checkSiteName(siteName);
     return connector.getWeb().getSite().isSiteNameAvailable(siteName);
@@ -5788,7 +5802,7 @@ public final class SimpleAOClient {
    * @see  User
    */
   public boolean isUsernameAvailable(
-    com.aoindustries.aoserv.client.account.User.Name username
+      com.aoindustries.aoserv.client.account.User.Name username
   ) throws IOException, SQLException {
     return connector.getAccount().getUser().isUsernameAvailable(username);
   }
@@ -5846,10 +5860,10 @@ public final class SimpleAOClient {
    * @see  Account#move
    */
   public void moveAccount(
-    Account.Name business,
-    String from,
-    String to,
-    TerminalWriter out
+      Account.Name business,
+      String from,
+      String to,
+      TerminalWriter out
   ) throws IllegalArgumentException, IOException, SQLException {
     getAccount(business).move(getLinuxServer(from), getLinuxServer(to), out);
   }
@@ -5868,10 +5882,10 @@ public final class SimpleAOClient {
    * @see  IpAddress#moveTo
    */
   public void moveIPAddress(
-    InetAddress ip_address,
-    String from_server,
-    String from_net_device,
-    String to_server
+      InetAddress ip_address,
+      String from_server,
+      String from_net_device,
+      String to_server
   ) throws IllegalArgumentException, IOException, SQLException {
     getIPAddress(from_server, from_net_device, ip_address).moveTo(getHost(to_server));
   }
@@ -5902,8 +5916,8 @@ public final class SimpleAOClient {
    * @see  #addDNSZone
    */
   public void printZoneFile(
-    String zone,
-    PrintWriter out
+      String zone,
+      PrintWriter out
   ) throws IllegalArgumentException, SQLException, IOException {
     getZone(zone).printZoneFile(out);
   }
@@ -5958,12 +5972,12 @@ public final class SimpleAOClient {
    * @see  SmtpRelay
    */
   public void refreshEmailSmtpRelay(
-    int pkey,
-    long minDuration
+      int pkey,
+      long minDuration
   ) throws IllegalArgumentException, IOException, SQLException {
-    SmtpRelay sr=connector.getEmail().getSmtpRelay().get(pkey);
+    SmtpRelay sr = connector.getEmail().getSmtpRelay().get(pkey);
     if (sr == null) {
-      throw new IllegalArgumentException("Unable to find EmailSmtpRelay: "+pkey);
+      throw new IllegalArgumentException("Unable to find EmailSmtpRelay: " + pkey);
     }
     sr.refresh(minDuration);
   }
@@ -5983,14 +5997,14 @@ public final class SimpleAOClient {
    * @see  BlackholeAddress#remove()
    */
   public void removeBlackholeEmailAddress(
-    String address,
-    DomainName domain,
-    String aoServer
+      String address,
+      DomainName domain,
+      String aoServer
   ) throws IllegalArgumentException, IOException, SQLException {
-    Address addr=getEmailAddress(aoServer, domain, address);
-    BlackholeAddress bea=addr.getBlackholeEmailAddress();
+    Address addr = getEmailAddress(aoServer, domain, address);
+    BlackholeAddress bea = addr.getBlackholeEmailAddress();
     if (bea == null) {
-      throw new IllegalArgumentException("Unable to find BlackholeEmailAddress: "+address+'@'+domain+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find BlackholeEmailAddress: " + address + '@' + domain + " on " + aoServer);
     }
     bea.remove();
     if (addr.getCannotRemoveReasons().isEmpty() && !addr.isUsed()) {
@@ -6013,10 +6027,10 @@ public final class SimpleAOClient {
    * @see  #addAdministrator
    */
   public void removeAdministrator(
-    com.aoindustries.aoserv.client.account.User.Name username
+      com.aoindustries.aoserv.client.account.User.Name username
   ) throws IllegalArgumentException, IOException, SQLException {
-    com.aoindustries.aoserv.client.account.User un=getUsername(username);
-    Administrator ba=un.getAdministrator();
+    com.aoindustries.aoserv.client.account.User un = getUsername(username);
+    Administrator ba = un.getAdministrator();
     if (ba == null) {
       throw new IllegalArgumentException("Unable to find Administrator: " + username);
     }
@@ -6042,14 +6056,14 @@ public final class SimpleAOClient {
    * @see  #setDefaultAccountHost
    */
   public void removeAccountHost(
-    Account.Name accounting,
-    String server
+      Account.Name accounting,
+      String server
   ) throws IllegalArgumentException, IOException, SQLException {
-    Account bu=getAccount(accounting);
+    Account bu = getAccount(accounting);
     Host se = getHost(server);
     AccountHost bs = bu.getAccountHost(se);
     if (bs == null) {
-      throw new IllegalArgumentException("Unable to find AccountHost: accounting="+accounting+" and server="+server);
+      throw new IllegalArgumentException("Unable to find AccountHost: accounting=" + accounting + " and server=" + server);
     }
     bs.remove();
   }
@@ -6067,11 +6081,11 @@ public final class SimpleAOClient {
    * @see  CreditCard#remove
    */
   public void removeCreditCard(
-    int pkey
+      int pkey
   ) throws IllegalArgumentException, SQLException, IOException {
-    CreditCard cc=connector.getPayment().getCreditCard().get(pkey);
+    CreditCard cc = connector.getPayment().getCreditCard().get(pkey);
     if (cc == null) {
-      throw new IllegalArgumentException("Unable to find CreditCard: "+pkey);
+      throw new IllegalArgumentException("Unable to find CreditCard: " + pkey);
     }
     cc.remove();
   }
@@ -6093,13 +6107,13 @@ public final class SimpleAOClient {
    * @see  CvsRepository
    */
   public void removeCvsRepository(
-    String aoServer,
-    PosixPath path
+      String aoServer,
+      PosixPath path
   ) throws IllegalArgumentException, IOException, SQLException {
     Server ao = getLinuxServer(aoServer);
-    CvsRepository cr=ao.getCvsRepository(path);
+    CvsRepository cr = ao.getCvsRepository(path);
     if (cr == null) {
-      throw new IllegalArgumentException("Unable to find CvsRepository: "+path+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find CvsRepository: " + path + " on " + aoServer);
     }
     cr.remove();
   }
@@ -6119,28 +6133,28 @@ public final class SimpleAOClient {
    * @see  Record
    */
   public void removeDNSRecord(
-    int pkey
+      int pkey
   ) throws IllegalArgumentException, IOException, SQLException {
-    Record nr=connector.getDns().getRecord().get(pkey);
+    Record nr = connector.getDns().getRecord().get(pkey);
     if (nr == null) {
-      throw new IllegalArgumentException("Unable to find DNSRecord: "+pkey);
+      throw new IllegalArgumentException("Unable to find DNSRecord: " + pkey);
     }
     nr.remove();
   }
 
   public void removeDNSRecord(
-    String zone,
-    String domain,
-    String type,
-    String tag,
-    String destination
+      String zone,
+      String domain,
+      String type,
+      String tag,
+      String destination
   ) throws IllegalArgumentException, IOException, SQLException {
-    Zone nz=getZone(zone);
+    Zone nz = getZone(zone);
 
     // Must be a valid type
-    RecordType nt=connector.getDns().getRecordType().get(type);
+    RecordType nt = connector.getDns().getRecordType().get(type);
     if (nt == null) {
-      throw new IllegalArgumentException("Unable to find RecordType: "+type);
+      throw new IllegalArgumentException("Unable to find RecordType: " + type);
     }
     // Must have a valid destination type
     nt.checkDestination(tag, destination);
@@ -6149,8 +6163,8 @@ public final class SimpleAOClient {
     Record found = null;
     for (Record rec : nz.getDNSRecords(domain, nt)) {
       if (
-        Objects.equals(rec.getTag(), tag)
-        && rec.getDestination().equals(destination)
+          Objects.equals(rec.getTag(), tag)
+              && rec.getDestination().equals(destination)
       ) {
         if (found != null) {
           throw new AssertionError("Duplicate DNSRecord: (" + zone + ", " + domain + ", " + type + ", " + tag + ", " + destination + ")");
@@ -6179,7 +6193,7 @@ public final class SimpleAOClient {
    * @see  Zone
    */
   public void removeDNSZone(
-    String zone
+      String zone
   ) throws IllegalArgumentException, IOException, SQLException {
     getZone(zone).remove();
   }
@@ -6199,8 +6213,8 @@ public final class SimpleAOClient {
    * @see  Zone
    */
   public void setDNSZoneTTL(
-    String zone,
-    int ttl
+      String zone,
+      int ttl
   ) throws IllegalArgumentException, IOException, SQLException {
     getZone(zone).setTTL(ttl);
   }
@@ -6225,9 +6239,9 @@ public final class SimpleAOClient {
    * @see  #addLinuxAccAddress(java.lang.String, com.aoapps.net.DomainName, java.lang.String, com.aoindustries.aoserv.client.linux.User.Name)
    */
   public void removeEmailAddress(
-    String address,
-    DomainName domain,
-    String aoServer
+      String address,
+      DomainName domain,
+      String aoServer
   ) throws IllegalArgumentException, IOException, SQLException {
     getEmailAddress(aoServer, domain, address).remove();
   }
@@ -6250,15 +6264,15 @@ public final class SimpleAOClient {
    * @see  #addEmailForwarding
    */
   public void removeEmailForwarding(
-    String address,
-    DomainName domain,
-    String aoServer,
-    Email destination
+      String address,
+      DomainName domain,
+      String aoServer,
+      Email destination
   ) throws IllegalArgumentException, IOException, SQLException {
-    Address addr=getEmailAddress(aoServer, domain, address);
-    Forwarding ef=addr.getEmailForwarding(destination);
+    Address addr = getEmailAddress(aoServer, domain, address);
+    Forwarding ef = addr.getEmailForwarding(destination);
     if (ef == null) {
-      throw new IllegalArgumentException("Unable to find EmailForwarding: "+address+'@'+domain+"->"+destination+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find EmailForwarding: " + address + '@' + domain + "->" + destination + " on " + aoServer);
     }
     ef.remove();
     if (addr.getCannotRemoveReasons().isEmpty() && !addr.isUsed()) {
@@ -6282,8 +6296,8 @@ public final class SimpleAOClient {
    * @see  #addEmailList
    */
   public void removeEmailList(
-    PosixPath path,
-    String aoServer
+      PosixPath path,
+      String aoServer
   ) throws IllegalArgumentException, IOException, SQLException {
     getEmailList(aoServer, path).remove();
   }
@@ -6307,16 +6321,16 @@ public final class SimpleAOClient {
    * @see  #addEmailListAddress(java.lang.String, com.aoapps.net.DomainName, com.aoindustries.aoserv.client.linux.PosixPath, java.lang.String)
    */
   public void removeEmailListAddress(
-    String address,
-    DomainName domain,
-    PosixPath path,
-    String aoServer
+      String address,
+      DomainName domain,
+      PosixPath path,
+      String aoServer
   ) throws IllegalArgumentException, IOException, SQLException {
-    Address addr=getEmailAddress(aoServer, domain, address);
-    com.aoindustries.aoserv.client.email.List el=getEmailList(aoServer, path);
-    ListAddress ela=addr.getEmailListAddress(el);
+    Address addr = getEmailAddress(aoServer, domain, address);
+    com.aoindustries.aoserv.client.email.List el = getEmailList(aoServer, path);
+    ListAddress ela = addr.getEmailListAddress(el);
     if (ela == null) {
-      throw new IllegalArgumentException("Unable to find EmailListAddress: "+address+'@'+domain+"->"+path+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find EmailListAddress: " + address + '@' + domain + "->" + path + " on " + aoServer);
     }
     ela.remove();
     if (addr.getCannotRemoveReasons().isEmpty() && !addr.isUsed()) {
@@ -6339,11 +6353,11 @@ public final class SimpleAOClient {
    * @see  #addEmailPipe
    */
   public void removeEmailPipe(
-    int pkey
+      int pkey
   ) throws IllegalArgumentException, IOException, SQLException {
-    Pipe ep=connector.getEmail().getPipe().get(pkey);
+    Pipe ep = connector.getEmail().getPipe().get(pkey);
     if (ep == null) {
-      throw new IllegalArgumentException("Unable to find EmailPipe: "+pkey);
+      throw new IllegalArgumentException("Unable to find EmailPipe: " + pkey);
     }
     ep.remove();
   }
@@ -6366,26 +6380,26 @@ public final class SimpleAOClient {
    * @see  #addEmailPipeAddress(java.lang.String, com.aoapps.net.DomainName, int)
    */
   public void removeEmailPipeAddress(
-    String address,
-    DomainName domain,
-    int pipe
+      String address,
+      DomainName domain,
+      int pipe
   ) throws IllegalArgumentException, IOException, SQLException {
-    Pipe ep=connector.getEmail().getPipe().get(pipe);
+    Pipe ep = connector.getEmail().getPipe().get(pipe);
     if (ep == null) {
-      throw new IllegalArgumentException("Unable to find EmailPipe: "+pipe);
+      throw new IllegalArgumentException("Unable to find EmailPipe: " + pipe);
     }
-    Server ao=ep.getLinuxServer();
-    Domain sd=ao.getEmailDomain(domain);
+    Server ao = ep.getLinuxServer();
+    Domain sd = ao.getEmailDomain(domain);
     if (sd == null) {
-      throw new IllegalArgumentException("Unable to find EmailDomain: "+domain+" on "+ao.getHostname());
+      throw new IllegalArgumentException("Unable to find EmailDomain: " + domain + " on " + ao.getHostname());
     }
-    Address addr=connector.getEmail().getAddress().getEmailAddress(address, sd);
+    Address addr = connector.getEmail().getAddress().getEmailAddress(address, sd);
     if (addr == null) {
-      throw new IllegalArgumentException("Unable to find EmailAddress: "+address+"@"+domain+" on "+ao.getHostname());
+      throw new IllegalArgumentException("Unable to find EmailAddress: " + address + "@" + domain + " on " + ao.getHostname());
     }
-    PipeAddress epa=addr.getEmailPipeAddress(ep);
+    PipeAddress epa = addr.getEmailPipeAddress(ep);
     if (epa == null) {
-      throw new IllegalArgumentException("Unable to find EmailPipeAddress: "+address+"@"+domain+"->"+ep);
+      throw new IllegalArgumentException("Unable to find EmailPipeAddress: " + address + "@" + domain + "->" + ep);
     }
     epa.remove();
     if (addr.getCannotRemoveReasons().isEmpty() && !addr.isUsed()) {
@@ -6408,11 +6422,11 @@ public final class SimpleAOClient {
    * @see  #addFTPGuestUser(com.aoindustries.aoserv.client.linux.User.Name)
    */
   public void removeFTPGuestUser(
-    com.aoindustries.aoserv.client.linux.User.Name username
+      com.aoindustries.aoserv.client.linux.User.Name username
   ) throws IllegalArgumentException, IOException, SQLException {
-    GuestUser ftpUser=connector.getFtp().getGuestUser().get(username);
+    GuestUser ftpUser = connector.getFtp().getGuestUser().get(username);
     if (ftpUser == null) {
-      throw new IllegalArgumentException("Unable to find FTPGuestUser: "+username);
+      throw new IllegalArgumentException("Unable to find FTPGuestUser: " + username);
     }
     ftpUser.remove();
   }
@@ -6432,8 +6446,8 @@ public final class SimpleAOClient {
    * @see  SharedTomcat
    */
   public void removeHttpdSharedTomcat(
-    String name,
-    String aoServer
+      String name,
+      String aoServer
   ) throws IllegalArgumentException, IOException, SQLException {
     getHttpdSharedTomcat(aoServer, name).remove();
   }
@@ -6453,8 +6467,8 @@ public final class SimpleAOClient {
    * @see  Site
    */
   public void removeHttpdSite(
-    String name,
-    String aoServer
+      String name,
+      String aoServer
   ) throws IllegalArgumentException, IOException, SQLException {
     getHttpdSite(aoServer, name).remove();
   }
@@ -6472,11 +6486,11 @@ public final class SimpleAOClient {
    * @see  VirtualHostName#remove
    */
   public void removeHttpdSiteURL(
-    int pkey
+      int pkey
   ) throws IllegalArgumentException, IOException, SQLException {
-    VirtualHostName hsu=connector.getWeb().getVirtualHostName().get(pkey);
+    VirtualHostName hsu = connector.getWeb().getVirtualHostName().get(pkey);
     if (hsu == null) {
-      throw new IllegalArgumentException("Unable to find HttpdSiteURL: "+pkey);
+      throw new IllegalArgumentException("Unable to find HttpdSiteURL: " + pkey);
     }
     hsu.remove();
   }
@@ -6494,11 +6508,11 @@ public final class SimpleAOClient {
    * @see  Context#remove
    */
   public void removeHttpdTomcatContext(
-    int pkey
+      int pkey
   ) throws IllegalArgumentException, IOException, SQLException {
-    Context htc=connector.getWeb_tomcat().getContext().get(pkey);
+    Context htc = connector.getWeb_tomcat().getContext().get(pkey);
     if (htc == null) {
-      throw new IllegalArgumentException("Unable to find HttpdTomcatContext: "+pkey);
+      throw new IllegalArgumentException("Unable to find HttpdTomcatContext: " + pkey);
     }
     htc.remove();
   }
@@ -6516,11 +6530,11 @@ public final class SimpleAOClient {
    * @see  Context#remove
    */
   public void removeHttpdTomcatDataSource(
-    int pkey
+      int pkey
   ) throws IllegalArgumentException, IOException, SQLException {
-    ContextDataSource htds=connector.getWeb_tomcat().getContextDataSource().get(pkey);
+    ContextDataSource htds = connector.getWeb_tomcat().getContextDataSource().get(pkey);
     if (htds == null) {
-      throw new IllegalArgumentException("Unable to find HttpdTomcatDataSource: "+pkey);
+      throw new IllegalArgumentException("Unable to find HttpdTomcatDataSource: " + pkey);
     }
     htds.remove();
   }
@@ -6538,11 +6552,11 @@ public final class SimpleAOClient {
    * @see  Context#remove
    */
   public void removeHttpdTomcatParameter(
-    int pkey
+      int pkey
   ) throws IllegalArgumentException, IOException, SQLException {
-    ContextParameter htp=connector.getWeb_tomcat().getContextParameter().get(pkey);
+    ContextParameter htp = connector.getWeb_tomcat().getContextParameter().get(pkey);
     if (htp == null) {
-      throw new IllegalArgumentException("Unable to find HttpdTomcatParameter: "+pkey);
+      throw new IllegalArgumentException("Unable to find HttpdTomcatParameter: " + pkey);
     }
     htp.remove();
   }
@@ -6565,16 +6579,16 @@ public final class SimpleAOClient {
    * @see  #addLinuxAccAddress(java.lang.String, com.aoapps.net.DomainName, java.lang.String, com.aoindustries.aoserv.client.linux.User.Name)
    */
   public void removeLinuxAccAddress(
-    String address,
-    DomainName domain,
-    String aoServer,
-    com.aoindustries.aoserv.client.linux.User.Name username
+      String address,
+      DomainName domain,
+      String aoServer,
+      com.aoindustries.aoserv.client.linux.User.Name username
   ) throws IllegalArgumentException, IOException, SQLException {
-    Address addr=getEmailAddress(aoServer, domain, address);
-    UserServer lsa=getLinuxServerAccount(aoServer, username);
-    InboxAddress laa=addr.getLinuxAccAddress(lsa);
+    Address addr = getEmailAddress(aoServer, domain, address);
+    UserServer lsa = getLinuxServerAccount(aoServer, username);
+    InboxAddress laa = addr.getLinuxAccAddress(lsa);
     if (laa == null) {
-      throw new IllegalArgumentException("Unable to find LinuxAccAddress: "+address+'@'+domain+"->"+username+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find LinuxAccAddress: " + address + '@' + domain + "->" + username + " on " + aoServer);
     }
     laa.remove();
     if (addr.getCannotRemoveReasons().isEmpty() && !addr.isUsed()) {
@@ -6596,7 +6610,7 @@ public final class SimpleAOClient {
    * @see  #addLinuxAccount
    */
   public void removeLinuxAccount(
-    com.aoindustries.aoserv.client.linux.User.Name username
+      com.aoindustries.aoserv.client.linux.User.Name username
   ) throws IllegalArgumentException, IOException, SQLException {
     getLinuxAccount(username).remove();
   }
@@ -6615,7 +6629,7 @@ public final class SimpleAOClient {
    * @see  #addLinuxGroup
    */
   public void removeLinuxGroup(
-    Group.Name name
+      Group.Name name
   ) throws IllegalArgumentException, IOException, SQLException {
     getLinuxGroup(name).remove();
   }
@@ -6638,14 +6652,14 @@ public final class SimpleAOClient {
    * @see  #addLinuxAccount
    */
   public void removeLinuxGroupAccount(
-    Group.Name group,
-    com.aoindustries.aoserv.client.linux.User.Name username
+      Group.Name group,
+      com.aoindustries.aoserv.client.linux.User.Name username
   ) throws IllegalArgumentException, IOException, SQLException {
-    Group lg=getLinuxGroup(group);
-    com.aoindustries.aoserv.client.linux.User la=getLinuxAccount(username);
+    Group lg = getLinuxGroup(group);
+    com.aoindustries.aoserv.client.linux.User la = getLinuxAccount(username);
     List<GroupUser> lgas = connector.getLinux().getGroupUser().getLinuxGroupAccounts(group, username);
     if (lgas.isEmpty()) {
-      throw new IllegalArgumentException(username+" is not part of the "+group+" group");
+      throw new IllegalArgumentException(username + " is not part of the " + group + " group");
     }
     for (GroupUser lga : lgas) lga.remove();
   }
@@ -6666,8 +6680,8 @@ public final class SimpleAOClient {
    * @see  #addLinuxServerAccount
    */
   public void removeLinuxServerAccount(
-    com.aoindustries.aoserv.client.linux.User.Name username,
-    String aoServer
+      com.aoindustries.aoserv.client.linux.User.Name username,
+      String aoServer
   ) throws IllegalArgumentException, IOException, SQLException {
     getLinuxServerAccount(aoServer, username).remove();
   }
@@ -6688,8 +6702,8 @@ public final class SimpleAOClient {
    * @see  #addLinuxServerGroup(com.aoindustries.aoserv.client.linux.Group.Name, java.lang.String)
    */
   public void removeLinuxServerGroup(
-    Group.Name group,
-    String aoServer
+      Group.Name group,
+      String aoServer
   ) throws IllegalArgumentException, IOException, SQLException {
     getLinuxServerGroup(aoServer, group).remove();
   }
@@ -6714,9 +6728,9 @@ public final class SimpleAOClient {
    * @see  #dumpMySQLDatabase
    */
   public void removeMySQLDatabase(
-    com.aoindustries.aoserv.client.mysql.Database.Name name,
-    com.aoindustries.aoserv.client.mysql.Server.Name mysqlServer,
-    String aoServer
+      com.aoindustries.aoserv.client.mysql.Database.Name name,
+      com.aoindustries.aoserv.client.mysql.Server.Name mysqlServer,
+      String aoServer
   ) throws IllegalArgumentException, IOException, SQLException {
     getMySQLDatabase(aoServer, mysqlServer, name).remove();
   }
@@ -6741,16 +6755,16 @@ public final class SimpleAOClient {
    * @see  #addMySQLDBUser
    */
   public void removeMySQLDBUser(
-    com.aoindustries.aoserv.client.mysql.Database.Name name,
-    com.aoindustries.aoserv.client.mysql.Server.Name mysqlServer,
-    String aoServer,
-    com.aoindustries.aoserv.client.mysql.User.Name username
+      com.aoindustries.aoserv.client.mysql.Database.Name name,
+      com.aoindustries.aoserv.client.mysql.Server.Name mysqlServer,
+      String aoServer,
+      com.aoindustries.aoserv.client.mysql.User.Name username
   ) throws IllegalArgumentException, IOException, SQLException {
-    com.aoindustries.aoserv.client.mysql.Database md=getMySQLDatabase(aoServer, mysqlServer, name);
-    com.aoindustries.aoserv.client.mysql.UserServer msu=getMySQLServerUser(aoServer, mysqlServer, username);
-    com.aoindustries.aoserv.client.mysql.DatabaseUser mdu=md.getMySQLDBUser(msu);
+    com.aoindustries.aoserv.client.mysql.Database md = getMySQLDatabase(aoServer, mysqlServer, name);
+    com.aoindustries.aoserv.client.mysql.UserServer msu = getMySQLServerUser(aoServer, mysqlServer, username);
+    com.aoindustries.aoserv.client.mysql.DatabaseUser mdu = md.getMySQLDBUser(msu);
     if (mdu == null) {
-      throw new IllegalArgumentException("Unable to find MySQLDBUser on MySQLServer "+mysqlServer+" on Server "+aoServer+" for MySQLDatabase named "+name+" and MySQLServerUser named "+username);
+      throw new IllegalArgumentException("Unable to find MySQLDBUser on MySQLServer " + mysqlServer + " on Server " + aoServer + " for MySQLDatabase named " + name + " and MySQLServerUser named " + username);
     }
     mdu.remove();
   }
@@ -6772,9 +6786,9 @@ public final class SimpleAOClient {
    * @see  #addMySQLServerUser
    */
   public void removeMySQLServerUser(
-    com.aoindustries.aoserv.client.mysql.User.Name username,
-    com.aoindustries.aoserv.client.mysql.Server.Name mysqlServer,
-    String aoServer
+      com.aoindustries.aoserv.client.mysql.User.Name username,
+      com.aoindustries.aoserv.client.mysql.Server.Name mysqlServer,
+      String aoServer
   ) throws IllegalArgumentException, IOException, SQLException {
     getMySQLServerUser(aoServer, mysqlServer, username).remove();
   }
@@ -6795,7 +6809,7 @@ public final class SimpleAOClient {
    * @see  #removeMySQLServerUser
    */
   public void removeMySQLUser(
-    com.aoindustries.aoserv.client.mysql.User.Name username
+      com.aoindustries.aoserv.client.mysql.User.Name username
   ) throws IllegalArgumentException, IOException, SQLException {
     getMySQLUser(username).remove();
   }
@@ -6813,7 +6827,7 @@ public final class SimpleAOClient {
    * @see  Bind#remove
    */
   public void removeNetBind(
-    int pkey
+      int pkey
   ) throws IllegalArgumentException, IOException, SQLException {
     getNetBind(pkey).remove();
   }
@@ -6838,9 +6852,9 @@ public final class SimpleAOClient {
    * @see  #dumpPostgresDatabase
    */
   public void removePostgresDatabase(
-    com.aoindustries.aoserv.client.postgresql.Database.Name name,
-    com.aoindustries.aoserv.client.postgresql.Server.Name postgresServer,
-    String aoServer
+      com.aoindustries.aoserv.client.postgresql.Database.Name name,
+      com.aoindustries.aoserv.client.postgresql.Server.Name postgresServer,
+      String aoServer
   ) throws IllegalArgumentException, IOException, SQLException {
     getPostgresDatabase(aoServer, postgresServer, name).remove();
   }
@@ -6862,9 +6876,9 @@ public final class SimpleAOClient {
    * @see  com.aoindustries.aoserv.client.postgresql.UserServer#remove
    */
   public void removePostgresServerUser(
-    com.aoindustries.aoserv.client.postgresql.User.Name username,
-    com.aoindustries.aoserv.client.postgresql.Server.Name postgresServer,
-    String aoServer
+      com.aoindustries.aoserv.client.postgresql.User.Name username,
+      com.aoindustries.aoserv.client.postgresql.Server.Name postgresServer,
+      String aoServer
   ) throws IllegalArgumentException, IOException, SQLException {
     getPostgresServerUser(aoServer, postgresServer, username).remove();
   }
@@ -6885,7 +6899,7 @@ public final class SimpleAOClient {
    * @see  #removePostgresServerUser
    */
   public void removePostgresUser(
-    com.aoindustries.aoserv.client.postgresql.User.Name username
+      com.aoindustries.aoserv.client.postgresql.User.Name username
   ) throws IllegalArgumentException, IOException, SQLException {
     getPostgresUser(username).remove();
   }
@@ -6906,8 +6920,8 @@ public final class SimpleAOClient {
    * @see  #removeEmailAddress
    */
   public void removeEmailDomain(
-    DomainName domain,
-    String aoServer
+      DomainName domain,
+      String aoServer
   ) throws IllegalArgumentException, IOException, SQLException {
     getEmailDomain(aoServer, domain).remove();
   }
@@ -6928,11 +6942,11 @@ public final class SimpleAOClient {
    * @see  #refreshEmailSmtpRelay
    */
   public void removeEmailSmtpRelay(
-    int pkey
+      int pkey
   ) throws IllegalArgumentException, IOException, SQLException {
-    SmtpRelay sr=connector.getEmail().getSmtpRelay().get(pkey);
+    SmtpRelay sr = connector.getEmail().getSmtpRelay().get(pkey);
     if (sr == null) {
-      throw new IllegalArgumentException("Unable to find EmailSmtpRelay: "+pkey);
+      throw new IllegalArgumentException("Unable to find EmailSmtpRelay: " + pkey);
     }
     sr.remove();
   }
@@ -6952,16 +6966,16 @@ public final class SimpleAOClient {
    * @see  #addFileBackupSetting
    */
   public void removeFileBackupSetting(
-    int replication,
-    String path
+      int replication,
+      String path
   ) throws IllegalArgumentException, IOException, SQLException {
     FileReplication ffr = getConnector().getBackup().getFileReplication().get(replication);
     if (ffr == null) {
-      throw new IllegalArgumentException("Unable to find FailoverFileReplication: "+replication);
+      throw new IllegalArgumentException("Unable to find FailoverFileReplication: " + replication);
     }
-    FileReplicationSetting fbs=ffr.getFileBackupSetting(path);
+    FileReplicationSetting fbs = ffr.getFileBackupSetting(path);
     if (fbs == null) {
-      throw new IllegalArgumentException("Unable to find FileBackupSetting: "+path+" on "+replication);
+      throw new IllegalArgumentException("Unable to find FileBackupSetting: " + path + " on " + replication);
     }
     fbs.remove();
   }
@@ -6982,13 +6996,13 @@ public final class SimpleAOClient {
    * @see  #addMajordomoServer
    */
   public void removeMajordomoServer(
-    DomainName domain,
-    String aoServer
+      DomainName domain,
+      String aoServer
   ) throws IllegalArgumentException, IOException, SQLException {
-    Domain sd=getEmailDomain(aoServer, domain);
-    MajordomoServer ms=sd.getMajordomoServer();
+    Domain sd = getEmailDomain(aoServer, domain);
+    MajordomoServer ms = sd.getMajordomoServer();
     if (ms == null) {
-      throw new IllegalArgumentException("Unable to find MajordomoServer: "+domain+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find MajordomoServer: " + domain + " on " + aoServer);
     }
     ms.remove();
   }
@@ -7007,7 +7021,7 @@ public final class SimpleAOClient {
    * @see  #addUsername
    */
   public void removeUsername(
-    com.aoindustries.aoserv.client.account.User.Name username
+      com.aoindustries.aoserv.client.account.User.Name username
   ) throws IllegalArgumentException, IOException, SQLException {
     getUsername(username).remove();
   }
@@ -7123,17 +7137,17 @@ public final class SimpleAOClient {
    * @see  UserServer#setAutoresponder
    */
   public void setAutoresponder(
-    com.aoindustries.aoserv.client.linux.User.Name username,
-    String aoServer,
-    String address,
-    DomainName domain,
-    String subject,
-    String content,
-    boolean enabled
+      com.aoindustries.aoserv.client.linux.User.Name username,
+      String aoServer,
+      String address,
+      DomainName domain,
+      String subject,
+      String content,
+      boolean enabled
   ) throws IllegalArgumentException, IOException, SQLException {
-    UserServer lsa=getLinuxServerAccount(aoServer, username);
+    UserServer lsa = getLinuxServerAccount(aoServer, username);
     if (address == null) {
-      address="";
+      address = "";
     }
     Address ea;
     if (domain == null) {
@@ -7177,8 +7191,8 @@ public final class SimpleAOClient {
    * @see  Account#setName(com.aoindustries.aoserv.client.account.Account.Name)
    */
   public void setAccountAccounting(
-    Account.Name oldAccounting,
-    Account.Name newAccounting
+      Account.Name oldAccounting,
+      Account.Name newAccounting
   ) throws IllegalArgumentException, IOException, SQLException {
     getAccount(oldAccounting).setName(newAccounting);
   }
@@ -7199,10 +7213,10 @@ public final class SimpleAOClient {
    * @see  #addAdministrator
    */
   public void setAdministratorPassword(
-    com.aoindustries.aoserv.client.account.User.Name username,
-    String password
+      com.aoindustries.aoserv.client.account.User.Name username,
+      String password
   ) throws IllegalArgumentException, IOException, SQLException {
-    Administrator pe=connector.getAccount().getAdministrator().get(username);
+    Administrator pe = connector.getAccount().getAdministrator().get(username);
     if (pe == null) {
       throw new IllegalArgumentException("Unable to find Administrator: " + username);
     }
@@ -7222,43 +7236,43 @@ public final class SimpleAOClient {
    * @see  #addAdministrator
    */
   public void setAdministratorProfile(
-    com.aoindustries.aoserv.client.account.User.Name username,
-    String name,
-    String title,
-    Date birthday,
-    boolean isPrivate,
-    String workPhone,
-    String homePhone,
-    String cellPhone,
-    String fax,
-    Email email,
-    String address1,
-    String address2,
-    String city,
-    String state,
-    String country,
-    String zip
+      com.aoindustries.aoserv.client.account.User.Name username,
+      String name,
+      String title,
+      Date birthday,
+      boolean isPrivate,
+      String workPhone,
+      String homePhone,
+      String cellPhone,
+      String fax,
+      Email email,
+      String address1,
+      String address2,
+      String city,
+      String state,
+      String country,
+      String zip
   ) throws IllegalArgumentException, IOException, SQLException {
     Administrator administrator = connector.getAccount().getAdministrator().get(username);
     if (administrator == null) {
       throw new IllegalArgumentException("Unable to find Administrator: " + username);
     }
     administrator.setProfile(
-      name,
-      title,
-      birthday,
-      isPrivate,
-      workPhone,
-      homePhone,
-      cellPhone,
-      fax,
-      email,
-      address1,
-      address2,
-      city,
-      state,
-      country,
-      zip
+        name,
+        title,
+        birthday,
+        isPrivate,
+        workPhone,
+        homePhone,
+        cellPhone,
+        fax,
+        email,
+        address1,
+        address2,
+        city,
+        state,
+        country,
+        zip
     );
   }
 
@@ -7279,9 +7293,9 @@ public final class SimpleAOClient {
    * @see  #removeLinuxServerAccount
    */
   public void setCronTable(
-    com.aoindustries.aoserv.client.linux.User.Name username,
-    String aoServer,
-    String cronTable
+      com.aoindustries.aoserv.client.linux.User.Name username,
+      String aoServer,
+      String cronTable
   ) throws IllegalArgumentException, IOException, SQLException {
     getLinuxServerAccount(aoServer, username).setCronTable(cronTable);
   }
@@ -7302,14 +7316,14 @@ public final class SimpleAOClient {
    * @see  #removeCvsRepository
    */
   public void setCvsRepositoryMode(
-    String aoServer,
-    PosixPath path,
-    long mode
+      String aoServer,
+      PosixPath path,
+      long mode
   ) throws IllegalArgumentException, IOException, SQLException {
     Server ao = getLinuxServer(aoServer);
-    CvsRepository cr=ao.getCvsRepository(path);
+    CvsRepository cr = ao.getCvsRepository(path);
     if (cr == null) {
-      throw new IllegalArgumentException("Unable to find CvsRepository: "+path+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find CvsRepository: " + path + " on " + aoServer);
     }
     cr.setMode(mode);
   }
@@ -7331,14 +7345,14 @@ public final class SimpleAOClient {
    * @see  #removeAccountHost
    */
   public void setDefaultAccountHost(
-    Account.Name accounting,
-    String server
+      Account.Name accounting,
+      String server
   ) throws IllegalArgumentException, SQLException, IOException {
-    Account bu=getAccount(accounting);
+    Account bu = getAccount(accounting);
     Host se = getHost(server);
-    AccountHost bs=bu.getAccountHost(se);
+    AccountHost bs = bu.getAccountHost(se);
     if (bs == null) {
-      throw new IllegalArgumentException("Unable to find AccountHost: accounting="+accounting+" and server="+server);
+      throw new IllegalArgumentException("Unable to find AccountHost: accounting=" + accounting + " and server=" + server);
     }
     bs.setAsDefault();
   }
@@ -7361,9 +7375,9 @@ public final class SimpleAOClient {
    * @see  #addEmailList
    */
   public void setEmailListAddressList(
-    PosixPath path,
-    String aoServer,
-    String addresses
+      PosixPath path,
+      String aoServer,
+      String addresses
   ) throws IllegalArgumentException, IOException, SQLException {
     getEmailList(aoServer, path).setAddressList(addresses);
   }
@@ -7383,23 +7397,23 @@ public final class SimpleAOClient {
    * @see  #addFileBackupSetting
    */
   public void setFileBackupSetting(
-    int replication,
-    String path,
-    boolean backupEnabled,
-    boolean required
+      int replication,
+      String path,
+      boolean backupEnabled,
+      boolean required
   ) throws IllegalArgumentException, IOException, SQLException {
     FileReplication ffr = getConnector().getBackup().getFileReplication().get(replication);
     if (ffr == null) {
-      throw new IllegalArgumentException("Unable to find FailoverFileReplication: "+replication);
+      throw new IllegalArgumentException("Unable to find FailoverFileReplication: " + replication);
     }
-    FileReplicationSetting fbs=ffr.getFileBackupSetting(path);
+    FileReplicationSetting fbs = ffr.getFileBackupSetting(path);
     if (fbs == null) {
-      throw new IllegalArgumentException("Unable to find FileBackupSetting: "+path+" on "+replication);
+      throw new IllegalArgumentException("Unable to find FileBackupSetting: " + path + " on " + replication);
     }
     fbs.setSettings(
-      path,
-      backupEnabled,
-      required
+        path,
+        backupEnabled,
+        required
     );
   }
 
@@ -7417,9 +7431,9 @@ public final class SimpleAOClient {
    * @see  SharedTomcat#setIsManual
    */
   public void setHttpdSharedTomcatIsManual(
-    String name,
-    String aoServer,
-    boolean isManual
+      String name,
+      String aoServer,
+      boolean isManual
   ) throws IllegalArgumentException, IOException, SQLException {
     getHttpdSharedTomcat(aoServer, name).setIsManual(isManual);
   }
@@ -7438,9 +7452,9 @@ public final class SimpleAOClient {
    * @see  SharedTomcat#setMaxPostSize(int)
    */
   public void setHttpdSharedTomcatMaxPostSize(
-    String name,
-    String aoServer,
-    int maxPostSize
+      String name,
+      String aoServer,
+      int maxPostSize
   ) throws IllegalArgumentException, IOException, SQLException {
     getHttpdSharedTomcat(aoServer, name).setMaxPostSize(maxPostSize);
   }
@@ -7459,9 +7473,9 @@ public final class SimpleAOClient {
    * @see  SharedTomcat#setUnpackWARs(boolean)
    */
   public void setHttpdSharedTomcatUnpackWARs(
-    String name,
-    String aoServer,
-    boolean unpackWARs
+      String name,
+      String aoServer,
+      boolean unpackWARs
   ) throws IllegalArgumentException, IOException, SQLException {
     getHttpdSharedTomcat(aoServer, name).setUnpackWARs(unpackWARs);
   }
@@ -7480,9 +7494,9 @@ public final class SimpleAOClient {
    * @see  SharedTomcat#setAutoDeploy(boolean)
    */
   public void setHttpdSharedTomcatAutoDeploy(
-    String name,
-    String aoServer,
-    boolean autoDeploy
+      String name,
+      String aoServer,
+      boolean autoDeploy
   ) throws IllegalArgumentException, IOException, SQLException {
     getHttpdSharedTomcat(aoServer, name).setAutoDeploy(autoDeploy);
   }
@@ -7501,9 +7515,9 @@ public final class SimpleAOClient {
    * @see  SharedTomcat#setTomcatAuthentication(boolean)
    */
   public void setHttpdSharedTomcatTomcatAuthentication(
-    String name,
-    String aoServer,
-    boolean autoDeploy
+      String name,
+      String aoServer,
+      boolean autoDeploy
   ) throws IllegalArgumentException, IOException, SQLException {
     getHttpdSharedTomcat(aoServer, name).setTomcatAuthentication(autoDeploy);
   }
@@ -7522,13 +7536,13 @@ public final class SimpleAOClient {
    * @see  SharedTomcat#setHttpdTomcatVersion(com.aoindustries.aoserv.client.web.tomcat.Version)
    */
   public void setHttpdSharedTomcatVersion(
-    String name,
-    String aoServer,
-    String version
+      String name,
+      String aoServer,
+      String version
   ) throws IllegalArgumentException, IOException, SQLException {
     SharedTomcat hst = getHttpdSharedTomcat(aoServer, name);
     hst.setHttpdTomcatVersion(
-      findTomcatVersion(hst.getLinuxServer(), version)
+        findTomcatVersion(hst.getLinuxServer(), version)
     );
   }
 
@@ -7545,12 +7559,12 @@ public final class SimpleAOClient {
    * @see  VirtualHost#setIsManual(boolean)
    */
   public void setHttpdSiteBindIsManual(
-    int pkey,
-    boolean isManual
+      int pkey,
+      boolean isManual
   ) throws IllegalArgumentException, IOException, SQLException {
-    VirtualHost hsb=connector.getWeb().getVirtualHost().get(pkey);
+    VirtualHost hsb = connector.getWeb().getVirtualHost().get(pkey);
     if (hsb == null) {
-      throw new IllegalArgumentException("Unable to find HttpdSiteBind: "+pkey);
+      throw new IllegalArgumentException("Unable to find HttpdSiteBind: " + pkey);
     }
     hsb.setIsManual(isManual);
   }
@@ -7568,12 +7582,12 @@ public final class SimpleAOClient {
    * @see  VirtualHost#setRedirectToPrimaryHostname
    */
   public void setHttpdSiteBindRedirectToPrimaryHostname(
-    int pkey,
-    boolean redirectToPrimaryHostname
+      int pkey,
+      boolean redirectToPrimaryHostname
   ) throws IllegalArgumentException, IOException, SQLException {
-    VirtualHost hsb=connector.getWeb().getVirtualHost().get(pkey);
+    VirtualHost hsb = connector.getWeb().getVirtualHost().get(pkey);
     if (hsb == null) {
-      throw new IllegalArgumentException("Unable to find HttpdSiteBind: "+pkey);
+      throw new IllegalArgumentException("Unable to find HttpdSiteBind: " + pkey);
     }
     hsb.setRedirectToPrimaryHostname(redirectToPrimaryHostname);
   }
@@ -7592,9 +7606,9 @@ public final class SimpleAOClient {
    * @see  Site#setIsManual
    */
   public void setHttpdSiteIsManual(
-    String siteName,
-    String aoServer,
-    boolean isManual
+      String siteName,
+      String aoServer,
+      boolean isManual
   ) throws IllegalArgumentException, IOException, SQLException {
     getHttpdSite(aoServer, siteName).setIsManual(isManual);
   }
@@ -7615,9 +7629,9 @@ public final class SimpleAOClient {
    * @see  Site#setServerAdmin
    */
   public void setHttpdSiteServerAdmin(
-    String siteName,
-    String aoServer,
-    Email emailAddress
+      String siteName,
+      String aoServer,
+      Email emailAddress
   ) throws IllegalArgumentException, IOException, SQLException {
     getHttpdSite(aoServer, siteName).setServerAdmin(emailAddress);
   }
@@ -7636,13 +7650,13 @@ public final class SimpleAOClient {
    * @see  Site#setPhpVersion(com.aoindustries.aoserv.client.distribution.SoftwareVersion)
    */
   public void setHttpdSitePhpVersion(
-    String siteName,
-    String aoServer,
-    String phpVersion
+      String siteName,
+      String aoServer,
+      String phpVersion
   ) throws IllegalArgumentException, IOException, SQLException {
     Site hs = getHttpdSite(aoServer, siteName);
     hs.setPhpVersion(
-      findPhpVersion(hs.getLinuxServer(), phpVersion)
+        findPhpVersion(hs.getLinuxServer(), phpVersion)
     );
   }
 
@@ -7660,9 +7674,9 @@ public final class SimpleAOClient {
    * @see  Site#setEnableCgi(boolean)
    */
   public void setHttpdSiteEnableCgi(
-    String siteName,
-    String aoServer,
-    boolean enableCgi
+      String siteName,
+      String aoServer,
+      boolean enableCgi
   ) throws IllegalArgumentException, IOException, SQLException {
     getHttpdSite(aoServer, siteName).setEnableCgi(enableCgi);
   }
@@ -7681,9 +7695,9 @@ public final class SimpleAOClient {
    * @see  Site#setEnableSsi(boolean)
    */
   public void setHttpdSiteEnableSsi(
-    String siteName,
-    String aoServer,
-    boolean enableSsi
+      String siteName,
+      String aoServer,
+      boolean enableSsi
   ) throws IllegalArgumentException, IOException, SQLException {
     getHttpdSite(aoServer, siteName).setEnableSsi(enableSsi);
   }
@@ -7702,9 +7716,9 @@ public final class SimpleAOClient {
    * @see  Site#setEnableHtaccess(boolean)
    */
   public void setHttpdSiteEnableHtaccess(
-    String siteName,
-    String aoServer,
-    boolean enableHtaccess
+      String siteName,
+      String aoServer,
+      boolean enableHtaccess
   ) throws IllegalArgumentException, IOException, SQLException {
     getHttpdSite(aoServer, siteName).setEnableHtaccess(enableHtaccess);
   }
@@ -7723,9 +7737,9 @@ public final class SimpleAOClient {
    * @see  Site#setEnableIndexes(boolean)
    */
   public void setHttpdSiteEnableIndexes(
-    String siteName,
-    String aoServer,
-    boolean enableIndexes
+      String siteName,
+      String aoServer,
+      boolean enableIndexes
   ) throws IllegalArgumentException, IOException, SQLException {
     getHttpdSite(aoServer, siteName).setEnableIndexes(enableIndexes);
   }
@@ -7744,9 +7758,9 @@ public final class SimpleAOClient {
    * @see  Site#setEnableFollowSymlinks(boolean)
    */
   public void setHttpdSiteEnableFollowSymlinks(
-    String siteName,
-    String aoServer,
-    boolean enableFollowSymlinks
+      String siteName,
+      String aoServer,
+      boolean enableFollowSymlinks
   ) throws IllegalArgumentException, IOException, SQLException {
     getHttpdSite(aoServer, siteName).setEnableFollowSymlinks(enableFollowSymlinks);
   }
@@ -7765,9 +7779,9 @@ public final class SimpleAOClient {
    * @see  Site#setEnableAnonymousFtp(boolean)
    */
   public void setHttpdSiteEnableAnonymousFtp(
-    String siteName,
-    String aoServer,
-    boolean enableAnonymousFtp
+      String siteName,
+      String aoServer,
+      boolean enableAnonymousFtp
   ) throws IllegalArgumentException, IOException, SQLException {
     getHttpdSite(aoServer, siteName).setEnableAnonymousFtp(enableAnonymousFtp);
   }
@@ -7786,9 +7800,9 @@ public final class SimpleAOClient {
    * @see  Site#setBlockTraceTrack(boolean)
    */
   public void setHttpdSiteBlockTraceTrack(
-    String siteName,
-    String aoServer,
-    boolean blockTraceTrack
+      String siteName,
+      String aoServer,
+      boolean blockTraceTrack
   ) throws IllegalArgumentException, IOException, SQLException {
     getHttpdSite(aoServer, siteName).setBlockTraceTrack(blockTraceTrack);
   }
@@ -7807,9 +7821,9 @@ public final class SimpleAOClient {
    * @see  Site#setBlockScm(boolean)
    */
   public void setHttpdSiteBlockScm(
-    String siteName,
-    String aoServer,
-    boolean blockScm
+      String siteName,
+      String aoServer,
+      boolean blockScm
   ) throws IllegalArgumentException, IOException, SQLException {
     getHttpdSite(aoServer, siteName).setBlockScm(blockScm);
   }
@@ -7828,9 +7842,9 @@ public final class SimpleAOClient {
    * @see  Site#setBlockCoreDumps(boolean)
    */
   public void setHttpdSiteBlockCoreDumps(
-    String siteName,
-    String aoServer,
-    boolean blockCoreDumps
+      String siteName,
+      String aoServer,
+      boolean blockCoreDumps
   ) throws IllegalArgumentException, IOException, SQLException {
     getHttpdSite(aoServer, siteName).setBlockCoreDumps(blockCoreDumps);
   }
@@ -7849,9 +7863,9 @@ public final class SimpleAOClient {
    * @see  Site#setBlockEditorBackups(boolean)
    */
   public void setHttpdSiteBlockEditorBackups(
-    String siteName,
-    String aoServer,
-    boolean blockEditorBackups
+      String siteName,
+      String aoServer,
+      boolean blockEditorBackups
   ) throws IllegalArgumentException, IOException, SQLException {
     getHttpdSite(aoServer, siteName).setBlockEditorBackups(blockEditorBackups);
   }
@@ -7865,46 +7879,46 @@ public final class SimpleAOClient {
    *                                  or {@link com.aoindustries.aoserv.client.web.tomcat.Site}
    */
   public void setHttpdTomcatContextAttributes(
-    String siteName,
-    String aoServer,
-    String oldPath,
-    String className,
-    boolean cookies,
-    boolean crossContext,
-    PosixPath docBase,
-    boolean override,
-    String newPath,
-    boolean privileged,
-    boolean reloadable,
-    boolean useNaming,
-    String wrapperClass,
-    int debug,
-    PosixPath workDir,
-    boolean serverXmlConfigured
+      String siteName,
+      String aoServer,
+      String oldPath,
+      String className,
+      boolean cookies,
+      boolean crossContext,
+      PosixPath docBase,
+      boolean override,
+      String newPath,
+      boolean privileged,
+      boolean reloadable,
+      boolean useNaming,
+      String wrapperClass,
+      int debug,
+      PosixPath workDir,
+      boolean serverXmlConfigured
   ) throws IllegalArgumentException, IOException, SQLException {
-    Site hs=getHttpdSite(aoServer, siteName);
-    com.aoindustries.aoserv.client.web.tomcat.Site hts=hs.getHttpdTomcatSite();
+    Site hs = getHttpdSite(aoServer, siteName);
+    com.aoindustries.aoserv.client.web.tomcat.Site hts = hs.getHttpdTomcatSite();
     if (hts == null) {
-      throw new IllegalArgumentException("Unable to find HttpdTomcatSite: "+siteName+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find HttpdTomcatSite: " + siteName + " on " + aoServer);
     }
-    Context htc=hts.getHttpdTomcatContext(oldPath);
+    Context htc = hts.getHttpdTomcatContext(oldPath);
     if (htc == null) {
-      throw new IllegalArgumentException("Unable to find HttpdTomcatContext: "+siteName+" on "+aoServer+" path='"+oldPath+'\'');
+      throw new IllegalArgumentException("Unable to find HttpdTomcatContext: " + siteName + " on " + aoServer + " path='" + oldPath + '\'');
     }
     htc.setAttributes(
-      className,
-      cookies,
-      crossContext,
-      docBase,
-      override,
-      newPath,
-      privileged,
-      reloadable,
-      useNaming,
-      wrapperClass,
-      debug,
-      workDir,
-      serverXmlConfigured
+        className,
+        cookies,
+        crossContext,
+        docBase,
+        override,
+        newPath,
+        privileged,
+        reloadable,
+        useNaming,
+        wrapperClass,
+        debug,
+        workDir,
+        serverXmlConfigured
     );
   }
 
@@ -7922,9 +7936,9 @@ public final class SimpleAOClient {
    * @see  com.aoindustries.aoserv.client.web.tomcat.Site#setBlockWebinf(boolean)
    */
   public void setHttpdTomcatSiteBlockWebinf(
-    String siteName,
-    String aoServer,
-    boolean blockWebinf
+      String siteName,
+      String aoServer,
+      boolean blockWebinf
   ) throws IllegalArgumentException, IOException, SQLException {
     Site hs = getHttpdSite(aoServer, siteName);
     com.aoindustries.aoserv.client.web.tomcat.Site hts = hs.getHttpdTomcatSite();
@@ -7948,9 +7962,9 @@ public final class SimpleAOClient {
    * @see  PrivateTomcatSite#setMaxPostSize(int)
    */
   public void setHttpdTomcatStdSiteMaxPostSize(
-    String siteName,
-    String aoServer,
-    int maxPostSize
+      String siteName,
+      String aoServer,
+      int maxPostSize
   ) throws IllegalArgumentException, IOException, SQLException {
     Site hs = getHttpdSite(aoServer, siteName);
     com.aoindustries.aoserv.client.web.tomcat.Site hts = hs.getHttpdTomcatSite();
@@ -7978,9 +7992,9 @@ public final class SimpleAOClient {
    * @see  PrivateTomcatSite#setUnpackWARs(boolean)
    */
   public void setHttpdTomcatStdSiteUnpackWARs(
-    String siteName,
-    String aoServer,
-    boolean unpackWARs
+      String siteName,
+      String aoServer,
+      boolean unpackWARs
   ) throws IllegalArgumentException, IOException, SQLException {
     Site hs = getHttpdSite(aoServer, siteName);
     com.aoindustries.aoserv.client.web.tomcat.Site hts = hs.getHttpdTomcatSite();
@@ -8008,9 +8022,9 @@ public final class SimpleAOClient {
    * @see  PrivateTomcatSite#setAutoDeploy(boolean)
    */
   public void setHttpdTomcatStdSiteAutoDeploy(
-    String siteName,
-    String aoServer,
-    boolean autoDeploy
+      String siteName,
+      String aoServer,
+      boolean autoDeploy
   ) throws IllegalArgumentException, IOException, SQLException {
     Site hs = getHttpdSite(aoServer, siteName);
     com.aoindustries.aoserv.client.web.tomcat.Site hts = hs.getHttpdTomcatSite();
@@ -8038,9 +8052,9 @@ public final class SimpleAOClient {
    * @see  PrivateTomcatSite#setTomcatAuthentication(boolean)
    */
   public void setHttpdTomcatStdSiteTomcatAuthentication(
-    String siteName,
-    String aoServer,
-    boolean tomcatAuthentication
+      String siteName,
+      String aoServer,
+      boolean tomcatAuthentication
   ) throws IllegalArgumentException, IOException, SQLException {
     Site hs = getHttpdSite(aoServer, siteName);
     com.aoindustries.aoserv.client.web.tomcat.Site hts = hs.getHttpdTomcatSite();
@@ -8068,9 +8082,9 @@ public final class SimpleAOClient {
    * @see  PrivateTomcatSite#setHttpdTomcatVersion(com.aoindustries.aoserv.client.web.tomcat.Version)
    */
   public void setHttpdTomcatStdSiteVersion(
-    String siteName,
-    String aoServer,
-    String version
+      String siteName,
+      String aoServer,
+      String version
   ) throws IllegalArgumentException, IOException, SQLException {
     Site hs = getHttpdSite(aoServer, siteName);
     com.aoindustries.aoserv.client.web.tomcat.Site hts = hs.getHttpdTomcatSite();
@@ -8082,7 +8096,7 @@ public final class SimpleAOClient {
       throw new IllegalArgumentException("Unable to find HttpdTomcatStdSite: " + siteName + " on " + aoServer);
     }
     htss.setHttpdTomcatVersion(
-      findTomcatVersion(hs.getLinuxServer(), version)
+        findTomcatVersion(hs.getLinuxServer(), version)
     );
   }
 
@@ -8101,12 +8115,12 @@ public final class SimpleAOClient {
    * @see  IpAddress#setDHCPAddress
    */
   public void setIPAddressDHCPAddress(
-    int ipAddress,
-    InetAddress dhcpAddress
+      int ipAddress,
+      InetAddress dhcpAddress
   ) throws IllegalArgumentException, IOException, SQLException {
-    IpAddress ia=connector.getNet().getIpAddress().get(ipAddress);
+    IpAddress ia = connector.getNet().getIpAddress().get(ipAddress);
     if (ia == null) {
-      throw new IllegalArgumentException("Unable to find IPAddress: "+ipAddress);
+      throw new IllegalArgumentException("Unable to find IPAddress: " + ipAddress);
     }
     ia.setDHCPAddress(dhcpAddress);
   }
@@ -8126,10 +8140,10 @@ public final class SimpleAOClient {
    * @see  IpAddress#setHostname
    */
   public void setIPAddressHostname(
-    InetAddress ipAddress,
-    String server,
-    String net_device,
-    DomainName hostname
+      InetAddress ipAddress,
+      String server,
+      String net_device,
+      DomainName hostname
   ) throws IllegalArgumentException, IOException, SQLException {
     getIPAddress(server, net_device, ipAddress).setHostname(hostname);
   }
@@ -8150,10 +8164,10 @@ public final class SimpleAOClient {
    * @see  #addPackage
    */
   public void setIPAddressMonitoringEnabled(
-    InetAddress ipAddress,
-    String server,
-    String net_device,
-    boolean enabled
+      InetAddress ipAddress,
+      String server,
+      String net_device,
+      boolean enabled
   ) throws IllegalArgumentException, IOException, SQLException {
     getIPAddress(server, net_device, ipAddress).getMonitoring().setEnabled(enabled);
   }
@@ -8176,10 +8190,10 @@ public final class SimpleAOClient {
    * @see  #addPackage
    */
   public void setIPAddressPackage(
-    InetAddress ipAddress,
-    String server,
-    String net_device,
-    Account.Name newPackage
+      InetAddress ipAddress,
+      String server,
+      String net_device,
+      Account.Name newPackage
   ) throws IllegalArgumentException, IOException, SQLException {
     getIPAddress(server, net_device, ipAddress).setPackage(getPackage(newPackage));
   }
@@ -8199,8 +8213,8 @@ public final class SimpleAOClient {
    * @see  #addLinuxAccount
    */
   public void setLinuxAccountHomePhone(
-    com.aoindustries.aoserv.client.linux.User.Name username,
-    Gecos phone
+      com.aoindustries.aoserv.client.linux.User.Name username,
+      Gecos phone
   ) throws IllegalArgumentException, IOException, SQLException {
     getLinuxAccount(username).setHomePhone(phone);
   }
@@ -8222,8 +8236,8 @@ public final class SimpleAOClient {
    * @see  #addLinuxAccount
    */
   public void setLinuxAccountName(
-    com.aoindustries.aoserv.client.linux.User.Name username,
-    Gecos name
+      com.aoindustries.aoserv.client.linux.User.Name username,
+      Gecos name
   ) throws IllegalArgumentException, IOException, SQLException {
     getLinuxAccount(username).setName(name);
   }
@@ -8243,8 +8257,8 @@ public final class SimpleAOClient {
    * @see  #addLinuxAccount
    */
   public void setLinuxAccountOfficeLocation(
-    com.aoindustries.aoserv.client.linux.User.Name username,
-    Gecos location
+      com.aoindustries.aoserv.client.linux.User.Name username,
+      Gecos location
   ) throws IllegalArgumentException, IOException, SQLException {
     getLinuxAccount(username).setOfficeLocation(location);
   }
@@ -8264,8 +8278,8 @@ public final class SimpleAOClient {
    * @see  #addLinuxAccount
    */
   public void setLinuxAccountOfficePhone(
-    com.aoindustries.aoserv.client.linux.User.Name username,
-    Gecos phone
+      com.aoindustries.aoserv.client.linux.User.Name username,
+      Gecos phone
   ) throws IllegalArgumentException, IOException, SQLException {
     getLinuxAccount(username).setOfficePhone(phone);
   }
@@ -8286,8 +8300,8 @@ public final class SimpleAOClient {
    * @see  #addLinuxAccount
    */
   public void setLinuxAccountPassword(
-    com.aoindustries.aoserv.client.linux.User.Name username,
-    String password
+      com.aoindustries.aoserv.client.linux.User.Name username,
+      String password
   ) throws IllegalArgumentException, IOException, SQLException {
     getLinuxAccount(username).setPassword(password);
   }
@@ -8307,13 +8321,13 @@ public final class SimpleAOClient {
    * @see  #addLinuxAccount
    */
   public void setLinuxAccountShell(
-    com.aoindustries.aoserv.client.linux.User.Name username,
-    PosixPath path
+      com.aoindustries.aoserv.client.linux.User.Name username,
+      PosixPath path
   ) throws IllegalArgumentException, IOException, SQLException {
-    com.aoindustries.aoserv.client.linux.User la=getLinuxAccount(username);
-    Shell sh=connector.getLinux().getShell().get(path);
+    com.aoindustries.aoserv.client.linux.User la = getLinuxAccount(username);
+    Shell sh = connector.getLinux().getShell().get(path);
     if (sh == null) {
-      throw new IllegalArgumentException("Unable to find Shell: "+path);
+      throw new IllegalArgumentException("Unable to find Shell: " + path);
     }
     la.setShell(sh);
   }
@@ -8335,9 +8349,9 @@ public final class SimpleAOClient {
    * @see  #addLinuxServerAccount
    */
   public void setLinuxServerAccountPassword(
-    com.aoindustries.aoserv.client.linux.User.Name username,
-    String aoServer,
-    String password
+      com.aoindustries.aoserv.client.linux.User.Name username,
+      String aoServer,
+      String password
   ) throws IllegalArgumentException, IOException, SQLException {
     getLinuxServerAccount(aoServer, username).setPassword(password);
   }
@@ -8357,9 +8371,9 @@ public final class SimpleAOClient {
    * @see  #addLinuxServerAccount
    */
   public void setLinuxServerAccountJunkEmailRetention(
-    com.aoindustries.aoserv.client.linux.User.Name username,
-    String aoServer,
-    int days
+      com.aoindustries.aoserv.client.linux.User.Name username,
+      String aoServer,
+      int days
   ) throws IllegalArgumentException, IOException, SQLException {
     getLinuxServerAccount(aoServer, username).setJunkEmailRetention(days);
   }
@@ -8380,9 +8394,9 @@ public final class SimpleAOClient {
    * @see  SpamAssassinMode
    */
   public void setLinuxServerAccountSpamAssassinIntegrationMode(
-    com.aoindustries.aoserv.client.linux.User.Name username,
-    String aoServer,
-    String mode
+      com.aoindustries.aoserv.client.linux.User.Name username,
+      String aoServer,
+      String mode
   ) throws IllegalArgumentException, IOException, SQLException {
     getLinuxServerAccount(aoServer, username).setEmailSpamAssassinIntegrationMode(getEmailSpamAssassinIntegrationMode(mode));
   }
@@ -8402,9 +8416,9 @@ public final class SimpleAOClient {
    * @see  #addLinuxServerAccount
    */
   public void setLinuxServerAccountSpamAssassinRequiredScore(
-    com.aoindustries.aoserv.client.linux.User.Name username,
-    String aoServer,
-    float required_score
+      com.aoindustries.aoserv.client.linux.User.Name username,
+      String aoServer,
+      float required_score
   ) throws IllegalArgumentException, IOException, SQLException {
     getLinuxServerAccount(aoServer, username).setSpamAssassinRequiredScore(required_score);
   }
@@ -8424,9 +8438,9 @@ public final class SimpleAOClient {
    * @see  #addLinuxServerAccount
    */
   public void setLinuxServerAccountTrashEmailRetention(
-    com.aoindustries.aoserv.client.linux.User.Name username,
-    String aoServer,
-    int days
+      com.aoindustries.aoserv.client.linux.User.Name username,
+      String aoServer,
+      int days
   ) throws IllegalArgumentException, IOException, SQLException {
     getLinuxServerAccount(aoServer, username).setTrashEmailRetention(days);
   }
@@ -8447,9 +8461,9 @@ public final class SimpleAOClient {
    * @see  #addLinuxServerAccount
    */
   public void setLinuxServerAccountUseInbox(
-    com.aoindustries.aoserv.client.linux.User.Name username,
-    String aoServer,
-    boolean useInbox
+      com.aoindustries.aoserv.client.linux.User.Name username,
+      String aoServer,
+      boolean useInbox
   ) throws IllegalArgumentException, IOException, SQLException {
     getLinuxServerAccount(aoServer, username).setUseInbox(useInbox);
   }
@@ -8474,19 +8488,19 @@ public final class SimpleAOClient {
    * @see  #removeEmailList
    */
   public void setMajordomoInfoFile(
-    DomainName domain,
-    String aoServer,
-    String listName,
-    String file
+      DomainName domain,
+      String aoServer,
+      String listName,
+      String file
   ) throws IllegalArgumentException, IOException, SQLException {
-    Domain ed=getEmailDomain(aoServer, domain);
-    MajordomoServer ms=ed.getMajordomoServer();
+    Domain ed = getEmailDomain(aoServer, domain);
+    MajordomoServer ms = ed.getMajordomoServer();
     if (ms == null) {
-      throw new IllegalArgumentException("Unable to find MajordomoServer: "+domain+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find MajordomoServer: " + domain + " on " + aoServer);
     }
-    MajordomoList ml=ms.getMajordomoList(listName);
+    MajordomoList ml = ms.getMajordomoList(listName);
     if (ml == null) {
-      throw new IllegalArgumentException("Unable to find MajordomoList: "+listName+'@'+domain+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find MajordomoList: " + listName + '@' + domain + " on " + aoServer);
     }
     ml.setInfoFile(file);
   }
@@ -8511,19 +8525,19 @@ public final class SimpleAOClient {
    * @see  #removeEmailList
    */
   public void setMajordomoIntroFile(
-    DomainName domain,
-    String aoServer,
-    String listName,
-    String file
+      DomainName domain,
+      String aoServer,
+      String listName,
+      String file
   ) throws IllegalArgumentException, IOException, SQLException {
-    Domain ed=getEmailDomain(aoServer, domain);
-    MajordomoServer ms=ed.getMajordomoServer();
+    Domain ed = getEmailDomain(aoServer, domain);
+    MajordomoServer ms = ed.getMajordomoServer();
     if (ms == null) {
-      throw new IllegalArgumentException("Unable to find MajordomoServer: "+domain+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find MajordomoServer: " + domain + " on " + aoServer);
     }
-    MajordomoList ml=ms.getMajordomoList(listName);
+    MajordomoList ml = ms.getMajordomoList(listName);
     if (ml == null) {
-      throw new IllegalArgumentException("Unable to find MajordomoList: "+listName+'@'+domain+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find MajordomoList: " + listName + '@' + domain + " on " + aoServer);
     }
     ml.setIntroFile(file);
   }
@@ -8544,12 +8558,12 @@ public final class SimpleAOClient {
    * @see  com.aoindustries.aoserv.client.mysql.UserServer#setPassword
    */
   public void setMySQLServerUserPassword(
-    com.aoindustries.aoserv.client.mysql.User.Name username,
-    com.aoindustries.aoserv.client.mysql.Server.Name mysqlServer,
-    String aoServer,
-    String password
+      com.aoindustries.aoserv.client.mysql.User.Name username,
+      com.aoindustries.aoserv.client.mysql.Server.Name mysqlServer,
+      String aoServer,
+      String password
   ) throws IllegalArgumentException, IOException, SQLException {
-    getMySQLServerUser(aoServer, mysqlServer, username).setPassword(password == null || password.length() == 0?null:password);
+    getMySQLServerUser(aoServer, mysqlServer, username).setPassword(password == null || password.length() == 0 ? null : password);
   }
 
   /**
@@ -8567,10 +8581,10 @@ public final class SimpleAOClient {
    * @see  com.aoindustries.aoserv.client.mysql.User#setPassword
    */
   public void setMySQLUserPassword(
-    com.aoindustries.aoserv.client.mysql.User.Name username,
-    String password
+      com.aoindustries.aoserv.client.mysql.User.Name username,
+      String password
   ) throws IllegalArgumentException, IOException, SQLException {
-    getMySQLUser(username).setPassword(password == null || password.length() == 0?null:password);
+    getMySQLUser(username).setPassword(password == null || password.length() == 0 ? null : password);
   }
 
   /**
@@ -8586,8 +8600,8 @@ public final class SimpleAOClient {
    * @see  Bind#setFirewalldZones(java.util.Set)
    */
   public void setNetBindFirewalldZones(
-    int pkey,
-    Set<FirewallZone.Name> firewalldZones
+      int pkey,
+      Set<FirewallZone.Name> firewalldZones
   ) throws IllegalArgumentException, IOException, SQLException {
     getNetBind(pkey).setFirewalldZones(firewalldZones);
   }
@@ -8605,8 +8619,8 @@ public final class SimpleAOClient {
    * @see  Bind#setMonitoringEnabled
    */
   public void setNetBindMonitoringEnabled(
-    int pkey,
-    boolean enabled
+      int pkey,
+      boolean enabled
   ) throws IllegalArgumentException, IOException, SQLException {
     getNetBind(pkey).setMonitoringEnabled(enabled);
   }
@@ -8628,12 +8642,12 @@ public final class SimpleAOClient {
    * @see  com.aoindustries.aoserv.client.postgresql.UserServer#setPassword
    */
   public void setPostgresServerUserPassword(
-    com.aoindustries.aoserv.client.postgresql.User.Name username,
-    com.aoindustries.aoserv.client.postgresql.Server.Name postgresServer,
-    String aoServer,
-    String password
+      com.aoindustries.aoserv.client.postgresql.User.Name username,
+      com.aoindustries.aoserv.client.postgresql.Server.Name postgresServer,
+      String aoServer,
+      String password
   ) throws IllegalArgumentException, IOException, SQLException {
-    getPostgresServerUser(aoServer, postgresServer, username).setPassword(password == null || password.length() == 0?null:password);
+    getPostgresServerUser(aoServer, postgresServer, username).setPassword(password == null || password.length() == 0 ? null : password);
   }
 
   /**
@@ -8651,10 +8665,10 @@ public final class SimpleAOClient {
    * @see  com.aoindustries.aoserv.client.postgresql.User#setPassword
    */
   public void setPostgresUserPassword(
-    com.aoindustries.aoserv.client.postgresql.User.Name username,
-    String password
+      com.aoindustries.aoserv.client.postgresql.User.Name username,
+      String password
   ) throws IllegalArgumentException, IOException, SQLException {
-    getPostgresUser(username).setPassword(password == null || password.length() == 0?null:password);
+    getPostgresUser(username).setPassword(password == null || password.length() == 0 ? null : password);
   }
 
   /**
@@ -8670,11 +8684,11 @@ public final class SimpleAOClient {
    * @see  VirtualHostName#setAsPrimary()
    */
   public void setPrimaryHttpdSiteURL(
-    int pkey
+      int pkey
   ) throws IllegalArgumentException, IOException, SQLException {
-    VirtualHostName hsu=connector.getWeb().getVirtualHostName().get(pkey);
+    VirtualHostName hsu = connector.getWeb().getVirtualHostName().get(pkey);
     if (hsu == null) {
-      throw new IllegalArgumentException("Unable to find HttpdSiteURL: "+pkey);
+      throw new IllegalArgumentException("Unable to find HttpdSiteURL: " + pkey);
     }
     hsu.setAsPrimary();
   }
@@ -8694,8 +8708,8 @@ public final class SimpleAOClient {
    * @see  com.aoindustries.aoserv.client.linux.User#setPrimaryLinuxGroup
    */
   public void setPrimaryLinuxGroupAccount(
-    Group.Name group_name,
-    com.aoindustries.aoserv.client.linux.User.Name username
+      Group.Name group_name,
+      com.aoindustries.aoserv.client.linux.User.Name username
   ) throws IllegalArgumentException, IOException, SQLException {
     getLinuxAccount(username).setPrimaryLinuxGroup(getLinuxGroup(group_name));
   }
@@ -8717,8 +8731,8 @@ public final class SimpleAOClient {
    * @see  #addUsername
    */
   public void setUsernamePassword(
-    com.aoindustries.aoserv.client.account.User.Name username,
-    String password
+      com.aoindustries.aoserv.client.account.User.Name username,
+      String password
   ) throws IllegalArgumentException, IOException, SQLException {
     getUsername(username).setPassword(password);
   }
@@ -8787,10 +8801,10 @@ public final class SimpleAOClient {
    * @see  #addHttpdTomcatStdSite
    */
   public String startJVM(String siteName, String aoServer) throws IllegalArgumentException, IOException, SQLException {
-    Site site=getHttpdSite(aoServer, siteName);
-    com.aoindustries.aoserv.client.web.tomcat.Site tomcatSite=site.getHttpdTomcatSite();
+    Site site = getHttpdSite(aoServer, siteName);
+    com.aoindustries.aoserv.client.web.tomcat.Site tomcatSite = site.getHttpdTomcatSite();
     if (tomcatSite == null) {
-      throw new IllegalArgumentException("HttpdSite "+siteName+" on "+aoServer+" is not a HttpdTomcatSite");
+      throw new IllegalArgumentException("HttpdSite " + siteName + " on " + aoServer + " is not a HttpdTomcatSite");
     }
     return tomcatSite.startJVM();
   }
@@ -8904,10 +8918,10 @@ public final class SimpleAOClient {
    * @see  #addHttpdTomcatStdSite
    */
   public String stopJVM(String siteName, String aoServer) throws IllegalArgumentException, IOException, SQLException {
-    Site site=getHttpdSite(aoServer, siteName);
-    com.aoindustries.aoserv.client.web.tomcat.Site tomcatSite=site.getHttpdTomcatSite();
+    Site site = getHttpdSite(aoServer, siteName);
+    com.aoindustries.aoserv.client.web.tomcat.Site tomcatSite = site.getHttpdTomcatSite();
     if (tomcatSite == null) {
-      throw new IllegalArgumentException("HttpdSite "+siteName+" on "+aoServer+" is not a HttpdTomcatSite");
+      throw new IllegalArgumentException("HttpdSite " + siteName + " on " + aoServer + " is not a HttpdTomcatSite");
     }
     return tomcatSite.stopJVM();
   }
@@ -8982,43 +8996,43 @@ public final class SimpleAOClient {
    *                                  {@link com.aoindustries.aoserv.client.web.tomcat.Site} or {@link Context}.
    */
   public void updateHttpdTomcatDataSource(
-    String siteName,
-    String aoServer,
-    String path,
-    String oldName,
-    String newName,
-    String driverClassName,
-    String url,
-    String username,
-    String password,
-    int maxActive,
-    int maxIdle,
-    int maxWait,
-    String validationQuery
+      String siteName,
+      String aoServer,
+      String path,
+      String oldName,
+      String newName,
+      String driverClassName,
+      String url,
+      String username,
+      String password,
+      int maxActive,
+      int maxIdle,
+      int maxWait,
+      String validationQuery
   ) throws IllegalArgumentException, IOException, SQLException {
-    Site hs=getHttpdSite(aoServer, siteName);
-    com.aoindustries.aoserv.client.web.tomcat.Site hts=hs.getHttpdTomcatSite();
+    Site hs = getHttpdSite(aoServer, siteName);
+    com.aoindustries.aoserv.client.web.tomcat.Site hts = hs.getHttpdTomcatSite();
     if (hts == null) {
-      throw new IllegalArgumentException("Unable to find HttpdTomcatSite: "+siteName+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find HttpdTomcatSite: " + siteName + " on " + aoServer);
     }
-    Context htc=hts.getHttpdTomcatContext(path);
+    Context htc = hts.getHttpdTomcatContext(path);
     if (htc == null) {
-      throw new IllegalArgumentException("Unable to find HttpdTomcatContext: "+siteName+" on "+aoServer+" path='"+path+'\'');
+      throw new IllegalArgumentException("Unable to find HttpdTomcatContext: " + siteName + " on " + aoServer + " path='" + path + '\'');
     }
-    ContextDataSource htds=htc.getHttpdTomcatDataSource(oldName);
+    ContextDataSource htds = htc.getHttpdTomcatDataSource(oldName);
     if (htds == null) {
-      throw new IllegalArgumentException("Unable to find HttpdTomcatDataSource: "+siteName+" on "+aoServer+" path='"+path+"' name='"+oldName+'\'');
+      throw new IllegalArgumentException("Unable to find HttpdTomcatDataSource: " + siteName + " on " + aoServer + " path='" + path + "' name='" + oldName + '\'');
     }
     htds.update(
-      newName,
-      driverClassName,
-      url,
-      username,
-      password,
-      maxActive,
-      maxIdle,
-      maxWait,
-      validationQuery
+        newName,
+        driverClassName,
+        url,
+        username,
+        password,
+        maxActive,
+        maxIdle,
+        maxWait,
+        validationQuery
     );
   }
 
@@ -9031,33 +9045,33 @@ public final class SimpleAOClient {
    *                                  {@link com.aoindustries.aoserv.client.web.tomcat.Site} or {@link Context}.
    */
   public void updateHttpdTomcatParameter(
-    String siteName,
-    String aoServer,
-    String path,
-    String oldName,
-    String newName,
-    String value,
-    boolean override,
-    String description
+      String siteName,
+      String aoServer,
+      String path,
+      String oldName,
+      String newName,
+      String value,
+      boolean override,
+      String description
   ) throws IllegalArgumentException, IOException, SQLException {
-    Site hs=getHttpdSite(aoServer, siteName);
-    com.aoindustries.aoserv.client.web.tomcat.Site hts=hs.getHttpdTomcatSite();
+    Site hs = getHttpdSite(aoServer, siteName);
+    com.aoindustries.aoserv.client.web.tomcat.Site hts = hs.getHttpdTomcatSite();
     if (hts == null) {
-      throw new IllegalArgumentException("Unable to find HttpdTomcatSite: "+siteName+" on "+aoServer);
+      throw new IllegalArgumentException("Unable to find HttpdTomcatSite: " + siteName + " on " + aoServer);
     }
-    Context htc=hts.getHttpdTomcatContext(path);
+    Context htc = hts.getHttpdTomcatContext(path);
     if (htc == null) {
-      throw new IllegalArgumentException("Unable to find HttpdTomcatContext: "+siteName+" on "+aoServer+" path='"+path+'\'');
+      throw new IllegalArgumentException("Unable to find HttpdTomcatContext: " + siteName + " on " + aoServer + " path='" + path + '\'');
     }
-    ContextParameter htp=htc.getHttpdTomcatParameter(oldName);
+    ContextParameter htp = htc.getHttpdTomcatParameter(oldName);
     if (htp == null) {
-      throw new IllegalArgumentException("Unable to find HttpdTomcatParameter: "+siteName+" on "+aoServer+" path='"+path+"' name='"+oldName+'\'');
+      throw new IllegalArgumentException("Unable to find HttpdTomcatParameter: " + siteName + " on " + aoServer + " path='" + path + "' name='" + oldName + '\'');
     }
     htp.update(
-      newName,
-      value,
-      override,
-      description
+        newName,
+        value,
+        override,
+        description
     );
   }
 
@@ -9208,9 +9222,9 @@ public final class SimpleAOClient {
    * @throws IllegalArgumentException if unable to find the {@link Server} or {@link Certificate}
    */
   public List<Certificate.Check> checkSslCertificate(
-    String aoServer,
-    String keyFileOrCertbotName,
-    boolean allowCached
+      String aoServer,
+      String keyFileOrCertbotName,
+      boolean allowCached
   ) throws IllegalArgumentException, IOException, SQLException {
     return getSslCertificate(aoServer, keyFileOrCertbotName).check(allowCached);
   }
@@ -9225,7 +9239,7 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link VirtualServer}
    */
   public String createVirtualServer(
-    String virtualServer
+      String virtualServer
   ) throws IllegalArgumentException, IOException, SQLException {
     return getVirtualServer(virtualServer).create();
   }
@@ -9240,7 +9254,7 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link VirtualServer}
    */
   public String rebootVirtualServer(
-    String virtualServer
+      String virtualServer
   ) throws IllegalArgumentException, IOException, SQLException {
     return getVirtualServer(virtualServer).reboot();
   }
@@ -9255,7 +9269,7 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link VirtualServer}
    */
   public String shutdownVirtualServer(
-    String virtualServer
+      String virtualServer
   ) throws IllegalArgumentException, IOException, SQLException {
     return getVirtualServer(virtualServer).shutdown();
   }
@@ -9270,7 +9284,7 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link VirtualServer}
    */
   public String destroyVirtualServer(
-    String virtualServer
+      String virtualServer
   ) throws IllegalArgumentException, IOException, SQLException {
     return getVirtualServer(virtualServer).destroy();
   }
@@ -9285,7 +9299,7 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link VirtualServer}
    */
   public String pauseVirtualServer(
-    String virtualServer
+      String virtualServer
   ) throws IllegalArgumentException, IOException, SQLException {
     return getVirtualServer(virtualServer).pause();
   }
@@ -9300,7 +9314,7 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link VirtualServer}
    */
   public String unpauseVirtualServer(
-    String virtualServer
+      String virtualServer
   ) throws IllegalArgumentException, IOException, SQLException {
     return getVirtualServer(virtualServer).unpause();
   }
@@ -9315,7 +9329,7 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link VirtualServer}
    */
   public int getVirtualServerStatus(
-    String virtualServer
+      String virtualServer
   ) throws IllegalArgumentException, IOException, SQLException {
     return getVirtualServer(virtualServer).getStatus();
   }
@@ -9333,18 +9347,18 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link com.aoindustries.aoserv.client.net.reputation.Set} or unable to parse parameters
    */
   public void addIpReputation(
-    String identifier,
-    String host,
-    String confidence,
-    String reputationType,
-    short score
+      String identifier,
+      String host,
+      String confidence,
+      String reputationType,
+      short score
   ) throws IllegalArgumentException, IOException, SQLException {
     com.aoindustries.aoserv.client.net.reputation.Set set = getIpReputationSet(identifier);
     int hostIp = IpAddress.getIntForIPAddress(host);
     set.addReputation(hostIp,
-      com.aoindustries.aoserv.client.net.reputation.Set.ConfidenceType.valueOf(confidence.toUpperCase(Locale.ROOT)),
-      com.aoindustries.aoserv.client.net.reputation.Set.ReputationType.valueOf(reputationType.toUpperCase(Locale.ROOT)),
-      score
+        com.aoindustries.aoserv.client.net.reputation.Set.ConfidenceType.valueOf(confidence.toUpperCase(Locale.ROOT)),
+        com.aoindustries.aoserv.client.net.reputation.Set.ReputationType.valueOf(reputationType.toUpperCase(Locale.ROOT)),
+        score
     );
   }
 
@@ -9365,8 +9379,8 @@ public final class SimpleAOClient {
    * @see  VirtualDisk#verify()
    */
   public long verifyVirtualDisk(
-    String virtualServer,
-    String device
+      String virtualServer,
+      String device
   ) throws IllegalArgumentException, IOException, SQLException {
     return getVirtualDisk(virtualServer, device).verify();
   }
@@ -9381,12 +9395,12 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link VirtualServer}
    */
   public String getPrimaryVirtualServer(
-    String virtualServer
+      String virtualServer
   ) throws IllegalArgumentException, IOException, SQLException {
     return
-      getVirtualServer(virtualServer)
-      .getPrimaryPhysicalServer()
-      .toString()
+        getVirtualServer(virtualServer)
+            .getPrimaryPhysicalServer()
+            .toString()
     ;
   }
 
@@ -9400,12 +9414,12 @@ public final class SimpleAOClient {
    * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link VirtualServer}
    */
   public String getSecondaryVirtualServer(
-    String virtualServer
+      String virtualServer
   ) throws IllegalArgumentException, IOException, SQLException {
     return
-      getVirtualServer(virtualServer)
-      .getSecondaryPhysicalServer()
-      .toString()
+        getVirtualServer(virtualServer)
+            .getSecondaryPhysicalServer()
+            .toString()
     ;
   }
 }

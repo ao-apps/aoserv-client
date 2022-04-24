@@ -41,8 +41,9 @@ public final class PriorityTable extends GlobalTableStringKey<Priority> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Priority.COLUMN_PRIORITY_name, ASCENDING)
+      new OrderBy(Priority.COLUMN_PRIORITY_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

@@ -81,7 +81,7 @@ public final class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public PhysicalServer() {
     // Do nothing
   }
@@ -104,9 +104,9 @@ public final class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
   }
 
   public Host getHost() throws SQLException, IOException {
-    Host se=table.getConnector().getNet().getHost().get(pkey);
+    Host se = table.getConnector().getNet().getHost().get(pkey);
     if (se == null) {
-      throw new SQLException("Unable to find Host: "+pkey);
+      throw new SQLException("Unable to find Host: " + pkey);
     }
     return se;
   }
@@ -120,7 +120,7 @@ public final class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
     }
     Rack ra = table.getConnector().getInfrastructure().getRack().get(rack);
     if (ra == null) {
-      throw new SQLException("Unable to find Rack: "+rack);
+      throw new SQLException("Unable to find Rack: " + rack);
     }
     return ra;
   }
@@ -149,7 +149,7 @@ public final class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
     }
     ProcessorType pt = table.getConnector().getInfrastructure().getProcessorType().get(processorType);
     if (pt == null) {
-      throw new SQLException("Unable to find ProcessorType: "+processorType);
+      throw new SQLException("Unable to find ProcessorType: " + processorType);
     }
     return pt;
   }

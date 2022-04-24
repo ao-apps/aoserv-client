@@ -43,8 +43,9 @@ public final class VersionTable extends GlobalTableIntegerKey<Version> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Version.COLUMN_VERSION_name+'.'+SoftwareVersion.COLUMN_VERSION_name, ASCENDING)
+      new OrderBy(Version.COLUMN_VERSION_name + '.' + SoftwareVersion.COLUMN_VERSION_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -58,9 +59,9 @@ public final class VersionTable extends GlobalTableIntegerKey<Version> {
 
   public Version getPostgresVersion(String version, OperatingSystemVersion osv) throws IOException, SQLException {
     return get(connector.getDistribution().getSoftware()
-      .get(Version.TECHNOLOGY_NAME)
-      .getTechnologyVersion(connector, version, osv)
-      .getPkey()
+        .get(Version.TECHNOLOGY_NAME)
+        .getTechnologyVersion(connector, version, osv)
+        .getPkey()
     );
   }
 

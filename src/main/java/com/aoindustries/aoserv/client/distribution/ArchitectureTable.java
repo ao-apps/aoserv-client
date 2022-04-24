@@ -41,8 +41,9 @@ public final class ArchitectureTable extends GlobalTableStringKey<Architecture> 
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Architecture.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(Architecture.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

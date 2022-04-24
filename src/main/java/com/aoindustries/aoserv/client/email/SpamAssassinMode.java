@@ -43,13 +43,13 @@ import java.sql.SQLException;
  */
 public final class SpamAssassinMode extends GlobalObjectStringKey<SpamAssassinMode> {
 
-  static final int COLUMN_NAME=0;
+  static final int COLUMN_NAME = 0;
   static final String COLUMN_SORT_ORDER_name = "sort_order";
 
   public static final String
-    NONE="none",
-    POP3="pop3",
-    IMAP="imap"
+      NONE = "none",
+      POP3 = "pop3",
+      IMAP = "imap"
   ;
 
   public static final String DEFAULT_SPAMASSASSIN_INTEGRATION_MODE = NONE;
@@ -63,7 +63,7 @@ public final class SpamAssassinMode extends GlobalObjectStringKey<SpamAssassinMo
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public SpamAssassinMode() {
     // Do nothing
   }
@@ -97,16 +97,16 @@ public final class SpamAssassinMode extends GlobalObjectStringKey<SpamAssassinMo
 
   @Override
   public void init(ResultSet results) throws SQLException {
-    pkey=results.getString(1);
-    display=results.getString(2);
-    sort_order=results.getInt(3);
+    pkey = results.getString(1);
+    display = results.getString(2);
+    sort_order = results.getInt(3);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readUTF().intern();
-    display=in.readUTF();
-    sort_order=in.readCompressedInt();
+    pkey = in.readUTF().intern();
+    display = in.readUTF();
+    sort_order = in.readCompressedInt();
   }
 
   @Override

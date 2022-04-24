@@ -76,9 +76,9 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
   public static final int ROOT_UID = 0;
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_USERNAME=1,
-    COLUMN_AO_SERVER=2
+      COLUMN_PKEY = 0,
+      COLUMN_USERNAME = 1,
+      COLUMN_AO_SERVER = 2
   ;
   public static final String COLUMN_USERNAME_name = "username";
   public static final String COLUMN_AO_SERVER_name = "ao_server";
@@ -109,7 +109,7 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public UserServer() {
     // Do nothing
   }
@@ -183,7 +183,7 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
   @Override
   public boolean canEnable() throws SQLException, IOException {
-    DisableLog dl=getDisableLog();
+    DisableLog dl = getDisableLog();
     if (dl == null) {
       return false;
     } else {
@@ -198,32 +198,32 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
   public long copyHomeDirectory(final Server toServer) throws IOException, SQLException {
     return table.getConnector().requestResult(
-      false,
-      AoservProtocol.CommandID.COPY_HOME_DIRECTORY,
-      // Java 9: new AOServConnector.ResultRequest<>
-      new AOServConnector.ResultRequest<Long>() {
-        private long result;
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(pkey);
-          out.writeCompressedInt(toServer.getPkey());
-        }
-
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code != AoservProtocol.DONE) {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+        false,
+        AoservProtocol.CommandID.COPY_HOME_DIRECTORY,
+        // Java 9: new AOServConnector.ResultRequest<>
+        new AOServConnector.ResultRequest<Long>() {
+          private long result;
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(pkey);
+            out.writeCompressedInt(toServer.getPkey());
           }
-          result = in.readLong();
-        }
 
-        @Override
-        public Long afterRelease() {
-          return result;
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code != AoservProtocol.DONE) {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
+            }
+            result = in.readLong();
+          }
+
+          @Override
+          public Long afterRelease() {
+            return result;
+          }
         }
-      }
     );
   }
 
@@ -250,7 +250,7 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
       case COLUMN_AO_SERVER: return ao_server;
       case 3: return uid;
       case 4: return home;
-      case 5: return autoresponder_from == -1?null:autoresponder_from;
+      case 5: return autoresponder_from == -1 ? null : autoresponder_from;
       case 6: return autoresponder_subject;
       case 7: return autoresponder_path;
       case 8: return is_autoresponder_enabled;
@@ -258,8 +258,8 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
       case 10: return predisable_password;
       case 11: return created;
       case 12: return use_inbox;
-      case 13: return trash_email_retention == -1?null:trash_email_retention;
-      case 14: return junk_email_retention == -1?null:junk_email_retention;
+      case 13: return trash_email_retention == -1 ? null : trash_email_retention;
+      case 14: return junk_email_retention == -1 ? null : junk_email_retention;
       case 15: return sa_integration_mode;
       case 16: return sa_required_score;
       case 17: return sa_discard_score == -1 ? null : sa_discard_score;
@@ -277,7 +277,7 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
   }
 
   public String getAutoresponderContent() throws IOException, SQLException {
-    String content=table.getConnector().requestStringQuery(true, AoservProtocol.CommandID.GET_AUTORESPONDER_CONTENT, pkey);
+    String content = table.getConnector().requestStringQuery(true, AoservProtocol.CommandID.GET_AUTORESPONDER_CONTENT, pkey);
     if (content.length() == 0) {
       return null;
     }
@@ -336,9 +336,9 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
     if (disable_log == -1) {
       return null;
     }
-    DisableLog obj=table.getConnector().getAccount().getDisableLog().get(disable_log);
+    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disable_log);
     if (obj == null) {
-      throw new SQLException("Unable to find DisableLog: "+disable_log);
+      throw new SQLException("Unable to find DisableLog: " + disable_log);
     }
     return obj;
   }
@@ -357,78 +357,78 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
   public InboxAttributes getInboxAttributes() throws IOException, SQLException {
     return table.getConnector().requestResult(
-      true,
-      AoservProtocol.CommandID.GET_INBOX_ATTRIBUTES,
-      // Java 9: new AOServConnector.ResultRequest<>
-      new AOServConnector.ResultRequest<InboxAttributes>() {
-
-        private InboxAttributes result;
-
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(pkey);
-        }
-
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            InboxAttributes attr;
-            if (in.readBoolean()) {
-              attr=new InboxAttributes(table.getConnector(), UserServer.this);
-              attr.read(in, AoservProtocol.Version.CURRENT_VERSION);
-            } else {
-              attr=null;
-            }
-            result = attr;
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
-          }
-        }
-
-        @Override
-        public InboxAttributes afterRelease() {
-          return result;
-        }
-      }
-    );
-  }
-
-  public long[] getImapFolderSizes(final String[] folderNames) throws IOException, SQLException {
-    final long[] sizes=new long[folderNames.length];
-    if (sizes.length>0) {
-      table.getConnector().requestUpdate(
         true,
-        AoservProtocol.CommandID.GET_IMAP_FOLDER_SIZES,
-        new AOServConnector.UpdateRequest() {
+        AoservProtocol.CommandID.GET_INBOX_ATTRIBUTES,
+        // Java 9: new AOServConnector.ResultRequest<>
+        new AOServConnector.ResultRequest<InboxAttributes>() {
+
+          private InboxAttributes result;
+
           @Override
           public void writeRequest(StreamableOutput out) throws IOException {
             out.writeCompressedInt(pkey);
-            out.writeCompressedInt(folderNames.length);
-            for (String folderName : folderNames) {
-              out.writeUTF(folderName);
-            }
           }
 
           @Override
           public void readResponse(StreamableInput in) throws IOException, SQLException {
-            int code=in.readByte();
+            int code = in.readByte();
             if (code == AoservProtocol.DONE) {
-              for (int c=0;c<folderNames.length;c++) {
-                sizes[c]=in.readLong();
+              InboxAttributes attr;
+              if (in.readBoolean()) {
+                attr = new InboxAttributes(table.getConnector(), UserServer.this);
+                attr.read(in, AoservProtocol.Version.CURRENT_VERSION);
+              } else {
+                attr = null;
               }
+              result = attr;
             } else {
               AoservProtocol.checkResult(code, in);
-              throw new IOException("Unexpected response code: "+code);
+              throw new IOException("Unexpected response code: " + code);
             }
           }
 
           @Override
-          public void afterRelease() {
-            // Do nothing
+          public InboxAttributes afterRelease() {
+            return result;
           }
         }
+    );
+  }
+
+  public long[] getImapFolderSizes(final String[] folderNames) throws IOException, SQLException {
+    final long[] sizes = new long[folderNames.length];
+    if (sizes.length > 0) {
+      table.getConnector().requestUpdate(
+          true,
+          AoservProtocol.CommandID.GET_IMAP_FOLDER_SIZES,
+          new AOServConnector.UpdateRequest() {
+            @Override
+            public void writeRequest(StreamableOutput out) throws IOException {
+              out.writeCompressedInt(pkey);
+              out.writeCompressedInt(folderNames.length);
+              for (String folderName : folderNames) {
+                out.writeUTF(folderName);
+              }
+            }
+
+            @Override
+            public void readResponse(StreamableInput in) throws IOException, SQLException {
+              int code = in.readByte();
+              if (code == AoservProtocol.DONE) {
+                for (int c = 0; c < folderNames.length; c++) {
+                  sizes[c] = in.readLong();
+                }
+              } else {
+                AoservProtocol.checkResult(code, in);
+                throw new IOException("Unexpected response code: " + code);
+              }
+            }
+
+            @Override
+            public void afterRelease() {
+              // Do nothing
+            }
+          }
       );
     }
     return sizes;
@@ -484,9 +484,9 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
   }
 
   public SpamAssassinMode getEmailSpamAssassinIntegrationMode() throws SQLException, IOException {
-    SpamAssassinMode esaim=table.getConnector().getEmail().getSpamAssassinMode().get(sa_integration_mode);
+    SpamAssassinMode esaim = table.getConnector().getEmail().getSpamAssassinMode().get(sa_integration_mode);
     if (esaim == null) {
-      throw new SQLException("Unable to find EmailSpamAssassinIntegrationMode: "+sa_integration_mode);
+      throw new SQLException("Unable to find EmailSpamAssassinIntegrationMode: " + sa_integration_mode);
     }
     return esaim;
   }
@@ -527,7 +527,7 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
   }
 
   public Server getServer() throws SQLException, IOException {
-    Server ao=table.getConnector().getLinux().getServer().get(ao_server);
+    Server ao = table.getConnector().getLinux().getServer().get(ao_server);
     if (ao == null) {
       throw new SQLException("Unable to find linux.Server: " + ao_server);
     }
@@ -546,36 +546,36 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
   @Override
   public void init(ResultSet result) throws SQLException {
     try {
-      int pos=1;
-      pkey=result.getInt(pos++);
+      int pos = 1;
+      pkey = result.getInt(pos++);
       username = User.Name.valueOf(result.getString(pos++));
-      ao_server=result.getInt(pos++);
+      ao_server = result.getInt(pos++);
       uid = LinuxId.valueOf(result.getInt(pos++));
       home = PosixPath.valueOf(result.getString(pos++));
-      autoresponder_from=result.getInt(pos++);
+      autoresponder_from = result.getInt(pos++);
       if (result.wasNull()) {
-        autoresponder_from=-1;
+        autoresponder_from = -1;
       }
       autoresponder_subject = result.getString(pos++);
       autoresponder_path = result.getString(pos++);
-      is_autoresponder_enabled=result.getBoolean(pos++);
-      disable_log=result.getInt(pos++);
+      is_autoresponder_enabled = result.getBoolean(pos++);
+      disable_log = result.getInt(pos++);
       if (result.wasNull()) {
-        disable_log=-1;
+        disable_log = -1;
       }
-      predisable_password=result.getString(pos++);
+      predisable_password = result.getString(pos++);
       created = UnmodifiableTimestamp.valueOf(result.getTimestamp(pos++));
-      use_inbox=result.getBoolean(pos++);
-      trash_email_retention=result.getInt(pos++);
+      use_inbox = result.getBoolean(pos++);
+      trash_email_retention = result.getInt(pos++);
       if (result.wasNull()) {
-        trash_email_retention=-1;
+        trash_email_retention = -1;
       }
-      junk_email_retention=result.getInt(pos++);
+      junk_email_retention = result.getInt(pos++);
       if (result.wasNull()) {
-        junk_email_retention=-1;
+        junk_email_retention = -1;
       }
-      sa_integration_mode=result.getString(pos++);
-      sa_required_score=result.getFloat(pos++);
+      sa_integration_mode = result.getString(pos++);
+      sa_required_score = result.getFloat(pos++);
       sa_discard_score = result.getInt(pos++);
       if (result.wasNull()) {
         sa_discard_score = -1;
@@ -592,7 +592,7 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
   @Override
   public int arePasswordsSet() throws IOException, SQLException {
-    return table.getConnector().requestBooleanQuery(true, AoservProtocol.CommandID.IS_LINUX_SERVER_ACCOUNT_PASSWORD_SET, pkey)?PasswordProtected.ALL:PasswordProtected.NONE;
+    return table.getConnector().requestBooleanQuery(true, AoservProtocol.CommandID.IS_LINUX_SERVER_ACCOUNT_PASSWORD_SET, pkey) ? PasswordProtected.ALL : PasswordProtected.NONE;
   }
 
   @Override
@@ -628,7 +628,7 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
   @Override
   public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws SQLException, IOException {
-    List<CannotRemoveReason<?>> reasons=new ArrayList<>();
+    List<CannotRemoveReason<?>> reasons = new ArrayList<>();
 
     LinuxId uidMin = getServer().getUidMin();
     if (uid.compareTo(uidMin) < 0) {
@@ -640,13 +640,13 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
     // No CVS repositories
     for (CvsRepository cr : ao.getCvsRepositories()) {
       if (cr.getLinuxServerAccount_pkey() == pkey) {
-        reasons.add(new CannotRemoveReason<>("Used by CVS repository "+cr.getPath()+" on "+cr.getLinuxServerAccount().getServer().getHostname(), cr));
+        reasons.add(new CannotRemoveReason<>("Used by CVS repository " + cr.getPath() + " on " + cr.getLinuxServerAccount().getServer().getHostname(), cr));
       }
     }
 
     // No email lists
     for (com.aoindustries.aoserv.client.email.List el : getEmailLists()) {
-      reasons.add(new CannotRemoveReason<>("Used by email list "+el.getPath()+" on "+el.getLinuxServerAccount().getServer().getHostname(), el));
+      reasons.add(new CannotRemoveReason<>("Used by email list " + el.getPath() + " on " + el.getLinuxServerAccount().getServer().getHostname(), el));
     }
 
     // No httpd_servers
@@ -654,12 +654,12 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
       if (hs.getLinuxServerAccount_pkey() == pkey) {
         String name = hs.getName();
         reasons.add(
-          new CannotRemoveReason<>(
-            name == null
-              ? "Used by Apache HTTP Server on " + hs.getLinuxServer().getHostname()
-              : "Used by Apache HTTP Server (" + name + ") on " + hs.getLinuxServer().getHostname(),
-            hs
-          )
+            new CannotRemoveReason<>(
+                name == null
+                    ? "Used by Apache HTTP Server on " + hs.getLinuxServer().getHostname()
+                    : "Used by Apache HTTP Server (" + name + ") on " + hs.getLinuxServer().getHostname(),
+                hs
+            )
         );
       }
     }
@@ -667,15 +667,15 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
     // No httpd shared tomcats
     for (SharedTomcat hst : ao.getHttpdSharedTomcats()) {
       if (hst.getLinuxServerAccount_pkey() == pkey) {
-        reasons.add(new CannotRemoveReason<>("Used by Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getLinuxServer().getHostname(), hst));
+        reasons.add(new CannotRemoveReason<>("Used by Multi-Site Tomcat JVM " + hst.getInstallDirectory() + " on " + hst.getLinuxServer().getHostname(), hst));
       }
     }
 
     // No majordomo_servers
     for (MajordomoServer ms : ao.getMajordomoServers()) {
       if (ms.getLinuxServerAccount_pkey() == pkey) {
-        Domain ed=ms.getDomain();
-        reasons.add(new CannotRemoveReason<>("Used by Majordomo server "+ed.getDomain()+" on "+ed.getLinuxServer().getHostname(), ms));
+        Domain ed = ms.getDomain();
+        reasons.add(new CannotRemoveReason<>("Used by Majordomo server " + ed.getDomain() + " on " + ed.getLinuxServer().getHostname(), ms));
       }
     }
 
@@ -683,14 +683,14 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
     for (PrivateServer pfs : ao.getPrivateFTPServers()) {
       if (pfs.getLinuxServerAccount_pkey() == pkey) {
         UserServer lsa = pfs.getLinuxServerAccount();
-        reasons.add(new CannotRemoveReason<>("Used by private FTP server "+lsa.getHome()+" on "+lsa.getServer().getHostname(), pfs));
+        reasons.add(new CannotRemoveReason<>("Used by private FTP server " + lsa.getHome() + " on " + lsa.getServer().getHostname(), pfs));
       }
     }
 
     // No httpd_sites
     for (Site site : ao.getHttpdSites()) {
       if (site.getLinuxAccount_username().equals(username)) {
-        reasons.add(new CannotRemoveReason<>("Used by website "+site.getInstallDirectory()+" on "+site.getLinuxServer().getHostname(), site));
+        reasons.add(new CannotRemoveReason<>("Used by website " + site.getInstallDirectory() + " on " + site.getLinuxServer().getHostname(), site));
       }
     }
 
@@ -700,10 +700,10 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
   @Override
   public void remove() throws IOException, SQLException {
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.REMOVE,
-      Table.TableID.LINUX_SERVER_ACCOUNTS,
-      pkey
+        true,
+        AoservProtocol.CommandID.REMOVE,
+        Table.TableID.LINUX_SERVER_ACCOUNTS,
+        pkey
     );
   }
 
@@ -713,56 +713,56 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
   @Override
   public void setPassword(String password) throws IOException, SQLException {
-    AOServConnector connector=table.getConnector();
+    AOServConnector connector = table.getConnector();
     if (!connector.isSecure()) {
-      throw new IOException("Passwords for linux accounts may only be set when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure.");
+      throw new IOException("Passwords for linux accounts may only be set when using secure protocols.  Currently using the " + connector.getProtocol() + " protocol, which is not secure.");
     }
     connector.requestUpdateIL(true, AoservProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_PASSWORD, pkey, password);
   }
 
   public void setAutoresponder(
-    final InboxAddress from,
-    final String subject,
-    final String content,
-    final boolean enabled
+      final InboxAddress from,
+      final String subject,
+      final String content,
+      final boolean enabled
   ) throws IOException, SQLException {
     table.getConnector().requestUpdate(
-      true,
-      AoservProtocol.CommandID.SET_AUTORESPONDER,
-      new AOServConnector.UpdateRequest() {
-        private IntList invalidateList;
+        true,
+        AoservProtocol.CommandID.SET_AUTORESPONDER,
+        new AOServConnector.UpdateRequest() {
+          private IntList invalidateList;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(pkey);
-          out.writeCompressedInt(from == null?-1:from.getPkey());
-          out.writeBoolean(subject != null);
-          if (subject != null) {
-            out.writeUTF(subject);
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(pkey);
+            out.writeCompressedInt(from == null ? -1 : from.getPkey());
+            out.writeBoolean(subject != null);
+            if (subject != null) {
+              out.writeUTF(subject);
+            }
+            out.writeBoolean(content != null);
+            if (content != null) {
+              out.writeUTF(content);
+            }
+            out.writeBoolean(enabled);
           }
-          out.writeBoolean(content != null);
-          if (content != null) {
-            out.writeUTF(content);
-          }
-          out.writeBoolean(enabled);
-        }
 
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            invalidateList=AOServConnector.readInvalidateList(in);
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              invalidateList = AOServConnector.readInvalidateList(in);
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
+            }
+          }
+
+          @Override
+          public void afterRelease() {
+            table.getConnector().tablesUpdated(invalidateList);
           }
         }
-
-        @Override
-        public void afterRelease() {
-          table.getConnector().tablesUpdated(invalidateList);
-        }
-      }
     );
   }
 
@@ -792,39 +792,39 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
   public void setPredisablePassword(final String password) throws IOException, SQLException {
     table.getConnector().requestUpdate(
-      true,
-      AoservProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_PREDISABLE_PASSWORD,
-      new AOServConnector.UpdateRequest() {
-        private IntList invalidateList;
+        true,
+        AoservProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_PREDISABLE_PASSWORD,
+        new AOServConnector.UpdateRequest() {
+          private IntList invalidateList;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(pkey);
-          out.writeNullUTF(password);
-        }
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(pkey);
+            out.writeNullUTF(password);
+          }
 
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            invalidateList=AOServConnector.readInvalidateList(in);
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              invalidateList = AOServConnector.readInvalidateList(in);
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
+            }
+          }
+
+          @Override
+          public void afterRelease() {
+            table.getConnector().tablesUpdated(invalidateList);
           }
         }
-
-        @Override
-        public void afterRelease() {
-          table.getConnector().tablesUpdated(invalidateList);
-        }
-      }
     );
   }
 
   @Override
   public String toStringImpl() throws SQLException, IOException {
-    return username+" on "+getServer().getHostname();
+    return username + " on " + getServer().getHostname();
   }
 
   @Override

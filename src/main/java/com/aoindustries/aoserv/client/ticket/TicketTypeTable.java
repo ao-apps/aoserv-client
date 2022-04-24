@@ -41,8 +41,9 @@ public final class TicketTypeTable extends GlobalTableStringKey<TicketType> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(TicketType.COLUMN_TYPE_name, ASCENDING)
+      new OrderBy(TicketType.COLUMN_TYPE_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

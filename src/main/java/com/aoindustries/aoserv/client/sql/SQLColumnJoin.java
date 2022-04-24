@@ -49,10 +49,10 @@ public final class SQLColumnJoin implements SQLExpression {
   private final int valueIndex;
 
   public SQLColumnJoin(
-    AOServConnector conn,
-    SQLExpression expression,
-    Column keyColumn,
-    Column valueColumn
+      AOServConnector conn,
+      SQLExpression expression,
+      Column keyColumn,
+      Column valueColumn
   ) throws SQLException, IOException {
     this.expression = expression;
     this.keyColumn = keyColumn;
@@ -60,7 +60,7 @@ public final class SQLColumnJoin implements SQLExpression {
     this.valueColumn = valueColumn;
     this.type = valueColumn.getType(conn);
     this.table = keyColumn.getTable(conn).getAOServTable(conn);
-    this.valueIndex=valueColumn.getIndex();
+    this.valueIndex = valueColumn.getIndex();
   }
 
   @Override
@@ -75,9 +75,9 @@ public final class SQLColumnJoin implements SQLExpression {
 
   @Override
   public Object evaluate(AOServConnector conn, AOServObject<?, ?> obj) throws IOException, SQLException {
-    Object keyValue=expression.evaluate(conn, obj);
+    Object keyValue = expression.evaluate(conn, obj);
     if (keyValue != null) {
-      AOServObject<?, ?> row=table.getUniqueRow(keyIndex, keyValue);
+      AOServObject<?, ?> row = table.getUniqueRow(keyIndex, keyValue);
       if (row != null) {
         return row.getColumn(valueIndex);
       }

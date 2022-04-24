@@ -49,7 +49,7 @@ import java.sql.SQLException;
  */
 public final class UserHost extends CachedObjectIntegerKey<UserHost> {
 
-  static final int COLUMN_PKEY=0;
+  static final int COLUMN_PKEY = 0;
   static final String COLUMN_USERNAME_name = "username";
   static final String COLUMN_SERVER_name = "server";
 
@@ -62,7 +62,7 @@ public final class UserHost extends CachedObjectIntegerKey<UserHost> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public UserHost() {
     // Do nothing
   }
@@ -78,17 +78,17 @@ public final class UserHost extends CachedObjectIntegerKey<UserHost> {
   }
 
   public User getMasterUser() throws SQLException, IOException {
-    User obj=table.getConnector().getMaster().getUser().get(username);
+    User obj = table.getConnector().getMaster().getUser().get(username);
     if (obj == null) {
-      throw new SQLException("Unable to find MasterUser: "+username);
+      throw new SQLException("Unable to find MasterUser: " + username);
     }
     return obj;
   }
 
   public Host getHost() throws SQLException, IOException {
-    Host obj=table.getConnector().getNet().getHost().get(server);
+    Host obj = table.getConnector().getNet().getHost().get(server);
     if (obj == null) {
-      throw new SQLException("Unable to find Host: "+server);
+      throw new SQLException("Unable to find Host: " + server);
     }
     return obj;
   }

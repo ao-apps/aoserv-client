@@ -41,8 +41,9 @@ public final class BankAccountTable extends CachedTableStringKey<BankAccount> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(BankAccount.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(BankAccount.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

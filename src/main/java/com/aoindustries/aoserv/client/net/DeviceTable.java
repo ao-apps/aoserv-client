@@ -43,10 +43,11 @@ public final class DeviceTable extends CachedTableIntegerKey<Device> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Device.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(Device.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(Device.COLUMN_DEVICE_ID_name, ASCENDING)
+      new OrderBy(Device.COLUMN_SERVER_name + '.' + Host.COLUMN_PACKAGE_name + '.' + Package.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(Device.COLUMN_SERVER_name + '.' + Host.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(Device.COLUMN_DEVICE_ID_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -64,10 +65,10 @@ public final class DeviceTable extends CachedTableIntegerKey<Device> {
 
   Device getNetDevice(Host se, String deviceID) throws IOException, SQLException {
     // Use the index first
-    List<Device> cached=getNetDevices(se);
-    int size=cached.size();
-    for (int c=0;c<size;c++) {
-      Device dev=cached.get(c);
+    List<Device> cached = getNetDevices(se);
+    int size = cached.size();
+    for (int c = 0; c < size; c++) {
+      Device dev = cached.get(c);
       if (dev.getDeviceId_name().equals(deviceID)) {
         return dev;
       }

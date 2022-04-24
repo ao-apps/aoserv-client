@@ -48,15 +48,15 @@ final class SocketConnectionPool extends AOPool<SocketConnection, IOException, I
 
   SocketConnectionPool(TCPConnector connector, Logger logger) {
     super(
-      DELAY_TIME,
-      MAX_IDLE_TIME,
-      // TODO: EncodeURLComponent this and AOServConnector?
-      SocketConnectionPool.class.getName() + "?hostname=" + connector.hostname + "&port=" + connector.port + "&connectAs=" + connector.connectAs + "&authenticateAs=" + connector.authenticateAs,
-      connector.poolSize,
-      connector.maxConnectionAge,
-      logger
+        DELAY_TIME,
+        MAX_IDLE_TIME,
+        // TODO: EncodeURLComponent this and AOServConnector?
+        SocketConnectionPool.class.getName() + "?hostname=" + connector.hostname + "&port=" + connector.port + "&connectAs=" + connector.connectAs + "&authenticateAs=" + connector.authenticateAs,
+        connector.poolSize,
+        connector.maxConnectionAge,
+        logger
     );
-    this.connector=connector;
+    this.connector = connector;
   }
 
   @Override
@@ -93,21 +93,21 @@ final class SocketConnectionPool extends AOPool<SocketConnection, IOException, I
   protected void printConnectionStats(Appendable out, boolean isXhtml) throws IOException {
     try {
       // Create statistics on the caches
-      int totalLoaded=0;
-      int totalCaches=0;
-      int totalActive=0;
-      int totalHashed=0;
-      int totalIndexed=0;
-      int totalRows=0;
+      int totalLoaded = 0;
+      int totalCaches = 0;
+      int totalActive = 0;
+      int totalHashed = 0;
+      int totalIndexed = 0;
+      int totalRows = 0;
       for (AOServTable<?, ?> table : connector.getTables()) {
         totalLoaded++;
         if (table instanceof CachedTable<?, ?>) {
           totalCaches++;
-          int columnCount=table.getTableSchema().getSchemaColumns(connector).size();
-          CachedTable<?, ?> cached=(CachedTable<?, ?>)table;
+          int columnCount = table.getTableSchema().getSchemaColumns(connector).size();
+          CachedTable<?, ?> cached = (CachedTable<?, ?>) table;
           if (cached.isLoaded()) {
             totalActive++;
-            for (int d=0;d<columnCount;d++) {
+            for (int d = 0; d < columnCount; d++) {
               if (cached.isHashed(d)) {
                 totalHashed++;
               }
@@ -115,15 +115,15 @@ final class SocketConnectionPool extends AOPool<SocketConnection, IOException, I
                 totalIndexed++;
               }
             }
-            totalRows+=cached.size();
+            totalRows += cached.size();
           }
         } else if (table instanceof GlobalTable<?, ?>) {
           totalCaches++;
-          int columnCount=table.getTableSchema().getSchemaColumns(connector).size();
-          GlobalTable<?, ?> global=(GlobalTable<?, ?>)table;
+          int columnCount = table.getTableSchema().getSchemaColumns(connector).size();
+          GlobalTable<?, ?> global = (GlobalTable<?, ?>) table;
           if (global.isLoaded()) {
             totalActive++;
-            for (int d=0;d<columnCount;d++) {
+            for (int d = 0; d < columnCount; d++) {
               if (global.isHashed(d)) {
                 totalHashed++;
               }
@@ -131,7 +131,7 @@ final class SocketConnectionPool extends AOPool<SocketConnection, IOException, I
                 totalIndexed++;
               }
             }
-            totalRows+=global.size();
+            totalRows += global.size();
           }
         }
       }
@@ -171,9 +171,9 @@ final class SocketConnectionPool extends AOPool<SocketConnection, IOException, I
       com.aoapps.hodgepodge.util.EncodingUtils.encodeHtml(connector.authenticateAs, out, isXhtml);
       out.append("</td></tr>\n"
           + "    <tr><td>Password:</td><td>");
-      String password=connector.password;
+      String password = connector.password;
       int len = Math.max(password.length(), 8);
-      for (int c=0;c<len;c++) {
+      for (int c = 0; c < len; c++) {
         out.append('*');
       }
       out.append("</td></tr>\n");
@@ -190,7 +190,7 @@ final class SocketConnectionPool extends AOPool<SocketConnection, IOException, I
   @Override
   protected IOException newException(String message, Throwable cause) {
     if (cause instanceof IOException) {
-      return (IOException)cause;
+      return (IOException) cause;
     }
     if (cause instanceof InterruptedException) {
       return newInterruptedException(message, cause);
@@ -215,7 +215,7 @@ final class SocketConnectionPool extends AOPool<SocketConnection, IOException, I
     // Restore the interrupted status
     Thread.currentThread().interrupt();
     if (cause instanceof InterruptedIOException) {
-      return (InterruptedIOException)cause;
+      return (InterruptedIOException) cause;
     }
     if (message == null) {
       if (cause == null) {

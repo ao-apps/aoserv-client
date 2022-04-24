@@ -54,9 +54,10 @@ public final class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(CreditCard.COLUMN_ACCOUNTING_name, ASCENDING),
-    new OrderBy(CreditCard.COLUMN_CREATED_name, ASCENDING)
+      new OrderBy(CreditCard.COLUMN_ACCOUNTING_name, ASCENDING),
+      new OrderBy(CreditCard.COLUMN_CREATED_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -64,31 +65,31 @@ public final class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
   }
 
   public int addCreditCard(
-    final Processor processor,
-    final Account business,
-    final String groupName,
-    final String cardInfo,
-    final byte expirationMonth,
-    final short expirationYear,
-    final String providerUniqueId,
-    final String firstName,
-    final String lastName,
-    final String companyName,
-    final Email email,
-    final String phone,
-    final String fax,
-    final String customerId,
-    final String customerTaxId,
-    final String streetAddress1,
-    final String streetAddress2,
-    final String city,
-    final String state,
-    final String postalCode,
-    final CountryCode countryCode,
-    final String principalName,
-    final String description,
-    // Encrypted values
-    String card_number
+      final Processor processor,
+      final Account business,
+      final String groupName,
+      final String cardInfo,
+      final byte expirationMonth,
+      final short expirationYear,
+      final String providerUniqueId,
+      final String firstName,
+      final String lastName,
+      final String companyName,
+      final Email email,
+      final String phone,
+      final String fax,
+      final String customerId,
+      final String customerTaxId,
+      final String streetAddress1,
+      final String streetAddress2,
+      final String city,
+      final String state,
+      final String postalCode,
+      final CountryCode countryCode,
+      final String principalName,
+      final String description,
+      // Encrypted values
+      String card_number
   ) throws IOException, SQLException {
     // Validate the encrypted parameters
     if (card_number == null) {
@@ -99,7 +100,7 @@ public final class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
     }
 
     if (!connector.isSecure()) {
-      throw new IOException("Credit cards may only be added when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure.");
+      throw new IOException("Credit cards may only be added when using secure protocols.  Currently using the " + connector.getProtocol() + " protocol, which is not secure.");
     }
 
     // Encrypt if currently configured to
@@ -114,62 +115,62 @@ public final class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
     }
 
     return connector.requestResult(
-      true,
-      AoservProtocol.CommandID.ADD,
-      // Java 9: new AOServConnector.ResultRequest<>
-      new AOServConnector.ResultRequest<Integer>() {
-        private int pkey;
-        private IntList invalidateList;
+        true,
+        AoservProtocol.CommandID.ADD,
+        // Java 9: new AOServConnector.ResultRequest<>
+        new AOServConnector.ResultRequest<Integer>() {
+          private int pkey;
+          private IntList invalidateList;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(Table.TableID.CREDIT_CARDS.ordinal());
-          out.writeUTF(processor.getProviderId());
-          out.writeUTF(business.getName().toString());
-          out.writeNullUTF(groupName);
-          out.writeUTF(cardInfo);
-          out.writeByte(expirationMonth);
-          out.writeShort(expirationYear);
-          out.writeUTF(providerUniqueId);
-          out.writeUTF(firstName);
-          out.writeUTF(lastName);
-          out.writeNullUTF(companyName);
-          out.writeNullUTF(Objects.toString(email, null));
-          out.writeNullUTF(phone);
-          out.writeNullUTF(fax);
-          out.writeNullUTF(customerId);
-          out.writeNullUTF(customerTaxId);
-          out.writeUTF(streetAddress1);
-          out.writeNullUTF(streetAddress2);
-          out.writeUTF(city);
-          out.writeNullUTF(state);
-          out.writeNullUTF(postalCode);
-          out.writeUTF(countryCode.getCode());
-          out.writeNullUTF(principalName);
-          out.writeNullUTF(description);
-          out.writeNullUTF(encryptedCardNumber);
-          out.writeCompressedInt(encryptionFrom == null ? -1 : encryptionFrom.getPkey());
-          out.writeCompressedInt(encryptionRecipient == null ? -1 : encryptionRecipient.getPkey());
-        }
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(Table.TableID.CREDIT_CARDS.ordinal());
+            out.writeUTF(processor.getProviderId());
+            out.writeUTF(business.getName().toString());
+            out.writeNullUTF(groupName);
+            out.writeUTF(cardInfo);
+            out.writeByte(expirationMonth);
+            out.writeShort(expirationYear);
+            out.writeUTF(providerUniqueId);
+            out.writeUTF(firstName);
+            out.writeUTF(lastName);
+            out.writeNullUTF(companyName);
+            out.writeNullUTF(Objects.toString(email, null));
+            out.writeNullUTF(phone);
+            out.writeNullUTF(fax);
+            out.writeNullUTF(customerId);
+            out.writeNullUTF(customerTaxId);
+            out.writeUTF(streetAddress1);
+            out.writeNullUTF(streetAddress2);
+            out.writeUTF(city);
+            out.writeNullUTF(state);
+            out.writeNullUTF(postalCode);
+            out.writeUTF(countryCode.getCode());
+            out.writeNullUTF(principalName);
+            out.writeNullUTF(description);
+            out.writeNullUTF(encryptedCardNumber);
+            out.writeCompressedInt(encryptionFrom == null ? -1 : encryptionFrom.getPkey());
+            out.writeCompressedInt(encryptionRecipient == null ? -1 : encryptionRecipient.getPkey());
+          }
 
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            pkey=in.readCompressedInt();
-            invalidateList=AOServConnector.readInvalidateList(in);
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unknown response code: "+code);
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              pkey = in.readCompressedInt();
+              invalidateList = AOServConnector.readInvalidateList(in);
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unknown response code: " + code);
+            }
+          }
+
+          @Override
+          public Integer afterRelease() {
+            connector.tablesUpdated(invalidateList);
+            return pkey;
           }
         }
-
-        @Override
-        public Integer afterRelease() {
-          connector.tablesUpdated(invalidateList);
-          return pkey;
-        }
-      }
     );
   }
 
@@ -213,19 +214,19 @@ public final class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-    String command=args[0];
+    String command = args[0];
     if (command.equalsIgnoreCase(Command.DECLINE_CREDIT_CARD)) {
       if (AOSH.checkParamCount(Command.DECLINE_CREDIT_CARD, args, 2, err)) {
         connector.getSimpleAOClient().declineCreditCard(
-          AOSH.parseInt(args[1], "pkey"),
-          args[2]
+            AOSH.parseInt(args[1], "pkey"),
+            args[2]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.REMOVE_CREDIT_CARD)) {
       if (AOSH.checkParamCount(Command.REMOVE_CREDIT_CARD, args, 1, err)) {
         connector.getSimpleAOClient().removeCreditCard(
-          AOSH.parseInt(args[1], "pkey")
+            AOSH.parseInt(args[1], "pkey")
         );
       }
       return true;

@@ -52,9 +52,9 @@ import java.util.Objects;
 public final class VirtualHost extends CachedObjectIntegerKey<VirtualHost> implements Disablable {
 
   static final int
-    COLUMN_PKEY = 0,
-    COLUMN_HTTPD_SITE = 1,
-    COLUMN_SSL_CERTIFICATE = 6
+      COLUMN_PKEY = 0,
+      COLUMN_HTTPD_SITE = 1,
+      COLUMN_SSL_CERTIFICATE = 6
   ;
   static final String COLUMN_HTTPD_SITE_name = "httpd_site";
   static final String COLUMN_HTTPD_BIND_name = "httpd_bind";
@@ -83,7 +83,7 @@ public final class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public VirtualHost() {
     // Do nothing
   }
@@ -323,33 +323,33 @@ public final class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
 
   public void setPredisableConfig(final String config) throws IOException, SQLException {
     table.getConnector().requestUpdate(
-      true,
-      AoservProtocol.CommandID.SET_HTTPD_SITE_BIND_PREDISABLE_CONFIG,
-      new AOServConnector.UpdateRequest() {
-        private IntList invalidateList;
+        true,
+        AoservProtocol.CommandID.SET_HTTPD_SITE_BIND_PREDISABLE_CONFIG,
+        new AOServConnector.UpdateRequest() {
+          private IntList invalidateList;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(pkey);
-          out.writeNullUTF(config);
-        }
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(pkey);
+            out.writeNullUTF(config);
+          }
 
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code = in.readByte();
-          if (code == AoservProtocol.DONE) {
-            invalidateList = AOServConnector.readInvalidateList(in);
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: " + code);
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              invalidateList = AOServConnector.readInvalidateList(in);
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
+            }
+          }
+
+          @Override
+          public void afterRelease() {
+            table.getConnector().tablesUpdated(invalidateList);
           }
         }
-
-        @Override
-        public void afterRelease() {
-          table.getConnector().tablesUpdated(invalidateList);
-        }
-      }
     );
   }
 

@@ -39,20 +39,20 @@ public final class CannotRemoveReason<T extends AOServObject<?, ? extends T>> {
   private final List<T> dependentObjects;
 
   public CannotRemoveReason(String reason) {
-    this.reason=reason;
-    this.dependentObjects=null;
+    this.reason = reason;
+    this.dependentObjects = null;
   }
 
   public CannotRemoveReason(String reason, T dependentObject) {
-    this.reason=reason;
-    this.dependentObjects=dependentObject == null?null:Collections.singletonList(dependentObject);
+    this.reason = reason;
+    this.dependentObjects = dependentObject == null ? null : Collections.singletonList(dependentObject);
   }
 
   /**
    * @param  dependentObjects  No defensive copy is made
    */
   public CannotRemoveReason(String reason, List<T> dependentObjects) {
-    this.reason=reason;
+    this.reason = reason;
     this.dependentObjects = Collections.unmodifiableList(dependentObjects);
   }
 

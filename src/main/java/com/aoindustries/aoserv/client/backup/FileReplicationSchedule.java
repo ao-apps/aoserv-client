@@ -41,8 +41,8 @@ import java.sql.SQLException;
 public final class FileReplicationSchedule extends CachedObjectIntegerKey<FileReplicationSchedule> {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_REPLICATION=1
+      COLUMN_PKEY = 0,
+      COLUMN_REPLICATION = 1
   ;
   static final String COLUMN_REPLICATION_name = "replication";
   static final String COLUMN_HOUR_name = "hour";
@@ -59,7 +59,7 @@ public final class FileReplicationSchedule extends CachedObjectIntegerKey<FileRe
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public FileReplicationSchedule() {
     // Do nothing
   }
@@ -77,9 +77,9 @@ public final class FileReplicationSchedule extends CachedObjectIntegerKey<FileRe
   }
 
   public FileReplication getFailoverFileReplication() throws SQLException, IOException {
-    FileReplication ffr=table.getConnector().getBackup().getFileReplication().get(replication);
+    FileReplication ffr = table.getConnector().getBackup().getFileReplication().get(replication);
     if (ffr == null) {
-      throw new SQLException("Unable to find FailoverFileReplication: "+replication);
+      throw new SQLException("Unable to find FailoverFileReplication: " + replication);
     }
     return ffr;
   }
@@ -103,20 +103,20 @@ public final class FileReplicationSchedule extends CachedObjectIntegerKey<FileRe
 
   @Override
   public void init(ResultSet result) throws SQLException {
-    pkey=result.getInt(1);
-    replication=result.getInt(2);
-    hour=result.getShort(3);
-    minute=result.getShort(4);
-    enabled=result.getBoolean(5);
+    pkey = result.getInt(1);
+    replication = result.getInt(2);
+    hour = result.getShort(3);
+    minute = result.getShort(4);
+    enabled = result.getBoolean(5);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readCompressedInt();
-    replication=in.readCompressedInt();
-    hour=in.readShort();
-    minute=in.readShort();
-    enabled=in.readBoolean();
+    pkey = in.readCompressedInt();
+    replication = in.readCompressedInt();
+    hour = in.readShort();
+    minute = in.readShort();
+    enabled = in.readBoolean();
   }
 
   @Override

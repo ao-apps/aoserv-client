@@ -48,7 +48,7 @@ public abstract class GlobalTableIntegerKey<V extends GlobalObjectIntegerKey<V>>
     if (pkey == null) {
       return null;
     }
-    return get(((Integer)pkey).intValue());
+    return get(((Integer) pkey).intValue());
   }
 
   /**

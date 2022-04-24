@@ -32,21 +32,22 @@ import java.beans.SimpleBeanInfo;
 public class SchemaBeanInfo extends SimpleBeanInfo {
 
   private static final PropertyDescriptor[] properties;
+
   static {
     try {
-      properties = new PropertyDescriptor[] {
-        new PropertyDescriptor("Context",           Schema.class, "getContext",           null),
-        new PropertyDescriptor("ContextDataSource", Schema.class, "getContextDataSource", null),
-        new PropertyDescriptor("ContextParameter",  Schema.class, "getContextParameter",  null),
-        new PropertyDescriptor("JkMount",           Schema.class, "getJkMount",           null),
-        new PropertyDescriptor("JkProtocol",        Schema.class, "getJkProtocol",        null),
-        new PropertyDescriptor("PrivateTomcatSite", Schema.class, "getPrivateTomcatSite", null),
-        new PropertyDescriptor("SharedTomcat",      Schema.class, "getSharedTomcat",      null),
-        new PropertyDescriptor("SharedTomcatSite",  Schema.class, "getSharedTomcatSite",  null),
-        new PropertyDescriptor("Site",              Schema.class, "getSite",              null),
-        new PropertyDescriptor("Version",           Schema.class, "getVersion",           null),
-        new PropertyDescriptor("Worker",            Schema.class, "getWorker",            null),
-        new PropertyDescriptor("WorkerName",        Schema.class, "getWorkerName",        null),
+      properties = new PropertyDescriptor[]{
+          new PropertyDescriptor("Context",           Schema.class, "getContext",           null),
+          new PropertyDescriptor("ContextDataSource", Schema.class, "getContextDataSource", null),
+          new PropertyDescriptor("ContextParameter",  Schema.class, "getContextParameter",  null),
+          new PropertyDescriptor("JkMount",           Schema.class, "getJkMount",           null),
+          new PropertyDescriptor("JkProtocol",        Schema.class, "getJkProtocol",        null),
+          new PropertyDescriptor("PrivateTomcatSite", Schema.class, "getPrivateTomcatSite", null),
+          new PropertyDescriptor("SharedTomcat",      Schema.class, "getSharedTomcat",      null),
+          new PropertyDescriptor("SharedTomcatSite",  Schema.class, "getSharedTomcatSite",  null),
+          new PropertyDescriptor("Site",              Schema.class, "getSite",              null),
+          new PropertyDescriptor("Version",           Schema.class, "getVersion",           null),
+          new PropertyDescriptor("Worker",            Schema.class, "getWorker",            null),
+          new PropertyDescriptor("WorkerName",        Schema.class, "getWorkerName",        null),
       };
     } catch (IntrospectionException err) {
       throw new ExceptionInInitializerError(err);
@@ -55,7 +56,7 @@ public class SchemaBeanInfo extends SimpleBeanInfo {
 
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField") // Not copying array for performance
-  public PropertyDescriptor[] getPropertyDescriptors () {
+  public PropertyDescriptor[] getPropertyDescriptors() {
     return properties;
   }
 
@@ -65,8 +66,8 @@ public class SchemaBeanInfo extends SimpleBeanInfo {
   @Override
   public BeanInfo[] getAdditionalBeanInfo() {
     try {
-      return new BeanInfo[] {
-        Introspector.getBeanInfo(Schema.class.getSuperclass())
+      return new BeanInfo[]{
+          Introspector.getBeanInfo(Schema.class.getSuperclass())
       };
     } catch (IntrospectionException err) {
       throw new AssertionError(err);

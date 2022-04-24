@@ -46,27 +46,27 @@ import java.sql.SQLException;
  */
 public final class DistroFile extends FilesystemCachedObject<Integer, DistroFile> {
 
-  static final int COLUMN_PKEY=0;
-  public static final int COLUMN_OPERATING_SYSTEM_VERSION=1;
-  public static final int COLUMN_PATH=2;
+  static final int COLUMN_PKEY = 0;
+  public static final int COLUMN_OPERATING_SYSTEM_VERSION = 1;
+  public static final int COLUMN_PATH = 2;
   static final String COLUMN_PATH_name = "path";
-  static final String COLUMN_OPERATING_SYSTEM_VERSION_name= "operating_system_version";
+  static final String COLUMN_OPERATING_SYSTEM_VERSION_name = "operating_system_version";
 
   // TODO: These fixed sizes being hard-coded is not very nice.  Maybe query
   //       the master for the longest sizes before downloading the records?
   //       Or hack the protocol a bit for this table and begin the transfer with a set of int's giving the lengths.
   static final int
-    MAX_PATH_LENGTH=194, // select max(length(path)) from distro_files;
-    MAX_TYPE_LENGTH=10,
-    MAX_SYMLINK_TARGET_LENGTH=96, // select max(length(symlink_target)) from distro_files;
-    MAX_LINUX_ACCOUNT_LENGTH=15, // select max(length(linux_account)) from distro_files;
-    MAX_LINUX_GROUP_LENGTH=15 // select max(length(linux_group)) from distro_files;
+      MAX_PATH_LENGTH = 194, // select max(length(path)) from distro_files;
+      MAX_TYPE_LENGTH = 10,
+      MAX_SYMLINK_TARGET_LENGTH = 96, // select max(length(symlink_target)) from distro_files;
+      MAX_LINUX_ACCOUNT_LENGTH = 15, // select max(length(linux_account)) from distro_files;
+      MAX_LINUX_GROUP_LENGTH = 15 // select max(length(linux_group)) from distro_files;
   ;
 
   /**
    * The size may not be available for certain file types.
    */
-  public static final long NULL_SIZE=-1;
+  public static final long NULL_SIZE = -1;
 
   private int pkey;
   private int operating_system_version;
@@ -90,7 +90,7 @@ public final class DistroFile extends FilesystemCachedObject<Integer, DistroFile
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public DistroFile() {
     // Do nothing
   }
@@ -98,8 +98,8 @@ public final class DistroFile extends FilesystemCachedObject<Integer, DistroFile
   @Override
   public boolean equals(Object obj) {
     return
-      (obj instanceof DistroFile)
-      && ((DistroFile)obj).pkey == pkey
+        (obj instanceof DistroFile)
+            && ((DistroFile) obj).pkey == pkey
     ;
   }
 
@@ -129,9 +129,9 @@ public final class DistroFile extends FilesystemCachedObject<Integer, DistroFile
   }
 
   public OperatingSystemVersion getOperatingSystemVersion() throws SQLException, IOException {
-    OperatingSystemVersion osv=table.getConnector().getDistribution().getOperatingSystemVersion().get(operating_system_version);
+    OperatingSystemVersion osv = table.getConnector().getDistribution().getOperatingSystemVersion().get(operating_system_version);
     if (osv == null) {
-      throw new SQLException("Unable to find OperatingSystemVersion: "+operating_system_version);
+      throw new SQLException("Unable to find OperatingSystemVersion: " + operating_system_version);
     }
     return osv;
   }
@@ -145,9 +145,9 @@ public final class DistroFile extends FilesystemCachedObject<Integer, DistroFile
   }
 
   public DistroFileType getType() throws SQLException, IOException {
-    DistroFileType fileType=table.getConnector().getDistribution_management().getDistroFileType().get(type);
+    DistroFileType fileType = table.getConnector().getDistribution_management().getDistroFileType().get(type);
     if (fileType == null) {
-      throw new SQLException("Unable to find DistroFileType: "+type);
+      throw new SQLException("Unable to find DistroFileType: " + type);
     }
     return fileType;
   }
@@ -163,17 +163,17 @@ public final class DistroFile extends FilesystemCachedObject<Integer, DistroFile
     if (table.getConnector() == null) {
       throw new NullPointerException("table.getConnector() is null");
     }
-    User linuxAccount=table.getConnector().getLinux().getUser().get(linux_account);
+    User linuxAccount = table.getConnector().getLinux().getUser().get(linux_account);
     if (linuxAccount == null) {
-      throw new SQLException("Unable to find LinuxAccount: "+linux_account);
+      throw new SQLException("Unable to find LinuxAccount: " + linux_account);
     }
     return linuxAccount;
   }
 
   public Group getLinuxGroup() throws SQLException, IOException {
-    Group linuxGroup=table.getConnector().getLinux().getGroup().get(linux_group);
+    Group linuxGroup = table.getConnector().getLinux().getGroup().get(linux_group);
     if (linuxGroup == null) {
-      throw new SQLException("Unable to find LinuxGroup: "+linux_group);
+      throw new SQLException("Unable to find LinuxGroup: " + linux_group);
     }
     return linuxGroup;
   }
@@ -286,7 +286,7 @@ public final class DistroFile extends FilesystemCachedObject<Integer, DistroFile
   private static String readChars(DataInputStream in) throws IOException {
     int len = in.readInt();
     char[] chars = new char[len];
-    for (int i=0; i<len; i++) {
+    for (int i = 0; i < len; i++) {
       chars[i] = in.readChar();
     }
     return new String(chars);
@@ -357,27 +357,27 @@ public final class DistroFile extends FilesystemCachedObject<Integer, DistroFile
     out.writeInt(pkey);
     out.writeInt(operating_system_version);
     String pathStr = path.toString();
-    if (pathStr.length()>MAX_PATH_LENGTH) {
-      throw new IOException("path.length()>"+MAX_PATH_LENGTH+": "+pathStr.length());
+    if (pathStr.length() > MAX_PATH_LENGTH) {
+      throw new IOException("path.length()>" + MAX_PATH_LENGTH + ": " + pathStr.length());
     }
     writeChars(pathStr, out);
     out.writeBoolean(optional);
-    if (type.length()>MAX_TYPE_LENGTH) {
-      throw new IOException("type.length()>"+MAX_TYPE_LENGTH+": "+type.length());
+    if (type.length() > MAX_TYPE_LENGTH) {
+      throw new IOException("type.length()>" + MAX_TYPE_LENGTH + ": " + type.length());
     }
     writeChars(type, out);
     out.writeLong(mode);
     {
       String linux_accountStr = linux_account.toString();
-      if (linux_accountStr.length()>MAX_LINUX_ACCOUNT_LENGTH) {
-        throw new IOException("linux_account.length()>"+MAX_LINUX_ACCOUNT_LENGTH+": "+linux_accountStr.length());
+      if (linux_accountStr.length() > MAX_LINUX_ACCOUNT_LENGTH) {
+        throw new IOException("linux_account.length()>" + MAX_LINUX_ACCOUNT_LENGTH + ": " + linux_accountStr.length());
       }
       writeChars(linux_accountStr, out);
     }
     {
       String linux_groupStr = linux_group.toString();
-      if (linux_groupStr.length()>MAX_LINUX_GROUP_LENGTH) {
-        throw new IOException("linux_group.length()>"+MAX_LINUX_GROUP_LENGTH+": "+linux_groupStr.length());
+      if (linux_groupStr.length() > MAX_LINUX_GROUP_LENGTH) {
+        throw new IOException("linux_group.length()>" + MAX_LINUX_GROUP_LENGTH + ": " + linux_groupStr.length());
       }
       writeChars(linux_groupStr, out);
     }
@@ -391,8 +391,8 @@ public final class DistroFile extends FilesystemCachedObject<Integer, DistroFile
     }
     out.writeBoolean(symlink_target != null);
     if (symlink_target != null) {
-      if (symlink_target.length()>MAX_SYMLINK_TARGET_LENGTH) {
-        throw new IOException("symlink_target.length()>"+MAX_SYMLINK_TARGET_LENGTH+": "+symlink_target.length());
+      if (symlink_target.length() > MAX_SYMLINK_TARGET_LENGTH) {
+        throw new IOException("symlink_target.length()>" + MAX_SYMLINK_TARGET_LENGTH + ": " + symlink_target.length());
       }
       writeChars(symlink_target, out);
     }

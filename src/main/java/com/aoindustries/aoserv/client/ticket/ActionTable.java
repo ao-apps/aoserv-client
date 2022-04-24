@@ -44,10 +44,11 @@ public final class ActionTable extends CachedTableIntegerKey<Action> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Action.COLUMN_TICKET_name, ASCENDING),
-    new OrderBy(Action.COLUMN_TIME_name, ASCENDING),
-    new OrderBy(Action.COLUMN_PKEY_name, ASCENDING)
+      new OrderBy(Action.COLUMN_TICKET_name, ASCENDING),
+      new OrderBy(Action.COLUMN_TIME_name, ASCENDING),
+      new OrderBy(Action.COLUMN_PKEY_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

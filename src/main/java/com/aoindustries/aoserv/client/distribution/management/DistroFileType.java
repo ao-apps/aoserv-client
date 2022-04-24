@@ -39,7 +39,7 @@ import java.sql.SQLException;
  */
 public final class DistroFileType extends GlobalObjectStringKey<DistroFileType> {
 
-  static final int COLUMN_TYPE=0;
+  static final int COLUMN_TYPE = 0;
   static final String COLUMN_TYPE_name = "type";
 
   private String description;
@@ -48,11 +48,11 @@ public final class DistroFileType extends GlobalObjectStringKey<DistroFileType> 
    * The different file types.
    */
   public static final String
-    CONFIG="config",
-    NO_RECURSE="no_recurse",
-    PRELINK="prelink",
-    SYSTEM="system",
-    USER="user"
+      CONFIG = "config",
+      NO_RECURSE = "no_recurse",
+      PRELINK = "prelink",
+      SYSTEM = "system",
+      USER = "user"
   ;
 
   /**
@@ -61,7 +61,7 @@ public final class DistroFileType extends GlobalObjectStringKey<DistroFileType> 
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public DistroFileType() {
     // Do nothing
   }
@@ -98,8 +98,8 @@ public final class DistroFileType extends GlobalObjectStringKey<DistroFileType> 
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readUTF().intern();
-    description=in.readUTF();
+    pkey = in.readUTF().intern();
+    description = in.readUTF();
   }
 
   @Override

@@ -58,9 +58,10 @@ public final class SharedTomcatTable extends CachedTableIntegerKey<SharedTomcat>
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(SharedTomcat.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(SharedTomcat.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING)
+      new OrderBy(SharedTomcat.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(SharedTomcat.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -68,49 +69,49 @@ public final class SharedTomcatTable extends CachedTableIntegerKey<SharedTomcat>
   }
 
   public int addHttpdSharedTomcat(
-    final String name,
-    final Server aoServer,
-    Version version,
-    final UserServer lsa,
-    final GroupServer lsg
+      final String name,
+      final Server aoServer,
+      Version version,
+      final UserServer lsa,
+      final GroupServer lsg
   ) throws IOException, SQLException {
     final int tvPkey = version.getTechnologyVersion(connector).getPkey();
     return connector.requestResult(
-      true,
-      AoservProtocol.CommandID.ADD,
-      // Java 9: new AOServConnector.ResultRequest<>
-      new AOServConnector.ResultRequest<Integer>() {
-        private int pkey;
-        private IntList invalidateList;
+        true,
+        AoservProtocol.CommandID.ADD,
+        // Java 9: new AOServConnector.ResultRequest<>
+        new AOServConnector.ResultRequest<Integer>() {
+          private int pkey;
+          private IntList invalidateList;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(Table.TableID.HTTPD_SHARED_TOMCATS.ordinal());
-          out.writeUTF(name);
-          out.writeCompressedInt(aoServer.getPkey());
-          out.writeCompressedInt(tvPkey);
-          out.writeUTF(lsa.getLinuxAccount_username_id().toString());
-          out.writeUTF(lsg.getLinuxGroup_name().toString());
-        }
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(Table.TableID.HTTPD_SHARED_TOMCATS.ordinal());
+            out.writeUTF(name);
+            out.writeCompressedInt(aoServer.getPkey());
+            out.writeCompressedInt(tvPkey);
+            out.writeUTF(lsa.getLinuxAccount_username_id().toString());
+            out.writeUTF(lsg.getLinuxGroup_name().toString());
+          }
 
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            pkey=in.readCompressedInt();
-            invalidateList=AOServConnector.readInvalidateList(in);
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              pkey = in.readCompressedInt();
+              invalidateList = AOServConnector.readInvalidateList(in);
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
+            }
+          }
+
+          @Override
+          public Integer afterRelease() {
+            connector.tablesUpdated(invalidateList);
+            return pkey;
           }
         }
-
-        @Override
-        public Integer afterRelease() {
-          connector.tablesUpdated(invalidateList);
-          return pkey;
-        }
-      }
     );
   }
 
@@ -136,13 +137,13 @@ public final class SharedTomcatTable extends CachedTableIntegerKey<SharedTomcat>
   }
 
   public List<SharedTomcat> getHttpdSharedTomcats(Package pk) throws IOException, SQLException {
-    Account.Name pkname=pk.getName();
+    Account.Name pkname = pk.getName();
 
-    List<SharedTomcat> cached=getRows();
-    int size=cached.size();
-    List<SharedTomcat> matches=new ArrayList<>(size);
-    for (int c=0;c<size;c++) {
-      SharedTomcat hst=cached.get(c);
+    List<SharedTomcat> cached = getRows();
+    int size = cached.size();
+    List<SharedTomcat> matches = new ArrayList<>(size);
+    for (int c = 0; c < size; c++) {
+      SharedTomcat hst = cached.get(c);
       if (hst.getLinuxServerGroup().getLinuxGroup().getPackage_name().equals(pkname)) {
         matches.add(hst);
       }
@@ -156,10 +157,10 @@ public final class SharedTomcatTable extends CachedTableIntegerKey<SharedTomcat>
 
   public SharedTomcat getHttpdSharedTomcat(String name, Server ao) throws IOException, SQLException {
     // Use the index first
-    List<SharedTomcat> cached=getHttpdSharedTomcats(ao);
-    int size=cached.size();
-    for (int c=0;c<size;c++) {
-      SharedTomcat tomcat=cached.get(c);
+    List<SharedTomcat> cached = getHttpdSharedTomcats(ao);
+    int size = cached.size();
+    for (int c = 0; c < size; c++) {
+      SharedTomcat tomcat = cached.get(c);
       if (tomcat.getName().equals(name)) {
         return tomcat;
       }
@@ -174,29 +175,29 @@ public final class SharedTomcatTable extends CachedTableIntegerKey<SharedTomcat>
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
-    String command=args[0];
+    String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_HTTPD_SHARED_TOMCAT)) {
       if (AOSH.checkMinParamCount(Command.ADD_HTTPD_SHARED_TOMCAT, args, 5, err)) {
         // Create an array of all the alternate hostnames
         out.println(
-          connector.getSimpleAOClient().addHttpdSharedTomcat(
-            args[1],
-            args[2],
-            args[3],
-            AOSH.parseLinuxUserName(args[4], "linux_server_account"),
-            AOSH.parseGroupName(args[5], "linux_server_group")
-          )
+            connector.getSimpleAOClient().addHttpdSharedTomcat(
+                args[1],
+                args[2],
+                args[3],
+                AOSH.parseLinuxUserName(args[4], "linux_server_account"),
+                AOSH.parseGroupName(args[5], "linux_server_group")
+            )
         );
         out.flush();
       }
       return true;
-    } else if ( command.equalsIgnoreCase(Command.CHECK_SHARED_TOMCAT_NAME)) {
+    } else if (command.equalsIgnoreCase(Command.CHECK_SHARED_TOMCAT_NAME)) {
       if (AOSH.checkParamCount(Command.CHECK_SHARED_TOMCAT_NAME, args, 1, err)) {
         try {
           SimpleAOClient.checkSharedTomcatName(args[1]);
           out.println("true");
         } catch (IllegalArgumentException iae) {
-          out.print("aosh: "+Command.CHECK_SHARED_TOMCAT_NAME+": ");
+          out.print("aosh: " + Command.CHECK_SHARED_TOMCAT_NAME + ": ");
           out.println(iae.getMessage());
         }
         out.flush();
@@ -205,11 +206,11 @@ public final class SharedTomcatTable extends CachedTableIntegerKey<SharedTomcat>
     } else if (command.equalsIgnoreCase(Command.DISABLE_HTTPD_SHARED_TOMCAT)) {
       if (AOSH.checkParamCount(Command.DISABLE_HTTPD_SHARED_TOMCAT, args, 3, err)) {
         out.println(
-          connector.getSimpleAOClient().disableHttpdSharedTomcat(
-            args[1],
-            args[2],
-            args[3]
-          )
+            connector.getSimpleAOClient().disableHttpdSharedTomcat(
+                args[1],
+                args[2],
+                args[3]
+            )
         );
         out.flush();
       }
@@ -239,54 +240,54 @@ public final class SharedTomcatTable extends CachedTableIntegerKey<SharedTomcat>
     } else if (command.equalsIgnoreCase(Command.SET_HTTPD_SHARED_TOMCAT_IS_MANUAL)) {
       if (AOSH.checkParamCount(Command.SET_HTTPD_SHARED_TOMCAT_IS_MANUAL, args, 3, err)) {
         connector.getSimpleAOClient().setHttpdSharedTomcatIsManual(
-          args[1],
-          args[2],
-          AOSH.parseBoolean(args[3], "is_manual")
+            args[1],
+            args[2],
+            AOSH.parseBoolean(args[3], "is_manual")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_HTTPD_SHARED_TOMCAT_MAX_POST_SIZE)) {
       if (AOSH.checkParamCount(Command.SET_HTTPD_SHARED_TOMCAT_MAX_POST_SIZE, args, 3, err)) {
         connector.getSimpleAOClient().setHttpdSharedTomcatMaxPostSize(
-          args[1],
-          args[2],
-          args[3].isEmpty() ? -1 : AOSH.parseInt(args[3], "max_post_size")
+            args[1],
+            args[2],
+            args[3].isEmpty() ? -1 : AOSH.parseInt(args[3], "max_post_size")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_HTTPD_SHARED_TOMCAT_UNPACK_WARS)) {
       if (AOSH.checkParamCount(Command.SET_HTTPD_SHARED_TOMCAT_UNPACK_WARS, args, 3, err)) {
         connector.getSimpleAOClient().setHttpdSharedTomcatIsManual(
-          args[1],
-          args[2],
-          AOSH.parseBoolean(args[3], "unpack_wars")
+            args[1],
+            args[2],
+            AOSH.parseBoolean(args[3], "unpack_wars")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_HTTPD_SHARED_TOMCAT_AUTO_DEPLOY)) {
       if (AOSH.checkParamCount(Command.SET_HTTPD_SHARED_TOMCAT_AUTO_DEPLOY, args, 3, err)) {
         connector.getSimpleAOClient().setHttpdSharedTomcatAutoDeploy(
-          args[1],
-          args[2],
-          AOSH.parseBoolean(args[3], "auto_deploy")
+            args[1],
+            args[2],
+            AOSH.parseBoolean(args[3], "auto_deploy")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.web_tomcat_SharedTomcat_tomcatAuthentication_set)) {
       if (AOSH.checkParamCount(Command.web_tomcat_SharedTomcat_tomcatAuthentication_set, args, 3, err)) {
         connector.getSimpleAOClient().setHttpdSharedTomcatTomcatAuthentication(
-          args[1],
-          args[2],
-          AOSH.parseBoolean(args[3], "tomcatAuthentication")
+            args[1],
+            args[2],
+            AOSH.parseBoolean(args[3], "tomcatAuthentication")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_HTTPD_SHARED_TOMCAT_VERSION)) {
       if (AOSH.checkParamCount(Command.SET_HTTPD_SHARED_TOMCAT_VERSION, args, 3, err)) {
         connector.getSimpleAOClient().setHttpdSharedTomcatVersion(
-          args[1],
-          args[2],
-          args[3]
+            args[1],
+            args[2],
+            args[3]
         );
       }
       return true;
@@ -296,9 +297,9 @@ public final class SharedTomcatTable extends CachedTableIntegerKey<SharedTomcat>
 
   public boolean isSharedTomcatNameAvailable(String name) throws IOException, SQLException {
     return connector.requestBooleanQuery(
-      true,
-      AoservProtocol.CommandID.IS_SHARED_TOMCAT_NAME_AVAILABLE,
-      name
+        true,
+        AoservProtocol.CommandID.IS_SHARED_TOMCAT_NAME_AVAILABLE,
+        name
     );
   }
 }

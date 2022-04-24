@@ -55,8 +55,8 @@ import java.util.Objects;
 public final class Request extends CachedObjectIntegerKey<Request> {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_BRAND=1
+      COLUMN_PKEY = 0,
+      COLUMN_BRAND = 1
   ;
   static final String COLUMN_BRAND_name = "brand";
   static final String COLUMN_TIME_name = "time";
@@ -116,7 +116,7 @@ public final class Request extends CachedObjectIntegerKey<Request> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Request() {
     // Do nothing
   }
@@ -178,38 +178,38 @@ public final class Request extends CachedObjectIntegerKey<Request> {
       pkey = result.getInt(pos++);
       brand = Account.Name.valueOf(result.getString(pos++));
       time = UnmodifiableTimestamp.valueOf(result.getTimestamp(pos++));
-      ip_address=InetAddress.valueOf(result.getString(pos++));
-      package_definition=result.getInt(pos++);
-      business_name=result.getString(pos++);
-      business_phone=result.getString(pos++);
-      business_fax=result.getString(pos++);
-      business_address1=result.getString(pos++);
-      business_address2=result.getString(pos++);
-      business_city=result.getString(pos++);
-      business_state=result.getString(pos++);
-      business_country=result.getString(pos++);
-      business_zip=result.getString(pos++);
-      ba_name=result.getString(pos++);
-      ba_title=result.getString(pos++);
-      ba_work_phone=result.getString(pos++);
-      ba_cell_phone=result.getString(pos++);
-      ba_home_phone=result.getString(pos++);
-      ba_fax=result.getString(pos++);
-      ba_email=Email.valueOf(result.getString(pos++));
-      ba_address1=result.getString(pos++);
-      ba_address2=result.getString(pos++);
-      ba_city=result.getString(pos++);
-      ba_state=result.getString(pos++);
-      ba_country=result.getString(pos++);
-      ba_zip=result.getString(pos++);
+      ip_address = InetAddress.valueOf(result.getString(pos++));
+      package_definition = result.getInt(pos++);
+      business_name = result.getString(pos++);
+      business_phone = result.getString(pos++);
+      business_fax = result.getString(pos++);
+      business_address1 = result.getString(pos++);
+      business_address2 = result.getString(pos++);
+      business_city = result.getString(pos++);
+      business_state = result.getString(pos++);
+      business_country = result.getString(pos++);
+      business_zip = result.getString(pos++);
+      ba_name = result.getString(pos++);
+      ba_title = result.getString(pos++);
+      ba_work_phone = result.getString(pos++);
+      ba_cell_phone = result.getString(pos++);
+      ba_home_phone = result.getString(pos++);
+      ba_fax = result.getString(pos++);
+      ba_email = Email.valueOf(result.getString(pos++));
+      ba_address1 = result.getString(pos++);
+      ba_address2 = result.getString(pos++);
+      ba_city = result.getString(pos++);
+      ba_state = result.getString(pos++);
+      ba_country = result.getString(pos++);
+      ba_zip = result.getString(pos++);
       ba_username = User.Name.valueOf(result.getString(pos++));
-      billing_contact=result.getString(pos++);
-      billing_email=Email.valueOf(result.getString(pos++));
-      billing_use_monthly=result.getBoolean(pos++);
-      billing_pay_one_year=result.getBoolean(pos++);
-      encrypted_data=result.getString(pos++);
-      encryption_from=result.getInt(pos++);
-      encryption_recipient=result.getInt(pos++);
+      billing_contact = result.getString(pos++);
+      billing_email = Email.valueOf(result.getString(pos++));
+      billing_use_monthly = result.getBoolean(pos++);
+      billing_pay_one_year = result.getBoolean(pos++);
+      encrypted_data = result.getString(pos++);
+      encryption_from = result.getInt(pos++);
+      encryption_recipient = result.getInt(pos++);
       completed_by = User.Name.valueOf(result.getString(pos++));
       completed_time = UnmodifiableTimestamp.valueOf(result.getTimestamp(pos++));
     } catch (ValidationException e) {
@@ -333,7 +333,7 @@ public final class Request extends CachedObjectIntegerKey<Request> {
   public PackageDefinition getPackageDefinition() throws SQLException, IOException {
     PackageDefinition pd = table.getConnector().getBilling().getPackageDefinition().get(package_definition);
     if (pd == null) {
-      throw new SQLException("Unable to find PackageDefinition: "+package_definition);
+      throw new SQLException("Unable to find PackageDefinition: " + package_definition);
     }
     return pd;
   }
@@ -449,7 +449,7 @@ public final class Request extends CachedObjectIntegerKey<Request> {
   public EncryptionKey getEncryptionFrom() throws SQLException, IOException {
     EncryptionKey ek = table.getConnector().getPki().getEncryptionKey().get(encryption_from);
     if (ek == null) {
-      throw new SQLException("Unable to find EncryptionKey: "+encryption_from);
+      throw new SQLException("Unable to find EncryptionKey: " + encryption_from);
     }
     return ek;
   }
@@ -457,7 +457,7 @@ public final class Request extends CachedObjectIntegerKey<Request> {
   public EncryptionKey getEncryptionRecipient() throws SQLException, IOException {
     EncryptionKey er = table.getConnector().getPki().getEncryptionKey().get(encryption_recipient);
     if (er == null) {
-      throw new SQLException("Unable to find EncryptionKey: "+encryption_recipient);
+      throw new SQLException("Unable to find EncryptionKey: " + encryption_recipient);
     }
     return er;
   }
@@ -524,16 +524,16 @@ public final class Request extends CachedObjectIntegerKey<Request> {
     // If a different passphrase is provided, don't use the cached values, clear, and re-decrypt
     if (decryptPassphrase == null || !passphrase.equals(decryptPassphrase)) {
       // Clear first just in case there is a problem in part of the decryption
-      decryptPassphrase=null;
-      ba_password=null;
-      billing_cardholder_name=null;
-      billing_card_number=null;
-      billing_expiration_month=null;
-      billing_expiration_year=null;
-      billing_street_address=null;
-      billing_city=null;
-      billing_state=null;
-      billing_zip=null;
+      decryptPassphrase = null;
+      ba_password = null;
+      billing_cardholder_name = null;
+      billing_card_number = null;
+      billing_expiration_month = null;
+      billing_expiration_year = null;
+      billing_street_address = null;
+      billing_city = null;
+      billing_state = null;
+      billing_zip = null;
 
       // Perform the decryption
       String decrypted = getEncryptionRecipient().decrypt(encrypted_data, passphrase);
@@ -544,19 +544,19 @@ public final class Request extends CachedObjectIntegerKey<Request> {
       // Store the values
       if (lines.size() == 9) {
         // 9-line format
-        ba_password=lines.get(0);
-        billing_cardholder_name=lines.get(1);
-        billing_card_number=lines.get(2);
-        billing_expiration_month=lines.get(3);
-        billing_expiration_year=lines.get(4);
-        billing_street_address=lines.get(5);
-        billing_city=lines.get(6);
-        billing_state=lines.get(7);
-        billing_zip=lines.get(8);
+        ba_password = lines.get(0);
+        billing_cardholder_name = lines.get(1);
+        billing_card_number = lines.get(2);
+        billing_expiration_month = lines.get(3);
+        billing_expiration_year = lines.get(4);
+        billing_street_address = lines.get(5);
+        billing_city = lines.get(6);
+        billing_state = lines.get(7);
+        billing_zip = lines.get(8);
       } else {
-        throw new IOException("Unexpected number of lines after decryption: "+lines.size());
+        throw new IOException("Unexpected number of lines after decryption: " + lines.size());
       }
-      decryptPassphrase=passphrase;
+      decryptPassphrase = passphrase;
     }
   }
 }

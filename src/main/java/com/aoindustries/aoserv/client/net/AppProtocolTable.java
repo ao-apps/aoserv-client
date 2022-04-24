@@ -41,8 +41,9 @@ public final class AppProtocolTable extends GlobalTableStringKey<AppProtocol> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(AppProtocol.COLUMN_PORT_name, ASCENDING)
+      new OrderBy(AppProtocol.COLUMN_PORT_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

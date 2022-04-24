@@ -41,8 +41,9 @@ public final class SpamAssassinModeTable extends GlobalTableStringKey<SpamAssass
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(SpamAssassinMode.COLUMN_SORT_ORDER_name, ASCENDING)
+      new OrderBy(SpamAssassinMode.COLUMN_SORT_ORDER_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

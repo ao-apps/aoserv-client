@@ -43,8 +43,8 @@ import java.sql.SQLException;
 public final class AdministratorPermission extends CachedObjectIntegerKey<AdministratorPermission> {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_USERNAME=1
+      COLUMN_PKEY = 0,
+      COLUMN_USERNAME = 1
   ;
   static final String COLUMN_USERNAME_name = "username";
   static final String COLUMN_PERMISSION_name = "permission";
@@ -55,7 +55,7 @@ public final class AdministratorPermission extends CachedObjectIntegerKey<Admini
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public AdministratorPermission() {
     // Do nothing
   }
@@ -92,7 +92,7 @@ public final class AdministratorPermission extends CachedObjectIntegerKey<Admini
   public Permission getAOServPermission() throws SQLException, IOException {
     Permission ap = table.getConnector().getMaster().getPermission().get(permission);
     if (ap == null) {
-      throw new SQLException("Unable to find AOServPermission: "+permission);
+      throw new SQLException("Unable to find AOServPermission: " + permission);
     }
     return ap;
   }

@@ -53,13 +53,14 @@ import java.util.List;
  */
 public final class MajordomoServer extends CachedObjectIntegerKey<MajordomoServer> implements Removable {
 
-  static final int COLUMN_DOMAIN=0;
+  static final int COLUMN_DOMAIN = 0;
   static final String COLUMN_DOMAIN_name = "domain";
 
   /**
    * The directory that stores the majordomo servers.
    */
   public static final PosixPath MAJORDOMO_SERVER_DIRECTORY;
+
   static {
     try {
       MAJORDOMO_SERVER_DIRECTORY = PosixPath.valueOf("/etc/mail/majordomo");
@@ -71,14 +72,14 @@ public final class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
   /**
    * The username part of the email address used to directly email majordomo.
    */
-  public static final String MAJORDOMO_ADDRESS="majordomo";
+  public static final String MAJORDOMO_ADDRESS = "majordomo";
 
   /**
    * The username part of the email address used to directly email the majordomo owner.
    */
   public static final String
-    OWNER_MAJORDOMO_ADDRESS="owner-majordomo",
-    MAJORDOMO_OWNER_ADDRESS="majordomo-owner"
+      OWNER_MAJORDOMO_ADDRESS = "owner-majordomo",
+      MAJORDOMO_OWNER_ADDRESS = "majordomo-owner"
   ;
 
   private int linux_server_account;
@@ -94,13 +95,13 @@ public final class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public MajordomoServer() {
     // Do nothing
   }
 
   public int addMajordomoList(
-    String listName
+      String listName
   ) throws SQLException, IOException {
     return table.getConnector().getEmail().getMajordomoList().addMajordomoList(this, listName);
   }
@@ -125,9 +126,9 @@ public final class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
   }
 
   public Domain getDomain() throws IOException, SQLException {
-    Domain obj=table.getConnector().getEmail().getDomain().get(pkey);
+    Domain obj = table.getConnector().getEmail().getDomain().get(pkey);
     if (obj == null) {
-      throw new SQLException("Unable to find EmailDomain: "+pkey);
+      throw new SQLException("Unable to find EmailDomain: " + pkey);
     }
     return obj;
   }
@@ -137,9 +138,9 @@ public final class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
   }
 
   public UserServer getLinuxServerAccount() throws SQLException, IOException {
-    UserServer obj=table.getConnector().getLinux().getUserServer().get(linux_server_account);
+    UserServer obj = table.getConnector().getLinux().getUserServer().get(linux_server_account);
     if (obj == null) {
-      throw new SQLException("Unable to find LinuxServerAccount: "+linux_server_account);
+      throw new SQLException("Unable to find LinuxServerAccount: " + linux_server_account);
     }
     return obj;
   }
@@ -149,17 +150,17 @@ public final class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
   }
 
   public GroupServer getLinuxServerGroup() throws SQLException, IOException {
-    GroupServer obj=table.getConnector().getLinux().getGroupServer().get(linux_server_group);
+    GroupServer obj = table.getConnector().getLinux().getGroupServer().get(linux_server_group);
     if (obj == null) {
-      throw new SQLException("Unable to find LinuxServerGroup: "+linux_server_group);
+      throw new SQLException("Unable to find LinuxServerGroup: " + linux_server_group);
     }
     return obj;
   }
 
   public PipeAddress getMajordomoPipeAddress() throws SQLException, IOException {
-    PipeAddress obj=table.getConnector().getEmail().getPipeAddress().get(majordomo_pipe_address);
+    PipeAddress obj = table.getConnector().getEmail().getPipeAddress().get(majordomo_pipe_address);
     if (obj == null) {
-      throw new SQLException("Unable to find EmailPipeAddress: "+majordomo_pipe_address);
+      throw new SQLException("Unable to find EmailPipeAddress: " + majordomo_pipe_address);
     }
     return obj;
   }
@@ -177,9 +178,9 @@ public final class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
   }
 
   public Address getMajordomoOwnerAddress() throws SQLException, IOException {
-    Address obj=table.getConnector().getEmail().getAddress().get(majordomo_owner_add);
+    Address obj = table.getConnector().getEmail().getAddress().get(majordomo_owner_add);
     if (obj == null) {
-      throw new SQLException("Unable to find EmailAddress: "+majordomo_owner_add);
+      throw new SQLException("Unable to find EmailAddress: " + majordomo_owner_add);
     }
     return obj;
   }
@@ -189,9 +190,9 @@ public final class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
   }
 
   public Address getOwnerMajordomoAddress() throws SQLException, IOException {
-    Address obj=table.getConnector().getEmail().getAddress().get(owner_majordomo_add);
+    Address obj = table.getConnector().getEmail().getAddress().get(owner_majordomo_add);
     if (obj == null) {
-      throw new SQLException("Unable to find EmailAddress: "+owner_majordomo_add);
+      throw new SQLException("Unable to find EmailAddress: " + owner_majordomo_add);
     }
     return obj;
   }
@@ -202,42 +203,42 @@ public final class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
   }
 
   public MajordomoVersion getVersion() throws SQLException, IOException {
-    MajordomoVersion obj=table.getConnector().getEmail().getMajordomoVersion().get(version);
+    MajordomoVersion obj = table.getConnector().getEmail().getMajordomoVersion().get(version);
     if (obj == null) {
-      throw new SQLException("Unable to find MajordomoVersion: "+version);
+      throw new SQLException("Unable to find MajordomoVersion: " + version);
     }
     return obj;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
-    pkey=result.getInt(1);
-    linux_server_account=result.getInt(2);
-    linux_server_group=result.getInt(3);
-    version=result.getString(4);
-    majordomo_pipe_address=result.getInt(5);
-    owner_majordomo_add=result.getInt(6);
-    majordomo_owner_add=result.getInt(7);
+    pkey = result.getInt(1);
+    linux_server_account = result.getInt(2);
+    linux_server_group = result.getInt(3);
+    version = result.getString(4);
+    majordomo_pipe_address = result.getInt(5);
+    owner_majordomo_add = result.getInt(6);
+    majordomo_owner_add = result.getInt(7);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readCompressedInt();
-    linux_server_account=in.readCompressedInt();
-    linux_server_group=in.readCompressedInt();
-    version=in.readUTF().intern();
-    majordomo_pipe_address=in.readCompressedInt();
-    owner_majordomo_add=in.readCompressedInt();
-    majordomo_owner_add=in.readCompressedInt();
+    pkey = in.readCompressedInt();
+    linux_server_account = in.readCompressedInt();
+    linux_server_group = in.readCompressedInt();
+    version = in.readUTF().intern();
+    majordomo_pipe_address = in.readCompressedInt();
+    owner_majordomo_add = in.readCompressedInt();
+    majordomo_owner_add = in.readCompressedInt();
   }
 
   @Override
   public void remove() throws IOException, SQLException {
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.REMOVE,
-      Table.TableID.MAJORDOMO_SERVERS,
-      pkey
+        true,
+        AoservProtocol.CommandID.REMOVE,
+        Table.TableID.MAJORDOMO_SERVERS,
+        pkey
     );
   }
 

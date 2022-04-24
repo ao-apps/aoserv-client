@@ -42,7 +42,7 @@ import java.sql.SQLException;
  */
 public final class TcpRedirect extends CachedObjectIntegerKey<TcpRedirect> {
 
-  static final int COLUMN_NET_BIND=0;
+  static final int COLUMN_NET_BIND = 0;
   static final String COLUMN_NET_BIND_name = "net_bind";
 
   private int cps;
@@ -56,7 +56,7 @@ public final class TcpRedirect extends CachedObjectIntegerKey<TcpRedirect> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public TcpRedirect() {
     // Do nothing
   }
@@ -74,9 +74,9 @@ public final class TcpRedirect extends CachedObjectIntegerKey<TcpRedirect> {
   }
 
   public Bind getNetBind() throws IOException, SQLException {
-    Bind nb=table.getConnector().getNet().getBind().get(pkey);
+    Bind nb = table.getConnector().getNet().getBind().get(pkey);
     if (nb == null) {
-      throw new SQLException("Unable to find NetBind: "+pkey);
+      throw new SQLException("Unable to find NetBind: " + pkey);
     }
     return nb;
   }
@@ -105,13 +105,13 @@ public final class TcpRedirect extends CachedObjectIntegerKey<TcpRedirect> {
   @Override
   public void init(ResultSet result) throws SQLException {
     try {
-      pkey=result.getInt(1);
-      cps=result.getInt(2);
-      cps_overload_sleep_time=result.getInt(3);
-      destination_host=HostAddress.valueOf(result.getString(4));
+      pkey = result.getInt(1);
+      cps = result.getInt(2);
+      cps_overload_sleep_time = result.getInt(3);
+      destination_host = HostAddress.valueOf(result.getString(4));
       destination_port = Port.valueOf(
-        result.getInt(5),
-        com.aoapps.net.Protocol.TCP
+          result.getInt(5),
+          com.aoapps.net.Protocol.TCP
       );
     } catch (ValidationException e) {
       throw new SQLException(e);
@@ -121,13 +121,13 @@ public final class TcpRedirect extends CachedObjectIntegerKey<TcpRedirect> {
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
-      pkey=in.readCompressedInt();
-      cps=in.readCompressedInt();
-      cps_overload_sleep_time=in.readCompressedInt();
-      destination_host=HostAddress.valueOf(in.readUTF()).intern();
+      pkey = in.readCompressedInt();
+      cps = in.readCompressedInt();
+      cps_overload_sleep_time = in.readCompressedInt();
+      destination_host = HostAddress.valueOf(in.readUTF()).intern();
       destination_port = Port.valueOf(
-        in.readCompressedInt(),
-        com.aoapps.net.Protocol.TCP
+          in.readCompressedInt(),
+          com.aoapps.net.Protocol.TCP
       );
     } catch (ValidationException e) {
       throw new IOException(e);
@@ -136,7 +136,7 @@ public final class TcpRedirect extends CachedObjectIntegerKey<TcpRedirect> {
 
   @Override
   public String toStringImpl() throws SQLException, IOException {
-    return getNetBind().toStringImpl()+"->"+destination_host.toBracketedString()+':'+destination_port.getPort();
+    return getNetBind().toStringImpl() + "->" + destination_host.toBracketedString() + ':' + destination_port.getPort();
   }
 
   @Override

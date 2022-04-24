@@ -45,8 +45,9 @@ public final class SetTable extends CachedTableIntegerKey<Set> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Set.COLUMN_IDENTIFIER_name, ASCENDING)
+      new OrderBy(Set.COLUMN_IDENTIFIER_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -75,15 +76,15 @@ public final class SetTable extends CachedTableIntegerKey<Set> {
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-    String command=args[0];
+    String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_IP_REPUTATION)) {
       if (AOSH.checkParamCount(Command.ADD_IP_REPUTATION, args, 5, err)) {
         connector.getSimpleAOClient().addIpReputation(
-          args[1],
-          args[2],
-          args[3],
-          args[4],
-          AOSH.parseShort(args[5], "score")
+            args[1],
+            args[2],
+            args[3],
+            args[4],
+            AOSH.parseShort(args[5], "score")
         );
       }
       return true;

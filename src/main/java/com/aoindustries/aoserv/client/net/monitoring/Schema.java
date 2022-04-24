@@ -35,7 +35,10 @@ import java.util.List;
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
   private final IpAddressMonitoringTable IpAddressMonitoring;
-  public IpAddressMonitoringTable getIpAddressMonitoring() {return IpAddressMonitoring;}
+
+  public IpAddressMonitoringTable getIpAddressMonitoring() {
+    return IpAddressMonitoring;
+  }
 
   private final List<? extends AOServTable<?, ?>> tables;
 

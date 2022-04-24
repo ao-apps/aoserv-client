@@ -50,9 +50,9 @@ import java.util.Objects;
 public final class CyrusImapdBind extends CachedObjectIntegerKey<CyrusImapdBind> {
 
   static final int
-    COLUMN_NET_BIND = 0,
-    COLUMN_CYRUS_IMAPD_SERVER = 1,
-    COLUMN_SSL_CERTIFICATE = 3
+      COLUMN_NET_BIND = 0,
+      COLUMN_CYRUS_IMAPD_SERVER = 1,
+      COLUMN_SSL_CERTIFICATE = 3
   ;
   static final String COLUMN_NET_BIND_name = "net_bind";
 
@@ -67,7 +67,7 @@ public final class CyrusImapdBind extends CachedObjectIntegerKey<CyrusImapdBind>
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public CyrusImapdBind() {
     // Do nothing
   }

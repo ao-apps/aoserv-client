@@ -41,9 +41,10 @@ public final class UserAclTable extends CachedTableIntegerKey<UserAcl> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(UserAcl.COLUMN_USERNAME_name, ASCENDING),
-    new OrderBy(UserAcl.COLUMN_HOST_name, ASCENDING)
+      new OrderBy(UserAcl.COLUMN_USERNAME_name, ASCENDING),
+      new OrderBy(UserAcl.COLUMN_HOST_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

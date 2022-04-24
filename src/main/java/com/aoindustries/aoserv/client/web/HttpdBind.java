@@ -46,8 +46,8 @@ import java.sql.SQLException;
 public final class HttpdBind extends CachedObjectIntegerKey<HttpdBind> {
 
   static final int
-    COLUMN_NET_BIND=0,
-    COLUMN_HTTPD_SERVER=1
+      COLUMN_NET_BIND = 0,
+      COLUMN_HTTPD_SERVER = 1
   ;
   static final String COLUMN_NET_BIND_name = "net_bind";
 
@@ -59,7 +59,7 @@ public final class HttpdBind extends CachedObjectIntegerKey<HttpdBind> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public HttpdBind() {
     // Do nothing
   }
@@ -78,17 +78,17 @@ public final class HttpdBind extends CachedObjectIntegerKey<HttpdBind> {
   }
 
   public HttpdServer getHttpdServer() throws SQLException, IOException {
-    HttpdServer obj=table.getConnector().getWeb().getHttpdServer().get(httpd_server);
+    HttpdServer obj = table.getConnector().getWeb().getHttpdServer().get(httpd_server);
     if (obj == null) {
-      throw new SQLException("Unable to find HttpdServer: "+httpd_server);
+      throw new SQLException("Unable to find HttpdServer: " + httpd_server);
     }
     return obj;
   }
 
   public Bind getNetBind() throws SQLException, IOException {
-    Bind obj=table.getConnector().getNet().getBind().get(pkey);
+    Bind obj = table.getConnector().getNet().getBind().get(pkey);
     if (obj == null) {
-      throw new SQLException("Unable to find NetBind: "+pkey);
+      throw new SQLException("Unable to find NetBind: " + pkey);
     }
     return obj;
   }
@@ -100,21 +100,21 @@ public final class HttpdBind extends CachedObjectIntegerKey<HttpdBind> {
 
   @Override
   public void init(ResultSet result) throws SQLException {
-    pkey=result.getInt(1);
-    httpd_server=result.getInt(2);
+    pkey = result.getInt(1);
+    httpd_server = result.getInt(2);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readCompressedInt();
-    httpd_server=in.readCompressedInt();
+    pkey = in.readCompressedInt();
+    httpd_server = in.readCompressedInt();
   }
 
   @Override
   public String toStringImpl() throws SQLException, IOException {
-    HttpdServer server=getHttpdServer();
-    Bind bind=getNetBind();
-    return server.toStringImpl()+'|'+bind.toStringImpl();
+    HttpdServer server = getHttpdServer();
+    Bind bind = getNetBind();
+    return server.toStringImpl() + '|' + bind.toStringImpl();
   }
 
   @Override

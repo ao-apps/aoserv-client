@@ -46,7 +46,7 @@ public abstract class GlobalTableDomainNameKey<V extends GlobalObjectDomainNameK
   @Deprecated
   @Override
   public V get(Object pkey) throws IOException, SQLException {
-    return get((DomainName)pkey);
+    return get((DomainName) pkey);
   }
 
   /**

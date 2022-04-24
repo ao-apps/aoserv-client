@@ -54,9 +54,9 @@ import java.util.List;
 public final class Pipe extends CachedObjectIntegerKey<Pipe> implements Removable, Disablable {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_AO_SERVER=1,
-    COLUMN_PACKAGE=3
+      COLUMN_PKEY = 0,
+      COLUMN_AO_SERVER = 1,
+      COLUMN_PACKAGE = 3
   ;
   static final String COLUMN_AO_SERVER_name = "ao_server";
   static final String COLUMN_COMMAND_name = "command";
@@ -72,7 +72,7 @@ public final class Pipe extends CachedObjectIntegerKey<Pipe> implements Removabl
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Pipe() {
     // Do nothing
   }
@@ -88,7 +88,7 @@ public final class Pipe extends CachedObjectIntegerKey<Pipe> implements Removabl
 
   @Override
   public boolean canEnable() throws SQLException, IOException {
-    DisableLog dl=getDisableLog();
+    DisableLog dl = getDisableLog();
     if (dl == null) {
       return false;
     } else {
@@ -113,7 +113,7 @@ public final class Pipe extends CachedObjectIntegerKey<Pipe> implements Removabl
       case COLUMN_AO_SERVER: return ao_server;
       case 2: return command;
       case COLUMN_PACKAGE: return packageName;
-      case 4: return disable_log == -1?null:disable_log;
+      case 4: return disable_log == -1 ? null : disable_log;
       default: throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
@@ -128,9 +128,9 @@ public final class Pipe extends CachedObjectIntegerKey<Pipe> implements Removabl
     if (disable_log == -1) {
       return null;
     }
-    DisableLog obj=table.getConnector().getAccount().getDisableLog().get(disable_log);
+    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disable_log);
     if (obj == null) {
-      throw new SQLException("Unable to find DisableLog: "+disable_log);
+      throw new SQLException("Unable to find DisableLog: " + disable_log);
     }
     return obj;
   }
@@ -148,9 +148,9 @@ public final class Pipe extends CachedObjectIntegerKey<Pipe> implements Removabl
   }
 
   public Server getLinuxServer() throws SQLException, IOException {
-    Server ao=table.getConnector().getLinux().getServer().get(ao_server);
+    Server ao = table.getConnector().getLinux().getServer().get(ao_server);
     if (ao == null) {
-      throw new SQLException("Unable to find linux.Server: "+ao_server);
+      throw new SQLException("Unable to find linux.Server: " + ao_server);
     }
     return ao;
   }
@@ -167,9 +167,9 @@ public final class Pipe extends CachedObjectIntegerKey<Pipe> implements Removabl
       ao_server = result.getInt(2);
       command = result.getString(3);
       packageName = Account.Name.valueOf(result.getString(4));
-      disable_log=result.getInt(5);
+      disable_log = result.getInt(5);
       if (result.wasNull()) {
-        disable_log=-1;
+        disable_log = -1;
       }
     } catch (ValidationException e) {
       throw new SQLException(e);
@@ -179,11 +179,11 @@ public final class Pipe extends CachedObjectIntegerKey<Pipe> implements Removabl
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
-      pkey=in.readCompressedInt();
-      ao_server=in.readCompressedInt();
+      pkey = in.readCompressedInt();
+      ao_server = in.readCompressedInt();
       command = in.readUTF();
       packageName = Account.Name.valueOf(in.readUTF()).intern();
-      disable_log=in.readCompressedInt();
+      disable_log = in.readCompressedInt();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -197,16 +197,16 @@ public final class Pipe extends CachedObjectIntegerKey<Pipe> implements Removabl
   @Override
   public void remove() throws IOException, SQLException {
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.REMOVE,
-      Table.TableID.EMAIL_PIPES,
-      pkey
+        true,
+        AoservProtocol.CommandID.REMOVE,
+        Table.TableID.EMAIL_PIPES,
+        pkey
     );
   }
 
   @Override
   public String toStringImpl() {
-    return ao_server+":"+command;
+    return ao_server + ":" + command;
   }
 
   @Override

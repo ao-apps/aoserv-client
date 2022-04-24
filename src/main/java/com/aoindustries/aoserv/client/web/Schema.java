@@ -35,31 +35,58 @@ import java.util.List;
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
   private final HeaderTable Header;
-  public HeaderTable getHeader() {return Header;}
+
+  public HeaderTable getHeader() {
+    return Header;
+  }
 
   private final HttpdBindTable HttpdBind;
-  public HttpdBindTable getHttpdBind() {return HttpdBind;}
+
+  public HttpdBindTable getHttpdBind() {
+    return HttpdBind;
+  }
 
   private final HttpdServerTable HttpdServer;
-  public HttpdServerTable getHttpdServer() {return HttpdServer;}
+
+  public HttpdServerTable getHttpdServer() {
+    return HttpdServer;
+  }
 
   private final LocationTable Location;
-  public LocationTable getLocation() {return Location;}
+
+  public LocationTable getLocation() {
+    return Location;
+  }
 
   private final RewriteRuleTable RewriteRule;
-  public RewriteRuleTable getRewriteRule() {return RewriteRule;}
+
+  public RewriteRuleTable getRewriteRule() {
+    return RewriteRule;
+  }
 
   private final SiteTable Site;
-  public SiteTable getSite() {return Site;}
+
+  public SiteTable getSite() {
+    return Site;
+  }
 
   private final StaticSiteTable StaticSite;
-  public StaticSiteTable getStaticSite() {return StaticSite;}
+
+  public StaticSiteTable getStaticSite() {
+    return StaticSite;
+  }
 
   private final VirtualHostTable VirtualHost;
-  public VirtualHostTable getVirtualHost() {return VirtualHost;}
+
+  public VirtualHostTable getVirtualHost() {
+    return VirtualHost;
+  }
 
   private final VirtualHostNameTable VirtualHostName;
-  public VirtualHostNameTable getVirtualHostName() {return VirtualHostName;}
+
+  public VirtualHostNameTable getVirtualHostName() {
+    return VirtualHostName;
+  }
 
   private final List<? extends AOServTable<?, ?>> tables;
 

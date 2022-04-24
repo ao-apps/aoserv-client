@@ -35,7 +35,10 @@ import java.util.List;
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
   private final CvsRepositoryTable CvsRepository;
-  public CvsRepositoryTable getCvsRepository() {return CvsRepository;}
+
+  public CvsRepositoryTable getCvsRepository() {
+    return CvsRepository;
+  }
 
   private final List<? extends AOServTable<?, ?>> tables;
 

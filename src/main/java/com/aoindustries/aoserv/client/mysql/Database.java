@@ -103,10 +103,10 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
    * @author  AO Industries, Inc.
    */
   public static final class Name implements
-    Comparable<Name>,
-    Serializable,
-    DtoFactory<com.aoindustries.aoserv.client.dto.MySQLDatabaseName>,
-    Internable<Name>
+      Comparable<Name>,
+      Serializable,
+      DtoFactory<com.aoindustries.aoserv.client.dto.MySQLDatabaseName>,
+      Internable<Name>
   {
 
     private static final long serialVersionUID = 1495532864586195961L;
@@ -135,13 +135,13 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
       for (int c = 0; c < len; c++) {
         char ch = name.charAt(c);
         if (
-          (ch<'a' || ch>'z')
-          && (ch < 'A' || ch > 'Z')
-          && (ch < '0' || ch > '9')
-          && ch != '_'
-          && ch != '-'
-          && ch != '.'
-          && ch != ' '
+            (ch < 'a' || ch > 'z')
+                && (ch < 'A' || ch > 'Z')
+                && (ch < '0' || ch > '9')
+                && ch != '_'
+                && ch != '-'
+                && ch != '.'
+                && ch != ' '
         ) {
           return new InvalidResult(RESOURCES, "Name.validate.illegalCharacter");
         }
@@ -205,8 +205,8 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
     @Override
     public boolean equals(Object obj) {
       return
-        (obj instanceof Name)
-        && name.equals(((Name)obj).name)
+          (obj instanceof Name)
+              && name.equals(((Name) obj).name)
       ;
     }
 
@@ -252,9 +252,9 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
   }
 
   static final int
-    COLUMN_PKEY = 0,
-    COLUMN_MYSQL_SERVER = 2,
-    COLUMN_PACKAGE = 3
+      COLUMN_PKEY = 0,
+      COLUMN_MYSQL_SERVER = 2,
+      COLUMN_PACKAGE = 3
   ;
   static final String COLUMN_NAME_name = "name";
   static final String COLUMN_MYSQL_SERVER_name = "mysql_server";
@@ -263,27 +263,27 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
    * The classname of the JDBC driver used for the <code>MySQLDatabase</code>.
    */
   public static final String
-    CENTOS_JDBC_DRIVER="com.mysql.jdbc.Driver",
-    CENTOS_7_JDBC_DRIVER="com.mysql.cj.jdbc.Driver"
+      CENTOS_JDBC_DRIVER = "com.mysql.jdbc.Driver",
+      CENTOS_7_JDBC_DRIVER = "com.mysql.cj.jdbc.Driver"
   ;
 
   /**
    * The URL for MySQL JDBC documentation.
    */
   public static final String
-    CENTOS_JDBC_DOCUMENTATION_URL="https://dev.mysql.com/doc/connector-j/5.1/en/",
-    CENTOS_7_JDBC_DOCUMENTATION_URL="https://dev.mysql.com/doc/connector-j/8.0/en/"
+      CENTOS_JDBC_DOCUMENTATION_URL = "https://dev.mysql.com/doc/connector-j/5.1/en/",
+      CENTOS_7_JDBC_DOCUMENTATION_URL = "https://dev.mysql.com/doc/connector-j/8.0/en/"
   ;
 
   public static final Name
-    /** The root database for a MySQL installation. */
-    MYSQL,
-    /** MySQL */
-    INFORMATION_SCHEMA,
-    PERFORMANCE_SCHEMA,
-    SYS,
-    /** Monitoring */
-    MYSQLMON
+      /** The root database for a MySQL installation. */
+      MYSQL,
+      /** MySQL */
+      INFORMATION_SCHEMA,
+      PERFORMANCE_SCHEMA,
+      SYS,
+      /** Monitoring */
+      MYSQLMON
   ;
 
   static {
@@ -306,14 +306,14 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
    */
   public static boolean isSpecial(Name name) {
     return
-      // The root database for a MySQL installation.
-      name.equals(MYSQL)
-      // MySQL
-      || name.equals(INFORMATION_SCHEMA)
-      || name.equals(PERFORMANCE_SCHEMA)
-      || name.equals(SYS)
-      // Monitoring
-      || name.equals(MYSQLMON);
+        // The root database for a MySQL installation.
+        name.equals(MYSQL)
+            // MySQL
+            || name.equals(INFORMATION_SCHEMA)
+            || name.equals(PERFORMANCE_SCHEMA)
+            || name.equals(SYS)
+            // Monitoring
+            || name.equals(MYSQLMON);
   }
 
   private Name name;
@@ -327,7 +327,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Database() {
     // Do nothing
   }
@@ -337,47 +337,47 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
    */
   @Deprecated
   public int addMySQLServerUser(
-    UserServer msu,
-    boolean canSelect,
-    boolean canInsert,
-    boolean canUpdate,
-    boolean canDelete,
-    boolean canCreate,
-    boolean canDrop,
-    boolean canReference,
-    boolean canIndex,
-    boolean canAlter,
-    boolean canCreateTempTable,
-    boolean canLockTables,
-    boolean canCreateView,
-    boolean canShowView,
-    boolean canCreateRoutine,
-    boolean canAlterRoutine,
-    boolean canExecute,
-    boolean canEvent,
-    boolean canTrigger
+      UserServer msu,
+      boolean canSelect,
+      boolean canInsert,
+      boolean canUpdate,
+      boolean canDelete,
+      boolean canCreate,
+      boolean canDrop,
+      boolean canReference,
+      boolean canIndex,
+      boolean canAlter,
+      boolean canCreateTempTable,
+      boolean canLockTables,
+      boolean canCreateView,
+      boolean canShowView,
+      boolean canCreateRoutine,
+      boolean canAlterRoutine,
+      boolean canExecute,
+      boolean canEvent,
+      boolean canTrigger
   ) throws IOException, SQLException {
     return table.getConnector().getMysql().getDatabaseUser().addMySQLDBUser(
-      this,
-      msu,
-      canSelect,
-      canInsert,
-      canUpdate,
-      canDelete,
-      canCreate,
-      canDrop,
-      canReference,
-      canIndex,
-      canAlter,
-      canCreateTempTable,
-      canLockTables,
-      canCreateView,
-      canShowView,
-      canCreateRoutine,
-      canAlterRoutine,
-      canExecute,
-      canEvent,
-      canTrigger
+        this,
+        msu,
+        canSelect,
+        canInsert,
+        canUpdate,
+        canDelete,
+        canCreate,
+        canDrop,
+        canReference,
+        canIndex,
+        canAlter,
+        canCreateTempTable,
+        canLockTables,
+        canCreateView,
+        canShowView,
+        canCreateRoutine,
+        canAlterRoutine,
+        canExecute,
+        canEvent,
+        canTrigger
     );
   }
 
@@ -386,7 +386,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
    */
   @Override
   public void dump(PrintWriter out) throws IOException, SQLException {
-    dump((Writer)out);
+    dump((Writer) out);
   }
 
   /**
@@ -399,74 +399,29 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
    */
   public void dump(final Writer out) throws IOException, SQLException {
     table.getConnector().requestUpdate(
-      false,
-      AoservProtocol.CommandID.DUMP_MYSQL_DATABASE,
-      new AOServConnector.UpdateRequest() {
-        @Override
-        public void writeRequest(StreamableOutput masterOut) throws IOException {
-          masterOut.writeCompressedInt(pkey);
-          masterOut.writeBoolean(false);
-        }
-
-        @Override
-        public void readResponse(StreamableInput masterIn) throws IOException, SQLException {
-          long dumpSize = masterIn.readLong();
-          if (dumpSize < 0) {
-            throw new IOException("dumpSize < 0: " + dumpSize);
+        false,
+        AoservProtocol.CommandID.DUMP_MYSQL_DATABASE,
+        new AOServConnector.UpdateRequest() {
+          @Override
+          public void writeRequest(StreamableOutput masterOut) throws IOException {
+            masterOut.writeCompressedInt(pkey);
+            masterOut.writeBoolean(false);
           }
-          long bytesRead;
-          try (
+
+          @Override
+          public void readResponse(StreamableInput masterIn) throws IOException, SQLException {
+            long dumpSize = masterIn.readLong();
+            if (dumpSize < 0) {
+              throw new IOException("dumpSize < 0: " + dumpSize);
+            }
+            long bytesRead;
+            try (
             ByteCountInputStream byteCountIn = new ByteCountInputStream(new NestedInputStream(masterIn));
             Reader nestedIn = new InputStreamReader(byteCountIn, DUMP_ENCODING)
-          ) {
-            IoUtils.copy(nestedIn, out);
-            bytesRead = byteCountIn.getCount();
-          }
-          if (bytesRead < dumpSize) {
-            throw new IOException("Too few bytes read: " + bytesRead + " < " + dumpSize);
-          }
-          if (bytesRead > dumpSize) {
-            throw new IOException("Too many bytes read: " + bytesRead + " > " + dumpSize);
-          }
-        }
-
-        @Override
-        public void afterRelease() {
-          // Do nothing
-        }
-      }
-    );
-  }
-
-  /**
-   * Dumps the database in {@link #DUMP_ENCODING} encoding into binary form, optionally gzipped.
-   */
-  public void dump(
-    final boolean gzip,
-    final StreamHandler streamHandler
-  ) throws IOException, SQLException {
-    table.getConnector().requestUpdate(
-      false,
-      AoservProtocol.CommandID.DUMP_MYSQL_DATABASE,
-      new AOServConnector.UpdateRequest() {
-        @Override
-        public void writeRequest(StreamableOutput masterOut) throws IOException {
-          masterOut.writeCompressedInt(pkey);
-          masterOut.writeBoolean(gzip);
-        }
-
-        @Override
-        public void readResponse(StreamableInput masterIn) throws IOException, SQLException {
-          long dumpSize = masterIn.readLong();
-          if (dumpSize < -1) {
-            throw new IOException("dumpSize < -1: " + dumpSize);
-          }
-          streamHandler.onDumpSize(dumpSize);
-          long bytesRead;
-          try (InputStream nestedIn = new NestedInputStream(masterIn)) {
-            bytesRead = IoUtils.copy(nestedIn, streamHandler.getOut());
-          }
-          if (dumpSize != -1) {
+                ) {
+              IoUtils.copy(nestedIn, out);
+              bytesRead = byteCountIn.getCount();
+            }
             if (bytesRead < dumpSize) {
               throw new IOException("Too few bytes read: " + bytesRead + " < " + dumpSize);
             }
@@ -474,13 +429,58 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
               throw new IOException("Too many bytes read: " + bytesRead + " > " + dumpSize);
             }
           }
-        }
 
-        @Override
-        public void afterRelease() {
-          // Do nothing
+          @Override
+          public void afterRelease() {
+            // Do nothing
+          }
         }
-      }
+    );
+  }
+
+  /**
+   * Dumps the database in {@link #DUMP_ENCODING} encoding into binary form, optionally gzipped.
+   */
+  public void dump(
+      final boolean gzip,
+      final StreamHandler streamHandler
+  ) throws IOException, SQLException {
+    table.getConnector().requestUpdate(
+        false,
+        AoservProtocol.CommandID.DUMP_MYSQL_DATABASE,
+        new AOServConnector.UpdateRequest() {
+          @Override
+          public void writeRequest(StreamableOutput masterOut) throws IOException {
+            masterOut.writeCompressedInt(pkey);
+            masterOut.writeBoolean(gzip);
+          }
+
+          @Override
+          public void readResponse(StreamableInput masterIn) throws IOException, SQLException {
+            long dumpSize = masterIn.readLong();
+            if (dumpSize < -1) {
+              throw new IOException("dumpSize < -1: " + dumpSize);
+            }
+            streamHandler.onDumpSize(dumpSize);
+            long bytesRead;
+            try (InputStream nestedIn = new NestedInputStream(masterIn)) {
+              bytesRead = IoUtils.copy(nestedIn, streamHandler.getOut());
+            }
+            if (dumpSize != -1) {
+              if (bytesRead < dumpSize) {
+                throw new IOException("Too few bytes read: " + bytesRead + " < " + dumpSize);
+              }
+              if (bytesRead > dumpSize) {
+                throw new IOException("Too many bytes read: " + bytesRead + " > " + dumpSize);
+              }
+            }
+          }
+
+          @Override
+          public void afterRelease() {
+            // Do nothing
+          }
+        }
     );
   }
 
@@ -536,8 +536,8 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
     Port port = nb.getPort();
     if (!port.equals(Server.DEFAULT_PORT)) {
       jdbcUrl
-        .append(':')
-        .append(port.getPort());
+          .append(':')
+          .append(port.getPort());
     }
     jdbcUrl.append('/');
     URIEncoder.encodeURIComponent(getName().toString(), jdbcUrl);
@@ -581,9 +581,9 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
   }
 
   public Package getPackage() throws SQLException, IOException {
-    Package obj=table.getConnector().getBilling().getPackage().get(packageName);
+    Package obj = table.getConnector().getBilling().getPackage().get(packageName);
     if (obj == null) {
-      throw new SQLException("Unable to find Package: "+packageName);
+      throw new SQLException("Unable to find Package: " + packageName);
     }
     return obj;
   }
@@ -612,7 +612,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
   @Override
   public void init(ResultSet result) throws SQLException {
     try {
-      pkey=result.getInt(1);
+      pkey = result.getInt(1);
       name = Name.valueOf(result.getString(2));
       mysql_server = result.getInt(3);
       packageName = Account.Name.valueOf(result.getString(4));
@@ -625,7 +625,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
-      pkey=in.readCompressedInt();
+      pkey = in.readCompressedInt();
       name = Name.valueOf(in.readUTF());
       mysql_server = in.readCompressedInt();
       packageName = Account.Name.valueOf(in.readUTF()).intern();
@@ -637,19 +637,19 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
 
   @Override
   public List<CannotRemoveReason<Database>> getCannotRemoveReasons() throws SQLException, IOException {
-    List<CannotRemoveReason<Database>> reasons=new ArrayList<>();
+    List<CannotRemoveReason<Database>> reasons = new ArrayList<>();
     if (isSpecial()) {
       Server ms = getMySQLServer();
       reasons.add(
-        new CannotRemoveReason<>(
-          "Not allowed to drop a special MySQL database: "
-            + name
-            + " on "
-            + ms.getName()
-            + " on "
-            + ms.getLinuxServer().getHostname(),
-          this
-        )
+          new CannotRemoveReason<>(
+              "Not allowed to drop a special MySQL database: "
+                  + name
+                  + " on "
+                  + ms.getName()
+                  + " on "
+                  + ms.getLinuxServer().getHostname(),
+              this
+          )
       );
     }
     return reasons;
@@ -661,10 +661,10 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
       throw new SQLException("Refusing to remove special MySQL database: " + this);
     }
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.REMOVE,
-      Table.TableID.MYSQL_DATABASES,
-      pkey
+        true,
+        AoservProtocol.CommandID.REMOVE,
+        Table.TableID.MYSQL_DATABASES,
+        pkey
     );
   }
 
@@ -677,7 +677,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
     out.writeUTF(name.toString());
-    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_4)<0) {
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_4) < 0) {
       out.writeCompressedInt(-1);
     } else {
       out.writeCompressedInt(mysql_server);
@@ -744,24 +744,24 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
     private final String comment;
 
     public TableStatus(
-      Table_Name name,
-      Engine engine,
-      Integer version,
-      RowFormat rowFormat,
-      Long rows,
-      Long avgRowLength,
-      Long dataLength,
-      Long maxDataLength,
-      Long indexLength,
-      Long dataFree,
-      Long autoIncrement,
-      String createTime,
-      String updateTime,
-      String checkTime,
-      Collation collation,
-      String checksum,
-      String createOptions,
-      String comment
+        Table_Name name,
+        Engine engine,
+        Integer version,
+        RowFormat rowFormat,
+        Long rows,
+        Long avgRowLength,
+        Long dataLength,
+        Long maxDataLength,
+        Long indexLength,
+        Long dataFree,
+        Long autoIncrement,
+        String createTime,
+        String updateTime,
+        String checkTime,
+        Collation collation,
+        String checksum,
+        String createOptions,
+        String comment
     ) {
       this.name = name;
       this.engine = engine;
@@ -922,63 +922,63 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
    */
   public List<TableStatus> getTableStatus(final MysqlReplication mysqlSlave) throws IOException, SQLException {
     return table.getConnector().requestResult(
-      true,
-      AoservProtocol.CommandID.GET_MYSQL_TABLE_STATUS,
-      new AOServConnector.ResultRequest<List<TableStatus>>() {
-        private List<TableStatus> result;
+        true,
+        AoservProtocol.CommandID.GET_MYSQL_TABLE_STATUS,
+        new AOServConnector.ResultRequest<List<TableStatus>>() {
+          private List<TableStatus> result;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(pkey);
-          out.writeCompressedInt(mysqlSlave == null ? -1 : mysqlSlave.getPkey());
-        }
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(pkey);
+            out.writeCompressedInt(mysqlSlave == null ? -1 : mysqlSlave.getPkey());
+          }
 
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.NEXT) {
-            int size = in.readCompressedInt();
-            List<TableStatus> tableStatuses = new ArrayList<>(size);
-            for (int c=0;c<size;c++) {
-              try {
-                tableStatuses.add(
-                  new TableStatus(
-                    Table_Name.valueOf(in.readUTF()), // name
-                    in.readNullEnum(Engine.class), // engine
-                    in.readNullInteger(), // version
-                    in.readNullEnum(TableStatus.RowFormat.class), // rowFormat
-                    in.readNullLong(), // rows
-                    in.readNullLong(), // avgRowLength
-                    in.readNullLong(), // dataLength
-                    in.readNullLong(), // maxDataLength
-                    in.readNullLong(), // indexLength
-                    in.readNullLong(), // dataFree
-                    in.readNullLong(), // autoIncrement
-                    in.readNullUTF(), // createTime
-                    in.readNullUTF(), // updateTime
-                    in.readNullUTF(), // checkTime
-                    in.readNullEnum(TableStatus.Collation.class), // collation
-                    in.readNullUTF(), // checksum
-                    in.readNullUTF(), // createOptions
-                    in.readNullUTF() // comment
-                  )
-                );
-              } catch (ValidationException e) {
-                throw new IOException(e);
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.NEXT) {
+              int size = in.readCompressedInt();
+              List<TableStatus> tableStatuses = new ArrayList<>(size);
+              for (int c = 0; c < size; c++) {
+                try {
+                  tableStatuses.add(
+                      new TableStatus(
+                          Table_Name.valueOf(in.readUTF()), // name
+                          in.readNullEnum(Engine.class), // engine
+                          in.readNullInteger(), // version
+                          in.readNullEnum(TableStatus.RowFormat.class), // rowFormat
+                          in.readNullLong(), // rows
+                          in.readNullLong(), // avgRowLength
+                          in.readNullLong(), // dataLength
+                          in.readNullLong(), // maxDataLength
+                          in.readNullLong(), // indexLength
+                          in.readNullLong(), // dataFree
+                          in.readNullLong(), // autoIncrement
+                          in.readNullUTF(), // createTime
+                          in.readNullUTF(), // updateTime
+                          in.readNullUTF(), // checkTime
+                          in.readNullEnum(TableStatus.Collation.class), // collation
+                          in.readNullUTF(), // checksum
+                          in.readNullUTF(), // createOptions
+                          in.readNullUTF() // comment
+                      )
+                  );
+                } catch (ValidationException e) {
+                  throw new IOException(e);
+                }
               }
+              this.result = tableStatuses;
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
             }
-            this.result = tableStatuses;
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+          }
+
+          @Override
+          public List<TableStatus> afterRelease() {
+            return Collections.unmodifiableList(result);
           }
         }
-
-        @Override
-        public List<TableStatus> afterRelease() {
-          return Collections.unmodifiableList(result);
-        }
-      }
     );
   }
 
@@ -1000,10 +1000,10 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
     private final String msgText;
 
     public CheckTableResult(
-      Table_Name table,
-      long duration,
-      MsgType msgType,
-      String msgText
+        Table_Name table,
+        long duration,
+        MsgType msgType,
+        String msgText
     ) {
       this.table = table;
       this.duration = duration;
@@ -1055,60 +1055,60 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
       return Collections.emptyList();
     }
     return table.getConnector().requestResult(
-      true,
-      AoservProtocol.CommandID.CHECK_MYSQL_TABLES,
-      new AOServConnector.ResultRequest<List<CheckTableResult>>() {
-        private List<CheckTableResult> result;
+        true,
+        AoservProtocol.CommandID.CHECK_MYSQL_TABLES,
+        new AOServConnector.ResultRequest<List<CheckTableResult>>() {
+          private List<CheckTableResult> result;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(pkey);
-          out.writeCompressedInt(mysqlSlave == null ? -1 : mysqlSlave.getPkey());
-          int size = tableNames.size();
-          out.writeCompressedInt(size);
-          int count = 0;
-          Iterator<Table_Name> iter = tableNames.iterator();
-          while (count<size && iter.hasNext()) {
-            out.writeUTF(iter.next().toString());
-            count++;
-          }
-          if (count != size) {
-            throw new ConcurrentModificationException("count != size");
-          }
-        }
-
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.NEXT) {
-            int size = in.readCompressedInt();
-            List<CheckTableResult> checkTableResults = new ArrayList<>(size);
-            for (int c=0;c<size;c++) {
-              try {
-                checkTableResults.add(
-                  new CheckTableResult(
-                    Table_Name.valueOf(in.readUTF()), // table
-                    in.readLong(), // duration
-                    in.readNullEnum(CheckTableResult.MsgType.class), // msgType
-                    in.readNullUTF() // msgText
-                  )
-                );
-              } catch (ValidationException e) {
-                throw new IOException(e);
-              }
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(pkey);
+            out.writeCompressedInt(mysqlSlave == null ? -1 : mysqlSlave.getPkey());
+            int size = tableNames.size();
+            out.writeCompressedInt(size);
+            int count = 0;
+            Iterator<Table_Name> iter = tableNames.iterator();
+            while (count < size && iter.hasNext()) {
+              out.writeUTF(iter.next().toString());
+              count++;
             }
-            this.result = checkTableResults;
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+            if (count != size) {
+              throw new ConcurrentModificationException("count != size");
+            }
+          }
+
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.NEXT) {
+              int size = in.readCompressedInt();
+              List<CheckTableResult> checkTableResults = new ArrayList<>(size);
+              for (int c = 0; c < size; c++) {
+                try {
+                  checkTableResults.add(
+                      new CheckTableResult(
+                          Table_Name.valueOf(in.readUTF()), // table
+                          in.readLong(), // duration
+                          in.readNullEnum(CheckTableResult.MsgType.class), // msgType
+                          in.readNullUTF() // msgText
+                      )
+                  );
+                } catch (ValidationException e) {
+                  throw new IOException(e);
+                }
+              }
+              this.result = checkTableResults;
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
+            }
+          }
+
+          @Override
+          public List<CheckTableResult> afterRelease() {
+            return Collections.unmodifiableList(result);
           }
         }
-
-        @Override
-        public List<CheckTableResult> afterRelease() {
-          return Collections.unmodifiableList(result);
-        }
-      }
     );
   }
 

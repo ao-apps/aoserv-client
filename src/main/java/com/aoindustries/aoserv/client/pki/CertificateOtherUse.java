@@ -38,8 +38,8 @@ import java.sql.SQLException;
 public final class CertificateOtherUse extends CachedObjectIntegerKey<CertificateOtherUse> {
 
   static final int
-    COLUMN_PKEY = 0,
-    COLUMN_SSL_CERTIFICATE = 1
+      COLUMN_PKEY = 0,
+      COLUMN_SSL_CERTIFICATE = 1
   ;
   static final String COLUMN_SSL_CERTIFICATE_name = "ssl_certificate";
   static final String COLUMN_SORT_ORDER_name = "sort_order";
@@ -55,7 +55,7 @@ public final class CertificateOtherUse extends CachedObjectIntegerKey<Certificat
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public CertificateOtherUse() {
     // Do nothing
   }

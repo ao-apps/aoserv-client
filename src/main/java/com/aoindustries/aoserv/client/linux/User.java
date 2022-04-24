@@ -82,10 +82,10 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
    * @author  AO Industries, Inc.
    */
   public static final class Gecos implements
-    Comparable<Gecos>,
-    Serializable,
-    DtoFactory<com.aoindustries.aoserv.client.dto.Gecos>,
-    Internable<Gecos> {
+      Comparable<Gecos>,
+      Serializable,
+      DtoFactory<com.aoindustries.aoserv.client.dto.Gecos>,
+      Internable<Gecos> {
 
     private static final long serialVersionUID = -117164942375352467L;
 
@@ -108,34 +108,34 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       if (len == 0) {
         return new InvalidResult(RESOURCES, "Gecos.validate.isEmpty");
       }
-      if (len>MAX_LENGTH) {
+      if (len > MAX_LENGTH) {
         return new InvalidResult(RESOURCES, "Gecos.validate.tooLong", MAX_LENGTH, len);
       }
 
       for (int c = 0; c < len; c++) {
         char ch = value.charAt(c);
         if (
-          (ch < 'a' || ch > 'z')
-          && (ch<'A' || ch>'Z')
-          && (ch < '0' || ch > '9')
-          && ch != '-'
-          && ch != '_'
-          && ch != '@'
-          && ch != ' '
-          && ch != '.'
-          && ch != '#'
-          && ch != '='
-          && ch != '/'
-          && ch != '$'
-          && ch != '%'
-          && ch != '^'
-          && ch != '&'
-          && ch != '*'
-          && ch != '('
-          && ch != ')'
-          && ch != '?'
-          && ch != '\''
-          && ch != '+'
+            (ch < 'a' || ch > 'z')
+                && (ch < 'A' || ch > 'Z')
+                && (ch < '0' || ch > '9')
+                && ch != '-'
+                && ch != '_'
+                && ch != '@'
+                && ch != ' '
+                && ch != '.'
+                && ch != '#'
+                && ch != '='
+                && ch != '/'
+                && ch != '$'
+                && ch != '%'
+                && ch != '^'
+                && ch != '&'
+                && ch != '*'
+                && ch != '('
+                && ch != ')'
+                && ch != '?'
+                && ch != '\''
+                && ch != '+'
         ) {
           return new InvalidResult(RESOURCES, "Gecos.validate.invalidCharacter", ch);
         }
@@ -199,8 +199,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
     @Override
     public boolean equals(Object obj) {
       return
-        (obj instanceof Gecos)
-        && value.equals(((Gecos)obj).value)
+          (obj instanceof Gecos)
+              && value.equals(((Gecos) obj).value)
       ;
     }
 
@@ -270,7 +270,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
   // TODO: Update for IEEE Std 1003.1.2001 "3.426 User Name"? https://paulgorman.org/technical/presentations/linux_username_conventions.pdf
   // TODO: Rename "LinuxName" and combined with "GroupName" as "PosixName" (and an associated "PosixPortableFilename")?
   public static class Name extends com.aoindustries.aoserv.client.account.User.Name implements
-    FastExternalizable
+      FastExternalizable
   {
 
     /**
@@ -310,7 +310,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
         if (ch == ' ') {
           return new InvalidResult(RESOURCES, "Name.validate.noSpace");
         }
-        if (ch <= 0x21 || ch>0x7f) {
+        if (ch <= 0x21 || ch > 0x7f) {
           return new InvalidResult(RESOURCES, "Name.validate.specialCharacter");
         }
         if (ch >= 'A' && ch <= 'Z') {
@@ -410,7 +410,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
      *
      * @see  FastExternalizable
      */
-    @Deprecated/* Java 9: (forRemoval = false) */
+    @Deprecated // Java 9: (forRemoval = false)
     public Name() {
       // Do nothing
     }
@@ -422,80 +422,81 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
     // </editor-fold>
   }
 
-  static final int COLUMN_USERNAME=0;
+  static final int COLUMN_USERNAME = 0;
   static final String COLUMN_USERNAME_name = "username";
 
   /**
    * Some commonly used system and application account usernames.
    */
   public static final Name
-    ADM,
-    AOADMIN,
-    AOSERV_JILTER,
-    AOSERV_XEN_MIGRATION,
-    APACHE,
-    AVAHI_AUTOIPD,
-    AWSTATS,
-    BIN,
-    BIRD,
-    CENTOS, // Amazon EC2 cloud-init
-    CHRONY,
-    CLAMSCAN,
-    CLAMUPDATE,
-    CYRUS,
-    DAEMON,
-    DBUS,
-    DHCPD,
-    EMAILMON,
-    FTP,
-    FTPMON,
-    GAMES,
-    HALT,
-    INTERBASE,
-    JENKINS,
-    LP,
-    MAIL,
-    MAILNULL,
-    MEMCACHED,
-    MYSQL,
-    NAMED,
-    NFSNOBODY,
-    NGINX,
-    NOBODY,
-    OPERATOR,
-    POLKITD,
-    POSTGRES,
-    REDIS,
-    ROOT,
-    RPC,
-    RPCUSER,
-    SASLAUTH,
-    SHUTDOWN,
-    SMMSP,
-    SONARQUBE,
-    SSHD,
-    SYNC,
-    SYSTEMD_BUS_PROXY,
-    SYSTEMD_NETWORK,
-    TCPDUMP,
-    TSS,
-    UNBOUND,
-    // AOServ Master:
-    AOSERV_MASTER,
-    // AOServ Schema:
-    ACCOUNTING,
-    BILLING,
-    DISTRIBUTION,
-    INFRASTRUCTURE,
-    MANAGEMENT,
-    MONITORING,
-    RESELLER;
+      ADM,
+      AOADMIN,
+      AOSERV_JILTER,
+      AOSERV_XEN_MIGRATION,
+      APACHE,
+      AVAHI_AUTOIPD,
+      AWSTATS,
+      BIN,
+      BIRD,
+      CENTOS, // Amazon EC2 cloud-init
+      CHRONY,
+      CLAMSCAN,
+      CLAMUPDATE,
+      CYRUS,
+      DAEMON,
+      DBUS,
+      DHCPD,
+      EMAILMON,
+      FTP,
+      FTPMON,
+      GAMES,
+      HALT,
+      INTERBASE,
+      JENKINS,
+      LP,
+      MAIL,
+      MAILNULL,
+      MEMCACHED,
+      MYSQL,
+      NAMED,
+      NFSNOBODY,
+      NGINX,
+      NOBODY,
+      OPERATOR,
+      POLKITD,
+      POSTGRES,
+      REDIS,
+      ROOT,
+      RPC,
+      RPCUSER,
+      SASLAUTH,
+      SHUTDOWN,
+      SMMSP,
+      SONARQUBE,
+      SSHD,
+      SYNC,
+      SYSTEMD_BUS_PROXY,
+      SYSTEMD_NETWORK,
+      TCPDUMP,
+      TSS,
+      UNBOUND,
+      // AOServ Master:
+      AOSERV_MASTER,
+      // AOServ Schema:
+      ACCOUNTING,
+      BILLING,
+      DISTRIBUTION,
+      INFRASTRUCTURE,
+      MANAGEMENT,
+      MONITORING,
+      RESELLER;
 
   /**
    * @deprecated  User httpd no longer used.
    */
   @Deprecated
   public static final Name HTTPD;
+
   static {
     try {
       ADM = Name.valueOf("adm");
@@ -566,7 +567,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
     }
   }
 
-  public static final String NO_PASSWORD_CONFIG_VALUE="!!";
+  public static final String NO_PASSWORD_CONFIG_VALUE = "!!";
 
   private Gecos name;
   private Gecos office_location;
@@ -583,7 +584,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public User() {
     // Do nothing
   }
@@ -624,7 +625,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
 
   @Override
   public boolean canEnable() throws SQLException, IOException {
-    DisableLog dl=getDisableLog();
+    DisableLog dl = getDisableLog();
     if (dl == null) {
       return false;
     } else {
@@ -671,7 +672,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       case 5: return type;
       case 6: return shell;
       case 7: return created;
-      case 8: return disable_log == -1?null:disable_log;
+      case 8: return disable_log == -1 ? null : disable_log;
       default: throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
@@ -691,9 +692,9 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
     if (disable_log == -1) {
       return null;
     }
-    DisableLog obj=table.getConnector().getAccount().getDisableLog().get(disable_log);
+    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disable_log);
     if (obj == null) {
-      throw new SQLException("Unable to find DisableLog: "+disable_log);
+      throw new SQLException("Unable to find DisableLog: " + disable_log);
     }
     return obj;
   }
@@ -773,31 +774,31 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
 
   public static List<PosixPath> getValidHomeDirectories(Name username, Server ao) throws SQLException, IOException {
     try {
-      List<PosixPath> dirs=new ArrayList<>();
+      List<PosixPath> dirs = new ArrayList<>();
       if (username != null) {
         dirs.add(UserServer.getDefaultHomeDirectory(username));
         dirs.add(UserServer.getHashedHomeDirectory(username));
       }
-      List<Site> hss=ao.getHttpdSites();
-      int hsslen=hss.size();
-      for (int c=0;c<hsslen;c++) {
-        Site hs=hss.get(c);
-        PosixPath siteDir=hs.getInstallDirectory();
+      List<Site> hss = ao.getHttpdSites();
+      int hsslen = hss.size();
+      for (int c = 0; c < hsslen; c++) {
+        Site hs = hss.get(c);
+        PosixPath siteDir = hs.getInstallDirectory();
         dirs.add(siteDir);
         if (hs.getHttpdTomcatSite() != null) {
           dirs.add(PosixPath.valueOf(siteDir.toString() + "/webapps"));
         }
       }
 
-      List<SharedTomcat> hsts=ao.getHttpdSharedTomcats();
-      int hstslen=hsts.size();
-      for (int c=0;c<hstslen;c++) {
-        SharedTomcat hst=hsts.get(c);
+      List<SharedTomcat> hsts = ao.getHttpdSharedTomcats();
+      int hstslen = hsts.size();
+      for (int c = 0; c < hstslen; c++) {
+        SharedTomcat hst = hsts.get(c);
         dirs.add(
-          PosixPath.valueOf(
-            hst.getLinuxServer().getHost().getOperatingSystemVersion().getHttpdSharedTomcatsDirectory().toString()
-            + '/' + hst.getName()
-          )
+            PosixPath.valueOf(
+                hst.getLinuxServer().getHost().getOperatingSystemVersion().getHttpdSharedTomcatsDirectory().toString()
+                    + '/' + hst.getName()
+            )
         );
       }
       return dirs;
@@ -817,9 +818,9 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       type = result.getString(6);
       shell = PosixPath.valueOf(result.getString(7));
       created = UnmodifiableTimestamp.valueOf(result.getTimestamp(8));
-      disable_log=result.getInt(9);
+      disable_log = result.getInt(9);
       if (result.wasNull()) {
-        disable_log=-1;
+        disable_log = -1;
       }
     } catch (ValidationException e) {
       throw new SQLException(e);
@@ -845,7 +846,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
 
   @Override
   public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws SQLException, IOException {
-    List<CannotRemoveReason<?>> reasons=new ArrayList<>();
+    List<CannotRemoveReason<?>> reasons = new ArrayList<>();
 
     // All LinuxServerAccounts must be removable
     for (UserServer lsa : getLinuxServerAccounts()) {
@@ -858,10 +859,10 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
   @Override
   public void remove() throws IOException, SQLException {
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.REMOVE,
-      Table.TableID.LINUX_ACCOUNTS,
-      pkey
+        true,
+        AoservProtocol.CommandID.REMOVE,
+        Table.TableID.LINUX_ACCOUNTS,
+        pkey
     );
   }
 
@@ -872,24 +873,24 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
   }
 
   public void setHomePhone(Gecos phone) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_LINUX_ACCOUNT_HOME_PHONE, pkey, phone == null?"":phone.toString());
+    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_LINUX_ACCOUNT_HOME_PHONE, pkey, phone == null ? "" : phone.toString());
   }
 
   public void setName(Gecos name) throws IOException, SQLException {
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.SET_LINUX_ACCOUNT_NAME,
-      pkey,
-      name == null ? "" : name.toString()
+        true,
+        AoservProtocol.CommandID.SET_LINUX_ACCOUNT_NAME,
+        pkey,
+        name == null ? "" : name.toString()
     );
   }
 
   public void setOfficeLocation(Gecos location) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_LINUX_ACCOUNT_OFFICE_LOCATION, pkey, location == null?"":location.toString());
+    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_LINUX_ACCOUNT_OFFICE_LOCATION, pkey, location == null ? "" : location.toString());
   }
 
   public void setOfficePhone(Gecos phone) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_LINUX_ACCOUNT_OFFICE_PHONE, pkey, phone == null?"":phone.toString());
+    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_LINUX_ACCOUNT_OFFICE_PHONE, pkey, phone == null ? "" : phone.toString());
   }
 
   @Override
@@ -935,10 +936,10 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
   public void setPrimaryLinuxGroup(Group group) throws SQLException, IOException {
     List<GroupUser> lgas = table.getConnector().getLinux().getGroupUser().getLinuxGroupAccounts(group.getName(), pkey);
     if (lgas.isEmpty()) {
-      throw new SQLException("Unable to find LinuxGroupAccount for username="+pkey+" and group="+group.getName());
+      throw new SQLException("Unable to find LinuxGroupAccount for username=" + pkey + " and group=" + group.getName());
     }
     if (lgas.size() > 1) {
-      throw new SQLException("Found more than one LinuxGroupAccount for username="+pkey+" and group="+group.getName());
+      throw new SQLException("Found more than one LinuxGroupAccount for username=" + pkey + " and group=" + group.getName());
     }
     lgas.get(0).setAsPrimary();
   }

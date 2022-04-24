@@ -46,9 +46,10 @@ public final class SiteTable extends CachedTableIntegerKey<Site> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Site.COLUMN_HTTPD_SITE_name+'.'+com.aoindustries.aoserv.client.web.Site.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(Site.COLUMN_HTTPD_SITE_name+'.'+com.aoindustries.aoserv.client.web.Site.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING)
+      new OrderBy(Site.COLUMN_HTTPD_SITE_name + '.' + com.aoindustries.aoserv.client.web.Site.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(Site.COLUMN_HTTPD_SITE_name + '.' + com.aoindustries.aoserv.client.web.Site.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -67,30 +68,30 @@ public final class SiteTable extends CachedTableIntegerKey<Site> {
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-    String command=args[0];
+    String command = args[0];
     if (command.equalsIgnoreCase(Command.SET_HTTPD_TOMCAT_SITE_BLOCK_WEBINF)) {
       if (AOSH.checkParamCount(Command.SET_HTTPD_TOMCAT_SITE_BLOCK_WEBINF, args, 3, err)) {
         connector.getSimpleAOClient().setHttpdTomcatSiteBlockWebinf(
-          args[1],
-          args[2],
-          AOSH.parseBoolean(args[3], "block_webinf")
+            args[1],
+            args[2],
+            AOSH.parseBoolean(args[3], "block_webinf")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.START_JVM)) {
       if (AOSH.checkParamCount(Command.START_JVM, args, 2, err)) {
-        String message=connector.getSimpleAOClient().startJVM(args[1], args[2]);
+        String message = connector.getSimpleAOClient().startJVM(args[1], args[2]);
         if (message != null) {
-          err.println("aosh: "+Command.START_JVM+": "+message);
+          err.println("aosh: " + Command.START_JVM + ": " + message);
           err.flush();
         }
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.STOP_JVM)) {
       if (AOSH.checkParamCount(Command.STOP_JVM, args, 2, err)) {
-        String message=connector.getSimpleAOClient().stopJVM(args[1], args[2]);
+        String message = connector.getSimpleAOClient().stopJVM(args[1], args[2]);
         if (message != null) {
-          err.println("aosh: "+Command.STOP_JVM+": "+message);
+          err.println("aosh: " + Command.STOP_JVM + ": " + message);
           err.flush();
         }
       }

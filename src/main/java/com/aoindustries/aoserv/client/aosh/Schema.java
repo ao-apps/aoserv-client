@@ -35,6 +35,7 @@ import java.util.List;
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
   private final CommandTable Command;
+
   public CommandTable getCommand() {
     return Command;
   }

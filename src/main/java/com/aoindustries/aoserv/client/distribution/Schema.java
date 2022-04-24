@@ -35,36 +35,43 @@ import java.util.List;
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
   private final ArchitectureTable Architecture;
+
   public ArchitectureTable getArchitecture() {
     return Architecture;
   }
 
   private final OperatingSystemTable OperatingSystem;
+
   public OperatingSystemTable getOperatingSystem() {
     return OperatingSystem;
   }
 
   private final OperatingSystemVersionTable OperatingSystemVersion;
+
   public OperatingSystemVersionTable getOperatingSystemVersion() {
     return OperatingSystemVersion;
   }
 
   private final SoftwareTable Software;
+
   public SoftwareTable getSoftware() {
     return Software;
   }
 
   private final SoftwareCategorizationTable SoftwareCategorization;
+
   public SoftwareCategorizationTable getSoftwareCategorization() {
     return SoftwareCategorization;
   }
 
   private final SoftwareCategoryTable SoftwareCategory;
+
   public SoftwareCategoryTable getSoftwareCategory() {
     return SoftwareCategory;
   }
 
   private final SoftwareVersionTable SoftwareVersion;
+
   public SoftwareVersionTable getSoftwareVersion() {
     return SoftwareVersion;
   }

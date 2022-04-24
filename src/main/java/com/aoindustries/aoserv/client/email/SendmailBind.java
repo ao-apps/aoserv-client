@@ -47,8 +47,8 @@ import java.sql.SQLException;
 public final class SendmailBind extends CachedObjectIntegerKey<SendmailBind> {
 
   static final int
-    COLUMN_NET_BIND = 0,
-    COLUMN_SENDMAIL_SERVER = 1
+      COLUMN_NET_BIND = 0,
+      COLUMN_SENDMAIL_SERVER = 1
   ;
   static final String COLUMN_NET_BIND_name = "net_bind";
 
@@ -61,7 +61,7 @@ public final class SendmailBind extends CachedObjectIntegerKey<SendmailBind> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public SendmailBind() {
     // Do nothing
   }

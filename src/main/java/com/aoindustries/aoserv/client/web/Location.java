@@ -48,8 +48,8 @@ import java.util.List;
 public final class Location extends CachedObjectIntegerKey<Location> implements Removable {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_HTTPD_SITE=1
+      COLUMN_PKEY = 0,
+      COLUMN_HTTPD_SITE = 1
   ;
   static final String COLUMN_HTTPD_SITE_name = "httpd_site";
 
@@ -78,10 +78,10 @@ public final class Location extends CachedObjectIntegerKey<Location> implements 
 
   private static String validateNonQuoteAscii(String s, String label) {
     // Is only comprised of space through ~ (ASCII), not including "
-    for (int c=0;c<s.length();c++) {
-      char ch=s.charAt(c);
-      if (ch<' ' || ch>'~' || ch == '"') {
-        return "Invalid character in "+label+": "+ch;
+    for (int c = 0; c < s.length(); c++) {
+      char ch = s.charAt(c);
+      if (ch < ' ' || ch > '~' || ch == '"') {
+        return "Invalid character in " + label + ": " + ch;
       }
     }
     return null;
@@ -133,7 +133,7 @@ public final class Location extends CachedObjectIntegerKey<Location> implements 
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Location() {
     // Do nothing
   }
@@ -160,9 +160,9 @@ public final class Location extends CachedObjectIntegerKey<Location> implements 
   }
 
   public Site getHttpdSite() throws SQLException, IOException {
-    Site obj=table.getConnector().getWeb().getSite().get(httpd_site);
+    Site obj = table.getConnector().getWeb().getSite().get(httpd_site);
     if (obj == null) {
-      throw new SQLException("Unable to find HttpdSite: "+httpd_site);
+      throw new SQLException("Unable to find HttpdSite: " + httpd_site);
     }
     return obj;
   }
@@ -208,11 +208,11 @@ public final class Location extends CachedObjectIntegerKey<Location> implements 
   @Override
   public void init(ResultSet result) throws SQLException {
     try {
-      pkey=result.getInt(1);
-      httpd_site=result.getInt(2);
-      path=result.getString(3);
-      is_regular_expression=result.getBoolean(4);
-      auth_name=result.getString(5);
+      pkey = result.getInt(1);
+      httpd_site = result.getInt(2);
+      path = result.getString(3);
+      is_regular_expression = result.getBoolean(4);
+      auth_name = result.getString(5);
       {
         String s = result.getString(6);
         auth_group_file = s.isEmpty() ? null : PosixPath.valueOf(s);
@@ -221,7 +221,7 @@ public final class Location extends CachedObjectIntegerKey<Location> implements 
         String s = result.getString(7);
         auth_user_file = s.isEmpty() ? null : PosixPath.valueOf(s);
       }
-      require=result.getString(8);
+      require = result.getString(8);
       handler = result.getString(9);
     } catch (ValidationException e) {
       throw new SQLException(e);
@@ -231,11 +231,11 @@ public final class Location extends CachedObjectIntegerKey<Location> implements 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
-      pkey=in.readCompressedInt();
-      httpd_site=in.readCompressedInt();
-      path=in.readCompressedUTF();
-      is_regular_expression=in.readBoolean();
-      auth_name=in.readCompressedUTF();
+      pkey = in.readCompressedInt();
+      httpd_site = in.readCompressedInt();
+      path = in.readCompressedUTF();
+      is_regular_expression = in.readBoolean();
+      auth_name = in.readCompressedUTF();
       {
         String s = in.readCompressedUTF();
         auth_group_file = s.isEmpty() ? null : PosixPath.valueOf(s);
@@ -244,7 +244,7 @@ public final class Location extends CachedObjectIntegerKey<Location> implements 
         String s = in.readCompressedUTF();
         auth_user_file = s.isEmpty() ? null : PosixPath.valueOf(s);
       }
-      require=in.readCompressedUTF().intern();
+      require = in.readCompressedUTF().intern();
       handler = in.readBoolean() ? in.readCompressedUTF().intern() : null;
     } catch (ValidationException e) {
       throw new IOException(e);
@@ -257,32 +257,32 @@ public final class Location extends CachedObjectIntegerKey<Location> implements 
   }
 
   public void setAttributes(
-    String path,
-    boolean isRegularExpression,
-    String authName,
-    PosixPath authGroupFile,
-    PosixPath authUserFile,
-    String require,
-    String handler
+      String path,
+      boolean isRegularExpression,
+      String authName,
+      PosixPath authGroupFile,
+      PosixPath authUserFile,
+      String require,
+      String handler
   ) throws IOException, SQLException {
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.SET_HTTPD_SITE_AUTHENTICATED_LOCATION_ATTRIBUTES,
-      pkey,
-      path,
-      isRegularExpression,
-      authName,
-      authGroupFile == null ? "" : authGroupFile.toString(),
-      authUserFile == null ? "" : authUserFile.toString(),
-      require,
-      handler == null ? "" : handler
+        true,
+        AoservProtocol.CommandID.SET_HTTPD_SITE_AUTHENTICATED_LOCATION_ATTRIBUTES,
+        pkey,
+        path,
+        isRegularExpression,
+        authName,
+        authGroupFile == null ? "" : authGroupFile.toString(),
+        authUserFile == null ? "" : authUserFile.toString(),
+        require,
+        handler == null ? "" : handler
     );
   }
 
   @Override
   public String toStringImpl() throws SQLException, IOException {
-    Site site=getHttpdSite();
-    return site.toStringImpl()+':'+path;
+    Site site = getHttpdSite();
+    return site.toStringImpl() + ':' + path;
   }
 
   @Override

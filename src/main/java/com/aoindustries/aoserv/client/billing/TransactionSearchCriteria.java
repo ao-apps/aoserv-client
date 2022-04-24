@@ -77,23 +77,23 @@ public final class TransactionSearchCriteria implements AOServStreamable {
    *
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public TransactionSearchCriteria() {
     // Do nothing
   }
 
   public TransactionSearchCriteria(
-    Timestamp after,
-    Timestamp before,
-    int transid,
-    Account.Name account,
-    Account.Name sourceAccount,
-    User.Name administrator,
-    String type,
-    String description,
-    String paymentType,
-    String paymentInfo,
-    byte paymentConfirmed
+      Timestamp after,
+      Timestamp before,
+      int transid,
+      Account.Name account,
+      Account.Name sourceAccount,
+      User.Name administrator,
+      String type,
+      String description,
+      String paymentType,
+      String paymentInfo,
+      byte paymentConfirmed
   ) {
     this.after = UnmodifiableTimestamp.valueOf(after);
     this.before = UnmodifiableTimestamp.valueOf(before);
@@ -109,30 +109,30 @@ public final class TransactionSearchCriteria implements AOServStreamable {
   }
 
   public TransactionSearchCriteria(
-    Timestamp after,
-    Timestamp before,
-    int transid,
-    Account account,
-    Account sourceAccount,
-    Administrator administrator,
-    TransactionType type,
-    String description,
-    PaymentType paymentType,
-    String paymentInfo,
-    byte paymentConfirmed
+      Timestamp after,
+      Timestamp before,
+      int transid,
+      Account account,
+      Account sourceAccount,
+      Administrator administrator,
+      TransactionType type,
+      String description,
+      PaymentType paymentType,
+      String paymentInfo,
+      byte paymentConfirmed
   ) {
     this(
-      after,
-      before,
-      transid,
-      account == null ? null : account.getName(),
-      sourceAccount == null ? null : sourceAccount.getName(),
-      administrator == null ? null : administrator.getUsername_userId(),
-      type == null ? null : type.getName(),
-      description,
-      paymentType == null ? null : paymentType.getName(),
-      paymentInfo,
-      paymentConfirmed
+        after,
+        before,
+        transid,
+        account == null ? null : account.getName(),
+        sourceAccount == null ? null : sourceAccount.getName(),
+        administrator == null ? null : administrator.getUsername_userId(),
+        type == null ? null : type.getName(),
+        description,
+        paymentType == null ? null : paymentType.getName(),
+        paymentInfo,
+        paymentConfirmed
     );
   }
 

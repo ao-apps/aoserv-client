@@ -49,8 +49,8 @@ import java.util.List;
 public final class PipeAddress extends CachedObjectIntegerKey<PipeAddress> implements Removable {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_EMAIL_ADDRESS=1
+      COLUMN_PKEY = 0,
+      COLUMN_EMAIL_ADDRESS = 1
   ;
   static final String COLUMN_EMAIL_ADDRESS_name = "email_address";
   static final String COLUMN_EMAIL_PIPE_name = "email_pipe";
@@ -64,7 +64,7 @@ public final class PipeAddress extends CachedObjectIntegerKey<PipeAddress> imple
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public PipeAddress() {
     // Do nothing
   }
@@ -114,16 +114,16 @@ public final class PipeAddress extends CachedObjectIntegerKey<PipeAddress> imple
 
   @Override
   public void init(ResultSet result) throws SQLException {
-    pkey=result.getInt(1);
-    email_address=result.getInt(2);
-    email_pipe=result.getInt(3);
+    pkey = result.getInt(1);
+    email_address = result.getInt(2);
+    email_pipe = result.getInt(3);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readCompressedInt();
-    email_address=in.readCompressedInt();
-    email_pipe=in.readCompressedInt();
+    pkey = in.readCompressedInt();
+    email_address = in.readCompressedInt();
+    email_pipe = in.readCompressedInt();
   }
 
   @Override
@@ -133,11 +133,11 @@ public final class PipeAddress extends CachedObjectIntegerKey<PipeAddress> imple
     // Cannot be used as any part of a majordomo list
     for (MajordomoList ml : table.getConnector().getEmail().getMajordomoList().getRows()) {
       if (
-        ml.getListPipeAddress().getPkey() == pkey
-        || ml.getListRequestPipeAddress().getPkey() == pkey
+          ml.getListPipeAddress().getPkey() == pkey
+              || ml.getListRequestPipeAddress().getPkey() == pkey
       ) {
-        Domain ed=ml.getMajordomoServer().getDomain();
-        reasons.add(new CannotRemoveReason<>("Used by Majordomo list "+ml.getName()+'@'+ed.getDomain()+" on "+ed.getLinuxServer().getHostname(), ml));
+        Domain ed = ml.getMajordomoServer().getDomain();
+        reasons.add(new CannotRemoveReason<>("Used by Majordomo list " + ml.getName() + '@' + ed.getDomain() + " on " + ed.getLinuxServer().getHostname(), ml));
       }
     }
 
@@ -145,7 +145,7 @@ public final class PipeAddress extends CachedObjectIntegerKey<PipeAddress> imple
     for (MajordomoServer ms : table.getConnector().getEmail().getMajordomoServer().getRows()) {
       if (ms.getMajordomoPipeAddress().getPkey() == pkey) {
         Domain ed = ms.getDomain();
-        reasons.add(new CannotRemoveReason<>("Used by Majordomo server "+ed.getDomain()+" on "+ed.getLinuxServer().getHostname(), ms));
+        reasons.add(new CannotRemoveReason<>("Used by Majordomo server " + ed.getDomain() + " on " + ed.getLinuxServer().getHostname(), ms));
       }
     }
 
@@ -155,16 +155,16 @@ public final class PipeAddress extends CachedObjectIntegerKey<PipeAddress> imple
   @Override
   public void remove() throws IOException, SQLException {
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.REMOVE,
-      Table.TableID.EMAIL_PIPE_ADDRESSES,
-      pkey
+        true,
+        AoservProtocol.CommandID.REMOVE,
+        Table.TableID.EMAIL_PIPE_ADDRESSES,
+        pkey
     );
   }
 
   @Override
   public String toStringImpl() throws SQLException, IOException {
-    return getEmailAddress().toStringImpl()+"->"+getEmailPipe().getCommand();
+    return getEmailAddress().toStringImpl() + "->" + getEmailPipe().getCommand();
   }
 
   @Override

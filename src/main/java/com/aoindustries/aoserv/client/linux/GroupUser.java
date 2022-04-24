@@ -75,7 +75,7 @@ public final class GroupUser extends CachedObjectIntegerKey<GroupUser> implement
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public GroupUser() {
     // Do nothing
   }
@@ -187,7 +187,7 @@ public final class GroupUser extends CachedObjectIntegerKey<GroupUser> implement
 
   @Override
   public List<CannotRemoveReason<GroupUser>> getCannotRemoveReasons() {
-    List<CannotRemoveReason<GroupUser>> reasons=new ArrayList<>();
+    List<CannotRemoveReason<GroupUser>> reasons = new ArrayList<>();
     if (isPrimary) {
       reasons.add(new CannotRemoveReason<>("Not allowed to drop a primary group", this));
     }
@@ -197,23 +197,23 @@ public final class GroupUser extends CachedObjectIntegerKey<GroupUser> implement
   @Override
   public void remove() throws IOException, SQLException {
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.REMOVE,
-      Table.TableID.LINUX_GROUP_ACCOUNTS,
-      pkey
+        true,
+        AoservProtocol.CommandID.REMOVE,
+        Table.TableID.LINUX_GROUP_ACCOUNTS,
+        pkey
     );
   }
 
   void setAsPrimary() throws IOException, SQLException {
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.SET_PRIMARY_LINUX_GROUP_ACCOUNT,
-      pkey
+        true,
+        AoservProtocol.CommandID.SET_PRIMARY_LINUX_GROUP_ACCOUNT,
+        pkey
     );
   }
 
   @Override
   public String toStringImpl() {
-    return group.toString()+'|'+user.toString()+(isPrimary?"|p":"|a");
+    return group.toString() + '|' + user.toString() + (isPrimary ? "|p" : "|a");
   }
 }

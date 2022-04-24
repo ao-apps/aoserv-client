@@ -42,8 +42,9 @@ public final class TopLevelDomainTable extends GlobalTableDomainNameKey<TopLevel
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(TopLevelDomain.COLUMN_DOMAIN_name, ASCENDING)
+      new OrderBy(TopLevelDomain.COLUMN_DOMAIN_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

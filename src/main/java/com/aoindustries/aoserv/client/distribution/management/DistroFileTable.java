@@ -47,9 +47,10 @@ public final class DistroFileTable extends FilesystemCachedTable<Integer, Distro
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(DistroFile.COLUMN_PATH_name, ASCENDING),
-    new OrderBy(DistroFile.COLUMN_OPERATING_SYSTEM_VERSION_name, ASCENDING)
+      new OrderBy(DistroFile.COLUMN_PATH_name, ASCENDING),
+      new OrderBy(DistroFile.COLUMN_OPERATING_SYSTEM_VERSION_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -76,16 +77,16 @@ public final class DistroFileTable extends FilesystemCachedTable<Integer, Distro
   public int getRecordLength() {
     return
         4                                             // pkey
-      + 4                                             // operating_system_version
-      + 4+DistroFile.MAX_PATH_LENGTH*2                // path
-      + 1                                             // optional
-      + 4+DistroFile.MAX_TYPE_LENGTH*2                // type
-      + 8                                             // mode
-      + 4+DistroFile.MAX_LINUX_ACCOUNT_LENGTH*2       // linux_account
-      + 4+DistroFile.MAX_LINUX_GROUP_LENGTH*2         // linux_group
-      + 8                                             // size
-      + 1+8+8+8+8                                     // file_sha256
-      + 1+4+DistroFile.MAX_SYMLINK_TARGET_LENGTH*2    // symlink_target
+            + 4                                             // operating_system_version
+            + 4 + DistroFile.MAX_PATH_LENGTH * 2                // path
+            + 1                                             // optional
+            + 4 + DistroFile.MAX_TYPE_LENGTH * 2                // type
+            + 8                                             // mode
+            + 4 + DistroFile.MAX_LINUX_ACCOUNT_LENGTH * 2       // linux_account
+            + 4 + DistroFile.MAX_LINUX_GROUP_LENGTH * 2         // linux_group
+            + 8                                             // size
+            + 1 + 8 + 8 + 8 + 8                                     // file_sha256
+            + 1 + 4 + DistroFile.MAX_SYMLINK_TARGET_LENGTH * 2    // symlink_target
     ;
   }
 
@@ -114,12 +115,12 @@ public final class DistroFileTable extends FilesystemCachedTable<Integer, Distro
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-    String command=args[0];
+    String command = args[0];
     if (command.equalsIgnoreCase(Command.START_DISTRO)) {
       if (AOSH.checkParamCount(Command.START_DISTRO, args, 2, err)) {
         connector.getSimpleAOClient().startDistro(
-          args[1],
-          AOSH.parseBoolean(args[2], "include_user")
+            args[1],
+            AOSH.parseBoolean(args[2], "include_user")
         );
       }
       return true;
@@ -129,10 +130,10 @@ public final class DistroFileTable extends FilesystemCachedTable<Integer, Distro
 
   public void startDistro(Server server, boolean includeUser) throws IOException, SQLException {
     connector.requestUpdate(
-      true,
-      AoservProtocol.CommandID.START_DISTRO,
-      server.getPkey(),
-      includeUser
+        true,
+        AoservProtocol.CommandID.START_DISTRO,
+        server.getPkey(),
+        includeUser
     );
   }
 }

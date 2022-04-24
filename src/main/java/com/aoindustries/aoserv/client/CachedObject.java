@@ -40,7 +40,7 @@ public abstract class CachedObject<K, T extends CachedObject<K, T>> extends AOSe
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   protected CachedObject() {
     // Do nothing
   }
@@ -55,6 +55,6 @@ public abstract class CachedObject<K, T extends CachedObject<K, T>> extends AOSe
     if (this.table != null) {
       throw new IllegalStateException("table already set");
     }
-    this.table=table;
+    this.table = table;
   }
 }

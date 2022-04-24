@@ -51,9 +51,10 @@ public final class ServerTable extends CachedTableIntegerKey<Server> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Server.COLUMN_AO_SERVER_name+'.'+com.aoindustries.aoserv.client.linux.Server.COLUMN_HOSTNAME_name, ASCENDING),
-    new OrderBy(Server.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(Server.COLUMN_AO_SERVER_name + '.' + com.aoindustries.aoserv.client.linux.Server.COLUMN_HOSTNAME_name, ASCENDING),
+      new OrderBy(Server.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -61,22 +62,22 @@ public final class ServerTable extends CachedTableIntegerKey<Server> {
   }
 
   int addMySQLServer(
-    Server.Name name,
-    Server aoServer,
-    SoftwareVersion version,
-    int maxConnections
+      Server.Name name,
+      Server aoServer,
+      SoftwareVersion version,
+      int maxConnections
   ) throws SQLException, IOException {
     if (!version.getTechnologyName_name().equals(Software.MYSQL)) {
-      throw new SQLException("TechnologyVersion must have name of "+Software.MYSQL+": "+version.getTechnologyName_name());
+      throw new SQLException("TechnologyVersion must have name of " + Software.MYSQL + ": " + version.getTechnologyName_name());
     }
     return connector.requestIntQueryIL(
-      true,
-      AoservProtocol.CommandID.ADD,
-      Table.TableID.MYSQL_SERVERS,
-      name,
-      aoServer.getPkey(),
-      version.getPkey(),
-      maxConnections
+        true,
+        AoservProtocol.CommandID.ADD,
+        Table.TableID.MYSQL_SERVERS,
+        name,
+        aoServer.getPkey(),
+        version.getPkey(),
+        maxConnections
     );
   }
 
@@ -95,10 +96,10 @@ public final class ServerTable extends CachedTableIntegerKey<Server> {
 
   public Server getMySQLServer(Server.Name name, com.aoindustries.aoserv.client.linux.Server ao) throws IOException, SQLException {
     // Use the index first
-    List<Server> table=getMySQLServers(ao);
-    int size=table.size();
-    for (int c=0;c<size;c++) {
-      Server ms=table.get(c);
+    List<Server> table = getMySQLServers(ao);
+    int size = table.size();
+    for (int c = 0; c < size; c++) {
+      Server ms = table.get(c);
       if (ms.getName().equals(name)) {
         return ms;
       }
@@ -113,14 +114,14 @@ public final class ServerTable extends CachedTableIntegerKey<Server> {
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-    String command=args[0];
+    String command = args[0];
     if (command.equalsIgnoreCase(Command.CHECK_MYSQL_SERVER_NAME)) {
       if (AOSH.checkParamCount(Command.CHECK_MYSQL_SERVER_NAME, args, 1, err)) {
         ValidationResult validationResult = Server.Name.validate(args[1]);
         out.println(validationResult.isValid());
         out.flush();
         if (!validationResult.isValid()) {
-          err.print("aosh: "+Command.CHECK_MYSQL_SERVER_NAME+": ");
+          err.print("aosh: " + Command.CHECK_MYSQL_SERVER_NAME + ": ");
           err.println(validationResult.toString());
           err.flush();
         }
@@ -130,14 +131,14 @@ public final class ServerTable extends CachedTableIntegerKey<Server> {
       if (AOSH.checkParamCount(Command.IS_MYSQL_SERVER_NAME_AVAILABLE, args, 2, err)) {
         try {
           out.println(
-            connector.getSimpleAOClient().isMySQLServerNameAvailable(
-              AOSH.parseMySQLServerName(args[1], "server_name"),
-              args[2]
-            )
+              connector.getSimpleAOClient().isMySQLServerNameAvailable(
+                  AOSH.parseMySQLServerName(args[1], "server_name"),
+                  args[2]
+              )
           );
           out.flush();
         } catch (IllegalArgumentException iae) {
-          err.print("aosh: "+Command.IS_MYSQL_SERVER_NAME_AVAILABLE+": ");
+          err.print("aosh: " + Command.IS_MYSQL_SERVER_NAME_AVAILABLE + ": ");
           err.println(iae.getMessage());
           err.flush();
         }
@@ -146,24 +147,24 @@ public final class ServerTable extends CachedTableIntegerKey<Server> {
     } else if (command.equalsIgnoreCase(Command.RESTART_MYSQL)) {
       if (AOSH.checkParamCount(Command.RESTART_MYSQL, args, 2, err)) {
         connector.getSimpleAOClient().restartMySQL(
-          AOSH.parseMySQLServerName(args[1], "mysql_server"),
-          args[2]
+            AOSH.parseMySQLServerName(args[1], "mysql_server"),
+            args[2]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.START_MYSQL)) {
       if (AOSH.checkParamCount(Command.START_MYSQL, args, 2, err)) {
         connector.getSimpleAOClient().startMySQL(
-          AOSH.parseMySQLServerName(args[1], "mysql_server"),
-          args[2]
+            AOSH.parseMySQLServerName(args[1], "mysql_server"),
+            args[2]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.STOP_MYSQL)) {
       if (AOSH.checkParamCount(Command.STOP_MYSQL, args, 2, err)) {
         connector.getSimpleAOClient().stopMySQL(
-          AOSH.parseMySQLServerName(args[1], "mysql_server"),
-          args[2]
+            AOSH.parseMySQLServerName(args[1], "mysql_server"),
+            args[2]
         );
       }
       return true;
@@ -182,10 +183,10 @@ public final class ServerTable extends CachedTableIntegerKey<Server> {
 
   public void waitForRebuild(com.aoindustries.aoserv.client.linux.Server aoServer) throws IOException, SQLException {
     connector.requestUpdate(
-      true,
-      AoservProtocol.CommandID.WAIT_FOR_REBUILD,
-      Table.TableID.MYSQL_SERVERS,
-      aoServer.getPkey()
+        true,
+        AoservProtocol.CommandID.WAIT_FOR_REBUILD,
+        Table.TableID.MYSQL_SERVERS,
+        aoServer.getPkey()
     );
   }
 }

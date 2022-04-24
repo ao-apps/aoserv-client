@@ -56,21 +56,21 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
   public static final String TECHNOLOGY_NAME = "postgresql";
 
   public static final String
-    VERSION_7_1 = "7.1",
-    VERSION_7_2 = "7.2",
-    VERSION_7_3 = "7.3",
-    VERSION_8_0 = "8.0",
-    VERSION_8_1 = "8.1",
-    VERSION_8_3 = "8.3",
-    VERSION_9_2 = "9.2",
-    VERSION_9_4 = "9.4",
-    VERSION_9_5 = "9.5",
-    VERSION_9_6 = "9.6",
-    VERSION_10 = "10",
-    VERSION_11 = "11",
-    VERSION_12 = "12",
-    VERSION_13 = "13",
-    VERSION_14 = "14"
+      VERSION_7_1 = "7.1",
+      VERSION_7_2 = "7.2",
+      VERSION_7_3 = "7.3",
+      VERSION_8_0 = "8.0",
+      VERSION_8_1 = "8.1",
+      VERSION_8_3 = "8.3",
+      VERSION_9_2 = "9.2",
+      VERSION_9_4 = "9.4",
+      VERSION_9_5 = "9.5",
+      VERSION_9_6 = "9.6",
+      VERSION_10 = "10",
+      VERSION_11 = "11",
+      VERSION_12 = "12",
+      VERSION_13 = "13",
+      VERSION_14 = "14"
   ;
 
   /**
@@ -82,22 +82,22 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
    * </p>
    */
   public static String[] getPreferredMinorVersions() {
-    return new String[] {
-      VERSION_14,
-      VERSION_13,
-      VERSION_12,
-      VERSION_11,
-      VERSION_10,
-      VERSION_9_6,
-      VERSION_9_5,
-      VERSION_9_4,
-      VERSION_9_2,
-      VERSION_8_3,
-      VERSION_8_1,
-      VERSION_8_0,
-      VERSION_7_3,
-      VERSION_7_2,
-      VERSION_7_1
+    return new String[]{
+        VERSION_14,
+        VERSION_13,
+        VERSION_12,
+        VERSION_11,
+        VERSION_10,
+        VERSION_9_6,
+        VERSION_9_5,
+        VERSION_9_4,
+        VERSION_9_2,
+        VERSION_8_3,
+        VERSION_8_1,
+        VERSION_8_0,
+        VERSION_7_3,
+        VERSION_7_2,
+        VERSION_7_1
     };
   }
 
@@ -107,16 +107,16 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
    */
   public static boolean isScramSha256(String version) {
     return
-      version.startsWith(VERSION_10 + '.')
-      || version.startsWith(VERSION_10 + 'R')
-      || version.startsWith(VERSION_11 + '.')
-      || version.startsWith(VERSION_11 + 'R')
-      || version.startsWith(VERSION_12 + '.')
-      || version.startsWith(VERSION_12 + 'R')
-      || version.startsWith(VERSION_13 + '.')
-      || version.startsWith(VERSION_13 + 'R')
-      || version.startsWith(VERSION_14 + '.')
-      || version.startsWith(VERSION_14 + 'R')
+        version.startsWith(VERSION_10 + '.')
+            || version.startsWith(VERSION_10 + 'R')
+            || version.startsWith(VERSION_11 + '.')
+            || version.startsWith(VERSION_11 + 'R')
+            || version.startsWith(VERSION_12 + '.')
+            || version.startsWith(VERSION_12 + 'R')
+            || version.startsWith(VERSION_13 + '.')
+            || version.startsWith(VERSION_13 + 'R')
+            || version.startsWith(VERSION_14 + '.')
+            || version.startsWith(VERSION_14 + 'R')
     ;
   }
 
@@ -126,7 +126,7 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Version() {
     // Do nothing
   }
@@ -157,8 +157,8 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
       throw new SQLException("Unable to find TechnologyVersion: " + postgisVersion);
     }
     if (
-      tv.getOperatingSystemVersion(connector).getPkey()
-      != getTechnologyVersion(connector).getOperatingSystemVersion(connector).getPkey()
+        tv.getOperatingSystemVersion(connector).getPkey()
+            != getTechnologyVersion(connector).getOperatingSystemVersion(connector).getPkey()
     ) {
       throw new SQLException("postgresql/postgis version mismatch on PostgresVersion: #" + pkey);
     }
@@ -181,7 +181,7 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
   public SoftwareVersion getTechnologyVersion(AOServConnector connector) throws SQLException, IOException {
     SoftwareVersion obj = connector.getDistribution().getSoftwareVersion().get(pkey);
     if (obj == null) {
-      throw new SQLException("Unable to find TechnologyVersion: "+pkey);
+      throw new SQLException("Unable to find TechnologyVersion: " + pkey);
     }
     return obj;
   }

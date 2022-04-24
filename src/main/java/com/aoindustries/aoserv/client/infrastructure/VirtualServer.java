@@ -49,7 +49,7 @@ import java.util.List;
  */
 public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 
-  static final int COLUMN_SERVER=0;
+  static final int COLUMN_SERVER = 0;
 
   static final String COLUMN_SERVER_name = "server";
 
@@ -76,7 +76,7 @@ public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public VirtualServer() {
     // Do nothing
   }
@@ -106,9 +106,9 @@ public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
   }
 
   public Host getHost() throws SQLException, IOException {
-    Host se=table.getConnector().getNet().getHost().get(pkey);
+    Host se = table.getConnector().getNet().getHost().get(pkey);
     if (se == null) {
-      throw new SQLException("Unable to find Host: "+pkey);
+      throw new SQLException("Unable to find Host: " + pkey);
     }
     return se;
   }
@@ -145,7 +145,7 @@ public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
     }
     ProcessorType pt = table.getConnector().getInfrastructure().getProcessorType().get(minimumProcessorType);
     if (pt == null) {
-      throw new SQLException("Unable to find ProcessorType: "+minimumProcessorType);
+      throw new SQLException("Unable to find ProcessorType: " + minimumProcessorType);
     }
     return pt;
   }
@@ -156,7 +156,7 @@ public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
   public Architecture getMinimumProcessorArchitecture() throws IOException, SQLException {
     Architecture a = table.getConnector().getDistribution().getArchitecture().get(minimumProcessorArchitecture);
     if (a == null) {
-      throw new SQLException("Unable to find Architecture: "+minimumProcessorArchitecture);
+      throw new SQLException("Unable to find Architecture: " + minimumProcessorArchitecture);
     }
     return a;
   }
@@ -366,42 +366,42 @@ public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 
   public Server.DaemonAccess requestVncConsoleAccess() throws IOException, SQLException {
     return table.getConnector().requestResult(
-      true,
-      AoservProtocol.CommandID.REQUEST_VNC_CONSOLE_DAEMON_ACCESS,
-      // Java 9: new AOServConnector.ResultRequest<>
-      new AOServConnector.ResultRequest<Server.DaemonAccess>() {
-        private Server.DaemonAccess daemonAccess;
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(pkey);
-        }
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            try {
-              daemonAccess = new Server.DaemonAccess(
-                in.readUTF(),
-                HostAddress.valueOf(in.readUTF()),
-                Port.valueOf(
-                  in.readCompressedInt(),
-                  com.aoapps.net.Protocol.TCP
-                ),
-                in.readLong()
-              );
-            } catch (ValidationException e) {
-              throw new IOException(e);
+        true,
+        AoservProtocol.CommandID.REQUEST_VNC_CONSOLE_DAEMON_ACCESS,
+        // Java 9: new AOServConnector.ResultRequest<>
+        new AOServConnector.ResultRequest<Server.DaemonAccess>() {
+          private Server.DaemonAccess daemonAccess;
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(pkey);
+          }
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              try {
+                daemonAccess = new Server.DaemonAccess(
+                    in.readUTF(),
+                    HostAddress.valueOf(in.readUTF()),
+                    Port.valueOf(
+                        in.readCompressedInt(),
+                        com.aoapps.net.Protocol.TCP
+                    ),
+                    in.readLong()
+                );
+              } catch (ValidationException e) {
+                throw new IOException(e);
+              }
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
             }
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+          }
+          @Override
+          public Server.DaemonAccess afterRelease() {
+            return daemonAccess;
           }
         }
-        @Override
-        public Server.DaemonAccess afterRelease() {
-          return daemonAccess;
-        }
-      }
     );
   }
 
@@ -489,13 +489,13 @@ public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
    * concurrently, as returned by "xm list".
    */
   public static final int
-    RUNNING = 1,
-    BLOCKED = 2,
-    PAUSED = 4,
-    SHUTDOWN = 8,
-    CRASHED = 16,
-    DYING = 32,
-    DESTROYED = 64
+      RUNNING = 1,
+      BLOCKED = 2,
+      PAUSED = 4,
+      SHUTDOWN = 8,
+      CRASHED = 16,
+      DYING = 32,
+      DESTROYED = 64
   ;
 
   /**
@@ -503,44 +503,44 @@ public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
    */
   public static String getStatusList(int status) {
     StringBuilder sb = new StringBuilder();
-    if ((status&RUNNING) != 0) {
-      if (sb.length()>0) {
+    if ((status & RUNNING) != 0) {
+      if (sb.length() > 0) {
         sb.append(',');
       }
       sb.append("Running");
     }
-    if ((status&BLOCKED) != 0) {
-      if (sb.length()>0) {
+    if ((status & BLOCKED) != 0) {
+      if (sb.length() > 0) {
         sb.append(',');
       }
       sb.append("Blocked");
     }
-    if ((status&PAUSED) != 0) {
-      if (sb.length()>0) {
+    if ((status & PAUSED) != 0) {
+      if (sb.length() > 0) {
         sb.append(',');
       }
       sb.append("Paused");
     }
-    if ((status&SHUTDOWN) != 0) {
-      if (sb.length()>0) {
+    if ((status & SHUTDOWN) != 0) {
+      if (sb.length() > 0) {
         sb.append(',');
       }
       sb.append("Shutdown");
     }
-    if ((status&CRASHED) != 0) {
-      if (sb.length()>0) {
+    if ((status & CRASHED) != 0) {
+      if (sb.length() > 0) {
         sb.append(',');
       }
       sb.append("Crashed");
     }
-    if ((status&DYING) != 0) {
-      if (sb.length()>0) {
+    if ((status & DYING) != 0) {
+      if (sb.length() > 0) {
         sb.append(',');
       }
       sb.append("Dying");
     }
-    if ((status&DESTROYED) != 0) {
-      if (sb.length()>0) {
+    if ((status & DESTROYED) != 0) {
+      if (sb.length() > 0) {
         sb.append(',');
       }
       sb.append("Destroyed");
@@ -567,11 +567,11 @@ public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
    */
   public PhysicalServer getPrimaryPhysicalServer() throws IOException, SQLException {
     return table.getConnector().getInfrastructure().getPhysicalServer().get(
-      table.getConnector().requestIntQuery(
-        true,
-        AoservProtocol.CommandID.GET_PRIMARY_PHYSICAL_SERVER,
-        pkey
-      )
+        table.getConnector().requestIntQuery(
+            true,
+            AoservProtocol.CommandID.GET_PRIMARY_PHYSICAL_SERVER,
+            pkey
+        )
     );
   }
 
@@ -580,11 +580,11 @@ public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
    */
   public PhysicalServer getSecondaryPhysicalServer() throws IOException, SQLException {
     return table.getConnector().getInfrastructure().getPhysicalServer().get(
-      table.getConnector().requestIntQuery(
-        true,
-        AoservProtocol.CommandID.GET_SECONDARY_PHYSICAL_SERVER,
-        pkey
-      )
+        table.getConnector().requestIntQuery(
+            true,
+            AoservProtocol.CommandID.GET_SECONDARY_PHYSICAL_SERVER,
+            pkey
+        )
     );
   }
 }

@@ -54,9 +54,9 @@ import java.util.List;
 public final class InboxAddress extends CachedObjectIntegerKey<InboxAddress> implements Removable {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_EMAIL_ADDRESS=1,
-    COLUMN_LINUX_SERVER_ACCOUNT=2
+      COLUMN_PKEY = 0,
+      COLUMN_EMAIL_ADDRESS = 1,
+      COLUMN_LINUX_SERVER_ACCOUNT = 2
   ;
   static final String COLUMN_EMAIL_ADDRESS_name = "email_address";
   static final String COLUMN_LINUX_SERVER_ACCOUNT_name = "linux_server_account";
@@ -73,7 +73,7 @@ public final class InboxAddress extends CachedObjectIntegerKey<InboxAddress> imp
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public InboxAddress() {
     // Do nothing
   }
@@ -136,9 +136,9 @@ public final class InboxAddress extends CachedObjectIntegerKey<InboxAddress> imp
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readCompressedInt();
-    email_address=in.readCompressedInt();
-    linux_server_account=in.readCompressedInt();
+    pkey = in.readCompressedInt();
+    email_address = in.readCompressedInt();
+    linux_server_account = in.readCompressedInt();
   }
 
   @Override
@@ -149,16 +149,16 @@ public final class InboxAddress extends CachedObjectIntegerKey<InboxAddress> imp
   @Override
   public void remove() throws IOException, SQLException {
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.REMOVE,
-      Table.TableID.LINUX_ACC_ADDRESSES,
-      pkey
+        true,
+        AoservProtocol.CommandID.REMOVE,
+        Table.TableID.LINUX_ACC_ADDRESSES,
+        pkey
     );
   }
 
   @Override
   public String toStringImpl() throws SQLException, IOException {
-    return getEmailAddress().toStringImpl()+"->"+getLinuxServerAccount().toStringImpl();
+    return getEmailAddress().toStringImpl() + "->" + getLinuxServerAccount().toStringImpl();
   }
 
   @Override

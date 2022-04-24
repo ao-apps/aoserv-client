@@ -74,7 +74,7 @@ public final class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomca
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public PrivateTomcatSite() {
     // Do nothing
   }
@@ -83,9 +83,9 @@ public final class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomca
   protected Object getColumnImpl(int i) {
     switch (i) {
       case COLUMN_TOMCAT_SITE: return pkey;
-      case COLUMN_TOMCAT4_SHUTDOWN_PORT: return tomcat4_shutdown_port == -1?null:tomcat4_shutdown_port;
+      case COLUMN_TOMCAT4_SHUTDOWN_PORT: return tomcat4_shutdown_port == -1 ? null : tomcat4_shutdown_port;
       case 2: return tomcat4_shutdown_key;
-      case 3: return maxPostSize == -1 ? null: maxPostSize;
+      case 3: return maxPostSize == -1 ? null : maxPostSize;
       case 4: return unpackWARs;
       case 5: return autoDeploy;
       case 6: return tomcatAuthentication;
@@ -94,9 +94,9 @@ public final class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomca
   }
 
   public Site getHttpdTomcatSite() throws SQLException, IOException {
-    Site obj=table.getConnector().getWeb_tomcat().getSite().get(pkey);
+    Site obj = table.getConnector().getWeb_tomcat().getSite().get(pkey);
     if (obj == null) {
-      throw new SQLException("Unable to find HttpdTomcatSite: "+pkey);
+      throw new SQLException("Unable to find HttpdTomcatSite: " + pkey);
     }
     return obj;
   }
@@ -114,33 +114,33 @@ public final class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomca
 
   public void setMaxPostSize(final int maxPostSize) throws IOException, SQLException {
     table.getConnector().requestUpdate(
-      true,
-      AoservProtocol.CommandID.SET_HTTPD_TOMCAT_STD_SITE_MAX_POST_SIZE,
-      new AOServConnector.UpdateRequest() {
-        private IntList invalidateList;
+        true,
+        AoservProtocol.CommandID.SET_HTTPD_TOMCAT_STD_SITE_MAX_POST_SIZE,
+        new AOServConnector.UpdateRequest() {
+          private IntList invalidateList;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(pkey);
-          out.writeInt(maxPostSize);
-        }
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(pkey);
+            out.writeInt(maxPostSize);
+          }
 
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            invalidateList=AOServConnector.readInvalidateList(in);
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              invalidateList = AOServConnector.readInvalidateList(in);
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
+            }
+          }
+
+          @Override
+          public void afterRelease() {
+            table.getConnector().tablesUpdated(invalidateList);
           }
         }
-
-        @Override
-        public void afterRelease() {
-          table.getConnector().tablesUpdated(invalidateList);
-        }
-      }
     );
   }
 
@@ -185,9 +185,9 @@ public final class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomca
     if (tomcat4_shutdown_port == -1) {
       return null;
     }
-    Bind nb=table.getConnector().getNet().getBind().get(tomcat4_shutdown_port);
+    Bind nb = table.getConnector().getNet().getBind().get(tomcat4_shutdown_port);
     if (nb == null) {
-      throw new SQLException("Unable to find NetBind: "+tomcat4_shutdown_port);
+      throw new SQLException("Unable to find NetBind: " + tomcat4_shutdown_port);
     }
     return nb;
   }
@@ -199,12 +199,12 @@ public final class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomca
 
   @Override
   public void init(ResultSet result) throws SQLException {
-    pkey=result.getInt(1);
-    tomcat4_shutdown_port=result.getInt(2);
+    pkey = result.getInt(1);
+    tomcat4_shutdown_port = result.getInt(2);
     if (result.wasNull()) {
-      tomcat4_shutdown_port=-1;
+      tomcat4_shutdown_port = -1;
     }
-    tomcat4_shutdown_key=result.getString(3);
+    tomcat4_shutdown_key = result.getString(3);
     maxPostSize = result.getInt(4);
     if (result.wasNull()) {
       maxPostSize = -1;
@@ -216,9 +216,9 @@ public final class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomca
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readCompressedInt();
-    tomcat4_shutdown_port=in.readCompressedInt();
-    tomcat4_shutdown_key=in.readNullUTF();
+    pkey = in.readCompressedInt();
+    tomcat4_shutdown_port = in.readCompressedInt();
+    tomcat4_shutdown_key = in.readNullUTF();
     maxPostSize = in.readInt();
     unpackWARs = in.readBoolean();
     autoDeploy = in.readBoolean();

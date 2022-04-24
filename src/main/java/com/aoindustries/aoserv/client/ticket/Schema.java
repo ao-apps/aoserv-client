@@ -35,41 +35,49 @@ import java.util.List;
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
   private final ActionTable Action;
+
   public ActionTable getAction() {
     return Action;
   }
 
   private final ActionTypeTable ActionType;
+
   public ActionTypeTable getActionType() {
     return ActionType;
   }
 
   private final AssignmentTable Assignment;
+
   public AssignmentTable getAssignment() {
     return Assignment;
   }
 
   private final LanguageTable Language;
+
   public LanguageTable getLanguage() {
     return Language;
   }
 
   private final PriorityTable Priority;
+
   public PriorityTable getPriority() {
     return Priority;
   }
 
   private final StatusTable Status;
+
   public StatusTable getStatus() {
     return Status;
   }
 
   private final TicketTable Ticket;
+
   public TicketTable getTicket() {
     return Ticket;
   }
 
   private final TicketTypeTable TicketType;
+
   public TicketTypeTable getTicketType() {
     return TicketType;
   }

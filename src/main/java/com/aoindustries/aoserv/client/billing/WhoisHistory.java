@@ -47,9 +47,9 @@ import java.util.List;
 public final class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 
   static final int
-    COLUMN_id = 0,
-    COLUMN_output = 4,
-    COLUMN_error = 5
+      COLUMN_id = 0,
+      COLUMN_output = 4,
+      COLUMN_error = 5
   ;
   static final String COLUMN_registrableDomain_name = "registrableDomain";
   static final String COLUMN_time_name = "time";
@@ -61,7 +61,9 @@ public final class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
   /**
    * Note: these are loaded in a separate call to the master as-needed to conserve heap space, and it is null to begin with.
    */
-  private static class OutputLock {/* Empty lock class to help heap profile */}
+  private static class OutputLock {
+    // Empty lock class to help heap profile
+  }
   private final OutputLock outputLock = new OutputLock();
   private String output;
   private String error;
@@ -75,7 +77,7 @@ public final class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public WhoisHistory() {
     // Do nothing
   }
@@ -121,32 +123,32 @@ public final class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
     assert Thread.holdsLock(outputLock);
     if (error == null) {
       table.getConnector().requestResult(
-        true,
-        AoservProtocol.CommandID.GET_WHOIS_HISTORY_WHOIS_OUTPUT,
-        // Java 9: new AOServConnector.ResultRequest<>
-        new AOServConnector.ResultRequest<Void>() {
-          @Override
-          public void writeRequest(StreamableOutput out) throws IOException {
-            out.writeCompressedInt(pkey);
-          }
+          true,
+          AoservProtocol.CommandID.GET_WHOIS_HISTORY_WHOIS_OUTPUT,
+          // Java 9: new AOServConnector.ResultRequest<>
+          new AOServConnector.ResultRequest<Void>() {
+            @Override
+            public void writeRequest(StreamableOutput out) throws IOException {
+              out.writeCompressedInt(pkey);
+            }
 
-          @Override
-          public void readResponse(StreamableInput in) throws IOException, SQLException {
-            int code = in.readByte();
-            if (code == AoservProtocol.DONE) {
-              output = in.readUTF();
-              error = in.readUTF();
-            } else {
-              AoservProtocol.checkResult(code, in);
-              throw new IOException("Unexpected response code: " + code);
+            @Override
+            public void readResponse(StreamableInput in) throws IOException, SQLException {
+              int code = in.readByte();
+              if (code == AoservProtocol.DONE) {
+                output = in.readUTF();
+                error = in.readUTF();
+              } else {
+                AoservProtocol.checkResult(code, in);
+                throw new IOException("Unexpected response code: " + code);
+              }
+            }
+
+            @Override
+            public Void afterRelease() {
+              return null;
             }
           }
-
-          @Override
-          public Void afterRelease() {
-            return null;
-          }
-        }
       );
     }
   }
@@ -250,7 +252,7 @@ public final class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 
   @Override
   public String toStringImpl() {
-    return pkey+"|"+registrableDomain+"|"+getTime();
+    return pkey + "|" + registrableDomain + "|" + getTime();
   }
 
   /**

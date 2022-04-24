@@ -49,11 +49,12 @@ public final class IpAddressMonitoringTable extends CachedTableIntegerKey<IpAddr
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(IpAddressMonitoring.COLUMN_ID_name + '.' + IpAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
-    new OrderBy(IpAddressMonitoring.COLUMN_ID_name + '.' + IpAddress.COLUMN_DEVICE_name+'.'+Device.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(IpAddressMonitoring.COLUMN_ID_name + '.' + IpAddress.COLUMN_DEVICE_name+'.'+Device.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(IpAddressMonitoring.COLUMN_ID_name + '.' + IpAddress.COLUMN_DEVICE_name+'.'+Device.COLUMN_DEVICE_ID_name, ASCENDING)
+      new OrderBy(IpAddressMonitoring.COLUMN_ID_name + '.' + IpAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
+      new OrderBy(IpAddressMonitoring.COLUMN_ID_name + '.' + IpAddress.COLUMN_DEVICE_name + '.' + Device.COLUMN_SERVER_name + '.' + Host.COLUMN_PACKAGE_name + '.' + Package.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(IpAddressMonitoring.COLUMN_ID_name + '.' + IpAddress.COLUMN_DEVICE_name + '.' + Device.COLUMN_SERVER_name + '.' + Host.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(IpAddressMonitoring.COLUMN_ID_name + '.' + IpAddress.COLUMN_DEVICE_name + '.' + Device.COLUMN_DEVICE_ID_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -72,14 +73,14 @@ public final class IpAddressMonitoringTable extends CachedTableIntegerKey<IpAddr
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-    String command=args[0];
+    String command = args[0];
     if (command.equalsIgnoreCase(Command.SET_IP_ADDRESS_MONITORING_ENABLED)) {
       if (AOSH.checkParamCount(Command.SET_IP_ADDRESS_MONITORING_ENABLED, args, 4, err)) {
         connector.getSimpleAOClient().setIPAddressMonitoringEnabled(
-          AOSH.parseInetAddress(args[1], "ip_address"),
-          args[2],
-          args[3],
-          AOSH.parseBoolean(args[4], "enabled")
+            AOSH.parseInetAddress(args[1], "ip_address"),
+            args[2],
+            args[3],
+            AOSH.parseBoolean(args[4], "enabled")
         );
       }
       return true;

@@ -46,9 +46,9 @@ public final class Category extends CachedObjectIntegerKey<Category> {
   private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Category.class);
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_PARENT=1,
-    COLUMN_NAME=2
+      COLUMN_PKEY = 0,
+      COLUMN_PARENT = 1,
+      COLUMN_NAME = 2
   ;
   static final String COLUMN_PKEY_name = "pkey";
   static final String COLUMN_PARENT_name = "parent";
@@ -68,7 +68,7 @@ public final class Category extends CachedObjectIntegerKey<Category> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Category() {
     // Do nothing
   }
@@ -96,7 +96,7 @@ public final class Category extends CachedObjectIntegerKey<Category> {
     }
     Category tc = table.getConnector().getReseller().getCategory().get(parent);
     if (tc == null) {
-      throw new SQLException("Unable to find TicketCategory: "+parent);
+      throw new SQLException("Unable to find TicketCategory: " + parent);
     }
     return tc;
   }
@@ -128,17 +128,19 @@ public final class Category extends CachedObjectIntegerKey<Category> {
   }
 
   private String slashPath = null;
+
   public synchronized String getSlashPath() throws IOException, SQLException {
     if (slashPath == null) {
-      slashPath = parent == -1 ? name : (getParent().getSlashPath()+'/'+name);
+      slashPath = parent == -1 ? name : (getParent().getSlashPath() + '/' + name);
     }
     return slashPath;
   }
 
   private String dotPath = null;
+
   public synchronized String getDotPath() throws IOException, SQLException {
     if (dotPath == null) {
-      dotPath = parent == -1 ? name : (getParent().getDotPath()+'.'+name);
+      dotPath = parent == -1 ? name : (getParent().getDotPath() + '.' + name);
     }
     return dotPath;
   }

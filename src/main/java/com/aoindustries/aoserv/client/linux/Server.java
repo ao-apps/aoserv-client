@@ -96,8 +96,8 @@ import java.util.ResourceBundle;
  * @author  AO Industries, Inc.
  */
 public final class Server
-  extends CachedObjectIntegerKey<Server>
-  implements DtoFactory<com.aoindustries.aoserv.client.dto.LinuxServer>
+    extends CachedObjectIntegerKey<Server>
+    implements DtoFactory<com.aoindustries.aoserv.client.dto.LinuxServer>
 {
 
   private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Server.class);
@@ -137,7 +137,7 @@ public final class Server
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Server() {
     // Do nothing
   }
@@ -148,13 +148,13 @@ public final class Server
     switch (i) {
       case COLUMN_SERVER: return pkey;
       case COLUMN_HOSTNAME: return hostname;
-      case 2: return daemon_bind == -1?null:daemon_bind;
+      case 2: return daemon_bind == -1 ? null : daemon_bind;
       case 3: return pool_size;
       case 4: return distro_hour;
       case 5: return last_distro_time;
-      case 6: return failover_server == -1?null:failover_server;
+      case 6: return failover_server == -1 ? null : failover_server;
       case 7: return daemonDeviceId;
-      case 8: return daemon_connect_bind == -1?null:daemon_connect_bind;
+      case 8: return daemon_connect_bind == -1 ? null : daemon_connect_bind;
       case 9: return time_zone;
       case 10: return jilter_bind == -1 ? null : jilter_bind;
       case 11: return restrict_outbound_email;
@@ -230,9 +230,9 @@ public final class Server
     if (failover_server == -1) {
       return null;
     }
-    Server se=table.getConnector().getLinux().getServer().get(failover_server);
+    Server se = table.getConnector().getLinux().getServer().get(failover_server);
     if (se == null) {
-      throw new SQLException("Unable to find linux.Server: "+failover_server);
+      throw new SQLException("Unable to find linux.Server: " + failover_server);
     }
     return se;
   }
@@ -499,12 +499,12 @@ public final class Server
       out.writeBoolean(false);
       out.writeBoolean(false);
     }
-    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_4)<0) {
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_4) < 0) {
       out.writeBoolean(true);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30) <= 0) {
       out.writeBoolean(false);
-      out.writeUTF("linux.Server #"+pkey);
+      out.writeUTF("linux.Server #" + pkey);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_31) >= 0) {
       out.writeUTF(hostname.toString());
@@ -529,7 +529,7 @@ public final class Server
     out.writeNullUTF(daemonDeviceId);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30) <= 0) {
       out.writeNullUTF(null);
-      out.writeCompressedInt(1200*100);
+      out.writeCompressedInt(1200 * 100);
       out.writeBoolean(true);
       if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_108) >= 0) {
         out.writeNullUTF(null);
@@ -579,17 +579,17 @@ public final class Server
   }
 
   public int addCvsRepository(
-    PosixPath path,
-    UserServer lsa,
-    GroupServer lsg,
-    long mode
+      PosixPath path,
+      UserServer lsa,
+      GroupServer lsg,
+      long mode
   ) throws IOException, SQLException {
     return table.getConnector().getScm().getCvsRepository().addCvsRepository(
-      this,
-      path,
-      lsa,
-      lsg,
-      mode
+        this,
+        path,
+        lsa,
+        lsg,
+        mode
     );
   }
 
@@ -602,98 +602,98 @@ public final class Server
   }
 
   public int addHttpdJBossSite(
-    String siteName,
-    Package packageObj,
-    User siteUser,
-    Group siteGroup,
-    Email serverAdmin,
-    boolean useApache,
-    IpAddress ipAddress,
-    DomainName primaryHttpHostname,
-    DomainName[] altHttpHostnames,
-    com.aoindustries.aoserv.client.web.jboss.Version jBossVersion
+      String siteName,
+      Package packageObj,
+      User siteUser,
+      Group siteGroup,
+      Email serverAdmin,
+      boolean useApache,
+      IpAddress ipAddress,
+      DomainName primaryHttpHostname,
+      DomainName[] altHttpHostnames,
+      com.aoindustries.aoserv.client.web.jboss.Version jBossVersion
   ) throws IOException, SQLException {
     return table.getConnector().getWeb_jboss().getSite().addHttpdJBossSite(
-      this,
-      siteName,
-      packageObj,
-      siteUser,
-      siteGroup,
-      serverAdmin,
-      useApache,
-      ipAddress,
-      primaryHttpHostname,
-      altHttpHostnames,
-      jBossVersion
+        this,
+        siteName,
+        packageObj,
+        siteUser,
+        siteGroup,
+        serverAdmin,
+        useApache,
+        ipAddress,
+        primaryHttpHostname,
+        altHttpHostnames,
+        jBossVersion
     );
   }
 
   public int addHttpdSharedTomcat(
-    String name,
-    com.aoindustries.aoserv.client.web.tomcat.Version version,
-    UserServer lsa,
-    GroupServer lsg
+      String name,
+      com.aoindustries.aoserv.client.web.tomcat.Version version,
+      UserServer lsa,
+      GroupServer lsg
   ) throws IOException, SQLException {
     return table.getConnector().getWeb_tomcat().getSharedTomcat().addHttpdSharedTomcat(
-      name,
-      this,
-      version,
-      lsa,
-      lsg
+        name,
+        this,
+        version,
+        lsa,
+        lsg
     );
   }
 
   public int addHttpdTomcatSharedSite(
-    String siteName,
-    Package packageObj,
-    User siteUser,
-    Group siteGroup,
-    Email serverAdmin,
-    boolean useApache,
-    IpAddress ipAddress,
-    DomainName primaryHttpHostname,
-    DomainName[] altHttpHostnames,
-    String sharedTomcatName
+      String siteName,
+      Package packageObj,
+      User siteUser,
+      Group siteGroup,
+      Email serverAdmin,
+      boolean useApache,
+      IpAddress ipAddress,
+      DomainName primaryHttpHostname,
+      DomainName[] altHttpHostnames,
+      String sharedTomcatName
   ) throws IOException, SQLException {
     return table.getConnector().getWeb_tomcat().getSharedTomcatSite().addHttpdTomcatSharedSite(
-      this,
-      siteName,
-      packageObj,
-      siteUser,
-      siteGroup,
-      serverAdmin,
-      useApache,
-      ipAddress,
-      primaryHttpHostname,
-      altHttpHostnames,
-      sharedTomcatName
+        this,
+        siteName,
+        packageObj,
+        siteUser,
+        siteGroup,
+        serverAdmin,
+        useApache,
+        ipAddress,
+        primaryHttpHostname,
+        altHttpHostnames,
+        sharedTomcatName
     );
   }
 
   public int addHttpdTomcatStdSite(
-    String siteName,
-    Package packageObj,
-    User jvmUser,
-    Group jvmGroup,
-    Email serverAdmin,
-    boolean useApache,
-    IpAddress ipAddress,
-    DomainName primaryHttpHostname,
-    DomainName[] altHttpHostnames,
-    com.aoindustries.aoserv.client.web.tomcat.Version tomcatVersion
+      String siteName,
+      Package packageObj,
+      User jvmUser,
+      Group jvmGroup,
+      Email serverAdmin,
+      boolean useApache,
+      IpAddress ipAddress,
+      DomainName primaryHttpHostname,
+      DomainName[] altHttpHostnames,
+      com.aoindustries.aoserv.client.web.tomcat.Version tomcatVersion
   ) throws IOException, SQLException {
     return table.getConnector().getWeb_tomcat().getPrivateTomcatSite().addHttpdTomcatStdSite(
-      this,
-      siteName,
-      packageObj,
-      jvmUser,
-      jvmGroup,
-      serverAdmin,
-      useApache,
-      ipAddress,
-      primaryHttpHostname,
-      altHttpHostnames,
-      tomcatVersion
+        this,
+        siteName,
+        packageObj,
+        jvmUser,
+        jvmGroup,
+        serverAdmin,
+        useApache,
+        ipAddress,
+        primaryHttpHostname,
+        altHttpHostnames,
+        tomcatVersion
     );
   }
 
@@ -705,9 +705,9 @@ public final class Server
    */
   public int addSystemGroup(Group.Name groupName, int gid) throws IOException, SQLException {
     return table.getConnector().getLinux().getGroupServer().addSystemGroup(
-      this,
-      groupName,
-      gid
+        this,
+        groupName,
+        gid
     );
   }
 
@@ -718,27 +718,27 @@ public final class Server
    * expected settings.
    */
   public int addSystemUser(
-    User.Name username,
-    int uid,
-    int gid,
-    User.Gecos fullName,
-    User.Gecos officeLocation,
-    User.Gecos officePhone,
-    User.Gecos homePhone,
-    PosixPath home,
-    PosixPath shell
+      User.Name username,
+      int uid,
+      int gid,
+      User.Gecos fullName,
+      User.Gecos officeLocation,
+      User.Gecos officePhone,
+      User.Gecos homePhone,
+      PosixPath home,
+      PosixPath shell
   ) throws IOException, SQLException {
     return table.getConnector().getLinux().getUserServer().addSystemUser(
-      this,
-      username,
-      uid,
-      gid,
-      fullName,
-      officeLocation,
-      officePhone,
-      homePhone,
-      home,
-      shell
+        this,
+        username,
+        uid,
+        gid,
+        fullName,
+        officeLocation,
+        officePhone,
+        homePhone,
+        home,
+        shell
     );
   }
 
@@ -767,21 +767,21 @@ public final class Server
   }
 
   public IpAddress getDaemonIPAddress() throws SQLException, IOException {
-    Bind nb=getDaemonBind();
+    Bind nb = getDaemonBind();
     if (nb == null) {
-      throw new SQLException("Unable to find daemon NetBind for linux.Server: "+pkey);
+      throw new SQLException("Unable to find daemon NetBind for linux.Server: " + pkey);
     }
-    IpAddress ia=nb.getIpAddress();
-    InetAddress ip=ia.getInetAddress();
+    IpAddress ia = nb.getIpAddress();
+    InetAddress ip = ia.getInetAddress();
     if (ip.isUnspecified()) {
       DeviceId ndi = getDaemonDeviceId();
-      Device nd=getHost().getNetDevice(ndi.getName());
+      Device nd = getHost().getNetDevice(ndi.getName());
       if (nd == null) {
-        throw new SQLException("Unable to find NetDevice: "+ndi.getName()+" on "+pkey);
+        throw new SQLException("Unable to find NetDevice: " + ndi.getName() + " on " + pkey);
       }
-      ia=nd.getPrimaryIPAddress();
+      ia = nd.getPrimaryIPAddress();
       if (ia == null) {
-        throw new SQLException("Unable to find primary IPAddress: "+ndi.getName()+" on "+pkey);
+        throw new SQLException("Unable to find primary IPAddress: " + ndi.getName() + " on " + pkey);
       }
     }
     return ia;
@@ -866,9 +866,9 @@ public final class Server
   }
 
   public List<User> getLinuxAccounts() throws SQLException, IOException {
-    List<UserServer> lsa=getLinuxServerAccounts();
-    int len=lsa.size();
-    List<User> la=new ArrayList<>(len);
+    List<UserServer> lsa = getLinuxServerAccounts();
+    int len = lsa.size();
+    List<User> la = new ArrayList<>(len);
     for (int c = 0; c < len; c++) {
       la.add(lsa.get(c).getLinuxAccount());
     }
@@ -876,9 +876,9 @@ public final class Server
   }
 
   public List<Group> getLinuxGroups() throws SQLException, IOException {
-    List<GroupServer> lsg=getLinuxServerGroups();
-    int len=lsg.size();
-    List<Group> lg=new ArrayList<>(len);
+    List<GroupServer> lsg = getLinuxServerGroups();
+    int len = lsg.size();
+    List<Group> lg = new ArrayList<>(len);
     for (int c = 0; c < len; c++) {
       lg.add(lsg.get(c).getLinuxGroup());
     }
@@ -925,7 +925,7 @@ public final class Server
           if (startTime > currentTime) {
             startTime = currentTime;
           } else if ((currentTime - startTime) >= 15000) {
-            throw new IOException("15 second timeout reached while trying to get lock to access server #"+pkey);
+            throw new IOException("15 second timeout reached while trying to get lock to access server #" + pkey);
           } else {
             try {
               mrtgLocks.wait(startTime + 15000 - currentTime);
@@ -945,36 +945,36 @@ public final class Server
 
     try {
       table.getConnector().requestUpdate(
-        false,
-        AoservProtocol.CommandID.GET_MRTG_FILE,
-        new AOServConnector.UpdateRequest() {
-          @Override
-          public void writeRequest(StreamableOutput masterOut) throws IOException {
-            masterOut.writeCompressedInt(pkey);
-            masterOut.writeUTF(filename);
-          }
+          false,
+          AoservProtocol.CommandID.GET_MRTG_FILE,
+          new AOServConnector.UpdateRequest() {
+            @Override
+            public void writeRequest(StreamableOutput masterOut) throws IOException {
+              masterOut.writeCompressedInt(pkey);
+              masterOut.writeUTF(filename);
+            }
 
-          @Override
-          public void readResponse(StreamableInput in) throws IOException, SQLException {
-            byte[] buff=BufferManager.getBytes();
-            try {
-              int code;
-              while ((code=in.readByte()) == AoservProtocol.NEXT) {
-                int len=in.readShort();
-                in.readFully(buff, 0, len);
-                out.write(buff, 0, len);
+            @Override
+            public void readResponse(StreamableInput in) throws IOException, SQLException {
+              byte[] buff = BufferManager.getBytes();
+              try {
+                int code;
+                while ((code = in.readByte()) == AoservProtocol.NEXT) {
+                  int len = in.readShort();
+                  in.readFully(buff, 0, len);
+                  out.write(buff, 0, len);
+                }
+                AoservProtocol.checkResult(code, in);
+              } finally {
+                BufferManager.release(buff, false);
               }
-              AoservProtocol.checkResult(code, in);
-            } finally {
-              BufferManager.release(buff, false);
+            }
+
+            @Override
+            public void afterRelease() {
+              // Do nothing
             }
           }
-
-          @Override
-          public void afterRelease() {
-            // Do nothing
-          }
-        }
       );
     } finally {
       synchronized (mrtgLocks) {
@@ -994,7 +994,7 @@ public final class Server
 
   public com.aoindustries.aoserv.client.mysql.Server getPreferredMySQLServer() throws IOException, SQLException {
     // Look for the most-preferred version that has an instance on the server
-    List<com.aoindustries.aoserv.client.mysql.Server> pss=getMySQLServers();
+    List<com.aoindustries.aoserv.client.mysql.Server> pss = getMySQLServers();
     for (String versionPrefix : com.aoindustries.aoserv.client.mysql.Server.PREFERRED_VERSION_PREFIXES) {
       for (com.aoindustries.aoserv.client.mysql.Server ps : pss) {
         if (ps.getVersion().getVersion().startsWith(versionPrefix)) {
@@ -1004,7 +1004,7 @@ public final class Server
     }
 
     // Default to first available server if no preferred ones round
-    return pss.isEmpty()?null:pss.get(0);
+    return pss.isEmpty() ? null : pss.get(0);
   }
 
   public List<Server> getNestedServers() throws IOException, SQLException {
@@ -1021,7 +1021,7 @@ public final class Server
 
   public com.aoindustries.aoserv.client.postgresql.Server getPreferredPostgresServer() throws SQLException, IOException {
     // Look for the most-preferred version that has an instance on the server
-    List<com.aoindustries.aoserv.client.postgresql.Server> pss=getPostgresServers();
+    List<com.aoindustries.aoserv.client.postgresql.Server> pss = getPostgresServers();
     String[] preferredMinorVersions = com.aoindustries.aoserv.client.postgresql.Version.getPreferredMinorVersions();
     for (String version : preferredMinorVersions) {
       for (com.aoindustries.aoserv.client.postgresql.Server ps : pss) {
@@ -1032,15 +1032,15 @@ public final class Server
     }
 
     // Default to first available server if no preferred ones round
-    return pss.isEmpty()?null:pss.get(0);
+    return pss.isEmpty() ? null : pss.get(0);
   }
 
   public IpAddress getPrimaryIPAddress() throws SQLException, IOException {
     DeviceId ndi = getDaemonDeviceId();
-    String name=ndi.getName();
-    Device nd=getHost().getNetDevice(name);
+    String name = ndi.getName();
+    Device nd = getHost().getNetDevice(name);
     if (nd == null) {
-      throw new SQLException("Unable to find NetDevice: "+name+" on "+pkey);
+      throw new SQLException("Unable to find NetDevice: " + name + " on " + pkey);
     }
     return nd.getPrimaryIPAddress();
   }
@@ -1249,9 +1249,9 @@ public final class Server
     private final long count;
 
     MdMismatchReport(
-      String device,
-      RaidLevel level,
-      long count
+        String device,
+        RaidLevel level,
+        long count
     ) {
       this.device = device;
       this.level = level;
@@ -1299,11 +1299,11 @@ public final class Server
       List<String> values = Strings.split(line, '\t');
       if (values.size() != 3) {
         throw new ParseException(
-          RESOURCES.getMessage(
-            "MdMismatchReport.ParseException.badColumnCount",
-            line
-          ),
-          lineNum
+            RESOURCES.getMessage(
+                "MdMismatchReport.ParseException.badColumnCount",
+                line
+            ),
+            lineNum
         );
       }
 
@@ -1311,11 +1311,11 @@ public final class Server
       String device = values.get(0);
       if (!device.startsWith("/dev/md")) {
         throw new ParseException(
-          RESOURCES.getMessage(
-            "MdMismatchReport.ParseException.badDeviceStart",
-            device
-          ),
-          lineNum
+            RESOURCES.getMessage(
+                "MdMismatchReport.ParseException.badDeviceStart",
+                device
+            ),
+            lineNum
         );
       }
 
@@ -1329,11 +1329,11 @@ public final class Server
         count = Long.parseLong(countString);
       } catch (NumberFormatException e) {
         ParseException parseException = new ParseException(
-          RESOURCES.getMessage(
-            "MdMismatchReport.ParseException.countNotNumber",
-            countString
-          ),
-          lineNum
+            RESOURCES.getMessage(
+                "MdMismatchReport.ParseException.countNotNumber",
+                countString
+            ),
+            lineNum
         );
         parseException.initCause(e);
         throw parseException;
@@ -1413,16 +1413,16 @@ public final class Server
     private final Long outOfSync;
 
     DrbdReport(
-      String device,
-      String resourceHostname,
-      String resourceDevice,
-      ConnectionState connectionState,
-      DiskState localDiskState,
-      DiskState remoteDiskState,
-      Role localRole,
-      Role remoteRole,
-      Long lastVerified,
-      Long outOfSync
+        String device,
+        String resourceHostname,
+        String resourceDevice,
+        ConnectionState connectionState,
+        DiskState localDiskState,
+        DiskState remoteDiskState,
+        Role localRole,
+        Role remoteRole,
+        Long lastVerified,
+        Long outOfSync
     ) {
       this.device = device;
       this.resourceHostname = resourceHostname;
@@ -1504,11 +1504,11 @@ public final class Server
       List<String> values = Strings.split(line, '\t');
       if (values.size() != 7) {
         throw new ParseException(
-          RESOURCES.getMessage(
-            "DrbdReport.ParseException.badColumnCount",
-            line
-          ),
-          lineNum
+            RESOURCES.getMessage(
+                "DrbdReport.ParseException.badColumnCount",
+                line
+            ),
+            lineNum
         );
       }
 
@@ -1516,11 +1516,11 @@ public final class Server
       String device = values.get(0);
       if (!device.startsWith("/dev/drbd")) {
         throw new ParseException(
-          RESOURCES.getMessage(
-            "DrbdReport.ParseException.badDeviceStart",
-            device
-          ),
-          lineNum
+            RESOURCES.getMessage(
+                "DrbdReport.ParseException.badDeviceStart",
+                device
+            ),
+            lineNum
         );
       }
 
@@ -1529,38 +1529,38 @@ public final class Server
       int dashPos = resource.lastIndexOf('-');
       if (dashPos == -1) {
         throw new ParseException(
-          RESOURCES.getMessage(
-            "DrbdReport.ParseException.noDash",
-            resource
-          ),
-          lineNum
+            RESOURCES.getMessage(
+                "DrbdReport.ParseException.noDash",
+                resource
+            ),
+            lineNum
         );
       }
       String domUHostname = resource.substring(0, dashPos);
-      String domUDevice = resource.substring(dashPos+1);
+      String domUDevice = resource.substring(dashPos + 1);
       if (
-        domUDevice.length() != 4
-        || domUDevice.charAt(0) != 'x'
-        || domUDevice.charAt(1) != 'v'
-        || domUDevice.charAt(2) != 'd'
-        || domUDevice.charAt(3)<'a'
-        || domUDevice.charAt(3)>'z'
+          domUDevice.length() != 4
+              || domUDevice.charAt(0) != 'x'
+              || domUDevice.charAt(1) != 'v'
+              || domUDevice.charAt(2) != 'd'
+              || domUDevice.charAt(3) < 'a'
+              || domUDevice.charAt(3) > 'z'
       ) {
         throw new ParseException(
-          RESOURCES.getMessage(
-            "DrbdReport.ParseException.unexpectedResourceEnding",
-            domUDevice
-          ),
-          lineNum
+            RESOURCES.getMessage(
+                "DrbdReport.ParseException.unexpectedResourceEnding",
+                domUDevice
+            ),
+            lineNum
         );
       }
 
       // Connection State
       String connectionStateString = values.get(2);
       final DrbdReport.ConnectionState connectionState =
-        "null".equals(connectionStateString)
-        ? null
-        : DrbdReport.ConnectionState.valueOf(connectionStateString);
+          "null".equals(connectionStateString)
+              ? null
+              : DrbdReport.ConnectionState.valueOf(connectionStateString);
 
       // Disk states
       String ds = values.get(3);
@@ -1576,15 +1576,15 @@ public final class Server
         int dsSlashPos = ds.indexOf('/');
         if (dsSlashPos == -1) {
           throw new ParseException(
-            RESOURCES.getMessage(
-              "DrbdReport.ParseException.noSlashInDiskStates",
-              ds
-            ),
-            lineNum
+              RESOURCES.getMessage(
+                  "DrbdReport.ParseException.noSlashInDiskStates",
+                  ds
+              ),
+              lineNum
           );
         }
         localDiskState = DrbdReport.DiskState.valueOf(ds.substring(0, dsSlashPos));
-        remoteDiskState = DrbdReport.DiskState.valueOf(ds.substring(dsSlashPos+1));
+        remoteDiskState = DrbdReport.DiskState.valueOf(ds.substring(dsSlashPos + 1));
       }
 
       // Roles
@@ -1601,46 +1601,46 @@ public final class Server
         int slashPos = state.indexOf('/');
         if (slashPos == -1) {
           throw new ParseException(
-            RESOURCES.getMessage(
-              "DrbdReport.ParseException.noSlashInState",
-              state
-            ),
-            lineNum
+              RESOURCES.getMessage(
+                  "DrbdReport.ParseException.noSlashInState",
+                  state
+              ),
+              lineNum
           );
         }
         localRole = DrbdReport.Role.valueOf(state.substring(0, slashPos));
-        remoteRole = DrbdReport.Role.valueOf(state.substring(slashPos+1));
+        remoteRole = DrbdReport.Role.valueOf(state.substring(slashPos + 1));
       }
 
       // Last Verified
       String lastVerifiedString = values.get(5);
       Long lastVerified =
-        "null".equals(lastVerifiedString)
-        ? null
-        : (Long.parseLong(lastVerifiedString)*1000)
+          "null".equals(lastVerifiedString)
+              ? null
+              : (Long.parseLong(lastVerifiedString) * 1000)
       ;
 
       // Out of Sync
       String outOfSyncString = values.get(6);
       Long outOfSync =
-        "null".equals(outOfSyncString)
-        ? null
-        : Long.parseLong(outOfSyncString)
+          "null".equals(outOfSyncString)
+              ? null
+              : Long.parseLong(outOfSyncString)
       ;
 
       reports.add(
-        new DrbdReport(
-          device,
-          domUHostname,
-          domUDevice,
-          connectionState,
-          localDiskState,
-          remoteDiskState,
-          localRole,
-          remoteRole,
-          lastVerified,
-          outOfSync
-        )
+          new DrbdReport(
+              device,
+              domUHostname,
+              domUDevice,
+              connectionState,
+              localDiskState,
+              remoteDiskState,
+              localRole,
+              remoteRole,
+              lastVerified,
+              outOfSync
+          )
       );
     }
     return reports;
@@ -1650,8 +1650,8 @@ public final class Server
 
     private static boolean overlaps(long start1, long size1, long start2, long size2) {
       return
-        (start2+size2)>start1
-        && (start1+size1)>start2
+          (start2 + size2) > start1
+              && (start1 + size1) > start2
       ;
     }
 
@@ -1664,51 +1664,51 @@ public final class Server
         List<String> lines = Strings.splitLines(vgs);
         int size = lines.size();
         Map<String, VolumeGroup> volumeGroups = AoCollections.newHashMap(size);
-        for (int c=0;c<size;c++) {
-          final int lineNum = c+1;
+        for (int c = 0; c < size; c++) {
+          final int lineNum = c + 1;
           String line = lines.get(c);
           List<String> fields = Strings.split(line, '\t');
           if (fields.size() != 6) {
             throw new ParseException(
-              RESOURCES.getMessage(
-                "LvmReport.VolumeGroup.parseVgsReport.badColumnCount",
-                6,
-                fields.size()
-              ),
-              lineNum
+                RESOURCES.getMessage(
+                    "LvmReport.VolumeGroup.parseVgsReport.badColumnCount",
+                    6,
+                    fields.size()
+                ),
+                lineNum
             );
           }
           String vgExtentSize = fields.get(1).trim();
           if (!vgExtentSize.endsWith("B")) {
             throw new ParseException(
-              RESOURCES.getMessage(
-                "LvmReport.VolumeGroup.parseVgsReport.invalidateVgExtentSize",
-                vgExtentSize
-              ),
-              lineNum
+                RESOURCES.getMessage(
+                    "LvmReport.VolumeGroup.parseVgsReport.invalidateVgExtentSize",
+                    vgExtentSize
+                ),
+                lineNum
             );
           }
-          vgExtentSize = vgExtentSize.substring(0, vgExtentSize.length()-1);
+          vgExtentSize = vgExtentSize.substring(0, vgExtentSize.length() - 1);
           String vgName = fields.get(0).trim();
           if (
-            volumeGroups.put(
-              vgName,
-              new VolumeGroup(
-                vgName,
-                Integer.parseInt(vgExtentSize),
-                Long.parseLong(fields.get(2).trim()),
-                Long.parseLong(fields.get(3).trim()),
-                Integer.parseInt(fields.get(4).trim()),
-                Integer.parseInt(fields.get(5).trim())
-              )
-            ) != null
+              volumeGroups.put(
+                  vgName,
+                  new VolumeGroup(
+                      vgName,
+                      Integer.parseInt(vgExtentSize),
+                      Long.parseLong(fields.get(2).trim()),
+                      Long.parseLong(fields.get(3).trim()),
+                      Integer.parseInt(fields.get(4).trim()),
+                      Integer.parseInt(fields.get(5).trim())
+                  )
+              ) != null
           ) {
             throw new ParseException(
-              RESOURCES.getMessage(
-                "LvmReport.VolumeGroup.parseVgsReport.vgNameFoundTwice",
-                vgName
-              ),
-              lineNum
+                RESOURCES.getMessage(
+                    "LvmReport.VolumeGroup.parseVgsReport.vgNameFoundTwice",
+                    vgName
+                ),
+                lineNum
             );
           }
         }
@@ -1794,18 +1794,18 @@ public final class Server
         Map<String, Integer> vgPhysicalVolumeCounts = AoCollections.newHashMap(volumeGroups.size());
         Map<String, Long> vgExtentCountTotals = AoCollections.newHashMap(volumeGroups.size());
         Map<String, Long> vgAllocCountTotals = AoCollections.newHashMap(volumeGroups.size());
-        for (int c=0;c<size;c++) {
-          final int lineNum = c+1;
+        for (int c = 0; c < size; c++) {
+          final int lineNum = c + 1;
           String line = lines.get(c);
           List<String> fields = Strings.split(line, '\t');
           if (fields.size() != 5) {
             throw new ParseException(
-              RESOURCES.getMessage(
-                "LvmReport.PhysicalVolume.parsePvsReport.badColumnCount",
-                5,
-                fields.size()
-              ),
-              lineNum
+                RESOURCES.getMessage(
+                    "LvmReport.PhysicalVolume.parsePvsReport.badColumnCount",
+                    5,
+                    fields.size()
+                ),
+                lineNum
             );
           }
           String pvName = fields.get(0).trim();
@@ -1814,80 +1814,80 @@ public final class Server
           long pvPeAllocCount = Long.parseLong(fields.get(2).trim());
           String pvSizeString = fields.get(3).trim();
           if (pvSizeString.endsWith("B")) {
-            pvSizeString = pvSizeString.substring(0, pvSizeString.length()-1);
+            pvSizeString = pvSizeString.substring(0, pvSizeString.length() - 1);
           }
           long pvSize = Long.parseLong(pvSizeString);
           VolumeGroup volumeGroup;
           if (vgName.length() == 0) {
             if (pvPeCount != 0 || pvPeAllocCount != 0) {
               throw new ParseException(
-                RESOURCES.getMessage(
-                  "LvmReport.PhysicalVolume.parsePvsReport.invalidValues",
-                  pvPeCount,
-                  pvPeAllocCount,
-                  vgName
-                ),
-                lineNum
+                  RESOURCES.getMessage(
+                      "LvmReport.PhysicalVolume.parsePvsReport.invalidValues",
+                      pvPeCount,
+                      pvPeAllocCount,
+                      vgName
+                  ),
+                  lineNum
               );
             }
             volumeGroup = null;
           } else {
-            if (pvPeCount<1 && pvPeAllocCount<0 && pvPeAllocCount>pvPeCount) {
+            if (pvPeCount < 1 && pvPeAllocCount < 0 && pvPeAllocCount > pvPeCount) {
               throw new ParseException(
-                RESOURCES.getMessage(
-                  "LvmReport.PhysicalVolume.parsePvsReport.invalidValues",
-                  pvPeCount,
-                  pvPeAllocCount,
-                  vgName
-                ),
-                lineNum
+                  RESOURCES.getMessage(
+                      "LvmReport.PhysicalVolume.parsePvsReport.invalidValues",
+                      pvPeCount,
+                      pvPeAllocCount,
+                      vgName
+                  ),
+                  lineNum
               );
             }
             volumeGroup = volumeGroups.get(vgName);
             if (volumeGroup == null) {
               throw new ParseException(
-                RESOURCES.getMessage(
-                  "LvmReport.PhysicalVolume.parsePvsReport.volumeGroupNotFound",
-                  vgName
-                ),
-                lineNum
+                  RESOURCES.getMessage(
+                      "LvmReport.PhysicalVolume.parsePvsReport.volumeGroupNotFound",
+                      vgName
+                  ),
+                  lineNum
               );
             }
             // Add to totals for consistency checks
             Integer count = vgPhysicalVolumeCounts.get(vgName);
             vgPhysicalVolumeCounts.put(
-              vgName,
-              count == null ? 1 : (count+1)
+                vgName,
+                count == null ? 1 : (count + 1)
             );
             Long vgExtentCountTotal = vgExtentCountTotals.get(vgName);
             vgExtentCountTotals.put(
-              vgName,
-              vgExtentCountTotal == null ? pvPeCount : (vgExtentCountTotal+pvPeCount)
+                vgName,
+                vgExtentCountTotal == null ? pvPeCount : (vgExtentCountTotal + pvPeCount)
             );
             Long vgFreeCountTotal = vgAllocCountTotals.get(vgName);
             vgAllocCountTotals.put(
-              vgName,
-              vgFreeCountTotal == null ? pvPeAllocCount : (vgFreeCountTotal+pvPeAllocCount)
+                vgName,
+                vgFreeCountTotal == null ? pvPeAllocCount : (vgFreeCountTotal + pvPeAllocCount)
             );
           }
           if (
-            physicalVolumes.put(
-              pvName,
-              new PhysicalVolume(
-                pvName,
-                pvPeCount,
-                pvPeAllocCount,
-                pvSize,
-                volumeGroup
-              )
-            ) != null
+              physicalVolumes.put(
+                  pvName,
+                  new PhysicalVolume(
+                      pvName,
+                      pvPeCount,
+                      pvPeAllocCount,
+                      pvSize,
+                      volumeGroup
+                  )
+              ) != null
           ) {
             throw new ParseException(
-              RESOURCES.getMessage(
-                "LvmReport.PhysicalVolume.parsePvsReport.pvNameFoundTwice",
-                pvName
-              ),
-              lineNum
+                RESOURCES.getMessage(
+                    "LvmReport.PhysicalVolume.parsePvsReport.pvNameFoundTwice",
+                    pvName
+                ),
+                lineNum
             );
           }
         }
@@ -1901,11 +1901,11 @@ public final class Server
           int actualPvCount = actualPvCountI == null ? 0 : actualPvCountI;
           if (expectedPvCount != actualPvCount) {
             throw new ParseException(
-              RESOURCES.getMessage(
-                "LvmReport.PhysicalVolume.parsePvsReport.mismatchPvCount",
-                vgName
-              ),
-              0
+                RESOURCES.getMessage(
+                    "LvmReport.PhysicalVolume.parsePvsReport.mismatchPvCount",
+                    vgName
+                ),
+                0
             );
           }
           // Check vgExtentCount
@@ -1914,24 +1914,24 @@ public final class Server
           long actualVgExtentCount = actualVgExtentCountL == null ? 0 : actualVgExtentCountL;
           if (expectedVgExtentCount != actualVgExtentCount) {
             throw new ParseException(
-              RESOURCES.getMessage(
-                "LvmReport.PhysicalVolume.parsePvsReport.badVgExtentCount",
-                vgName
-              ),
-              0
+                RESOURCES.getMessage(
+                    "LvmReport.PhysicalVolume.parsePvsReport.badVgExtentCount",
+                    vgName
+                ),
+                0
             );
           }
           // Check vgFreeCount
           long expectedVgFreeCount = volumeGroup.getVgFreeCount();
           Long vgAllocCountTotalL = vgAllocCountTotals.get(vgName);
-          long actualVgFreeCount = vgAllocCountTotalL == null ? expectedVgExtentCount : (expectedVgExtentCount-vgAllocCountTotalL);
+          long actualVgFreeCount = vgAllocCountTotalL == null ? expectedVgExtentCount : (expectedVgExtentCount - vgAllocCountTotalL);
           if (expectedVgFreeCount != actualVgFreeCount) {
             throw new ParseException(
-              RESOURCES.getMessage(
-                "LvmReport.PhysicalVolume.parsePvsReport.badVgFreeCount",
-                vgName
-              ),
-              0
+                RESOURCES.getMessage(
+                    "LvmReport.PhysicalVolume.parsePvsReport.badVgFreeCount",
+                    vgName
+                ),
+                0
             );
           }
         }
@@ -2007,18 +2007,18 @@ public final class Server
       private static void parseLvsReport(String lvs, Map<String, VolumeGroup> volumeGroups, Map<String, PhysicalVolume> physicalVolumes) throws ParseException {
         final List<String> lines = Strings.splitLines(lvs);
         final int size = lines.size();
-        for (int c=0;c<size;c++) {
-          final int lineNum = c+1;
+        for (int c = 0; c < size; c++) {
+          final int lineNum = c + 1;
           final String line = lines.get(c);
           final List<String> fields = Strings.split(line, '\t');
           if (fields.size() != 7) {
             throw new ParseException(
-              RESOURCES.getMessage(
-                "LvmReport.LogicalVolume.parseLsvReport.badColumnCount",
-                7,
-                fields.size()
-              ),
-              lineNum
+                RESOURCES.getMessage(
+                    "LvmReport.LogicalVolume.parseLsvReport.badColumnCount",
+                    7,
+                    fields.size()
+                ),
+                lineNum
             );
           }
           final String vgName = fields.get(0).trim();
@@ -2033,22 +2033,22 @@ public final class Server
           VolumeGroup volumeGroup = volumeGroups.get(vgName);
           if (volumeGroup == null) {
             throw new ParseException(
-              RESOURCES.getMessage(
-                "LvmReport.LogicalVolume.parseLsvReport.volumeGroupNotFound",
-                vgName
-              ),
-              lineNum
+                RESOURCES.getMessage(
+                    "LvmReport.LogicalVolume.parseLsvReport.volumeGroupNotFound",
+                    vgName
+                ),
+                lineNum
             );
           }
 
           // Find or add the logical volume
-          if (segCount<1) {
+          if (segCount < 1) {
             throw new ParseException(
-              RESOURCES.getMessage(
-                "LvmReport.LogicalVolume.parseLsvReport.badSegCount",
-                segCount
-              ),
-              lineNum
+                RESOURCES.getMessage(
+                    "LvmReport.LogicalVolume.parseLsvReport.badSegCount",
+                    segCount
+                ),
+                lineNum
             );
           }
           LogicalVolume logicalVolume = volumeGroup.getLogicalVolume(lvName);
@@ -2058,32 +2058,32 @@ public final class Server
           } else {
             if (segCount != logicalVolume.segCount) {
               throw new ParseException(
-                RESOURCES.getMessage(
-                  "LvmReport.LogicalVolume.parseLsvReport.segCountChanged",
-                  logicalVolume.segCount,
-                  segCount
-                ),
-                lineNum
+                  RESOURCES.getMessage(
+                      "LvmReport.LogicalVolume.parseLsvReport.segCountChanged",
+                      logicalVolume.segCount,
+                      segCount
+                  ),
+                  lineNum
               );
             }
           }
 
           // Add the segment
-          if (stripeCount<1) {
+          if (stripeCount < 1) {
             throw new ParseException(
-              RESOURCES.getMessage(
-                "LvmReport.LogicalVolume.parseLsvReport.badStripeCount",
-                stripeCount
-              ),
-              lineNum
+                RESOURCES.getMessage(
+                    "LvmReport.LogicalVolume.parseLsvReport.badStripeCount",
+                    stripeCount
+                ),
+                lineNum
             );
           }
           if (segPeRanges.size() != stripeCount) {
             throw new ParseException(
-              RESOURCES.getMessage(
-                "LvmReport.LogicalVolume.parseLsvReport.mismatchStripeCount"
-              ),
-              lineNum
+                RESOURCES.getMessage(
+                    "LvmReport.LogicalVolume.parseLsvReport.mismatchStripeCount"
+                ),
+                lineNum
             );
           }
           Segment newSegment = new Segment(logicalVolume, segType, stripeCount, segStartPe);
@@ -2091,12 +2091,12 @@ public final class Server
           for (Segment existingSegment : logicalVolume.segments) {
             if (newSegment.overlaps(existingSegment)) {
               throw new ParseException(
-                RESOURCES.getMessage(
-                  "LvmReport.LogicalVolume.parseLsvReport.segmentOverlap",
-                  existingSegment,
-                  newSegment
-                ),
-                lineNum
+                  RESOURCES.getMessage(
+                      "LvmReport.LogicalVolume.parseLsvReport.segmentOverlap",
+                      existingSegment,
+                      newSegment
+                  ),
+                  lineNum
               );
             }
           }
@@ -2107,41 +2107,41 @@ public final class Server
             int colonPos = segPeRange.indexOf(':');
             if (colonPos == -1) {
               throw new ParseException(
-                RESOURCES.getMessage(
-                  "LvmReport.LogicalVolume.parseLsvReport.segPeRangeNoColon",
-                  segPeRange
-                ),
-                lineNum
+                  RESOURCES.getMessage(
+                      "LvmReport.LogicalVolume.parseLsvReport.segPeRangeNoColon",
+                      segPeRange
+                  ),
+                  lineNum
               );
             }
-            int dashPos = segPeRange.indexOf('-', colonPos+1);
+            int dashPos = segPeRange.indexOf('-', colonPos + 1);
             if (dashPos == -1) {
               throw new ParseException(
-                RESOURCES.getMessage(
-                  "LvmReport.LogicalVolume.parseLsvReport.segPeRangeNoDash",
-                  segPeRange
-                ),
-                lineNum
+                  RESOURCES.getMessage(
+                      "LvmReport.LogicalVolume.parseLsvReport.segPeRangeNoDash",
+                      segPeRange
+                  ),
+                  lineNum
               );
             }
             String stripeDevice = segPeRange.substring(0, colonPos).trim();
             PhysicalVolume stripePv = physicalVolumes.get(stripeDevice);
             if (stripePv == null) {
               throw new ParseException(
-                RESOURCES.getMessage(
-                  "LvmReport.LogicalVolume.parseLsvReport.physicalVolumeNotFound",
-                  stripeDevice
-                ),
-                lineNum
+                  RESOURCES.getMessage(
+                      "LvmReport.LogicalVolume.parseLsvReport.physicalVolumeNotFound",
+                      stripeDevice
+                  ),
+                  lineNum
               );
             }
-            long firstPe = Long.parseLong(segPeRange.substring(colonPos+1, dashPos).trim());
-            if (firstPe<0) {
-              throw new AssertionError("firstPe<0: "+firstPe);
+            long firstPe = Long.parseLong(segPeRange.substring(colonPos + 1, dashPos).trim());
+            if (firstPe < 0) {
+              throw new AssertionError("firstPe<0: " + firstPe);
             }
-            long lastPe = Long.parseLong(segPeRange.substring(dashPos+1).trim());
-            if (lastPe<firstPe) {
-              throw new AssertionError("lastPe<firstPe: "+lastPe+"<"+firstPe);
+            long lastPe = Long.parseLong(segPeRange.substring(dashPos + 1).trim());
+            if (lastPe < firstPe) {
+              throw new AssertionError("lastPe<firstPe: " + lastPe + "<" + firstPe);
             }
             // Make sure no overlap with other stripes in the same physical volume
             Stripe newStripe = new Stripe(newSegment, stripePv, firstPe, lastPe);
@@ -2151,12 +2151,12 @@ public final class Server
                   for (Stripe existingStripe : existingSegment.stripes) {
                     if (newStripe.overlaps(existingStripe)) {
                       throw new ParseException(
-                        RESOURCES.getMessage(
-                          "LvmReport.LogicalVolume.parseLsvReport.stripeOverlap",
-                          existingStripe,
-                          newStripe
-                        ),
-                        lineNum
+                          RESOURCES.getMessage(
+                              "LvmReport.LogicalVolume.parseLsvReport.stripeOverlap",
+                              existingStripe,
+                              newStripe
+                          ),
+                          lineNum
                       );
                     }
                   }
@@ -2175,11 +2175,11 @@ public final class Server
           int actualLvCount = volumeGroup.logicalVolumes.size();
           if (expectedLvCount != actualLvCount) {
             throw new ParseException(
-              RESOURCES.getMessage(
-                "LvmReport.LogicalVolume.parseLsvReport.mismatchLvCount",
-                volumeGroup
-              ),
-              0
+                RESOURCES.getMessage(
+                    "LvmReport.LogicalVolume.parseLsvReport.mismatchLvCount",
+                    volumeGroup
+                ),
+                0
             );
           }
 
@@ -2188,7 +2188,7 @@ public final class Server
           for (LogicalVolume lv : volumeGroup.logicalVolumes.values()) {
             for (Segment segment : lv.segments) {
               for (Stripe stripe : segment.stripes) {
-                totalLvExtents += stripe.getLastPe()-stripe.getFirstPe()+1;
+                totalLvExtents += stripe.getLastPe() - stripe.getFirstPe() + 1;
               }
             }
           }
@@ -2196,11 +2196,11 @@ public final class Server
           long actualFreeCount = volumeGroup.vgExtentCount - totalLvExtents;
           if (expectedFreeCount != actualFreeCount) {
             throw new ParseException(
-              RESOURCES.getMessage(
-                "LvmReport.LogicalVolume.parseLsvReport.mismatchFreeCount",
-                volumeGroup
-              ),
-              0
+                RESOURCES.getMessage(
+                    "LvmReport.LogicalVolume.parseLsvReport.mismatchFreeCount",
+                    volumeGroup
+                ),
+                0
             );
           }
 
@@ -2225,7 +2225,7 @@ public final class Server
 
       @Override
       public String toString() {
-        return volumeGroup+"/"+lvName;
+        return volumeGroup + "/" + lvName;
       }
 
       /**
@@ -2284,7 +2284,7 @@ public final class Server
 
       @Override
       public String toString() {
-        return logicalVolume+"("+segStartPe+"-"+getSegEndPe()+")";
+        return logicalVolume + "(" + segStartPe + "-" + getSegEndPe() + ")";
       }
 
       /**
@@ -2300,10 +2300,10 @@ public final class Server
         if (diff != 0) {
           return diff;
         }
-        if (segStartPe<other.segStartPe) {
+        if (segStartPe < other.segStartPe) {
           return -1;
         }
-        if (segStartPe>other.segStartPe) {
+        if (segStartPe > other.segStartPe) {
           return 1;
         }
         return 0;
@@ -2335,7 +2335,7 @@ public final class Server
         for (Stripe stripe : stripes) {
           segmentCount += stripe.getLastPe() - stripe.getFirstPe() + 1;
         }
-        return segStartPe+segmentCount-1;
+        return segStartPe + segmentCount - 1;
       }
 
       public List<Stripe> getStripes() {
@@ -2345,14 +2345,14 @@ public final class Server
       public boolean overlaps(Segment other) {
         // Doesn't overlap self
         return
-          this != other
-          && logicalVolume == other.logicalVolume
-          && LvmReport.overlaps(
-            segStartPe,
-            getSegEndPe()-segStartPe+1,
-            other.segStartPe,
-            other.getSegEndPe()-other.segStartPe+1
-          )
+            this != other
+                && logicalVolume == other.logicalVolume
+                && LvmReport.overlaps(
+                segStartPe,
+                getSegEndPe() - segStartPe + 1,
+                other.segStartPe,
+                other.getSegEndPe() - other.segStartPe + 1
+            )
         ;
       }
     }
@@ -2373,7 +2373,7 @@ public final class Server
 
       @Override
       public String toString() {
-        return segment+":"+physicalVolume+"("+firstPe+"-"+lastPe+")";
+        return segment + ":" + physicalVolume + "(" + firstPe + "-" + lastPe + ")";
       }
 
       /**
@@ -2389,10 +2389,10 @@ public final class Server
         if (diff != 0) {
           return diff;
         }
-        if (firstPe<other.firstPe) {
+        if (firstPe < other.firstPe) {
           return -1;
         }
-        if (firstPe>other.firstPe) {
+        if (firstPe > other.firstPe) {
           return 1;
         }
         return 0;
@@ -2417,14 +2417,14 @@ public final class Server
       public boolean overlaps(Stripe other) {
         // Doesn't overlap self
         return
-          this != other
-          && physicalVolume == other.physicalVolume
-          && LvmReport.overlaps(
-            firstPe,
-            lastPe-firstPe+1,
-            other.firstPe,
-            other.lastPe-other.firstPe+1
-          )
+            this != other
+                && physicalVolume == other.physicalVolume
+                && LvmReport.overlaps(
+                firstPe,
+                lastPe - firstPe + 1,
+                other.firstPe,
+                other.lastPe - other.firstPe + 1
+            )
         ;
       }
     }
@@ -2463,43 +2463,43 @@ public final class Server
   public LvmReport getLvmReport() throws IOException, SQLException, ParseException {
     try {
       return table.getConnector().requestResult(
-        true,
-        AoservProtocol.CommandID.GET_AO_SERVER_LVM_REPORT,
-        // Java 9: new AOServConnector.ResultRequest<>
-        new AOServConnector.ResultRequest<LvmReport>() {
-          private String vgs;
-          private String pvs;
-          private String lvs;
-          @Override
-          public void writeRequest(StreamableOutput out) throws IOException {
-            out.writeCompressedInt(pkey);
-          }
-          @Override
-          public void readResponse(StreamableInput in) throws IOException, SQLException {
-            int code=in.readByte();
-            if (code == AoservProtocol.DONE) {
-              vgs = in.readUTF();
-              pvs = in.readUTF();
-              lvs = in.readUTF();
-            } else {
-              AoservProtocol.checkResult(code, in);
-              throw new IOException("Unexpected response code: "+code);
+          true,
+          AoservProtocol.CommandID.GET_AO_SERVER_LVM_REPORT,
+          // Java 9: new AOServConnector.ResultRequest<>
+          new AOServConnector.ResultRequest<LvmReport>() {
+            private String vgs;
+            private String pvs;
+            private String lvs;
+            @Override
+            public void writeRequest(StreamableOutput out) throws IOException {
+              out.writeCompressedInt(pkey);
+            }
+            @Override
+            public void readResponse(StreamableInput in) throws IOException, SQLException {
+              int code = in.readByte();
+              if (code == AoservProtocol.DONE) {
+                vgs = in.readUTF();
+                pvs = in.readUTF();
+                lvs = in.readUTF();
+              } else {
+                AoservProtocol.checkResult(code, in);
+                throw new IOException("Unexpected response code: " + code);
+              }
+            }
+            @Override
+            public LvmReport afterRelease() {
+              try {
+                return new LvmReport(vgs, pvs, lvs);
+              } catch (ParseException err) {
+                throw new WrappedException(err);
+              }
             }
           }
-          @Override
-          public LvmReport afterRelease() {
-            try {
-              return new LvmReport(vgs, pvs, lvs);
-            } catch (ParseException err) {
-              throw new WrappedException(err);
-            }
-          }
-        }
       );
     } catch (WrappedException err) {
       Throwable cause = err.getCause();
       if (cause instanceof ParseException) {
-        throw (ParseException)cause;
+        throw (ParseException) cause;
       }
       throw err;
     }
@@ -2526,22 +2526,22 @@ public final class Server
       int colonPos = line.indexOf(':');
       if (colonPos == -1) {
         throw new ParseException(
-          RESOURCES.getMessage(
-            "getHddModelReport.ParseException.noColon",
-            line
-          ),
-          lineNum
+            RESOURCES.getMessage(
+                "getHddModelReport.ParseException.noColon",
+                line
+            ),
+            lineNum
         );
       }
       String device = line.substring(0, colonPos).trim();
-      String model = line.substring(colonPos+1).trim();
+      String model = line.substring(colonPos + 1).trim();
       if (results.put(device, model) != null) {
         throw new ParseException(
-          RESOURCES.getMessage(
-            "getHddModelReport.ParseException.duplicateDevice",
-            device
-          ),
-          lineNum
+            RESOURCES.getMessage(
+                "getHddModelReport.ParseException.duplicateDevice",
+                device
+            ),
+            lineNum
         );
       }
     }
@@ -2577,21 +2577,21 @@ public final class Server
     private final String extCheckInterval;
 
     private FilesystemReport(
-      String mountPoint,
-      String device,
-      long bytes,
-      long used,
-      long free,
-      byte use,
-      Long inodes,
-      Long inodesUsed,
-      Long inodesFree,
-      Byte inodeUse,
-      String fsType,
-      String mountOptions,
-      String extState,
-      String extMaxMount,
-      String extCheckInterval
+        String mountPoint,
+        String device,
+        long bytes,
+        long used,
+        long free,
+        byte use,
+        Long inodes,
+        Long inodesUsed,
+        Long inodesFree,
+        Byte inodeUse,
+        String fsType,
+        String mountOptions,
+        String extState,
+        String extMaxMount,
+        String extCheckInterval
     ) {
       this.mountPoint = mountPoint;
       this.device = device;
@@ -2712,8 +2712,8 @@ public final class Server
           return "clean".equals(extState);
         case "ext2":
           return
-            "not clean".equals(extState) // Normal state when mounted
-            || "clean".equals(extState)
+              "not clean".equals(extState) // Normal state when mounted
+                  || "clean".equals(extState)
           ;
         default:
           // Other types of filesystems are assumed to be clean until we have more information
@@ -2729,7 +2729,7 @@ public final class Server
     if (!value.endsWith("%")) {
       throw new NumberFormatException("Percentage does not end with '%': " + value);
     }
-    return Byte.parseByte(value.substring(0, value.length()-1));
+    return Byte.parseByte(value.substring(0, value.length() - 1));
   }
 
   private static Long parseLong(String value) throws NumberFormatException {
@@ -2746,7 +2746,7 @@ public final class Server
     if (lines.isEmpty()) {
       throw new IOException("No lines from report");
     }
-    for (int i=0, numLines=lines.size(); i<numLines; i++) {
+    for (int i = 0, numLines = lines.size(); i < numLines; i++) {
       String line = lines.get(i);
       List<String> columns = Strings.split(line, "\",\"");
       if (columns.size() != 15) {
@@ -2764,46 +2764,46 @@ public final class Server
       extchkint = extchkint.substring(0, extchkint.length() - 1);
       if (i == 0) {
         if (
-          !"mountpoint".equals(mountPoint)
-          || !"device".equals(columns.get(1))
-          || !"bytes".equals(columns.get(2))
-          || !"used".equals(columns.get(3))
-          || !"free".equals(columns.get(4))
-          || !"use".equals(columns.get(5))
-          || !"inodes".equals(columns.get(6))
-          || !"iused".equals(columns.get(7))
-          || !"ifree".equals(columns.get(8))
-          || !"iuse".equals(columns.get(9))
-          || !"fstype".equals(columns.get(10))
-          || !"mountoptions".equals(columns.get(11))
-          || !"extstate".equals(columns.get(12))
-          || !"extmaxmount".equals(columns.get(13))
-          || !"extchkint".equals(extchkint)
+            !"mountpoint".equals(mountPoint)
+                || !"device".equals(columns.get(1))
+                || !"bytes".equals(columns.get(2))
+                || !"used".equals(columns.get(3))
+                || !"free".equals(columns.get(4))
+                || !"use".equals(columns.get(5))
+                || !"inodes".equals(columns.get(6))
+                || !"iused".equals(columns.get(7))
+                || !"ifree".equals(columns.get(8))
+                || !"iuse".equals(columns.get(9))
+                || !"fstype".equals(columns.get(10))
+                || !"mountoptions".equals(columns.get(11))
+                || !"extstate".equals(columns.get(12))
+                || !"extmaxmount".equals(columns.get(13))
+                || !"extchkint".equals(extchkint)
         ) {
           throw new IOException("First line is not the expected column labels");
         }
       } else {
         if (
-          reports.put(
-            mountPoint,
-            new FilesystemReport(
-              mountPoint,
-              columns.get(1), // device
-              Long.parseLong(columns.get(2)), // bytes
-              Long.parseLong(columns.get(3)), // used
-              Long.parseLong(columns.get(4)), // free
-              parsePercent(columns.get(5)), // use
-              parseLong(columns.get(6)), // inodes
-              parseLong(columns.get(7)), // inodesUsed
-              parseLong(columns.get(8)), // inodesFree
-              parsePercent(columns.get(9)), // inodeUse
-              columns.get(10), // fsType
-              columns.get(11), // mountOptions
-              columns.get(12), // extState
-              columns.get(13), // extMaxMount
-              extchkint // extCheckInterval
-            )
-          ) != null
+            reports.put(
+                mountPoint,
+                new FilesystemReport(
+                    mountPoint,
+                    columns.get(1), // device
+                    Long.parseLong(columns.get(2)), // bytes
+                    Long.parseLong(columns.get(3)), // used
+                    Long.parseLong(columns.get(4)), // free
+                    parsePercent(columns.get(5)), // use
+                    parseLong(columns.get(6)), // inodes
+                    parseLong(columns.get(7)), // inodesUsed
+                    parseLong(columns.get(8)), // inodesFree
+                    parsePercent(columns.get(9)), // inodeUse
+                    columns.get(10), // fsType
+                    columns.get(11), // mountOptions
+                    columns.get(12), // extState
+                    columns.get(13), // extMaxMount
+                    extchkint // extCheckInterval
+                )
+            ) != null
         ) {
           throw new IOException("Duplicate mount point: " + mountPoint);
         }
@@ -2831,13 +2831,13 @@ public final class Server
    */
   public String checkPort(InetAddress ipAddress, Port port, String appProtocol, URIParameters monitoringParameters) throws IOException, SQLException {
     return table.getConnector().requestStringQuery(
-      true,
-      AoservProtocol.CommandID.AO_SERVER_CHECK_PORT,
-      pkey,
-      ipAddress.toString(),
-      port,
-      appProtocol,
-      Bind.encodeParameters(monitoringParameters)
+        true,
+        AoservProtocol.CommandID.AO_SERVER_CHECK_PORT,
+        pkey,
+        ipAddress.toString(),
+        port,
+        appProtocol,
+        Bind.encodeParameters(monitoringParameters)
     );
   }
 
@@ -2870,31 +2870,31 @@ public final class Server
   @Override
   public com.aoindustries.aoserv.client.dto.LinuxServer getDto() {
     return new com.aoindustries.aoserv.client.dto.LinuxServer(
-      getPkey(),
-      getDto(hostname),
-      daemon_bind == -1 ? null : daemon_bind,
-      pool_size,
-      distro_hour,
-      last_distro_time == null ? null : last_distro_time.getTime(),
-      failover_server == -1 ? null : failover_server,
-      daemonDeviceId,
-      daemon_connect_bind == -1 ? null : daemon_connect_bind,
-      time_zone,
-      jilter_bind == -1 ? null : jilter_bind,
-      restrict_outbound_email,
-      getDto(daemon_connect_address),
-      failover_batch_size,
-      Float.isNaN(monitoring_load_low) ? null : monitoring_load_low,
-      Float.isNaN(monitoring_load_medium) ? null : monitoring_load_medium,
-      Float.isNaN(monitoring_load_high) ? null : monitoring_load_high,
-      Float.isNaN(monitoring_load_critical) ? null : monitoring_load_critical,
-      getDto(uidMin),
-      getDto(gidMin),
-      getDto(uidMax),
-      getDto(gidMax),
-      getDto(lastUid),
-      getDto(lastGid),
-      sftp_umask == -1 ? null : sftp_umask
+        getPkey(),
+        getDto(hostname),
+        daemon_bind == -1 ? null : daemon_bind,
+        pool_size,
+        distro_hour,
+        last_distro_time == null ? null : last_distro_time.getTime(),
+        failover_server == -1 ? null : failover_server,
+        daemonDeviceId,
+        daemon_connect_bind == -1 ? null : daemon_connect_bind,
+        time_zone,
+        jilter_bind == -1 ? null : jilter_bind,
+        restrict_outbound_email,
+        getDto(daemon_connect_address),
+        failover_batch_size,
+        Float.isNaN(monitoring_load_low) ? null : monitoring_load_low,
+        Float.isNaN(monitoring_load_medium) ? null : monitoring_load_medium,
+        Float.isNaN(monitoring_load_high) ? null : monitoring_load_high,
+        Float.isNaN(monitoring_load_critical) ? null : monitoring_load_critical,
+        getDto(uidMin),
+        getDto(gidMin),
+        getDto(uidMax),
+        getDto(gidMax),
+        getDto(lastUid),
+        getDto(lastGid),
+        sftp_umask == -1 ? null : sftp_umask
     );
   }
   // </editor-fold>

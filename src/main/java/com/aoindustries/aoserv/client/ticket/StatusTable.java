@@ -41,8 +41,9 @@ public final class StatusTable extends GlobalTableStringKey<Status> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Status.COLUMN_SORT_ORDER_name, ASCENDING)
+      new OrderBy(Status.COLUMN_SORT_ORDER_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

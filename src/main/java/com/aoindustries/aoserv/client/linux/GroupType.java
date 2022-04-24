@@ -48,19 +48,19 @@ import java.sql.SQLException;
  */
 public final class GroupType extends GlobalObjectStringKey<GroupType> {
 
-  static final int COLUMN_NAME=0;
+  static final int COLUMN_NAME = 0;
   static final String COLUMN_DESCRIPTION_name = "description";
 
   /**
    * The available group types.
    */
   public static final String
-    USER="user",
-    EMAIL="email",
-    FTPONLY="ftponly",
-    SYSTEM="system",
-    BACKUP="backup",
-    APPLICATION="application"
+      USER = "user",
+      EMAIL = "email",
+      FTPONLY = "ftponly",
+      SYSTEM = "system",
+      BACKUP = "backup",
+      APPLICATION = "application"
   ;
 
   private String description;
@@ -71,7 +71,7 @@ public final class GroupType extends GlobalObjectStringKey<GroupType> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public GroupType() {
     // Do nothing
   }
@@ -108,8 +108,8 @@ public final class GroupType extends GlobalObjectStringKey<GroupType> {
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readUTF().intern();
-    description=in.readUTF();
+    pkey = in.readUTF().intern();
+    description = in.readUTF();
   }
 
   @Override

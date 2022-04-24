@@ -52,20 +52,20 @@ import java.util.Objects;
 public final class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdServer> {
 
   static final int
-    COLUMN_AO_SERVER = 0,
-    COLUMN_SIEVE_NET_BIND = 1,
-    COLUMN_CERTIFICATE = 3
+      COLUMN_AO_SERVER = 0,
+      COLUMN_SIEVE_NET_BIND = 1,
+      COLUMN_CERTIFICATE = 3
   ;
   static final String COLUMN_AO_SERVER_name = "ao_server";
 
   // Matches aoserv-master-db/aoindustries/email/CyrusImapdServer.TimeUnit-type.sql
   public enum TimeUnit {
     DAYS('d') {
-      @Override
-      float convertToDays(float duration) {
-        return duration;
-      }
-    },
+    @Override
+    float convertToDays(float duration) {
+      return duration;
+    }
+  },
     HOURS('h') {
       @Override
       float convertToDays(float duration) {
@@ -86,6 +86,7 @@ public final class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
     };
 
     private static final TimeUnit[] values = values();
+
     private static TimeUnit getFromSuffix(String suffix) {
       if (suffix == null) {
         return null;
@@ -183,7 +184,7 @@ public final class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public CyrusImapdServer() {
     // Do nothing
   }

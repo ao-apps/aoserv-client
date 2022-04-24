@@ -52,44 +52,44 @@ public final class AppProtocol extends GlobalObjectStringKey<AppProtocol> {
   static final String COLUMN_PORT_name = "port";
 
   public static final String
-    AOSERV_DAEMON = "aoserv-daemon",
-    AOSERV_DAEMON_SSL = "aoserv-daemon-ssl",
-    AOSERV_MASTER = "aoserv-master",
-    AOSERV_MASTER_SSL = "aoserv-master-ssl",
-    AUTH = "auth",
-    CVSPSERVER = "cvspserver",
-    DNS = "DNS",
-    FTP = "FTP",
-    FTP_DATA = "FTP-DATA",
-    HTTP = "HTTP",
-    HTTPS = "HTTPS",
-    HYPERSONIC = "hypersonic",
-    IMAP2 = "IMAP2",
-    JMX = "JMX",
-    JNP = "JNP",
-    MEMCACHED = "memcached",
-    MILTER = "milter",
-    MYSQL = "MySQL",
-    NTALK = "ntalk",
-    POP3 = "POP3",
-    POSTGRESQL = "PostgreSQL",
-    REDIS = "redis",
-    REDIS_CLUSTER = "redis-cluster",
-    REDIS_SENTINEL = "redis-sentinel",
-    RFB = "RFB",
-    RMI = "RMI",
-    SIEVE = "sieve",
-    SIMAP = "SIMAP",
-    SPAMD = "spamd",
-    SPOP3 = "SPOP3",
-    SSH = "SSH",
-    SMTP = "SMTP",
-    SMTPS = "SMTPS",
-    SUBMISSION = "submission",
-    TALK = "talk",
-    TELNET = "Telnet",
-    TOMCAT4_SHUTDOWN = "tomcat4-shutdown",
-    WEBSERVER = "webserver"
+      AOSERV_DAEMON = "aoserv-daemon",
+      AOSERV_DAEMON_SSL = "aoserv-daemon-ssl",
+      AOSERV_MASTER = "aoserv-master",
+      AOSERV_MASTER_SSL = "aoserv-master-ssl",
+      AUTH = "auth",
+      CVSPSERVER = "cvspserver",
+      DNS = "DNS",
+      FTP = "FTP",
+      FTP_DATA = "FTP-DATA",
+      HTTP = "HTTP",
+      HTTPS = "HTTPS",
+      HYPERSONIC = "hypersonic",
+      IMAP2 = "IMAP2",
+      JMX = "JMX",
+      JNP = "JNP",
+      MEMCACHED = "memcached",
+      MILTER = "milter",
+      MYSQL = "MySQL",
+      NTALK = "ntalk",
+      POP3 = "POP3",
+      POSTGRESQL = "PostgreSQL",
+      REDIS = "redis",
+      REDIS_CLUSTER = "redis-cluster",
+      REDIS_SENTINEL = "redis-sentinel",
+      RFB = "RFB",
+      RMI = "RMI",
+      SIEVE = "sieve",
+      SIMAP = "SIMAP",
+      SPAMD = "spamd",
+      SPOP3 = "SPOP3",
+      SSH = "SSH",
+      SMTP = "SMTP",
+      SMTPS = "SMTPS",
+      SUBMISSION = "submission",
+      TALK = "talk",
+      TELNET = "Telnet",
+      TOMCAT4_SHUTDOWN = "tomcat4-shutdown",
+      WEBSERVER = "webserver"
   ;
 
   private Port port;
@@ -102,7 +102,7 @@ public final class AppProtocol extends GlobalObjectStringKey<AppProtocol> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public AppProtocol() {
     // Do nothing
   }
@@ -154,8 +154,8 @@ public final class AppProtocol extends GlobalObjectStringKey<AppProtocol> {
       name = result.getString(3);
       is_user_service = result.getBoolean(4);
       port = Port.valueOf(
-        portNum,
-        com.aoapps.net.Protocol.valueOf(result.getString(5).toUpperCase(Locale.ROOT))
+          portNum,
+          com.aoapps.net.Protocol.valueOf(result.getString(5).toUpperCase(Locale.ROOT))
       );
     } catch (ValidationException e) {
       throw new SQLException(e);
@@ -170,8 +170,8 @@ public final class AppProtocol extends GlobalObjectStringKey<AppProtocol> {
       name = in.readUTF();
       is_user_service = in.readBoolean();
       port = Port.valueOf(
-        portNum,
-        in.readEnum(com.aoapps.net.Protocol.class)
+          portNum,
+          in.readEnum(com.aoapps.net.Protocol.class)
       );
     } catch (ValidationException e) {
       throw new IOException(e);

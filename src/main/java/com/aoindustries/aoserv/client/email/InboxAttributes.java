@@ -47,19 +47,19 @@ public final class InboxAttributes implements AOServStreamable {
   private long lastModified;
 
   public InboxAttributes(AOServConnector connector, UserServer lsa) {
-    this.connector=connector;
-    this.linuxServerAccount=lsa.getPkey();
+    this.connector = connector;
+    this.linuxServerAccount = lsa.getPkey();
   }
 
   public InboxAttributes(
-    long fileSize,
-    long lastModified
+      long fileSize,
+      long lastModified
   ) {
-    this.connector=null;
-    this.linuxServerAccount=-1;
-    this.systemTime=System.currentTimeMillis();
-    this.fileSize=fileSize;
-    this.lastModified=lastModified;
+    this.connector = null;
+    this.linuxServerAccount = -1;
+    this.systemTime = System.currentTimeMillis();
+    this.fileSize = fileSize;
+    this.lastModified = lastModified;
   }
 
   public AOServConnector getAOServConnector() {
@@ -88,7 +88,7 @@ public final class InboxAttributes implements AOServStreamable {
   /**
    * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
    *
-   * @see  #read(StreamableInput,AOServProtocol.Version)
+   * @see  #read(StreamableInput, AOServProtocol.Version)
    */
   @Deprecated
   @Override
@@ -98,15 +98,15 @@ public final class InboxAttributes implements AOServStreamable {
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    systemTime=in.readLong();
-    fileSize=in.readLong();
-    lastModified=in.readLong();
+    systemTime = in.readLong();
+    fileSize = in.readLong();
+    lastModified = in.readLong();
   }
 
   /**
    * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
    *
-   * @see  #write(StreamableOutput,AOServProtocol.Version)
+   * @see  #write(StreamableOutput, AOServProtocol.Version)
    */
   @Deprecated
   @Override

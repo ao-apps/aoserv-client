@@ -40,9 +40,9 @@ import java.sql.SQLException;
 public final class Rack extends CachedObjectIntegerKey<Rack> {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_FARM=1,
-    COLUMN_NAME=2
+      COLUMN_PKEY = 0,
+      COLUMN_FARM = 1,
+      COLUMN_NAME = 2
   ;
   static final String COLUMN_FARM_name = "farm";
   static final String COLUMN_NAME_name = "name";
@@ -58,7 +58,7 @@ public final class Rack extends CachedObjectIntegerKey<Rack> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Rack() {
     // Do nothing
   }
@@ -76,9 +76,9 @@ public final class Rack extends CachedObjectIntegerKey<Rack> {
   }
 
   public ServerFarm getServerFarm() throws SQLException, IOException {
-    ServerFarm sf=table.getConnector().getInfrastructure().getServerFarm().get(farm);
+    ServerFarm sf = table.getConnector().getInfrastructure().getServerFarm().get(farm);
     if (sf == null) {
-      throw new SQLException("Unable to find ServerFarm: "+farm);
+      throw new SQLException("Unable to find ServerFarm: " + farm);
     }
     return sf;
   }

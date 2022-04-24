@@ -51,8 +51,8 @@ import java.sql.SQLException;
 public final class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_ACCOUNTING=1
+      COLUMN_PKEY = 0,
+      COLUMN_ACCOUNTING = 1
   ;
   static final String COLUMN_ACCOUNTING_name = "accounting";
   static final String COLUMN_ID_name = "id";
@@ -80,13 +80,13 @@ public final class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
   @SuppressWarnings("ThrowFromFinallyBlock")
   public static String encrypt(String signer, String recipient, String plaintext) throws IOException {
     String[] command = {
-      "/usr/bin/gpg",
-      "--batch",
-      "--sign",
-      "--encrypt",
-      "--armor",
-      "--default-key", '='+signer,
-      "--recipient", '='+recipient
+        "/usr/bin/gpg",
+        "--batch",
+        "--sign",
+        "--encrypt",
+        "--armor",
+        "--default-key", '=' + signer,
+        "--recipient", '=' + recipient
     };
     Process p = Runtime.getRuntime().exec(command);
     try {
@@ -100,7 +100,7 @@ public final class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
         StringBuilder sb = new StringBuilder();
         char[] buff = new char[4096];
         int count;
-        while ((count=in.read(buff, 0, 4096)) != -1) {
+        while ((count = in.read(buff, 0, 4096)) != -1) {
           sb.append(buff, 0, count);
         }
         return sb.toString();
@@ -111,7 +111,7 @@ public final class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
       try (Reader errIn = new InputStreamReader(p.getErrorStream())) {
         char[] buff = new char[4096];
         int ret;
-        while ((ret=errIn.read(buff, 0, 4096)) != -1) {
+        while ((ret = errIn.read(buff, 0, 4096)) != -1) {
           cout.write(buff, 0, ret);
         }
       }
@@ -119,7 +119,7 @@ public final class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
         int retCode = p.waitFor();
         if (retCode != 0) {
           throw new IOException(
-            "Non-zero exit value from gpg: " + retCode + ", standard error was: " + cout.toString()
+              "Non-zero exit value from gpg: " + retCode + ", standard error was: " + cout.toString()
           );
         }
       } catch (InterruptedException err) {
@@ -138,11 +138,11 @@ public final class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
   @SuppressWarnings("ThrowFromFinallyBlock")
   public static String decrypt(String recipient, String ciphertext, String passphrase) throws IOException {
     String[] command = {
-      "/usr/bin/gpg",
-      "--batch",
-      "--decrypt",
-      "--armor",
-      "--passphrase-fd", "0"
+        "/usr/bin/gpg",
+        "--batch",
+        "--decrypt",
+        "--armor",
+        "--passphrase-fd", "0"
     };
     Process p = Runtime.getRuntime().exec(command);
     try {
@@ -157,7 +157,7 @@ public final class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
         StringBuilder sb = new StringBuilder();
         char[] buff = new char[4096];
         int count;
-        while ((count=in.read(buff, 0, 4096)) != -1) {
+        while ((count = in.read(buff, 0, 4096)) != -1) {
           sb.append(buff, 0, count);
         }
         return sb.toString();
@@ -187,7 +187,7 @@ public final class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public EncryptionKey() {
     // Do nothing
   }
@@ -240,7 +240,7 @@ public final class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
-      pkey=in.readCompressedInt();
+      pkey = in.readCompressedInt();
       accounting = Account.Name.valueOf(in.readUTF()).intern();
       id = in.readUTF();
     } catch (ValidationException e) {

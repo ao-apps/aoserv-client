@@ -41,9 +41,10 @@ public final class RackTable extends CachedTableIntegerKey<Rack> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Rack.COLUMN_FARM_name, ASCENDING),
-    new OrderBy(Rack.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(Rack.COLUMN_FARM_name, ASCENDING),
+      new OrderBy(Rack.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

@@ -41,8 +41,9 @@ public final class AttachmentTypeTable extends GlobalTableStringKey<AttachmentTy
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(AttachmentType.COLUMN_EXTENSION_name, ASCENDING)
+      new OrderBy(AttachmentType.COLUMN_EXTENSION_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

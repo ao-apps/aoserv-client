@@ -44,11 +44,11 @@ import java.sql.SQLException;
  * @author  AO Industries, Inc.
  */
 public final class DaemonAcl extends CachedObjectIntegerKey<DaemonAcl>
-  implements DtoFactory<com.aoindustries.aoserv.client.dto.LinuxDaemonAcl> {
+    implements DtoFactory<com.aoindustries.aoserv.client.dto.LinuxDaemonAcl> {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_AO_SERVER=1
+      COLUMN_PKEY = 0,
+      COLUMN_AO_SERVER = 1
   ;
   static final String COLUMN_AO_SERVER_name = "ao_server";
   static final String COLUMN_HOST_name = "host";
@@ -62,7 +62,7 @@ public final class DaemonAcl extends CachedObjectIntegerKey<DaemonAcl>
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public DaemonAcl() {
     // Do nothing
   }
@@ -82,9 +82,9 @@ public final class DaemonAcl extends CachedObjectIntegerKey<DaemonAcl>
   }
 
   public Server getServer() throws SQLException, IOException {
-    Server ao=table.getConnector().getLinux().getServer().get(aoServer);
+    Server ao = table.getConnector().getLinux().getServer().get(aoServer);
     if (ao == null) {
-      throw new SQLException("Unable to find linux.Server: "+aoServer);
+      throw new SQLException("Unable to find linux.Server: " + aoServer);
     }
     return ao;
   }
@@ -118,7 +118,7 @@ public final class DaemonAcl extends CachedObjectIntegerKey<DaemonAcl>
 
   @Override
   public String toStringImpl() {
-    return aoServer+"|"+host;
+    return aoServer + "|" + host;
   }
 
   @Override

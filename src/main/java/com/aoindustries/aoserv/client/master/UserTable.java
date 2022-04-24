@@ -41,8 +41,9 @@ public final class UserTable extends CachedTableUserNameKey<User> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(User.COLUMN_USERNAME_name, ASCENDING)
+      new OrderBy(User.COLUMN_USERNAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

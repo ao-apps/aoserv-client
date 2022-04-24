@@ -35,19 +35,34 @@ import java.util.List;
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
   private final AoservProtocolTable AoservProtocol;
-  public AoservProtocolTable getAoservProtocol() {return AoservProtocol;}
+
+  public AoservProtocolTable getAoservProtocol() {
+    return AoservProtocol;
+  }
 
   private final ColumnTable Column;
-  public ColumnTable getColumn() {return Column;}
+
+  public ColumnTable getColumn() {
+    return Column;
+  }
 
   private final ForeignKeyTable ForeignKey;
-  public ForeignKeyTable getForeignKey() {return ForeignKey;}
+
+  public ForeignKeyTable getForeignKey() {
+    return ForeignKey;
+  }
 
   private final TableTable Table;
-  public TableTable getTable() {return Table;}
+
+  public TableTable getTable() {
+    return Table;
+  }
 
   private final TypeTable Type;
-  public TypeTable getType() {return Type;}
+
+  public TypeTable getType() {
+    return Type;
+  }
 
   private final List<? extends AOServTable<?, ?>> tables;
 

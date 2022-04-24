@@ -76,23 +76,23 @@ public final class AOSH extends ShellInterpreter {
 
   private static final Logger logger = Logger.getLogger(AOSH.class.getName());
 
-  private static final Reader nullInput=new CharArrayReader(new char[0]);
+  private static final Reader nullInput = new CharArrayReader(new char[0]);
 
   private final AOServConnector connector;
 
   public AOSH(AOServConnector connector, Reader in, TerminalWriter out, TerminalWriter err) {
     super(in, out, err);
-    this.connector=connector;
+    this.connector = connector;
   }
 
   public AOSH(AOServConnector connector, Reader in, TerminalWriter out, TerminalWriter err, String ... args) {
     super(in, out, err, args);
-    this.connector=connector;
+    this.connector = connector;
   }
 
   public static boolean checkMinParamCount(String function, String[] args, int minCount, PrintWriter err) {
-    int paramCount=args.length-1;
-    if (paramCount<minCount) {
+    int paramCount = args.length - 1;
+    if (paramCount < minCount) {
       err.print("aosh: ");
       err.print(function);
       err.println(": not enough parameters");
@@ -107,14 +107,14 @@ public final class AOSH extends ShellInterpreter {
   }
 
   public static boolean checkRangeParamCount(String function, String[] args, int minCount, int maxCount, PrintWriter err) {
-    int paramCount=args.length-1;
-    if (paramCount<minCount) {
+    int paramCount = args.length - 1;
+    if (paramCount < minCount) {
       err.print("aosh: ");
       err.print(function);
       err.println(": not enough parameters");
       err.flush();
       return false;
-    } else if (paramCount>maxCount) {
+    } else if (paramCount > maxCount) {
       err.print("aosh: ");
       err.print(function);
       err.println(": too many parameters");
@@ -125,8 +125,8 @@ public final class AOSH extends ShellInterpreter {
   }
 
   private void echo(String[] args) {
-    for (int c=1;c<args.length;c++) {
-      if (c>1) {
+    for (int c = 1; c < args.length; c++) {
+      if (c > 1) {
         out.print(' ');
       }
       out.print(args[c]);
@@ -137,9 +137,9 @@ public final class AOSH extends ShellInterpreter {
 
   public static String executeCommand(AOServConnector connector, String[] args) throws IOException, SQLException {
     StringWriter buff = new StringWriter();
-    TerminalWriter out=new TerminalWriter(buff);
+    TerminalWriter out = new TerminalWriter(buff);
     out.setEnabled(false);
-    AOSH sh=new AOSH(connector, nullInput, out, out);
+    AOSH sh = new AOSH(connector, nullInput, out, out);
     sh.handleCommand(args);
     out.flush();
     return buff.toString();
@@ -152,7 +152,7 @@ public final class AOSH extends ShellInterpreter {
 
   @Override
   protected String getPrompt() throws SQLException, IOException {
-    return '['+connector.getCurrentAdministrator().toString()+'@'+connector.getHostname()+"]$ ";
+    return '[' + connector.getCurrentAdministrator().toString() + '@' + connector.getHostname() + "]$ ";
   }
 
   /** Avoid repeated array copies. */
@@ -167,12 +167,12 @@ public final class AOSH extends ShellInterpreter {
    */
   @Override
   public boolean handleCommand(String[] args) throws IOException, SQLException {
-    int argCount=args.length;
-    if (argCount>0) {
-      String command=args[0];
+    int argCount = args.length;
+    if (argCount > 0) {
+      String command = args[0];
       if (Command.EXIT.equalsIgnoreCase(command)) {
         if (argCount != 1) {
-          err.println("aosh: "+Command.EXIT+": too many parameters");
+          err.println("aosh: " + Command.EXIT + ": too many parameters");
           err.flush();
         } else {
           return false;
@@ -199,7 +199,7 @@ public final class AOSH extends ShellInterpreter {
         } else if (Command.WHOAMI.equalsIgnoreCase(command)) {
           whoami(args);
         } else {
-          boolean done=false;
+          boolean done = false;
           CommandTable commandTable = connector.getAosh().getCommand();
           Command aoshCommand = commandTable.get(command);
           if (aoshCommand == null) {
@@ -213,9 +213,9 @@ public final class AOSH extends ShellInterpreter {
           }
           if (aoshCommand != null) {
             AOServTable<?, ?> table = aoshCommand.getTable(connector).getAOServTable(connector);
-            done=table.handleCommand(args, in, out, err, isInteractive());
+            done = table.handleCommand(args, in, out, err, isInteractive());
             if (!done) {
-              throw new RuntimeException("AOSHCommand found, but command not processed.  command='"+command+"', table='"+table.getTableName()+'\'');
+              throw new RuntimeException("AOSHCommand found, but command not processed.  command='" + command + "', table='" + table.getTableName() + '\'');
             }
           }
           /*
@@ -227,7 +227,7 @@ public final class AOSH extends ShellInterpreter {
             }
           }*/
           if (!done) {
-            err.println("aosh: "+command+": command not found");
+            err.println("aosh: " + command + ": command not found");
             err.flush();
           }
         }
@@ -238,20 +238,20 @@ public final class AOSH extends ShellInterpreter {
 
   private void invalidate(String[] args) throws IllegalArgumentException, SQLException, IOException {
     if (checkRangeParamCount(Command.INVALIDATE, args, 1, 2, err)) {
-      String tableName=args[1];
-      TableTable schemaTableTable=connector.getSchema().getTable();
+      String tableName = args[1];
+      TableTable schemaTableTable = connector.getSchema().getTable();
       // Find the table ID
-      int tableID=-1;
-      for (int d=0;d<numTables;d++) {
+      int tableID = -1;
+      for (int d = 0; d < numTables; d++) {
         if (schemaTableTable.get(d).getName().equalsIgnoreCase(tableName)) {
-          tableID=d;
+          tableID = d;
           break;
         }
       }
       if (tableID >= 0) {
-        connector.getSimpleAOClient().invalidate(tableID, args.length>2?args[2]:null);
+        connector.getSimpleAOClient().invalidate(tableID, args.length > 2 ? args[2] : null);
       } else {
-        err.print("aosh: "+Command.INVALIDATE+": unable to find table: ");
+        err.print("aosh: " + Command.INVALIDATE + ": unable to find table: ");
         err.println(tableName);
         err.flush();
       }
@@ -260,13 +260,13 @@ public final class AOSH extends ShellInterpreter {
 
   @SuppressWarnings({"UseOfSystemOutOrSystemErr", "UseSpecificCatch", "BroadCatchBlock", "TooBroadCatch"})
   public static void main(String[] args) {
-    TerminalWriter out=new TerminalWriter(new BufferedWriter(new OutputStreamWriter(System.out)));
-    TerminalWriter err=System.out == System.err ? out : new TerminalWriter(new BufferedWriter(new OutputStreamWriter(System.err)));
+    TerminalWriter out = new TerminalWriter(new BufferedWriter(new OutputStreamWriter(System.out)));
+    TerminalWriter err = System.out == System.err ? out : new TerminalWriter(new BufferedWriter(new OutputStreamWriter(System.err)));
     try {
       User.Name username = getConfigUsername(System.in, err);
       String password = getConfigPassword(System.in, err);
       AOServConnector connector = AOServConnector.getConnector(username, password);
-      AOSH aosh=new AOSH(connector, new BufferedReader(new InputStreamReader(System.in)), out, err, args);
+      AOSH aosh = new AOSH(connector, new BufferedReader(new InputStreamReader(System.in)), out, err, args);
       aosh.run();
       if (aosh.isInteractive()) {
         out.println();
@@ -350,28 +350,28 @@ public final class AOSH extends ShellInterpreter {
 
   public static boolean parseBoolean(String s, String field) {
     if (
-      s.equalsIgnoreCase("true")
-      || s.equalsIgnoreCase("t")
-      || s.equalsIgnoreCase("yes")
-      || s.equalsIgnoreCase("y")
-      || s.equalsIgnoreCase("vang")
-      || s.equalsIgnoreCase("da")
-      || s.equalsIgnoreCase("si")
-      || s.equalsIgnoreCase("oui")
-      || s.equalsIgnoreCase("ja")
-      || s.equalsIgnoreCase("nam")
+        s.equalsIgnoreCase("true")
+            || s.equalsIgnoreCase("t")
+            || s.equalsIgnoreCase("yes")
+            || s.equalsIgnoreCase("y")
+            || s.equalsIgnoreCase("vang")
+            || s.equalsIgnoreCase("da")
+            || s.equalsIgnoreCase("si")
+            || s.equalsIgnoreCase("oui")
+            || s.equalsIgnoreCase("ja")
+            || s.equalsIgnoreCase("nam")
     ) {
       return true;
     } else if (
-      s.equalsIgnoreCase("false")
-      || s.equalsIgnoreCase("f")
-      || s.equalsIgnoreCase("no")
-      || s.equalsIgnoreCase("n")
-      || s.equalsIgnoreCase("khong")
-      || s.equalsIgnoreCase("nyet")
-      || s.equalsIgnoreCase("non")
-      || s.equalsIgnoreCase("nien")
-      || s.equalsIgnoreCase("la")
+        s.equalsIgnoreCase("false")
+            || s.equalsIgnoreCase("f")
+            || s.equalsIgnoreCase("no")
+            || s.equalsIgnoreCase("n")
+            || s.equalsIgnoreCase("khong")
+            || s.equalsIgnoreCase("nyet")
+            || s.equalsIgnoreCase("non")
+            || s.equalsIgnoreCase("nien")
+            || s.equalsIgnoreCase("la")
     ) {
       return false;
     } else {
@@ -550,25 +550,25 @@ public final class AOSH extends ShellInterpreter {
   }
 
   public static Port parsePort(
-    String port,
-    String portField,
-    String protocol,
-    String protocolField
+      String port,
+      String portField,
+      String protocol,
+      String protocolField
   ) {
     int portInt = parseInt(port, portField);
     com.aoapps.net.Protocol protocolObj;
     try {
       protocolObj = com.aoapps.net.Protocol.valueOf(protocol.toUpperCase(Locale.ROOT));
     } catch (IllegalArgumentException e) {
-      throw new IllegalArgumentException("Invalid argument for protocol ("+protocolField+"): "+protocol, e);
+      throw new IllegalArgumentException("Invalid argument for protocol (" + protocolField + "): " + protocol, e);
     }
     try {
       return Port.valueOf(
-        portInt,
-        protocolObj
+          portInt,
+          protocolObj
       );
     } catch (ValidationException err) {
-      throw new IllegalArgumentException("Invalid argument for port ("+portField+"): "+port, err);
+      throw new IllegalArgumentException("Invalid argument for port (" + portField + "): " + port, err);
     }
   }
 
@@ -631,7 +631,7 @@ public final class AOSH extends ShellInterpreter {
     int ch;
     while ((ch = in.read()) != -1 && ch != '\n') {
       if (ch != '\r') {
-        sb.append((char)ch);
+        sb.append((char) ch);
       }
     }
   }
@@ -642,7 +642,7 @@ public final class AOSH extends ShellInterpreter {
       try {
         int count = Integer.parseInt(args[1]);
         if (count >= 0) {
-          String[] newArgs = new String[argCount-2];
+          String[] newArgs = new String[argCount - 2];
           System.arraycopy(args, 2, newArgs, 0, argCount - 2);
 
           for (int c = 0; c < count; c++) {
@@ -696,46 +696,46 @@ public final class AOSH extends ShellInterpreter {
   }
 
   private void su(String[] args) throws IOException {
-    int argCount=args.length;
+    int argCount = args.length;
     if (argCount >= 2) {
       try {
-        String[] newArgs=new String[argCount+(isInteractive()?0:-1)];
-        int pos=0;
+        String[] newArgs = new String[argCount + (isInteractive() ? 0 : -1)];
+        int pos = 0;
         if (isInteractive()) {
-          newArgs[pos++]="-i";
+          newArgs[pos++] = "-i";
         }
-        newArgs[pos++]="--";
-        System.arraycopy(args, 2, newArgs, pos, argCount-2);
+        newArgs[pos++] = "--";
+        System.arraycopy(args, 2, newArgs, pos, argCount - 2);
         new AOSH(
-          connector.switchUsers(User.Name.valueOf(args[1])
-          ),
-          in,
-          out,
-          err,
-          newArgs
+            connector.switchUsers(User.Name.valueOf(args[1])
+            ),
+            in,
+            out,
+            err,
+            newArgs
         ).run();
       } catch (ValidationException e) {
-        err.println("aosh: "+Command.SU+": " + e.getResult().toString());
+        err.println("aosh: " + Command.SU + ": " + e.getResult().toString());
         err.flush();
       }
     } else {
-      err.println("aosh: "+Command.SU+": not enough parameters");
+      err.println("aosh: " + Command.SU + ": not enough parameters");
       err.flush();
     }
   }
 
   private void time(String[] args) throws IOException, SQLException {
-    int argCount=args.length;
-    if (argCount>1) {
-      String[] newArgs=new String[argCount-1];
-      System.arraycopy(args, 1, newArgs, 0, argCount-1);
-      long startTime=System.currentTimeMillis();
+    int argCount = args.length;
+    if (argCount > 1) {
+      String[] newArgs = new String[argCount - 1];
+      System.arraycopy(args, 1, newArgs, 0, argCount - 1);
+      long startTime = System.currentTimeMillis();
       try {
         handleCommand(newArgs);
       } finally {
-        long timeSpan=System.currentTimeMillis()-startTime;
-        int mins=(int)(timeSpan/60000);
-        int secs=(int)(timeSpan%60000);
+        long timeSpan = System.currentTimeMillis() - startTime;
+        int mins = (int) (timeSpan / 60000);
+        int secs = (int) (timeSpan % 60000);
         out.println();
         out.print("real    ");
         out.print(mins);
@@ -745,7 +745,7 @@ public final class AOSH extends ShellInterpreter {
         out.flush();
       }
     } else {
-      err.println("aosh: "+Command.TIME+": not enough parameters");
+      err.println("aosh: " + Command.TIME + ": not enough parameters");
       err.flush();
     }
   }
@@ -755,7 +755,7 @@ public final class AOSH extends ShellInterpreter {
       out.println(connector.getCurrentAdministrator().getUsername().getUsername());
       out.flush();
     } else {
-      err.println("aosh: "+Command.WHOAMI+": too many parameters");
+      err.println("aosh: " + Command.WHOAMI + ": too many parameters");
       err.flush();
     }
   }

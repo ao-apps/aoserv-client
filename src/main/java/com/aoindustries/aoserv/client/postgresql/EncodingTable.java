@@ -42,10 +42,11 @@ public final class EncodingTable extends GlobalTableIntegerKey<Encoding> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Encoding.COLUMN_ENCODING_name, ASCENDING),
-    new OrderBy(Encoding.COLUMN_POSTGRES_VERSION_name+'.'+Version.COLUMN_MINOR_VERSION_name, ASCENDING),
-    new OrderBy(Encoding.COLUMN_PKEY_name, ASCENDING)
+      new OrderBy(Encoding.COLUMN_ENCODING_name, ASCENDING),
+      new OrderBy(Encoding.COLUMN_POSTGRES_VERSION_name + '.' + Version.COLUMN_MINOR_VERSION_name, ASCENDING),
+      new OrderBy(Encoding.COLUMN_PKEY_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -63,10 +64,10 @@ public final class EncodingTable extends GlobalTableIntegerKey<Encoding> {
 
   Encoding getPostgresEncoding(Version pv, String encoding) throws IOException, SQLException {
     // Use the index first
-    List<Encoding> cached=getPostgresEncodings(pv);
-    int cachedLen=cached.size();
+    List<Encoding> cached = getPostgresEncodings(pv);
+    int cachedLen = cached.size();
     for (int c = 0; c < cachedLen; c++) {
-      Encoding pe=cached.get(c);
+      Encoding pe = cached.get(c);
       if (pe.getEncoding().equals(encoding)) {
         return pe;
       }

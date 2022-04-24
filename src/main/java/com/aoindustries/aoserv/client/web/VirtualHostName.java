@@ -57,8 +57,8 @@ import java.util.List;
 public final class VirtualHostName extends CachedObjectIntegerKey<VirtualHostName> implements Removable {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_HTTPD_SITE_BIND=1
+      COLUMN_PKEY = 0,
+      COLUMN_HTTPD_SITE_BIND = 1
   ;
   static final String COLUMN_HOSTNAME_name = "hostname";
   static final String COLUMN_HTTPD_SITE_BIND_name = "httpd_site_bind";
@@ -73,14 +73,14 @@ public final class VirtualHostName extends CachedObjectIntegerKey<VirtualHostNam
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public VirtualHostName() {
     // Do nothing
   }
 
   @Override
   public List<CannotRemoveReason<VirtualHostName>> getCannotRemoveReasons() throws SQLException, IOException {
-    List<CannotRemoveReason<VirtualHostName>> reasons=new ArrayList<>();
+    List<CannotRemoveReason<VirtualHostName>> reasons = new ArrayList<>();
 
     if (isPrimary) {
       reasons.add(new CannotRemoveReason<>("Not allowed to remove the primary URL", this));
@@ -108,9 +108,9 @@ public final class VirtualHostName extends CachedObjectIntegerKey<VirtualHostNam
   }
 
   public VirtualHost getHttpdSiteBind() throws SQLException, IOException {
-    VirtualHost obj=table.getConnector().getWeb().getVirtualHost().get(httpd_site_bind);
+    VirtualHost obj = table.getConnector().getWeb().getVirtualHost().get(httpd_site_bind);
     if (obj == null) {
-      throw new SQLException("Unable to find HttpdSiteBind: "+httpd_site_bind);
+      throw new SQLException("Unable to find HttpdSiteBind: " + httpd_site_bind);
     }
     return obj;
   }
@@ -121,10 +121,10 @@ public final class VirtualHostName extends CachedObjectIntegerKey<VirtualHostNam
   }
 
   public String getURL() throws SQLException, IOException {
-    VirtualHost siteBind=getHttpdSiteBind();
-    Bind netBind=siteBind.getHttpdBind().getNetBind();
-    Port port=netBind.getPort();
-    StringBuilder url=new StringBuilder();
+    VirtualHost siteBind = getHttpdSiteBind();
+    Bind netBind = siteBind.getHttpdBind().getNetBind();
+    Port port = netBind.getPort();
+    StringBuilder url = new StringBuilder();
     AppProtocol appProtocol = siteBind.getHttpdBind().getNetBind().getAppProtocol();
     String protocol = appProtocol.getProtocol();
     if (AppProtocol.HTTP.equals(protocol)) {
@@ -143,10 +143,10 @@ public final class VirtualHostName extends CachedObjectIntegerKey<VirtualHostNam
   }
 
   public String getURLNoSlash() throws SQLException, IOException {
-    VirtualHost siteBind=getHttpdSiteBind();
-    Bind netBind=siteBind.getHttpdBind().getNetBind();
-    Port port=netBind.getPort();
-    StringBuilder url=new StringBuilder();
+    VirtualHost siteBind = getHttpdSiteBind();
+    Bind netBind = siteBind.getHttpdBind().getNetBind();
+    Port port = netBind.getPort();
+    StringBuilder url = new StringBuilder();
     AppProtocol appProtocol = siteBind.getHttpdBind().getNetBind().getAppProtocol();
     String protocol = appProtocol.getProtocol();
     if (AppProtocol.HTTP.equals(protocol)) {
@@ -166,10 +166,10 @@ public final class VirtualHostName extends CachedObjectIntegerKey<VirtualHostNam
   @Override
   public void init(ResultSet result) throws SQLException {
     try {
-      pkey=result.getInt(1);
-      httpd_site_bind=result.getInt(2);
-      hostname=DomainName.valueOf(result.getString(3));
-      isPrimary=result.getBoolean(4);
+      pkey = result.getInt(1);
+      httpd_site_bind = result.getInt(2);
+      hostname = DomainName.valueOf(result.getString(3));
+      isPrimary = result.getBoolean(4);
     } catch (ValidationException e) {
       throw new SQLException(e);
     }
@@ -183,17 +183,17 @@ public final class VirtualHostName extends CachedObjectIntegerKey<VirtualHostNam
   }
 
   public boolean isTestURL() throws SQLException, IOException {
-    Site hs=getHttpdSiteBind().getHttpdSite();
-    return hostname.toString().equalsIgnoreCase(hs.getName()+"."+hs.getLinuxServer().getHostname());
+    Site hs = getHttpdSiteBind().getHttpdSite();
+    return hostname.toString().equalsIgnoreCase(hs.getName() + "." + hs.getLinuxServer().getHostname());
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
-      pkey=in.readCompressedInt();
-      httpd_site_bind=in.readCompressedInt();
-      hostname=DomainName.valueOf(in.readUTF());
-      isPrimary=in.readBoolean();
+      pkey = in.readCompressedInt();
+      httpd_site_bind = in.readCompressedInt();
+      hostname = DomainName.valueOf(in.readUTF());
+      isPrimary = in.readBoolean();
     } catch (ValidationException e) {
       throw new IOException(e);
     }

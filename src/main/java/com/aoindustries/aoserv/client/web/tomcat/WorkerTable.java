@@ -52,10 +52,11 @@ public final class WorkerTable extends CachedTableIntegerKey<Worker> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Worker.COLUMN_BIND_name+'.'+Bind.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(Worker.COLUMN_BIND_name+'.'+Bind.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(Worker.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(Worker.COLUMN_BIND_name + '.' + Bind.COLUMN_SERVER_name + '.' + Host.COLUMN_PACKAGE_name + '.' + Package.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(Worker.COLUMN_BIND_name + '.' + Bind.COLUMN_SERVER_name + '.' + Host.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(Worker.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -68,16 +69,16 @@ public final class WorkerTable extends CachedTableIntegerKey<Worker> {
   }
 
   public List<Worker> getHttpdWorkers(HttpdServer server) throws IOException, SQLException {
-    int serverPKey=server.getPkey();
-    List<Worker> cached=getRows();
-    int size=cached.size();
-    List<Worker> matches=new ArrayList<>(size);
-  Loop:
-    for (int c=0;c<size;c++) {
-      Worker worker=cached.get(c);
-      Site hts=worker.getTomcatSite();
+    int serverPKey = server.getPkey();
+    List<Worker> cached = getRows();
+    int size = cached.size();
+    List<Worker> matches = new ArrayList<>(size);
+    Loop:
+    for (int c = 0; c < size; c++) {
+      Worker worker = cached.get(c);
+      Site hts = worker.getTomcatSite();
       if (hts != null) {
-        List<VirtualHost> binds=hts.getHttpdSite().getHttpdSiteBinds();
+        List<VirtualHost> binds = hts.getHttpdSite().getHttpdSiteBinds();
         // If one of the binds is this server, then count as a match
         for (VirtualHost bind : binds) {
           if (bind.getHttpdBind().getHttpdServer_pkey() == serverPKey) {
@@ -86,11 +87,11 @@ public final class WorkerTable extends CachedTableIntegerKey<Worker> {
           }
         }
       } else {
-        SharedTomcat hst=worker.getHttpdSharedTomcat();
+        SharedTomcat hst = worker.getHttpdSharedTomcat();
         if (hst != null) {
           // If one of the binds is this server, then count as a match
           for (SharedTomcatSite htss : hst.getHttpdTomcatSharedSites()) {
-            List<VirtualHost> binds=htss.getHttpdTomcatSite().getHttpdSite().getHttpdSiteBinds();
+            List<VirtualHost> binds = htss.getHttpdTomcatSite().getHttpdSite().getHttpdSiteBinds();
             for (VirtualHost bind : binds) {
               if (bind.getHttpdBind().getHttpdServer_pkey() == serverPKey) {
                 matches.add(worker);
@@ -99,7 +100,7 @@ public final class WorkerTable extends CachedTableIntegerKey<Worker> {
             }
           }
         } else {
-          logger.log(Level.WARNING, "pkey="+worker.getPkey(), new SQLException("HttpdWorker doesn't have either HttpdTomcatSite or HttpdSharedTomcat"));
+          logger.log(Level.WARNING, "pkey=" + worker.getPkey(), new SQLException("HttpdWorker doesn't have either HttpdTomcatSite or HttpdSharedTomcat"));
         }
       }
     }

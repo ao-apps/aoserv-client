@@ -46,7 +46,7 @@ import java.sql.SQLException;
  */
 public final class BackupReport extends AOServObject<Integer, BackupReport> implements SingleTableObject<Integer, BackupReport> {
 
-  static final int COLUMN_PKEY=0;
+  static final int COLUMN_PKEY = 0;
   static final String COLUMN_DATE_name = "date";
   static final String COLUMN_SERVER_name = "server";
   static final String COLUMN_PACKAGE_name = "package";
@@ -54,17 +54,17 @@ public final class BackupReport extends AOServObject<Integer, BackupReport> impl
   /**
    * The hour of the day (in master server time zone) that backup reports will be created.
    */
-  public static final int BACKUP_REPORT_HOUR=2;
+  public static final int BACKUP_REPORT_HOUR = 2;
 
   /**
    * The minute (in master server time zone) that backup reports will be created.
    */
-  public static final int BACKUP_REPORT_MINUTE=15;
+  public static final int BACKUP_REPORT_MINUTE = 15;
 
   /**
    * The maximum number of days that reports will be maintained.  This is roughly 5 years.
    */
-  public static final int MAX_REPORT_AGE=2*366+3*365; // Assumes worst-case of two leap years in 5-year span.
+  public static final int MAX_REPORT_AGE = 2 * 366 + 3 * 365; // Assumes worst-case of two leap years in 5-year span.
 
   private int pkey;
   private int server;
@@ -81,7 +81,7 @@ public final class BackupReport extends AOServObject<Integer, BackupReport> impl
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public BackupReport() {
     // Do nothing
   }
@@ -89,8 +89,8 @@ public final class BackupReport extends AOServObject<Integer, BackupReport> impl
   @Override
   public boolean equals(Object obj) {
     return
-      (obj instanceof BackupReport)
-      && ((BackupReport)obj).pkey == pkey
+        (obj instanceof BackupReport)
+            && ((BackupReport) obj).pkey == pkey
     ;
   }
 
@@ -116,9 +116,9 @@ public final class BackupReport extends AOServObject<Integer, BackupReport> impl
   }
 
   public Host getHost() throws SQLException, IOException {
-    Host se=table.getConnector().getNet().getHost().get(server);
+    Host se = table.getConnector().getNet().getHost().get(server);
     if (se == null) {
-      throw new SQLException("Unable to find Host: "+server);
+      throw new SQLException("Unable to find Host: " + server);
     }
     return se;
   }
@@ -128,9 +128,9 @@ public final class BackupReport extends AOServObject<Integer, BackupReport> impl
   }
 
   public Package getPackage() throws IOException, SQLException {
-    Package pk=table.getConnector().getBilling().getPackage().get(package_id);
+    Package pk = table.getConnector().getBilling().getPackage().get(package_id);
     if (pk == null) {
-      throw new SQLException("Unable to find Package: "+package_id);
+      throw new SQLException("Unable to find Package: " + package_id);
     }
     return pk;
   }
@@ -169,22 +169,22 @@ public final class BackupReport extends AOServObject<Integer, BackupReport> impl
 
   @Override
   public void init(ResultSet result) throws SQLException {
-    pkey=result.getInt(1);
-    server=result.getInt(2);
-    package_id=result.getInt(3);
-    date=result.getDate(4).getTime();
-    file_count=result.getInt(5);
-    disk_size=result.getLong(6);
+    pkey = result.getInt(1);
+    server = result.getInt(2);
+    package_id = result.getInt(3);
+    date = result.getDate(4).getTime();
+    file_count = result.getInt(5);
+    disk_size = result.getLong(6);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readCompressedInt();
-    server=in.readCompressedInt();
-    package_id=in.readCompressedInt();
-    date=in.readLong();
-    file_count=in.readInt();
-    disk_size=in.readLong();
+    pkey = in.readCompressedInt();
+    server = in.readCompressedInt();
+    package_id = in.readCompressedInt();
+    date = in.readLong();
+    file_count = in.readInt();
+    disk_size = in.readLong();
   }
 
   @Override
@@ -192,7 +192,7 @@ public final class BackupReport extends AOServObject<Integer, BackupReport> impl
     if (this.table != null) {
       throw new IllegalStateException("table already set");
     }
-    this.table=table;
+    this.table = table;
   }
 
   @Override

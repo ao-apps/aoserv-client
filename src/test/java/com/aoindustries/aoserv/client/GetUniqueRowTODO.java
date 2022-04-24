@@ -75,44 +75,44 @@ public class GetUniqueRowTODO extends TestCase {
     System.out.println("Testing all unique rows:");
     for (AOServConnector conn : conns) {
       User.Name username = conn.getCurrentAdministrator().getKey();
-      System.out.println("    "+username);
-      Map<Object, AOServObject> uniqueMap=new HashMap<>();
+      System.out.println("    " + username);
+      Map<Object, AOServObject> uniqueMap = new HashMap<>();
       int numTables = Table.TableID.values().length;
-      for (int c=0;c<numTables;c++) {
+      for (int c = 0; c < numTables; c++) {
         // Excluded for testing speed
         if (
-          c == Table.TableID.DISTRO_FILES.ordinal()
+            c == Table.TableID.DISTRO_FILES.ordinal()
         ) {
           continue;
         }
-        AOServTable table=conn.getTable(c);
-        System.out.print("        "+table.getTableName()+": ");
-        List<AOServObject> rows=new ArrayList<>();
+        AOServTable table = conn.getTable(c);
+        System.out.print("        " + table.getTableName() + ": ");
+        List<AOServObject> rows = new ArrayList<>();
         rows.addAll(table.getRows());
-        System.out.println(rows.size()+" rows");
+        System.out.println(rows.size() + " rows");
         System.out.println("            Shuffling rows");
         Collections.shuffle(rows);
-        List<Column> columns=table.getTableSchema().getSchemaColumns(conn);
+        List<Column> columns = table.getTableSchema().getSchemaColumns(conn);
         for (Column column : columns) {
           uniqueMap.clear();
           if (column.isUnique()) {
-            int index=column.getIndex();
+            int index = column.getIndex();
             for (AOServObject row : rows) {
-              Object uniqueValue=row.getColumn(index);
+              Object uniqueValue = row.getColumn(index);
               // Multiple rows may have null values even when the column is otherwise unique
               if (uniqueValue != null) {
                 // Check that is actually unique in overall list of data
                 if (uniqueMap.containsKey(uniqueValue)) {
-                  fail("Column is flagged as unique but has a duplicate value.  Table="+table.getTableName()+", Column="+column.getName()+", Value="+uniqueValue);
+                  fail("Column is flagged as unique but has a duplicate value.  Table=" + table.getTableName() + ", Column=" + column.getName() + ", Value=" + uniqueValue);
                 }
                 uniqueMap.put(uniqueValue, row);
                 // Check that the object returned from the get unique row call matches the row that provides the unique value
-                AOServObject fromUniqueCall=table.getUniqueRow(index, uniqueValue);
-                assertEquals("Table="+table.getTableName()+", Column="+column.getName(), row, fromUniqueCall);
+                AOServObject fromUniqueCall = table.getUniqueRow(index, uniqueValue);
+                assertEquals("Table=" + table.getTableName() + ", Column=" + column.getName(), row, fromUniqueCall);
               } else {
                 // Make sure is nullable
                 if (!column.isNullable()) {
-                  fail("Column returned null value but is not flagged as nullable.  Table="+table.getTableName()+", Column="+column.getName()+", Value="+uniqueValue);
+                  fail("Column returned null value but is not flagged as nullable.  Table=" + table.getTableName() + ", Column=" + column.getName() + ", Value=" + uniqueValue);
                 }
               }
             }

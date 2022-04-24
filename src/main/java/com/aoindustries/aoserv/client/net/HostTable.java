@@ -58,9 +58,10 @@ public final class HostTable extends CachedTableIntegerKey<Host> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(Host.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(Host.COLUMN_PACKAGE_name + '.' + Package.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(Host.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -68,58 +69,58 @@ public final class HostTable extends CachedTableIntegerKey<Host> {
   }
 
   public int addBackupHost(
-    final String hostname,
-    final ServerFarm farm,
-    final Package owner,
-    final String description,
-    final int backup_hour,
-    final OperatingSystemVersion os_version,
-    final User.Name username,
-    final String password,
-    final String contact_phone,
-    final String contact_email
+      final String hostname,
+      final ServerFarm farm,
+      final Package owner,
+      final String description,
+      final int backup_hour,
+      final OperatingSystemVersion os_version,
+      final User.Name username,
+      final String password,
+      final String contact_phone,
+      final String contact_email
   ) throws IOException, SQLException {
     // Create the new profile
     return connector.requestResult(
-      true,
-      AoservProtocol.CommandID.ADD_BACKUP_SERVER,
-      // Java 9: new AOServConnector.ResultRequest<>
-      new AOServConnector.ResultRequest<Integer>() {
-        private int pkey;
-        private IntList invalidateList;
+        true,
+        AoservProtocol.CommandID.ADD_BACKUP_SERVER,
+        // Java 9: new AOServConnector.ResultRequest<>
+        new AOServConnector.ResultRequest<Integer>() {
+          private int pkey;
+          private IntList invalidateList;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeUTF(hostname);
-          out.writeUTF(farm.getName());
-          out.writeCompressedInt(owner.getPkey());
-          out.writeUTF(description);
-          out.writeCompressedInt(backup_hour);
-          out.writeCompressedInt(os_version.getPkey());
-          out.writeUTF(username.toString());
-          out.writeUTF(password);
-          out.writeUTF(contact_phone);
-          out.writeUTF(contact_email);
-        }
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeUTF(hostname);
+            out.writeUTF(farm.getName());
+            out.writeCompressedInt(owner.getPkey());
+            out.writeUTF(description);
+            out.writeCompressedInt(backup_hour);
+            out.writeCompressedInt(os_version.getPkey());
+            out.writeUTF(username.toString());
+            out.writeUTF(password);
+            out.writeUTF(contact_phone);
+            out.writeUTF(contact_email);
+          }
 
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            pkey=in.readCompressedInt();
-            invalidateList=AOServConnector.readInvalidateList(in);
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              pkey = in.readCompressedInt();
+              invalidateList = AOServConnector.readInvalidateList(in);
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
+            }
+          }
+
+          @Override
+          public Integer afterRelease() {
+            connector.tablesUpdated(invalidateList);
+            return pkey;
           }
         }
-
-        @Override
-        public Integer afterRelease() {
-          connector.tablesUpdated(invalidateList);
-          return pkey;
-        }
-      }
     );
   }
 
@@ -134,9 +135,9 @@ public final class HostTable extends CachedTableIntegerKey<Host> {
     if (pkey == null) {
       return null;
     } else if (pkey instanceof Integer) {
-      return get(((Integer)pkey).intValue());
+      return get(((Integer) pkey).intValue());
     } else if (pkey instanceof String) {
-      return get((String)pkey);
+      return get((String) pkey);
     } else {
       throw new IllegalArgumentException("Must be an Integer or a String");
     }
@@ -157,8 +158,8 @@ public final class HostTable extends CachedTableIntegerKey<Host> {
     // Is it the exact hostname of an ao_server?
     try {
       Server aoServer = DomainName.validate(server).isValid()
-        ? connector.getLinux().getServer().get(DomainName.valueOf(server))
-        : null;
+          ? connector.getLinux().getServer().get(DomainName.valueOf(server))
+          : null;
       if (aoServer != null) {
         return aoServer.getHost();
       }
@@ -185,7 +186,7 @@ public final class HostTable extends CachedTableIntegerKey<Host> {
       String packageName = server.substring(0, slashPos);
       if (Account.Name.validate(packageName).isValid()) {
         try {
-          String name = server.substring(slashPos+1);
+          String name = server.substring(slashPos + 1);
           Package pk = connector.getBilling().getPackage().get(Account.Name.valueOf(packageName));
           if (pk == null) {
             return null;
@@ -235,24 +236,24 @@ public final class HostTable extends CachedTableIntegerKey<Host> {
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-    String command=args[0];
+    String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_BACKUP_SERVER)) {
       if (AOSH.checkParamCount(Command.ADD_BACKUP_SERVER, args, 12, err)) {
         out.println(
-          connector.getSimpleAOClient().addBackupHost(
-            args[1],
-            args[2],
-            AOSH.parseAccountingCode(args[3], "owner"),
-            args[4],
-            AOSH.parseInt(args[5], "backup_hour"),
-            args[6],
-            args[7],
-            args[8],
-            AOSH.parseUserName(args[9], "username"),
-            args[10],
-            args[11],
-            args[12]
-          )
+            connector.getSimpleAOClient().addBackupHost(
+                args[1],
+                args[2],
+                AOSH.parseAccountingCode(args[3], "owner"),
+                args[4],
+                AOSH.parseInt(args[5], "backup_hour"),
+                args[6],
+                args[7],
+                args[8],
+                AOSH.parseUserName(args[9], "username"),
+                args[10],
+                args[11],
+                args[12]
+            )
         );
         out.flush();
       }

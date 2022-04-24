@@ -54,9 +54,10 @@ public final class SiteTable extends CachedTableIntegerKey<Site> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Site.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(Site.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING)
+      new OrderBy(Site.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(Site.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -73,15 +74,15 @@ public final class SiteTable extends CachedTableIntegerKey<Site> {
   }
 
   public Site getHttpdSite(String siteName, Server ao) throws IOException, SQLException {
-    int aoPKey=ao.getPkey();
+    int aoPKey = ao.getPkey();
 
-    List<Site> cached=getRows();
-    int size=cached.size();
-    for (int c=0;c<size;c++) {
-      Site site=cached.get(c);
+    List<Site> cached = getRows();
+    int size = cached.size();
+    for (int c = 0; c < size; c++) {
+      Site site = cached.get(c);
       if (
-        site.getAoServer_server_pkey() == aoPKey
-        && site.getName().equals(siteName)
+          site.getAoServer_server_pkey() == aoPKey
+              && site.getName().equals(siteName)
       ) {
         return site;
       }
@@ -90,13 +91,13 @@ public final class SiteTable extends CachedTableIntegerKey<Site> {
   }
 
   List<Site> getHttpdSites(HttpdServer server) throws IOException, SQLException {
-    int serverPKey=server.getPkey();
+    int serverPKey = server.getPkey();
 
-    List<Site> cached=getRows();
-    int size=cached.size();
-    List<Site> matches=new ArrayList<>(size);
-    for (int c=0;c<size;c++) {
-      Site site=cached.get(c);
+    List<Site> cached = getRows();
+    int size = cached.size();
+    List<Site> matches = new ArrayList<>(size);
+    for (int c = 0; c < size; c++) {
+      Site site = cached.get(c);
       for (VirtualHost bind : site.getHttpdSiteBinds()) {
         if (bind.getHttpdBind().getHttpdServer_pkey() == serverPKey) {
           matches.add(site);
@@ -119,14 +120,14 @@ public final class SiteTable extends CachedTableIntegerKey<Site> {
     User.Name lsaUsername = lsa.getLinuxAccount_username_id();
     int aoServer = lsa.getAoServer_server_id();
 
-    List<Site> cached=getRows();
-    int size=cached.size();
-    List<Site> matches=new ArrayList<>(size);
-    for (int c=0;c<size;c++) {
-      Site site=cached.get(c);
+    List<Site> cached = getRows();
+    int size = cached.size();
+    List<Site> matches = new ArrayList<>(size);
+    for (int c = 0; c < size; c++) {
+      Site site = cached.get(c);
       if (
-        site.getAoServer_server_pkey() == aoServer
-        && site.getLinuxAccount_username().equals(lsaUsername)
+          site.getAoServer_server_pkey() == aoServer
+              && site.getLinuxAccount_username().equals(lsaUsername)
       ) {
         matches.add(site);
       }
@@ -141,14 +142,14 @@ public final class SiteTable extends CachedTableIntegerKey<Site> {
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
-    String command=args[0];
+    String command = args[0];
     if (command.equalsIgnoreCase(Command.CHECK_SITE_NAME)) {
       if (AOSH.checkParamCount(Command.CHECK_SITE_NAME, args, 1, err)) {
         try {
           SimpleAOClient.checkSiteName(args[1]);
           out.println("true");
         } catch (IllegalArgumentException iae) {
-          out.print("aosh: "+Command.CHECK_SITE_NAME+": ");
+          out.print("aosh: " + Command.CHECK_SITE_NAME + ": ");
           out.println(iae.getMessage());
         }
         out.flush();
@@ -157,11 +158,11 @@ public final class SiteTable extends CachedTableIntegerKey<Site> {
     } else if (command.equalsIgnoreCase(Command.DISABLE_HTTPD_SITE)) {
       if (AOSH.checkParamCount(Command.DISABLE_HTTPD_SITE, args, 3, err)) {
         out.println(
-          connector.getSimpleAOClient().disableHttpdSite(
-            args[1],
-            args[2],
-            args[3]
-          )
+            connector.getSimpleAOClient().disableHttpdSite(
+                args[1],
+                args[2],
+                args[3]
+            )
         );
         out.flush();
       }
@@ -180,16 +181,16 @@ public final class SiteTable extends CachedTableIntegerKey<Site> {
     } else if (command.equalsIgnoreCase(Command.GET_AWSTATS_FILE)) {
       if (AOSH.checkParamCount(Command.GET_AWSTATS_FILE, args, 4, err)) {
         connector.getSimpleAOClient().getAWStatsFile(
-          args[1],
-          args[2],
-          args[3],
-          args[4],
-          new WriterOutputStream(out)
+            args[1],
+            args[2],
+            args[3],
+            args[4],
+            new WriterOutputStream(out)
         );
         out.flush();
       }
       return true;
-    /*} else if (command.equalsIgnoreCase(AOSHCommand.INITIALIZE_HTTPD_SITE_PASSWD_FILE)) {
+      /*} else if (command.equalsIgnoreCase(AOSHCommand.INITIALIZE_HTTPD_SITE_PASSWD_FILE)) {
       if (AOSH.checkParamCount(AOSHCommand.INITIALIZE_HTTPD_SITE_PASSWD_FILE, args, 4, err)) {
         connector.getSimpleAOClient().initializeHttpdSitePasswdFile(
           args[1],
@@ -214,18 +215,18 @@ public final class SiteTable extends CachedTableIntegerKey<Site> {
     } else if (command.equalsIgnoreCase(Command.SET_HTTPD_SITE_SERVER_ADMIN)) {
       if (AOSH.checkParamCount(Command.SET_HTTPD_SITE_SERVER_ADMIN, args, 3, err)) {
         connector.getSimpleAOClient().setHttpdSiteServerAdmin(
-          args[1],
-          args[2],
-          AOSH.parseEmail(args[3], "email_address")
+            args[1],
+            args[2],
+            AOSH.parseEmail(args[3], "email_address")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_HTTPD_SITE_IS_MANUAL)) {
       if (AOSH.checkParamCount(Command.SET_HTTPD_SITE_IS_MANUAL, args, 3, err)) {
         connector.getSimpleAOClient().setHttpdSiteIsManual(
-          args[1],
-          args[2],
-          AOSH.parseBoolean(args[3], "is_manual")
+            args[1],
+            args[2],
+            AOSH.parseBoolean(args[3], "is_manual")
         );
       }
       return true;
@@ -237,99 +238,99 @@ public final class SiteTable extends CachedTableIntegerKey<Site> {
     } else if (command.equalsIgnoreCase(Command.SET_HTTPD_SITE_PHP_VERSION)) {
       if (AOSH.checkParamCount(Command.SET_HTTPD_SITE_PHP_VERSION, args, 3, err)) {
         connector.getSimpleAOClient().setHttpdSitePhpVersion(
-          args[1],
-          args[2],
-          args[3]
+            args[1],
+            args[2],
+            args[3]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_HTTPD_SITE_ENABLE_CGI)) {
       if (AOSH.checkParamCount(Command.SET_HTTPD_SITE_ENABLE_CGI, args, 3, err)) {
         connector.getSimpleAOClient().setHttpdSiteEnableCgi(
-          args[1],
-          args[2],
-          AOSH.parseBoolean(args[3], "enable_cgi")
+            args[1],
+            args[2],
+            AOSH.parseBoolean(args[3], "enable_cgi")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_HTTPD_SITE_ENABLE_SSI)) {
       if (AOSH.checkParamCount(Command.SET_HTTPD_SITE_ENABLE_SSI, args, 3, err)) {
         connector.getSimpleAOClient().setHttpdSiteEnableSsi(
-          args[1],
-          args[2],
-          AOSH.parseBoolean(args[3], "enable_ssi")
+            args[1],
+            args[2],
+            AOSH.parseBoolean(args[3], "enable_ssi")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_HTTPD_SITE_ENABLE_HTACCESS)) {
       if (AOSH.checkParamCount(Command.SET_HTTPD_SITE_ENABLE_HTACCESS, args, 3, err)) {
         connector.getSimpleAOClient().setHttpdSiteEnableHtaccess(
-          args[1],
-          args[2],
-          AOSH.parseBoolean(args[3], "enable_htaccess")
+            args[1],
+            args[2],
+            AOSH.parseBoolean(args[3], "enable_htaccess")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_HTTPD_SITE_ENABLE_INDEXES)) {
       if (AOSH.checkParamCount(Command.SET_HTTPD_SITE_ENABLE_INDEXES, args, 3, err)) {
         connector.getSimpleAOClient().setHttpdSiteEnableIndexes(
-          args[1],
-          args[2],
-          AOSH.parseBoolean(args[3], "enable_indexes")
+            args[1],
+            args[2],
+            AOSH.parseBoolean(args[3], "enable_indexes")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_HTTPD_SITE_ENABLE_FOLLOW_SYMLINKS)) {
       if (AOSH.checkParamCount(Command.SET_HTTPD_SITE_ENABLE_FOLLOW_SYMLINKS, args, 3, err)) {
         connector.getSimpleAOClient().setHttpdSiteEnableFollowSymlinks(
-          args[1],
-          args[2],
-          AOSH.parseBoolean(args[3], "enable_follow_symlinks")
+            args[1],
+            args[2],
+            AOSH.parseBoolean(args[3], "enable_follow_symlinks")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_HTTPD_SITE_ENABLE_ANONYMOUS_FTP)) {
       if (AOSH.checkParamCount(Command.SET_HTTPD_SITE_ENABLE_ANONYMOUS_FTP, args, 3, err)) {
         connector.getSimpleAOClient().setHttpdSiteEnableAnonymousFtp(
-          args[1],
-          args[2],
-          AOSH.parseBoolean(args[3], "enable_anonymous_ftp")
+            args[1],
+            args[2],
+            AOSH.parseBoolean(args[3], "enable_anonymous_ftp")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_HTTPD_SITE_BLOCK_TRACE_TRACK)) {
       if (AOSH.checkParamCount(Command.SET_HTTPD_SITE_BLOCK_TRACE_TRACK, args, 3, err)) {
         connector.getSimpleAOClient().setHttpdSiteBlockTraceTrack(
-          args[1],
-          args[2],
-          AOSH.parseBoolean(args[3], "block_trace_track")
+            args[1],
+            args[2],
+            AOSH.parseBoolean(args[3], "block_trace_track")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_HTTPD_SITE_BLOCK_SCM)) {
       if (AOSH.checkParamCount(Command.SET_HTTPD_SITE_BLOCK_SCM, args, 3, err)) {
         connector.getSimpleAOClient().setHttpdSiteBlockScm(
-          args[1],
-          args[2],
-          AOSH.parseBoolean(args[3], "block_scm")
+            args[1],
+            args[2],
+            AOSH.parseBoolean(args[3], "block_scm")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_HTTPD_SITE_BLOCK_CORE_DUMPS)) {
       if (AOSH.checkParamCount(Command.SET_HTTPD_SITE_BLOCK_CORE_DUMPS, args, 3, err)) {
         connector.getSimpleAOClient().setHttpdSiteBlockCoreDumps(
-          args[1],
-          args[2],
-          AOSH.parseBoolean(args[3], "block_core_dumps")
+            args[1],
+            args[2],
+            AOSH.parseBoolean(args[3], "block_core_dumps")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_HTTPD_SITE_BLOCK_EDITOR_BACKUPS)) {
       if (AOSH.checkParamCount(Command.SET_HTTPD_SITE_BLOCK_EDITOR_BACKUPS, args, 3, err)) {
         connector.getSimpleAOClient().setHttpdSiteBlockEditorBackups(
-          args[1],
-          args[2],
-          AOSH.parseBoolean(args[3], "block_editor_backups")
+            args[1],
+            args[2],
+            AOSH.parseBoolean(args[3], "block_editor_backups")
         );
       }
       return true;
@@ -344,10 +345,10 @@ public final class SiteTable extends CachedTableIntegerKey<Site> {
 
   public void waitForRebuild(Server aoServer) throws IOException, SQLException {
     connector.requestUpdate(
-      true,
-      AoservProtocol.CommandID.WAIT_FOR_REBUILD,
-      Table.TableID.HTTPD_SITES,
-      aoServer.getPkey()
+        true,
+        AoservProtocol.CommandID.WAIT_FOR_REBUILD,
+        Table.TableID.HTTPD_SITES,
+        aoServer.getPkey()
     );
   }
 }

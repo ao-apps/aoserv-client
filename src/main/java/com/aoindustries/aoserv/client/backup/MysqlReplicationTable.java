@@ -46,10 +46,10 @@ public final class MysqlReplicationTable extends CachedTableIntegerKey<MysqlRepl
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(MysqlReplication.COLUMN_MYSQL_SERVER_name+'.'+Server.COLUMN_AO_SERVER_name+'.'+com.aoindustries.aoserv.client.linux.Server.COLUMN_HOSTNAME_name, ASCENDING),
-    new OrderBy(MysqlReplication.COLUMN_MYSQL_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(MysqlReplication.COLUMN_AO_SERVER_name, ASCENDING),
-    new OrderBy(MysqlReplication.COLUMN_REPLICATION_name, ASCENDING)
+      new OrderBy(MysqlReplication.COLUMN_MYSQL_SERVER_name + '.' + Server.COLUMN_AO_SERVER_name + '.' + com.aoindustries.aoserv.client.linux.Server.COLUMN_HOSTNAME_name, ASCENDING),
+      new OrderBy(MysqlReplication.COLUMN_MYSQL_SERVER_name + '.' + Server.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(MysqlReplication.COLUMN_AO_SERVER_name, ASCENDING),
+      new OrderBy(MysqlReplication.COLUMN_REPLICATION_name, ASCENDING)
   };
 
   @Override

@@ -35,10 +35,16 @@ import java.util.List;
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
   private final SiteTable Site;
-  public SiteTable getSite() {return Site;}
+
+  public SiteTable getSite() {
+    return Site;
+  }
 
   private final VersionTable Version;
-  public VersionTable getVersion() {return Version;}
+
+  public VersionTable getVersion() {
+    return Version;
+  }
 
   private final List<? extends AOServTable<?, ?>> tables;
 

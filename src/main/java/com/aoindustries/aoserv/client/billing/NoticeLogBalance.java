@@ -43,8 +43,8 @@ import java.sql.SQLException;
 public final class NoticeLogBalance extends CachedObjectIntegerKey<NoticeLogBalance> {
 
   static final int
-    COLUMN_id = 0,
-    COLUMN_noticeLog = 1
+      COLUMN_id = 0,
+      COLUMN_noticeLog = 1
   ;
   static final String COLUMN_noticeLog_name = "noticeLog";
   static final String COLUMN_balance_name = "balance";
@@ -58,7 +58,7 @@ public final class NoticeLogBalance extends CachedObjectIntegerKey<NoticeLogBala
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public NoticeLogBalance() {
     // Do nothing
   }

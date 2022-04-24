@@ -43,13 +43,13 @@ import java.sql.SQLException;
  */
 public final class OperatingSystem extends GlobalObjectStringKey<OperatingSystem> {
 
-  static final int COLUMN_NAME=0;
+  static final int COLUMN_NAME = 0;
   static final String COLUMN_NAME_name = "name";
 
   public static final String
-    CENTOS="centos",
-    DEBIAN="debian",
-    WINDOWS="windows"
+      CENTOS = "centos",
+      DEBIAN = "debian",
+      WINDOWS = "windows"
   ;
 
   /**
@@ -69,7 +69,7 @@ public final class OperatingSystem extends GlobalObjectStringKey<OperatingSystem
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public OperatingSystem() {
     // Do nothing
   }
@@ -107,16 +107,16 @@ public final class OperatingSystem extends GlobalObjectStringKey<OperatingSystem
 
   @Override
   public void init(ResultSet result) throws SQLException {
-    pkey=result.getString(1);
-    display=result.getString(2);
-    is_unix=result.getBoolean(3);
+    pkey = result.getString(1);
+    display = result.getString(2);
+    is_unix = result.getBoolean(3);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readUTF().intern();
-    display=in.readUTF();
-    is_unix=in.readBoolean();
+    pkey = in.readUTF().intern();
+    display = in.readUTF();
+    is_unix = in.readBoolean();
   }
 
   @Override

@@ -41,8 +41,9 @@ public final class DistroReportTypeTable extends GlobalTableStringKey<DistroRepo
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(DistroReportType.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(DistroReportType.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

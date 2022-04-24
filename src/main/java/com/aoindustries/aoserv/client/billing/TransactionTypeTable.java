@@ -41,8 +41,9 @@ public final class TransactionTypeTable extends GlobalTableStringKey<Transaction
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(TransactionType.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(TransactionType.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

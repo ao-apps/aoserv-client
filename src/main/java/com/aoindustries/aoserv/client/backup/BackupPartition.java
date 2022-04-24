@@ -43,8 +43,8 @@ import java.sql.SQLException;
 public final class BackupPartition extends CachedObjectIntegerKey<BackupPartition> {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_AO_SERVER=1
+      COLUMN_PKEY = 0,
+      COLUMN_AO_SERVER = 1
   ;
   static final String COLUMN_AO_SERVER_name = "ao_server";
   static final String COLUMN_PATH_name = "path";
@@ -60,7 +60,7 @@ public final class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public BackupPartition() {
     // Do nothing
   }
@@ -86,9 +86,9 @@ public final class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
   }
 
   public Server getLinuxServer() throws SQLException, IOException {
-    Server ao=table.getConnector().getLinux().getServer().get(ao_server);
+    Server ao = table.getConnector().getLinux().getServer().get(ao_server);
     if (ao == null) {
-      throw new SQLException("Unable to find linux.Server: "+ao_server);
+      throw new SQLException("Unable to find linux.Server: " + ao_server);
     }
     return ao;
   }
@@ -104,17 +104,17 @@ public final class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
 
   @Override
   public String toStringImpl() throws SQLException, IOException {
-    return getLinuxServer().getHostname()+":"+path;
+    return getLinuxServer().getHostname() + ":" + path;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     try {
-      pkey=result.getInt(1);
-      ao_server=result.getInt(2);
+      pkey = result.getInt(1);
+      ao_server = result.getInt(2);
       path = PosixPath.valueOf(result.getString(3));
-      enabled=result.getBoolean(4);
-      quota_enabled=result.getBoolean(5);
+      enabled = result.getBoolean(4);
+      quota_enabled = result.getBoolean(5);
     } catch (ValidationException e) {
       throw new SQLException(e);
     }
@@ -139,11 +139,11 @@ public final class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
-      pkey=in.readCompressedInt();
-      ao_server=in.readCompressedInt();
+      pkey = in.readCompressedInt();
+      ao_server = in.readCompressedInt();
       path = PosixPath.valueOf(in.readUTF()).intern();
-      enabled=in.readBoolean();
-      quota_enabled=in.readBoolean();
+      enabled = in.readBoolean();
+      quota_enabled = in.readBoolean();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -163,8 +163,8 @@ public final class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
     }
     out.writeBoolean(enabled);
     if (
-      protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_117) >= 0
-      && protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30) <= 0
+        protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_117) >= 0
+            && protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30) <= 0
     ) {
       out.writeCompressedInt(1); // fill_order
     }

@@ -32,20 +32,21 @@ import java.beans.SimpleBeanInfo;
 public class SchemaBeanInfo extends SimpleBeanInfo {
 
   private static final PropertyDescriptor[] properties;
+
   static {
     try {
-      properties = new PropertyDescriptor[] {
-        new PropertyDescriptor("DaemonAcl",   Schema.class, "getDaemonAcl",   null),
-        new PropertyDescriptor("Group",       Schema.class, "getGroup",       null),
-        new PropertyDescriptor("GroupServer", Schema.class, "getGroupServer", null),
-        new PropertyDescriptor("GroupType",   Schema.class, "getGroupType",   null),
-        new PropertyDescriptor("GroupUser",   Schema.class, "getGroupUser",   null),
-        new PropertyDescriptor("Server",      Schema.class, "getServer",      null),
-        new PropertyDescriptor("Shell",       Schema.class, "getShell",       null),
-        new PropertyDescriptor("TimeZone",    Schema.class, "getTimeZone",    null),
-        new PropertyDescriptor("User",        Schema.class, "getUser",        null),
-        new PropertyDescriptor("UserServer",  Schema.class, "getUserServer",  null),
-        new PropertyDescriptor("UserType",    Schema.class, "getUserType",    null),
+      properties = new PropertyDescriptor[]{
+          new PropertyDescriptor("DaemonAcl",   Schema.class, "getDaemonAcl",   null),
+          new PropertyDescriptor("Group",       Schema.class, "getGroup",       null),
+          new PropertyDescriptor("GroupServer", Schema.class, "getGroupServer", null),
+          new PropertyDescriptor("GroupType",   Schema.class, "getGroupType",   null),
+          new PropertyDescriptor("GroupUser",   Schema.class, "getGroupUser",   null),
+          new PropertyDescriptor("Server",      Schema.class, "getServer",      null),
+          new PropertyDescriptor("Shell",       Schema.class, "getShell",       null),
+          new PropertyDescriptor("TimeZone",    Schema.class, "getTimeZone",    null),
+          new PropertyDescriptor("User",        Schema.class, "getUser",        null),
+          new PropertyDescriptor("UserServer",  Schema.class, "getUserServer",  null),
+          new PropertyDescriptor("UserType",    Schema.class, "getUserType",    null),
       };
     } catch (IntrospectionException err) {
       throw new ExceptionInInitializerError(err);
@@ -54,7 +55,7 @@ public class SchemaBeanInfo extends SimpleBeanInfo {
 
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField") // Not copying array for performance
-  public PropertyDescriptor[] getPropertyDescriptors () {
+  public PropertyDescriptor[] getPropertyDescriptors() {
     return properties;
   }
 
@@ -64,8 +65,8 @@ public class SchemaBeanInfo extends SimpleBeanInfo {
   @Override
   public BeanInfo[] getAdditionalBeanInfo() {
     try {
-      return new BeanInfo[] {
-        Introspector.getBeanInfo(Schema.class.getSuperclass())
+      return new BeanInfo[]{
+          Introspector.getBeanInfo(Schema.class.getSuperclass())
       };
     } catch (IntrospectionException err) {
       throw new AssertionError(err);

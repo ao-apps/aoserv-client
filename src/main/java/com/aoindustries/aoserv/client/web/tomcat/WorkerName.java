@@ -43,7 +43,7 @@ import java.sql.SQLException;
  */
 public final class WorkerName extends GlobalObjectStringKey<WorkerName> {
 
-  static final int COLUMN_CODE=0;
+  static final int COLUMN_CODE = 0;
   static final String COLUMN_CODE_name = "code";
 
   /**
@@ -52,7 +52,7 @@ public final class WorkerName extends GlobalObjectStringKey<WorkerName> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public WorkerName() {
     // Do nothing
   }
@@ -76,12 +76,12 @@ public final class WorkerName extends GlobalObjectStringKey<WorkerName> {
 
   @Override
   public void init(ResultSet result) throws SQLException {
-    pkey=result.getString(1);
+    pkey = result.getString(1);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readUTF();
+    pkey = in.readUTF();
   }
 
   @Override

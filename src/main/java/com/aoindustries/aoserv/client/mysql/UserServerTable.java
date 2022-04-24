@@ -50,10 +50,11 @@ public final class UserServerTable extends CachedTableIntegerKey<UserServer> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(UserServer.COLUMN_USERNAME_name, ASCENDING),
-    new OrderBy(UserServer.COLUMN_MYSQL_SERVER_name+'.'+Server.COLUMN_AO_SERVER_name+'.'+com.aoindustries.aoserv.client.linux.Server.COLUMN_HOSTNAME_name, ASCENDING),
-    new OrderBy(UserServer.COLUMN_MYSQL_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(UserServer.COLUMN_USERNAME_name, ASCENDING),
+      new OrderBy(UserServer.COLUMN_MYSQL_SERVER_name + '.' + Server.COLUMN_AO_SERVER_name + '.' + com.aoindustries.aoserv.client.linux.Server.COLUMN_HOSTNAME_name, ASCENDING),
+      new OrderBy(UserServer.COLUMN_MYSQL_SERVER_name + '.' + Server.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -65,42 +66,42 @@ public final class UserServerTable extends CachedTableIntegerKey<UserServer> {
       throw new SQLException("Refusing to add special MySQL user: " + username + " on " + mysqlServer);
     }
     return connector.requestResult(
-      true,
-      AoservProtocol.CommandID.ADD,
-      // Java 9: new AOServConnector.ResultRequest<>
-      new AOServConnector.ResultRequest<Integer>() {
-        private int pkey;
-        private IntList invalidateList;
+        true,
+        AoservProtocol.CommandID.ADD,
+        // Java 9: new AOServConnector.ResultRequest<>
+        new AOServConnector.ResultRequest<Integer>() {
+          private int pkey;
+          private IntList invalidateList;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(Table.TableID.MYSQL_SERVER_USERS.ordinal());
-          out.writeUTF(username.toString());
-          out.writeCompressedInt(mysqlServer.getPkey());
-          out.writeBoolean(host != null);
-          if (host != null) {
-            out.writeUTF(host);
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(Table.TableID.MYSQL_SERVER_USERS.ordinal());
+            out.writeUTF(username.toString());
+            out.writeCompressedInt(mysqlServer.getPkey());
+            out.writeBoolean(host != null);
+            if (host != null) {
+              out.writeUTF(host);
+            }
+          }
+
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              pkey = in.readCompressedInt();
+              invalidateList = AOServConnector.readInvalidateList(in);
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
+            }
+          }
+
+          @Override
+          public Integer afterRelease() {
+            connector.tablesUpdated(invalidateList);
+            return pkey;
           }
         }
-
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            pkey=in.readCompressedInt();
-            invalidateList=AOServConnector.readInvalidateList(in);
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
-          }
-        }
-
-        @Override
-        public Integer afterRelease() {
-          connector.tablesUpdated(invalidateList);
-          return pkey;
-        }
-      }
     );
   }
 
@@ -110,12 +111,12 @@ public final class UserServerTable extends CachedTableIntegerKey<UserServer> {
   }
 
   UserServer getMySQLServerUser(User.Name username, Server ms) throws IOException, SQLException {
-    int msPKey=ms.getPkey();
+    int msPKey = ms.getPkey();
 
-    List<UserServer> table=getRows();
-    int size=table.size();
-    for (int c=0;c<size;c++) {
-      UserServer msu=table.get(c);
+    List<UserServer> table = getRows();
+    int size = table.size();
+    for (int c = 0; c < size; c++) {
+      UserServer msu = table.get(c);
       if (msu.getMySQLServer_id() == msPKey && msu.getMySQLUser_username().equals(username)) {
         return msu;
       }
@@ -138,16 +139,16 @@ public final class UserServerTable extends CachedTableIntegerKey<UserServer> {
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
-    String command=args[0];
+    String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_MYSQL_SERVER_USER)) {
       if (AOSH.checkParamCount(Command.ADD_MYSQL_SERVER_USER, args, 4, err)) {
         out.println(
-          connector.getSimpleAOClient().addMySQLServerUser(
-            AOSH.parseMySQLUserName(args[1], "username"),
-            AOSH.parseMySQLServerName(args[2], "mysql_server"),
-            args[3],
-            args[4]
-          )
+            connector.getSimpleAOClient().addMySQLServerUser(
+                AOSH.parseMySQLUserName(args[1], "username"),
+                AOSH.parseMySQLServerName(args[2], "mysql_server"),
+                args[3],
+                args[4]
+            )
         );
         out.flush();
       }
@@ -155,12 +156,12 @@ public final class UserServerTable extends CachedTableIntegerKey<UserServer> {
     } else if (command.equalsIgnoreCase(Command.DISABLE_MYSQL_SERVER_USER)) {
       if (AOSH.checkParamCount(Command.DISABLE_MYSQL_SERVER_USER, args, 4, err)) {
         out.println(
-          connector.getSimpleAOClient().disableMySQLServerUser(
-            AOSH.parseMySQLUserName(args[1], "username"),
-            AOSH.parseMySQLServerName(args[2], "mysql_server"),
-            args[3],
-            args[4]
-          )
+            connector.getSimpleAOClient().disableMySQLServerUser(
+                AOSH.parseMySQLUserName(args[1], "username"),
+                AOSH.parseMySQLServerName(args[2], "mysql_server"),
+                args[3],
+                args[4]
+            )
         );
         out.flush();
       }
@@ -168,20 +169,20 @@ public final class UserServerTable extends CachedTableIntegerKey<UserServer> {
     } else if (command.equalsIgnoreCase(Command.ENABLE_MYSQL_SERVER_USER)) {
       if (AOSH.checkParamCount(Command.ENABLE_MYSQL_SERVER_USER, args, 3, err)) {
         connector.getSimpleAOClient().enableMySQLServerUser(
-          AOSH.parseMySQLUserName(args[1], "username"),
-          AOSH.parseMySQLServerName(args[2], "mysql_server"),
-          args[3]
+            AOSH.parseMySQLUserName(args[1], "username"),
+            AOSH.parseMySQLServerName(args[2], "mysql_server"),
+            args[3]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.IS_MYSQL_SERVER_USER_PASSWORD_SET)) {
       if (AOSH.checkParamCount(Command.IS_MYSQL_SERVER_USER_PASSWORD_SET, args, 3, err)) {
         out.println(
-          connector.getSimpleAOClient().isMySQLServerUserPasswordSet(
-            AOSH.parseMySQLUserName(args[1], "username"),
-            AOSH.parseMySQLServerName(args[2], "mysql_server"),
-            args[3]
-          )
+            connector.getSimpleAOClient().isMySQLServerUserPasswordSet(
+                AOSH.parseMySQLUserName(args[1], "username"),
+                AOSH.parseMySQLServerName(args[2], "mysql_server"),
+                args[3]
+            )
         );
         out.flush();
       }
@@ -189,19 +190,19 @@ public final class UserServerTable extends CachedTableIntegerKey<UserServer> {
     } else if (command.equalsIgnoreCase(Command.REMOVE_MYSQL_SERVER_USER)) {
       if (AOSH.checkParamCount(Command.REMOVE_MYSQL_SERVER_USER, args, 3, err)) {
         connector.getSimpleAOClient().removeMySQLServerUser(
-          AOSH.parseMySQLUserName(args[1], "username"),
-          AOSH.parseMySQLServerName(args[2], "mysql_server"),
-          args[3]
+            AOSH.parseMySQLUserName(args[1], "username"),
+            AOSH.parseMySQLServerName(args[2], "mysql_server"),
+            args[3]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_MYSQL_SERVER_USER_PASSWORD)) {
       if (AOSH.checkParamCount(Command.SET_MYSQL_SERVER_USER_PASSWORD, args, 4, err)) {
         connector.getSimpleAOClient().setMySQLServerUserPassword(
-          AOSH.parseMySQLUserName(args[1], "username"),
-          AOSH.parseMySQLServerName(args[2], "mysql_server"),
-          args[3],
-          args[4]
+            AOSH.parseMySQLUserName(args[1], "username"),
+            AOSH.parseMySQLServerName(args[2], "mysql_server"),
+            args[3],
+            args[4]
         );
       }
       return true;

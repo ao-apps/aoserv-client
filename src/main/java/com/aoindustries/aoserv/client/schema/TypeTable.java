@@ -62,9 +62,9 @@ public final class TypeTable extends GlobalTableIntegerKey<Type> {
       return null;
     }
     if (pkey instanceof Integer) {
-      return get(((Integer)pkey).intValue());
+      return get(((Integer) pkey).intValue());
     } else if (pkey instanceof String) {
-      return get((String)pkey);
+      return get((String) pkey);
     } else {
       throw new IllegalArgumentException("Must be an Integer or a String");
     }

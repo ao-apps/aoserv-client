@@ -74,7 +74,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
    * @author  AO Industries, Inc.
    */
   public static final class Name extends com.aoindustries.aoserv.client.linux.User.Name implements
-    FastExternalizable
+      FastExternalizable
   {
 
     /**
@@ -100,8 +100,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
       // The first character must be [a-z] or [0-9]
       char ch = id.charAt(0);
       if (
-        (ch < 'a' || ch > 'z')
-        && (ch<'0' || ch>'9')
+          (ch < 'a' || ch > 'z')
+              && (ch < '0' || ch > '9')
       ) {
         return new InvalidResult(RESOURCES, "Name.validate.startAtoZor0to9");
       }
@@ -110,9 +110,9 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
       for (int c = 1; c < len; c++) {
         ch = id.charAt(c);
         if (
-          (ch<'a' || ch>'z')
-          && (ch<'0' || ch>'9')
-          && ch != '_'
+            (ch < 'a' || ch > 'z')
+                && (ch < '0' || ch > '9')
+                && ch != '_'
         ) {
           return new InvalidResult(RESOURCES, "Name.validate.illegalCharacter");
         }
@@ -182,7 +182,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
      *
      * @see  FastExternalizable
      */
-    @Deprecated/* Java 9: (forRemoval = false) */
+    @Deprecated // Java 9: (forRemoval = false)
     public Name() {
       // Do nothing
     }
@@ -194,7 +194,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
     // </editor-fold>
   }
 
-  static final int COLUMN_USERNAME=0;
+  static final int COLUMN_USERNAME = 0;
   static final String COLUMN_USERNAME_name = "username";
 
   /**
@@ -209,29 +209,29 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
    * The username of the PostgreSQL special users.
    */
   public static final Name
-    /** Super user */
-    POSTGRES,
-    /** Default roles, PostgreSQL 10+ - https://www.postgresql.org/docs/10/default-roles.html */
-    PG_MONITOR,
-    PG_READ_ALL_SETTINGS,
-    PG_READ_ALL_STATS,
-    PG_SIGNAL_BACKEND,
-    PG_STAT_SCAN_TABLES,
-    /** Default roles, PostgreSQL 11+ - https://www.postgresql.org/docs/11/default-roles.html */
-    PG_EXECUTE_SERVER_PROGRAM,
-    PG_READ_SERVER_FILES,
-    PG_WRITE_SERVER_FILES,
-    // Predefined roles, PostgreSQL 14+ - https://www.postgresql.org/docs/14/predefined-roles.html
-    PG_READ_ALL_DATA,
-    PG_WRITE_ALL_DATA,
-    PG_DATABASE_OWNER,
-    /** Monitoring */
-    POSTGRESMON,
-    /** AO Admin */
-    AOADMIN,
-    /** AO Platform Components */
-    AOSERV_APP,
-    AOWEB_APP;
+      // Super user
+      POSTGRES,
+      // Default roles, PostgreSQL 10+ - https://www.postgresql.org/docs/10/default-roles.html
+      PG_MONITOR,
+      PG_READ_ALL_SETTINGS,
+      PG_READ_ALL_STATS,
+      PG_SIGNAL_BACKEND,
+      PG_STAT_SCAN_TABLES,
+      // Default roles, PostgreSQL 11+ - https://www.postgresql.org/docs/11/default-roles.html
+      PG_EXECUTE_SERVER_PROGRAM,
+      PG_READ_SERVER_FILES,
+      PG_WRITE_SERVER_FILES,
+      // Predefined roles, PostgreSQL 14+ - https://www.postgresql.org/docs/14/predefined-roles.html
+      PG_READ_ALL_DATA,
+      PG_WRITE_ALL_DATA,
+      PG_DATABASE_OWNER,
+      // Monitoring
+      POSTGRESMON,
+      // AO Admin
+      AOADMIN,
+      // AO Platform Components
+      AOSERV_APP,
+      AOWEB_APP;
 
   static {
     try {
@@ -268,44 +268,44 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
    */
   public static boolean isSpecial(Name username) {
     return
-      // Super user
-      username.equals(POSTGRES)
-      // Default roles, PostgreSQL 10+ - https://www.postgresql.org/docs/10/default-roles.html
-      || username.equals(PG_MONITOR)
-      || username.equals(PG_READ_ALL_SETTINGS)
-      || username.equals(PG_READ_ALL_STATS)
-      || username.equals(PG_SIGNAL_BACKEND)
-      || username.equals(PG_STAT_SCAN_TABLES)
-      // Default roles, PostgreSQL 11+ - https://www.postgresql.org/docs/11/default-roles.html
-      || username.equals(PG_EXECUTE_SERVER_PROGRAM)
-      || username.equals(PG_READ_SERVER_FILES)
-      || username.equals(PG_WRITE_SERVER_FILES)
-      // Predefined roles, PostgreSQL 14+ - https://www.postgresql.org/docs/14/predefined-roles.html
-      || username.equals(PG_READ_ALL_DATA)
-      || username.equals(PG_WRITE_ALL_DATA)
-      || username.equals(PG_DATABASE_OWNER)
-      // Monitoring
-      || username.equals(POSTGRESMON)
-      // AO Admin
-      || username.equals(AOADMIN)
-      // AO Platform Components
-      || username.equals(AOSERV_APP)
-      || username.equals(AOWEB_APP);
+        // Super user
+        username.equals(POSTGRES)
+            // Default roles, PostgreSQL 10+ - https://www.postgresql.org/docs/10/default-roles.html
+            || username.equals(PG_MONITOR)
+            || username.equals(PG_READ_ALL_SETTINGS)
+            || username.equals(PG_READ_ALL_STATS)
+            || username.equals(PG_SIGNAL_BACKEND)
+            || username.equals(PG_STAT_SCAN_TABLES)
+            // Default roles, PostgreSQL 11+ - https://www.postgresql.org/docs/11/default-roles.html
+            || username.equals(PG_EXECUTE_SERVER_PROGRAM)
+            || username.equals(PG_READ_SERVER_FILES)
+            || username.equals(PG_WRITE_SERVER_FILES)
+            // Predefined roles, PostgreSQL 14+ - https://www.postgresql.org/docs/14/predefined-roles.html
+            || username.equals(PG_READ_ALL_DATA)
+            || username.equals(PG_WRITE_ALL_DATA)
+            || username.equals(PG_DATABASE_OWNER)
+            // Monitoring
+            || username.equals(POSTGRESMON)
+            // AO Admin
+            || username.equals(AOADMIN)
+            // AO Platform Components
+            || username.equals(AOSERV_APP)
+            || username.equals(AOWEB_APP);
   }
 
   /**
    * A password may be set to null, which means that the account will
    * be disabled.
    */
-  public static final String NO_PASSWORD=null;
+  public static final String NO_PASSWORD = null;
 
-  public static final String NO_PASSWORD_DB_VALUE="";
+  public static final String NO_PASSWORD_DB_VALUE = "";
 
   private boolean
-    createdb,
-    trace,
-    superPriv,
-    catupd
+      createdb,
+      trace,
+      superPriv,
+      catupd
   ;
   private int disable_log;
 
@@ -315,7 +315,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public User() {
     // Do nothing
   }
@@ -440,9 +440,9 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
     if (disable_log == -1) {
       return null;
     }
-    DisableLog obj=table.getConnector().getAccount().getDisableLog().get(disable_log);
+    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disable_log);
     if (obj == null) {
-      throw new SQLException("Unable to find DisableLog: "+disable_log);
+      throw new SQLException("Unable to find DisableLog: " + disable_log);
     }
     return obj;
   }
@@ -465,9 +465,9 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
   }
 
   public com.aoindustries.aoserv.client.account.User getUsername() throws SQLException, IOException {
-    com.aoindustries.aoserv.client.account.User username=table.getConnector().getAccount().getUser().get(this.pkey);
+    com.aoindustries.aoserv.client.account.User username = table.getConnector().getAccount().getUser().get(this.pkey);
     if (username == null) {
-      throw new SQLException("Unable to find Username: "+this.pkey);
+      throw new SQLException("Unable to find Username: " + this.pkey);
     }
     return username;
   }
@@ -480,13 +480,13 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
   public void init(ResultSet result) throws SQLException {
     try {
       pkey = Name.valueOf(result.getString(1));
-      createdb=result.getBoolean(2);
-      trace=result.getBoolean(3);
-      superPriv=result.getBoolean(4);
-      catupd=result.getBoolean(5);
-      disable_log=result.getInt(6);
+      createdb = result.getBoolean(2);
+      trace = result.getBoolean(3);
+      superPriv = result.getBoolean(4);
+      catupd = result.getBoolean(5);
+      disable_log = result.getInt(6);
       if (result.wasNull()) {
-        disable_log=-1;
+        disable_log = -1;
       }
     } catch (ValidationException e) {
       throw new SQLException(e);
@@ -501,11 +501,11 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
       pkey = Name.valueOf(in.readUTF()).intern();
-      createdb=in.readBoolean();
-      trace=in.readBoolean();
-      superPriv=in.readBoolean();
-      catupd=in.readBoolean();
-      disable_log=in.readCompressedInt();
+      createdb = in.readBoolean();
+      trace = in.readBoolean();
+      superPriv = in.readBoolean();
+      catupd = in.readBoolean();
+      disable_log = in.readCompressedInt();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -513,13 +513,13 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
 
   @Override
   public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws SQLException, IOException {
-    List<CannotRemoveReason<?>> reasons=new ArrayList<>();
+    List<CannotRemoveReason<?>> reasons = new ArrayList<>();
     if (isSpecial()) {
       reasons.add(
-        new CannotRemoveReason<>(
-          "Not allowed to remove a special PostgreSQL user: " + pkey,
-          this
-        )
+          new CannotRemoveReason<>(
+              "Not allowed to remove a special PostgreSQL user: " + pkey,
+              this
+          )
       );
     }
     for (UserServer psu : getPostgresServerUsers()) {
@@ -534,10 +534,10 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
       throw new SQLException("Refusing to remove special PostgreSQL user: " + this);
     }
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.REMOVE,
-      Table.TableID.POSTGRES_USERS,
-      pkey
+        true,
+        AoservProtocol.CommandID.REMOVE,
+        Table.TableID.POSTGRES_USERS,
+        pkey
     );
   }
 

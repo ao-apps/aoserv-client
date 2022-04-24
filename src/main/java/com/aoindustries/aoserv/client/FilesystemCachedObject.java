@@ -46,7 +46,7 @@ public abstract class FilesystemCachedObject<K, T extends FilesystemCachedObject
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   protected FilesystemCachedObject() {
     // Do nothing
   }
@@ -71,7 +71,7 @@ public abstract class FilesystemCachedObject<K, T extends FilesystemCachedObject
     if (this.table != null) {
       throw new IllegalStateException("table already set");
     }
-    this.table=table;
+    this.table = table;
   }
 
   @Override

@@ -54,8 +54,8 @@ import java.util.ArrayList;
 public final class Address extends CachedObjectIntegerKey<Address> implements Removable {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_DOMAIN=2
+      COLUMN_PKEY = 0,
+      COLUMN_DOMAIN = 2
   ;
   static final String COLUMN_DOMAIN_name = "domain";
   static final String COLUMN_ADDRESS_name = "address";
@@ -69,7 +69,7 @@ public final class Address extends CachedObjectIntegerKey<Address> implements Re
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Address() {
     // Do nothing
   }
@@ -175,19 +175,19 @@ public final class Address extends CachedObjectIntegerKey<Address> implements Re
   public boolean isUsed() throws IOException, SQLException {
     // Anything using this address must be removable
     return
-      getBlackholeEmailAddress() != null
-      || !getEmailForwardings().isEmpty()
-      || !getEmailListAddresses().isEmpty()
-      || !getEmailPipeAddresses().isEmpty()
-      || !getLinuxAccAddresses().isEmpty()
+        getBlackholeEmailAddress() != null
+            || !getEmailForwardings().isEmpty()
+            || !getEmailListAddresses().isEmpty()
+            || !getEmailPipeAddresses().isEmpty()
+            || !getLinuxAccAddresses().isEmpty()
     ;
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readCompressedInt();
-    address=in.readUTF();
-    domain=in.readCompressedInt();
+    pkey = in.readCompressedInt();
+    address = in.readUTF();
+    domain = in.readCompressedInt();
   }
 
   @Override
@@ -195,7 +195,7 @@ public final class Address extends CachedObjectIntegerKey<Address> implements Re
     java.util.List<CannotRemoveReason<?>> reasons = new ArrayList<>();
 
     // Everything using this address must be removable
-    BlackholeAddress bea=getBlackholeEmailAddress();
+    BlackholeAddress bea = getBlackholeEmailAddress();
     if (bea != null) {
       reasons.addAll(bea.getCannotRemoveReasons());
     }
@@ -219,23 +219,23 @@ public final class Address extends CachedObjectIntegerKey<Address> implements Re
     // Cannot be used as any part of a majordomo list
     for (MajordomoList ml : table.getConnector().getEmail().getMajordomoList().getRows()) {
       if (
-        ml.getOwnerListAddress_id() == pkey
-        || ml.getListOwnerAddress_id() == pkey
-        || ml.getListApprovalAddress_id() == pkey
+          ml.getOwnerListAddress_id() == pkey
+              || ml.getListOwnerAddress_id() == pkey
+              || ml.getListApprovalAddress_id() == pkey
       ) {
-        Domain ed=ml.getMajordomoServer().getDomain();
-        reasons.add(new CannotRemoveReason<>("Used by Majordomo list "+ml.getName()+'@'+ed.getDomain()+" on "+ed.getLinuxServer().getHostname(), ml));
+        Domain ed = ml.getMajordomoServer().getDomain();
+        reasons.add(new CannotRemoveReason<>("Used by Majordomo list " + ml.getName() + '@' + ed.getDomain() + " on " + ed.getLinuxServer().getHostname(), ml));
       }
     }
 
     // Cannot be used as any part of a majordomo server
     for (MajordomoServer ms : table.getConnector().getEmail().getMajordomoServer().getRows()) {
       if (
-        ms.getOwnerMajordomoAddress_id() == pkey
-        || ms.getMajordomoOwnerAddress_id() == pkey
+          ms.getOwnerMajordomoAddress_id() == pkey
+              || ms.getMajordomoOwnerAddress_id() == pkey
       ) {
-        Domain ed=ms.getDomain();
-        reasons.add(new CannotRemoveReason<>("Used by Majordomo server "+ed.getDomain()+" on "+ed.getLinuxServer().getHostname(), ms));
+        Domain ed = ms.getDomain();
+        reasons.add(new CannotRemoveReason<>("Used by Majordomo server " + ed.getDomain() + " on " + ed.getLinuxServer().getHostname(), ms));
       }
     }
 
@@ -251,16 +251,16 @@ public final class Address extends CachedObjectIntegerKey<Address> implements Re
   @Override
   public void remove() throws IOException, SQLException {
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.REMOVE,
-      Table.TableID.EMAIL_ADDRESSES,
-      pkey
+        true,
+        AoservProtocol.CommandID.REMOVE,
+        Table.TableID.EMAIL_ADDRESSES,
+        pkey
     );
   }
 
   @Override
   public String toStringImpl() throws SQLException, IOException {
-    return address+'@'+getDomain().getDomain().toString();
+    return address + '@' + getDomain().getDomain().toString();
   }
 
   @Override

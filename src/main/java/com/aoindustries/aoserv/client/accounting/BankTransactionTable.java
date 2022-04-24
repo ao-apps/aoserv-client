@@ -45,9 +45,10 @@ public final class BankTransactionTable extends AOServTable<Integer, BankTransac
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(BankTransaction.COLUMN_TIME_name+"::"+Type.DATE_name, ASCENDING),
-    new OrderBy(BankTransaction.COLUMN_ID_name, ASCENDING)
+      new OrderBy(BankTransaction.COLUMN_TIME_name + "::" + Type.DATE_name, ASCENDING),
+      new OrderBy(BankTransaction.COLUMN_ID_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -63,7 +64,7 @@ public final class BankTransactionTable extends AOServTable<Integer, BankTransac
     if (transid == null) {
       return null;
     }
-    return get(((Integer)transid).intValue());
+    return get(((Integer) transid).intValue());
   }
 
   /**

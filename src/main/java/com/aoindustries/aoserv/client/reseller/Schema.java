@@ -35,16 +35,28 @@ import java.util.List;
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
   private final BrandTable Brand;
-  public BrandTable getBrand() {return Brand;}
+
+  public BrandTable getBrand() {
+    return Brand;
+  }
 
   private final BrandCategoryTable BrandCategory;
-  public BrandCategoryTable getBrandCategory() {return BrandCategory;}
+
+  public BrandCategoryTable getBrandCategory() {
+    return BrandCategory;
+  }
 
   private final CategoryTable Category;
-  public CategoryTable getCategory() {return Category;}
+
+  public CategoryTable getCategory() {
+    return Category;
+  }
 
   private final ResellerTable Reseller;
-  public ResellerTable getReseller() {return Reseller;}
+
+  public ResellerTable getReseller() {
+    return Reseller;
+  }
 
   private final List<? extends AOServTable<?, ?>> tables;
 

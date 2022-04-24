@@ -59,11 +59,11 @@ import java.util.List;
 public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> implements Disablable, Removable {
 
   static final int
-    COLUMN_PKEY = 0,
-    COLUMN_AO_SERVER = 2,
-    COLUMN_LINUX_SERVER_ACCOUNT = 4,
-    COLUMN_TOMCAT4_WORKER = 7,
-    COLUMN_TOMCAT4_SHUTDOWN_PORT = 8
+      COLUMN_PKEY = 0,
+      COLUMN_AO_SERVER = 2,
+      COLUMN_LINUX_SERVER_ACCOUNT = 4,
+      COLUMN_TOMCAT4_WORKER = 7,
+      COLUMN_TOMCAT4_SHUTDOWN_PORT = 8
   ;
   static final String COLUMN_NAME_name = "name";
   static final String COLUMN_AO_SERVER_name = "ao_server";
@@ -102,7 +102,7 @@ public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public SharedTomcat() {
     // Do nothing
   }
@@ -114,25 +114,25 @@ public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
 
   @Override
   public boolean canEnable() throws SQLException, IOException {
-    DisableLog dl=getDisableLog();
+    DisableLog dl = getDisableLog();
     if (dl == null) {
       return false;
     } else {
       return
-        dl.canEnable()
-        && !getLinuxServerGroup().getLinuxGroup().getPackage().isDisabled()
-        && !getLinuxServerAccount().isDisabled()
+          dl.canEnable()
+              && !getLinuxServerGroup().getLinuxGroup().getPackage().isDisabled()
+              && !getLinuxServerAccount().isDisabled()
       ;
     }
   }
 
   @Override
   public List<CannotRemoveReason<SharedTomcatSite>> getCannotRemoveReasons() throws SQLException, IOException {
-    List<CannotRemoveReason<SharedTomcatSite>> reasons=new ArrayList<>();
+    List<CannotRemoveReason<SharedTomcatSite>> reasons = new ArrayList<>();
 
     for (SharedTomcatSite htss : getHttpdTomcatSharedSites()) {
-      com.aoindustries.aoserv.client.web.Site hs=htss.getHttpdTomcatSite().getHttpdSite();
-      reasons.add(new CannotRemoveReason<>("Used by Multi-Site Tomcat website "+hs.getInstallDirectory()+" on "+hs.getLinuxServer().getHostname(), htss));
+      com.aoindustries.aoserv.client.web.Site hs = htss.getHttpdTomcatSite().getHttpdSite();
+      reasons.add(new CannotRemoveReason<>("Used by Multi-Site Tomcat website " + hs.getInstallDirectory() + " on " + hs.getLinuxServer().getHostname(), htss));
     }
 
     return reasons;
@@ -151,8 +151,8 @@ public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
   public PosixPath getInstallDirectory() throws SQLException, IOException {
     try {
       return PosixPath.valueOf(
-        getLinuxServer().getHost().getOperatingSystemVersion().getHttpdSharedTomcatsDirectory().toString()
-        + '/' + name
+          getLinuxServer().getHost().getOperatingSystemVersion().getHttpdSharedTomcatsDirectory().toString()
+              + '/' + name
       );
     } catch (ValidationException e) {
       throw new SQLException(e);
@@ -168,9 +168,9 @@ public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
       case 3: return version;
       case COLUMN_LINUX_SERVER_ACCOUNT: return linux_server_account;
       case 5: return linux_server_group;
-      case 6: return disable_log == -1?null:disable_log;
-      case COLUMN_TOMCAT4_WORKER: return tomcat4_worker == -1?null:tomcat4_worker;
-      case COLUMN_TOMCAT4_SHUTDOWN_PORT: return tomcat4_shutdown_port == -1?null:tomcat4_shutdown_port;
+      case 6: return disable_log == -1 ? null : disable_log;
+      case COLUMN_TOMCAT4_WORKER: return tomcat4_worker == -1 ? null : tomcat4_worker;
+      case COLUMN_TOMCAT4_SHUTDOWN_PORT: return tomcat4_shutdown_port == -1 ? null : tomcat4_shutdown_port;
       case 9: return tomcat4_shutdown_key;
       case 10: return isManual;
       case 11: return maxPostSize == -1 ? null : maxPostSize;
@@ -191,9 +191,9 @@ public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
     if (disable_log == -1) {
       return null;
     }
-    DisableLog obj=table.getConnector().getAccount().getDisableLog().get(disable_log);
+    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disable_log);
     if (obj == null) {
-      throw new SQLException("Unable to find DisableLog: "+disable_log);
+      throw new SQLException("Unable to find DisableLog: " + disable_log);
     }
     return obj;
   }
@@ -203,15 +203,15 @@ public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
   }
 
   public Version getHttpdTomcatVersion() throws SQLException, IOException {
-    Version obj=table.getConnector().getWeb_tomcat().getVersion().get(version);
+    Version obj = table.getConnector().getWeb_tomcat().getVersion().get(version);
     if (obj == null) {
-      throw new SQLException("Unable to find HttpdTomcatVersion: "+version);
+      throw new SQLException("Unable to find HttpdTomcatVersion: " + version);
     }
     if (
-      obj.getTechnologyVersion(table.getConnector()).getOperatingSystemVersion(table.getConnector()).getPkey()
-      != getLinuxServer().getHost().getOperatingSystemVersion_id()
+        obj.getTechnologyVersion(table.getConnector()).getOperatingSystemVersion(table.getConnector()).getPkey()
+            != getLinuxServer().getHost().getOperatingSystemVersion_id()
     ) {
-      throw new SQLException("resource/operating system version mismatch on HttpdSharedTomcat: #"+pkey);
+      throw new SQLException("resource/operating system version mismatch on HttpdSharedTomcat: #" + pkey);
     }
     return obj;
   }
@@ -225,9 +225,9 @@ public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
   }
 
   public UserServer getLinuxServerAccount() throws SQLException, IOException {
-    UserServer obj=table.getConnector().getLinux().getUserServer().get(linux_server_account);
+    UserServer obj = table.getConnector().getLinux().getUserServer().get(linux_server_account);
     if (obj == null) {
-      throw new SQLException("Unable to find LinuxServerAccount: "+linux_server_account);
+      throw new SQLException("Unable to find LinuxServerAccount: " + linux_server_account);
     }
     return obj;
   }
@@ -237,9 +237,9 @@ public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
   }
 
   public GroupServer getLinuxServerGroup() throws SQLException, IOException {
-    GroupServer obj=table.getConnector().getLinux().getGroupServer().get(linux_server_group);
+    GroupServer obj = table.getConnector().getLinux().getGroupServer().get(linux_server_group);
     if (obj == null) {
-      throw new SQLException("Unable to find LinuxServerGroup: "+linux_server_group);
+      throw new SQLException("Unable to find LinuxServerGroup: " + linux_server_group);
     }
     return obj;
   }
@@ -249,9 +249,9 @@ public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
   }
 
   public Server getLinuxServer() throws SQLException, IOException {
-    Server obj=table.getConnector().getLinux().getServer().get(ao_server);
+    Server obj = table.getConnector().getLinux().getServer().get(ao_server);
     if (obj == null) {
-      throw new SQLException("Unable to find linux.Server: "+ao_server);
+      throw new SQLException("Unable to find linux.Server: " + ao_server);
     }
     return obj;
   }
@@ -265,9 +265,9 @@ public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
     if (tomcat4_worker == -1) {
       return null;
     }
-    Worker hw=table.getConnector().getWeb_tomcat().getWorker().get(tomcat4_worker);
+    Worker hw = table.getConnector().getWeb_tomcat().getWorker().get(tomcat4_worker);
     if (hw == null) {
-      throw new SQLException("Unable to find HttpdWorker: "+tomcat4_worker);
+      throw new SQLException("Unable to find HttpdWorker: " + tomcat4_worker);
     }
     return hw;
   }
@@ -280,9 +280,9 @@ public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
     if (tomcat4_shutdown_port == -1) {
       return null;
     }
-    Bind nb=table.getConnector().getNet().getBind().get(tomcat4_shutdown_port);
+    Bind nb = table.getConnector().getNet().getBind().get(tomcat4_shutdown_port);
     if (nb == null) {
-      throw new SQLException("Unable to find NetBind: "+tomcat4_shutdown_port);
+      throw new SQLException("Unable to find NetBind: " + tomcat4_shutdown_port);
     }
     return nb;
   }
@@ -290,26 +290,26 @@ public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
   @Override
   public void init(ResultSet result) throws SQLException {
     int pos = 1;
-    pkey=result.getInt(pos++);
-    name=result.getString(pos++);
-    ao_server=result.getInt(pos++);
-    version=result.getInt(pos++);
-    linux_server_account=result.getInt(pos++);
-    linux_server_group=result.getInt(pos++);
-    disable_log=result.getInt(pos++);
+    pkey = result.getInt(pos++);
+    name = result.getString(pos++);
+    ao_server = result.getInt(pos++);
+    version = result.getInt(pos++);
+    linux_server_account = result.getInt(pos++);
+    linux_server_group = result.getInt(pos++);
+    disable_log = result.getInt(pos++);
     if (result.wasNull()) {
-      disable_log=-1;
+      disable_log = -1;
     }
-    tomcat4_worker=result.getInt(pos++);
+    tomcat4_worker = result.getInt(pos++);
     if (result.wasNull()) {
-      tomcat4_worker=-1;
+      tomcat4_worker = -1;
     }
-    tomcat4_shutdown_port=result.getInt(pos++);
+    tomcat4_shutdown_port = result.getInt(pos++);
     if (result.wasNull()) {
-      tomcat4_shutdown_port=-1;
+      tomcat4_shutdown_port = -1;
     }
-    tomcat4_shutdown_key=result.getString(pos++);
-    isManual=result.getBoolean(pos++);
+    tomcat4_shutdown_key = result.getString(pos++);
+    isManual = result.getBoolean(pos++);
     maxPostSize = result.getInt(pos++);
     if (result.wasNull()) {
       maxPostSize = -1;
@@ -336,33 +336,33 @@ public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
 
   public void setMaxPostSize(final int maxPostSize) throws IOException, SQLException {
     table.getConnector().requestUpdate(
-      true,
-      AoservProtocol.CommandID.SET_HTTPD_SHARED_TOMCAT_MAX_POST_SIZE,
-      new AOServConnector.UpdateRequest() {
-        private IntList invalidateList;
+        true,
+        AoservProtocol.CommandID.SET_HTTPD_SHARED_TOMCAT_MAX_POST_SIZE,
+        new AOServConnector.UpdateRequest() {
+          private IntList invalidateList;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(pkey);
-          out.writeInt(maxPostSize);
-        }
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(pkey);
+            out.writeInt(maxPostSize);
+          }
 
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            invalidateList=AOServConnector.readInvalidateList(in);
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              invalidateList = AOServConnector.readInvalidateList(in);
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
+            }
+          }
+
+          @Override
+          public void afterRelease() {
+            table.getConnector().tablesUpdated(invalidateList);
           }
         }
-
-        @Override
-        public void afterRelease() {
-          table.getConnector().tablesUpdated(invalidateList);
-        }
-      }
     );
   }
 
@@ -414,10 +414,10 @@ public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
     // These are the other files/directories that may exist under /www.  To avoid
     // potential conflicts, these may not be used as site names.
     if (
-      // Other filesystem patterns
-         "lost+found".equals(name)
-      || "aquota.group".equals(name)
-      || "aquota.user".equals(name)
+        // Other filesystem patterns
+        "lost+found".equals(name)
+            || "aquota.group".equals(name)
+            || "aquota.user".equals(name)
     ) {
       return false;
     }
@@ -446,17 +446,17 @@ public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
    */
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readCompressedInt();
-    name=in.readUTF();
-    ao_server=in.readCompressedInt();
-    version=in.readCompressedInt();
-    linux_server_account=in.readCompressedInt();
-    linux_server_group=in.readCompressedInt();
-    disable_log=in.readCompressedInt();
-    tomcat4_worker=in.readCompressedInt();
-    tomcat4_shutdown_port=in.readCompressedInt();
-    tomcat4_shutdown_key=in.readNullUTF();
-    isManual=in.readBoolean();
+    pkey = in.readCompressedInt();
+    name = in.readUTF();
+    ao_server = in.readCompressedInt();
+    version = in.readCompressedInt();
+    linux_server_account = in.readCompressedInt();
+    linux_server_group = in.readCompressedInt();
+    disable_log = in.readCompressedInt();
+    tomcat4_worker = in.readCompressedInt();
+    tomcat4_shutdown_port = in.readCompressedInt();
+    tomcat4_shutdown_key = in.readNullUTF();
+    isManual = in.readBoolean();
     maxPostSize = in.readInt();
     unpackWARs = in.readBoolean();
     autoDeploy = in.readBoolean();
@@ -470,7 +470,7 @@ public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
 
   @Override
   public String toStringImpl() throws SQLException, IOException {
-    return name+" on "+getLinuxServer().getHostname();
+    return name + " on " + getLinuxServer().getHostname();
   }
 
   @Override

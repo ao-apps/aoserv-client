@@ -55,12 +55,12 @@ public final class Status extends GlobalObjectStringKey<Status> implements Compa
    * The different ticket statuses.
    */
   public static final String
-    JUNK="junk",
-    DELETED="deleted",
-    CLOSED="closed",
-    BOUNCED="bounced",
-    HOLD="hold",
-    OPEN="open"
+      JUNK = "junk",
+      DELETED = "deleted",
+      CLOSED = "closed",
+      BOUNCED = "bounced",
+      HOLD = "hold",
+      OPEN = "open"
   ;
 
   private short sort_order;
@@ -71,7 +71,7 @@ public final class Status extends GlobalObjectStringKey<Status> implements Compa
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Status() {
     // Do nothing
   }
@@ -139,10 +139,10 @@ public final class Status extends GlobalObjectStringKey<Status> implements Compa
   public int compareTo(Status o) {
     short sortOrder1 = sort_order;
     short sortOrder2 = o.sort_order;
-    if (sortOrder1<sortOrder2) {
+    if (sortOrder1 < sortOrder2) {
       return -1;
     }
-    if (sortOrder1>sortOrder2) {
+    if (sortOrder1 > sortOrder2) {
       return 1;
     }
     return 0;

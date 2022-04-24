@@ -41,7 +41,7 @@ public abstract class CachedObjectIntegerKey<V extends CachedObjectIntegerKey<V>
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   protected CachedObjectIntegerKey() {
     // Do nothing
   }
@@ -49,9 +49,9 @@ public abstract class CachedObjectIntegerKey<V extends CachedObjectIntegerKey<V>
   @Override
   public boolean equals(Object obj) {
     return
-      obj != null
-      && obj.getClass() == getClass()
-      && ((CachedObjectIntegerKey)obj).pkey == pkey
+        obj != null
+            && obj.getClass() == getClass()
+            && ((CachedObjectIntegerKey) obj).pkey == pkey
     ;
   }
 

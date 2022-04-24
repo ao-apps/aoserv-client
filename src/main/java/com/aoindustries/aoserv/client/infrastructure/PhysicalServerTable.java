@@ -43,9 +43,10 @@ public final class PhysicalServerTable extends CachedTableIntegerKey<PhysicalSer
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(PhysicalServer.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(PhysicalServer.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(PhysicalServer.COLUMN_SERVER_name + '.' + Host.COLUMN_PACKAGE_name + '.' + Package.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(PhysicalServer.COLUMN_SERVER_name + '.' + Host.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

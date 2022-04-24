@@ -52,8 +52,8 @@ import java.util.Objects;
  */
 public final class FileReplication extends CachedObjectIntegerKey<FileReplication> implements BitRateProvider {
 
-  static final int COLUMN_PKEY=0;
-  static final int COLUMN_SERVER=1;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_SERVER = 1;
   static final String COLUMN_SERVER_name = "server";
   static final String COLUMN_BACKUP_PARTITION_name = "backup_partition";
 
@@ -73,7 +73,7 @@ public final class FileReplication extends CachedObjectIntegerKey<FileReplicatio
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public FileReplication() {
     // Do nothing
   }
@@ -118,9 +118,9 @@ public final class FileReplication extends CachedObjectIntegerKey<FileReplicatio
   }
 
   public Host getHost() throws SQLException, IOException {
-    Host se=table.getConnector().getNet().getHost().get(server);
+    Host se = table.getConnector().getNet().getHost().get(server);
     if (se == null) {
-      throw new SQLException("Unable to find Host: "+server);
+      throw new SQLException("Unable to find Host: " + server);
     }
     return se;
   }
@@ -150,9 +150,9 @@ public final class FileReplication extends CachedObjectIntegerKey<FileReplicatio
   }
 
   public BackupRetention getRetention() throws SQLException, IOException {
-    BackupRetention br=table.getConnector().getBackup().getBackupRetention().get(retention);
+    BackupRetention br = table.getConnector().getBackup().getBackupRetention().get(retention);
     if (br == null) {
-      throw new SQLException("Unable to find BackupRetention: "+retention);
+      throw new SQLException("Unable to find BackupRetention: " + retention);
     }
     return br;
   }
@@ -201,16 +201,16 @@ public final class FileReplication extends CachedObjectIntegerKey<FileReplicatio
   public void init(ResultSet result) throws SQLException {
     try {
       int pos = 1;
-      pkey=result.getInt(pos++);
-      server=result.getInt(pos++);
-      backup_partition=result.getInt(pos++);
+      pkey = result.getInt(pos++);
+      server = result.getInt(pos++);
+      backup_partition = result.getInt(pos++);
       long maxBitRateLong = result.getLong(pos++);
       max_bit_rate = result.wasNull() ? null : maxBitRateLong;
-      use_compression=result.getBoolean(pos++);
-      retention=result.getShort(pos++);
-      connect_address=HostAddress.valueOf(result.getString(pos++));
-      connect_from=InetAddress.valueOf(result.getString(pos++));
-      enabled=result.getBoolean(pos++);
+      use_compression = result.getBoolean(pos++);
+      retention = result.getShort(pos++);
+      connect_address = HostAddress.valueOf(result.getString(pos++));
+      connect_from = InetAddress.valueOf(result.getString(pos++));
+      enabled = result.getBoolean(pos++);
       {
         int i = result.getInt(pos++);
         quota_gid = result.wasNull() ? null : LinuxId.valueOf(i);
@@ -223,16 +223,16 @@ public final class FileReplication extends CachedObjectIntegerKey<FileReplicatio
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
-      pkey=in.readCompressedInt();
-      server=in.readCompressedInt();
-      backup_partition=in.readCompressedInt();
+      pkey = in.readCompressedInt();
+      server = in.readCompressedInt();
+      backup_partition = in.readCompressedInt();
       long maxBitRateLong = in.readLong();
       max_bit_rate = maxBitRateLong == -1 ? null : maxBitRateLong;
-      use_compression=in.readBoolean();
-      retention=in.readShort();
-      connect_address=InternUtils.intern(HostAddress.valueOf(in.readNullUTF()));
-      connect_from=InternUtils.intern(InetAddress.valueOf(in.readNullUTF()));
-      enabled=in.readBoolean();
+      use_compression = in.readBoolean();
+      retention = in.readShort();
+      connect_address = InternUtils.intern(HostAddress.valueOf(in.readNullUTF()));
+      connect_from = InternUtils.intern(InetAddress.valueOf(in.readNullUTF()));
+      enabled = in.readBoolean();
       {
         int i = in.readCompressedInt();
         quota_gid = (i == -1) ? null : LinuxId.valueOf(i);
@@ -244,7 +244,7 @@ public final class FileReplication extends CachedObjectIntegerKey<FileReplicatio
 
   @Override
   public String toStringImpl() throws SQLException, IOException {
-    return getHost().toStringImpl()+"->"+getBackupPartition().toStringImpl();
+    return getHost().toStringImpl() + "->" + getBackupPartition().toStringImpl();
   }
 
   @Override
@@ -259,15 +259,15 @@ public final class FileReplication extends CachedObjectIntegerKey<FileReplicatio
       out.writeCompressedInt(backup_partition);
     }
     if (
-      protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_105) >= 0
-      && protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_61) <= 0
+        protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_105) >= 0
+            && protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_61) <= 0
     ) {
       int maxBitRateInt;
       if (max_bit_rate == null) {
         maxBitRateInt = -1;
-      } else if (max_bit_rate>Integer.MAX_VALUE) {
+      } else if (max_bit_rate > Integer.MAX_VALUE) {
         maxBitRateInt = Integer.MAX_VALUE;
-      } else if (max_bit_rate<0) {
+      } else if (max_bit_rate < 0) {
         throw new IOException("Illegal bit rate: " + max_bit_rate);
       } else {
         maxBitRateInt = max_bit_rate.intValue();
@@ -295,8 +295,8 @@ public final class FileReplication extends CachedObjectIntegerKey<FileReplicatio
       out.writeBoolean(enabled);
     }
     if (
-      protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_17) >= 0
-      && protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30) <= 0
+        protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_17) >= 0
+            && protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30) <= 0
     ) {
       out.writeUTF("/var/backup"); // to_path (hard-coded /var/backup like found on xen2.mob.aoindustries.com)
       out.writeBoolean(false); // chunk_always
@@ -328,45 +328,45 @@ public final class FileReplication extends CachedObjectIntegerKey<FileReplicatio
 
   public Server.DaemonAccess requestReplicationDaemonAccess() throws IOException, SQLException {
     return table.getConnector().requestResult(
-      true,
-      AoservProtocol.CommandID.REQUEST_REPLICATION_DAEMON_ACCESS,
-      // Java 9: new AOServConnector.ResultRequest<>
-      new AOServConnector.ResultRequest<Server.DaemonAccess>() {
-        private Server.DaemonAccess daemonAccess;
+        true,
+        AoservProtocol.CommandID.REQUEST_REPLICATION_DAEMON_ACCESS,
+        // Java 9: new AOServConnector.ResultRequest<>
+        new AOServConnector.ResultRequest<Server.DaemonAccess>() {
+          private Server.DaemonAccess daemonAccess;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(pkey);
-        }
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(pkey);
+          }
 
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            try {
-              daemonAccess = new Server.DaemonAccess(
-                in.readUTF(),
-                HostAddress.valueOf(in.readUTF()),
-                Port.valueOf(
-                  in.readCompressedInt(),
-                  com.aoapps.net.Protocol.TCP
-                ),
-                in.readLong()
-              );
-            } catch (ValidationException e) {
-              throw new IOException(e);
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              try {
+                daemonAccess = new Server.DaemonAccess(
+                    in.readUTF(),
+                    HostAddress.valueOf(in.readUTF()),
+                    Port.valueOf(
+                        in.readCompressedInt(),
+                        com.aoapps.net.Protocol.TCP
+                    ),
+                    in.readLong()
+                );
+              } catch (ValidationException e) {
+                throw new IOException(e);
+              }
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
             }
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+          }
+
+          @Override
+          public Server.DaemonAccess afterRelease() {
+            return daemonAccess;
           }
         }
-
-        @Override
-        public Server.DaemonAccess afterRelease() {
-          return daemonAccess;
-        }
-      }
     );
   }
 
@@ -396,36 +396,36 @@ public final class FileReplication extends CachedObjectIntegerKey<FileReplicatio
 
   public Activity getActivity() throws IOException, SQLException {
     return table.getConnector().requestResult(
-      true,
-      AoservProtocol.CommandID.GET_FAILOVER_FILE_REPLICATION_ACTIVITY,
-      // Java 9: new AOServConnector.ResultRequest<>
-      new AOServConnector.ResultRequest<Activity>() {
-        private Activity activity;
+        true,
+        AoservProtocol.CommandID.GET_FAILOVER_FILE_REPLICATION_ACTIVITY,
+        // Java 9: new AOServConnector.ResultRequest<>
+        new AOServConnector.ResultRequest<Activity>() {
+          private Activity activity;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(pkey);
-        }
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(pkey);
+          }
 
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            activity = new Activity(
-              in.readLong(),
-              in.readUTF()
-            );
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              activity = new Activity(
+                  in.readLong(),
+                  in.readUTF()
+              );
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
+            }
+          }
+
+          @Override
+          public Activity afterRelease() {
+            return activity;
           }
         }
-
-        @Override
-        public Activity afterRelease() {
-          return activity;
-        }
-      }
     );
   }
 }

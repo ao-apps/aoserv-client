@@ -41,8 +41,9 @@ public final class UserTypeTable extends GlobalTableStringKey<UserType> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(UserType.COLUMN_DESCRIPTION_name, ASCENDING)
+      new OrderBy(UserType.COLUMN_DESCRIPTION_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

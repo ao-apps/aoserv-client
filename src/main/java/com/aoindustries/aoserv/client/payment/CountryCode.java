@@ -44,13 +44,13 @@ import java.sql.SQLException;
  */
 public final class CountryCode extends GlobalObjectStringKey<CountryCode> {
 
-  static final int COLUMN_CODE=0;
+  static final int COLUMN_CODE = 0;
   static final String COLUMN_NAME_name = "name";
 
   /**
    * <code>CountryCode</code>s used as constants.
    */
-  public static final String US="US";
+  public static final String US = "US";
 
   private String name;
   private boolean charge_com_supported;
@@ -62,7 +62,7 @@ public final class CountryCode extends GlobalObjectStringKey<CountryCode> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public CountryCode() {
     // Do nothing
   }
@@ -118,8 +118,8 @@ public final class CountryCode extends GlobalObjectStringKey<CountryCode> {
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readUTF().intern();
-    name=in.readUTF();
+    pkey = in.readUTF().intern();
+    name = in.readUTF();
     charge_com_supported = in.readBoolean();
     charge_com_name = in.readNullUTF();
   }

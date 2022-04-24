@@ -49,13 +49,13 @@ import java.util.ResourceBundle;
  */
 // TODO: PostgreSQL type will be "Table.Name" - move to inner class of Table to match, once there is a "Table" class.
 public final class Table_Name implements
-  Comparable<Table_Name>,
-  Serializable,
-  DtoFactory<com.aoindustries.aoserv.client.dto.MySQLTableName>
+    Comparable<Table_Name>,
+    Serializable,
+    DtoFactory<com.aoindustries.aoserv.client.dto.MySQLTableName>
 {
 
   private static final Resources RESOURCES =
-    Resources.getResources(ResourceBundle::getBundle, Table_Name.class.getPackage(), null, "Table.Name.");
+      Resources.getResources(ResourceBundle::getBundle, Table_Name.class.getPackage(), null, "Table.Name.");
 
   private static final long serialVersionUID = -4427431696460618301L;
 
@@ -83,10 +83,10 @@ public final class Table_Name implements
     // The first character must be [a-z], [A-Z], [0-9], or _
     char ch = name.charAt(0);
     if (
-         (ch < 'a' || ch > 'z')
-      && (ch < 'A' || ch > 'Z')
-      && (ch < '0' || ch > '9')
-      && ch != '_'
+        (ch < 'a' || ch > 'z')
+            && (ch < 'A' || ch > 'Z')
+            && (ch < '0' || ch > '9')
+            && ch != '_'
     ) {
       return new InvalidResult(RESOURCES, "validate.badFirstCharacter");
     }
@@ -95,12 +95,12 @@ public final class Table_Name implements
     for (int c = 1; c < len; c++) {
       ch = name.charAt(c);
       if (
-           (ch<'a' || ch>'z')
-        && (ch<'A' || ch>'Z')
-        && (ch<'0' || ch>'9')
-        && ch != '_'
-        && ch != '-'
-        && ch != '$'
+          (ch < 'a' || ch > 'z')
+              && (ch < 'A' || ch > 'Z')
+              && (ch < '0' || ch > '9')
+              && ch != '_'
+              && ch != '-'
+              && ch != '$'
       ) {
         return new InvalidResult(RESOURCES, "validate.illegalCharacter");
       }
@@ -149,8 +149,8 @@ public final class Table_Name implements
   @Override
   public boolean equals(Object obj) {
     return
-      (obj instanceof Table_Name)
-      && name.equals(((Table_Name)obj).name)
+        (obj instanceof Table_Name)
+            && name.equals(((Table_Name) obj).name)
     ;
   }
 

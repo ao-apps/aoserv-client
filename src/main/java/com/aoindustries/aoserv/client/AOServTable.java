@@ -73,7 +73,7 @@ public abstract class AOServTable<K, V extends AOServObject<K, V>> implements It
   private class TableListenersLock {
     @Override
     public String toString() {
-      return "tableListenersLock - "+getTableID();
+      return "tableListenersLock - " + getTableID();
     }
   }
 
@@ -103,15 +103,15 @@ public abstract class AOServTable<K, V extends AOServObject<K, V>> implements It
   class EventLock {
     @Override
     public String toString() {
-      return "EventLock - "+getTableID();
+      return "EventLock - " + getTableID();
     }
   }
-  final EventLock eventLock=new EventLock();
+  final EventLock eventLock = new EventLock();
 
   private final class TableEventThread extends Thread {
 
     private TableEventThread() {
-      setName("TableEventThread #" + getId() + " ("+AOServTable.this.getTableID()+") - "+AOServTable.this.getClass().getName());
+      setName("TableEventThread #" + getId() + " (" + AOServTable.this.getTableID() + ") - " + AOServTable.this.getClass().getName());
       setDaemon(true);
     }
 
@@ -140,7 +140,7 @@ public abstract class AOServTable<K, V extends AOServObject<K, V>> implements It
                 for (TableListenerEntry entry : tableListenersSnapshot) {
                   // skip immediate listeners
                   long delay = entry.delay;
-                  if (delay>0) {
+                  if (delay > 0) {
                     long delayStart = entry.delayStart;
                     // Is the table idle?
                     if (delayStart != -1) {
@@ -205,8 +205,8 @@ public abstract class AOServTable<K, V extends AOServObject<K, V>> implements It
     private Object param;
 
     private TableLoadListenerEntry(TableLoadListener listener, Object param) {
-      this.listener=listener;
-      this.param=param;
+      this.listener = listener;
+      this.param = param;
     }
   }
 
@@ -216,9 +216,9 @@ public abstract class AOServTable<K, V extends AOServObject<K, V>> implements It
   final List<TableLoadListenerEntry> _loadListeners = new ArrayList<>();
 
   protected AOServTable(AOServConnector connector, Class<V> clazz) {
-    this.connector=connector;
+    this.connector = connector;
     //this.client=new SimpleAOClient(connector);
-    this.clazz=clazz;
+    this.clazz = clazz;
   }
 
   public final void addProgressListener(ProgressListener listener) {
@@ -255,7 +255,7 @@ public abstract class AOServTable<K, V extends AOServObject<K, V>> implements It
    * the cached data for this table expires.  The default of
    * 1000ms of batching is used.
    *
-   * @see  #addTableListener(TableListener,long)
+   * @see  #addTableListener(TableListener, long)
    */
   @Override
   public final void addTableListener(TableListener listener) {
@@ -276,13 +276,13 @@ public abstract class AOServTable<K, V extends AOServObject<K, V>> implements It
    */
   @Override
   public final void addTableListener(TableListener listener, long batchTime) {
-    if (batchTime<0) {
-      throw new IllegalArgumentException("batchTime<0: "+batchTime);
+    if (batchTime < 0) {
+      throw new IllegalArgumentException("batchTime<0: " + batchTime);
     }
 
     synchronized (tableListenersLock) {
       if (tableListeners == null) {
-        tableListeners=new ArrayList<>();
+        tableListeners = new ArrayList<>();
       }
       tableListeners.add(new TableListenerEntry(listener, batchTime));
     }
@@ -342,12 +342,12 @@ public abstract class AOServTable<K, V extends AOServObject<K, V>> implements It
   /**
    * Indicates ascending sort.
    */
-  public static final boolean ASCENDING=true;
+  public static final boolean ASCENDING = true;
 
   /**
    * Indicates descending sort.
    */
-  public static final boolean DESCENDING=false;
+  public static final boolean DESCENDING = false;
 
   public static class OrderBy {
     private final String expression;
@@ -419,44 +419,44 @@ public abstract class AOServTable<K, V extends AOServObject<K, V>> implements It
    */
   protected V getObject(boolean allowRetry, final AoservProtocol.CommandID commID, final Object ... params) throws IOException, SQLException {
     return connector.requestResult(allowRetry,
-      commID,
-      // Java 9: new AOServConnector.ResultRequest<>
-      new AOServConnector.ResultRequest<V>() {
-        private V result;
+        commID,
+        // Java 9: new AOServConnector.ResultRequest<>
+        new AOServConnector.ResultRequest<V>() {
+          private V result;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          AOServConnector.writeParams(params, out);
-        }
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            AOServConnector.writeParams(params, out);
+          }
 
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.NEXT) {
-            V obj=getNewObject();
-            obj.read(in, AoservProtocol.Version.CURRENT_VERSION);
-            if (obj instanceof SingleTableObject) {
-              @SuppressWarnings("unchecked")
-              SingleTableObject<K, V> sto = (SingleTableObject)obj;
-              sto.setTable(AOServTable.this);
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.NEXT) {
+              V obj = getNewObject();
+              obj.read(in, AoservProtocol.Version.CURRENT_VERSION);
+              if (obj instanceof SingleTableObject) {
+                @SuppressWarnings("unchecked")
+                SingleTableObject<K, V> sto = (SingleTableObject) obj;
+                sto.setTable(AOServTable.this);
+              }
+              result = obj;
+            } else {
+              AoservProtocol.checkResult(code, in);
+              result = null;
             }
-            result = obj;
-          } else {
-            AoservProtocol.checkResult(code, in);
-            result = null;
+          }
+
+          @Override
+          public V afterRelease() {
+            return result;
           }
         }
-
-        @Override
-        public V afterRelease() {
-          return result;
-        }
-      }
     );
   }
 
   protected List<V> getObjects(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
-    List<V> list=new ArrayList<>();
+    List<V> list = new ArrayList<>();
     getObjects(allowRetry, list, commID, params);
     return list;
   }
@@ -497,121 +497,121 @@ public abstract class AOServTable<K, V extends AOServObject<K, V>> implements It
     try {
       try {
         connector.requestUpdate(
-          allowRetry,
-          commID,
-          new AOServConnector.UpdateRequest() {
+            allowRetry,
+            commID,
+            new AOServConnector.UpdateRequest() {
 
-            @Override
-            public void writeRequest(StreamableOutput out) throws IOException {
-              if (withProgress) {
-                out.writeBoolean(progListeners != null);
+              @Override
+              public void writeRequest(StreamableOutput out) throws IOException {
+                if (withProgress) {
+                  out.writeBoolean(progListeners != null);
+                }
+                AOServConnector.writeParams(params, out);
               }
-              AOServConnector.writeParams(params, out);
-            }
 
-            @Override
-            public void readResponse(StreamableInput in) throws IOException, SQLException {
-              // Remove anything that was added during a previous attempt
-              if (initialSize == 0) {
-                list.clear();
-              } else {
-                while (list.size() > initialSize) {
-                  list.remove(list.size() - 1);
-                }
-              }
-              // Set the progresses back to zero
-              for (int c = 0; c < progCount; c++) {
-                if (lastProgresses[c] != 0) {
-                  progListeners[c].onProgressChanged(
-                    AOServTable.this,
-                    lastProgresses[c] = 0,
-                    progressScales[c]
-                  );
-                }
-              }
-              // Load the data
-              int code = (progListeners == null) ? AoservProtocol.NEXT : in.readByte();
-              if (code == AoservProtocol.NEXT) {
-                final long size;
-                if (progListeners == null) {
-                  size = -1; // Unknown
+              @Override
+              public void readResponse(StreamableInput in) throws IOException, SQLException {
+                // Remove anything that was added during a previous attempt
+                if (initialSize == 0) {
+                  list.clear();
                 } else {
-                  size = in.readLong();
-                }
-                // Tell each load listener about the number of rows
-                for (int c = 0; c < loadCount; c++) {
-                  TableLoadListenerEntry entry = loadListeners[c];
-                  entry.param = entry.listener.onTableLoadRowCount(
-                    AOServTable.this,
-                    entry.param,
-                    size == -1 ? null : size
-                  );
-                }
-
-                long objCount = 0;
-                while ((code = in.readByte()) == AoservProtocol.NEXT) {
-                  V obj = getNewObject();
-                  obj.read(in, AoservProtocol.Version.CURRENT_VERSION);
-                  if (obj instanceof SingleTableObject) {
-                    @SuppressWarnings("unchecked")
-                    SingleTableObject<K, V> sto = (SingleTableObject)obj;
-                    sto.setTable(AOServTable.this);
+                  while (list.size() > initialSize) {
+                    list.remove(list.size() - 1);
                   }
-
-                  // Sort and add
-                  list.add(obj);
-
-                  // Notify of progress changes
-                  objCount++;
-                  for (int c = 0; c < progCount; c++) {
-                    int currentProgress = (int)(objCount * progressScales[c] / size);
-                    if (currentProgress != lastProgresses[c]) {
-                      progListeners[c].onProgressChanged(
+                }
+                // Set the progresses back to zero
+                for (int c = 0; c < progCount; c++) {
+                  if (lastProgresses[c] != 0) {
+                    progListeners[c].onProgressChanged(
                         AOServTable.this,
-                        lastProgresses[c] = currentProgress,
+                        lastProgresses[c] = 0,
                         progressScales[c]
-                      );
-                    }
-                  }
-
-                  // Tell each load listener of the new object
-                  for (int c = 0; c < loadCount; c++) {
-                    TableLoadListenerEntry entry = loadListeners[c];
-                    entry.param = entry.listener.onTableRowLoaded(
-                      AOServTable.this,
-                      entry.param,
-                      objCount - 1,
-                      obj
                     );
                   }
                 }
-                AoservProtocol.checkResult(code, in);
-                if (size != -1 && size != objCount) {
-                  throw new IOException("Unexpected number of objects returned: expected = " + size + ", returned = " + objCount);
-                }
-              } else {
-                AoservProtocol.checkResult(code, in);
-                throw new IOException("Unexpected response code: " + code);
-              }
-            }
+                // Load the data
+                int code = (progListeners == null) ? AoservProtocol.NEXT : in.readByte();
+                if (code == AoservProtocol.NEXT) {
+                  final long size;
+                  if (progListeners == null) {
+                    size = -1; // Unknown
+                  } else {
+                    size = in.readLong();
+                  }
+                  // Tell each load listener about the number of rows
+                  for (int c = 0; c < loadCount; c++) {
+                    TableLoadListenerEntry entry = loadListeners[c];
+                    entry.param = entry.listener.onTableLoadRowCount(
+                        AOServTable.this,
+                        entry.param,
+                        size == -1 ? null : size
+                    );
+                  }
 
-            @Override
-            public void afterRelease() {
-              try {
-                sortIfNeeded(list);
-              } catch (IOException | SQLException err) {
-                throw new WrappedException(err);
+                  long objCount = 0;
+                  while ((code = in.readByte()) == AoservProtocol.NEXT) {
+                    V obj = getNewObject();
+                    obj.read(in, AoservProtocol.Version.CURRENT_VERSION);
+                    if (obj instanceof SingleTableObject) {
+                      @SuppressWarnings("unchecked")
+                      SingleTableObject<K, V> sto = (SingleTableObject) obj;
+                      sto.setTable(AOServTable.this);
+                    }
+
+                    // Sort and add
+                    list.add(obj);
+
+                    // Notify of progress changes
+                    objCount++;
+                    for (int c = 0; c < progCount; c++) {
+                      int currentProgress = (int) (objCount * progressScales[c] / size);
+                      if (currentProgress != lastProgresses[c]) {
+                        progListeners[c].onProgressChanged(
+                            AOServTable.this,
+                            lastProgresses[c] = currentProgress,
+                            progressScales[c]
+                        );
+                      }
+                    }
+
+                    // Tell each load listener of the new object
+                    for (int c = 0; c < loadCount; c++) {
+                      TableLoadListenerEntry entry = loadListeners[c];
+                      entry.param = entry.listener.onTableRowLoaded(
+                          AOServTable.this,
+                          entry.param,
+                          objCount - 1,
+                          obj
+                      );
+                    }
+                  }
+                  AoservProtocol.checkResult(code, in);
+                  if (size != -1 && size != objCount) {
+                    throw new IOException("Unexpected number of objects returned: expected = " + size + ", returned = " + objCount);
+                  }
+                } else {
+                  AoservProtocol.checkResult(code, in);
+                  throw new IOException("Unexpected response code: " + code);
+                }
+              }
+
+              @Override
+              public void afterRelease() {
+                try {
+                  sortIfNeeded(list);
+                } catch (IOException | SQLException err) {
+                  throw new WrappedException(err);
+                }
               }
             }
-          }
         );
         // Show at final progress scale, just in case previous algorithm did not get the scale there.
         for (int c = 0; c < progCount; c++) {
           if (lastProgresses[c] != progressScales[c]) {
             progListeners[c].onProgressChanged(
-              AOServTable.this,
-              lastProgresses[c] = progressScales[c],
-              progressScales[c]
+                AOServTable.this,
+                lastProgresses[c] = progressScales[c],
+                progressScales[c]
             );
           }
         }
@@ -619,10 +619,10 @@ public abstract class AOServTable<K, V extends AOServObject<K, V>> implements It
         // Unwrap exceptions to specific types
         Throwable cause = err.getCause();
         if (cause instanceof IOException) {
-          throw (IOException)cause;
+          throw (IOException) cause;
         }
         if (cause instanceof SQLException) {
-          throw (SQLException)cause;
+          throw (SQLException) cause;
         }
         throw err;
       }
@@ -778,7 +778,7 @@ public abstract class AOServTable<K, V extends AOServObject<K, V>> implements It
 
   private TableLoadListenerEntry[] getTableLoadListeners() {
     synchronized (_loadListeners) {
-      int size=_loadListeners.size();
+      int size = _loadListeners.size();
       if (size == 0) {
         return null;
       }
@@ -871,10 +871,10 @@ public abstract class AOServTable<K, V extends AOServObject<K, V>> implements It
     final Type[] types = new Type[numCols];
     int supportsAnyPrecisionCount = 0;
     boolean[] alignRights = new boolean[numCols];
-    for (int c = 0 ; c < numCols; c++) {
+    for (int c = 0; c < numCols; c++) {
       Column column = columns.get(c);
       titles[c] = column.getName();
-      Type type = types[c]=column.getType(conn);
+      Type type = types[c] = column.getType(conn);
       if (type.supportsPrecision()) {
         supportsAnyPrecisionCount++;
       }
@@ -902,14 +902,14 @@ public abstract class AOServTable<K, V extends AOServObject<K, V>> implements It
             int maxPrecision = type.getMaxPrecision();
             int current = precisions[col];
             if (
-              maxPrecision == -1
-              || current == -1
-              || current < maxPrecision
+                maxPrecision == -1
+                    || current == -1
+                    || current < maxPrecision
             ) {
               int precision = type.getPrecision(row.getColumn(col));
               if (
-                precision != -1
-                && (current == -1 || precision > current)
+                  precision != -1
+                      && (current == -1 || precision > current)
               ) {
                 precisions[col] = precision;
                 if (maxPrecision != -1 && precision >= maxPrecision) {
@@ -928,34 +928,34 @@ public abstract class AOServTable<K, V extends AOServObject<K, V>> implements It
 
     // Print the results
     SQLUtility.printTable(
-      titles,
-      // Java 9: new Iterator<>
-      (Iterable<String[]>)() -> new Iterator<String[]>() {
-        private int index = 0;
+        titles,
+        // Java 9: new Iterator<>
+        (Iterable<String[]>) () -> new Iterator<String[]>() {
+          private int index = 0;
 
-        @Override
-        public boolean hasNext() {
-          return index < numRows;
-        }
+          @Override
+          public boolean hasNext() {
+            return index < numRows;
+          }
 
-        @Override
-        public String[] next() throws NoSuchElementException {
-          if (index >= rows.size()) {
-            throw new NoSuchElementException();
+          @Override
+          public String[] next() throws NoSuchElementException {
+            if (index >= rows.size()) {
+              throw new NoSuchElementException();
+            }
+            // Convert the results to strings
+            AOServObject<?, ?> row = rows.get(index);
+            String[] strings = new String[numCols];
+            for (int col = 0; col < numCols; col++) {
+              strings[col] = types[col].getString(row.getColumn(col), precisions[col]);
+            }
+            index++;
+            return strings;
           }
-          // Convert the results to strings
-          AOServObject<?, ?> row = rows.get(index);
-          String[] strings = new String[numCols];
-          for (int col = 0; col < numCols; col++) {
-            strings[col] = types[col].getString(row.getColumn(col), precisions[col]);
-          }
-          index++;
-          return strings;
-        }
-      },
-      out,
-      isInteractive,
-      alignRights
+        },
+        out,
+        isInteractive,
+        alignRights
     );
   }
 
@@ -1030,9 +1030,9 @@ public abstract class AOServTable<K, V extends AOServObject<K, V>> implements It
    */
   public final void removeTableLoadListener(TableLoadListener listener) {
     synchronized (_loadListeners) {
-      int size=_loadListeners.size();
-      for (int c=0;c<size;c++) {
-        TableLoadListenerEntry entry=_loadListeners.get(c);
+      int size = _loadListeners.size();
+      for (int c = 0; c < size; c++) {
+        TableLoadListenerEntry entry = _loadListeners.get(c);
         if (entry.listener == listener) {
           _loadListeners.remove(c);
           break;
@@ -1059,12 +1059,12 @@ public abstract class AOServTable<K, V extends AOServObject<K, V>> implements It
 
       synchronized (eventLock) {
         // Notify the batching thread of the update
-        int size=tableListenersSnapshot.size();
+        int size = tableListenersSnapshot.size();
         boolean modified = false;
-        for (int c=0;c<size;c++) {
-          TableListenerEntry entry=tableListenersSnapshot.get(c);
-          if (entry.delay>0 && entry.delayStart == -1) {
-            entry.delayStart=System.currentTimeMillis();
+        for (int c = 0; c < size; c++) {
+          TableListenerEntry entry = tableListenersSnapshot.get(c);
+          if (entry.delay > 0 && entry.delayStart == -1) {
+            entry.delayStart = System.currentTimeMillis();
             modified = true;
           }
         }

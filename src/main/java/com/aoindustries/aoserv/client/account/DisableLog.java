@@ -42,7 +42,7 @@ import java.sql.SQLException;
  */
 public final class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 
-  static final int COLUMN_PKEY=0;
+  static final int COLUMN_PKEY = 0;
   static final String COLUMN_TIME_name = "time";
   static final String COLUMN_ACCOUNTING_name = "accounting";
   static final String COLUMN_PKEY_name = "pkey";
@@ -58,7 +58,7 @@ public final class DisableLog extends CachedObjectIntegerKey<DisableLog> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public DisableLog() {
     // Do nothing
   }
@@ -68,19 +68,19 @@ public final class DisableLog extends CachedObjectIntegerKey<DisableLog> {
    * things disabled by this <code>DisableLog</code>.
    */
   public boolean canEnable() throws SQLException, IOException {
-    Administrator disabledBy=getDisabledBy();
+    Administrator disabledBy = getDisabledBy();
     return disabledBy != null && table
-      .getConnector()
-      .getCurrentAdministrator()
-      .getUsername()
-      .getPackage()
-      .getAccount()
-      .isAccountOrParentOf(
-        disabledBy
+        .getConnector()
+        .getCurrentAdministrator()
         .getUsername()
         .getPackage()
         .getAccount()
-      );
+        .isAccountOrParentOf(
+            disabledBy
+                .getUsername()
+                .getPackage()
+                .getAccount()
+        );
   }
 
   @Override
@@ -142,11 +142,11 @@ public final class DisableLog extends CachedObjectIntegerKey<DisableLog> {
   @Override
   public void init(ResultSet result) throws SQLException {
     try {
-      pkey=result.getInt(1);
+      pkey = result.getInt(1);
       time = UnmodifiableTimestamp.valueOf(result.getTimestamp(2));
-      accounting=Account.Name.valueOf(result.getString(3));
+      accounting = Account.Name.valueOf(result.getString(3));
       disabled_by = User.Name.valueOf(result.getString(4));
-      disable_reason=result.getString(5);
+      disable_reason = result.getString(5);
     } catch (ValidationException e) {
       throw new SQLException(e);
     }
@@ -155,11 +155,11 @@ public final class DisableLog extends CachedObjectIntegerKey<DisableLog> {
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
-      pkey=in.readCompressedInt();
+      pkey = in.readCompressedInt();
       time = SQLStreamables.readUnmodifiableTimestamp(in);
-      accounting=Account.Name.valueOf(in.readUTF()).intern();
+      accounting = Account.Name.valueOf(in.readUTF()).intern();
       disabled_by = User.Name.valueOf(in.readUTF()).intern();
-      disable_reason=in.readNullUTF();
+      disable_reason = in.readNullUTF();
     } catch (ValidationException e) {
       throw new IOException(e);
     }

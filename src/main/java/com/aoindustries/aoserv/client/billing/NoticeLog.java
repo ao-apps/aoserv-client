@@ -51,8 +51,8 @@ import java.util.List;
 public final class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 
   static final int
-    COLUMN_PKEY = 0,
-    COLUMN_ACCOUNTING = 2
+      COLUMN_PKEY = 0,
+      COLUMN_ACCOUNTING = 2
   ;
   static final String COLUMN_PKEY_name = "pkey";
   static final String COLUMN_CREATE_TIME_name = "create_time";
@@ -75,7 +75,7 @@ public final class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public NoticeLog() {
     // Do nothing
   }

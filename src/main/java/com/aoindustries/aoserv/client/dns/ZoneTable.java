@@ -53,8 +53,9 @@ public final class ZoneTable extends CachedTableStringKey<Zone> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Zone.COLUMN_ZONE_name, ASCENDING)
+      new OrderBy(Zone.COLUMN_ZONE_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -67,8 +68,8 @@ public final class ZoneTable extends CachedTableStringKey<Zone> {
   }
 
   private List<DomainName> getDNSTLDs() throws IOException, SQLException {
-    List<TopLevelDomain> tlds=connector.getDns().getTopLevelDomain().getRows();
-    List<DomainName> names=new ArrayList<>(tlds.size());
+    List<TopLevelDomain> tlds = connector.getDns().getTopLevelDomain().getRows();
+    List<DomainName> names = new ArrayList<>(tlds.size());
     for (TopLevelDomain tld : tlds) {
       names.add(tld.getDomain());
     }
@@ -77,13 +78,13 @@ public final class ZoneTable extends CachedTableStringKey<Zone> {
 
   public void addDNSZone(Package packageObj, String zone, InetAddress ip, int ttl) throws IOException, SQLException {
     connector.requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.ADD,
-      Table.TableID.DNS_ZONES,
-      packageObj.getName(),
-      zone,
-      ip,
-      ttl
+        true,
+        AoservProtocol.CommandID.ADD,
+        Table.TableID.DNS_ZONES,
+        packageObj.getName(),
+        zone,
+        ip,
+        ttl
     );
   }
 
@@ -98,20 +99,20 @@ public final class ZoneTable extends CachedTableStringKey<Zone> {
    * Checks the formatting for a DNS zone.  The format of a DNS zone must be <code><i>name</i>.<i>tld</i>.</code>
    */
   public static boolean checkDNSZone(String zone, List<DomainName> tlds) {
-    int zoneLen=zone.length();
+    int zoneLen = zone.length();
 
-    String shortestName=null;
-    int len=tlds.size();
-    for (int c=0;c<len;c++) {
+    String shortestName = null;
+    int len = tlds.size();
+    for (int c = 0; c < len; c++) {
       DomainName o = tlds.get(c);
-      String tld='.'+o.toString()+'.';
+      String tld = '.' + o.toString() + '.';
 
-      int tldLen=tld.length();
-      if (tldLen<zoneLen) {
-        if (zone.substring(zoneLen-tldLen).equals(tld)) {
-          String name=zone.substring(0, zoneLen-tldLen);
-          if (shortestName == null || name.length()<shortestName.length()) {
-            shortestName=name;
+      int tldLen = tld.length();
+      if (tldLen < zoneLen) {
+        if (zone.substring(zoneLen - tldLen).equals(tld)) {
+          String name = zone.substring(0, zoneLen - tldLen);
+          if (shortestName == null || name.length() < shortestName.length()) {
+            shortestName = name;
           }
         }
       }
@@ -133,32 +134,32 @@ public final class ZoneTable extends CachedTableStringKey<Zone> {
    */
   public static String getDNSZoneForHostname(String hostname, List<DomainName> tlds) throws IllegalArgumentException {
     int hlen = hostname.length();
-    if (hlen>0 && hostname.charAt(hlen-1) == '.') {
+    if (hlen > 0 && hostname.charAt(hlen - 1) == '.') {
       hostname = hostname.substring(0, --hlen);
     }
     String longestTld = null;
     int tldlen = tlds.size();
     for (int i = 0; i < tldlen; i++) {
       DomainName o = tlds.get(i);
-      String tld='.'+o.toString(); // No dot at end
+      String tld = '.' + o.toString(); // No dot at end
 
       int len = tld.length();
-      if (hlen >= len && hostname.substring(hlen-len).equals(tld)) {
-        if (longestTld == null || tld.length()>longestTld.length()) {
-          longestTld=tld;
+      if (hlen >= len && hostname.substring(hlen - len).equals(tld)) {
+        if (longestTld == null || tld.length() > longestTld.length()) {
+          longestTld = tld;
         }
       }
     }
     if (longestTld == null) {
-      throw new IllegalArgumentException("Unable to determine top level domain for hostname: "+hostname);
+      throw new IllegalArgumentException("Unable to determine top level domain for hostname: " + hostname);
     }
 
-    String zone = hostname.substring(0, hlen-longestTld.length());
+    String zone = hostname.substring(0, hlen - longestTld.length());
     int startpos = zone.lastIndexOf('.');
     if (startpos >= 0) {
-      zone = zone.substring(startpos+1);
+      zone = zone.substring(startpos + 1);
     }
-    return zone+longestTld+".";
+    return zone + longestTld + ".";
   }
 
   public List<Zone> getDNSZones(Package packageObj) throws IOException, SQLException {
@@ -178,14 +179,14 @@ public final class ZoneTable extends CachedTableStringKey<Zone> {
 
       int tldLen = tld.length();
       if (
-        hostnameLen > tldLen
-        && hostnameStr.endsWith(tld)
+          hostnameLen > tldLen
+              && hostnameStr.endsWith(tld)
       ) {
         String name = hostnameStr.substring(0, hostnameLen - tldLen);
         // Take only the last hostname segment
         int pos = name.lastIndexOf('.');
         if (pos != -1) {
-          name = name.substring(pos+1);
+          name = name.substring(pos + 1);
         }
         try {
           return DomainName.valueOf(name + tld);
@@ -208,14 +209,14 @@ public final class ZoneTable extends CachedTableStringKey<Zone> {
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-    String command=args[0];
+    String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_DNS_ZONE)) {
       if (AOSH.checkParamCount(Command.ADD_DNS_ZONE, args, 4, err)) {
         connector.getSimpleAOClient().addDNSZone(
-          AOSH.parseAccountingCode(args[1], "package"),
-          args[2],
-          AOSH.parseInetAddress(args[3], "ip_address"),
-          AOSH.parseInt(args[4], "ttl")
+            AOSH.parseAccountingCode(args[1], "package"),
+            args[2],
+            AOSH.parseInetAddress(args[3], "ip_address"),
+            AOSH.parseInt(args[4], "ttl")
         );
       }
       return true;
@@ -223,11 +224,11 @@ public final class ZoneTable extends CachedTableStringKey<Zone> {
       if (AOSH.checkParamCount(Command.CHECK_DNS_ZONE, args, 1, err)) {
         try {
           connector.getSimpleAOClient().checkDNSZone(
-            args[1]
+              args[1]
           );
           out.println("true");
         } catch (IllegalArgumentException iae) {
-          out.print("aosh: "+Command.CHECK_DNS_ZONE+": ");
+          out.print("aosh: " + Command.CHECK_DNS_ZONE + ": ");
           out.println(iae.getMessage());
         }
         out.flush();
@@ -239,7 +240,7 @@ public final class ZoneTable extends CachedTableStringKey<Zone> {
           out.println(connector.getSimpleAOClient().isDNSZoneAvailable(args[1]));
           out.flush();
         } catch (IllegalArgumentException iae) {
-          err.print("aosh: "+Command.IS_DNS_ZONE_AVAILABLE+": ");
+          err.print("aosh: " + Command.IS_DNS_ZONE_AVAILABLE + ": ");
           err.println(iae.getMessage());
           err.flush();
         }
@@ -248,8 +249,8 @@ public final class ZoneTable extends CachedTableStringKey<Zone> {
     } else if (command.equalsIgnoreCase(Command.PRINT_ZONE_FILE)) {
       if (AOSH.checkParamCount(Command.PRINT_ZONE_FILE, args, 1, err)) {
         connector.getSimpleAOClient().printZoneFile(
-          args[1],
-          out
+            args[1],
+            out
         );
         out.flush();
       }
@@ -257,15 +258,15 @@ public final class ZoneTable extends CachedTableStringKey<Zone> {
     } else if (command.equalsIgnoreCase(Command.REMOVE_DNS_ZONE)) {
       if (AOSH.checkParamCount(Command.REMOVE_DNS_ZONE, args, 1, err)) {
         connector.getSimpleAOClient().removeDNSZone(
-          args[1]
+            args[1]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_DNS_ZONE_TTL)) {
       if (AOSH.checkParamCount(Command.REMOVE_DNS_ZONE, args, 2, err)) {
         connector.getSimpleAOClient().setDNSZoneTTL(
-          args[1],
-          AOSH.parseInt(args[2], "ttl")
+            args[1],
+            AOSH.parseInt(args[2], "ttl")
         );
       }
     }
@@ -281,7 +282,7 @@ public final class ZoneTable extends CachedTableStringKey<Zone> {
    */
   public static boolean isValidHostnamePart(String name) {
     // Must not be an empty string
-    int len=name.length();
+    int len = name.length();
     if (len == 0) {
       return false;
     }
@@ -292,7 +293,7 @@ public final class ZoneTable extends CachedTableStringKey<Zone> {
     }
 
     // Must not be all numbers
-    int numCount=0;
+    int numCount = 0;
     // All remaining characters must be [a-z,0-9,-]
     for (int c = 0; c < len; c++) {
       char ch = name.charAt(c);

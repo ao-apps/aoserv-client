@@ -41,9 +41,9 @@ import java.sql.SQLException;
 public final class BindFirewallZone extends CachedObjectIntegerKey<BindFirewallZone> {
 
   static final int
-    COLUMN_PKEY = 0,
-    COLUMN_NET_BIND = 1,
-    COLUMN_FIREWALLD_ZONE = 2
+      COLUMN_PKEY = 0,
+      COLUMN_NET_BIND = 1,
+      COLUMN_FIREWALLD_ZONE = 2
   ;
   static final String COLUMN_NET_BIND_name = "net_bind";
   static final String COLUMN_FIREWALLD_ZONE_name = "firewalld_zone";
@@ -57,7 +57,7 @@ public final class BindFirewallZone extends CachedObjectIntegerKey<BindFirewallZ
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public BindFirewallZone() {
     // Do nothing
   }

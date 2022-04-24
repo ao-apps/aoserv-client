@@ -42,17 +42,17 @@ import java.sql.SQLException;
  */
 public final class Priority extends GlobalObjectStringKey<Priority> implements Comparable<Priority> {
 
-  static final int COLUMN_PRIORITY=0;
+  static final int COLUMN_PRIORITY = 0;
   static final String COLUMN_PRIORITY_name = "priority";
 
   /**
    * The possible ticket priorities.
    */
   public static final String
-    LOW="0-Low",
-    NORMAL="1-Normal",
-    HIGH="2-High",
-    URGENT="3-Urgent"
+      LOW = "0-Low",
+      NORMAL = "1-Normal",
+      HIGH = "2-High",
+      URGENT = "3-Urgent"
   ;
 
   /**
@@ -61,7 +61,7 @@ public final class Priority extends GlobalObjectStringKey<Priority> implements C
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Priority() {
     // Do nothing
   }
@@ -90,7 +90,7 @@ public final class Priority extends GlobalObjectStringKey<Priority> implements C
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readUTF().intern();
+    pkey = in.readUTF().intern();
   }
 
   @Override

@@ -45,8 +45,9 @@ public final class CyrusImapdServerTable extends CachedTableIntegerKey<CyrusImap
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(CyrusImapdServer.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING)
+      new OrderBy(CyrusImapdServer.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

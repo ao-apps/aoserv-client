@@ -44,8 +44,8 @@ import java.sql.SQLException;
 public final class SharedTomcatSite extends CachedObjectIntegerKey<SharedTomcatSite> {
 
   static final int
-    COLUMN_TOMCAT_SITE=0,
-    COLUMN_HTTPD_SHARED_TOMCAT=1
+      COLUMN_TOMCAT_SITE = 0,
+      COLUMN_HTTPD_SHARED_TOMCAT = 1
   ;
   static final String COLUMN_TOMCAT_SITE_name = "tomcat_site";
 
@@ -59,7 +59,7 @@ public final class SharedTomcatSite extends CachedObjectIntegerKey<SharedTomcatS
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public SharedTomcatSite() {
     // Do nothing
   }
@@ -69,7 +69,7 @@ public final class SharedTomcatSite extends CachedObjectIntegerKey<SharedTomcatS
    * with this site.
    */
   public boolean canStop() throws SQLException, IOException {
-    SharedTomcat hst=getHttpdSharedTomcat();
+    SharedTomcat hst = getHttpdSharedTomcat();
     return getHttpdSharedTomcat() != null && !hst.isDisabled();
   }
 
@@ -106,9 +106,9 @@ public final class SharedTomcatSite extends CachedObjectIntegerKey<SharedTomcatS
   }
 
   public Site getHttpdTomcatSite() throws SQLException, IOException {
-    Site obj=table.getConnector().getWeb_tomcat().getSite().get(pkey);
+    Site obj = table.getConnector().getWeb_tomcat().getSite().get(pkey);
     if (obj == null) {
-      throw new SQLException("Unable to find HttpdTomcatSite: "+pkey);
+      throw new SQLException("Unable to find HttpdTomcatSite: " + pkey);
     }
     return obj;
   }
@@ -120,14 +120,14 @@ public final class SharedTomcatSite extends CachedObjectIntegerKey<SharedTomcatS
 
   @Override
   public void init(ResultSet result) throws SQLException {
-    pkey=result.getInt(1);
-    httpd_shared_tomcat=result.getInt(2);
+    pkey = result.getInt(1);
+    httpd_shared_tomcat = result.getInt(2);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readCompressedInt();
-    httpd_shared_tomcat=in.readCompressedInt();
+    pkey = in.readCompressedInt();
+    httpd_shared_tomcat = in.readCompressedInt();
   }
 
   @Override

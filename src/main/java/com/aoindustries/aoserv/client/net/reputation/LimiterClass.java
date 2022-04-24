@@ -40,12 +40,12 @@ import java.sql.SQLException;
 public final class LimiterClass extends CachedObjectIntegerKey<LimiterClass> {
 
   static final int
-    COLUMN_PKEY    = 0,
-    COLUMN_LIMITER = 1
+      COLUMN_PKEY    = 0,
+      COLUMN_LIMITER = 1
   ;
   static final String
-    COLUMN_LIMITER_name = "limiter",
-    COLUMN_CLASS_name = "class"
+      COLUMN_LIMITER_name = "limiter",
+      COLUMN_CLASS_name = "class"
   ;
 
   /**
@@ -82,7 +82,7 @@ public final class LimiterClass extends CachedObjectIntegerKey<LimiterClass> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public LimiterClass() {
     // Do nothing
   }

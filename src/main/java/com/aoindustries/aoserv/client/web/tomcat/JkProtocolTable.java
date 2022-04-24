@@ -41,8 +41,9 @@ public final class JkProtocolTable extends GlobalTableStringKey<JkProtocol> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(JkProtocol.COLUMN_PROTOCOL_name, ASCENDING)
+      new OrderBy(JkProtocol.COLUMN_PROTOCOL_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

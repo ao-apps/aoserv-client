@@ -45,8 +45,8 @@ public final class Language extends GlobalObjectStringKey<Language> {
   static final String COLUMN_CODE_name = "code";
 
   public static final String
-    EN="en",
-    JA="ja"
+      EN = "en",
+      JA = "ja"
   ;
 
   /**
@@ -55,7 +55,7 @@ public final class Language extends GlobalObjectStringKey<Language> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Language() {
     // Do nothing
   }

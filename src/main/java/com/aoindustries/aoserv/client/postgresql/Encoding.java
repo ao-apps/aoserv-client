@@ -45,8 +45,8 @@ import java.sql.SQLException;
 public final class Encoding extends GlobalObjectIntegerKey<Encoding> {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_POSTGRES_VERSION=2
+      COLUMN_PKEY = 0,
+      COLUMN_POSTGRES_VERSION = 2
   ;
   static final String COLUMN_ENCODING_name = "encoding";
   static final String COLUMN_POSTGRES_VERSION_name = "postgres_version";
@@ -56,52 +56,52 @@ public final class Encoding extends GlobalObjectIntegerKey<Encoding> {
    * The supported encodings.
    */
   public static final String
-    ALT="ALT",                      // 7.1    7.2   7.3   8.0
-    BIG5="BIG5",                    // 7.1    7.2   7.3
-    EUC_CN="EUC_CN",                // 7.1    7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
-    EUC_JIS_2004="EUC_JIS_2004",    //                          9.4   9.5   9.6   10   11   12   13   14
-    EUC_JP="EUC_JP",                // 7.1    7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
-    EUC_KR="EUC_KR",                // 7.1    7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
-    EUC_TW="EUC_TW",                // 7.1    7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
-    GB18030="GB18030",              //              7.3
-    GBK="GBK",                      //              7.3
-    ISO_8859_5="ISO_8859_5",        //        7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
-    ISO_8859_6="ISO_8859_6",        //        7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
-    ISO_8859_7="ISO_8859_7",        //        7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
-    ISO_8859_8="ISO_8859_8",        //        7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
-    JOHAB="JOHAB",                  //              7.3   8.0
-    KOI8="KOI8",                    // 7.1    7.2   7.3   8.0
-    KOI8R="KOI8R",                  //                          9.4   9.5   9.6   10   11   12   13   14
-    KOI8U="KOI8U",                  //                          9.4   9.5   9.6   10   11   12   13   14
-    LATIN1="LATIN1",                // 7.1    7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
-    LATIN2="LATIN2",                // 7.1    7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
-    LATIN3="LATIN3",                // 7.1    7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
-    LATIN4="LATIN4",                // 7.1    7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
-    LATIN5="LATIN5",                // 7.1    7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
-    LATIN6="LATIN6",                //        7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
-    LATIN7="LATIN7",                //        7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
-    LATIN8="LATIN8",                //        7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
-    LATIN9="LATIN9",                //        7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
-    LATIN10="LATIN10",              //        7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
-    MULE_INTERNAL="MULE_INTERNAL",  // 7.1    7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
-    SJIS="SJIS",                    // 7.1    7.2   7.3
-    SQL_ASCII="SQL_ASCII",          // 7.1    7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
-    UTF8="UTF8",                    //                          9.4   9.5   9.6   10   11   12   13   14
-    TCVN="TCVN",                    //              7.3   8.0
-    UHC="UHC",                      //              7.3
-    UNICODE="UNICODE",              // 7.1    7.2   7.3   8.0
-    WIN="WIN",                      // 7.1    7.2   7.3   8.0
-    WIN866="WIN866",                //                          9.4   9.5   9.6   10   11   12   13   14
-    WIN874="WIN874",                //              7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
-    WIN1250="WIN1250",              // 7.1    7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
-    WIN1251="WIN1251",              //                          9.4   9.5   9.6   10   11   12   13   14
-    WIN1252="WIN1252",              //                          9.4   9.5   9.6   10   11   12   13   14
-    WIN1253="WIN1253",              //                          9.4   9.5   9.6   10   11   12   13   14
-    WIN1254="WIN1254",              //                          9.4   9.5   9.6   10   11   12   13   14
-    WIN1255="WIN1255",              //                          9.4   9.5   9.6   10   11   12   13   14
-    WIN1256="WIN1256",              //              7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
-    WIN1257="WIN1257",              //                          9.4   9.5   9.6   10   11   12   13   14
-    WIN1258="WIN1258"               //                          9.4   9.5   9.6   10   11   12   13   14
+      ALT = "ALT",                      // 7.1    7.2   7.3   8.0
+      BIG5 = "BIG5",                    // 7.1    7.2   7.3
+      EUC_CN = "EUC_CN",                // 7.1    7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
+      EUC_JIS_2004 = "EUC_JIS_2004",    //                          9.4   9.5   9.6   10   11   12   13   14
+      EUC_JP = "EUC_JP",                // 7.1    7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
+      EUC_KR = "EUC_KR",                // 7.1    7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
+      EUC_TW = "EUC_TW",                // 7.1    7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
+      GB18030 = "GB18030",              //              7.3
+      GBK = "GBK",                      //              7.3
+      ISO_8859_5 = "ISO_8859_5",        //        7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
+      ISO_8859_6 = "ISO_8859_6",        //        7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
+      ISO_8859_7 = "ISO_8859_7",        //        7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
+      ISO_8859_8 = "ISO_8859_8",        //        7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
+      JOHAB = "JOHAB",                  //              7.3   8.0
+      KOI8 = "KOI8",                    // 7.1    7.2   7.3   8.0
+      KOI8R = "KOI8R",                  //                          9.4   9.5   9.6   10   11   12   13   14
+      KOI8U = "KOI8U",                  //                          9.4   9.5   9.6   10   11   12   13   14
+      LATIN1 = "LATIN1",                // 7.1    7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
+      LATIN2 = "LATIN2",                // 7.1    7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
+      LATIN3 = "LATIN3",                // 7.1    7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
+      LATIN4 = "LATIN4",                // 7.1    7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
+      LATIN5 = "LATIN5",                // 7.1    7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
+      LATIN6 = "LATIN6",                //        7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
+      LATIN7 = "LATIN7",                //        7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
+      LATIN8 = "LATIN8",                //        7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
+      LATIN9 = "LATIN9",                //        7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
+      LATIN10 = "LATIN10",              //        7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
+      MULE_INTERNAL = "MULE_INTERNAL",  // 7.1    7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
+      SJIS = "SJIS",                    // 7.1    7.2   7.3
+      SQL_ASCII = "SQL_ASCII",          // 7.1    7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
+      UTF8 = "UTF8",                    //                          9.4   9.5   9.6   10   11   12   13   14
+      TCVN = "TCVN",                    //              7.3   8.0
+      UHC = "UHC",                      //              7.3
+      UNICODE = "UNICODE",              // 7.1    7.2   7.3   8.0
+      WIN = "WIN",                      // 7.1    7.2   7.3   8.0
+      WIN866 = "WIN866",                //                          9.4   9.5   9.6   10   11   12   13   14
+      WIN874 = "WIN874",                //              7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
+      WIN1250 = "WIN1250",              // 7.1    7.2   7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
+      WIN1251 = "WIN1251",              //                          9.4   9.5   9.6   10   11   12   13   14
+      WIN1252 = "WIN1252",              //                          9.4   9.5   9.6   10   11   12   13   14
+      WIN1253 = "WIN1253",              //                          9.4   9.5   9.6   10   11   12   13   14
+      WIN1254 = "WIN1254",              //                          9.4   9.5   9.6   10   11   12   13   14
+      WIN1255 = "WIN1255",              //                          9.4   9.5   9.6   10   11   12   13   14
+      WIN1256 = "WIN1256",              //              7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
+      WIN1257 = "WIN1257",              //                          9.4   9.5   9.6   10   11   12   13   14
+      WIN1258 = "WIN1258"               //                          9.4   9.5   9.6   10   11   12   13   14
   ;
 
   /**
@@ -111,8 +111,8 @@ public final class Encoding extends GlobalObjectIntegerKey<Encoding> {
    */
   public static String getDefaultEncoding(String version) {
     if (
-      version.startsWith("7.")
-      || version.startsWith("8.")
+        version.startsWith("7.")
+            || version.startsWith("8.")
     ) {
       return SQL_ASCII;
     } else {
@@ -129,7 +129,7 @@ public final class Encoding extends GlobalObjectIntegerKey<Encoding> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Encoding() {
     // Do nothing
   }
@@ -149,9 +149,9 @@ public final class Encoding extends GlobalObjectIntegerKey<Encoding> {
   }
 
   public Version getPostgresVersion(AOServConnector connector) throws SQLException, IOException {
-    Version pv=connector.getPostgresql().getVersion().get(postgres_version);
+    Version pv = connector.getPostgresql().getVersion().get(postgres_version);
     if (pv == null) {
-      throw new SQLException("Unable to find PostgresVersion: "+postgres_version);
+      throw new SQLException("Unable to find PostgresVersion: " + postgres_version);
     }
     return pv;
   }
@@ -163,16 +163,16 @@ public final class Encoding extends GlobalObjectIntegerKey<Encoding> {
 
   @Override
   public void init(ResultSet result) throws SQLException {
-    pkey=result.getInt(1);
-    encoding=result.getString(2);
-    postgres_version=result.getInt(3);
+    pkey = result.getInt(1);
+    encoding = result.getString(2);
+    postgres_version = result.getInt(3);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readCompressedInt();
-    encoding=in.readUTF().intern();
-    postgres_version=in.readCompressedInt();
+    pkey = in.readCompressedInt();
+    encoding = in.readUTF().intern();
+    postgres_version = in.readCompressedInt();
   }
 
   @Override

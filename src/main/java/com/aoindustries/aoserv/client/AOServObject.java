@@ -96,7 +96,7 @@ public abstract class AOServObject<K, T extends AOServObject<K, T>> implements R
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   protected AOServObject() {
     // Do nothing
   }
@@ -191,15 +191,15 @@ public abstract class AOServObject<K, T extends AOServObject<K, T>> implements R
           }
         }
         throw new SQLException(
-          "expr......: " + expr + "\n"
-          + "type......: " + type + "\n"
-          + "this......: " + this + "\n"
-          + "other.....: " + other + "\n"
-          + "thisKey...: " + this.getKey() + "\n"
-          + "otherKey..: " + other.getKey() + "\n"
-          + "thisValue.: " + getString1 + "\n"
-          + "otherValue: " + getString2,
-          e
+            "expr......: " + expr + "\n"
+                + "type......: " + type + "\n"
+                + "this......: " + this + "\n"
+                + "other.....: " + other + "\n"
+                + "thisKey...: " + this.getKey() + "\n"
+                + "otherKey..: " + other.getKey() + "\n"
+                + "thisValue.: " + getString1 + "\n"
+                + "otherValue: " + getString2,
+            e
         );
       }
     }
@@ -208,16 +208,16 @@ public abstract class AOServObject<K, T extends AOServObject<K, T>> implements R
 
   // TODO: Remove in AOServ 2
   public final int compareTo(AOServConnector conn, Comparable<?> value, SQLExpression[] sortExpressions, boolean[] sortOrders) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
-    int len=sortExpressions.length;
-    for (int c=0;c<len;c++) {
-      SQLExpression expr=sortExpressions[c];
-      Type type=expr.getType();
-      int diff=type.compareTo(
-        expr.evaluate(conn, this),
-        value
+    int len = sortExpressions.length;
+    for (int c = 0; c < len; c++) {
+      SQLExpression expr = sortExpressions[c];
+      Type type = expr.getType();
+      int diff = type.compareTo(
+          expr.evaluate(conn, this),
+          value
       );
       if (diff != 0) {
-        return sortOrders[c]?diff:-diff;
+        return sortOrders[c] ? diff : -diff;
       }
     }
     return 0;
@@ -225,24 +225,25 @@ public abstract class AOServObject<K, T extends AOServObject<K, T>> implements R
 
   // TODO: Remove in AOServ 2
   public final int compareTo(AOServConnector conn, Object[] OA, SQLExpression[] sortExpressions, boolean[] sortOrders) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
-    int len=sortExpressions.length;
+    int len = sortExpressions.length;
     if (len != OA.length) {
-      throw new IllegalArgumentException("Array length mismatch when comparing AOServObject to Object[]: sortExpressions.length="+len+", OA.length="+OA.length);
+      throw new IllegalArgumentException("Array length mismatch when comparing AOServObject to Object[]: sortExpressions.length=" + len + ", OA.length=" + OA.length);
     }
 
-    for (int c=0;c<len;c++) {
-      SQLExpression expr=sortExpressions[c];
-      Type type=expr.getType();
-      int diff=type.compareTo(
-        expr.evaluate(conn, this),
-        OA[c]
+    for (int c = 0; c < len; c++) {
+      SQLExpression expr = sortExpressions[c];
+      Type type = expr.getType();
+      int diff = type.compareTo(
+          expr.evaluate(conn, this),
+          OA[c]
       );
       if (diff != 0) {
-        return sortOrders[c]?diff:-diff;
+        return sortOrders[c] ? diff : -diff;
       }
     }
     return 0;
   }
+
   // </editor-fold>
 
   // <editor-fold defaultstate="collapsed" desc="DTO">
@@ -445,8 +446,8 @@ public abstract class AOServObject<K, T extends AOServObject<K, T>> implements R
       return null;
     }
     return com.aoapps.net.Port.valueOf(
-      port.getPort(),
-      com.aoapps.net.Protocol.valueOf(port.getProtocol())
+        port.getPort(),
+        com.aoapps.net.Protocol.valueOf(port.getProtocol())
     );
   }
 
@@ -519,6 +520,7 @@ public abstract class AOServObject<K, T extends AOServObject<K, T>> implements R
     }
     return User.Name.valueOf(userId.getName());
   }
+
   // </editor-fold>
 
   /**
@@ -537,8 +539,8 @@ public abstract class AOServObject<K, T extends AOServObject<K, T>> implements R
     Class<?> class1 = getClass();
     Class<?> class2 = obj.getClass();
     if (class1 == class2) {
-      K pkey1=getKey();
-      Object pkey2 = ((AOServObject)obj).getKey();
+      K pkey1 = getKey();
+      Object pkey2 = ((AOServObject) obj).getKey();
       if (pkey1 == null || pkey2 == null) {
         throw new NullPointerException("No primary key available.");
       }
@@ -562,8 +564,8 @@ public abstract class AOServObject<K, T extends AOServObject<K, T>> implements R
   protected abstract Object getColumnImpl(int i) throws IOException, SQLException;
 
   public final List<Object> getColumns(AOServConnector connector) throws IOException, SQLException {
-    int len=getTableSchema(connector).getSchemaColumns(connector).size();
-    List<Object> buff=new ArrayList<>(len);
+    int len = getTableSchema(connector).getSchemaColumns(connector).size();
+    List<Object> buff = new ArrayList<>(len);
     for (int c = 0; c < len; c++) {
       buff.add(getColumn(c));
     }
@@ -571,7 +573,7 @@ public abstract class AOServObject<K, T extends AOServObject<K, T>> implements R
   }
 
   public final int getColumns(AOServConnector connector, List<Object> buff) throws IOException, SQLException {
-    int len=getTableSchema(connector).getSchemaColumns(connector).size();
+    int len = getTableSchema(connector).getSchemaColumns(connector).size();
     for (int c = 0; c < len; c++) {
       buff.add(getColumn(c));
     }
@@ -613,7 +615,7 @@ public abstract class AOServObject<K, T extends AOServObject<K, T>> implements R
   /**
    * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
    *
-   * @see  #read(StreamableInput,com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  #read(StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated
   @Override
@@ -664,7 +666,7 @@ public abstract class AOServObject<K, T extends AOServObject<K, T>> implements R
   /**
    * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
    *
-   * @see  #write(StreamableOutput,com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  #write(StreamableOutput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated
   @Override

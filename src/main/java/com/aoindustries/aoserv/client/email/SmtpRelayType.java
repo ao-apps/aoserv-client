@@ -42,17 +42,17 @@ import java.sql.SQLException;
  */
 public final class SmtpRelayType extends GlobalObjectStringKey<SmtpRelayType> {
 
-  static final int COLUMN_NAME=0;
+  static final int COLUMN_NAME = 0;
   static final String COLUMN_NAME_name = "name";
 
   /**
    * The different relay types.
    */
   public static final String
-    ALLOW="allow",
-    ALLOW_RELAY="allow_relay",
-    DENY_SPAM="deny_spam",
-    DENY="deny"
+      ALLOW = "allow",
+      ALLOW_RELAY = "allow_relay",
+      DENY_SPAM = "deny_spam",
+      DENY = "deny"
   ;
 
   private String sendmail_config;
@@ -64,7 +64,7 @@ public final class SmtpRelayType extends GlobalObjectStringKey<SmtpRelayType> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public SmtpRelayType() {
     // Do nothing
   }
@@ -109,21 +109,21 @@ public final class SmtpRelayType extends GlobalObjectStringKey<SmtpRelayType> {
     if (pkey.equals(DENY)) {
       return "blocked";
     }
-    throw new SQLException("Unknown value for name: "+pkey);
+    throw new SQLException("Unknown value for name: " + pkey);
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
-    pkey=result.getString(1);
-    sendmail_config=result.getString(2);
-    qmail_config=result.getString(3);
+    pkey = result.getString(1);
+    sendmail_config = result.getString(2);
+    qmail_config = result.getString(3);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readUTF().intern();
-    sendmail_config=in.readUTF();
-    qmail_config=in.readUTF();
+    pkey = in.readUTF().intern();
+    sendmail_config = in.readUTF();
+    qmail_config = in.readUTF();
   }
 
   @Override

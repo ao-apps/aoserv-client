@@ -65,7 +65,7 @@ public final class Column extends GlobalObjectIntegerKey<Column> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Column() {
     // Do nothing
   }
@@ -262,7 +262,7 @@ public final class Column extends GlobalObjectIntegerKey<Column> {
 
   @Override
   public String toStringImpl() {
-    return table+'.'+name;
+    return table + '.' + name;
   }
 
   public List<ForeignKey> getReferencedBy(AOServConnector connector) throws IOException, SQLException {

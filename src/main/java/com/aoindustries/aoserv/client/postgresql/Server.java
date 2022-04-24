@@ -82,10 +82,10 @@ public final class Server extends CachedObjectIntegerKey<Server> {
    * @author  AO Industries, Inc.
    */
   public static final class Name implements
-    Comparable<Name>,
-    Serializable,
-    DtoFactory<com.aoindustries.aoserv.client.dto.PostgresServerName>,
-    Internable<Name>
+      Comparable<Name>,
+      Serializable,
+      DtoFactory<com.aoindustries.aoserv.client.dto.PostgresServerName>,
+      Internable<Name>
   {
 
     private static final long serialVersionUID = 7935268259991524802L;
@@ -110,8 +110,8 @@ public final class Server extends CachedObjectIntegerKey<Server> {
       // The first character must be [a-z] or [0-9]
       char ch = name.charAt(0);
       if (
-        (ch < 'a' || ch > 'z')
-        && (ch<'0' || ch>'9')
+          (ch < 'a' || ch > 'z')
+              && (ch < '0' || ch > '9')
       ) {
         return new InvalidResult(RESOURCES, "Name.validate.startAtoZor0to9");
       }
@@ -120,11 +120,11 @@ public final class Server extends CachedObjectIntegerKey<Server> {
       for (int c = 1; c < len; c++) {
         ch = name.charAt(c);
         if (
-          (ch<'a' || ch>'z')
-          && (ch<'0' || ch>'9')
-          && ch != '.'
-          && ch != '-'
-          && ch != '_'
+            (ch < 'a' || ch > 'z')
+                && (ch < '0' || ch > '9')
+                && ch != '.'
+                && ch != '-'
+                && ch != '_'
         ) {
           return new InvalidResult(RESOURCES, "Name.validate.illegalCharacter");
         }
@@ -188,8 +188,8 @@ public final class Server extends CachedObjectIntegerKey<Server> {
     @Override
     public boolean equals(Object obj) {
       return
-        (obj instanceof Name)
-        && name.equals(((Name)obj).name)
+          (obj instanceof Name)
+              && name.equals(((Name) obj).name)
       ;
     }
 
@@ -239,6 +239,7 @@ public final class Server extends CachedObjectIntegerKey<Server> {
    * The default PostSQL port.
    */
   public static final Port DEFAULT_PORT;
+
   static {
     try {
       DEFAULT_PORT = Port.valueOf(5432, com.aoapps.net.Protocol.TCP);
@@ -251,6 +252,7 @@ public final class Server extends CachedObjectIntegerKey<Server> {
    * The directory that contains the PostgreSQL data files.
    */
   public static final PosixPath DATA_BASE_DIR;
+
   static {
     try {
       DATA_BASE_DIR = PosixPath.valueOf("/var/lib/pgsql");
@@ -404,8 +406,8 @@ public final class Server extends CachedObjectIntegerKey<Server> {
   // </editor-fold>
 
   static final int
-    COLUMN_BIND = 0,
-    COLUMN_AO_SERVER = 2
+      COLUMN_BIND = 0,
+      COLUMN_AO_SERVER = 2
   ;
   static final String COLUMN_NAME_name = "name";
   static final String COLUMN_AO_SERVER_name = "ao_server";
@@ -424,7 +426,7 @@ public final class Server extends CachedObjectIntegerKey<Server> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Server() {
     // Do nothing
   }
@@ -473,15 +475,15 @@ public final class Server extends CachedObjectIntegerKey<Server> {
   }
 
   public Version getVersion() throws SQLException, IOException {
-    Version obj=table.getConnector().getPostgresql().getVersion().get(version);
+    Version obj = table.getConnector().getPostgresql().getVersion().get(version);
     if (obj == null) {
-      throw new SQLException("Unable to find PostgresVersion: "+version);
+      throw new SQLException("Unable to find PostgresVersion: " + version);
     }
     if (
-      obj.getTechnologyVersion(table.getConnector()).getOperatingSystemVersion(table.getConnector()).getPkey()
-      != getLinuxServer().getHost().getOperatingSystemVersion_id()
+        obj.getTechnologyVersion(table.getConnector()).getOperatingSystemVersion(table.getConnector()).getPkey()
+            != getLinuxServer().getHost().getOperatingSystemVersion_id()
     ) {
-      throw new SQLException("resource/operating system version mismatch on PostgresServer: #"+pkey);
+      throw new SQLException("resource/operating system version mismatch on PostgresServer: #" + pkey);
     }
     return obj;
   }
@@ -560,21 +562,21 @@ public final class Server extends CachedObjectIntegerKey<Server> {
 
   @Override
   public String toStringImpl() throws SQLException, IOException {
-    return name+" on "+getLinuxServer().getHostname();
+    return name + " on " + getLinuxServer().getHostname();
   }
 
   public int addPostgresDatabase(
-    Database.Name name,
-    UserServer datdba,
-    Encoding encoding,
-    boolean enablePostgis
+      Database.Name name,
+      UserServer datdba,
+      Encoding encoding,
+      boolean enablePostgis
   ) throws IOException, SQLException {
     return table.getConnector().getPostgresql().getDatabase().addPostgresDatabase(
-      name,
-      this,
-      datdba,
-      encoding,
-      enablePostgis
+        name,
+        this,
+        datdba,
+        encoding,
+        enablePostgis
     );
   }
 
@@ -607,10 +609,10 @@ public final class Server extends CachedObjectIntegerKey<Server> {
   }
 
   public List<User> getPostgresUsers() throws SQLException, IOException {
-    List<UserServer> psu=getPostgresServerUsers();
-    int len=psu.size();
-    List<User> pu=new ArrayList<>(len);
-    for (int c=0;c<len;c++) {
+    List<UserServer> psu = getPostgresServerUsers();
+    int len = psu.size();
+    List<User> pu = new ArrayList<>(len);
+    for (int c = 0; c < len; c++) {
       pu.add(psu.get(c).getPostgresUser());
     }
     return pu;

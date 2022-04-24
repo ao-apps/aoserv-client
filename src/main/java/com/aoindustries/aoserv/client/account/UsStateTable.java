@@ -41,8 +41,9 @@ public final class UsStateTable extends GlobalTableStringKey<UsState> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(UsState.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(UsState.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

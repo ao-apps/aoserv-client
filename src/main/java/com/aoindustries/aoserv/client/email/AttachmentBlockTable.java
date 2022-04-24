@@ -44,10 +44,11 @@ public final class AttachmentBlockTable extends CachedTableIntegerKey<Attachment
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(AttachmentBlock.COLUMN_LINUX_SERVER_ACCOUNT_name+'.'+UserServer.COLUMN_USERNAME_name, ASCENDING),
-    new OrderBy(AttachmentBlock.COLUMN_LINUX_SERVER_ACCOUNT_name+'.'+UserServer.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
-    new OrderBy(AttachmentBlock.COLUMN_EXTENSION_name, ASCENDING)
+      new OrderBy(AttachmentBlock.COLUMN_LINUX_SERVER_ACCOUNT_name + '.' + UserServer.COLUMN_USERNAME_name, ASCENDING),
+      new OrderBy(AttachmentBlock.COLUMN_LINUX_SERVER_ACCOUNT_name + '.' + UserServer.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
+      new OrderBy(AttachmentBlock.COLUMN_EXTENSION_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

@@ -46,8 +46,8 @@ import java.util.List;
 public final class ContextDataSource extends CachedObjectIntegerKey<ContextDataSource> implements Removable {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_TOMCAT_CONTEXT=1
+      COLUMN_PKEY = 0,
+      COLUMN_TOMCAT_CONTEXT = 1
   ;
   static final String COLUMN_TOMCAT_CONTEXT_name = "tomcat_context";
   static final String COLUMN_NAME_name = "name";
@@ -69,7 +69,7 @@ public final class ContextDataSource extends CachedObjectIntegerKey<ContextDataS
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public ContextDataSource() {
     // Do nothing
   }
@@ -98,9 +98,9 @@ public final class ContextDataSource extends CachedObjectIntegerKey<ContextDataS
   }
 
   public Context getHttpdTomcatContext() throws SQLException, IOException {
-    Context obj=table.getConnector().getWeb_tomcat().getContext().get(tomcat_context);
+    Context obj = table.getConnector().getWeb_tomcat().getContext().get(tomcat_context);
     if (obj == null) {
-      throw new SQLException("Unable to find HttpdTomcatContext: "+tomcat_context);
+      throw new SQLException("Unable to find HttpdTomcatContext: " + tomcat_context);
     }
     return obj;
   }
@@ -148,32 +148,32 @@ public final class ContextDataSource extends CachedObjectIntegerKey<ContextDataS
 
   @Override
   public void init(ResultSet result) throws SQLException {
-    pkey=result.getInt(1);
-    tomcat_context=result.getInt(2);
-    name=result.getString(3);
-    driverClassName=result.getString(4);
-    url=result.getString(5);
-    username=result.getString(6);
-    password=result.getString(7);
-    maxActive=result.getInt(8);
-    maxIdle=result.getInt(9);
-    maxWait=result.getInt(10);
-    validationQuery=result.getString(11);
+    pkey = result.getInt(1);
+    tomcat_context = result.getInt(2);
+    name = result.getString(3);
+    driverClassName = result.getString(4);
+    url = result.getString(5);
+    username = result.getString(6);
+    password = result.getString(7);
+    maxActive = result.getInt(8);
+    maxIdle = result.getInt(9);
+    maxWait = result.getInt(10);
+    validationQuery = result.getString(11);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readCompressedInt();
-    tomcat_context=in.readCompressedInt();
-    name=in.readUTF();
-    driverClassName=in.readUTF();
-    url=in.readUTF();
-    username=in.readUTF().intern();
-    password=in.readUTF();
-    maxActive=in.readCompressedInt();
-    maxIdle=in.readCompressedInt();
-    maxWait=in.readCompressedInt();
-    validationQuery=in.readNullUTF();
+    pkey = in.readCompressedInt();
+    tomcat_context = in.readCompressedInt();
+    name = in.readUTF();
+    driverClassName = in.readUTF();
+    url = in.readUTF();
+    username = in.readUTF().intern();
+    password = in.readUTF();
+    maxActive = in.readCompressedInt();
+    maxIdle = in.readCompressedInt();
+    maxWait = in.readCompressedInt();
+    validationQuery = in.readNullUTF();
   }
 
   @Override
@@ -182,29 +182,29 @@ public final class ContextDataSource extends CachedObjectIntegerKey<ContextDataS
   }
 
   public void update(
-    String name,
-    String driverClassName,
-    String url,
-    String username,
-    String password,
-    int maxActive,
-    int maxIdle,
-    int maxWait,
-    String validationQuery
+      String name,
+      String driverClassName,
+      String url,
+      String username,
+      String password,
+      int maxActive,
+      int maxIdle,
+      int maxWait,
+      String validationQuery
   ) throws IOException, SQLException {
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.UPDATE_HTTPD_TOMCAT_DATA_SOURCE,
-      pkey,
-      name,
-      driverClassName,
-      url,
-      username,
-      password,
-      maxActive,
-      maxIdle,
-      maxWait,
-      validationQuery == null ? "" : validationQuery
+        true,
+        AoservProtocol.CommandID.UPDATE_HTTPD_TOMCAT_DATA_SOURCE,
+        pkey,
+        name,
+        driverClassName,
+        url,
+        username,
+        password,
+        maxActive,
+        maxIdle,
+        maxWait,
+        validationQuery == null ? "" : validationQuery
     );
   }
 

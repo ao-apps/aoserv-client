@@ -40,17 +40,18 @@ import java.util.Map;
  */
 public final class ForeignKeyTable extends GlobalTableIntegerKey<ForeignKey> {
 
-  private static final Map<String, List<ForeignKey>> tableKeys=new HashMap<>();
-  private static final Map<Integer, List<ForeignKey>> referencesHash=new HashMap<>();
-  private static final Map<Integer, List<ForeignKey>> referencedByHash=new HashMap<>();
+  private static final Map<String, List<ForeignKey>> tableKeys = new HashMap<>();
+  private static final Map<Integer, List<ForeignKey>> referencesHash = new HashMap<>();
+  private static final Map<Integer, List<ForeignKey>> referencedByHash = new HashMap<>();
 
   ForeignKeyTable(AOServConnector connector) {
     super(connector, ForeignKey.class);
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(ForeignKey.COLUMN_ID_name, ASCENDING)
+      new OrderBy(ForeignKey.COLUMN_ID_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -75,19 +76,19 @@ public final class ForeignKeyTable extends GlobalTableIntegerKey<ForeignKey> {
   List<ForeignKey> getSchemaForeignKeys(Table table) throws IOException, SQLException {
     synchronized (ForeignKeyTable.class) {
       if (tableKeys.isEmpty()) {
-        List<ForeignKey> cached=getRows();
-        int size=cached.size();
-        for (int c=0;c<size;c++) {
-          ForeignKey key=cached.get(c);
-          String tableName=key.getColumn(connector).getTable_name();
-          List<ForeignKey> keys=tableKeys.get(tableName);
+        List<ForeignKey> cached = getRows();
+        int size = cached.size();
+        for (int c = 0; c < size; c++) {
+          ForeignKey key = cached.get(c);
+          String tableName = key.getColumn(connector).getTable_name();
+          List<ForeignKey> keys = tableKeys.get(tableName);
           if (keys == null) {
-            tableKeys.put(tableName, keys=new ArrayList<>());
+            tableKeys.put(tableName, keys = new ArrayList<>());
           }
           keys.add(key);
         }
       }
-      List<ForeignKey> matches=tableKeys.get(table.getName());
+      List<ForeignKey> matches = tableKeys.get(table.getName());
       if (matches != null) {
         return matches;
       }
@@ -97,28 +98,28 @@ public final class ForeignKeyTable extends GlobalTableIntegerKey<ForeignKey> {
 
   private void rebuildReferenceHashes() throws IOException, SQLException {
     if (
-      referencedByHash.isEmpty()
-      || referencesHash.isEmpty()
+        referencedByHash.isEmpty()
+            || referencesHash.isEmpty()
     ) {
       // All methods that call this are already synched
-      List<ForeignKey> cached=getRows();
-      int size=cached.size();
-      for (int c=0;c<size;c++) {
-        ForeignKey key=cached.get(c);
+      List<ForeignKey> cached = getRows();
+      int size = cached.size();
+      for (int c = 0; c < size; c++) {
+        ForeignKey key = cached.get(c);
         Integer keyColumnPKey = key.getColumn_id();
-        Integer foreignColumnPKey=key.getForeignColumn_id();
+        Integer foreignColumnPKey = key.getForeignColumn_id();
 
         // Referenced By
-        List<ForeignKey> referencedBy=referencedByHash.get(keyColumnPKey);
+        List<ForeignKey> referencedBy = referencedByHash.get(keyColumnPKey);
         if (referencedBy == null) {
-          referencedByHash.put(keyColumnPKey, referencedBy=new ArrayList<>());
+          referencedByHash.put(keyColumnPKey, referencedBy = new ArrayList<>());
         }
         referencedBy.add(key);
 
         // References
-        List<ForeignKey> references=referencesHash.get(foreignColumnPKey);
+        List<ForeignKey> references = referencesHash.get(foreignColumnPKey);
         if (references == null) {
-          referencesHash.put(foreignColumnPKey, references=new ArrayList<>());
+          referencesHash.put(foreignColumnPKey, references = new ArrayList<>());
         }
         references.add(key);
       }
@@ -128,7 +129,7 @@ public final class ForeignKeyTable extends GlobalTableIntegerKey<ForeignKey> {
   List<ForeignKey> getSchemaForeignKeysReferencedBy(Column column) throws IOException, SQLException {
     synchronized (ForeignKeyTable.class) {
       rebuildReferenceHashes();
-      List<ForeignKey> matches=referencedByHash.get(column.getPkey());
+      List<ForeignKey> matches = referencedByHash.get(column.getPkey());
       if (matches != null) {
         return matches;
       } else {
@@ -140,7 +141,7 @@ public final class ForeignKeyTable extends GlobalTableIntegerKey<ForeignKey> {
   List<ForeignKey> getSchemaForeignKeysReferencing(Column column) throws IOException, SQLException {
     synchronized (ForeignKeyTable.class) {
       rebuildReferenceHashes();
-      List<ForeignKey> matches=referencesHash.get(column.getPkey());
+      List<ForeignKey> matches = referencesHash.get(column.getPkey());
       if (matches != null) {
         return matches;
       } else {

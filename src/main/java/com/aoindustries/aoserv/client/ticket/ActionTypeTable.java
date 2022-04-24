@@ -45,8 +45,9 @@ public final class ActionTypeTable extends GlobalTableStringKey<ActionType> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(ActionType.COLUMN_TYPE_name, ASCENDING)
+      new OrderBy(ActionType.COLUMN_TYPE_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

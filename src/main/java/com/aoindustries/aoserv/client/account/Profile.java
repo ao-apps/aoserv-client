@@ -53,8 +53,8 @@ import java.util.Set;
 public final class Profile extends CachedObjectIntegerKey<Profile> {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_ACCOUNTING=1
+      COLUMN_PKEY = 0,
+      COLUMN_ACCOUNTING = 1
   ;
   static final String COLUMN_ACCOUNTING_name = "accounting";
   static final String COLUMN_PRIORITY_name = "priority";
@@ -107,7 +107,7 @@ public final class Profile extends CachedObjectIntegerKey<Profile> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Profile() {
     // Do nothing
   }
@@ -258,7 +258,7 @@ public final class Profile extends CachedObjectIntegerKey<Profile> {
   private static Set<Email> getEmailSet(Array array) throws SQLException, ValidationException {
     if (USE_SQL_DATA && USE_ARRAY_OF_DOMAIN) {
       // This does not locate duplicates like the ResultSet implementation below
-      return new LinkedHashSet<>(Arrays.asList((Email[])array.getArray()));
+      return new LinkedHashSet<>(Arrays.asList((Email[]) array.getArray()));
     } else {
       Set<Email> set = new LinkedHashSet<>();
       try (ResultSet result = array.getResultSet()) {
@@ -343,22 +343,22 @@ public final class Profile extends CachedObjectIntegerKey<Profile> {
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
-      pkey=in.readCompressedInt();
-      accounting=Account.Name.valueOf(in.readUTF()).intern();
-      priority=in.readCompressedInt();
-      name=in.readUTF();
-      isPrivate=in.readBoolean();
-      phone=in.readUTF();
-      fax=in.readNullUTF();
-      address1=in.readUTF();
-      address2=in.readNullUTF();
-      city=in.readUTF();
-      state=InternUtils.intern(in.readNullUTF());
-      country=in.readUTF().intern();
-      zip=in.readNullUTF();
-      sendInvoice=in.readBoolean();
+      pkey = in.readCompressedInt();
+      accounting = Account.Name.valueOf(in.readUTF()).intern();
+      priority = in.readCompressedInt();
+      name = in.readUTF();
+      isPrivate = in.readBoolean();
+      phone = in.readUTF();
+      fax = in.readNullUTF();
+      address1 = in.readUTF();
+      address2 = in.readNullUTF();
+      city = in.readUTF();
+      state = InternUtils.intern(in.readNullUTF());
+      country = in.readUTF().intern();
+      zip = in.readNullUTF();
+      sendInvoice = in.readBoolean();
       created = SQLStreamables.readUnmodifiableTimestamp(in);
-      billingContact=in.readUTF();
+      billingContact = in.readUTF();
       {
         int size = in.readCompressedInt();
         Set<Email> emails = AoCollections.newLinkedHashSet(size);
@@ -368,7 +368,7 @@ public final class Profile extends CachedObjectIntegerKey<Profile> {
         billingEmail = AoCollections.optimalUnmodifiableSet(emails);
       }
       billingEmailFormat = in.readEnum(EmailFormat.class);
-      technicalContact=in.readUTF();
+      technicalContact = in.readUTF();
       {
         int size = in.readCompressedInt();
         Set<Email> emails = AoCollections.newLinkedHashSet(size);
@@ -389,7 +389,7 @@ public final class Profile extends CachedObjectIntegerKey<Profile> {
 
   @Override
   public String toStringImpl() {
-    return name + " ("+priority+')';
+    return name + " (" + priority + ')';
   }
 
   @Override

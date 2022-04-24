@@ -50,8 +50,9 @@ public final class UserTable extends CachedTableUserNameKey<User> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(User.COLUMN_USERNAME_name, ASCENDING)
+      new OrderBy(User.COLUMN_USERNAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -60,11 +61,11 @@ public final class UserTable extends CachedTableUserNameKey<User> {
 
   public void addUsername(Package packageObject, User.Name username) throws IOException, SQLException {
     connector.requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.ADD,
-      Table.TableID.USERNAMES,
-      packageObject.getName(),
-      username
+        true,
+        AoservProtocol.CommandID.ADD,
+        Table.TableID.USERNAMES,
+        packageObject.getName(),
+        username
     );
   }
 
@@ -84,19 +85,19 @@ public final class UserTable extends CachedTableUserNameKey<User> {
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
-    String command=args[0];
+    String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_USERNAME)) {
       if (AOSH.checkParamCount(Command.ADD_USERNAME, args, 2, err)) {
         connector.getSimpleAOClient().addUsername(
-          AOSH.parseAccountingCode(args[1], "package"),
-          AOSH.parseUserName(args[2], "username")
+            AOSH.parseAccountingCode(args[1], "package"),
+            AOSH.parseUserName(args[2], "username")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.ARE_USERNAME_PASSWORDS_SET)) {
       if (AOSH.checkParamCount(Command.ARE_USERNAME_PASSWORDS_SET, args, 1, err)) {
-        int result=connector.getSimpleAOClient().areUsernamePasswordsSet(
-          AOSH.parseUserName(args[1], "username")
+        int result = connector.getSimpleAOClient().areUsernamePasswordsSet(
+            AOSH.parseUserName(args[1], "username")
         );
         if (result == PasswordProtected.NONE) {
           out.println("none");
@@ -105,7 +106,7 @@ public final class UserTable extends CachedTableUserNameKey<User> {
         } else if (result == PasswordProtected.ALL) {
           out.println("all");
         } else {
-          throw new RuntimeException("Unexpected value for result: "+result);
+          throw new RuntimeException("Unexpected value for result: " + result);
         }
         out.flush();
       }
@@ -116,7 +117,7 @@ public final class UserTable extends CachedTableUserNameKey<User> {
         out.println(validationResult.isValid());
         out.flush();
         if (!validationResult.isValid()) {
-          err.print("aosh: "+Command.CHECK_USERNAME+": ");
+          err.print("aosh: " + Command.CHECK_USERNAME + ": ");
           err.println(validationResult.toString());
           err.flush();
         }
@@ -125,8 +126,8 @@ public final class UserTable extends CachedTableUserNameKey<User> {
     } else if (command.equalsIgnoreCase(Command.CHECK_USERNAME_PASSWORD)) {
       if (AOSH.checkParamCount(Command.CHECK_USERNAME_PASSWORD, args, 2, err)) {
         List<PasswordChecker.Result> results = connector.getSimpleAOClient().checkUsernamePassword(
-          AOSH.parseUserName(args[1], "username"),
-          args[2]
+            AOSH.parseUserName(args[1], "username"),
+            args[2]
         );
         if (PasswordChecker.hasResults(results)) {
           PasswordChecker.printResults(results, out);
@@ -137,10 +138,10 @@ public final class UserTable extends CachedTableUserNameKey<User> {
     } else if (command.equalsIgnoreCase(Command.DISABLE_USERNAME)) {
       if (AOSH.checkParamCount(Command.DISABLE_USERNAME, args, 2, err)) {
         out.println(
-          connector.getSimpleAOClient().disableUsername(
-            AOSH.parseUserName(args[1], "username"),
-            args[2]
-          )
+            connector.getSimpleAOClient().disableUsername(
+                AOSH.parseUserName(args[1], "username"),
+                args[2]
+            )
         );
         out.flush();
       }
@@ -148,7 +149,7 @@ public final class UserTable extends CachedTableUserNameKey<User> {
     } else if (command.equalsIgnoreCase(Command.ENABLE_USERNAME)) {
       if (AOSH.checkParamCount(Command.ENABLE_USERNAME, args, 1, err)) {
         connector.getSimpleAOClient().enableUsername(
-          AOSH.parseUserName(args[1], "username")
+            AOSH.parseUserName(args[1], "username")
         );
       }
       return true;
@@ -156,13 +157,13 @@ public final class UserTable extends CachedTableUserNameKey<User> {
       if (AOSH.checkParamCount(Command.IS_USERNAME_AVAILABLE, args, 1, err)) {
         try {
           out.println(
-            connector.getSimpleAOClient().isUsernameAvailable(
-              AOSH.parseUserName(args[1], "username")
-            )
+              connector.getSimpleAOClient().isUsernameAvailable(
+                  AOSH.parseUserName(args[1], "username")
+              )
           );
           out.flush();
         } catch (IllegalArgumentException iae) {
-          err.print("aosh: "+Command.IS_USERNAME_AVAILABLE+": ");
+          err.print("aosh: " + Command.IS_USERNAME_AVAILABLE + ": ");
           err.println(iae.getMessage());
           err.flush();
         }
@@ -171,15 +172,15 @@ public final class UserTable extends CachedTableUserNameKey<User> {
     } else if (command.equalsIgnoreCase(Command.REMOVE_USERNAME)) {
       if (AOSH.checkParamCount(Command.REMOVE_USERNAME, args, 1, err)) {
         connector.getSimpleAOClient().removeUsername(
-          AOSH.parseUserName(args[1], "username")
+            AOSH.parseUserName(args[1], "username")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_USERNAME_PASSWORD)) {
       if (AOSH.checkParamCount(Command.SET_USERNAME_PASSWORD, args, 2, err)) {
         connector.getSimpleAOClient().setUsernamePassword(
-          AOSH.parseUserName(args[1], "username"),
-          args[2]
+            AOSH.parseUserName(args[1], "username"),
+            args[2]
         );
       }
       return true;

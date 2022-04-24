@@ -63,8 +63,8 @@ public class CreditCardTest extends TestCase {
       for (int d = 0; d < len; d++) {
         int randVal = fastRandom.nextInt(13);
         char randCh;
-        if (randVal<10) {
-          randCh = (char)('0'+randVal);
+        if (randVal < 10) {
+          randCh = (char) ('0' + randVal);
         } else if (randVal == 10) {
           randCh = ' ';
         } else if (randVal == 11) {
@@ -72,7 +72,7 @@ public class CreditCardTest extends TestCase {
         } else if (randVal == 12) {
           randCh = '/';
         } else {
-          throw new AssertionError("Unexpected value for randVal: "+randVal);
+          throw new AssertionError("Unexpected value for randVal: " + randVal);
         }
         sb.append(randCh);
       }

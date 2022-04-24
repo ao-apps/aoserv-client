@@ -42,9 +42,10 @@ public final class DaemonAclTable extends CachedTableIntegerKey<DaemonAcl> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(DaemonAcl.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
-    new OrderBy(DaemonAcl.COLUMN_HOST_name, ASCENDING)
+      new OrderBy(DaemonAcl.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
+      new OrderBy(DaemonAcl.COLUMN_HOST_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

@@ -43,8 +43,9 @@ public final class PermissionTable extends GlobalTableStringKey<Permission> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Permission.COLUMN_SORT_ORDER_name, ASCENDING)
+      new OrderBy(Permission.COLUMN_SORT_ORDER_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

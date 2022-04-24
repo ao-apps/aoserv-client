@@ -42,7 +42,7 @@ import java.sql.SQLException;
  */
 public final class AttachmentType extends GlobalObjectStringKey<AttachmentType> {
 
-  static final int COLUMN_EXTENSION=0;
+  static final int COLUMN_EXTENSION = 0;
   static final String COLUMN_EXTENSION_name = "extension";
 
   private String description;
@@ -54,7 +54,7 @@ public final class AttachmentType extends GlobalObjectStringKey<AttachmentType> 
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public AttachmentType() {
     // Do nothing
   }
@@ -88,16 +88,16 @@ public final class AttachmentType extends GlobalObjectStringKey<AttachmentType> 
 
   @Override
   public void init(ResultSet result) throws SQLException {
-    pkey=result.getString(1);
-    description=result.getString(2);
-    is_default_block=result.getBoolean(3);
+    pkey = result.getString(1);
+    description = result.getString(2);
+    is_default_block = result.getBoolean(3);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readUTF().intern();
-    description=in.readUTF();
-    is_default_block=in.readBoolean();
+    pkey = in.readUTF().intern();
+    description = in.readUTF();
+    is_default_block = in.readBoolean();
   }
 
   @Override

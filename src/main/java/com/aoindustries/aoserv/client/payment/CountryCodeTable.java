@@ -50,8 +50,9 @@ public final class CountryCodeTable extends GlobalTableStringKey<CountryCode> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(CountryCode.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(CountryCode.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -67,7 +68,7 @@ public final class CountryCodeTable extends GlobalTableStringKey<CountryCode> {
     Map<String, int[]> counts = new HashMap<>();
 
     // Add the business_profiles
-    Set<Account.Name> finishedAccounts=new HashSet<>();
+    Set<Account.Name> finishedAccounts = new HashSet<>();
     for (Profile profile : connector.getAccount().getProfile().getRows()) {
       Account.Name accounting = profile.getAccount_name();
       if (!finishedAccounts.contains(accounting)) {
@@ -87,32 +88,32 @@ public final class CountryCodeTable extends GlobalTableStringKey<CountryCode> {
     while (iter.hasNext()) {
       String code = iter.next();
       int count = counts.get(code)[0];
-      int c=0;
-      for (; c<biggest.size(); c++) {
+      int c = 0;
+      for (; c < biggest.size(); c++) {
         String ccCode = biggest.get(c);
         int[] ccCounter = counts.get(ccCode);
         int ccCount = ccCounter == null ? 0 : ccCounter[0];
         if (
-          count>ccCount
-          || (
-            count == ccCount
-            && code.compareToIgnoreCase(ccCode) <= 0
-          )
+            count > ccCount
+                || (
+                count == ccCount
+                    && code.compareToIgnoreCase(ccCode) <= 0
+            )
         ) {
           break;
         }
       }
-      if (c<prioritySize) {
+      if (c < prioritySize) {
         if (biggest.size() >= prioritySize) {
-          biggest.remove(prioritySize-1);
+          biggest.remove(prioritySize - 1);
         }
         biggest.add(Math.min(c, biggest.size()), code);
       }
     }
 
     // Package the results
-    List<CountryCode> ccs=getRows();
-    List<CountryCode> results=new ArrayList<>(ccs.size() + biggest.size());
+    List<CountryCode> ccs = getRows();
+    List<CountryCode> results = new ArrayList<>(ccs.size() + biggest.size());
     for (String code : biggest) {
       results.add(get(code));
     }
@@ -120,7 +121,7 @@ public final class CountryCodeTable extends GlobalTableStringKey<CountryCode> {
 
     // Return the results
     if (priorityCounter != null && priorityCounter.length >= 1) {
-      priorityCounter[0]=biggest.size();
+      priorityCounter[0] = biggest.size();
     }
     return results;
   }

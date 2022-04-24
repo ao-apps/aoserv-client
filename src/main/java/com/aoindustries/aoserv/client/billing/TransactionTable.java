@@ -75,11 +75,12 @@ public final class TransactionTable extends CachedTableIntegerKey<Transaction> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Transaction.COLUMN_TIME_name+"::"+Type.DATE_name, ASCENDING),
-    new OrderBy(Transaction.COLUMN_SOURCE_ACCOUNTING_name, ASCENDING),
-    new OrderBy(Transaction.COLUMN_TIME_name, ASCENDING),
-    new OrderBy(Transaction.COLUMN_TRANSID_name, ASCENDING)
+      new OrderBy(Transaction.COLUMN_TIME_name + "::" + Type.DATE_name, ASCENDING),
+      new OrderBy(Transaction.COLUMN_SOURCE_ACCOUNTING_name, ASCENDING),
+      new OrderBy(Transaction.COLUMN_TIME_name, ASCENDING),
+      new OrderBy(Transaction.COLUMN_TRANSID_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -95,81 +96,81 @@ public final class TransactionTable extends CachedTableIntegerKey<Transaction> {
    *              choose the time when "now" or "today" is desired for the transaction.
    */
   public int add(
-    final int timeType,
-    final Timestamp time,
-    final Account account,
-    final Account sourceAccount,
-    final Administrator administrator,
-    final TransactionType type,
-    final String description,
-    final int quantity,
-    final Money rate,
-    final PaymentType paymentType,
-    final String paymentInfo,
-    final Processor processor,
-    final byte paymentConfirmed
+      final int timeType,
+      final Timestamp time,
+      final Account account,
+      final Account sourceAccount,
+      final Administrator administrator,
+      final TransactionType type,
+      final String description,
+      final int quantity,
+      final Money rate,
+      final PaymentType paymentType,
+      final String paymentInfo,
+      final Processor processor,
+      final byte paymentConfirmed
   ) throws IOException, SQLException {
     if (
-      timeType != Type.DATE
-      && timeType != Type.TIME
+        timeType != Type.DATE
+            && timeType != Type.TIME
     ) {
       throw new IllegalArgumentException("timeType must be either Type.DATE or Type.TIME: " + timeType);
     }
     return connector.requestResult(
-      false,
-      AoservProtocol.CommandID.ADD,
-      // Java 9: new AOServConnector.ResultRequest<>
-      new AOServConnector.ResultRequest<Integer>() {
-        private int transid;
-        private IntList invalidateList;
+        false,
+        AoservProtocol.CommandID.ADD,
+        // Java 9: new AOServConnector.ResultRequest<>
+        new AOServConnector.ResultRequest<Integer>() {
+          private int transid;
+          private IntList invalidateList;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(Table.TableID.TRANSACTIONS.ordinal());
-          if (timeType == Type.DATE) {
-            out.writeByte('D');
-            // No need to send full precision, since the server will round to the date anyway
-            out.writeNullLong(time == null ? null : time.getTime());
-          } else if (timeType == Type.TIME) {
-            out.writeByte('T');
-            SQLStreamables.writeNullTimestamp(time, out);
-          } else {
-            throw new AssertionError("Unexpected value for timeType: " + timeType);
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(Table.TableID.TRANSACTIONS.ordinal());
+            if (timeType == Type.DATE) {
+              out.writeByte('D');
+              // No need to send full precision, since the server will round to the date anyway
+              out.writeNullLong(time == null ? null : time.getTime());
+            } else if (timeType == Type.TIME) {
+              out.writeByte('T');
+              SQLStreamables.writeNullTimestamp(time, out);
+            } else {
+              throw new AssertionError("Unexpected value for timeType: " + timeType);
+            }
+            out.writeUTF(account.getName().toString());
+            out.writeUTF(sourceAccount.getName().toString());
+            out.writeUTF(administrator.getUsername_userId().toString());
+            out.writeUTF(type.getName());
+            out.writeUTF(description);
+            out.writeCompressedInt(quantity);
+            MoneyUtil.writeMoney(rate, out);
+            out.writeBoolean(paymentType != null);
+            if (paymentType != null) {
+              out.writeUTF(paymentType.getName());
+            }
+            out.writeNullUTF(paymentInfo);
+            out.writeNullUTF(processor == null ? null : processor.getProviderId());
+            out.writeByte(paymentConfirmed);
           }
-          out.writeUTF(account.getName().toString());
-          out.writeUTF(sourceAccount.getName().toString());
-          out.writeUTF(administrator.getUsername_userId().toString());
-          out.writeUTF(type.getName());
-          out.writeUTF(description);
-          out.writeCompressedInt(quantity);
-          MoneyUtil.writeMoney(rate, out);
-          out.writeBoolean(paymentType != null);
-          if (paymentType != null) {
-            out.writeUTF(paymentType.getName());
-          }
-          out.writeNullUTF(paymentInfo);
-          out.writeNullUTF(processor == null ? null : processor.getProviderId());
-          out.writeByte(paymentConfirmed);
-        }
 
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            transid=in.readCompressedInt();
-            invalidateList=AOServConnector.readInvalidateList(in);
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              transid = in.readCompressedInt();
+              invalidateList = AOServConnector.readInvalidateList(in);
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
+            }
+          }
+
+          @Override
+          public Integer afterRelease() {
+            connector.tablesUpdated(invalidateList);
+            return transid;
           }
         }
-
-        @Override
-        public Integer afterRelease() {
-          connector.tablesUpdated(invalidateList);
-          return transid;
-        }
-      }
     );
   }
 
@@ -213,8 +214,8 @@ public final class TransactionTable extends CachedTableIntegerKey<Transaction> {
     List<Money> monies = MinimalList.emptyList();
     for (Map.Entry<java.util.Currency, BigDecimal> moneyEntry : balances.entrySet()) {
       monies = MinimalList.add(
-        monies,
-        new Money(moneyEntry.getKey(), moneyEntry.getValue())
+          monies,
+          new Money(moneyEntry.getKey(), moneyEntry.getValue())
       );
     }
     return Monies.of(monies);
@@ -299,12 +300,12 @@ public final class TransactionTable extends CachedTableIntegerKey<Transaction> {
       } else {
         // and any of the following
         if (
-          // Account is active
-          canceled == null
-          // Account canceled less than a year ago
-          || (currentTime - canceled.getTime()) <= SHOW_CANCELED_DURATION
-          // Account has a non-zero balance in the currency
-          || money.getUnscaledValue() != 0
+            // Account is active
+            canceled == null
+                // Account canceled less than a year ago
+                || (currentTime - canceled.getTime()) <= SHOW_CANCELED_DURATION
+                // Account has a non-zero balance in the currency
+                || money.getUnscaledValue() != 0
         ) {
           active = true;
         } else {
@@ -318,8 +319,8 @@ public final class TransactionTable extends CachedTableIntegerKey<Transaction> {
           for (int i = numTransactions - 1; i >= 0; i--) {
             Transaction transaction = transactions.get(i);
             if (
-              transaction.getPaymentConfirmed() != Transaction.NOT_CONFIRMED
-              && transaction.getRate().getCurrency() == money.getCurrency()
+                transaction.getPaymentConfirmed() != Transaction.NOT_CONFIRMED
+                    && transaction.getRate().getCurrency() == money.getCurrency()
             ) {
               lastTransaction = transaction;
               break;
@@ -351,8 +352,8 @@ public final class TransactionTable extends CachedTableIntegerKey<Transaction> {
     SortedMap<java.util.Currency, BigDecimal> balances = new TreeMap<>(CurrencyComparator.getInstance());
     for (Transaction transaction : getTransactions(account)) {
       if (
-        transaction.getPaymentConfirmed() != Transaction.NOT_CONFIRMED
-        && transaction.getTime().compareTo(before) < 0
+          transaction.getPaymentConfirmed() != Transaction.NOT_CONFIRMED
+              && transaction.getTime().compareTo(before) < 0
       ) {
         addBalance(balances, transaction.getAmount());
       }
@@ -390,8 +391,8 @@ public final class TransactionTable extends CachedTableIntegerKey<Transaction> {
     SortedMap<java.util.Currency, BigDecimal> balances = new TreeMap<>(CurrencyComparator.getInstance());
     for (Transaction transaction : getTransactions(account)) {
       if (
-        transaction.getPaymentConfirmed() == Transaction.CONFIRMED
-        && transaction.getTime().compareTo(before) < 0
+          transaction.getPaymentConfirmed() == Transaction.CONFIRMED
+              && transaction.getTime().compareTo(before) < 0
       ) {
         addBalance(balances, transaction.getAmount());
       }
@@ -459,37 +460,37 @@ public final class TransactionTable extends CachedTableIntegerKey<Transaction> {
     }
     for (Transaction tr : rows) {
       if (
-        (
-          criteria.getAfter() == null
-          || tr.getTime().compareTo(criteria.getAfter()) >= 0
-        ) && (
-          criteria.getBefore() == null
-          || tr.getTime().compareTo(criteria.getBefore()) < 0
-        ) && (
-          criteria.getPaymentConfirmed() == TransactionSearchCriteria.ANY
-          || criteria.getPaymentConfirmed() == tr.getPaymentConfirmed()
-        ) && (
-          criteria.getAccount() == null
-          || criteria.getAccount().equals(tr.getAccount_name())
-        ) && (
-          criteria.getSourceAccount() == null
-          || criteria.getSourceAccount().equals(tr.getSourceAccount_name())
-        ) && (
-          criteria.getAdministrator() == null
-          || criteria.getAdministrator().equals(tr.getAdministrator_username())
-        ) && (
-          criteria.getType() == null
-          || criteria.getType().equals(tr.getType_name())
-        ) && (
-          criteria.getDescription() == null || criteria.getDescription().isEmpty()
-          || matchesWords(tr.getDescription(), criteria.getDescription())
-        ) && (
-          criteria.getPaymentType() == null
-          || criteria.getPaymentType().equals(tr.getPaymentType_name())
-        ) && (
-          criteria.getPaymentInfo() == null || criteria.getPaymentInfo().isEmpty()
-          || matchesWords(tr.getPaymentInfo(), criteria.getPaymentInfo())
-        )
+          (
+              criteria.getAfter() == null
+                  || tr.getTime().compareTo(criteria.getAfter()) >= 0
+          ) && (
+              criteria.getBefore() == null
+                  || tr.getTime().compareTo(criteria.getBefore()) < 0
+          ) && (
+              criteria.getPaymentConfirmed() == TransactionSearchCriteria.ANY
+                  || criteria.getPaymentConfirmed() == tr.getPaymentConfirmed()
+          ) && (
+              criteria.getAccount() == null
+                  || criteria.getAccount().equals(tr.getAccount_name())
+          ) && (
+              criteria.getSourceAccount() == null
+                  || criteria.getSourceAccount().equals(tr.getSourceAccount_name())
+          ) && (
+              criteria.getAdministrator() == null
+                  || criteria.getAdministrator().equals(tr.getAdministrator_username())
+          ) && (
+              criteria.getType() == null
+                  || criteria.getType().equals(tr.getType_name())
+          ) && (
+              criteria.getDescription() == null || criteria.getDescription().isEmpty()
+                  || matchesWords(tr.getDescription(), criteria.getDescription())
+          ) && (
+              criteria.getPaymentType() == null
+                  || criteria.getPaymentType().equals(tr.getPaymentType_name())
+          ) && (
+              criteria.getPaymentInfo() == null || criteria.getPaymentInfo().isEmpty()
+                  || matchesWords(tr.getPaymentInfo(), criteria.getPaymentInfo())
+          )
       ) {
         matches.add(tr);
       }
@@ -524,21 +525,21 @@ public final class TransactionTable extends CachedTableIntegerKey<Transaction> {
         {
           String paymentConfirmed = args[13];
           if (
-            paymentConfirmed.equals("Confirmed")
-            // Backwards compatibility
-            || paymentConfirmed.equals("Y")
+              paymentConfirmed.equals("Confirmed")
+                  // Backwards compatibility
+                  || paymentConfirmed.equals("Y")
           ) {
             pc = Transaction.CONFIRMED;
           } else if (
-            paymentConfirmed.equals("Pending")
-            // Backwards compatibility
-            || paymentConfirmed.equals("W")
+              paymentConfirmed.equals("Pending")
+                  // Backwards compatibility
+                  || paymentConfirmed.equals("W")
           ) {
             pc = Transaction.WAITING_CONFIRMATION;
           } else if (
-            paymentConfirmed.equals("Failed")
-            // Backwards compatibility
-            || paymentConfirmed.equals("N")
+              paymentConfirmed.equals("Failed")
+                  // Backwards compatibility
+                  || paymentConfirmed.equals("N")
           ) {
             pc = Transaction.NOT_CONFIRMED;
           } else {
@@ -564,24 +565,24 @@ public final class TransactionTable extends CachedTableIntegerKey<Transaction> {
           }
         }
         out.println(
-          connector.getSimpleAOClient().addTransaction(
-            timeType,
-            time,
-            AOSH.parseAccountingCode(args[2], "business"),
-            AOSH.parseAccountingCode(args[3], "source_business"),
-            AOSH.parseUserName(args[4], "business_administrator"),
-            args[5],
-            args[6],
-            AOSH.parseDecimal3(args[7], "quantity"),
-            new Money(
-              java.util.Currency.getInstance(args[8]),
-              AOSH.parseBigDecimal(args[9], "rate")
-            ),
-            args[10],
-            args[11],
-            args[12],
-            pc
-          )
+            connector.getSimpleAOClient().addTransaction(
+                timeType,
+                time,
+                AOSH.parseAccountingCode(args[2], "business"),
+                AOSH.parseAccountingCode(args[3], "source_business"),
+                AOSH.parseUserName(args[4], "business_administrator"),
+                args[5],
+                args[6],
+                AOSH.parseDecimal3(args[7], "quantity"),
+                new Money(
+                    java.util.Currency.getInstance(args[8]),
+                    AOSH.parseBigDecimal(args[9], "rate")
+                ),
+                args[10],
+                args[11],
+                args[12],
+                pc
+            )
         );
         out.flush();
       }

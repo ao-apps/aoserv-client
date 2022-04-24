@@ -52,7 +52,7 @@ import java.sql.SQLException;
  */
 public final class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
 
-  static final int COLUMN_NET_BIND=0;
+  static final int COLUMN_NET_BIND = 0;
   static final String COLUMN_NET_BIND_name = "net_bind";
 
   private PosixPath logfile;
@@ -68,7 +68,7 @@ public final class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public PrivateServer() {
     // Do nothing
   }
@@ -102,9 +102,9 @@ public final class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
   }
 
   public Bind getNetBind() throws SQLException, IOException {
-    Bind nb=table.getConnector().getNet().getBind().get(pkey);
+    Bind nb = table.getConnector().getNet().getBind().get(pkey);
     if (nb == null) {
-      throw new SQLException("Unable to find NetBind: "+pkey);
+      throw new SQLException("Unable to find NetBind: " + pkey);
     }
     return nb;
   }
@@ -118,9 +118,9 @@ public final class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
   }
 
   public UserServer getLinuxServerAccount() throws SQLException, IOException {
-    UserServer lsa=table.getConnector().getLinux().getUserServer().get(pub_linux_server_account);
+    UserServer lsa = table.getConnector().getLinux().getUserServer().get(pub_linux_server_account);
     if (lsa == null) {
-      throw new SQLException("Unable to find LinuxServerAccount: "+pub_linux_server_account);
+      throw new SQLException("Unable to find LinuxServerAccount: " + pub_linux_server_account);
     }
     return lsa;
   }
@@ -158,8 +158,8 @@ public final class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
       hostname = DomainName.valueOf(result.getString(3));
       email = Email.valueOf(result.getString(4));
       created = UnmodifiableTimestamp.valueOf(result.getTimestamp(5));
-      pub_linux_server_account=result.getInt(6);
-      allow_anonymous=result.getBoolean(7);
+      pub_linux_server_account = result.getInt(6);
+      allow_anonymous = result.getBoolean(7);
     } catch (ValidationException e) {
       throw new SQLException(e);
     }
@@ -187,12 +187,12 @@ public final class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
 
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
-    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_113)<0) {
-      throw new IOException("PrivateFTPServer on AOServProtocol version less than "+AoservProtocol.Version.VERSION_1_0_A_113.getVersion()+" is no longer supported.  Please upgrade your AOServ Client software packages.");
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_113) < 0) {
+      throw new IOException("PrivateFTPServer on AOServProtocol version less than " + AoservProtocol.Version.VERSION_1_0_A_113.getVersion() + " is no longer supported.  Please upgrade your AOServ Client software packages.");
     }
     out.writeCompressedInt(pkey);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_38) <= 0) {
-      out.writeUTF("Upgrade AOServClient to version "+AoservProtocol.Version.VERSION_1_39+" or newer");
+      out.writeUTF("Upgrade AOServClient to version " + AoservProtocol.Version.VERSION_1_39 + " or newer");
     }
     out.writeUTF(logfile.toString());
     out.writeUTF(hostname.toString());

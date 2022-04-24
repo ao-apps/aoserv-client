@@ -42,7 +42,7 @@ import java.sql.SQLException;
  */
 public final class StaticSite extends CachedObjectIntegerKey<StaticSite> {
 
-  static final int COLUMN_HTTPD_SITE=0;
+  static final int COLUMN_HTTPD_SITE = 0;
   static final String COLUMN_HTTPD_SITE_name = "httpd_site";
 
   /**
@@ -51,7 +51,7 @@ public final class StaticSite extends CachedObjectIntegerKey<StaticSite> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public StaticSite() {
     // Do nothing
   }
@@ -65,9 +65,9 @@ public final class StaticSite extends CachedObjectIntegerKey<StaticSite> {
   }
 
   public Site getHttpdSite() throws SQLException, IOException {
-    Site obj=table.getConnector().getWeb().getSite().get(pkey);
+    Site obj = table.getConnector().getWeb().getSite().get(pkey);
     if (obj == null) {
-      throw new SQLException("Unable to find HttpdSite: "+pkey);
+      throw new SQLException("Unable to find HttpdSite: " + pkey);
     }
     return obj;
   }
@@ -79,12 +79,12 @@ public final class StaticSite extends CachedObjectIntegerKey<StaticSite> {
 
   @Override
   public void init(ResultSet result) throws SQLException {
-    pkey=result.getInt(1);
+    pkey = result.getInt(1);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readCompressedInt();
+    pkey = in.readCompressedInt();
   }
 
   @Override

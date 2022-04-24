@@ -78,88 +78,188 @@ public class ObjectTypesTODO extends TestCase {
     int numTables = Table.TableID.values().length;
     for (AOServConnector conn : conns) {
       User.Name connUsername = conn.getCurrentAdministrator().getKey();
-      System.out.println("    "+connUsername);
-      for (int c=0;c<numTables;c++) {
+      System.out.println("    " + connUsername);
+      for (int c = 0; c < numTables; c++) {
         // Excluded for testing speed
         if (
-          c == Table.TableID.DISTRO_FILES.ordinal()
-          || c == Table.TableID.WhoisHistory.ordinal() // TODO: Just exclude output/error columns?
+            c == Table.TableID.DISTRO_FILES.ordinal()
+                || c == Table.TableID.WhoisHistory.ordinal() // TODO: Just exclude output/error columns?
         ) {
           continue;
         }
-        AOServTable<?, ?> table=conn.getTable(c);
-        String tableName=table.getTableName();
-        System.out.print("        "+tableName+": ");
-        List<? extends AOServObject<?, ?>> rows=table.getRows();
+        AOServTable<?, ?> table = conn.getTable(c);
+        String tableName = table.getTableName();
+        System.out.print("        " + tableName + ": ");
+        List<? extends AOServObject<?, ?>> rows = table.getRows();
         if (rows.isEmpty()) {
           System.out.println('E');
         } else {
-          List<Column> columns=table.getTableSchema().getSchemaColumns(conn);
+          List<Column> columns = table.getTableSchema().getSchemaColumns(conn);
           for (Column column : columns) {
             String columnName = column.getName();
             Type type = column.getType(conn);
-            int typeNum=type.getId();
-            char tested='N';
+            int typeNum = type.getId();
+            char tested = 'N';
             for (AOServObject<?, ?> row : rows) {
               // Cast to proper type if not null
-              Object value=row.getColumn(column.getIndex());
+              Object value = row.getColumn(column.getIndex());
               if (value != null) {
-                Class<?> expectedType=null;
+                Class<?> expectedType = null;
                 try {
                   switch (typeNum) {
-                    case Type.ACCOUNTING: {expectedType=String.class; String accounting=(String)value; break;}
-                    case Type.BOOLEAN: {expectedType=Boolean.class; Boolean b=(Boolean)value; break;}
+                    case Type.ACCOUNTING: {
+                      expectedType = String.class;
+                      String accounting = (String) value;
+                      break;
+                    }
+                    case Type.BOOLEAN: {
+                      expectedType = Boolean.class;
+                      Boolean b = (Boolean) value;
+                      break;
+                    }
                     //case SchemaType.BYTE: {expectedType=Byte.class; Byte b=(Byte)value; break;}
                     //case SchemaType.CITY: {expectedType=String.class; String city=(String)value; break;}
                     //case SchemaType.COUNTRY: {expectedType=String.class; String country=(String)value; break;}
-                    case Type.DATE: {expectedType=Date.class; Date date=(Date)value; break;}
-                    case Type.DECIMAL_2: {expectedType=Integer.class; Integer decimal2=(Integer)value; break;}
-                    case Type.DECIMAL_3: {expectedType=Integer.class; Integer decimal3=(Integer)value; break;}
-                    case Type.DOUBLE: {expectedType=Double.class; Double d=(Double)value; break;}
-                    case Type.EMAIL: {expectedType=String.class; String email=(String)value; break;}
-                    case Type.FKEY: {expectedType=Integer.class; Integer fkey=(Integer)value; break;}
-                    case Type.FLOAT: {expectedType=Float.class; Float f=(Float)value; break;}
-                    case Type.HOSTNAME: {expectedType=String.class; String hostname=(String)value; break;}
-                    case Type.INT: {expectedType=Integer.class; Integer i=(Integer)value; break;}
-                    case Type.INTERVAL: {expectedType=Long.class; Long interval=(Long)value; break;}
-                    case Type.IP_ADDRESS: {expectedType=String.class; String ip=(String)value; break;}
-                    case Type.LONG: {expectedType=Long.class; Long l=(Long)value; break;}
+                    case Type.DATE: {
+                      expectedType = Date.class;
+                      Date date = (Date) value;
+                      break;
+                    }
+                    case Type.DECIMAL_2: {
+                      expectedType = Integer.class;
+                      Integer decimal2 = (Integer) value;
+                      break;
+                    }
+                    case Type.DECIMAL_3: {
+                      expectedType = Integer.class;
+                      Integer decimal3 = (Integer) value;
+                      break;
+                    }
+                    case Type.DOUBLE: {
+                      expectedType = Double.class;
+                      Double d = (Double) value;
+                      break;
+                    }
+                    case Type.EMAIL: {
+                      expectedType = String.class;
+                      String email = (String) value;
+                      break;
+                    }
+                    case Type.FKEY: {
+                      expectedType = Integer.class;
+                      Integer fkey = (Integer) value;
+                      break;
+                    }
+                    case Type.FLOAT: {
+                      expectedType = Float.class;
+                      Float f = (Float) value;
+                      break;
+                    }
+                    case Type.HOSTNAME: {
+                      expectedType = String.class;
+                      String hostname = (String) value;
+                      break;
+                    }
+                    case Type.INT: {
+                      expectedType = Integer.class;
+                      Integer i = (Integer) value;
+                      break;
+                    }
+                    case Type.INTERVAL: {
+                      expectedType = Long.class;
+                      Long interval = (Long) value;
+                      break;
+                    }
+                    case Type.IP_ADDRESS: {
+                      expectedType = String.class;
+                      String ip = (String) value;
+                      break;
+                    }
+                    case Type.LONG: {
+                      expectedType = Long.class;
+                      Long l = (Long) value;
+                      break;
+                    }
                     //case SchemaType.OCTAL_INT: {expectedType=Integer.class; Integer i=(Integer)value; break;}
-                    case Type.OCTAL_LONG: {expectedType=Long.class; Long l=(Long)value; break;}
+                    case Type.OCTAL_LONG: {
+                      expectedType = Long.class;
+                      Long l = (Long) value;
+                      break;
+                    }
                     //case SchemaType.PACKAGE: {expectedType=String.class; String pack=(String)value; break;}
-                    case Type.PATH: {expectedType=String.class; String path=(String)value; break;}
-                    case Type.PHONE: {expectedType=String.class; String phone=(String)value; break;}
-                    case Type.PKEY: {expectedType=Integer.class; Integer pkey=(Integer)value; break;}
-                    case Type.SHORT: {expectedType=Short.class; Short s=(Short)value; break;}
+                    case Type.PATH: {
+                      expectedType = String.class;
+                      String path = (String) value;
+                      break;
+                    }
+                    case Type.PHONE: {
+                      expectedType = String.class;
+                      String phone = (String) value;
+                      break;
+                    }
+                    case Type.PKEY: {
+                      expectedType = Integer.class;
+                      Integer pkey = (Integer) value;
+                      break;
+                    }
+                    case Type.SHORT: {
+                      expectedType = Short.class;
+                      Short s = (Short) value;
+                      break;
+                    }
                     //case SchemaType.STATE: {expectedType=String.class; String state=(String)value; break;}
-                    case Type.STRING: {expectedType=String.class; String s=(String)value; break;}
-                    case Type.TIME: {expectedType=Date.class; Date time=(Date)value; break;}
-                    case Type.URL: {expectedType=String.class; String url=(String)value; break;}
-                    case Type.USERNAME: {expectedType=String.class; String username=(String)value; break;}
+                    case Type.STRING: {
+                      expectedType = String.class;
+                      String s = (String) value;
+                      break;
+                    }
+                    case Type.TIME: {
+                      expectedType = Date.class;
+                      Date time = (Date) value;
+                      break;
+                    }
+                    case Type.URL: {
+                      expectedType = String.class;
+                      String url = (String) value;
+                      break;
+                    }
+                    case Type.USERNAME: {
+                      expectedType = String.class;
+                      String username = (String) value;
+                      break;
+                    }
                     //case SchemaType.ZIP: {expectedType=String.class; String zip=(String)value; break;}
-                    case Type.ZONE: {expectedType=String.class; String zone=(String)value; break;}
-                    case Type.BIG_DECIMAL: {expectedType=BigDecimal.class; BigDecimal bigDecimal=(BigDecimal)value; break;}
+                    case Type.ZONE: {
+                      expectedType = String.class;
+                      String zone = (String) value;
+                      break;
+                    }
+                    case Type.BIG_DECIMAL: {
+                      expectedType = BigDecimal.class;
+                      BigDecimal bigDecimal = (BigDecimal) value;
+                      break;
+                    }
                     default: {
-                      fail("Unexpected SchemaType id: "+typeNum);
+                      fail("Unexpected SchemaType id: " + typeNum);
                       throw new AssertionError();
                     }
                   }
                   assert expectedType != null;
-                  String string=type.getString(value, -1);
-                  Object parsedValue=type.parseString(string);
+                  String string = type.getString(value, -1);
+                  Object parsedValue = type.parseString(string);
                   if (value instanceof Date) {
                     // milliseconds may be dropped
-                    long valueSeconds=((Date)value).getTime();
-                    long parsedSeconds=((Date)value).getTime();
+                    long valueSeconds = ((Date) value).getTime();
+                    long parsedSeconds = ((Date) value).getTime();
                     assertEquals(valueSeconds, parsedSeconds);
                   } else {
                     assertEquals(value, parsedValue);
                   }
-                  tested='.';
+                  tested = '.';
                 } catch (ClassCastException err) {
-                  fail(tableName+"."+columnName+"=\""+value+"\": Unable to cast from type "+value.getClass().getName()+" to "+(expectedType == null ? null : expectedType.getName()));
+                  fail(tableName + "." + columnName + "=\"" + value + "\": Unable to cast from type " + value.getClass().getName() + " to " + (expectedType == null ? null : expectedType.getName()));
                 } catch (UnsupportedOperationException err) {
-                  tested='U';
+                  tested = 'U';
                   break;
                 }
               }

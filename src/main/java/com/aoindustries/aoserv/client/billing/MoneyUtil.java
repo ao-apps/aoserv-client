@@ -82,7 +82,7 @@ public final class MoneyUtil {
     }
     String currencyCode = result.getString(currencyColumnLabel);
     if (currencyCode == null) {
-      throw new SQLException(currencyColumnLabel + " == null && " + valueColumnLabel+" != null");
+      throw new SQLException(currencyColumnLabel + " == null && " + valueColumnLabel + " != null");
     }
     return new Money(Currency.getInstance(currencyCode), value);
   }

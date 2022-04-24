@@ -58,7 +58,7 @@ public final class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public SoftwareVersion() {
     // Do nothing
   }
@@ -108,9 +108,9 @@ public final class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
   }
 
   public OperatingSystemVersion getOperatingSystemVersion(AOServConnector conn) throws SQLException, IOException {
-    OperatingSystemVersion osv=conn.getDistribution().getOperatingSystemVersion().get(operating_system_version);
+    OperatingSystemVersion osv = conn.getDistribution().getOperatingSystemVersion().get(operating_system_version);
     if (osv == null) {
-      throw new SQLException("Unable to find OperatingSystemVersion: "+operating_system_version);
+      throw new SQLException("Unable to find OperatingSystemVersion: " + operating_system_version);
     }
     return osv;
   }

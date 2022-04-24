@@ -79,9 +79,9 @@ import java.util.List;
 public final class Site extends CachedObjectIntegerKey<Site> implements Disablable, Removable {
 
   static final int
-    COLUMN_ID = 0,
-    COLUMN_AO_SERVER = 1,
-    COLUMN_PACKAGE = 4
+      COLUMN_ID = 0,
+      COLUMN_AO_SERVER = 1,
+      COLUMN_PACKAGE = 4
   ;
   public static final String COLUMN_NAME_name = "name";
   public static final String COLUMN_AO_SERVER_name = "ao_server";
@@ -121,7 +121,7 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Site() {
     // Do nothing
   }
@@ -137,7 +137,7 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
       case 5: return linuxAccount;
       case 6: return linuxGroup;
       case 7: return serverAdmin;
-      case 8: return disable_log == -1?null:disable_log;
+      case 8: return disable_log == -1 ? null : disable_log;
       case 9: return isManual;
       case 10: return awstatsSkipFiles;
       case 11: return phpVersion == -1 ? null : phpVersion;
@@ -186,7 +186,7 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
   public Package getPackage() throws SQLException, IOException {
     Package obj = table.getConnector().getBilling().getPackage().get(packageName);
     if (obj == null) {
-      throw new SQLException("Unable to find Package: "+packageName);
+      throw new SQLException("Unable to find Package: " + packageName);
     }
     return obj;
   }
@@ -204,7 +204,7 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
 
     UserServer lsa = obj.getLinuxServerAccount(getLinuxServer());
     if (lsa == null) {
-      throw new SQLException("Unable to find LinuxServerAccount: "+linuxAccount+" on "+ao_server);
+      throw new SQLException("Unable to find LinuxServerAccount: " + linuxAccount + " on " + ao_server);
     }
     return lsa;
   }
@@ -216,11 +216,11 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
   public GroupServer getLinuxServerGroup() throws SQLException, IOException {
     Group obj = table.getConnector().getLinux().getGroup().get(linuxGroup);
     if (obj == null) {
-      throw new SQLException("Unable to find LinuxGroup: "+linuxGroup);
+      throw new SQLException("Unable to find LinuxGroup: " + linuxGroup);
     }
     GroupServer lsg = obj.getLinuxServerGroup(getLinuxServer());
     if (lsg == null) {
-      throw new SQLException("Unable to find LinuxServerGroup: "+linuxGroup+" on "+ao_server);
+      throw new SQLException("Unable to find LinuxServerGroup: " + linuxGroup + " on " + ao_server);
     }
     return lsg;
   }
@@ -240,7 +240,7 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
     }
     DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disable_log);
     if (obj == null) {
-      throw new SQLException("Unable to find DisableLog: "+disable_log);
+      throw new SQLException("Unable to find DisableLog: " + disable_log);
     }
     return obj;
   }
@@ -269,8 +269,8 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
       throw new SQLException("Not a PHP version: " + tv.getTechnologyName_name() + " #" + tv.getPkey());
     }
     if (
-      tv.getOperatingSystemVersion(table.getConnector()).getPkey()
-      != getLinuxServer().getHost().getOperatingSystemVersion_id()
+        tv.getOperatingSystemVersion(table.getConnector()).getPkey()
+            != getLinuxServer().getHost().getOperatingSystemVersion_id()
     ) {
       throw new SQLException("php/operating system version mismatch on HttpdSite: #" + pkey);
     }
@@ -355,7 +355,7 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
       serverAdmin = Email.valueOf(result.getString(pos++));
       disable_log = result.getInt(pos++);
       if (result.wasNull()) {
-        disable_log=-1;
+        disable_log = -1;
       }
       isManual = result.getBoolean(pos++);
       awstatsSkipFiles = result.getString(pos++);
@@ -458,23 +458,23 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
   }
 
   public int addHttpdSiteAuthenticatedLocation(
-    String path,
-    boolean isRegularExpression,
-    String authName,
-    PosixPath authGroupFile,
-    PosixPath authUserFile,
-    String require,
-    String handler
+      String path,
+      boolean isRegularExpression,
+      String authName,
+      PosixPath authGroupFile,
+      PosixPath authUserFile,
+      String require,
+      String handler
   ) throws IOException, SQLException {
     return table.getConnector().getWeb().getLocation().addHttpdSiteAuthenticatedLocation(
-      this,
-      path,
-      isRegularExpression,
-      authName,
-      authGroupFile,
-      authUserFile,
-      require,
-      handler
+        this,
+        path,
+        isRegularExpression,
+        authName,
+        authGroupFile,
+        authUserFile,
+        require,
+        handler
     );
   }
 
@@ -493,14 +493,14 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
 
   @Override
   public boolean canEnable() throws SQLException, IOException {
-    DisableLog dl=getDisableLog();
+    DisableLog dl = getDisableLog();
     if (dl == null) {
       return false;
     } else {
       return
-        dl.canEnable()
-        && !getPackage().isDisabled()
-        && !getLinuxServerAccount().isDisabled()
+          dl.canEnable()
+              && !getPackage().isDisabled()
+              && !getLinuxServerAccount().isDisabled()
       ;
     }
   }
@@ -526,8 +526,8 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
   public PosixPath getInstallDirectory() throws SQLException, IOException {
     try {
       return PosixPath.valueOf(
-        getLinuxServer().getHost().getOperatingSystemVersion().getHttpdSitesDirectory()
-        + "/" + name
+          getLinuxServer().getHost().getOperatingSystemVersion().getHttpdSitesDirectory()
+              + "/" + name
       );
     } catch (ValidationException e) {
       throw new SQLException(e);
@@ -560,7 +560,7 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
   }
 
   public VirtualHostName getPrimaryHttpdSiteURL() throws SQLException, IOException {
-    List<VirtualHost> binds=getHttpdSiteBinds();
+    List<VirtualHost> binds = getHttpdSiteBinds();
     if (binds.isEmpty()) {
       return null;
     }
@@ -573,8 +573,8 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
       if (bind.getName() == null) {
         Bind nb = bind.getHttpdBind().getNetBind();
         if (
-          AppProtocol.HTTPS.equals(nb.getAppProtocol().getProtocol())
-          && nb.getPort().equals(httpsPort)
+            AppProtocol.HTTPS.equals(nb.getAppProtocol().getProtocol())
+                && nb.getPort().equals(httpsPort)
         ) {
           return bind.getPrimaryHttpdSiteURL();
         }
@@ -585,8 +585,8 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
       if (bind.getName() == null) {
         Bind nb = bind.getHttpdBind().getNetBind();
         if (
-          AppProtocol.HTTP.equals(nb.getAppProtocol().getProtocol())
-          && nb.getPort().equals(httpPort)
+            AppProtocol.HTTP.equals(nb.getAppProtocol().getProtocol())
+                && nb.getPort().equals(httpPort)
         ) {
           return bind.getPrimaryHttpdSiteURL();
         }
@@ -614,8 +614,8 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
     for (VirtualHost bind : binds) {
       Bind nb = bind.getHttpdBind().getNetBind();
       if (
-        AppProtocol.HTTPS.equals(nb.getAppProtocol().getProtocol())
-        && nb.getPort().equals(httpsPort)
+          AppProtocol.HTTPS.equals(nb.getAppProtocol().getProtocol())
+              && nb.getPort().equals(httpsPort)
       ) {
         return bind.getPrimaryHttpdSiteURL();
       }
@@ -624,8 +624,8 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
     for (VirtualHost bind : binds) {
       Bind nb = bind.getHttpdBind().getNetBind();
       if (
-        AppProtocol.HTTP.equals(nb.getAppProtocol().getProtocol())
-        && nb.getPort().equals(httpPort)
+          AppProtocol.HTTP.equals(nb.getAppProtocol().getProtocol())
+              && nb.getPort().equals(httpPort)
       ) {
         return bind.getPrimaryHttpdSiteURL();
       }
@@ -672,33 +672,33 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
     // These are the other files/directories that may exist under /www.  To avoid
     // potential conflicts, these may not be used as site names.
     if (
-         DISABLED.equals(name) // Provided by aoserv-httpd-site-disabled package
-      // CentOS 5 only
-      || "cache".equals(name) // nginx only?
-      || "fastcgi".equals(name)
-      || "error".equals(name)
-      || "icons".equals(name)
-      // CentOS 7
-      || "cgi-bin".equals(name)
-      || "html".equals(name)
-      || "mrtg".equals(name)
-      // Other filesystem patterns
-      || "lost+found".equals(name)
-      || "aquota.group".equals(name)
-      || "aquota.user".equals(name)
+        DISABLED.equals(name) // Provided by aoserv-httpd-site-disabled package
+            // CentOS 5 only
+            || "cache".equals(name) // nginx only?
+            || "fastcgi".equals(name)
+            || "error".equals(name)
+            || "icons".equals(name)
+            // CentOS 7
+            || "cgi-bin".equals(name)
+            || "html".equals(name)
+            || "mrtg".equals(name)
+            // Other filesystem patterns
+            || "lost+found".equals(name)
+            || "aquota.group".equals(name)
+            || "aquota.user".equals(name)
     ) {
       return false;
     }
 
     int len = name.length();
     if (len == 0 || len > MAX_NAME_LENGTH) {
-        return false;
+      return false;
     }
     // The first character must be [a-z] or [0-9]
     char ch = name.charAt(0);
     if (
-      (ch < 'a' || ch > 'z')
-      && (ch<'0' || ch>'9')
+        (ch < 'a' || ch > 'z')
+            && (ch < '0' || ch > '9')
     ) {
       return false;
     }
@@ -706,10 +706,10 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
     for (int c = 1; c < len; c++) {
       ch = name.charAt(c);
       if (
-        (ch < 'a' || ch > 'z')
-        && (ch < '0' || ch > '9')
-        && ch != '.'
-        && ch != '-'
+          (ch < 'a' || ch > 'z')
+              && (ch < '0' || ch > '9')
+              && ch != '.'
+              && ch != '-'
       ) {
         return false;
       }
@@ -776,42 +776,42 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
 
   @Override
   public String toStringImpl() throws SQLException, IOException {
-    return name+" on "+getLinuxServer().getHostname();
+    return name + " on " + getLinuxServer().getHostname();
   }
 
   public void getAWStatsFile(final String path, final String queryString, final OutputStream out) throws IOException, SQLException {
     table.getConnector().requestUpdate(
-      false,
-      AoservProtocol.CommandID.GET_AWSTATS_FILE,
-      new AOServConnector.UpdateRequest() {
-        @Override
-        public void writeRequest(StreamableOutput masterOut) throws IOException {
-          masterOut.writeCompressedInt(pkey);
-          masterOut.writeUTF(path);
-          masterOut.writeUTF(queryString == null ? "" : queryString);
-        }
+        false,
+        AoservProtocol.CommandID.GET_AWSTATS_FILE,
+        new AOServConnector.UpdateRequest() {
+          @Override
+          public void writeRequest(StreamableOutput masterOut) throws IOException {
+            masterOut.writeCompressedInt(pkey);
+            masterOut.writeUTF(path);
+            masterOut.writeUTF(queryString == null ? "" : queryString);
+          }
 
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          byte[] buff=BufferManager.getBytes();
-          try {
-            int code;
-            while ((code=in.readByte()) == AoservProtocol.NEXT) {
-              int len=in.readShort();
-              in.readFully(buff, 0, len);
-              out.write(buff, 0, len);
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            byte[] buff = BufferManager.getBytes();
+            try {
+              int code;
+              while ((code = in.readByte()) == AoservProtocol.NEXT) {
+                int len = in.readShort();
+                in.readFully(buff, 0, len);
+                out.write(buff, 0, len);
+              }
+              AoservProtocol.checkResult(code, in);
+            } finally {
+              BufferManager.release(buff, false);
             }
-            AoservProtocol.checkResult(code, in);
-          } finally {
-            BufferManager.release(buff, false);
+          }
+
+          @Override
+          public void afterRelease() {
+            // Do nothing
           }
         }
-
-        @Override
-        public void afterRelease() {
-          // Do nothing
-        }
-      }
     );
   }
 }

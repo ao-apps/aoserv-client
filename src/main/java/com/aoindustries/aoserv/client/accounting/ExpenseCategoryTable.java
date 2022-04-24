@@ -41,8 +41,9 @@ public final class ExpenseCategoryTable extends CachedTableStringKey<ExpenseCate
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(ExpenseCategory.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(ExpenseCategory.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

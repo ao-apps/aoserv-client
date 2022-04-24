@@ -101,11 +101,11 @@ public final class ApacheEscape {
       }
       // Characters allowed, but only inside double-quoted strings
       if (
-        ch == ' '
-        || ch == '\t'
-        || ch == '\''
-        || ch == '<'
-        || ch == '>'
+          ch == ' '
+              || ch == '\t'
+              || ch == '\''
+              || ch == '<'
+              || ch == '>'
       ) {
         if (sb == null) {
           sb = new StringBuilder(len * 2).append(value, 0, i);
@@ -119,22 +119,22 @@ public final class ApacheEscape {
       // Do not allow control characters
       // TODO: What about the higher control characters range 7F-9F?
       else if (ch < ' ') {
-        throw new IllegalArgumentException("Control character not allowed in Apache directives: " + (int)ch);
+        throw new IllegalArgumentException("Control character not allowed in Apache directives: " + (int) ch);
       }
       // Escape "$" when dollar escaping enabled and followed by '{'
       else if (
-        ch == '$'
-        && !allowVariables
-        && i < (len - 1)
-        && value.charAt(i + 1) == '{'
+          ch == '$'
+              && !allowVariables
+              && i < (len - 1)
+              && value.charAt(i + 1) == '{'
       ) {
         // Find name of variable
         int endPos = value.indexOf('}', i + 2);
         if (
-          // No closing } found, no escape needed
-          endPos == -1
-          // Empty variable name, no escape needed
-          || endPos == (i + 2)
+            // No closing } found, no escape needed
+            endPos == -1
+                // Empty variable name, no escape needed
+                || endPos == (i + 2)
         ) {
           if (sb != null) {
             sb.append('$');

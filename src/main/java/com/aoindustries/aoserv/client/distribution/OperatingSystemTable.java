@@ -43,8 +43,9 @@ public final class OperatingSystemTable extends GlobalTableStringKey<OperatingSy
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(OperatingSystem.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(OperatingSystem.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

@@ -42,9 +42,10 @@ public final class NetworkTable extends CachedTableLongKey<Network> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Network.COLUMN_SET_name+'.'+Set.COLUMN_IDENTIFIER_name, ASCENDING),
-    new OrderBy(Network.COLUMN_NETWORK_name, ASCENDING)
+      new OrderBy(Network.COLUMN_SET_name + '.' + Set.COLUMN_IDENTIFIER_name, ASCENDING),
+      new OrderBy(Network.COLUMN_NETWORK_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

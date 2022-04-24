@@ -48,8 +48,9 @@ public final class BrandTable extends CachedTableAccountNameKey<Brand> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Brand.COLUMN_ACCOUNTING_name, ASCENDING)
+      new OrderBy(Brand.COLUMN_ACCOUNTING_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -81,7 +82,7 @@ public final class BrandTable extends CachedTableAccountNameKey<Brand> {
    * actual root of the business tree) or where the parent is inaccessible.
    */
   public List<Brand> getTopLevelBrands() throws IOException, SQLException {
-    List<Brand> matches=new ArrayList<>();
+    List<Brand> matches = new ArrayList<>();
     for (Brand brand : getRows()) {
       if (brand.getParentBrand() == null) {
         matches.add(brand);

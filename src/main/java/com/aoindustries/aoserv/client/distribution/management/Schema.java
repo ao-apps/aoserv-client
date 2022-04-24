@@ -35,13 +35,22 @@ import java.util.List;
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
   private final DistroFileTable DistroFile;
-  public DistroFileTable getDistroFile() {return DistroFile;}
+
+  public DistroFileTable getDistroFile() {
+    return DistroFile;
+  }
 
   private final DistroFileTypeTable DistroFileType;
-  public DistroFileTypeTable getDistroFileType() {return DistroFileType;}
+
+  public DistroFileTypeTable getDistroFileType() {
+    return DistroFileType;
+  }
 
   private final DistroReportTypeTable DistroReportType;
-  public DistroReportTypeTable getDistroReportType() {return DistroReportType;}
+
+  public DistroReportTypeTable getDistroReportType() {
+    return DistroReportType;
+  }
 
   private final List<? extends AOServTable<?, ?>> tables;
 

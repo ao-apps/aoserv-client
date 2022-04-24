@@ -76,63 +76,63 @@ public class GetIndexedRowTODO extends TestCase {
     System.out.println("- means unsupported");
     for (AOServConnector conn : conns) {
       User.Name username = conn.getCurrentAdministrator().getKey();
-      System.out.println("    "+username);
+      System.out.println("    " + username);
       int numTables = Table.TableID.values().length;
-      for (int c=0;c<numTables;c++) {
+      for (int c = 0; c < numTables; c++) {
         // Excluded for testing speed
         if (
-          c == Table.TableID.DISTRO_FILES.ordinal()
-          || c == Table.TableID.TRANSACTIONS.ordinal()
-          || c == Table.TableID.WhoisHistory.ordinal() // TODO: Just exclude output/error columns?
+            c == Table.TableID.DISTRO_FILES.ordinal()
+                || c == Table.TableID.TRANSACTIONS.ordinal()
+                || c == Table.TableID.WhoisHistory.ordinal() // TODO: Just exclude output/error columns?
         ) {
           continue;
         }
-        AOServTable table=conn.getTable(c);
-        String tableName=table.getTableName();
-        System.out.print("        "+tableName+": ");
-        List<AOServObject> rows=table.getRows();
+        AOServTable table = conn.getTable(c);
+        String tableName = table.getTableName();
+        System.out.print("        " + tableName + ": ");
+        List<AOServObject> rows = table.getRows();
         if (rows.isEmpty()) {
           System.out.println("Empty table, cannot test");
         } else {
-          List<Column> columns=table.getTableSchema().getSchemaColumns(conn);
-          Map<Object, List<AOServObject>> expectedLists=new HashMap<>();
+          List<Column> columns = table.getTableSchema().getSchemaColumns(conn);
+          Map<Object, List<AOServObject>> expectedLists = new HashMap<>();
           for (Column column : columns) {
-            boolean supported=true;
-            String columnName=column.getName();
+            boolean supported = true;
+            String columnName = column.getName();
             try {
-              int colIndex=column.getIndex();
+              int colIndex = column.getIndex();
               // Build our list of the expected objects by iterating through the entire list
               expectedLists.clear();
               for (AOServObject row : rows) {
-                Object value=row.getColumn(colIndex);
+                Object value = row.getColumn(colIndex);
                 // null values are not indexed
                 if (value != null) {
-                  List<AOServObject> list=expectedLists.get(value);
+                  List<AOServObject> list = expectedLists.get(value);
                   if (list == null) {
-                    expectedLists.put(value, list=new ArrayList<>());
+                    expectedLists.put(value, list = new ArrayList<>());
                   }
                   list.add(row);
                 }
               }
               // Compare to the lists using the index routines
               for (Object value : expectedLists.keySet()) {
-                List<AOServObject> expectedList=expectedLists.get(value);
-                List<AOServObject> indexedRows=table.getIndexedRows(colIndex, value);
-                assertEquals(tableName+"."+columnName+"="+value+": Mismatch in list size: ", expectedList.size(), indexedRows.size());
+                List<AOServObject> expectedList = expectedLists.get(value);
+                List<AOServObject> indexedRows = table.getIndexedRows(colIndex, value);
+                assertEquals(tableName + "." + columnName + "=" + value + ": Mismatch in list size: ", expectedList.size(), indexedRows.size());
                 if (!expectedList.containsAll(indexedRows)) {
-                  fail(tableName+"."+columnName+"="+value+": expectedList does not contain all the rows of indexedRows");
+                  fail(tableName + "." + columnName + "=" + value + ": expectedList does not contain all the rows of indexedRows");
                 }
                 if (!indexedRows.containsAll(expectedList)) {
-                  fail(tableName+"."+columnName+"="+value+": indexedRows does not contain all the rows of expectedList");
+                  fail(tableName + "." + columnName + "=" + value + ": indexedRows does not contain all the rows of expectedList");
                 }
               }
             } catch (UnsupportedOperationException err) {
-              supported=false;
+              supported = false;
             } catch (RuntimeException err) {
-              System.out.println("RuntimeException tableName="+tableName+", columnName="+columnName);
+              System.out.println("RuntimeException tableName=" + tableName + ", columnName=" + columnName);
               throw err;
             }
-            System.out.print(supported?'+':'-');
+            System.out.print(supported ? '+' : '-');
           }
           System.out.println();
         }

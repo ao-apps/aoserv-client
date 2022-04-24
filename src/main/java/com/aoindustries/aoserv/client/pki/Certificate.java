@@ -53,9 +53,9 @@ import java.util.Objects;
 public final class Certificate extends CachedObjectIntegerKey<Certificate> {
 
   static final int
-    COLUMN_PKEY = 0,
-    COLUMN_AO_SERVER = 1,
-    COLUMN_PACKAGE = 2
+      COLUMN_PKEY = 0,
+      COLUMN_AO_SERVER = 1,
+      COLUMN_PACKAGE = 2
   ;
   static final String COLUMN_AO_SERVER_name = "ao_server";
   static final String COLUMN_CERT_FILE_name = "cert_file";
@@ -74,7 +74,7 @@ public final class Certificate extends CachedObjectIntegerKey<Certificate> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Certificate() {
     // Do nothing
   }
@@ -243,10 +243,10 @@ public final class Certificate extends CachedObjectIntegerKey<Certificate> {
     private final String message;
 
     public Check(
-      String check,
-      String value,
-      AlertLevel alertLevel,
-      String message
+        String check,
+        String value,
+        AlertLevel alertLevel,
+        String message
     ) {
       this.check = check;
       this.value = value;
@@ -292,45 +292,45 @@ public final class Certificate extends CachedObjectIntegerKey<Certificate> {
    */
   public List<Check> check(final boolean allowCached) throws IOException, SQLException {
     return table.getConnector().requestResult(
-      true,
-      AoservProtocol.CommandID.CHECK_SSL_CERTIFICATE,
-      new AOServConnector.ResultRequest<List<Check>>() {
-        private List<Check> result;
+        true,
+        AoservProtocol.CommandID.CHECK_SSL_CERTIFICATE,
+        new AOServConnector.ResultRequest<List<Check>>() {
+          private List<Check> result;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(pkey);
-          out.writeBoolean(allowCached);
-        }
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(pkey);
+            out.writeBoolean(allowCached);
+          }
 
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code = in.readByte();
-          if (code == AoservProtocol.NEXT) {
-            int size = in.readCompressedInt();
-            List<Check> results = new ArrayList<>(size);
-            for (int c = 0; c < size; c++) {
-              results.add(
-                new Check(
-                  in.readUTF(),
-                  in.readUTF(),
-                  AlertLevel.valueOf(in.readUTF()),
-                  in.readNullUTF()
-                )
-              );
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.NEXT) {
+              int size = in.readCompressedInt();
+              List<Check> results = new ArrayList<>(size);
+              for (int c = 0; c < size; c++) {
+                results.add(
+                    new Check(
+                        in.readUTF(),
+                        in.readUTF(),
+                        AlertLevel.valueOf(in.readUTF()),
+                        in.readNullUTF()
+                    )
+                );
+              }
+              this.result = results;
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
             }
-            this.result = results;
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: " + code);
+          }
+
+          @Override
+          public List<Check> afterRelease() {
+            return Collections.unmodifiableList(result);
           }
         }
-
-        @Override
-        public List<Check> afterRelease() {
-          return Collections.unmodifiableList(result);
-        }
-      }
     );
   }
 }

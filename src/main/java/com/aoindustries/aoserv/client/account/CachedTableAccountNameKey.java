@@ -47,7 +47,7 @@ public abstract class CachedTableAccountNameKey<V extends CachedObjectAccountNam
   @Deprecated
   @Override
   public V get(Object pkey) throws IOException, SQLException {
-    return get((Account.Name)pkey);
+    return get((Account.Name) pkey);
   }
 
   /**

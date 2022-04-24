@@ -47,9 +47,10 @@ public final class BackupPartitionTable extends CachedTableIntegerKey<BackupPart
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(BackupPartition.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
-    new OrderBy(BackupPartition.COLUMN_PATH_name, ASCENDING)
+      new OrderBy(BackupPartition.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
+      new OrderBy(BackupPartition.COLUMN_PATH_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -67,10 +68,10 @@ public final class BackupPartitionTable extends CachedTableIntegerKey<BackupPart
 
   public BackupPartition getBackupPartitionForPath(Server ao, String path) throws IOException, SQLException {
     // Use index first
-    List<BackupPartition> cached=getBackupPartitions(ao);
-    int size=cached.size();
-    for (int c=0;c<size;c++) {
-      BackupPartition bp=cached.get(c);
+    List<BackupPartition> cached = getBackupPartitions(ao);
+    int size = cached.size();
+    for (int c = 0; c < size; c++) {
+      BackupPartition bp = cached.get(c);
       if (bp.getPath().toString().equals(path)) {
         return bp;
       }
@@ -85,12 +86,12 @@ public final class BackupPartitionTable extends CachedTableIntegerKey<BackupPart
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-    String command=args[0];
+    String command = args[0];
     if (command.equalsIgnoreCase(Command.GET_BACKUP_PARTITION_TOTAL_SIZE)) {
       if (AOSH.checkParamCount(Command.GET_BACKUP_PARTITION_TOTAL_SIZE, args, 2, err)) {
-        long size=connector.getSimpleAOClient().getBackupPartitionTotalSize(
-          args[1],
-          args[2]
+        long size = connector.getSimpleAOClient().getBackupPartitionTotalSize(
+            args[1],
+            args[2]
         );
         if (size == -1) {
           out.println("Server unavailable");
@@ -102,9 +103,9 @@ public final class BackupPartitionTable extends CachedTableIntegerKey<BackupPart
       return true;
     } else if (command.equalsIgnoreCase(Command.GET_BACKUP_PARTITION_USED_SIZE)) {
       if (AOSH.checkParamCount(Command.GET_BACKUP_PARTITION_USED_SIZE, args, 2, err)) {
-        long size=connector.getSimpleAOClient().getBackupPartitionUsedSize(
-          args[1],
-          args[2]
+        long size = connector.getSimpleAOClient().getBackupPartitionUsedSize(
+            args[1],
+            args[2]
         );
         if (size == -1) {
           out.println("Server unavailable");

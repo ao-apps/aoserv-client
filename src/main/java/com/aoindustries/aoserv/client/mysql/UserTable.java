@@ -53,8 +53,9 @@ public final class UserTable extends CachedTableUserNameKey<User> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(User.COLUMN_USERNAME_name, ASCENDING)
+      new OrderBy(User.COLUMN_USERNAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -66,10 +67,10 @@ public final class UserTable extends CachedTableUserNameKey<User> {
       throw new SQLException("Refusing to add special MySQL user: " + username);
     }
     connector.requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.ADD,
-      Table.TableID.MYSQL_USERS,
-      username
+        true,
+        AoservProtocol.CommandID.ADD,
+        Table.TableID.MYSQL_USERS,
+        username
     );
   }
 
@@ -79,12 +80,12 @@ public final class UserTable extends CachedTableUserNameKey<User> {
   }
 
   public List<User> getMySQLUsers(Package pack) throws IOException, SQLException {
-    Account.Name name=pack.getName();
-    List<User> cached=getRows();
-    int size=cached.size();
-    List<User> matches=new ArrayList<>(size);
-    for (int c=0;c<size;c++) {
-      User msu=cached.get(c);
+    Account.Name name = pack.getName();
+    List<User> cached = getRows();
+    int size = cached.size();
+    List<User> matches = new ArrayList<>(size);
+    for (int c = 0; c < size; c++) {
+      User msu = cached.get(c);
       if (msu.getUsername().getPackage_name().equals(name)) {
         matches.add(msu);
       }
@@ -99,18 +100,18 @@ public final class UserTable extends CachedTableUserNameKey<User> {
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-    String command=args[0];
+    String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_MYSQL_USER)) {
       if (AOSH.checkParamCount(Command.ADD_MYSQL_USER, args, 1, err)) {
         connector.getSimpleAOClient().addMySQLUser(
-          AOSH.parseMySQLUserName(args[1], "username")
+            AOSH.parseMySQLUserName(args[1], "username")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.ARE_MYSQL_USER_PASSWORDS_SET)) {
       if (AOSH.checkParamCount(Command.ARE_MYSQL_USER_PASSWORDS_SET, args, 1, err)) {
-        int result=connector.getSimpleAOClient().areMySQLUserPasswordsSet(
-          AOSH.parseMySQLUserName(args[1], "username")
+        int result = connector.getSimpleAOClient().areMySQLUserPasswordsSet(
+            AOSH.parseMySQLUserName(args[1], "username")
         );
         if (result == PasswordProtected.NONE) {
           out.println("none");
@@ -119,16 +120,16 @@ public final class UserTable extends CachedTableUserNameKey<User> {
         } else if (result == PasswordProtected.ALL) {
           out.println("all");
         } else {
-          throw new RuntimeException("Unexpected value for result: "+result);
+          throw new RuntimeException("Unexpected value for result: " + result);
         }
         out.flush();
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.CHECK_MYSQL_PASSWORD)) {
       if (AOSH.checkParamCount(Command.CHECK_MYSQL_PASSWORD, args, 2, err)) {
-        List<PasswordChecker.Result> results=SimpleAOClient.checkMySQLPassword(
-          AOSH.parseMySQLUserName(args[1], "username"),
-          args[2]
+        List<PasswordChecker.Result> results = SimpleAOClient.checkMySQLPassword(
+            AOSH.parseMySQLUserName(args[1], "username"),
+            args[2]
         );
         if (PasswordChecker.hasResults(results)) {
           PasswordChecker.printResults(results, out);
@@ -142,7 +143,7 @@ public final class UserTable extends CachedTableUserNameKey<User> {
         out.println(validationResult.isValid());
         out.flush();
         if (!validationResult.isValid()) {
-          err.print("aosh: "+Command.CHECK_MYSQL_USERNAME+": ");
+          err.print("aosh: " + Command.CHECK_MYSQL_USERNAME + ": ");
           err.println(validationResult.toString());
           err.flush();
         }
@@ -151,10 +152,10 @@ public final class UserTable extends CachedTableUserNameKey<User> {
     } else if (command.equalsIgnoreCase(Command.DISABLE_MYSQL_USER)) {
       if (AOSH.checkParamCount(Command.DISABLE_MYSQL_USER, args, 2, err)) {
         out.println(
-          connector.getSimpleAOClient().disableMySQLUser(
-            AOSH.parseMySQLUserName(args[1], "username"),
-            args[2]
-          )
+            connector.getSimpleAOClient().disableMySQLUser(
+                AOSH.parseMySQLUserName(args[1], "username"),
+                args[2]
+            )
         );
         out.flush();
       }
@@ -162,22 +163,22 @@ public final class UserTable extends CachedTableUserNameKey<User> {
     } else if (command.equalsIgnoreCase(Command.ENABLE_MYSQL_USER)) {
       if (AOSH.checkParamCount(Command.ENABLE_MYSQL_USER, args, 1, err)) {
         connector.getSimpleAOClient().enableMySQLUser(
-          AOSH.parseMySQLUserName(args[1], "username")
+            AOSH.parseMySQLUserName(args[1], "username")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.REMOVE_MYSQL_USER)) {
       if (AOSH.checkParamCount(Command.REMOVE_MYSQL_USER, args, 1, err)) {
         connector.getSimpleAOClient().removeMySQLUser(
-          AOSH.parseMySQLUserName(args[1], "username")
+            AOSH.parseMySQLUserName(args[1], "username")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_MYSQL_USER_PASSWORD)) {
       if (AOSH.checkParamCount(Command.SET_MYSQL_USER_PASSWORD, args, 2, err)) {
         connector.getSimpleAOClient().setMySQLUserPassword(
-          AOSH.parseMySQLUserName(args[1], "username"),
-          args[2]
+            AOSH.parseMySQLUserName(args[1], "username"),
+            args[2]
         );
       }
       return true;
@@ -192,10 +193,10 @@ public final class UserTable extends CachedTableUserNameKey<User> {
 
   public void waitForRebuild(com.aoindustries.aoserv.client.linux.Server aoServer) throws IOException, SQLException {
     connector.requestUpdate(
-      true,
-      AoservProtocol.CommandID.WAIT_FOR_REBUILD,
-      Table.TableID.MYSQL_USERS,
-      aoServer.getPkey()
+        true,
+        AoservProtocol.CommandID.WAIT_FOR_REBUILD,
+        Table.TableID.MYSQL_USERS,
+        aoServer.getPkey()
     );
   }
 }

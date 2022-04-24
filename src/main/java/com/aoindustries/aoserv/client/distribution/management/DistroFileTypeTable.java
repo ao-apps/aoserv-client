@@ -41,8 +41,9 @@ public final class DistroFileTypeTable extends GlobalTableStringKey<DistroFileTy
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(DistroFileType.COLUMN_TYPE_name, ASCENDING)
+      new OrderBy(DistroFileType.COLUMN_TYPE_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

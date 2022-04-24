@@ -58,7 +58,7 @@ import java.sql.SQLException;
  */
 public final class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 
-  static final int COLUMN_PKEY=0;
+  static final int COLUMN_PKEY = 0;
   static final String COLUMN_PKEY_name = "pkey";
   static final String COLUMN_ACCOUNTING_name = "accounting";
   static final String COLUMN_PACKAGE_name = "package";
@@ -81,29 +81,29 @@ public final class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public MonthlyCharge() {
     // Do nothing
   }
 
   @SuppressWarnings("deprecation")
   MonthlyCharge(
-    MonthlyChargeTable table,
-    Account business,
-    Package packageObject,
-    TransactionType typeObject,
-    String description,
-    int quantity,
-    Money rate,
-    Administrator createdByObject,
-    boolean active
+      MonthlyChargeTable table,
+      Account business,
+      Package packageObject,
+      TransactionType typeObject,
+      String description,
+      int quantity,
+      Money rate,
+      Administrator createdByObject,
+      boolean active
   ) {
     setTable(table);
-    this.pkey=-1;
+    this.pkey = -1;
     this.accounting = business.getName();
     this.packageName = packageObject.getName();
     this.type = typeObject.getName();
-    this.description=description;
+    this.description = description;
     this.quantity = quantity;
     this.rate = rate;
     this.created = new UnmodifiableTimestamp(System.currentTimeMillis());

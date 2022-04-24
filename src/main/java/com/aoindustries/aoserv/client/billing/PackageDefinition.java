@@ -50,7 +50,7 @@ import java.util.List;
  */
 public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefinition> implements Removable {
 
-  static final int COLUMN_PKEY=0;
+  static final int COLUMN_PKEY = 0;
   static final String COLUMN_ACCOUNTING_name = "accounting";
   static final String COLUMN_CATEGORY_name = "category";
   static final String COLUMN_monthlyRate_name = "monthlyRate";
@@ -76,7 +76,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public PackageDefinition() {
     // Do nothing
   }
@@ -117,9 +117,9 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
   }
 
   public PackageCategory getPackageCategory() throws SQLException, IOException {
-    PackageCategory pc=table.getConnector().getBilling().getPackageCategory().get(category);
+    PackageCategory pc = table.getConnector().getBilling().getPackageCategory().get(category);
     if (pc == null) {
-      throw new SQLException("Unable to find PackageCategory: "+category);
+      throw new SQLException("Unable to find PackageCategory: " + category);
     }
     return pc;
   }
@@ -144,40 +144,40 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 
   public void setLimits(final PackageDefinitionLimit[] limits) throws IOException, SQLException {
     table.getConnector().requestUpdate(
-      true,
-      AoservProtocol.CommandID.SET_PACKAGE_DEFINITION_LIMITS,
-      new AOServConnector.UpdateRequest() {
-        private IntList invalidateList;
+        true,
+        AoservProtocol.CommandID.SET_PACKAGE_DEFINITION_LIMITS,
+        new AOServConnector.UpdateRequest() {
+          private IntList invalidateList;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(pkey);
-          out.writeCompressedInt(limits.length);
-          for (PackageDefinitionLimit limit : limits) {
-            out.writeUTF(limit.getResource_name());
-            out.writeCompressedInt(limit.getSoftLimit());
-            out.writeCompressedInt(limit.getHardLimit());
-            MoneyUtil.writeNullMoney(limit.getAdditionalRate(), out);
-            out.writeNullUTF(limit.getAdditionalTransactionType_name());
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(pkey);
+            out.writeCompressedInt(limits.length);
+            for (PackageDefinitionLimit limit : limits) {
+              out.writeUTF(limit.getResource_name());
+              out.writeCompressedInt(limit.getSoftLimit());
+              out.writeCompressedInt(limit.getHardLimit());
+              MoneyUtil.writeNullMoney(limit.getAdditionalRate(), out);
+              out.writeNullUTF(limit.getAdditionalTransactionType_name());
+            }
+          }
+
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              invalidateList = AOServConnector.readInvalidateList(in);
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unknown response code: " + code);
+            }
+          }
+
+          @Override
+          public void afterRelease() {
+            table.getConnector().tablesUpdated(invalidateList);
           }
         }
-
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            invalidateList=AOServConnector.readInvalidateList(in);
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unknown response code: "+code);
-          }
-        }
-
-        @Override
-        public void afterRelease() {
-          table.getConnector().tablesUpdated(invalidateList);
-        }
-      }
     );
   }
 
@@ -208,9 +208,9 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
     if (setup_fee_transaction_type == null) {
       return null;
     }
-    TransactionType tt=table.getConnector().getBilling().getTransactionType().get(setup_fee_transaction_type);
+    TransactionType tt = table.getConnector().getBilling().getTransactionType().get(setup_fee_transaction_type);
     if (tt == null) {
-      throw new SQLException("Unable to find TransactionType: "+setup_fee_transaction_type);
+      throw new SQLException("Unable to find TransactionType: " + setup_fee_transaction_type);
     }
     return tt;
   }
@@ -226,9 +226,9 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
     if (monthly_rate_transaction_type == null) {
       return null;
     }
-    TransactionType tt=table.getConnector().getBilling().getTransactionType().get(monthly_rate_transaction_type);
+    TransactionType tt = table.getConnector().getBilling().getTransactionType().get(monthly_rate_transaction_type);
     if (tt == null) {
-      throw new SQLException("Unable to find TransactionType: "+monthly_rate_transaction_type);
+      throw new SQLException("Unable to find TransactionType: " + monthly_rate_transaction_type);
     }
     return tt;
   }
@@ -261,9 +261,9 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
       accounting = Account.Name.valueOf(result.getString("accounting"));
       category = result.getString("category");
       name = result.getString("name");
-      version=result.getString("version");
-      display=result.getString("display");
-      description=result.getString("description");
+      version = result.getString("version");
+      display = result.getString("display");
+      description = result.getString("description");
       setupFee = MoneyUtil.getMoney(result, "setupFee.currency", "setupFee.value");
       setup_fee_transaction_type = result.getString("setup_fee_transaction_type");
       monthlyRate = MoneyUtil.getMoney(result, "monthlyRate.currency", "monthlyRate.value");
@@ -336,10 +336,10 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 
   @Override
   public List<CannotRemoveReason<Package>> getCannotRemoveReasons() throws IOException, SQLException {
-    List<CannotRemoveReason<Package>> reasons=new ArrayList<>(1);
-    List<Package> packs=getPackages();
+    List<CannotRemoveReason<Package>> reasons = new ArrayList<>(1);
+    List<Package> packs = getPackages();
     if (!packs.isEmpty()) {
-      reasons.add(new CannotRemoveReason<>("Used by "+packs.size()+" "+(packs.size() == 1?"package":"packages"), packs));
+      reasons.add(new CannotRemoveReason<>("Used by " + packs.size() + " " + (packs.size() == 1 ? "package" : "packages"), packs));
     }
     return reasons;
   }
@@ -347,65 +347,65 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
   @Override
   public void remove() throws IOException, SQLException {
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.REMOVE,
-      Table.TableID.PACKAGE_DEFINITIONS,
-      pkey
+        true,
+        AoservProtocol.CommandID.REMOVE,
+        Table.TableID.PACKAGE_DEFINITIONS,
+        pkey
     );
   }
 
   public void update(
-    final Account business,
-    final PackageCategory category,
-    final String name,
-    final String version,
-    final String display,
-    final String description,
-    final Money setupFee,
-    final TransactionType setupFeeTransactionType,
-    final Money monthlyRate,
-    final TransactionType monthlyRateTransactionType
+      final Account business,
+      final PackageCategory category,
+      final String name,
+      final String version,
+      final String display,
+      final String description,
+      final Money setupFee,
+      final TransactionType setupFeeTransactionType,
+      final Money monthlyRate,
+      final TransactionType monthlyRateTransactionType
   ) throws IOException, SQLException {
     table.getConnector().requestUpdate(
-      true,
-      AoservProtocol.CommandID.UPDATE_PACKAGE_DEFINITION,
-      new AOServConnector.UpdateRequest() {
-        private IntList invalidateList;
+        true,
+        AoservProtocol.CommandID.UPDATE_PACKAGE_DEFINITION,
+        new AOServConnector.UpdateRequest() {
+          private IntList invalidateList;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(pkey);
-          out.writeUTF(business.getName().toString());
-          out.writeUTF(category.getName());
-          out.writeUTF(name);
-          out.writeUTF(version);
-          out.writeUTF(display);
-          out.writeUTF(description);
-          MoneyUtil.writeNullMoney(setupFee, out);
-          out.writeBoolean(setupFeeTransactionType != null);
-          if (setupFeeTransactionType != null) {
-            out.writeUTF(setupFeeTransactionType.getName());
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(pkey);
+            out.writeUTF(business.getName().toString());
+            out.writeUTF(category.getName());
+            out.writeUTF(name);
+            out.writeUTF(version);
+            out.writeUTF(display);
+            out.writeUTF(description);
+            MoneyUtil.writeNullMoney(setupFee, out);
+            out.writeBoolean(setupFeeTransactionType != null);
+            if (setupFeeTransactionType != null) {
+              out.writeUTF(setupFeeTransactionType.getName());
+            }
+            MoneyUtil.writeMoney(monthlyRate, out);
+            out.writeUTF(monthlyRateTransactionType.getName());
           }
-          MoneyUtil.writeMoney(monthlyRate, out);
-          out.writeUTF(monthlyRateTransactionType.getName());
-        }
 
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            invalidateList=AOServConnector.readInvalidateList(in);
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unknown response code: "+code);
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              invalidateList = AOServConnector.readInvalidateList(in);
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unknown response code: " + code);
+            }
+          }
+
+          @Override
+          public void afterRelease() {
+            table.getConnector().tablesUpdated(invalidateList);
           }
         }
-
-        @Override
-        public void afterRelease() {
-          table.getConnector().tablesUpdated(invalidateList);
-        }
-      }
     );
   }
 }

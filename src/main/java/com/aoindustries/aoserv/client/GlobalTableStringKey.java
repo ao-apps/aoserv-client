@@ -45,7 +45,7 @@ public abstract class GlobalTableStringKey<V extends GlobalObjectStringKey<V>> e
   @Deprecated
   @Override
   public V get(Object pkey) throws IOException, SQLException {
-    return get((String)pkey);
+    return get((String) pkey);
   }
 
   /**

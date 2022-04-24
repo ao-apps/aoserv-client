@@ -69,11 +69,11 @@ public class GetDefaultOrderBySQLExpressionsTODO extends TestCase {
     System.out.println("Testing getTable(tableID).getDefaultOrderBySQLExpressions()");
     for (AOServConnector conn : conns) {
       User.Name username = conn.getCurrentAdministrator().getKey();
-      System.out.print("    "+username+": ");
+      System.out.print("    " + username + ": ");
       int numTables = Table.TableID.values().length;
-      for (int c=0;c<numTables;c++) {
+      for (int c = 0; c < numTables; c++) {
         System.out.print('.');
-        AOServTable<?, ?> table=conn.getTable(c);
+        AOServTable<?, ?> table = conn.getTable(c);
         table.getDefaultOrderBySQLExpressions();
       }
       System.out.println(" Done");

@@ -35,46 +35,88 @@ import java.util.List;
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
   private final CurrencyTable Currency;
-  public CurrencyTable getCurrency() {return Currency;}
+
+  public CurrencyTable getCurrency() {
+    return Currency;
+  }
 
   private final MonthlyChargeTable MonthlyCharge;
-  public MonthlyChargeTable getMonthlyCharge() {return MonthlyCharge;}
+
+  public MonthlyChargeTable getMonthlyCharge() {
+    return MonthlyCharge;
+  }
 
   private final NoticeLogTable NoticeLog;
-  public NoticeLogTable getNoticeLog() {return NoticeLog;}
+
+  public NoticeLogTable getNoticeLog() {
+    return NoticeLog;
+  }
 
   private final NoticeLogBalanceTable NoticeLogBalance;
-  public NoticeLogBalanceTable getNoticeLogBalance() {return NoticeLogBalance;}
+
+  public NoticeLogBalanceTable getNoticeLogBalance() {
+    return NoticeLogBalance;
+  }
 
   private final NoticeTypeTable NoticeType;
-  public NoticeTypeTable getNoticeType() {return NoticeType;}
+
+  public NoticeTypeTable getNoticeType() {
+    return NoticeType;
+  }
 
   private final PackageTable Package;
-  public PackageTable getPackage() {return Package;}
+
+  public PackageTable getPackage() {
+    return Package;
+  }
 
   private final PackageCategoryTable PackageCategory;
-  public PackageCategoryTable getPackageCategory() {return PackageCategory;}
+
+  public PackageCategoryTable getPackageCategory() {
+    return PackageCategory;
+  }
 
   private final PackageDefinitionTable PackageDefinition;
-  public PackageDefinitionTable getPackageDefinition() {return PackageDefinition;}
+
+  public PackageDefinitionTable getPackageDefinition() {
+    return PackageDefinition;
+  }
 
   private final PackageDefinitionLimitTable PackageDefinitionLimit;
-  public PackageDefinitionLimitTable getPackageDefinitionLimit() {return PackageDefinitionLimit;}
+
+  public PackageDefinitionLimitTable getPackageDefinitionLimit() {
+    return PackageDefinitionLimit;
+  }
 
   private final ResourceTable Resource;
-  public ResourceTable getResource() {return Resource;}
+
+  public ResourceTable getResource() {
+    return Resource;
+  }
 
   private final TransactionTable Transaction;
-  public TransactionTable getTransaction() {return Transaction;}
+
+  public TransactionTable getTransaction() {
+    return Transaction;
+  }
 
   private final TransactionTypeTable TransactionType;
-  public TransactionTypeTable getTransactionType() {return TransactionType;}
+
+  public TransactionTypeTable getTransactionType() {
+    return TransactionType;
+  }
 
   private final WhoisHistoryTable WhoisHistory;
-  public WhoisHistoryTable getWhoisHistory() {return WhoisHistory;}
+
+  public WhoisHistoryTable getWhoisHistory() {
+    return WhoisHistory;
+  }
 
   private final WhoisHistoryAccountTable WhoisHistoryAccount;
-  public WhoisHistoryAccountTable getWhoisHistoryAccount() {return WhoisHistoryAccount;}
+
+  public WhoisHistoryAccountTable getWhoisHistoryAccount() {
+    return WhoisHistoryAccount;
+  }
 
   private final List<? extends AOServTable<?, ?>> tables;
 

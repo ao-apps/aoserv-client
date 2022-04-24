@@ -48,7 +48,7 @@ public final class ExpenseCategory extends CachedObjectStringKey<ExpenseCategory
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public ExpenseCategory() {
     // Do nothing
   }
@@ -66,7 +66,7 @@ public final class ExpenseCategory extends CachedObjectStringKey<ExpenseCategory
   }
 
   @Override
-    public Table.TableID getTableID() {
+  public Table.TableID getTableID() {
     return Table.TableID.EXPENSE_CATEGORIES;
   }
 

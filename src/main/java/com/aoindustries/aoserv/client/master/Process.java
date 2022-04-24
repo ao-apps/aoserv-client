@@ -60,9 +60,9 @@ public class Process extends AOServObject<SmallIdentifier, Process> implements S
    * The different states a process may be in.
    */
   public static final String
-    LOGIN = "login",
-    RUN = "run",
-    SLEEP = "sleep"
+      LOGIN = "login",
+      RUN = "run",
+      SLEEP = "sleep"
   ;
 
   protected SmallIdentifier id;
@@ -92,7 +92,7 @@ public class Process extends AOServObject<SmallIdentifier, Process> implements S
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   // Also used by aoserv-master subclass
   public Process() {
     // Do nothing

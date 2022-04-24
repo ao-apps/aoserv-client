@@ -35,22 +35,40 @@ import java.util.List;
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
   private final HostTable Host;
-  public HostTable getHost() {return Host;}
+
+  public HostTable getHost() {
+    return Host;
+  }
 
   private final LimiterTable Limiter;
-  public LimiterTable getLimiter() {return Limiter;}
+
+  public LimiterTable getLimiter() {
+    return Limiter;
+  }
 
   private final LimiterClassTable LimiterClass;
-  public LimiterClassTable getLimiterClass() {return LimiterClass;}
+
+  public LimiterClassTable getLimiterClass() {
+    return LimiterClass;
+  }
 
   private final LimiterSetTable LimiterSet;
-  public LimiterSetTable getLimiterSet() {return LimiterSet;}
+
+  public LimiterSetTable getLimiterSet() {
+    return LimiterSet;
+  }
 
   private final NetworkTable Network;
-  public NetworkTable getNetwork() {return Network;}
+
+  public NetworkTable getNetwork() {
+    return Network;
+  }
 
   private final SetTable Set;
-  public SetTable getSet() {return Set;}
+
+  public SetTable getSet() {
+    return Set;
+  }
 
   private final List<? extends AOServTable<?, ?>> tables;
 

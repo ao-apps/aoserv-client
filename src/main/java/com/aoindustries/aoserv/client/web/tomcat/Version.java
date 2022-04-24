@@ -57,19 +57,19 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
   private PosixPath install_dir;
   private boolean requires_mod_jk;
 
-  public static final String TECHNOLOGY_NAME="jakarta-tomcat";
+  public static final String TECHNOLOGY_NAME = "jakarta-tomcat";
 
   public static final String
-    VERSION_3_1 = "3.1",
-    VERSION_3_2_4 = "3.2.4",
-    VERSION_4_1_PREFIX = "4.1.",
-    VERSION_5_5_PREFIX = "5.5.",
-    VERSION_6_0_PREFIX = "6.0.",
-    VERSION_7_0_PREFIX = "7.0.",
-    VERSION_8_0_PREFIX = "8.0.",
-    VERSION_8_5_PREFIX = "8.5.",
-    VERSION_9_0_PREFIX = "9.0.",
-    VERSION_10_0_PREFIX = "10.0."
+      VERSION_3_1 = "3.1",
+      VERSION_3_2_4 = "3.2.4",
+      VERSION_4_1_PREFIX = "4.1.",
+      VERSION_5_5_PREFIX = "5.5.",
+      VERSION_6_0_PREFIX = "6.0.",
+      VERSION_7_0_PREFIX = "7.0.",
+      VERSION_8_0_PREFIX = "8.0.",
+      VERSION_8_5_PREFIX = "8.5.",
+      VERSION_9_0_PREFIX = "9.0.",
+      VERSION_10_0_PREFIX = "10.0."
   ;
 
   /**
@@ -78,8 +78,8 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
    */
   public static boolean canUpgradeFrom(String version) {
     return
-      !version.equals(VERSION_3_1)
-      && !version.equals(VERSION_3_2_4);
+        !version.equals(VERSION_3_1)
+            && !version.equals(VERSION_3_2_4);
   }
 
   /**
@@ -87,13 +87,13 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
    */
   public static boolean canUpgradeTo(String version) {
     return
-      !version.equals(VERSION_3_1)
-      && !version.equals(VERSION_3_2_4)
-      && !version.startsWith(VERSION_4_1_PREFIX)
-      && !version.startsWith(VERSION_5_5_PREFIX)
-      && !version.startsWith(VERSION_6_0_PREFIX)
-      && !version.startsWith(VERSION_7_0_PREFIX)
-      && !version.startsWith(VERSION_8_0_PREFIX);
+        !version.equals(VERSION_3_1)
+            && !version.equals(VERSION_3_2_4)
+            && !version.startsWith(VERSION_4_1_PREFIX)
+            && !version.startsWith(VERSION_5_5_PREFIX)
+            && !version.startsWith(VERSION_6_0_PREFIX)
+            && !version.startsWith(VERSION_7_0_PREFIX)
+            && !version.startsWith(VERSION_8_0_PREFIX);
   }
 
   /**
@@ -102,7 +102,7 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Version() {
     // Do nothing
   }

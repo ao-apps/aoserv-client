@@ -44,9 +44,9 @@ import java.util.concurrent.atomic.AtomicReferenceArray;
  * @author  AO Industries, Inc.
  */
 public final class LinuxId implements
-  Comparable<LinuxId>,
-  Serializable,
-  DtoFactory<com.aoindustries.aoserv.client.dto.LinuxId>
+    Comparable<LinuxId>,
+    Serializable,
+    DtoFactory<com.aoindustries.aoserv.client.dto.LinuxId>
 {
 
   private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, LinuxId.class);
@@ -54,10 +54,10 @@ public final class LinuxId implements
   private static final long serialVersionUID = -6222776271442175855L;
 
   public static ValidationResult validate(int id) {
-    if (id<0) {
+    if (id < 0) {
       return new InvalidResult(RESOURCES, "validate.lessThanZero", id);
     }
-    if (id>65535) {
+    if (id > 65535) {
       return new InvalidResult(RESOURCES, "validate.greaterThan64k", id);
     }
     return ValidResult.getInstance();
@@ -88,7 +88,7 @@ public final class LinuxId implements
   private LinuxId(int id) {
     ValidationResult result;
     assert (result = validate(id)).isValid() : result.toString();
-    this.id=id;
+    this.id = id;
   }
 
   private void validate() throws ValidationException {
@@ -125,8 +125,8 @@ public final class LinuxId implements
   @Override
   public boolean equals(Object obj) {
     return
-      (obj instanceof LinuxId)
-      && ((LinuxId)obj).id == id
+        (obj instanceof LinuxId)
+            && ((LinuxId) obj).id == id
     ;
   }
 

@@ -43,24 +43,25 @@ import java.sql.SQLException;
  */
 public final class Shell extends GlobalObjectPosixPathKey<Shell> {
 
-  static final int COLUMN_PATH=0;
+  static final int COLUMN_PATH = 0;
   static final String COLUMN_PATH_name = "path";
 
   public static final PosixPath
-    BASH,
-    FALSE,
-    KSH,
-    SH,
-    SYNC,
-    TCSH,
-    HALT,
-    NOLOGIN,
-    SHUTDOWN,
-    FTPONLY,
-    FTPPASSWD,
-    GIT_SHELL,
-    PASSWD
+      BASH,
+      FALSE,
+      KSH,
+      SH,
+      SYNC,
+      TCSH,
+      HALT,
+      NOLOGIN,
+      SHUTDOWN,
+      FTPONLY,
+      FTPPASSWD,
+      GIT_SHELL,
+      PASSWD
   ;
+
   static {
     try {
       BASH = PosixPath.valueOf("/bin/bash").intern();
@@ -90,7 +91,7 @@ public final class Shell extends GlobalObjectPosixPathKey<Shell> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Shell() {
     // Do nothing
   }
@@ -141,8 +142,8 @@ public final class Shell extends GlobalObjectPosixPathKey<Shell> {
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
       pkey = PosixPath.valueOf(in.readUTF()).intern();
-      is_login=in.readBoolean();
-      is_system=in.readBoolean();
+      is_login = in.readBoolean();
+      is_system = in.readBoolean();
     } catch (ValidationException e) {
       throw new IOException(e);
     }

@@ -40,8 +40,8 @@ import java.sql.SQLException;
 public final class Option extends CachedObjectIntegerKey<Option> {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_REQUEST=1
+      COLUMN_PKEY = 0,
+      COLUMN_REQUEST = 1
   ;
   static final String COLUMN_REQUEST_name = "request";
   static final String COLUMN_NAME_name = "name";
@@ -56,7 +56,7 @@ public final class Option extends CachedObjectIntegerKey<Option> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Option() {
     // Do nothing
   }
@@ -88,8 +88,8 @@ public final class Option extends CachedObjectIntegerKey<Option> {
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey=in.readCompressedInt();
-    request=in.readCompressedInt();
+    pkey = in.readCompressedInt();
+    request = in.readCompressedInt();
     name = in.readUTF().intern();
     value = in.readNullUTF();
   }

@@ -40,7 +40,7 @@ public abstract class GlobalObjectDomainNameKey<T extends GlobalObjectDomainName
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   protected GlobalObjectDomainNameKey() {
     // Do nothing
   }
@@ -48,9 +48,9 @@ public abstract class GlobalObjectDomainNameKey<T extends GlobalObjectDomainName
   @Override
   public boolean equals(Object obj) {
     return
-      obj != null
-      && obj.getClass() == getClass()
-      && ((GlobalObjectDomainNameKey)obj).pkey.equals(pkey)
+        obj != null
+            && obj.getClass() == getClass()
+            && ((GlobalObjectDomainNameKey) obj).pkey.equals(pkey)
     ;
   }
 

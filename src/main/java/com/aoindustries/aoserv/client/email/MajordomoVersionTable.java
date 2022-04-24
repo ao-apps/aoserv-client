@@ -41,8 +41,9 @@ public final class MajordomoVersionTable extends GlobalTableStringKey<MajordomoV
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(MajordomoVersion.COLUMN_VERSION_name, ASCENDING)
+      new OrderBy(MajordomoVersion.COLUMN_VERSION_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

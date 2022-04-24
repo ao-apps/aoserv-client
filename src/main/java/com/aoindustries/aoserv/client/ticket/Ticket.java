@@ -86,6 +86,7 @@ public final class Ticket extends CachedObjectIntegerKey<Ticket> {
   private String contact_phone_numbers;
   private boolean internalNotesLoaded;
   private String internal_notes;
+
   // </editor-fold>
 
   // <editor-fold desc="Object implementation">
@@ -95,7 +96,7 @@ public final class Ticket extends CachedObjectIntegerKey<Ticket> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Ticket() {
     // Do nothing
   }
@@ -103,9 +104,9 @@ public final class Ticket extends CachedObjectIntegerKey<Ticket> {
   @Override
   public String toStringImpl() {
     if (reseller != null) {
-      return pkey+"|"+brand+'/'+accounting+'|'+status+"->"+reseller;
+      return pkey + "|" + brand + '/' + accounting + '|' + status + "->" + reseller;
     } else {
-      return pkey+"|"+brand+'/'+accounting+'|'+status;
+      return pkey + "|" + brand + '/' + accounting + '|' + status;
     }
   }
   // </editor-fold>
@@ -162,7 +163,8 @@ public final class Ticket extends CachedObjectIntegerKey<Ticket> {
       accounting = Account.Name.valueOf(result.getString(pos++));
       language = result.getString(pos++);
       created_by = User.Name.valueOf(result.getString(pos++));
-      category = result.getInt(pos++); if (result.wasNull()) {
+      category = result.getInt(pos++);
+      if (result.wasNull()) {
         category = -1;
       }
       ticket_type = result.getString(pos++);
@@ -277,7 +279,7 @@ public final class Ticket extends CachedObjectIntegerKey<Ticket> {
       out.writeNullUTF(null);
     }
     out.writeUTF(client_priority);
-    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_10)<0) {
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_10) < 0) {
       out.writeUTF(admin_priority == null ? client_priority : admin_priority);
     } else {
       out.writeNullUTF(admin_priority);
@@ -311,6 +313,7 @@ public final class Ticket extends CachedObjectIntegerKey<Ticket> {
       out.writeUTF(contact_phone_numbers);
     }
   }
+
   // </editor-fold>
 
   // <editor-fold desc="Accessors">
@@ -352,7 +355,7 @@ public final class Ticket extends CachedObjectIntegerKey<Ticket> {
   public Language getLanguage() throws SQLException, IOException {
     Language la = table.getConnector().getTicket().getLanguage().get(language);
     if (la == null) {
-      throw new SQLException("Unable to find Language: "+language);
+      throw new SQLException("Unable to find Language: " + language);
     }
     return la;
   }
@@ -371,7 +374,7 @@ public final class Ticket extends CachedObjectIntegerKey<Ticket> {
     }
     Category tc = table.getConnector().getReseller().getCategory().get(category);
     if (tc == null) {
-      throw new SQLException("Unable to find TicketCategory: "+category);
+      throw new SQLException("Unable to find TicketCategory: " + category);
     }
     return tc;
   }
@@ -461,6 +464,7 @@ public final class Ticket extends CachedObjectIntegerKey<Ticket> {
     }
     return internal_notes;
   }
+
   // </editor-fold>
 
   // <editor-fold desc="Data Access">
@@ -471,6 +475,7 @@ public final class Ticket extends CachedObjectIntegerKey<Ticket> {
   public List<Assignment> getTicketAssignments() throws IOException, SQLException {
     return table.getConnector().getTicket().getAssignment().getTicketAssignments(this);
   }
+
   // </editor-fold>
 
   // <editor-fold desc="Ticket Actions">
@@ -493,74 +498,74 @@ public final class Ticket extends CachedObjectIntegerKey<Ticket> {
 
   public void addAnnotation(final String summary, final String details) throws IOException, SQLException {
     table.getConnector().requestUpdate(
-      true,
-      AoservProtocol.CommandID.ADD_TICKET_ANNOTATION,
-      new AOServConnector.UpdateRequest() {
-        private IntList invalidateList;
+        true,
+        AoservProtocol.CommandID.ADD_TICKET_ANNOTATION,
+        new AOServConnector.UpdateRequest() {
+          private IntList invalidateList;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(pkey);
-          out.writeUTF(summary);
-          out.writeNullLongUTF(details);
-        }
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(pkey);
+            out.writeUTF(summary);
+            out.writeNullLongUTF(details);
+          }
 
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            invalidateList=AOServConnector.readInvalidateList(in);
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              invalidateList = AOServConnector.readInvalidateList(in);
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
+            }
+          }
+
+          @Override
+          public void afterRelease() {
+            table.getConnector().tablesUpdated(invalidateList);
           }
         }
-
-        @Override
-        public void afterRelease() {
-          table.getConnector().tablesUpdated(invalidateList);
-        }
-      }
     );
   }
 
   public void actAssignTo(Administrator assignedTo, Administrator business_administrator, String comments) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_TICKET_ASSIGNED_TO, pkey, assignedTo == null?"":assignedTo.getUsername().getUsername(), business_administrator.getUsername_userId(), comments);
+    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_TICKET_ASSIGNED_TO, pkey, assignedTo == null ? "" : assignedTo.getUsername().getUsername(), business_administrator.getUsername_userId(), comments);
   }
 
   public void setContactEmails(final Set<Email> contactEmails) throws IOException, SQLException {
     final AOServConnector connector = table.getConnector();
     connector.requestUpdate(
-      true,
-      AoservProtocol.CommandID.SET_TICKET_CONTACT_EMAILS,
-      new AOServConnector.UpdateRequest() {
-        private IntList invalidateList;
+        true,
+        AoservProtocol.CommandID.SET_TICKET_CONTACT_EMAILS,
+        new AOServConnector.UpdateRequest() {
+          private IntList invalidateList;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(pkey);
-          out.writeCompressedInt(contactEmails.size());
-          for (Email email : contactEmails) {
-            out.writeUTF(email.toString());
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(pkey);
+            out.writeCompressedInt(contactEmails.size());
+            for (Email email : contactEmails) {
+              out.writeUTF(email.toString());
+            }
+          }
+
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              invalidateList = AOServConnector.readInvalidateList(in);
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
+            }
+          }
+
+          @Override
+          public void afterRelease() {
+            connector.tablesUpdated(invalidateList);
           }
         }
-
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            invalidateList=AOServConnector.readInvalidateList(in);
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
-          }
-        }
-
-        @Override
-        public void afterRelease() {
-          connector.tablesUpdated(invalidateList);
-        }
-      }
     );
   }
 
@@ -599,11 +604,11 @@ public final class Ticket extends CachedObjectIntegerKey<Ticket> {
    */
   public boolean setAccount(Account oldAccount, Account newAccount) throws IOException, SQLException {
     return table.getConnector().requestBooleanQueryIL(
-      true,
-      AoservProtocol.CommandID.SET_TICKET_BUSINESS,
-      pkey,
-      oldAccount == null ? "" : oldAccount.getName().toString(),
-      newAccount == null ? "" : newAccount.getName().toString()
+        true,
+        AoservProtocol.CommandID.SET_TICKET_BUSINESS,
+        pkey,
+        oldAccount == null ? "" : oldAccount.getName().toString(),
+        newAccount == null ? "" : newAccount.getName().toString()
     );
   }
 
@@ -633,38 +638,38 @@ public final class Ticket extends CachedObjectIntegerKey<Ticket> {
    */
   public boolean setInternalNotes(final String oldInternalNotes, final String newInternalNotes) throws IOException, SQLException {
     return table.getConnector().requestResult(
-      true,
-      AoservProtocol.CommandID.SET_TICKET_INTERNAL_NOTES,
-      // Java 9: new AOServConnector.ResultRequest<>
-      new AOServConnector.ResultRequest<Boolean>() {
-        private boolean result;
-        private IntList invalidateList;
+        true,
+        AoservProtocol.CommandID.SET_TICKET_INTERNAL_NOTES,
+        // Java 9: new AOServConnector.ResultRequest<>
+        new AOServConnector.ResultRequest<Boolean>() {
+          private boolean result;
+          private IntList invalidateList;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(pkey);
-          out.writeLongUTF(oldInternalNotes);
-          out.writeLongUTF(newInternalNotes);
-        }
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(pkey);
+            out.writeLongUTF(oldInternalNotes);
+            out.writeLongUTF(newInternalNotes);
+          }
 
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code = in.readByte();
-          if (code == AoservProtocol.DONE) {
-            result = in.readBoolean();
-            invalidateList = AOServConnector.readInvalidateList(in);
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              result = in.readBoolean();
+              invalidateList = AOServConnector.readInvalidateList(in);
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
+            }
+          }
+
+          @Override
+          public Boolean afterRelease() {
+            table.getConnector().tablesUpdated(invalidateList);
+            return result;
           }
         }
-
-        @Override
-        public Boolean afterRelease() {
-          table.getConnector().tablesUpdated(invalidateList);
-          return result;
-        }
-      }
     );
   }
   // </editor-fold>

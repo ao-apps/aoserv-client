@@ -60,9 +60,9 @@ import java.util.Objects;
 public final class CreditCard extends CachedObjectIntegerKey<CreditCard> implements Removable {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_PROCESSOR_ID=1,
-    COLUMN_ACCOUNTING=2
+      COLUMN_PKEY = 0,
+      COLUMN_PROCESSOR_ID = 1,
+      COLUMN_ACCOUNTING = 2
   ;
   static final String COLUMN_ACCOUNTING_name = "accounting";
   static final String COLUMN_CREATED_name = "created";
@@ -76,10 +76,10 @@ public final class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
   static String randomize(String original) {
     SecureRandom secureRandom = AOServConnector.getSecureRandom();
     StringBuilder randomized = new StringBuilder();
-    for (int c=0, len=original.length(); c <= len; c++) {
+    for (int c = 0, len = original.length(); c <= len; c++) {
       int randChars = secureRandom.nextInt(20);
-      for (int d=0;d<randChars;d++) {
-        int randVal = secureRandom.nextInt(256-32-10-3); // Skipping 0-31, 32 (space), 45 (-), 47 (/), 48-57 (0-9)
+      for (int d = 0; d < randChars; d++) {
+        int randVal = secureRandom.nextInt(256 - 32 - 10 - 3); // Skipping 0-31, 32 (space), 45 (-), 47 (/), 48-57 (0-9)
         // Offset past the first 33
         randVal += 33;
         // Offset past the -
@@ -90,9 +90,9 @@ public final class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
         if (randVal >= 47) {
           randVal += 11;
         }
-        randomized.append((char)randVal);
+        randomized.append((char) randVal);
       }
-      if (c<len) {
+      if (c < len) {
         randomized.append(original.charAt(c));
       }
     }
@@ -107,13 +107,13 @@ public final class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
   static String derandomize(String randomized) {
     // Strip all characters except 0-9, space, and -
     StringBuilder stripped = new StringBuilder(randomized.length());
-    for (int c=0, len=randomized.length();c<len;c++) {
+    for (int c = 0, len = randomized.length(); c < len; c++) {
       char ch = randomized.charAt(c);
       if (
-        (ch >= '0' && ch <= '9')
-        || ch == ' '
-        || ch == '-'
-        || ch == '/'
+          (ch >= '0' && ch <= '9')
+              || ch == ' '
+              || ch == '-'
+              || ch == '/'
       ) {
         stripped.append(ch);
       }
@@ -164,7 +164,7 @@ public final class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public CreditCard() {
     // Do nothing
   }
@@ -179,10 +179,10 @@ public final class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
    */
   public void declined(String reason) throws IOException, SQLException {
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.CREDIT_CARD_DECLINED,
-      pkey,
-      reason
+        true,
+        AoservProtocol.CommandID.CREDIT_CARD_DECLINED,
+        pkey,
+        reason
     );
   }
 
@@ -196,7 +196,7 @@ public final class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
   public Processor getCreditCardProcessor() throws SQLException, IOException {
     Processor ccp = table.getConnector().getPayment().getProcessor().get(processorId);
     if (ccp == null) {
-      throw new SQLException("Unable to find CreditCardProcessor: "+processorId);
+      throw new SQLException("Unable to find CreditCardProcessor: " + processorId);
     }
     return ccp;
   }
@@ -407,7 +407,7 @@ public final class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
     }
     EncryptionKey ek = table.getConnector().getPki().getEncryptionKey().get(encryption_card_number_from);
     if (ek == null) {
-      throw new SQLException("Unable to find EncryptionKey: "+encryption_card_number_from);
+      throw new SQLException("Unable to find EncryptionKey: " + encryption_card_number_from);
     }
     return ek;
   }
@@ -418,7 +418,7 @@ public final class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
     }
     EncryptionKey er = table.getConnector().getPki().getEncryptionKey().get(encryption_card_number_recipient);
     if (er == null) {
-      throw new SQLException("Unable to find EncryptionKey: "+encryption_card_number_recipient);
+      throw new SQLException("Unable to find EncryptionKey: " + encryption_card_number_recipient);
     }
     return er;
   }
@@ -509,7 +509,7 @@ public final class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
       streetAddress2 = in.readNullUTF();
       city = in.readUTF();
       state = InternUtils.intern(in.readNullUTF());
-      postalCode=in.readNullUTF();
+      postalCode = in.readNullUTF();
       countryCode = in.readUTF().intern();
       created = SQLStreamables.readUnmodifiableTimestamp(in);
       createdBy = User.Name.valueOf(in.readUTF()).intern();
@@ -628,43 +628,43 @@ public final class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
    * Updates the credit card information (not including the card number or expiration).
    */
   public void update(
-    String cardInfo,
-    String firstName,
-    String lastName,
-    String companyName,
-    Email email,
-    String phone,
-    String fax,
-    String customerId,
-    String customerTaxId,
-    String streetAddress1,
-    String streetAddress2,
-    String city,
-    String state,
-    String postalCode,
-    CountryCode countryCode,
-    String description
+      String cardInfo,
+      String firstName,
+      String lastName,
+      String companyName,
+      Email email,
+      String phone,
+      String fax,
+      String customerId,
+      String customerTaxId,
+      String streetAddress1,
+      String streetAddress2,
+      String city,
+      String state,
+      String postalCode,
+      CountryCode countryCode,
+      String description
   ) throws IOException, SQLException {
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.UPDATE_CREDIT_CARD,
-      pkey,
-      cardInfo,
-      firstName,
-      lastName,
-      companyName == null ? "" : companyName,
-      email == null ? "" : email.toString(),
-      phone == null ? "" : phone,
-      fax == null ? "" : fax,
-      customerId == null ? "" : customerId,
-      customerTaxId == null ? "" : customerTaxId,
-      streetAddress1,
-      streetAddress2 == null ? "" : streetAddress2,
-      city,
-      state == null ? "" : state,
-      postalCode == null ? "" : postalCode,
-      countryCode.getCode(),
-      description == null ? "" : description
+        true,
+        AoservProtocol.CommandID.UPDATE_CREDIT_CARD,
+        pkey,
+        cardInfo,
+        firstName,
+        lastName,
+        companyName == null ? "" : companyName,
+        email == null ? "" : email.toString(),
+        phone == null ? "" : phone,
+        fax == null ? "" : fax,
+        customerId == null ? "" : customerId,
+        customerTaxId == null ? "" : customerTaxId,
+        streetAddress1,
+        streetAddress2 == null ? "" : streetAddress2,
+        city,
+        state == null ? "" : state,
+        postalCode == null ? "" : postalCode,
+        countryCode.getCode(),
+        description == null ? "" : description
     );
   }
 
@@ -674,10 +674,10 @@ public final class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
    * in the master database.
    */
   public void updateCardNumberAndExpiration(
-    final String maskedCardNumber,
-    String cardNumber,
-    final byte expirationMonth,
-    final short expirationYear
+      final String maskedCardNumber,
+      String cardNumber,
+      final byte expirationMonth,
+      final short expirationYear
   ) throws IOException, SQLException {
     Processor processor = getCreditCardProcessor();
     final EncryptionKey encryptionFrom = processor.getEncryptionFrom();
@@ -691,38 +691,38 @@ public final class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
     }
 
     table.getConnector().requestUpdate(
-      true,
-      AoservProtocol.CommandID.UPDATE_CREDIT_CARD_NUMBER_AND_EXPIRATION,
-      new AOServConnector.UpdateRequest() {
-        private IntList invalidateList;
+        true,
+        AoservProtocol.CommandID.UPDATE_CREDIT_CARD_NUMBER_AND_EXPIRATION,
+        new AOServConnector.UpdateRequest() {
+          private IntList invalidateList;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(pkey);
-          out.writeUTF(maskedCardNumber);
-          out.writeByte(expirationMonth);
-          out.writeShort(expirationYear);
-          out.writeNullUTF(encryptedCardNumber);
-          out.writeCompressedInt(encryptionFrom == null ? -1 : encryptionFrom.getPkey());
-          out.writeCompressedInt(encryptionRecipient == null ? -1 : encryptionRecipient.getPkey());
-        }
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(pkey);
+            out.writeUTF(maskedCardNumber);
+            out.writeByte(expirationMonth);
+            out.writeShort(expirationYear);
+            out.writeNullUTF(encryptedCardNumber);
+            out.writeCompressedInt(encryptionFrom == null ? -1 : encryptionFrom.getPkey());
+            out.writeCompressedInt(encryptionRecipient == null ? -1 : encryptionRecipient.getPkey());
+          }
 
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            invalidateList=AOServConnector.readInvalidateList(in);
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unknown response code: "+code);
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              invalidateList = AOServConnector.readInvalidateList(in);
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unknown response code: " + code);
+            }
+          }
+
+          @Override
+          public void afterRelease() {
+            table.getConnector().tablesUpdated(invalidateList);
           }
         }
-
-        @Override
-        public void afterRelease() {
-          table.getConnector().tablesUpdated(invalidateList);
-        }
-      }
     );
   }
 
@@ -731,15 +731,15 @@ public final class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
    * has been configured to store card encrypted in the master database.
    */
   public void updateCardExpiration(
-    byte expirationMonth,
-    short expirationYear
+      byte expirationMonth,
+      short expirationYear
   ) throws IOException, SQLException {
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.UPDATE_CREDIT_CARD_EXPIRATION,
-      pkey,
-      expirationMonth,
-      expirationYear
+        true,
+        AoservProtocol.CommandID.UPDATE_CREDIT_CARD_EXPIRATION,
+        pkey,
+        expirationMonth,
+        expirationYear
     );
   }
 
@@ -748,9 +748,9 @@ public final class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
    */
   public void reactivate() throws IOException, SQLException {
     table.getConnector().requestUpdateIL(
-      true,
-      AoservProtocol.CommandID.REACTIVATE_CREDIT_CARD,
-      pkey
+        true,
+        AoservProtocol.CommandID.REACTIVATE_CREDIT_CARD,
+        pkey
     );
   }
 
@@ -761,14 +761,14 @@ public final class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
     // If a different passphrase is provided, don't use the cached values, clear, and re-decrypt
     if (decryptCardNumberPassphrase == null || !passphrase.equals(decryptCardNumberPassphrase)) {
       // Clear first just in case there is a problem in part of the decryption
-      decryptCardNumberPassphrase=null;
-      card_number=null;
+      decryptCardNumberPassphrase = null;
+      card_number = null;
 
       if (encrypted_card_number != null) {
         // Perform the decryption
         card_number = derandomize(getEncryptionCardNumberRecipient().decrypt(encrypted_card_number, passphrase));
       }
-      decryptCardNumberPassphrase=passphrase;
+      decryptCardNumberPassphrase = passphrase;
     }
     return card_number;
   }

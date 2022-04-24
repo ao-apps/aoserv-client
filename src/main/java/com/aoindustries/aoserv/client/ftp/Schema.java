@@ -35,10 +35,16 @@ import java.util.List;
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
   private final GuestUserTable GuestUser;
-  public GuestUserTable getGuestUser() {return GuestUser;}
+
+  public GuestUserTable getGuestUser() {
+    return GuestUser;
+  }
 
   private final PrivateServerTable PrivateServer;
-  public PrivateServerTable getPrivateServer() {return PrivateServer;}
+
+  public PrivateServerTable getPrivateServer() {
+    return PrivateServer;
+  }
 
   private final List<? extends AOServTable<?, ?>> tables;
 

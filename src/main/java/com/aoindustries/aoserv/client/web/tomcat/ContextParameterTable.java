@@ -48,11 +48,12 @@ public final class ContextParameterTable extends CachedTableIntegerKey<ContextPa
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(ContextParameter.COLUMN_TOMCAT_CONTEXT_name+'.'+Context.COLUMN_TOMCAT_SITE_name+'.'+Site.COLUMN_HTTPD_SITE_name+'.'+com.aoindustries.aoserv.client.web.Site.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(ContextParameter.COLUMN_TOMCAT_CONTEXT_name+'.'+Context.COLUMN_TOMCAT_SITE_name+'.'+Site.COLUMN_HTTPD_SITE_name+'.'+com.aoindustries.aoserv.client.web.Site.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
-    new OrderBy(ContextParameter.COLUMN_TOMCAT_CONTEXT_name+'.'+Context.COLUMN_PATH_name, ASCENDING),
-    new OrderBy(ContextParameter.COLUMN_NAME_name, ASCENDING)
+      new OrderBy(ContextParameter.COLUMN_TOMCAT_CONTEXT_name + '.' + Context.COLUMN_TOMCAT_SITE_name + '.' + Site.COLUMN_HTTPD_SITE_name + '.' + com.aoindustries.aoserv.client.web.Site.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(ContextParameter.COLUMN_TOMCAT_CONTEXT_name + '.' + Context.COLUMN_TOMCAT_SITE_name + '.' + Site.COLUMN_HTTPD_SITE_name + '.' + com.aoindustries.aoserv.client.web.Site.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
+      new OrderBy(ContextParameter.COLUMN_TOMCAT_CONTEXT_name + '.' + Context.COLUMN_PATH_name, ASCENDING),
+      new OrderBy(ContextParameter.COLUMN_NAME_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -60,21 +61,21 @@ public final class ContextParameterTable extends CachedTableIntegerKey<ContextPa
   }
 
   int addHttpdTomcatParameter(
-    Context htc,
-    String name,
-    String value,
-    boolean override,
-    String description
+      Context htc,
+      String name,
+      String value,
+      boolean override,
+      String description
   ) throws IOException, SQLException {
     return connector.requestIntQueryIL(
-      true,
-      AoservProtocol.CommandID.ADD,
-      Table.TableID.HTTPD_TOMCAT_PARAMETERS,
-      htc.getPkey(),
-      name,
-      value,
-      override,
-      description == null ? "" : description
+        true,
+        AoservProtocol.CommandID.ADD,
+        Table.TableID.HTTPD_TOMCAT_PARAMETERS,
+        htc.getPkey(),
+        name,
+        value,
+        override,
+        description == null ? "" : description
     );
   }
 
@@ -89,7 +90,7 @@ public final class ContextParameterTable extends CachedTableIntegerKey<ContextPa
 
   ContextParameter getHttpdTomcatParameter(Context htc, String name) throws IOException, SQLException {
     // Use index first
-    List<ContextParameter> parameters=getHttpdTomcatParameters(htc);
+    List<ContextParameter> parameters = getHttpdTomcatParameters(htc);
     for (ContextParameter parameter : parameters) {
       if (parameter.getName().equals(name)) {
         return parameter;
@@ -105,19 +106,19 @@ public final class ContextParameterTable extends CachedTableIntegerKey<ContextPa
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-    String command=args[0];
+    String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_HTTPD_TOMCAT_PARAMETER)) {
       if (AOSH.checkParamCount(Command.ADD_HTTPD_TOMCAT_PARAMETER, args, 7, err)) {
         out.println(
-          connector.getSimpleAOClient().addHttpdTomcatParameter(
-            args[1],
-            args[2],
-            args[3],
-            args[4],
-            args[5],
-            AOSH.parseBoolean(args[6], "override"),
-            args[7]
-          )
+            connector.getSimpleAOClient().addHttpdTomcatParameter(
+                args[1],
+                args[2],
+                args[3],
+                args[4],
+                args[5],
+                AOSH.parseBoolean(args[6], "override"),
+                args[7]
+            )
         );
         out.flush();
       }
@@ -130,14 +131,14 @@ public final class ContextParameterTable extends CachedTableIntegerKey<ContextPa
     } else if (command.equalsIgnoreCase(Command.UPDATE_HTTPD_TOMCAT_PARAMETER)) {
       if (AOSH.checkParamCount(Command.UPDATE_HTTPD_TOMCAT_PARAMETER, args, 8, err)) {
         connector.getSimpleAOClient().updateHttpdTomcatParameter(
-          args[1],
-          args[2],
-          args[3],
-          args[4],
-          args[5],
-          args[6],
-          AOSH.parseBoolean(args[7], "override"),
-          args[8]
+            args[1],
+            args[2],
+            args[3],
+            args[4],
+            args[5],
+            args[6],
+            AOSH.parseBoolean(args[7], "override"),
+            args[8]
         );
       }
       return true;

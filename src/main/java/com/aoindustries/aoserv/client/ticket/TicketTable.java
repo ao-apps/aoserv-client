@@ -53,9 +53,10 @@ public final class TicketTable extends CachedTableIntegerKey<Ticket> {
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(Ticket.COLUMN_OPEN_DATE_name, DESCENDING),
-    new OrderBy(Ticket.COLUMN_PKEY_name, DESCENDING)
+      new OrderBy(Ticket.COLUMN_OPEN_DATE_name, DESCENDING),
+      new OrderBy(Ticket.COLUMN_PKEY_name, DESCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -63,64 +64,64 @@ public final class TicketTable extends CachedTableIntegerKey<Ticket> {
   }
 
   public int addTicket(
-    final Brand brand,
-    final Account business,
-    final Language language,
-    final Category category,
-    final TicketType ticketType,
-    final Email fromAddress,
-    final String summary,
-    final String details,
-    final Priority clientPriority,
-    final Set<Email> contactEmails,
-    final String contactPhoneNumbers
+      final Brand brand,
+      final Account business,
+      final Language language,
+      final Category category,
+      final TicketType ticketType,
+      final Email fromAddress,
+      final String summary,
+      final String details,
+      final Priority clientPriority,
+      final Set<Email> contactEmails,
+      final String contactPhoneNumbers
   ) throws IOException, SQLException {
     return connector.requestResult(
-      true,
-      AoservProtocol.CommandID.ADD,
-      // Java 9: new AOServConnector.ResultRequest<>
-      new AOServConnector.ResultRequest<Integer>() {
-        private int pkey;
-        private IntList invalidateList;
+        true,
+        AoservProtocol.CommandID.ADD,
+        // Java 9: new AOServConnector.ResultRequest<>
+        new AOServConnector.ResultRequest<Integer>() {
+          private int pkey;
+          private IntList invalidateList;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(Table.TableID.TICKETS.ordinal());
-          out.writeUTF(brand.getAccount_name().toString());
-          out.writeNullUTF(business == null ? null : business.getName().toString());
-          out.writeUTF(language.getCode());
-          out.writeCompressedInt(category == null ? -1 : category.getPkey());
-          out.writeUTF(ticketType.getType());
-          out.writeNullUTF(Objects.toString(fromAddress, null));
-          out.writeUTF(summary);
-          out.writeNullLongUTF(details);
-          out.writeUTF(clientPriority.getPriority());
-          int size = contactEmails.size();
-          out.writeCompressedInt(size);
-          for (Email email : contactEmails) {
-            out.writeUTF(email.toString());
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(Table.TableID.TICKETS.ordinal());
+            out.writeUTF(brand.getAccount_name().toString());
+            out.writeNullUTF(business == null ? null : business.getName().toString());
+            out.writeUTF(language.getCode());
+            out.writeCompressedInt(category == null ? -1 : category.getPkey());
+            out.writeUTF(ticketType.getType());
+            out.writeNullUTF(Objects.toString(fromAddress, null));
+            out.writeUTF(summary);
+            out.writeNullLongUTF(details);
+            out.writeUTF(clientPriority.getPriority());
+            int size = contactEmails.size();
+            out.writeCompressedInt(size);
+            for (Email email : contactEmails) {
+              out.writeUTF(email.toString());
+            }
+            out.writeUTF(contactPhoneNumbers);
           }
-          out.writeUTF(contactPhoneNumbers);
-        }
 
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            pkey=in.readCompressedInt();
-            invalidateList=AOServConnector.readInvalidateList(in);
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unexpected response code: "+code);
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              pkey = in.readCompressedInt();
+              invalidateList = AOServConnector.readInvalidateList(in);
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unexpected response code: " + code);
+            }
+          }
+
+          @Override
+          public Integer afterRelease() {
+            connector.tablesUpdated(invalidateList);
+            return pkey;
           }
         }
-
-        @Override
-        public Integer afterRelease() {
-          connector.tablesUpdated(invalidateList);
-          return pkey;
-        }
-      }
     );
   }
 

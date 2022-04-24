@@ -40,11 +40,12 @@ public interface AOServStreamable extends Streamable, AOServReadable, AOServWrit
    *
    * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
    *
-   * @see  #read(StreamableInput,com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  #read(StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated
   @Override
   void read(StreamableInput in, String protocolVersion) throws IOException;
+
   // Java 1.8: default method (or inherit from AOServReadable)
   // read(in, com.aoindustries.aoserv.client.schema.AoservProtocol.Version.getVersion(version));
 
@@ -55,11 +56,12 @@ public interface AOServStreamable extends Streamable, AOServReadable, AOServWrit
    *
    * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
    *
-   * @see  #write(StreamableOutput,com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  #write(StreamableOutput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated
   @Override
   void write(StreamableOutput out, String protocolVersion) throws IOException;
+
   // Java 1.8: default method (or inherit from AOServWritable)
   // write(out, com.aoindustries.aoserv.client.schema.AoservProtocol.Version.getVersion(version));
 

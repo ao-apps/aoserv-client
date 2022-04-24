@@ -42,12 +42,12 @@ import java.util.List;
 public final class Limiter extends CachedObjectIntegerKey<Limiter> {
 
   static final int
-    COLUMN_PKEY=0,
-    COLUMN_NET_DEVICE=1
+      COLUMN_PKEY = 0,
+      COLUMN_NET_DEVICE = 1
   ;
 
-  static final String COLUMN_NET_DEVICE_name= "net_device";
-  static final String COLUMN_IDENTIFIER_name= "identifier";
+  static final String COLUMN_NET_DEVICE_name = "net_device";
+  static final String COLUMN_IDENTIFIER_name = "identifier";
 
   private int netDevice;
   private String identifier;
@@ -59,7 +59,7 @@ public final class Limiter extends CachedObjectIntegerKey<Limiter> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public Limiter() {
     // Do nothing
   }

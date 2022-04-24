@@ -41,8 +41,9 @@ public final class ProcessorTypeTable extends GlobalTableStringKey<ProcessorType
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(ProcessorType.COLUMN_SORT_ORDER_name, ASCENDING)
+      new OrderBy(ProcessorType.COLUMN_SORT_ORDER_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

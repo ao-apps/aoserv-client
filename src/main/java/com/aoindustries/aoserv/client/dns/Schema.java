@@ -35,19 +35,34 @@ import java.util.List;
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
   private final ForbiddenZoneTable ForbiddenZone;
-  public ForbiddenZoneTable getForbiddenZone() {return ForbiddenZone;}
+
+  public ForbiddenZoneTable getForbiddenZone() {
+    return ForbiddenZone;
+  }
 
   private final RecordTable Record;
-  public RecordTable getRecord() {return Record;}
+
+  public RecordTable getRecord() {
+    return Record;
+  }
 
   private final RecordTypeTable RecordType;
-  public RecordTypeTable getRecordType() {return RecordType;}
+
+  public RecordTypeTable getRecordType() {
+    return RecordType;
+  }
 
   private final TopLevelDomainTable TopLevelDomain;
-  public TopLevelDomainTable getTopLevelDomain() {return TopLevelDomain;}
+
+  public TopLevelDomainTable getTopLevelDomain() {
+    return TopLevelDomain;
+  }
 
   private final ZoneTable Zone;
-  public ZoneTable getZone() {return Zone;}
+
+  public ZoneTable getZone() {
+    return Zone;
+  }
 
   private final List<? extends AOServTable<?, ?>> tables;
 

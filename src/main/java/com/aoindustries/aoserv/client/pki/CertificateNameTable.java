@@ -44,12 +44,13 @@ public final class CertificateNameTable extends CachedTableIntegerKey<Certificat
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(CertificateName.COLUMN_SSL_CERTIFICATE_name+'.'+Certificate.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
-    new OrderBy(CertificateName.COLUMN_SSL_CERTIFICATE_name+'.'+Certificate.COLUMN_CERT_FILE_name, ASCENDING),
-    new OrderBy(CertificateName.COLUMN_IS_COMMON_NAME_name, DESCENDING),
-    new OrderBy(CertificateName.COLUMN_DOMAIN_name, ASCENDING),
-    new OrderBy(CertificateName.COLUMN_IS_WILDCARD_name, DESCENDING)
+      new OrderBy(CertificateName.COLUMN_SSL_CERTIFICATE_name + '.' + Certificate.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
+      new OrderBy(CertificateName.COLUMN_SSL_CERTIFICATE_name + '.' + Certificate.COLUMN_CERT_FILE_name, ASCENDING),
+      new OrderBy(CertificateName.COLUMN_IS_COMMON_NAME_name, DESCENDING),
+      new OrderBy(CertificateName.COLUMN_DOMAIN_name, ASCENDING),
+      new OrderBy(CertificateName.COLUMN_IS_WILDCARD_name, DESCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {

@@ -45,19 +45,19 @@ public final class PackageCategory extends GlobalObjectStringKey<PackageCategory
 
   private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, PackageCategory.class);
 
-  static final int COLUMN_NAME=0;
+  static final int COLUMN_NAME = 0;
   static final String COLUMN_NAME_name = "name";
 
   public static final String
-    AOSERV="aoserv",
-    APPLICATION="application",
-    DEDICATED="dedicated",
-    MANAGED="managed",
-    RESELLER="reseller",
-    SYSADMIN="sysadmin",
-    VIRTUAL="virtual",
-    VIRTUAL_DEDICATED="virtual_dedicated",
-    VIRTUAL_MANAGED="virtual_managed"
+      AOSERV = "aoserv",
+      APPLICATION = "application",
+      DEDICATED = "dedicated",
+      MANAGED = "managed",
+      RESELLER = "reseller",
+      SYSADMIN = "sysadmin",
+      VIRTUAL = "virtual",
+      VIRTUAL_DEDICATED = "virtual_dedicated",
+      VIRTUAL_MANAGED = "virtual_managed"
   ;
 
   /**
@@ -66,7 +66,7 @@ public final class PackageCategory extends GlobalObjectStringKey<PackageCategory
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated/* Java 9: (forRemoval = true) */
+  @Deprecated // Java 9: (forRemoval = true)
   public PackageCategory() {
     // Do nothing
   }

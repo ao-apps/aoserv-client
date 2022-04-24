@@ -49,12 +49,13 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
   }
 
   private static final OrderBy[] defaultOrderBy = {
-    new OrderBy(PackageDefinition.COLUMN_ACCOUNTING_name, ASCENDING),
-    new OrderBy(PackageDefinition.COLUMN_CATEGORY_name, ASCENDING),
-    new OrderBy(PackageDefinition.COLUMN_monthlyRate_name, ASCENDING),
-    new OrderBy(PackageDefinition.COLUMN_NAME_name, ASCENDING),
-    new OrderBy(PackageDefinition.COLUMN_VERSION_name, ASCENDING)
+      new OrderBy(PackageDefinition.COLUMN_ACCOUNTING_name, ASCENDING),
+      new OrderBy(PackageDefinition.COLUMN_CATEGORY_name, ASCENDING),
+      new OrderBy(PackageDefinition.COLUMN_monthlyRate_name, ASCENDING),
+      new OrderBy(PackageDefinition.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(PackageDefinition.COLUMN_VERSION_name, ASCENDING)
   };
+
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   protected OrderBy[] getDefaultOrderBy() {
@@ -62,58 +63,58 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
   }
 
   public int addPackageDefinition(
-    final Account business,
-    final PackageCategory category,
-    final String name,
-    final String version,
-    final String display,
-    final String description,
-    final Money setupFee,
-    final TransactionType setupFeeTransactionType,
-    final Money monthlyRate,
-    final TransactionType monthlyRateTransactionType
+      final Account business,
+      final PackageCategory category,
+      final String name,
+      final String version,
+      final String display,
+      final String description,
+      final Money setupFee,
+      final TransactionType setupFeeTransactionType,
+      final Money monthlyRate,
+      final TransactionType monthlyRateTransactionType
   ) throws IOException, SQLException {
     return connector.requestResult(
-      true,
-      AoservProtocol.CommandID.ADD,
-      // Java 9: new AOServConnector.ResultRequest<>
-      new AOServConnector.ResultRequest<Integer>() {
-        private int pkey;
-        private IntList invalidateList;
+        true,
+        AoservProtocol.CommandID.ADD,
+        // Java 9: new AOServConnector.ResultRequest<>
+        new AOServConnector.ResultRequest<Integer>() {
+          private int pkey;
+          private IntList invalidateList;
 
-        @Override
-        public void writeRequest(StreamableOutput out) throws IOException {
-          out.writeCompressedInt(Table.TableID.PACKAGE_DEFINITIONS.ordinal());
-          out.writeUTF(business.getName().toString());
-          out.writeUTF(category.getName());
-          out.writeUTF(name);
-          out.writeUTF(version);
-          out.writeUTF(display);
-          out.writeUTF(description);
-          MoneyUtil.writeNullMoney(setupFee, out);
-          out.writeNullUTF(setupFeeTransactionType == null ? null : setupFeeTransactionType.getName());
-          MoneyUtil.writeMoney(monthlyRate, out);
-          out.writeUTF(monthlyRateTransactionType.getName());
-        }
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(Table.TableID.PACKAGE_DEFINITIONS.ordinal());
+            out.writeUTF(business.getName().toString());
+            out.writeUTF(category.getName());
+            out.writeUTF(name);
+            out.writeUTF(version);
+            out.writeUTF(display);
+            out.writeUTF(description);
+            MoneyUtil.writeNullMoney(setupFee, out);
+            out.writeNullUTF(setupFeeTransactionType == null ? null : setupFeeTransactionType.getName());
+            MoneyUtil.writeMoney(monthlyRate, out);
+            out.writeUTF(monthlyRateTransactionType.getName());
+          }
 
-        @Override
-        public void readResponse(StreamableInput in) throws IOException, SQLException {
-          int code=in.readByte();
-          if (code == AoservProtocol.DONE) {
-            pkey=in.readCompressedInt();
-            invalidateList=AOServConnector.readInvalidateList(in);
-          } else {
-            AoservProtocol.checkResult(code, in);
-            throw new IOException("Unknown response code: "+code);
+          @Override
+          public void readResponse(StreamableInput in) throws IOException, SQLException {
+            int code = in.readByte();
+            if (code == AoservProtocol.DONE) {
+              pkey = in.readCompressedInt();
+              invalidateList = AOServConnector.readInvalidateList(in);
+            } else {
+              AoservProtocol.checkResult(code, in);
+              throw new IOException("Unknown response code: " + code);
+            }
+          }
+
+          @Override
+          public Integer afterRelease() {
+            connector.tablesUpdated(invalidateList);
+            return pkey;
           }
         }
-
-        @Override
-        public Integer afterRelease() {
-          connector.tablesUpdated(invalidateList);
-          return pkey;
-        }
-      }
     );
   }
 
@@ -123,17 +124,17 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
   }
 
   public PackageDefinition getPackageDefinition(Account business, PackageCategory category, String name, String version) throws IOException, SQLException {
-    Account.Name accounting=business.getName();
-    String categoryName=category.getName();
-    List<PackageDefinition> pds=getRows();
-    int size=pds.size();
-    for (int c=0;c<size;c++) {
-      PackageDefinition pd=pds.get(c);
+    Account.Name accounting = business.getName();
+    String categoryName = category.getName();
+    List<PackageDefinition> pds = getRows();
+    int size = pds.size();
+    for (int c = 0; c < size; c++) {
+      PackageDefinition pd = pds.get(c);
       if (
-        pd.getAccount_name().equals(accounting)
-        && pd.getPackageCategory_name().equals(categoryName)
-        && pd.getName().equals(name)
-        && pd.getVersion().equals(version)
+          pd.getAccount_name().equals(accounting)
+              && pd.getPackageCategory_name().equals(categoryName)
+              && pd.getName().equals(name)
+              && pd.getVersion().equals(version)
       ) {
         return pd;
       }
@@ -142,17 +143,17 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
   }
 
   public List<PackageDefinition> getPackageDefinitions(Account business, PackageCategory category) throws IOException, SQLException {
-    Account.Name accounting=business.getName();
-    String categoryName=category.getName();
+    Account.Name accounting = business.getName();
+    String categoryName = category.getName();
 
     List<PackageDefinition> cached = getRows();
     List<PackageDefinition> matches = new ArrayList<>(cached.size());
-    int size=cached.size();
-    for (int c=0;c<size;c++) {
-      PackageDefinition pd=cached.get(c);
+    int size = cached.size();
+    for (int c = 0; c < size; c++) {
+      PackageDefinition pd = cached.get(c);
       if (
-        pd.getAccount_name().equals(accounting)
-        && pd.getPackageCategory_name().equals(categoryName)
+          pd.getAccount_name().equals(accounting)
+              && pd.getPackageCategory_name().equals(categoryName)
       ) {
         matches.add(pd);
       }
