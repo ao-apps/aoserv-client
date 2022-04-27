@@ -271,7 +271,7 @@ public final class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
             List<IpAddress> ips = pack.getIPAddresses();
             if (!ips.isEmpty()) {
               ips = ips.stream()
-                  .filter(ip -> {
+                  .filter((IpAddress ip) -> {
                     InetAddress ia = ip.getInetAddress();
                     return
                         !ia.isLoopback()

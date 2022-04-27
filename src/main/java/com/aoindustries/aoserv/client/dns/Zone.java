@@ -166,7 +166,7 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
     switch (addressFamily) {
       case INET : {
         String ipStr = ip.toString();
-        if (netmask.equals("255.255.255.0")) {
+        if ("255.255.255.0".equals(netmask)) {
           int pos = ipStr.indexOf('.');
           int oct1 = Integer.parseInt(ipStr.substring(0, pos));
           int pos2 = ipStr.indexOf('.', pos + 1);
@@ -174,7 +174,7 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
           pos = ipStr.indexOf('.', pos2 + 1);
           int oct3 = Integer.parseInt(ipStr.substring(pos2 + 1, pos));
           return oct3 + "." + oct2 + "." + oct1 + ".in-addr.arpa";
-        } else if (netmask.equals("255.255.255.128")) {
+        } else if ("255.255.255.128".equals(netmask)) {
           // Hurricane Electric compatible
           int pos = ipStr.indexOf('.');
           int oct1 = Integer.parseInt(ipStr.substring(0, pos));
@@ -281,7 +281,7 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
   }
 
   public boolean isArpa() {
-    return pkey.length() > 13 && pkey.substring(pkey.length() - 13).equals(".in-addr.arpa");
+    return pkey.length() > 13 && ".in-addr.arpa".equals(pkey.substring(pkey.length() - 13));
   }
 
   /**

@@ -1315,18 +1315,18 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
           return InetAddress.valueOf(s);
         case BOOLEAN:
           if (
-              s.equalsIgnoreCase("y")
-                  || s.equalsIgnoreCase("yes")
-                  || s.equalsIgnoreCase("t")
-                  || s.equalsIgnoreCase("true")
+              "y".equalsIgnoreCase(s)
+                  || "yes".equalsIgnoreCase(s)
+                  || "t".equalsIgnoreCase(s)
+                  || "true".equalsIgnoreCase(s)
           ) {
             return Boolean.TRUE;
           }
           if (
-              s.equalsIgnoreCase("n")
-                  || s.equalsIgnoreCase("no")
-                  || s.equalsIgnoreCase("f")
-                  || s.equalsIgnoreCase("false")
+              "n".equalsIgnoreCase(s)
+                  || "no".equalsIgnoreCase(s)
+                  || "f".equalsIgnoreCase(s)
+                  || "false".equalsIgnoreCase(s)
           ) {
             return Boolean.FALSE;
           }

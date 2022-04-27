@@ -304,6 +304,6 @@ public final class ZoneTable extends CachedTableStringKey<Zone> {
         numCount++;
       }
     }
-    return (numCount != len);
+    return numCount != len;
   }
 }

@@ -283,7 +283,7 @@ public final class Record extends CachedObjectIntegerKey<Record> implements Remo
    * Gets the domain, but in fully-qualified, absolute path (with trailing period).
    */
   public String getAbsoluteDomain() {
-    if (domain.equals("@")) {
+    if ("@".equals(domain)) {
       return zone;
     }
     if (domain.endsWith(".")) {
@@ -317,7 +317,7 @@ public final class Record extends CachedObjectIntegerKey<Record> implements Remo
 
   private static boolean isSpf1(String destination) {
     String txt = cleanTxt(destination);
-    return txt.equals("v=spf1") || txt.startsWith("v=spf1 ");
+    return "v=spf1".equals(txt) || txt.startsWith("v=spf1 ");
   }
 
   /**

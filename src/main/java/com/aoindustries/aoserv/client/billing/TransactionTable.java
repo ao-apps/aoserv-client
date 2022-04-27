@@ -525,21 +525,21 @@ public final class TransactionTable extends CachedTableIntegerKey<Transaction> {
         {
           String paymentConfirmed = args[13];
           if (
-              paymentConfirmed.equals("Confirmed")
+              "Confirmed".equals(paymentConfirmed)
                   // Backwards compatibility
-                  || paymentConfirmed.equals("Y")
+                  || "Y".equals(paymentConfirmed)
           ) {
             pc = Transaction.CONFIRMED;
           } else if (
-              paymentConfirmed.equals("Pending")
+              "Pending".equals(paymentConfirmed)
                   // Backwards compatibility
-                  || paymentConfirmed.equals("W")
+                  || "W".equals(paymentConfirmed)
           ) {
             pc = Transaction.WAITING_CONFIRMATION;
           } else if (
-              paymentConfirmed.equals("Failed")
+              "Failed".equals(paymentConfirmed)
                   // Backwards compatibility
-                  || paymentConfirmed.equals("N")
+                  || "N".equals(paymentConfirmed)
           ) {
             pc = Transaction.NOT_CONFIRMED;
           } else {

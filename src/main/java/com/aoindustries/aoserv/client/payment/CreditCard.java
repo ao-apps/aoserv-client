@@ -251,7 +251,7 @@ public final class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
     int len = cardNumber.length();
     StringBuilder nums = new StringBuilder(Math.min(len, MAX_LEN));
     for (
-      int c = (len - 1);
+      int c = len - 1;
       c >= 0 && nums.length() < MAX_LEN;
       c--
     ) {

@@ -107,7 +107,7 @@ public final class CommandTable extends GlobalTableStringKey<Command> {
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IOException, SQLException {
     String command = args[0];
-    if (command.equalsIgnoreCase(Command.HELP) || command.equals("?")) {
+    if (command.equalsIgnoreCase(Command.HELP) || "?".equals(command)) {
       int argCount = args.length;
       if (argCount == 1) {
         TableTable schemaTableTable = connector.getSchema().getTable();
@@ -126,7 +126,7 @@ public final class CommandTable extends GlobalTableStringKey<Command> {
         }
         out.flush();
       } else if (argCount == 2) {
-        if (args[1].equalsIgnoreCase("syntax")) {
+        if ("syntax".equalsIgnoreCase(args[1])) {
           TableTable schemaTableTable = connector.getSchema().getTable();
           for (int c = -1; c < numTables; c++) {
             String title;

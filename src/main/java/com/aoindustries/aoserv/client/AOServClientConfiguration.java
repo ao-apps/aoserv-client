@@ -53,7 +53,9 @@ public final class AOServClientConfiguration {
   }
 
   private static class PropsLock {
-    // Empty lock class to help heap profile
+    private PropsLock() {
+      // Empty lock class to help heap profile
+    }
   }
   private static final PropsLock propsLock = new PropsLock();
   private static Properties props;

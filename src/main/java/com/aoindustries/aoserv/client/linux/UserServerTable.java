@@ -156,7 +156,7 @@ public final class UserServerTable extends CachedTableIntegerKey<UserServer> {
     return matches;
   }
 
-  private boolean nameHashBuilt = false;
+  private boolean nameHashBuilt;
   private final Map<Integer, Map<User.Name, UserServer>> nameHash = new HashMap<>();
 
   UserServer getLinuxServerAccount(Server aoServer, User.Name username) throws IOException, SQLException {
@@ -288,7 +288,7 @@ public final class UserServerTable extends CachedTableIntegerKey<UserServer> {
     return null;
   }
 
-  private boolean uidHashBuilt = false;
+  private boolean uidHashBuilt;
   private final Map<Integer, Map<LinuxId, UserServer>> uidHash = new HashMap<>();
 
   UserServer getLinuxServerAccount(Server aoServer, LinuxId uid) throws IOException, SQLException {

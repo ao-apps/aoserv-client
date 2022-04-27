@@ -49,14 +49,14 @@ import java.util.Map;
  */
 public final class GroupUserTable extends CachedTableIntegerKey<GroupUser> {
 
-  private boolean hashBuilt = false;
+  private boolean hashBuilt;
   private final Map<Tuple2<Group.Name, User.Name>, List<GroupUser>> hash = new HashMap<>();
 
   /**
    * The group name of the primary group is hashed on first use for fast
    * lookups.
    */
-  private boolean primaryHashBuilt = false;
+  private boolean primaryHashBuilt;
   private final Map<User.Name, Group.Name> primaryHash = new HashMap<>();
 
   GroupUserTable(AOServConnector connector) {

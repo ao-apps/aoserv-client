@@ -144,7 +144,7 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
     } else if (command.equalsIgnoreCase(Command.SELECT)) {
       int argCount = args.length;
       if (argCount >= 4) {
-        if (argCount == 4 && args[1].equalsIgnoreCase("count(*)")) {
+        if (argCount == 4 && "count(*)".equalsIgnoreCase(args[1])) {
           selectCount(args, out, err, isInteractive);
         } else {
           selectRows(args, out, err, isInteractive);
@@ -226,7 +226,7 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
       List<String> expressions = new ArrayList<>(expressionArgs.size());
       // Substitute any * columnName and ,
       for (String expressionArg : expressionArgs) {
-        if (expressionArg.equals("*")) {
+        if ("*".equals(expressionArg)) {
           for (Column column : schemaTable.getSchemaColumns(connector)) {
             expressions.add(Parser.quote(column.getName()));
           }
@@ -241,7 +241,7 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
               current = expressionArg.substring(0, commaPos);
               expressionArg = expressionArg.substring(commaPos + 1);
             }
-            if (current.equals("*")) {
+            if ("*".equals(current)) {
               for (Column column : schemaTable.getSchemaColumns(connector)) {
                 expressions.add(Parser.quote(column.getName()));
               }
@@ -259,9 +259,9 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
       List<Boolean> sortOrders = new ArrayList<>();
       if (c < argCount) {
         String arg = args[c++];
-        if (arg.equalsIgnoreCase("order")) {
+        if ("order".equalsIgnoreCase(arg)) {
           if (c < argCount) {
-            if (args[c++].equalsIgnoreCase("by")) {
+            if ("by".equalsIgnoreCase(args[c++])) {
               while (c < argCount) {
                 String orderBy = args[c++];
                 do {
@@ -277,16 +277,16 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
                   if (
                       !orderExpressions.isEmpty()
                           && (
-                          expr.equalsIgnoreCase("asc")
-                              || expr.equalsIgnoreCase("ascending")
+                          "asc".equalsIgnoreCase(expr)
+                              || "ascending".equalsIgnoreCase(expr)
                       )
                   ) {
                     sortOrders.set(sortOrders.size() - 1, AOServTable.ASCENDING);
                   } else if (
                       !orderExpressions.isEmpty()
                           && (
-                          expr.equalsIgnoreCase("desc")
-                              || expr.equalsIgnoreCase("descending")
+                          "desc".equalsIgnoreCase(expr)
+                              || "descending".equalsIgnoreCase(expr)
                       )
                   ) {
                     sortOrders.set(sortOrders.size() - 1, AOServTable.DESCENDING);

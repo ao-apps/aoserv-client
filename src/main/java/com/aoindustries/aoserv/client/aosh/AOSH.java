@@ -350,28 +350,28 @@ public final class AOSH extends ShellInterpreter {
 
   public static boolean parseBoolean(String s, String field) {
     if (
-        s.equalsIgnoreCase("true")
-            || s.equalsIgnoreCase("t")
-            || s.equalsIgnoreCase("yes")
-            || s.equalsIgnoreCase("y")
-            || s.equalsIgnoreCase("vang")
-            || s.equalsIgnoreCase("da")
-            || s.equalsIgnoreCase("si")
-            || s.equalsIgnoreCase("oui")
-            || s.equalsIgnoreCase("ja")
-            || s.equalsIgnoreCase("nam")
+        "true".equalsIgnoreCase(s)
+            || "t".equalsIgnoreCase(s)
+            || "yes".equalsIgnoreCase(s)
+            || "y".equalsIgnoreCase(s)
+            || "vang".equalsIgnoreCase(s)
+            || "da".equalsIgnoreCase(s)
+            || "si".equalsIgnoreCase(s)
+            || "oui".equalsIgnoreCase(s)
+            || "ja".equalsIgnoreCase(s)
+            || "nam".equalsIgnoreCase(s)
     ) {
       return true;
     } else if (
-        s.equalsIgnoreCase("false")
-            || s.equalsIgnoreCase("f")
-            || s.equalsIgnoreCase("no")
-            || s.equalsIgnoreCase("n")
-            || s.equalsIgnoreCase("khong")
-            || s.equalsIgnoreCase("nyet")
-            || s.equalsIgnoreCase("non")
-            || s.equalsIgnoreCase("nien")
-            || s.equalsIgnoreCase("la")
+        "false".equalsIgnoreCase(s)
+            || "f".equalsIgnoreCase(s)
+            || "no".equalsIgnoreCase(s)
+            || "n".equalsIgnoreCase(s)
+            || "khong".equalsIgnoreCase(s)
+            || "nyet".equalsIgnoreCase(s)
+            || "non".equalsIgnoreCase(s)
+            || "nien".equalsIgnoreCase(s)
+            || "la".equalsIgnoreCase(s)
     ) {
       return false;
     } else {

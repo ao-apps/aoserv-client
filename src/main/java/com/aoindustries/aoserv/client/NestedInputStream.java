@@ -42,10 +42,10 @@ import java.sql.SQLException;
 public final class NestedInputStream extends InputStream {
 
   private final StreamableInput in;
-  private boolean isDone = false;
+  private boolean isDone;
   private byte[] buffer = BufferManager.getBytes();
-  private int bufferFilled = 0;
-  private int bufferRead = 0;
+  private int bufferFilled;
+  private int bufferRead;
 
   public NestedInputStream(StreamableInput in) {
     this.in = in;

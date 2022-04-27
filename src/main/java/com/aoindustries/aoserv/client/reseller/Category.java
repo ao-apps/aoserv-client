@@ -127,7 +127,7 @@ public final class Category extends CachedObjectIntegerKey<Category> {
     name = in.readUTF().intern();
   }
 
-  private String slashPath = null;
+  private String slashPath;
 
   public synchronized String getSlashPath() throws IOException, SQLException {
     if (slashPath == null) {
@@ -136,7 +136,7 @@ public final class Category extends CachedObjectIntegerKey<Category> {
     return slashPath;
   }
 
-  private String dotPath = null;
+  private String dotPath;
 
   public synchronized String getDotPath() throws IOException, SQLException {
     if (dotPath == null) {

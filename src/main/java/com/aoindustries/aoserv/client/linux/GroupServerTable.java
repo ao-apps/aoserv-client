@@ -122,7 +122,7 @@ public final class GroupServerTable extends CachedTableIntegerKey<GroupServer> {
     return null;
   }
 
-  private boolean nameHashBuilt = false;
+  private boolean nameHashBuilt;
   private final Map<Integer, Map<Group.Name, GroupServer>> nameHash = new HashMap<>();
 
   public GroupServer getLinuxServerGroup(Server aoServer, Group.Name group_name) throws IOException, SQLException {
@@ -157,7 +157,7 @@ public final class GroupServerTable extends CachedTableIntegerKey<GroupServer> {
     }
   }
 
-  private boolean gidHashBuilt = false;
+  private boolean gidHashBuilt;
   private final Map<Integer, Map<LinuxId, GroupServer>> gidHash = new HashMap<>();
 
   public GroupServer getLinuxServerGroup(Server aoServer, LinuxId gid) throws IOException, SQLException {

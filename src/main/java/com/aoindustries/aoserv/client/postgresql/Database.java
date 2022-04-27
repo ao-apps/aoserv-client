@@ -514,19 +514,19 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
     } else {
       String major = split.get(0);
       String minor = split.get(1);
-      if (major.equals("7")) {
+      if ("7".equals(major)) {
         return "https://www.postgresql.org/docs/" + URIEncoder.encodeURIComponent(major) + "." + URIEncoder.encodeURIComponent(minor) + "/jdbc.html";
       }
       if (
-          major.equals("8")
+          "8".equals(major)
               || (
-              major.equals("9")
+              "9".equals(major)
                   && (
-                  minor.equals("0")
-                      || minor.equals("1")
-                      || minor.equals("2")
-                      || minor.equals("3")
-                      || minor.equals("4")
+                  "0".equals(minor)
+                      || "1".equals(minor)
+                      || "2".equals(minor)
+                      || "3".equals(minor)
+                      || "4".equals(minor)
               )
           )
       ) {

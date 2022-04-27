@@ -138,9 +138,9 @@ public abstract class AOServConnector implements SchemaParent {
           (t instanceof IOException)
               && message != null
               && (
-              message.equals("Connection attempted with invalid password")
-                  || message.equals("Connection attempted with empty password")
-                  || message.equals("Connection attempted with empty connect username")
+              "Connection attempted with invalid password".equals(message)
+                  || "Connection attempted with empty password".equals(message)
+                  || "Connection attempted with empty connect username".equals(message)
                   || message.startsWith("Unable to find Administrator: ")
                   || message.startsWith("Not allowed to switch users from ")
           )

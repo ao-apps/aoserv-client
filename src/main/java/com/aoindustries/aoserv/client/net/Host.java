@@ -356,7 +356,7 @@ public final class Host extends CachedObjectIntegerKey<Host> implements Comparab
       if (pk1 == null || pk2 == null) {
         int id1 = getPackageId();
         int id2 = o.getPackageId();
-        return (id1 < id2 ? -1 : (id1 == id2 ? 0 : 1));
+        return id1 < id2 ? -1 : (id1 == id2 ? 0 : 1);
       } else {
         int diff = pk1.compareTo(pk2);
         if (diff != 0) {
