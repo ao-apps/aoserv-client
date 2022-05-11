@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.ticket;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTableStringKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.sql.SQLException;
  */
 public final class LanguageTable extends GlobalTableStringKey<Language> {
 
-  LanguageTable(AOServConnector connector) {
+  LanguageTable(AoservConnector connector) {
     super(connector, Language.class);
   }
 
@@ -56,7 +56,7 @@ public final class LanguageTable extends GlobalTableStringKey<Language> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.LANGUAGES;
+  public Table.TableId getTableId() {
+    return Table.TableId.LANGUAGES;
   }
 }

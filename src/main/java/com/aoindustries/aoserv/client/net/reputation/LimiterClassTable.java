@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.net.reputation;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.net.Device;
@@ -40,13 +40,15 @@ import java.util.List;
  */
 public final class LimiterClassTable extends CachedTableIntegerKey<LimiterClass> {
 
-  LimiterClassTable(AOServConnector connector) {
+  LimiterClassTable(AoservConnector connector) {
     super(connector, LimiterClass.class);
   }
 
   private static final OrderBy[] defaultOrderBy = {
-      new OrderBy(LimiterClass.COLUMN_LIMITER_name + '.' + Limiter.COLUMN_NET_DEVICE_name + '.' + Device.COLUMN_SERVER_name + '.' + Host.COLUMN_PACKAGE_name + '.' + Package.COLUMN_NAME_name, ASCENDING),
-      new OrderBy(LimiterClass.COLUMN_LIMITER_name + '.' + Limiter.COLUMN_NET_DEVICE_name + '.' + Device.COLUMN_SERVER_name + '.' + Host.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(LimiterClass.COLUMN_LIMITER_name + '.' + Limiter.COLUMN_NET_DEVICE_name + '.' + Device.COLUMN_SERVER_name
+          + '.' + Host.COLUMN_PACKAGE_name + '.' + Package.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(LimiterClass.COLUMN_LIMITER_name + '.' + Limiter.COLUMN_NET_DEVICE_name + '.' + Device.COLUMN_SERVER_name
+          + '.' + Host.COLUMN_NAME_name, ASCENDING),
       new OrderBy(LimiterClass.COLUMN_LIMITER_name + '.' + Limiter.COLUMN_NET_DEVICE_name + '.' + Device.COLUMN_DEVICE_ID_name, ASCENDING),
       new OrderBy(LimiterClass.COLUMN_LIMITER_name + '.' + Limiter.COLUMN_IDENTIFIER_name, ASCENDING),
       new OrderBy(LimiterClass.COLUMN_CLASS_name, ASCENDING)
@@ -68,7 +70,7 @@ public final class LimiterClassTable extends CachedTableIntegerKey<LimiterClass>
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.IP_REPUTATION_LIMITER_LIMITS;
+  public Table.TableId getTableId() {
+    return Table.TableId.IP_REPUTATION_LIMITER_LIMITS;
   }
 }

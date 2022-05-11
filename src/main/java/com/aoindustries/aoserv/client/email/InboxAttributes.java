@@ -26,8 +26,8 @@ package com.aoindustries.aoserv.client.email;
 import com.aoapps.hodgepodge.io.stream.Streamable;
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
-import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.AOServStreamable;
+import com.aoindustries.aoserv.client.AoservConnector;
+import com.aoindustries.aoserv.client.AoservStreamable;
 import com.aoindustries.aoserv.client.linux.UserServer;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import java.io.IOException;
@@ -38,15 +38,15 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-public final class InboxAttributes implements AOServStreamable {
+public final class InboxAttributes implements AoservStreamable {
 
-  private final AOServConnector connector;
+  private final AoservConnector connector;
   private final int linuxServerAccount;
   private long systemTime;
   private long fileSize;
   private long lastModified;
 
-  public InboxAttributes(AOServConnector connector, UserServer lsa) {
+  public InboxAttributes(AoservConnector connector, UserServer lsa) {
     this.connector = connector;
     this.linuxServerAccount = lsa.getPkey();
   }
@@ -62,7 +62,7 @@ public final class InboxAttributes implements AOServStreamable {
     this.lastModified = lastModified;
   }
 
-  public AOServConnector getAOServConnector() {
+  public AoservConnector getAoservConnector() {
     return connector;
   }
 
@@ -86,9 +86,11 @@ public final class InboxAttributes implements AOServStreamable {
   }
 
   /**
+   * {@inheritDoc}
+   *
    * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
    *
-   * @see  #read(StreamableInput, AOServProtocol.Version)
+   * @see  #read(StreamableInput, AoservProtocol.Version)
    */
   @Deprecated
   @Override
@@ -104,9 +106,11 @@ public final class InboxAttributes implements AOServStreamable {
   }
 
   /**
+   * {@inheritDoc}
+   *
    * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
    *
-   * @see  #write(StreamableOutput, AOServProtocol.Version)
+   * @see  #write(StreamableOutput, AoservProtocol.Version)
    */
   @Deprecated
   @Override

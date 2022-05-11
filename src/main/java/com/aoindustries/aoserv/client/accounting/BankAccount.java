@@ -43,9 +43,11 @@ public final class BankAccount extends CachedObjectStringKey<BankAccount> {
   static final int COLUMN_NAME = 0;
   static final String COLUMN_NAME_name = "name";
 
-  private String display, bank;
+  private String display;
+  private String bank;
 
-  private int depositDelay, withdrawalDelay;
+  private int depositDelay;
+  private int withdrawalDelay;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -103,8 +105,8 @@ public final class BankAccount extends CachedObjectStringKey<BankAccount> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.BANK_ACCOUNTS;
+  public Table.TableId getTableId() {
+    return Table.TableId.BANK_ACCOUNTS;
   }
 
   public int getWithdrawalDelay() {

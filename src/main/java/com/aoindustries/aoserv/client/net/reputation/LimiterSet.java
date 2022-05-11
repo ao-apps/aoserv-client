@@ -39,14 +39,10 @@ import java.sql.SQLException;
  */
 public final class LimiterSet extends CachedObjectIntegerKey<LimiterSet> {
 
-  static final int
-      COLUMN_PKEY    = 0,
-      COLUMN_LIMITER = 1
-  ;
-  static final String
-      COLUMN_LIMITER_name = "limiter",
-      COLUMN_SORT_ORDER_name = "sort_order"
-  ;
+  static final int COLUMN_PKEY    = 0;
+  static final int COLUMN_LIMITER = 1;
+  static final String COLUMN_LIMITER_name = "limiter";
+  static final String COLUMN_SORT_ORDER_name = "sort_order";
 
   private int limiter;
   private int set;
@@ -64,8 +60,8 @@ public final class LimiterSet extends CachedObjectIntegerKey<LimiterSet> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.IP_REPUTATION_LIMITER_SETS;
+  public Table.TableId getTableId() {
+    return Table.TableId.IP_REPUTATION_LIMITER_SETS;
   }
 
   @Override
@@ -82,7 +78,7 @@ public final class LimiterSet extends CachedObjectIntegerKey<LimiterSet> {
     out.writeCompressedInt(pkey);
     out.writeCompressedInt(limiter);
     out.writeCompressedInt(set);
-    out.writeShort        (sortOrder);
+    out.writeShort(sortOrder);
   }
 
   @Override
@@ -96,11 +92,16 @@ public final class LimiterSet extends CachedObjectIntegerKey<LimiterSet> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY     : return pkey;
-      case COLUMN_LIMITER  : return limiter;
-      case 2               : return set;
-      case 3               : return sortOrder;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_LIMITER:
+        return limiter;
+      case 2:
+        return set;
+      case 3:
+        return sortOrder;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 

@@ -26,7 +26,7 @@ package com.aoindustries.aoserv.client.backup;
 import com.aoapps.collections.IntList;
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.linux.Server;
@@ -44,15 +44,19 @@ import java.util.List;
  */
 public final class FileReplicationScheduleTable extends CachedTableIntegerKey<FileReplicationSchedule> {
 
-  FileReplicationScheduleTable(AOServConnector connector) {
+  FileReplicationScheduleTable(AoservConnector connector) {
     super(connector, FileReplicationSchedule.class);
   }
 
   private static final OrderBy[] defaultOrderBy = {
-      new OrderBy(FileReplicationSchedule.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_SERVER_name + '.' + Host.COLUMN_PACKAGE_name + '.' + Package.COLUMN_NAME_name, ASCENDING),
-      new OrderBy(FileReplicationSchedule.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_SERVER_name + '.' + Host.COLUMN_NAME_name, ASCENDING),
-      new OrderBy(FileReplicationSchedule.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_BACKUP_PARTITION_name + '.' + BackupPartition.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
-      new OrderBy(FileReplicationSchedule.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_BACKUP_PARTITION_name + '.' + BackupPartition.COLUMN_PATH_name, ASCENDING),
+      new OrderBy(FileReplicationSchedule.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_SERVER_name
+          + '.' + Host.COLUMN_PACKAGE_name + '.' + Package.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(FileReplicationSchedule.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_SERVER_name
+          + '.' + Host.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(FileReplicationSchedule.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_BACKUP_PARTITION_name
+          + '.' + BackupPartition.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
+      new OrderBy(FileReplicationSchedule.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_BACKUP_PARTITION_name
+          + '.' + BackupPartition.COLUMN_PATH_name, ASCENDING),
       new OrderBy(FileReplicationSchedule.COLUMN_HOUR_name, ASCENDING),
       new OrderBy(FileReplicationSchedule.COLUMN_MINUTE_name, ASCENDING)
   };
@@ -73,8 +77,8 @@ public final class FileReplicationScheduleTable extends CachedTableIntegerKey<Fi
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.FAILOVER_FILE_SCHEDULE;
+  public Table.TableId getTableId() {
+    return Table.TableId.FAILOVER_FILE_SCHEDULE;
   }
 
   void setFailoverFileSchedules(final FileReplication ffr, final List<Short> hours, final List<Short> minutes) throws IOException, SQLException {
@@ -84,8 +88,8 @@ public final class FileReplicationScheduleTable extends CachedTableIntegerKey<Fi
 
     connector.requestUpdate(
         true,
-        AoservProtocol.CommandID.SET_FAILOVER_FILE_SCHEDULES,
-        new AOServConnector.UpdateRequest() {
+        AoservProtocol.CommandId.SET_FAILOVER_FILE_SCHEDULES,
+        new AoservConnector.UpdateRequest() {
           private IntList invalidateList;
 
           @Override
@@ -103,7 +107,7 @@ public final class FileReplicationScheduleTable extends CachedTableIntegerKey<Fi
           public void readResponse(StreamableInput in) throws IOException, SQLException {
             int code = in.readByte();
             if (code == AoservProtocol.DONE) {
-              invalidateList = AOServConnector.readInvalidateList(in);
+              invalidateList = AoservConnector.readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
               throw new IOException("Unexpected response code: " + code);

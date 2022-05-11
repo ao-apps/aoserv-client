@@ -27,7 +27,7 @@ import com.aoapps.collections.IntList;
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.lang.i18n.Money;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
@@ -44,7 +44,7 @@ import java.util.List;
  */
 public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageDefinition> {
 
-  PackageDefinitionTable(AOServConnector connector) {
+  PackageDefinitionTable(AoservConnector connector) {
     super(connector, PackageDefinition.class);
   }
 
@@ -76,15 +76,15 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
   ) throws IOException, SQLException {
     return connector.requestResult(
         true,
-        AoservProtocol.CommandID.ADD,
-        // Java 9: new AOServConnector.ResultRequest<>
-        new AOServConnector.ResultRequest<Integer>() {
+        AoservProtocol.CommandId.ADD,
+        // Java 9: new AoservConnector.ResultRequest<>
+        new AoservConnector.ResultRequest<Integer>() {
           private int pkey;
           private IntList invalidateList;
 
           @Override
           public void writeRequest(StreamableOutput out) throws IOException {
-            out.writeCompressedInt(Table.TableID.PACKAGE_DEFINITIONS.ordinal());
+            out.writeCompressedInt(Table.TableId.PACKAGE_DEFINITIONS.ordinal());
             out.writeUTF(business.getName().toString());
             out.writeUTF(category.getName());
             out.writeUTF(name);
@@ -102,7 +102,7 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
             int code = in.readByte();
             if (code == AoservProtocol.DONE) {
               pkey = in.readCompressedInt();
-              invalidateList = AOServConnector.readInvalidateList(in);
+              invalidateList = AoservConnector.readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
               throw new IOException("Unknown response code: " + code);
@@ -162,7 +162,7 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.PACKAGE_DEFINITIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.PACKAGE_DEFINITIONS;
   }
 }

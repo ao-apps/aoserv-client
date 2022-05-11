@@ -41,17 +41,15 @@ import java.sql.SQLException;
  */
 public final class SmtpSmartHostDomain extends CachedObjectIntegerKey<SmtpSmartHostDomain> {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_SMART_HOST = 1
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_SMART_HOST = 1;
   static final String COLUMN_SMART_HOST_name = "smart_host";
   static final String COLUMN_DOMAIN_name = "domain";
 
-  private int smart_host;
+  private int smartHost;
   private DomainName domain;
-  private int domain_out_burst;
-  private float domain_out_rate;
+  private int domainOutBurst;
+  private float domainOutRate;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -67,19 +65,25 @@ public final class SmtpSmartHostDomain extends CachedObjectIntegerKey<SmtpSmartH
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_SMART_HOST: return smart_host;
-      case 2: return domain;
-      case 3: return domain_out_burst == -1 ? null : domain_out_burst;
-      case 4: return Float.isNaN(domain_out_rate) ? null : domain_out_rate;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_SMART_HOST:
+        return smartHost;
+      case 2:
+        return domain;
+      case 3:
+        return domainOutBurst == -1 ? null : domainOutBurst;
+      case 4:
+        return Float.isNaN(domainOutRate) ? null : domainOutRate;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   public SmtpSmartHost getEmailSmtpSmartHost() throws SQLException, IOException {
-    SmtpSmartHost obj = table.getConnector().getEmail().getSmtpSmartHost().get(smart_host);
+    SmtpSmartHost obj = table.getConnector().getEmail().getSmtpSmartHost().get(smartHost);
     if (obj == null) {
-      throw new SQLException("Unable to find EmailSmtpSmartHost: " + smart_host);
+      throw new SQLException("Unable to find EmailSmtpSmartHost: " + smartHost);
     }
     return obj;
   }
@@ -93,7 +97,7 @@ public final class SmtpSmartHostDomain extends CachedObjectIntegerKey<SmtpSmartH
    * A value of <code>-1</code> indicates unlimited.
    */
   public int getDomainOutBurst() {
-    return domain_out_burst;
+    return domainOutBurst;
   }
 
   /**
@@ -101,12 +105,12 @@ public final class SmtpSmartHostDomain extends CachedObjectIntegerKey<SmtpSmartH
    * A value of <code>Float.NaN</code> indicates unlimited.
    */
   public float getDomainOutRate() {
-    return domain_out_rate;
+    return domainOutRate;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.EMAIL_SMTP_SMART_HOST_DOMAINS;
+  public Table.TableId getTableId() {
+    return Table.TableId.EMAIL_SMTP_SMART_HOST_DOMAINS;
   }
 
   @Override
@@ -114,15 +118,15 @@ public final class SmtpSmartHostDomain extends CachedObjectIntegerKey<SmtpSmartH
     try {
       int pos = 1;
       pkey = result.getInt(pos++);
-      smart_host = result.getInt(pos++);
+      smartHost = result.getInt(pos++);
       domain = DomainName.valueOf(result.getString(pos++));
-      domain_out_burst = result.getInt(pos++);
+      domainOutBurst = result.getInt(pos++);
       if (result.wasNull()) {
-        domain_out_burst = -1;
+        domainOutBurst = -1;
       }
-      domain_out_rate = result.getFloat(pos++);
+      domainOutRate = result.getFloat(pos++);
       if (result.wasNull()) {
-        domain_out_rate = Float.NaN;
+        domainOutRate = Float.NaN;
       }
     } catch (ValidationException e) {
       throw new SQLException(e);
@@ -133,10 +137,10 @@ public final class SmtpSmartHostDomain extends CachedObjectIntegerKey<SmtpSmartH
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
       pkey = in.readCompressedInt();
-      smart_host = in.readCompressedInt();
+      smartHost = in.readCompressedInt();
       domain = DomainName.valueOf(in.readUTF());
-      domain_out_burst = in.readCompressedInt();
-      domain_out_rate = in.readFloat();
+      domainOutBurst = in.readCompressedInt();
+      domainOutRate = in.readFloat();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -145,8 +149,8 @@ public final class SmtpSmartHostDomain extends CachedObjectIntegerKey<SmtpSmartH
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeCompressedInt(smart_host);
-    out.writeCompressedInt(domain_out_burst);
-    out.writeFloat(domain_out_rate);
+    out.writeCompressedInt(smartHost);
+    out.writeCompressedInt(domainOutBurst);
+    out.writeFloat(domainOutRate);
   }
 }

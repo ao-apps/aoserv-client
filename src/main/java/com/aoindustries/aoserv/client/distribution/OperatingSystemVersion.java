@@ -26,7 +26,7 @@ package com.aoindustries.aoserv.client.distribution;
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.lang.validation.ValidationException;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalObjectIntegerKey;
 import com.aoindustries.aoserv.client.email.List;
 import com.aoindustries.aoserv.client.linux.PosixPath;
@@ -48,17 +48,15 @@ public final class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
   static final int COLUMN_PKEY = 0;
   static final String COLUMN_SORT_ORDER_name = "sort_order";
 
-  public static final String
-      //VERSION_1_4="1.4",
-      //VERSION_7_2="7.2",
-      //VERSION_9_2="9.2",
-      VERSION_5 = "5",
-      VERSION_5_DOM0 = "5.dom0",
-      VERSION_7 = "7",
-      VERSION_7_DOM0 = "7.dom0",
-      VERSION_2006_0 = "2006.0",
-      VERSION_ES_4 = "ES 4"
-  ;
+  //public static final String VERSION_1_4 = "1.4";
+  //public static final String VERSION_7_2 = "7.2";
+  //public static final String VERSION_9_2 = "9.2";
+  public static final String VERSION_5 = "5";
+  public static final String VERSION_5_DOM0 = "5.dom0";
+  public static final String VERSION_7 = "7";
+  public static final String VERSION_7_DOM0 = "7.dom0";
+  public static final String VERSION_2006_0 = "2006.0";
+  public static final String VERSION_ES_4 = "ES 4";
 
   /**
    * @deprecated  What is this used for?
@@ -68,21 +66,19 @@ public final class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
   @Deprecated
   public static final String DEFAULT_OPERATING_SYSTEM_VERSION = VERSION_7;
 
-  public static final int
-      CENTOS_5_DOM0_X86_64 = 63,
-      CENTOS_5_DOM0_I686 = 64,
-      CENTOS_5_I686_AND_X86_64 = 67,
-      CENTOS_7_DOM0_X86_64 = 69,
-      CENTOS_7_X86_64 = 70
-  ;
+  public static final int CENTOS_5_DOM0_X86_64 = 63;
+  public static final int CENTOS_5_DOM0_I686 = 64;
+  public static final int CENTOS_5_I686_AND_X86_64 = 67;
+  public static final int CENTOS_7_DOM0_X86_64 = 69;
+  public static final int CENTOS_7_X86_64 = 70;
 
-  private String operating_system;
-  private String version_number;
-  private String version_name;
+  private String operatingSystem;
+  private String versionNumber;
+  private String versionName;
   private String architecture;
   private String display;
-  private boolean is_aoserv_daemon_supported;
-  private short sort_order;
+  private boolean isAoservDaemonSupported;
+  private short sortOrder;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -98,35 +94,44 @@ public final class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case 1: return operating_system;
-      case 2: return version_number;
-      case 3: return version_name;
-      case 4: return architecture;
-      case 5: return display;
-      case 6: return is_aoserv_daemon_supported;
-      case 7: return sort_order;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case 1:
+        return operatingSystem;
+      case 2:
+        return versionNumber;
+      case 3:
+        return versionName;
+      case 4:
+        return architecture;
+      case 5:
+        return display;
+      case 6:
+        return isAoservDaemonSupported;
+      case 7:
+        return sortOrder;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
-  public OperatingSystem getOperatingSystem(AOServConnector conn) throws IOException, SQLException {
-    return conn.getDistribution().getOperatingSystem().get(operating_system);
+  public OperatingSystem getOperatingSystem(AoservConnector conn) throws IOException, SQLException {
+    return conn.getDistribution().getOperatingSystem().get(operatingSystem);
   }
 
   public String getVersionNumber() {
-    return version_number;
+    return versionNumber;
   }
 
   public String getVersionName() {
-    return version_name;
+    return versionName;
   }
 
   public String getArchitecture_name() {
     return architecture;
   }
 
-  public Architecture getArchitecture(AOServConnector connector) throws SQLException, IOException {
+  public Architecture getArchitecture(AoservConnector connector) throws SQLException, IOException {
     Architecture ar = connector.getDistribution().getArchitecture().get(architecture);
     if (ar == null) {
       throw new SQLException("Unable to find Architecture: " + architecture);
@@ -138,41 +143,41 @@ public final class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
     return display;
   }
 
-  public boolean isAOServDaemonSupported() {
-    return is_aoserv_daemon_supported;
+  public boolean isAoservDaemonSupported() {
+    return isAoservDaemonSupported;
   }
 
   public short getSortOrder() {
-    return sort_order;
+    return sortOrder;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.OPERATING_SYSTEM_VERSIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.OPERATING_SYSTEM_VERSIONS;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     pkey = result.getInt(1);
-    operating_system = result.getString(2);
-    version_number = result.getString(3);
-    version_name = result.getString(4);
+    operatingSystem = result.getString(2);
+    versionNumber = result.getString(3);
+    versionName = result.getString(4);
     architecture = result.getString(5);
     display = result.getString(6);
-    is_aoserv_daemon_supported = result.getBoolean(7);
-    sort_order = result.getShort(8);
+    isAoservDaemonSupported = result.getBoolean(7);
+    sortOrder = result.getShort(8);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readCompressedInt();
-    operating_system = in.readUTF().intern();
-    version_number = in.readUTF();
-    version_name = in.readUTF();
+    operatingSystem = in.readUTF().intern();
+    versionNumber = in.readUTF();
+    versionName = in.readUTF();
     architecture = in.readUTF().intern();
     display = in.readUTF();
-    is_aoserv_daemon_supported = in.readBoolean();
-    sort_order = in.readShort();
+    isAoservDaemonSupported = in.readBoolean();
+    sortOrder = in.readShort();
   }
 
   @Override
@@ -183,18 +188,18 @@ public final class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeUTF(operating_system);
-    out.writeUTF(version_number);
-    out.writeUTF(version_name);
+    out.writeUTF(operatingSystem);
+    out.writeUTF(versionNumber);
+    out.writeUTF(versionName);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_108) >= 0) {
       out.writeUTF(architecture);
     }
     out.writeUTF(display);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_108) >= 0) {
-      out.writeBoolean(is_aoserv_daemon_supported);
+      out.writeBoolean(isAoservDaemonSupported);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_3) >= 0) {
-      out.writeShort(sort_order);
+      out.writeShort(sortOrder);
     }
   }
 
@@ -206,7 +211,8 @@ public final class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
     return getHttpdSitesDirectory(pkey);
   }
 
-  private static final PosixPath WWW, VAR_WWW;
+  private static final PosixPath WWW;
+  private static final PosixPath VAR_WWW;
 
   static {
     try {
@@ -223,15 +229,15 @@ public final class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
    */
   public static PosixPath getHttpdSitesDirectory(int osv) {
     switch (osv) {
-      case CENTOS_5_I686_AND_X86_64 :
+      case CENTOS_5_I686_AND_X86_64:
         return WWW;
-      case CENTOS_7_X86_64 :
+      case CENTOS_7_X86_64:
         return VAR_WWW;
-      case CENTOS_5_DOM0_I686 :
-      case CENTOS_5_DOM0_X86_64 :
-      case CENTOS_7_DOM0_X86_64 :
+      case CENTOS_5_DOM0_I686:
+      case CENTOS_5_DOM0_X86_64:
+      case CENTOS_7_DOM0_X86_64:
         return null;
-      default :
+      default:
         throw new AssertionError("Unexpected OperatingSystemVersion: " + osv);
     }
   }
@@ -244,7 +250,8 @@ public final class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
     return getHttpdSharedTomcatsDirectory(pkey);
   }
 
-  private static final PosixPath WWWGROUP, VAR_OPT_APACHE_TOMCAT;
+  private static final PosixPath WWWGROUP;
+  private static final PosixPath VAR_OPT_APACHE_TOMCAT;
 
   static {
     try {
@@ -261,15 +268,15 @@ public final class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
    */
   public static PosixPath getHttpdSharedTomcatsDirectory(int osv) {
     switch (osv) {
-      case CENTOS_5_I686_AND_X86_64 :
+      case CENTOS_5_I686_AND_X86_64:
         return WWWGROUP;
-      case CENTOS_7_X86_64 :
+      case CENTOS_7_X86_64:
         return VAR_OPT_APACHE_TOMCAT;
-      case CENTOS_5_DOM0_I686 :
-      case CENTOS_5_DOM0_X86_64 :
-      case CENTOS_7_DOM0_X86_64 :
+      case CENTOS_5_DOM0_I686:
+      case CENTOS_5_DOM0_X86_64:
+      case CENTOS_7_DOM0_X86_64:
         return null;
-      default :
+      default:
         throw new AssertionError("Unexpected OperatingSystemVersion: " + osv);
     }
   }
@@ -282,7 +289,8 @@ public final class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
     return getHttpdSiteLogsDirectory(pkey);
   }
 
-  private static final PosixPath LOGS, VAR_LOG_HTTPD_SITES;
+  private static final PosixPath LOGS;
+  private static final PosixPath VAR_LOG_HTTPD_SITES;
 
   static {
     try {
@@ -299,15 +307,15 @@ public final class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
    */
   public static PosixPath getHttpdSiteLogsDirectory(int osv) {
     switch (osv) {
-      case CENTOS_5_I686_AND_X86_64 :
+      case CENTOS_5_I686_AND_X86_64:
         return LOGS;
-      case CENTOS_7_X86_64 :
+      case CENTOS_7_X86_64:
         return VAR_LOG_HTTPD_SITES;
-      case CENTOS_5_DOM0_I686 :
-      case CENTOS_5_DOM0_X86_64 :
-      case CENTOS_7_DOM0_X86_64 :
+      case CENTOS_5_DOM0_I686:
+      case CENTOS_5_DOM0_X86_64:
+      case CENTOS_7_DOM0_X86_64:
         return null;
-      default :
+      default:
         throw new AssertionError("Unexpected OperatingSystemVersion: " + osv);
     }
   }

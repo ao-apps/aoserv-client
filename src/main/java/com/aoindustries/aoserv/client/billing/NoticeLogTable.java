@@ -25,10 +25,10 @@ package com.aoindustries.aoserv.client.billing;
 
 import com.aoapps.hodgepodge.io.TerminalWriter;
 import com.aoapps.net.Email;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -44,7 +44,7 @@ import java.util.List;
  */
 public final class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
 
-  NoticeLogTable(AOServConnector connector) {
+  NoticeLogTable(AoservConnector connector) {
     super(connector, NoticeLog.class);
   }
 
@@ -66,10 +66,10 @@ public final class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
       final NoticeType type,
       final Transaction trans
   ) throws IOException, SQLException {
-    return connector.requestIntQueryIL(
+    return connector.requestIntQueryInvalidating(
         true,
-        AoservProtocol.CommandID.ADD,
-        Table.TableID.NOTICE_LOG,
+        AoservProtocol.CommandId.ADD,
+        Table.TableId.NOTICE_LOG,
         account.getName().toString(),
         billingContact,
         emailAddress,
@@ -88,22 +88,22 @@ public final class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.NOTICE_LOG;
+  public Table.TableId getTableId() {
+    return Table.TableId.NOTICE_LOG;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_NOTICE_LOG)) {
-      if (AOSH.checkParamCount(Command.ADD_NOTICE_LOG, args, 5, err)) {
+      if (Aosh.checkParamCount(Command.ADD_NOTICE_LOG, args, 5, err)) {
         out.println(
-            connector.getSimpleAOClient().addNoticeLog(
-                AOSH.parseAccountingCode(args[1], "business"),
+            connector.getSimpleClient().addNoticeLog(
+                Aosh.parseAccountingCode(args[1], "business"),
                 args[2],
-                AOSH.parseEmail(args[3], "email_address"),
+                Aosh.parseEmail(args[3], "email_address"),
                 args[4],
-                args[5].isEmpty() ? NoticeLog.NO_TRANSACTION : AOSH.parseInt(args[5], "transid")
+                args[5].isEmpty() ? NoticeLog.NO_TRANSACTION : Aosh.parseInt(args[5], "transid")
             )
         );
         out.flush();

@@ -32,15 +32,16 @@ import junit.framework.TestSuite;
 
 /**
  * Gets the sizes of each table.
- *
+ * <p>
  * TODO: This test does not run without a master setup.
+ * </p>
  *
  * @author  AO Industries, Inc.
  */
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class GetTableSizesTODO extends TestCase {
 
-  private List<AOServConnector> conns;
+  private List<AoservConnector> conns;
 
   public GetTableSizesTODO(String testName) {
     super(testName);
@@ -48,7 +49,7 @@ public class GetTableSizesTODO extends TestCase {
 
   @Override
   protected void setUp() throws Exception {
-    conns = AOServConnectorTODO.getTestConnectors();
+    conns = AoservConnectorTODO.getTestConnectors();
   }
 
   @Override
@@ -63,29 +64,29 @@ public class GetTableSizesTODO extends TestCase {
   }
 
   /**
-   * Test the size() method of each AOServTable.
+   * Test the size() method of each AoservTable.
    */
   public void testTableSizes() throws Exception {
-    final int PASSES = 10;
-    System.out.println("Testing getTable(tableID).size()");
-    for (AOServConnector conn : conns) {
+    final int passes = 10;
+    System.out.println("Testing getTable(tableId).size()");
+    for (AoservConnector conn : conns) {
       User.Name username = conn.getCurrentAdministrator().getKey();
       System.out.println("    " + username);
-      int numTables = Table.TableID.values().length;
-      int[][] counts = new int[PASSES][numTables];
-      for (int d = 0; d < PASSES; d++) {
+      int numTables = Table.TableId.values().length;
+      int[][] counts = new int[passes][numTables];
+      for (int d = 0; d < passes; d++) {
         // Excluded for testing speed
         if (
-            d == Table.TableID.DISTRO_FILES.ordinal()
-                || d == Table.TableID.TRANSACTIONS.ordinal()
-                || d == Table.TableID.WhoisHistory.ordinal()
+            d == Table.TableId.DISTRO_FILES.ordinal()
+                || d == Table.TableId.TRANSACTIONS.ordinal()
+                || d == Table.TableId.WhoisHistory.ordinal()
         ) {
           continue;
         }
-        System.out.print("        Pass" + (d < 9 ? "  " : " ") + (d + 1) + " of " + PASSES + ": ");
+        System.out.print("        Pass" + (d < 9 ? "  " : " ") + (d + 1) + " of " + passes + ": ");
         for (int c = 0; c < numTables; c++) {
           System.out.print('.');
-          AOServTable<?, ?> table = conn.getTable(c);
+          AoservTable<?, ?> table = conn.getTable(c);
           String tableName = table.getTableName();
           int size = table.size();
           if (size < 0) {
@@ -96,21 +97,21 @@ public class GetTableSizesTODO extends TestCase {
         System.out.println(" Done");
       }
       // Make sure counts match
-      for (int c = 1; c < PASSES; c++) {
+      for (int c = 1; c < passes; c++) {
         for (int d = 0; d < numTables; d++) {
           // Excluded for testing speed
           if (
-              d == Table.TableID.DISTRO_FILES.ordinal()
-                  || d == Table.TableID.TRANSACTIONS.ordinal()
-                  || d == Table.TableID.WhoisHistory.ordinal() // TODO: Just exclude output/error columns?
+              d == Table.TableId.DISTRO_FILES.ordinal()
+                  || d == Table.TableId.TRANSACTIONS.ordinal()
+                  || d == Table.TableId.WhoisHistory.ordinal() // TODO: Just exclude output/error columns?
           ) {
             continue;
           }
           // Skip master_processes because they frequently change sizes
           if (
-              d != Table.TableID.MASTER_PROCESSES.ordinal()
+              d != Table.TableId.MASTER_PROCESSES.ordinal()
           ) {
-            AOServTable<?, ?> table = conn.getTable(d);
+            AoservTable<?, ?> table = conn.getTable(d);
             String tableName = table.getTableName();
             assertEquals("Mismatched counts from different passes on table " + tableName + ": ", counts[0][d], counts[c][d]);
           }

@@ -27,9 +27,9 @@ import com.aoapps.collections.IntList;
 import com.aoapps.hodgepodge.io.TerminalWriter;
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
@@ -46,13 +46,15 @@ import java.util.List;
  */
 public final class JkMountTable extends CachedTableIntegerKey<JkMount> {
 
-  JkMountTable(AOServConnector connector) {
+  JkMountTable(AoservConnector connector) {
     super(connector, JkMount.class);
   }
 
   private static final OrderBy[] defaultOrderBy = {
-      new OrderBy(JkMount.COLUMN_HTTPD_TOMCAT_SITE_name + '.' + Site.COLUMN_HTTPD_SITE_name + '.' + com.aoindustries.aoserv.client.web.Site.COLUMN_NAME_name, ASCENDING),
-      new OrderBy(JkMount.COLUMN_HTTPD_TOMCAT_SITE_name + '.' + Site.COLUMN_HTTPD_SITE_name + '.' + com.aoindustries.aoserv.client.web.Site.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
+      new OrderBy(JkMount.COLUMN_HTTPD_TOMCAT_SITE_name + '.' + Site.COLUMN_HTTPD_SITE_name
+          + '.' + com.aoindustries.aoserv.client.web.Site.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(JkMount.COLUMN_HTTPD_TOMCAT_SITE_name + '.' + Site.COLUMN_HTTPD_SITE_name
+          + '.' + com.aoindustries.aoserv.client.web.Site.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
       new OrderBy(JkMount.COLUMN_MOUNT_name, DESCENDING), // JkMount before JkUnMount
       new OrderBy(JkMount.COLUMN_PATH_name, ASCENDING)
   };
@@ -73,15 +75,15 @@ public final class JkMountTable extends CachedTableIntegerKey<JkMount> {
     }
     return connector.requestResult(
         true,
-        AoservProtocol.CommandID.ADD,
-        // Java 9: new AOServConnector.ResultRequest<>
-        new AOServConnector.ResultRequest<Integer>() {
+        AoservProtocol.CommandId.ADD,
+        // Java 9: new AoservConnector.ResultRequest<>
+        new AoservConnector.ResultRequest<Integer>() {
           private int pkey;
           private IntList invalidateList;
 
           @Override
           public void writeRequest(StreamableOutput out) throws IOException {
-            out.writeCompressedInt(Table.TableID.HTTPD_TOMCAT_SITE_JK_MOUNTS.ordinal());
+            out.writeCompressedInt(Table.TableId.HTTPD_TOMCAT_SITE_JK_MOUNTS.ordinal());
             out.writeCompressedInt(hts.getPkey());
             out.writeUTF(path);
             out.writeBoolean(mount);
@@ -92,7 +94,7 @@ public final class JkMountTable extends CachedTableIntegerKey<JkMount> {
             int code = in.readByte();
             if (code == AoservProtocol.DONE) {
               pkey = in.readCompressedInt();
-              invalidateList = AOServConnector.readInvalidateList(in);
+              invalidateList = AoservConnector.readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
               throw new IOException("Unexpected response code: " + code);
@@ -118,29 +120,29 @@ public final class JkMountTable extends CachedTableIntegerKey<JkMount> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.HTTPD_TOMCAT_SITE_JK_MOUNTS;
+  public Table.TableId getTableId() {
+    return Table.TableId.HTTPD_TOMCAT_SITE_JK_MOUNTS;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_HTTPD_TOMCAT_SITE_JK_MOUNT)) {
-      if (AOSH.checkParamCount(Command.ADD_HTTPD_TOMCAT_SITE_JK_MOUNT, args, 4, err)) {
+      if (Aosh.checkParamCount(Command.ADD_HTTPD_TOMCAT_SITE_JK_MOUNT, args, 4, err)) {
         out.println(
-            connector.getSimpleAOClient().addHttpdTomcatSiteJkMount(
+            connector.getSimpleClient().addHttpdTomcatSiteJkMount(
                 args[1],
                 args[2],
                 args[3],
-                AOSH.parseBoolean(args[4], "mount")
+                Aosh.parseBoolean(args[4], "mount")
             )
         );
         out.flush();
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.REMOVE_HTTPD_TOMCAT_SITE_JK_MOUNT)) {
-      if (AOSH.checkParamCount(Command.REMOVE_HTTPD_TOMCAT_SITE_JK_MOUNT, args, 3, err)) {
-        connector.getSimpleAOClient().removeHttpdTomcatSiteJkMount(
+      if (Aosh.checkParamCount(Command.REMOVE_HTTPD_TOMCAT_SITE_JK_MOUNT, args, 3, err)) {
+        connector.getSimpleClient().removeHttpdTomcatSiteJkMount(
             args[1],
             args[2],
             args[3]

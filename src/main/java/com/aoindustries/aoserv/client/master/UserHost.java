@@ -36,10 +36,10 @@ import java.sql.SQLException;
 
 /**
  * <code>MasterUser</code>s are restricted to data based on a list
- * of <code>Server</code>s they may access.  A <code>MasterServer</code>
+ * of <code>Server</code>s they may access.  An <code>AoservMaster</code>
  * grants a <code>MasterUser</code> permission to data associated with
  * a <code>Server</code>.  If a <code>MasterUser</code> does not have
- * any <code>MasterServer</code>s associated with it, it is granted
+ * any <code>AoservMaster</code>s associated with it, it is granted
  * permissions to all servers.
  *
  * @see  User
@@ -70,10 +70,14 @@ public final class UserHost extends CachedObjectIntegerKey<UserHost> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case 1: return username;
-      case 2: return server;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case 1:
+        return username;
+      case 2:
+        return server;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -93,13 +97,13 @@ public final class UserHost extends CachedObjectIntegerKey<UserHost> {
     return obj;
   }
 
-  public int getServerPKey() {
+  public int getServerPkey() {
     return server;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.MASTER_SERVERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.MASTER_SERVERS;
   }
 
   @Override

@@ -38,7 +38,7 @@ import com.aoapps.lang.validation.ValidationResult;
 import com.aoapps.net.InetAddress;
 import com.aoapps.net.Port;
 import com.aoapps.net.URIEncoder;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Dumpable;
@@ -99,8 +99,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
       Comparable<Name>,
       Serializable,
       DtoFactory<com.aoindustries.aoserv.client.dto.PostgresDatabaseName>,
-      Internable<Name>
-  {
+      Internable<Name> {
 
     private static final long serialVersionUID = 5843440870677129701L;
 
@@ -201,8 +200,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
     public boolean equals(Object obj) {
       return
           (obj instanceof Name)
-              && name.equals(((Name) obj).name)
-      ;
+              && name.equals(((Name) obj).name);
     }
 
     @Override
@@ -246,11 +244,9 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
     }
   }
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_POSTGRES_SERVER = 2,
-      COLUMN_DATDBA = 3
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_POSTGRES_SERVER = 2;
+  static final int COLUMN_DATDBA = 3;
   static final String COLUMN_NAME_name = "name";
   static final String COLUMN_POSTGRES_SERVER_name = "postgres_server";
 
@@ -259,13 +255,14 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
    */
   public static final String JDBC_DRIVER = "org.postgresql.Driver";
 
+  /** Templates. */
   public static final Name
-      /** Templates */
       TEMPLATE0,
-      TEMPLATE1,
-      /** Monitoring */
-      POSTGRESMON,
-      /** AO Platform Components */
+      TEMPLATE1;
+  /** Monitoring. */
+  public static final Name POSTGRESMON;
+  /** AO Platform Components. */
+  public static final Name
       AOINDUSTRIES, // TODO: Remove once renamed to "aoserv-master"
       AOSERV,
       AOSERV_MASTER,
@@ -303,12 +300,12 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
   }
 
   private Name name;
-  private int postgres_server;
+  private int postgresServer;
   private int datdba;
   private int encoding;
-  private boolean is_template;
-  private boolean allow_conn;
-  private boolean enable_postgis;
+  private boolean isTemplate;
+  private boolean allowConn;
+  private boolean enablePostgis;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -322,10 +319,12 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
   }
 
   public boolean allowsConnections() {
-    return allow_conn;
+    return allowConn;
   }
 
   /**
+   * {@inheritDoc}
+   *
    * @see  #dump(java.io.Writer)
    */
   @Override
@@ -344,8 +343,8 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
   public void dump(final Writer out) throws IOException, SQLException {
     table.getConnector().requestUpdate(
         false,
-        AoservProtocol.CommandID.DUMP_POSTGRES_DATABASE,
-        new AOServConnector.UpdateRequest() {
+        AoservProtocol.CommandId.DUMP_POSTGRES_DATABASE,
+        new AoservConnector.UpdateRequest() {
           @Override
           public void writeRequest(StreamableOutput masterOut) throws IOException {
             masterOut.writeCompressedInt(pkey);
@@ -360,8 +359,8 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
             }
             long bytesRead;
             try (
-            ByteCountInputStream byteCountIn = new ByteCountInputStream(new NestedInputStream(masterIn));
-            Reader nestedIn = new InputStreamReader(byteCountIn, DUMP_ENCODING)
+                ByteCountInputStream byteCountIn = new ByteCountInputStream(new NestedInputStream(masterIn));
+                Reader nestedIn = new InputStreamReader(byteCountIn, DUMP_ENCODING)
                 ) {
               IoUtils.copy(nestedIn, out);
               bytesRead = byteCountIn.getCount();
@@ -391,8 +390,8 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
   ) throws IOException, SQLException {
     table.getConnector().requestUpdate(
         false,
-        AoservProtocol.CommandID.DUMP_POSTGRES_DATABASE,
-        new AOServConnector.UpdateRequest() {
+        AoservProtocol.CommandId.DUMP_POSTGRES_DATABASE,
+        new AoservConnector.UpdateRequest() {
           @Override
           public void writeRequest(StreamableOutput masterOut) throws IOException {
             masterOut.writeCompressedInt(pkey);
@@ -432,21 +431,30 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
    * Indicates that PostGIS should be enabled for this database.
    */
   public boolean getEnablePostgis() {
-    return enable_postgis;
+    return enablePostgis;
   }
 
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case 1: return name;
-      case COLUMN_POSTGRES_SERVER: return postgres_server;
-      case COLUMN_DATDBA: return datdba;
-      case 4: return encoding;
-      case 5: return is_template;
-      case 6: return allow_conn;
-      case 7: return enable_postgis;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case 1:
+        return name;
+      case COLUMN_POSTGRES_SERVER:
+        return postgresServer;
+      case COLUMN_DATDBA:
+        return datdba;
+      case 4:
+        return encoding;
+      case 5:
+        return isTemplate;
+      case 6:
+        return allowConn;
+      case 7:
+        return enablePostgis;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -454,7 +462,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
     return datdba;
   }
 
-  public UserServer getDatDBA() throws SQLException, IOException {
+  public UserServer getDatdba() throws SQLException, IOException {
     UserServer obj = table.getConnector().getPostgresql().getUserServer().get(datdba);
     if (obj == null) {
       throw new SQLException("Unable to find PostgresServerUser: " + datdba);
@@ -478,7 +486,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
     InetAddress ia = ip.getInetAddress();
     if (ipOnly) {
       if (ia.isUnspecified()) {
-        jdbcUrl.append(ao.getHost().getNetDevice(ao.getDaemonDeviceId().getName()).getPrimaryIPAddress().getInetAddress().toBracketedString());
+        jdbcUrl.append(ao.getHost().getNetDevice(ao.getDaemonDeviceId().getName()).getPrimaryIpAddress().getInetAddress().toBracketedString());
       } else {
         jdbcUrl.append(ia.toBracketedString());
       }
@@ -505,12 +513,12 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
 
   @Override
   public String getJdbcDocumentationUrl() throws SQLException, IOException {
-    final String LIST = "https://jdbc.postgresql.org/documentation/documentation.html";
-    final String HEAD = "https://jdbc.postgresql.org/documentation/head/index.html";
+    final String list = "https://jdbc.postgresql.org/documentation/documentation.html";
+    final String head = "https://jdbc.postgresql.org/documentation/head/index.html";
     String version = getPostgresServer().getVersion().getTechnologyVersion(table.getConnector()).getVersion();
     List<String> split = Strings.split(version, '.');
     if (split.size() < 2) {
-      return LIST;
+      return list;
     } else {
       String major = split.get(0);
       String minor = split.get(1);
@@ -532,7 +540,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
       ) {
         return "https://jdbc.postgresql.org/documentation/" + URIEncoder.encodeURIComponent(major) + URIEncoder.encodeURIComponent(minor) + "/index.html";
       }
-      return HEAD;
+      return head;
     }
   }
 
@@ -561,20 +569,20 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
   }
 
   public int getPostgresServer_bind_id() {
-    return postgres_server;
+    return postgresServer;
   }
 
   public Server getPostgresServer() throws SQLException, IOException {
-    Server obj = table.getConnector().getPostgresql().getServer().get(postgres_server);
+    Server obj = table.getConnector().getPostgresql().getServer().get(postgresServer);
     if (obj == null) {
-      throw new SQLException("Unable to find PostgresServer: " + postgres_server);
+      throw new SQLException("Unable to find PostgresServer: " + postgresServer);
     }
     return obj;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.POSTGRES_DATABASES;
+  public Table.TableId getTableId() {
+    return Table.TableId.POSTGRES_DATABASES;
   }
 
   @Override
@@ -582,19 +590,19 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
     try {
       pkey = result.getInt(1);
       name = Name.valueOf(result.getString(2));
-      postgres_server = result.getInt(3);
+      postgresServer = result.getInt(3);
       datdba = result.getInt(4);
       encoding = result.getInt(5);
-      is_template = result.getBoolean(6);
-      allow_conn = result.getBoolean(7);
-      enable_postgis = result.getBoolean(8);
+      isTemplate = result.getBoolean(6);
+      allowConn = result.getBoolean(7);
+      enablePostgis = result.getBoolean(8);
     } catch (ValidationException e) {
       throw new SQLException(e);
     }
   }
 
   public boolean isTemplate() {
-    return is_template;
+    return isTemplate;
   }
 
   @Override
@@ -602,12 +610,12 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
     try {
       pkey = in.readCompressedInt();
       name = Name.valueOf(in.readUTF());
-      postgres_server = in.readCompressedInt();
+      postgresServer = in.readCompressedInt();
       datdba = in.readCompressedInt();
       encoding = in.readCompressedInt();
-      is_template = in.readBoolean();
-      allow_conn = in.readBoolean();
-      enable_postgis = in.readBoolean();
+      isTemplate = in.readBoolean();
+      allowConn = in.readBoolean();
+      enablePostgis = in.readBoolean();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -618,11 +626,13 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
     List<CannotRemoveReason<Database>> reasons = new ArrayList<>();
 
     Server ps = getPostgresServer();
-    if (!allow_conn) {
-      reasons.add(new CannotRemoveReason<>("Not allowed to drop a PostgreSQL database that does not allow connections: " + name + " on " + ps.getName() + " on " + ps.getLinuxServer().getHostname(), this));
+    if (!allowConn) {
+      reasons.add(new CannotRemoveReason<>("Not allowed to drop a PostgreSQL database that does not allow connections: "
+          + name + " on " + ps.getName() + " on " + ps.getLinuxServer().getHostname(), this));
     }
-    if (is_template) {
-      reasons.add(new CannotRemoveReason<>("Not allowed to drop a template PostgreSQL database: " + name + " on " + ps.getName() + " on " + ps.getLinuxServer().getHostname(), this));
+    if (isTemplate) {
+      reasons.add(new CannotRemoveReason<>("Not allowed to drop a template PostgreSQL database: " + name + " on "
+          + ps.getName() + " on " + ps.getLinuxServer().getHostname(), this));
     }
     if (isSpecial()) {
       reasons.add(
@@ -646,10 +656,10 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
     if (isSpecial()) {
       throw new SQLException("Refusing to remove special PostgreSQL database: " + this);
     }
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.REMOVE,
-        Table.TableID.POSTGRES_DATABASES,
+        AoservProtocol.CommandId.REMOVE,
+        Table.TableId.POSTGRES_DATABASES,
         pkey
     );
   }
@@ -663,17 +673,17 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
     out.writeUTF(name.toString());
-    out.writeCompressedInt(postgres_server);
+    out.writeCompressedInt(postgresServer);
     out.writeCompressedInt(datdba);
     out.writeCompressedInt(encoding);
-    out.writeBoolean(is_template);
-    out.writeBoolean(allow_conn);
+    out.writeBoolean(isTemplate);
+    out.writeBoolean(allowConn);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30) <= 0) {
       out.writeShort(0);
       out.writeShort(7);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_27) >= 0) {
-      out.writeBoolean(enable_postgis);
+      out.writeBoolean(enablePostgis);
     }
   }
 }

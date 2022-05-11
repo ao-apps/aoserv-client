@@ -32,23 +32,24 @@ import junit.framework.TestSuite;
 
 /**
  * Gets the sizes of each table.
- *
+ * <p>
  * TODO: This test does not run without a master setup.
+ * </p>
  *
  * @author  AO Industries, Inc.
  */
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
-public class GetDefaultOrderBySQLExpressionsTODO extends TestCase {
+public class GetDefaultOrderBySqlExpressionsTODO extends TestCase {
 
-  private List<AOServConnector> conns;
+  private List<AoservConnector> conns;
 
-  public GetDefaultOrderBySQLExpressionsTODO(String testName) {
+  public GetDefaultOrderBySqlExpressionsTODO(String testName) {
     super(testName);
   }
 
   @Override
   protected void setUp() throws Exception {
-    conns = AOServConnectorTODO.getTestConnectors();
+    conns = AoservConnectorTODO.getTestConnectors();
   }
 
   @Override
@@ -57,24 +58,24 @@ public class GetDefaultOrderBySQLExpressionsTODO extends TestCase {
   }
 
   public static Test suite() {
-    TestSuite suite = new TestSuite(GetDefaultOrderBySQLExpressionsTODO.class);
+    TestSuite suite = new TestSuite(GetDefaultOrderBySqlExpressionsTODO.class);
 
     return suite;
   }
 
   /**
-   * Test the size() method of each AOServTable.
+   * Test the size() method of each AoservTable.
    */
   public void testTableSizes() throws Exception {
-    System.out.println("Testing getTable(tableID).getDefaultOrderBySQLExpressions()");
-    for (AOServConnector conn : conns) {
+    System.out.println("Testing getTable(tableId).getDefaultOrderBySqlExpressions()");
+    for (AoservConnector conn : conns) {
       User.Name username = conn.getCurrentAdministrator().getKey();
       System.out.print("    " + username + ": ");
-      int numTables = Table.TableID.values().length;
+      int numTables = Table.TableId.values().length;
       for (int c = 0; c < numTables; c++) {
         System.out.print('.');
-        AOServTable<?, ?> table = conn.getTable(c);
-        table.getDefaultOrderBySQLExpressions();
+        AoservTable<?, ?> table = conn.getTable(c);
+        table.getDefaultOrderBySqlExpressions();
       }
       System.out.println(" Done");
     }

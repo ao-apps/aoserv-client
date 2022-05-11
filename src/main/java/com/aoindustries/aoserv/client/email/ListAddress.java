@@ -47,16 +47,14 @@ import java.util.ArrayList;
  */
 public final class ListAddress extends CachedObjectIntegerKey<ListAddress> implements Removable {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_EMAIL_ADDRESS = 1,
-      COLUMN_EMAIL_LIST = 2
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_EMAIL_ADDRESS = 1;
+  static final int COLUMN_EMAIL_LIST = 2;
   static final String COLUMN_EMAIL_ADDRESS_name = "email_address";
   static final String COLUMN_EMAIL_LIST_name = "email_list";
 
-  private int email_address;
-  private int email_list;
+  private int emailAddress;
+  private int emailList;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -72,54 +70,58 @@ public final class ListAddress extends CachedObjectIntegerKey<ListAddress> imple
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_EMAIL_ADDRESS: return email_address;
-      case COLUMN_EMAIL_LIST: return email_list;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_EMAIL_ADDRESS:
+        return emailAddress;
+      case COLUMN_EMAIL_LIST:
+        return emailList;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   public int getEmailAddress_pkey() {
-    return email_address;
+    return emailAddress;
   }
 
   public Address getEmailAddress() throws SQLException, IOException {
-    Address emailAddressObject = table.getConnector().getEmail().getAddress().get(email_address);
+    Address emailAddressObject = table.getConnector().getEmail().getAddress().get(emailAddress);
     if (emailAddressObject == null) {
-      throw new SQLException("Unable to find EmailAddress: " + email_address);
+      throw new SQLException("Unable to find EmailAddress: " + emailAddress);
     }
     return emailAddressObject;
   }
 
   public int getEmailList_pkey() {
-    return email_list;
+    return emailList;
   }
 
   public List getEmailList() throws SQLException, IOException {
-    List emailListObject = table.getConnector().getEmail().getList().get(email_list);
+    List emailListObject = table.getConnector().getEmail().getList().get(emailList);
     if (emailListObject == null) {
-      throw new SQLException("Unable to find EmailList: " + email_list);
+      throw new SQLException("Unable to find EmailList: " + emailList);
     }
     return emailListObject;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.EMAIL_LIST_ADDRESSES;
+  public Table.TableId getTableId() {
+    return Table.TableId.EMAIL_LIST_ADDRESSES;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     pkey = result.getInt(1);
-    email_address = result.getInt(2);
-    email_list = result.getInt(3);
+    emailAddress = result.getInt(2);
+    emailList = result.getInt(3);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readCompressedInt();
-    email_address = in.readCompressedInt();
-    email_list = in.readCompressedInt();
+    emailAddress = in.readCompressedInt();
+    emailList = in.readCompressedInt();
   }
 
   @Override
@@ -139,10 +141,10 @@ public final class ListAddress extends CachedObjectIntegerKey<ListAddress> imple
 
   @Override
   public void remove() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.REMOVE,
-        Table.TableID.EMAIL_LIST_ADDRESSES,
+        AoservProtocol.CommandId.REMOVE,
+        Table.TableId.EMAIL_LIST_ADDRESSES,
         pkey
     );
   }
@@ -155,7 +157,7 @@ public final class ListAddress extends CachedObjectIntegerKey<ListAddress> imple
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeCompressedInt(email_address);
-    out.writeCompressedInt(email_list);
+    out.writeCompressedInt(emailAddress);
+    out.writeCompressedInt(emailList);
   }
 }

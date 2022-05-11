@@ -35,7 +35,7 @@ import com.aoapps.net.URIParameters;
 import com.aoapps.net.URIParametersMap;
 import com.aoapps.net.URIParametersUtils;
 import com.aoapps.net.UnmodifiableURIParameters;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Disablable;
@@ -81,12 +81,10 @@ import java.util.concurrent.ConcurrentMap;
  */
 public final class Bind extends CachedObjectIntegerKey<Bind> implements Removable {
 
-  static final int
-      COLUMN_ID = 0,
-      COLUMN_PACKAGE = 1,
-      COLUMN_SERVER = 2,
-      COLUMN_IP_ADDRESS = 3
-  ;
+  static final int COLUMN_ID = 0;
+  static final int COLUMN_PACKAGE = 1;
+  static final int COLUMN_SERVER = 2;
+  static final int COLUMN_IP_ADDRESS = 3;
   public static final String COLUMN_SERVER_name = "server";
   public static final String COLUMN_IP_ADDRESS_name = "ipAddress";
   public static final String COLUMN_PORT_name = "port";
@@ -95,12 +93,12 @@ public final class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
   private int server;
   private int ipAddress;
   private Port port;
-  private String app_protocol;
-  private boolean monitoring_enabled;
-  private String monitoring_parameters;
+  private String appProtocol;
+  private boolean monitoringEnabled;
+  private String monitoringParameters;
 
   // Protocol conversion
-  private boolean open_firewall;
+  private boolean openFirewall;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -116,15 +114,24 @@ public final class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_ID: return pkey;
-      case COLUMN_PACKAGE: return packageName;
-      case COLUMN_SERVER: return server;
-      case COLUMN_IP_ADDRESS: return ipAddress;
-      case 4: return port;
-      case 5: return app_protocol;
-      case 6: return monitoring_enabled;
-      case 7: return monitoring_parameters;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_ID:
+        return pkey;
+      case COLUMN_PACKAGE:
+        return packageName;
+      case COLUMN_SERVER:
+        return server;
+      case COLUMN_IP_ADDRESS:
+        return ipAddress;
+      case 4:
+        return port;
+      case 5:
+        return appProtocol;
+      case 6:
+        return monitoringEnabled;
+      case 7:
+        return monitoringParameters;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -160,7 +167,7 @@ public final class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
   public IpAddress getIpAddress() throws SQLException, IOException {
     IpAddress obj = table.getConnector().getNet().getIpAddress().get(ipAddress);
     if (obj == null) {
-      throw new SQLException("Unable to find IPAddress: " + ipAddress);
+      throw new SQLException("Unable to find IpAddress: " + ipAddress);
     }
     return obj;
   }
@@ -170,26 +177,26 @@ public final class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
   }
 
   public String getAppProtocol_protocol() {
-    return app_protocol;
+    return appProtocol;
   }
 
   public AppProtocol getAppProtocol() throws SQLException, IOException {
-    AppProtocol obj = table.getConnector().getNet().getAppProtocol().get(app_protocol);
+    AppProtocol obj = table.getConnector().getNet().getAppProtocol().get(appProtocol);
     if (obj == null) {
-      throw new SQLException("Unable to find Protocol: " + app_protocol);
+      throw new SQLException("Unable to find Protocol: " + appProtocol);
     }
     return obj;
   }
 
   public boolean isMonitoringEnabled() {
-    return monitoring_enabled;
+    return monitoringEnabled;
   }
 
   /**
    * Gets the unmodifiable map of parameters for this bind.
    */
   public URIParameters getMonitoringParameters() {
-    String myParamString = monitoring_parameters;
+    String myParamString = monitoringParameters;
     if (myParamString == null) {
       return EmptyURIParameters.getInstance();
     } else {
@@ -216,10 +223,10 @@ public final class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
           result.getInt(5),
           com.aoapps.net.Protocol.valueOf(result.getString(6))
       );
-      app_protocol = result.getString(7);
-      monitoring_enabled = result.getBoolean(8);
-      monitoring_parameters = result.getString(9);
-      open_firewall = result.getBoolean(10);
+      appProtocol = result.getString(7);
+      monitoringEnabled = result.getBoolean(8);
+      monitoringParameters = result.getString(9);
+      openFirewall = result.getBoolean(10);
     } catch (ValidationException e) {
       throw new SQLException(e);
     }
@@ -236,9 +243,9 @@ public final class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
           in.readCompressedInt(),
           in.readEnum(com.aoapps.net.Protocol.class)
       );
-      app_protocol = in.readUTF().intern();
-      monitoring_enabled = in.readBoolean();
-      monitoring_parameters = in.readNullUTF();
+      appProtocol = in.readUTF().intern();
+      monitoringEnabled = in.readBoolean();
+      monitoringParameters = in.readNullUTF();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -256,26 +263,26 @@ public final class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
     } else {
       out.writeEnum(port.getProtocol());
     }
-    out.writeUTF(app_protocol);
+    out.writeUTF(appProtocol);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_80_2) <= 0) {
-      out.writeBoolean(open_firewall);
+      out.writeBoolean(openFirewall);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_104) >= 0) {
-      out.writeBoolean(monitoring_enabled);
+      out.writeBoolean(monitoringEnabled);
     } else {
-      out.writeCompressedInt(monitoring_enabled ? 300000 : -1);
+      out.writeCompressedInt(monitoringEnabled ? 300000 : -1);
       out.writeNullUTF(null);
       out.writeNullUTF(null);
       out.writeNullUTF(null);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_58) >= 0) {
-      out.writeNullUTF(monitoring_parameters);
+      out.writeNullUTF(monitoringParameters);
     }
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.NET_BINDS;
+  public Table.TableId getTableId() {
+    return Table.TableId.NET_BINDS;
   }
 
   @Override
@@ -284,14 +291,14 @@ public final class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
   }
 
   public String getDetails() throws SQLException, IOException {
-    Server aoServer = getAOServerByDaemonNetBind();
+    Server aoServer = getAoserverByDaemonNetBind();
     if (aoServer != null) {
-      return "AOServDaemon";
+      return "AoservDaemon";
     }
 
-    Server jilterServer = getAOServerByJilterNetBind();
+    Server jilterServer = getAoserverByJilterNetBind();
     if (jilterServer != null) {
-      return "AOServDaemon.JilterManager";
+      return "AoservDaemon.JilterManager";
     }
 
     com.aoindustries.aoserv.client.postgresql.Server ps = getPostgresServer();
@@ -328,22 +335,20 @@ public final class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
       SharedTomcat hst = hw.getHttpdSharedTomcat();
       if (hst != null) {
         return
-            hw.getHttpdJKProtocol(table.getConnector()).getProtocol(table.getConnector()).getProtocol()
+            hw.getHttpdJkProtocol(table.getConnector()).getProtocol(table.getConnector()).getProtocol()
                 + " connector for Multi-Site Tomcat JVM version "
                 + hst.getHttpdTomcatVersion().getTechnologyVersion(table.getConnector()).getVersion()
                 + " in "
-                + hst.getInstallDirectory()
-        ;
+                + hst.getInstallDirectory();
       }
       com.aoindustries.aoserv.client.web.tomcat.Site hts = hw.getTomcatSite();
       if (hts != null) {
         return
-            hw.getHttpdJKProtocol(table.getConnector()).getProtocol(table.getConnector()).getProtocol()
+            hw.getHttpdJkProtocol(table.getConnector()).getProtocol(table.getConnector()).getProtocol()
                 + " connector for Single-Site Tomcat JVM version "
                 + hts.getHttpdTomcatVersion().getTechnologyVersion(table.getConnector()).getVersion()
                 + " in "
-                + hts.getHttpdSite().getInstallDirectory()
-        ;
+                + hts.getHttpdSite().getInstallDirectory();
       }
     }
 
@@ -353,8 +358,7 @@ public final class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
           "Shutdown port for Multi-Site Tomcat JVM version "
               + hst.getHttpdTomcatVersion().getTechnologyVersion(table.getConnector()).getVersion()
               + " in "
-              + hst.getInstallDirectory()
-      ;
+              + hst.getInstallDirectory();
     }
 
     PrivateTomcatSite htss = getHttpdTomcatStdSiteByShutdownPort();
@@ -363,8 +367,7 @@ public final class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
           "Shutdown port for Single-Site Tomcat JVM version "
               + htss.getHttpdTomcatSite().getHttpdTomcatVersion().getTechnologyVersion(table.getConnector()).getVersion()
               + " in "
-              + htss.getHttpdTomcatSite().getHttpdSite().getInstallDirectory()
-      ;
+              + htss.getHttpdTomcatSite().getHttpdSite().getInstallDirectory();
     }
 
     HttpdBind hb = getHttpdBind();
@@ -380,8 +383,7 @@ public final class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
                 + number
                 + " configured in /etc/httpd/conf/httpd"
                 + number
-                + ".conf"
-        ;
+                + ".conf";
       } else if (osvId == OperatingSystemVersion.CENTOS_7_X86_64) {
         if (name == null) {
           return "Apache HTTP Server configured in /etc/httpd/conf/httpd.conf";
@@ -391,62 +393,56 @@ public final class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
                   + name
                   + ") configured in /etc/httpd/conf/httpd@"
                   + hs.getSystemdEscapedName()
-                  + ".conf"
-          ;
+                  + ".conf";
         }
       } else {
         throw new AssertionError("Unexpected OperatingSystemVersion: " + osv);
       }
     }
 
-    com.aoindustries.aoserv.client.web.jboss.Site hjs = getHttpdJBossSiteByJNPPort();
+    com.aoindustries.aoserv.client.web.jboss.Site hjs = getHttpdJbossSiteByJnpPort();
     if (hjs != null) {
       return
           "JNP port for JBoss version "
-              + hjs.getHttpdJBossVersion().getTechnologyVersion(table.getConnector()).getVersion()
+              + hjs.getHttpdJbossVersion().getTechnologyVersion(table.getConnector()).getVersion()
               + " in "
-              + hjs.getHttpdTomcatSite().getHttpdSite().getInstallDirectory()
-      ;
+              + hjs.getHttpdTomcatSite().getHttpdSite().getInstallDirectory();
     }
 
-    com.aoindustries.aoserv.client.web.jboss.Site hjbs = getHttpdJBossSiteByWebserverPort();
+    com.aoindustries.aoserv.client.web.jboss.Site hjbs = getHttpdJbossSiteByWebserverPort();
     if (hjbs != null) {
       return
           "Webserver port for JBoss version "
-              + hjbs.getHttpdJBossVersion().getTechnologyVersion(table.getConnector()).getVersion()
+              + hjbs.getHttpdJbossVersion().getTechnologyVersion(table.getConnector()).getVersion()
               + " in "
-              + hjbs.getHttpdTomcatSite().getHttpdSite().getInstallDirectory()
-      ;
+              + hjbs.getHttpdTomcatSite().getHttpdSite().getInstallDirectory();
     }
 
-    hjbs = getHttpdJBossSiteByRMIPort();
+    hjbs = getHttpdJbossSiteByRmiPort();
     if (hjbs != null) {
       return
           "RMI port for JBoss version "
-              + hjbs.getHttpdJBossVersion().getTechnologyVersion(table.getConnector()).getVersion()
+              + hjbs.getHttpdJbossVersion().getTechnologyVersion(table.getConnector()).getVersion()
               + " in "
-              + hjbs.getHttpdTomcatSite().getHttpdSite().getInstallDirectory()
-      ;
+              + hjbs.getHttpdTomcatSite().getHttpdSite().getInstallDirectory();
     }
 
-    hjbs = getHttpdJBossSiteByHypersonicPort();
+    hjbs = getHttpdJbossSiteByHypersonicPort();
     if (hjbs != null) {
       return
           "Hypersonic port for JBoss version "
-              + hjbs.getHttpdJBossVersion().getTechnologyVersion(table.getConnector()).getVersion()
+              + hjbs.getHttpdJbossVersion().getTechnologyVersion(table.getConnector()).getVersion()
               + " in "
-              + hjbs.getHttpdTomcatSite().getHttpdSite().getInstallDirectory()
-      ;
+              + hjbs.getHttpdTomcatSite().getHttpdSite().getInstallDirectory();
     }
 
-    hjbs = getHttpdJBossSiteByJMXPort();
+    hjbs = getHttpdJbossSiteByJmxPort();
     if (hjbs != null) {
       return
           "JMX port for JBoss version "
-              + hjbs.getHttpdJBossVersion().getTechnologyVersion(table.getConnector()).getVersion()
+              + hjbs.getHttpdJbossVersion().getTechnologyVersion(table.getConnector()).getVersion()
               + " in "
-              + hjbs.getHttpdTomcatSite().getHttpdSite().getInstallDirectory()
-      ;
+              + hjbs.getHttpdTomcatSite().getHttpdSite().getInstallDirectory();
     }
 
     SendmailBind sb = getSendmailBind();
@@ -470,7 +466,7 @@ public final class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
       return "Port redirected to " + ntr.getDestinationHost().toBracketedString() + ':' + ntr.getDestinationPort().getPort();
     }
 
-    PrivateServer pfs = getPrivateFTPServer();
+    PrivateServer pfs = getPrivateFtpServer();
     if (pfs != null) {
       return "Private FTP server in " + pfs.getLinuxServerAccount().getHome();
     }
@@ -536,7 +532,7 @@ public final class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
       foundDisablable = true;
     }
 
-    com.aoindustries.aoserv.client.web.jboss.Site hjbs = getHttpdJBossSiteByJNPPort();
+    com.aoindustries.aoserv.client.web.jboss.Site hjbs = getHttpdJbossSiteByJnpPort();
     if (hjbs != null) {
       if (!hjbs.getHttpdTomcatSite().getHttpdSite().isDisabled()) {
         return false;
@@ -544,7 +540,7 @@ public final class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
       foundDisablable = true;
     }
 
-    hjbs = getHttpdJBossSiteByWebserverPort();
+    hjbs = getHttpdJbossSiteByWebserverPort();
     if (hjbs != null) {
       if (!hjbs.getHttpdTomcatSite().getHttpdSite().isDisabled()) {
         return false;
@@ -552,7 +548,7 @@ public final class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
       foundDisablable = true;
     }
 
-    hjbs = getHttpdJBossSiteByRMIPort();
+    hjbs = getHttpdJbossSiteByRmiPort();
     if (hjbs != null) {
       if (!hjbs.getHttpdTomcatSite().getHttpdSite().isDisabled()) {
         return false;
@@ -560,7 +556,7 @@ public final class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
       foundDisablable = true;
     }
 
-    hjbs = getHttpdJBossSiteByHypersonicPort();
+    hjbs = getHttpdJbossSiteByHypersonicPort();
     if (hjbs != null) {
       if (!hjbs.getHttpdTomcatSite().getHttpdSite().isDisabled()) {
         return false;
@@ -568,7 +564,7 @@ public final class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
       foundDisablable = true;
     }
 
-    hjbs = getHttpdJBossSiteByJMXPort();
+    hjbs = getHttpdJbossSiteByJmxPort();
     if (hjbs != null) {
       if (!hjbs.getHttpdTomcatSite().getHttpdSite().isDisabled()) {
         return false;
@@ -579,12 +575,12 @@ public final class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
     return foundDisablable;
   }
 
-  public Server getAOServerByDaemonNetBind() throws IOException, SQLException {
-    return table.getConnector().getLinux().getServer().getAOServerByDaemonNetBind(this);
+  public Server getAoserverByDaemonNetBind() throws IOException, SQLException {
+    return table.getConnector().getLinux().getServer().getAoserverByDaemonNetBind(this);
   }
 
-  public Server getAOServerByJilterNetBind() throws IOException, SQLException {
-    return table.getConnector().getLinux().getServer().getAOServerByJilterNetBind(this);
+  public Server getAoserverByJilterNetBind() throws IOException, SQLException {
+    return table.getConnector().getLinux().getServer().getAoserverByJilterNetBind(this);
   }
 
   public CyrusImapdBind getCyrusImapdBind() throws IOException, SQLException {
@@ -599,24 +595,24 @@ public final class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
     return table.getConnector().getWeb().getHttpdBind().get(pkey);
   }
 
-  public com.aoindustries.aoserv.client.web.jboss.Site getHttpdJBossSiteByJNPPort() throws IOException, SQLException {
-    return table.getConnector().getWeb_jboss().getSite().getHttpdJBossSiteByJNPPort(this);
+  public com.aoindustries.aoserv.client.web.jboss.Site getHttpdJbossSiteByJnpPort() throws IOException, SQLException {
+    return table.getConnector().getWeb_jboss().getSite().getHttpdJbossSiteByJnpPort(this);
   }
 
-  public com.aoindustries.aoserv.client.web.jboss.Site getHttpdJBossSiteByWebserverPort() throws IOException, SQLException {
-    return table.getConnector().getWeb_jboss().getSite().getHttpdJBossSiteByWebserverPort(this);
+  public com.aoindustries.aoserv.client.web.jboss.Site getHttpdJbossSiteByWebserverPort() throws IOException, SQLException {
+    return table.getConnector().getWeb_jboss().getSite().getHttpdJbossSiteByWebserverPort(this);
   }
 
-  public com.aoindustries.aoserv.client.web.jboss.Site getHttpdJBossSiteByRMIPort() throws IOException, SQLException {
-    return table.getConnector().getWeb_jboss().getSite().getHttpdJBossSiteByRMIPort(this);
+  public com.aoindustries.aoserv.client.web.jboss.Site getHttpdJbossSiteByRmiPort() throws IOException, SQLException {
+    return table.getConnector().getWeb_jboss().getSite().getHttpdJbossSiteByRmiPort(this);
   }
 
-  public com.aoindustries.aoserv.client.web.jboss.Site getHttpdJBossSiteByHypersonicPort() throws IOException, SQLException {
-    return table.getConnector().getWeb_jboss().getSite().getHttpdJBossSiteByHypersonicPort(this);
+  public com.aoindustries.aoserv.client.web.jboss.Site getHttpdJbossSiteByHypersonicPort() throws IOException, SQLException {
+    return table.getConnector().getWeb_jboss().getSite().getHttpdJbossSiteByHypersonicPort(this);
   }
 
-  public com.aoindustries.aoserv.client.web.jboss.Site getHttpdJBossSiteByJMXPort() throws IOException, SQLException {
-    return table.getConnector().getWeb_jboss().getSite().getHttpdJBossSiteByJMXPort(this);
+  public com.aoindustries.aoserv.client.web.jboss.Site getHttpdJbossSiteByJmxPort() throws IOException, SQLException {
+    return table.getConnector().getWeb_jboss().getSite().getHttpdJbossSiteByJmxPort(this);
   }
 
   public Worker getHttpdWorker() throws IOException, SQLException {
@@ -661,15 +657,15 @@ public final class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
     return table.getConnector().getNet().getTcpRedirect().get(pkey);
   }
 
-  public com.aoindustries.aoserv.client.mysql.Server getMySQLServer() throws IOException, SQLException {
-    return table.getConnector().getMysql().getServer().getMySQLServer(this);
+  public com.aoindustries.aoserv.client.mysql.Server getMysqlServer() throws IOException, SQLException {
+    return table.getConnector().getMysql().getServer().getMysqlServer(this);
   }
 
   public com.aoindustries.aoserv.client.postgresql.Server getPostgresServer() throws IOException, SQLException {
     return table.getConnector().getPostgresql().getServer().getPostgresServer(this);
   }
 
-  public PrivateServer getPrivateFTPServer() throws IOException, SQLException {
+  public PrivateServer getPrivateFtpServer() throws IOException, SQLException {
     return table.getConnector().getFtp().getPrivateServer().get(pkey);
   }
 
@@ -697,7 +693,7 @@ public final class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
   public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws IOException, SQLException {
     List<CannotRemoveReason<?>> reasons = new ArrayList<>();
 
-    AOServConnector conn = table.getConnector();
+    AoservConnector conn = table.getConnector();
 
     // Must be able to access package
     if (getPackage() == null) {
@@ -788,7 +784,7 @@ public final class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
     }
 
     // mysql_servers
-    com.aoindustries.aoserv.client.mysql.Server ms = getMySQLServer();
+    com.aoindustries.aoserv.client.mysql.Server ms = getMysqlServer();
     if (ms != null) {
       reasons.add(new CannotRemoveReason<>("Used for MySQL server " + ms.getName() + " on " + ms.getLinuxServer().getHostname(), ms));
     }
@@ -804,28 +800,28 @@ public final class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 
   @Override
   public void remove() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.REMOVE,
-        Table.TableID.NET_BINDS,
+        AoservProtocol.CommandId.REMOVE,
+        Table.TableId.NET_BINDS,
         pkey
     );
   }
 
-  public void setMonitoringEnabled(boolean monitoring_enabled) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(
+  public void setMonitoringEnabled(boolean monitoringEnabled) throws IOException, SQLException {
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.SET_NET_BIND_MONITORING,
+        AoservProtocol.CommandId.SET_NET_BIND_MONITORING,
         pkey,
-        monitoring_enabled
+        monitoringEnabled
     );
   }
 
   public void setFirewalldZones(final Set<FirewallZone.Name> firewalldZones) throws IOException, SQLException {
     table.getConnector().requestUpdate(
         true,
-        AoservProtocol.CommandID.SET_NET_BIND_FIREWALLD_ZONES,
-        new AOServConnector.UpdateRequest() {
+        AoservProtocol.CommandId.SET_NET_BIND_FIREWALLD_ZONES,
+        new AoservConnector.UpdateRequest() {
           private IntList invalidateList;
 
           @Override
@@ -847,7 +843,7 @@ public final class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
           public void readResponse(StreamableInput in) throws IOException, SQLException {
             int code = in.readByte();
             if (code == AoservProtocol.DONE) {
-              invalidateList = AOServConnector.readInvalidateList(in);
+              invalidateList = AoservConnector.readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
               throw new IOException("Unexpected response code: " + code);

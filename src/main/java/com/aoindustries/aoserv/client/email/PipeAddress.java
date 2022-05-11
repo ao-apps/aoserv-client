@@ -48,15 +48,13 @@ import java.util.List;
  */
 public final class PipeAddress extends CachedObjectIntegerKey<PipeAddress> implements Removable {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_EMAIL_ADDRESS = 1
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_EMAIL_ADDRESS = 1;
   static final String COLUMN_EMAIL_ADDRESS_name = "email_address";
   static final String COLUMN_EMAIL_PIPE_name = "email_pipe";
 
-  private int email_address;
-  private int email_pipe;
+  private int emailAddress;
+  private int emailPipe;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -75,55 +73,55 @@ public final class PipeAddress extends CachedObjectIntegerKey<PipeAddress> imple
       return pkey;
     }
     if (i == COLUMN_EMAIL_ADDRESS) {
-      return email_address;
+      return emailAddress;
     }
     if (i == 2) {
-      return email_pipe;
+      return emailPipe;
     }
     throw new IllegalArgumentException("Invalid index: " + i);
   }
 
   public int getEmailAddress_id() {
-    return email_address;
+    return emailAddress;
   }
 
   public Address getEmailAddress() throws SQLException, IOException {
-    Address emailAddressObject = table.getConnector().getEmail().getAddress().get(email_address);
+    Address emailAddressObject = table.getConnector().getEmail().getAddress().get(emailAddress);
     if (emailAddressObject == null) {
-      throw new SQLException("Unable to find EmailAddress: " + email_address);
+      throw new SQLException("Unable to find EmailAddress: " + emailAddress);
     }
     return emailAddressObject;
   }
 
   public int getEmailPipe_id() {
-    return email_pipe;
+    return emailPipe;
   }
 
   public Pipe getEmailPipe() throws SQLException, IOException {
-    Pipe emailPipeObject = table.getConnector().getEmail().getPipe().get(email_pipe);
+    Pipe emailPipeObject = table.getConnector().getEmail().getPipe().get(emailPipe);
     if (emailPipeObject == null) {
-      throw new SQLException("Unable to find EmailPipe: " + email_pipe);
+      throw new SQLException("Unable to find EmailPipe: " + emailPipe);
     }
     return emailPipeObject;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.EMAIL_PIPE_ADDRESSES;
+  public Table.TableId getTableId() {
+    return Table.TableId.EMAIL_PIPE_ADDRESSES;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     pkey = result.getInt(1);
-    email_address = result.getInt(2);
-    email_pipe = result.getInt(3);
+    emailAddress = result.getInt(2);
+    emailPipe = result.getInt(3);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readCompressedInt();
-    email_address = in.readCompressedInt();
-    email_pipe = in.readCompressedInt();
+    emailAddress = in.readCompressedInt();
+    emailPipe = in.readCompressedInt();
   }
 
   @Override
@@ -154,10 +152,10 @@ public final class PipeAddress extends CachedObjectIntegerKey<PipeAddress> imple
 
   @Override
   public void remove() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.REMOVE,
-        Table.TableID.EMAIL_PIPE_ADDRESSES,
+        AoservProtocol.CommandId.REMOVE,
+        Table.TableId.EMAIL_PIPE_ADDRESSES,
         pkey
     );
   }
@@ -170,7 +168,7 @@ public final class PipeAddress extends CachedObjectIntegerKey<PipeAddress> imple
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeCompressedInt(email_address);
-    out.writeCompressedInt(email_pipe);
+    out.writeCompressedInt(emailAddress);
+    out.writeCompressedInt(emailPipe);
   }
 }

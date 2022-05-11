@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.schema;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTableIntegerKey;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 public final class TypeTable extends GlobalTableIntegerKey<Type> {
 
-  TypeTable(AOServConnector connector) {
+  TypeTable(AoservConnector connector) {
     super(connector, Type.class);
   }
 
@@ -71,6 +71,8 @@ public final class TypeTable extends GlobalTableIntegerKey<Type> {
   }
 
   /**
+   * {@inheritDoc}
+   *
    * @see  #get(java.lang.Object)
    */
   @Override
@@ -86,7 +88,7 @@ public final class TypeTable extends GlobalTableIntegerKey<Type> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.SCHEMA_TYPES;
+  public Table.TableId getTableId() {
+    return Table.TableId.SCHEMA_TYPES;
   }
 }

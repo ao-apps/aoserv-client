@@ -84,8 +84,7 @@ public final class Permission extends GlobalObjectStringKey<Permission> {
     // virtual_servers
     control_virtual_server,
     get_virtual_server_status,
-    vnc_console
-    ;
+    vnc_console;
 
     /**
      * Gets the permission display value in the thread locale.
@@ -97,7 +96,7 @@ public final class Permission extends GlobalObjectStringKey<Permission> {
   }
 
   // From database
-  private short sort_order;
+  private short sortOrder;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -113,9 +112,12 @@ public final class Permission extends GlobalObjectStringKey<Permission> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_NAME: return pkey;
-      case 1: return sort_order;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_NAME:
+        return pkey;
+      case 1:
+        return sortOrder;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -132,8 +134,8 @@ public final class Permission extends GlobalObjectStringKey<Permission> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.AOSERV_PERMISSIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.AOSERV_PERMISSIONS;
   }
 
   public String getName() {
@@ -143,18 +145,18 @@ public final class Permission extends GlobalObjectStringKey<Permission> {
   @Override
   public void init(ResultSet result) throws SQLException {
     pkey = result.getString(1);
-    sort_order = result.getShort(2);
+    sortOrder = result.getShort(2);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readUTF().intern();
-    sort_order = in.readShort();
+    sortOrder = in.readShort();
   }
 
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeUTF(pkey);
-    out.writeShort(sort_order);
+    out.writeShort(sortOrder);
   }
 }

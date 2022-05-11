@@ -115,19 +115,17 @@ public final class ApacheEscape {
           quoted = true;
         }
         sb.append(ch);
-      }
-      // Do not allow control characters
-      // TODO: What about the higher control characters range 7F-9F?
-      else if (ch < ' ') {
+      } else if (ch < ' ') {
+        // Do not allow control characters
+        // TODO: What about the higher control characters range 7F-9F?
         throw new IllegalArgumentException("Control character not allowed in Apache directives: " + (int) ch);
-      }
-      // Escape "$" when dollar escaping enabled and followed by '{'
-      else if (
+      } else if (
           ch == '$'
               && !allowVariables
               && i < (len - 1)
               && value.charAt(i + 1) == '{'
       ) {
+        // Escape "$" when dollar escaping enabled and followed by '{'
         // Find name of variable
         int endPos = value.indexOf('}', i + 2);
         if (
@@ -156,11 +154,10 @@ public final class ApacheEscape {
             sb.append("${").append(dollarVariable).append('}'); // Relies on "Define <dollarVariable> $" set in configuration files.
           }
         }
-      }
-      // Backslashes are only escaped when followed by another backslash, a double quote, or
-      // are at the end of the value.  Furthermore, when at the end, the value is double-quoted
-      // to avoid possible line continuation
-      else if (ch == '\\') {
+      } else if (ch == '\\') {
+        // Backslashes are only escaped when followed by another backslash, a double quote, or
+        // are at the end of the value.  Furthermore, when at the end, the value is double-quoted
+        // to avoid possible line continuation
         if (i == (len - 1)) {
           // Is the last character, double-quote and escape
           if (sb == null) {
@@ -186,9 +183,8 @@ public final class ApacheEscape {
             }
           }
         }
-      }
-      // Characters that are backslash-escaped, enables double-quoting
-      else if (ch == '"') {
+      } else if (ch == '"') {
+        // Characters that are backslash-escaped, enables double-quoting
         if (sb == null) {
           sb = new StringBuilder(len * 2).append(value, 0, i);
         }
@@ -197,9 +193,8 @@ public final class ApacheEscape {
           quoted = true;
         }
         sb.append('\\').append(ch);
-      }
-      // All other characters unaltered
-      else {
+      } else {
+        // All other characters unaltered
         if (sb != null) {
           sb.append(ch);
         }

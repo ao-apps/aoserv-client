@@ -55,13 +55,11 @@ public final class DistroFile extends FilesystemCachedObject<Integer, DistroFile
   // TODO: These fixed sizes being hard-coded is not very nice.  Maybe query
   //       the master for the longest sizes before downloading the records?
   //       Or hack the protocol a bit for this table and begin the transfer with a set of int's giving the lengths.
-  static final int
-      MAX_PATH_LENGTH = 194, // select max(length(path)) from distro_files;
-      MAX_TYPE_LENGTH = 10,
-      MAX_SYMLINK_TARGET_LENGTH = 96, // select max(length(symlink_target)) from distro_files;
-      MAX_LINUX_ACCOUNT_LENGTH = 15, // select max(length(linux_account)) from distro_files;
-      MAX_LINUX_GROUP_LENGTH = 15 // select max(length(linux_group)) from distro_files;
-  ;
+  static final int MAX_PATH_LENGTH = 194; // select max(length(path)) from distro_files;
+  static final int MAX_TYPE_LENGTH = 10;
+  static final int MAX_SYMLINK_TARGET_LENGTH = 96; // select max(length(symlink_target)) from distro_files;
+  static final int MAX_LINUX_ACCOUNT_LENGTH = 15; // select max(length(linux_account)) from distro_files;
+  static final int MAX_LINUX_GROUP_LENGTH = 15; // select max(length(linux_group)) from distro_files;
 
   /**
    * The size may not be available for certain file types.
@@ -69,20 +67,20 @@ public final class DistroFile extends FilesystemCachedObject<Integer, DistroFile
   public static final long NULL_SIZE = -1;
 
   private int pkey;
-  private int operating_system_version;
+  private int operatingSystemVersion;
   private PosixPath path;
   private boolean optional;
   private String type;
   private long mode;
-  private User.Name linux_account;
-  private Group.Name linux_group;
+  private User.Name linuxAccount;
+  private Group.Name linuxGroup;
   private long size;
-  private boolean has_file_sha256;
-  private long file_sha256_0;
-  private long file_sha256_1;
-  private long file_sha256_2;
-  private long file_sha256_3;
-  private String symlink_target;
+  private boolean hasFileSha;
+  private long fileSha0;
+  private long fileSha1;
+  private long fileSha2;
+  private long fileSha3;
+  private String symlinkTarget;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -99,28 +97,42 @@ public final class DistroFile extends FilesystemCachedObject<Integer, DistroFile
   public boolean equals(Object obj) {
     return
         (obj instanceof DistroFile)
-            && ((DistroFile) obj).pkey == pkey
-    ;
+            && ((DistroFile) obj).pkey == pkey;
   }
 
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_OPERATING_SYSTEM_VERSION: return operating_system_version;
-      case COLUMN_PATH: return path;
-      case 3: return optional;
-      case 4: return type;
-      case 5: return mode;
-      case 6: return linux_account;
-      case 7: return linux_group;
-      case 8: return size == NULL_SIZE ? null : size;
-      case 9: return has_file_sha256 ? file_sha256_0 : null;
-      case 10: return has_file_sha256 ? file_sha256_1 : null;
-      case 11: return has_file_sha256 ? file_sha256_2 : null;
-      case 12: return has_file_sha256 ? file_sha256_3 : null;
-      case 13: return symlink_target;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_OPERATING_SYSTEM_VERSION:
+        return operatingSystemVersion;
+      case COLUMN_PATH:
+        return path;
+      case 3:
+        return optional;
+      case 4:
+        return type;
+      case 5:
+        return mode;
+      case 6:
+        return linuxAccount;
+      case 7:
+        return linuxGroup;
+      case 8:
+        return size == NULL_SIZE ? null : size;
+      case 9:
+        return hasFileSha ? fileSha0 : null;
+      case 10:
+        return hasFileSha ? fileSha1 : null;
+      case 11:
+        return hasFileSha ? fileSha2 : null;
+      case 12:
+        return hasFileSha ? fileSha3 : null;
+      case 13:
+        return symlinkTarget;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -129,9 +141,9 @@ public final class DistroFile extends FilesystemCachedObject<Integer, DistroFile
   }
 
   public OperatingSystemVersion getOperatingSystemVersion() throws SQLException, IOException {
-    OperatingSystemVersion osv = table.getConnector().getDistribution().getOperatingSystemVersion().get(operating_system_version);
+    OperatingSystemVersion osv = table.getConnector().getDistribution().getOperatingSystemVersion().get(operatingSystemVersion);
     if (osv == null) {
-      throw new SQLException("Unable to find OperatingSystemVersion: " + operating_system_version);
+      throw new SQLException("Unable to find OperatingSystemVersion: " + operatingSystemVersion);
     }
     return osv;
   }
@@ -163,17 +175,17 @@ public final class DistroFile extends FilesystemCachedObject<Integer, DistroFile
     if (table.getConnector() == null) {
       throw new NullPointerException("table.getConnector() is null");
     }
-    User linuxAccount = table.getConnector().getLinux().getUser().get(linux_account);
+    User linuxAccount = table.getConnector().getLinux().getUser().get(this.linuxAccount);
     if (linuxAccount == null) {
-      throw new SQLException("Unable to find LinuxAccount: " + linux_account);
+      throw new SQLException("Unable to find LinuxAccount: " + this.linuxAccount);
     }
     return linuxAccount;
   }
 
   public Group getLinuxGroup() throws SQLException, IOException {
-    Group linuxGroup = table.getConnector().getLinux().getGroup().get(linux_group);
+    Group linuxGroup = table.getConnector().getLinux().getGroup().get(this.linuxGroup);
     if (linuxGroup == null) {
-      throw new SQLException("Unable to find LinuxGroup: " + linux_group);
+      throw new SQLException("Unable to find LinuxGroup: " + this.linuxGroup);
     }
     return linuxGroup;
   }
@@ -183,27 +195,27 @@ public final class DistroFile extends FilesystemCachedObject<Integer, DistroFile
   }
 
   public boolean hasFileSha256() {
-    return has_file_sha256;
+    return hasFileSha;
   }
 
   public long getFileSha256_0() {
-    return file_sha256_0;
+    return fileSha0;
   }
 
   public long getFileSha256_1() {
-    return file_sha256_1;
+    return fileSha1;
   }
 
   public long getFileSha256_2() {
-    return file_sha256_2;
+    return fileSha2;
   }
 
   public long getFileSha256_3() {
-    return file_sha256_3;
+    return fileSha3;
   }
 
   public String getSymlinkTarget() {
-    return symlink_target;
+    return symlinkTarget;
   }
 
   @Override
@@ -212,8 +224,8 @@ public final class DistroFile extends FilesystemCachedObject<Integer, DistroFile
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.DISTRO_FILES;
+  public Table.TableId getTableId() {
+    return Table.TableId.DISTRO_FILES;
   }
 
   @Override
@@ -226,23 +238,23 @@ public final class DistroFile extends FilesystemCachedObject<Integer, DistroFile
     try {
       int pos = 1;
       pkey = result.getInt(pos++);
-      operating_system_version = result.getInt(pos++);
+      operatingSystemVersion = result.getInt(pos++);
       path = PosixPath.valueOf(result.getString(pos++));
       optional = result.getBoolean(pos++);
       type = result.getString(pos++);
       mode = result.getLong(pos++);
-      linux_account = User.Name.valueOf(result.getString(pos++));
-      linux_group = Group.Name.valueOf(result.getString(pos++));
+      linuxAccount = User.Name.valueOf(result.getString(pos++));
+      linuxGroup = Group.Name.valueOf(result.getString(pos++));
       size = result.getLong(pos++);
       if (result.wasNull()) {
         size = NULL_SIZE;
       }
-      file_sha256_0 = result.getLong(pos++);
-      file_sha256_1 = result.getLong(pos++);
-      file_sha256_2 = result.getLong(pos++);
-      file_sha256_3 = result.getLong(pos++);
-      has_file_sha256 = !result.wasNull();
-      symlink_target = result.getString(pos++);
+      fileSha0 = result.getLong(pos++);
+      fileSha1 = result.getLong(pos++);
+      fileSha2 = result.getLong(pos++);
+      fileSha3 = result.getLong(pos++);
+      hasFileSha = !result.wasNull();
+      symlinkTarget = result.getString(pos++);
     } catch (ValidationException e) {
       throw new SQLException(e);
     }
@@ -252,27 +264,27 @@ public final class DistroFile extends FilesystemCachedObject<Integer, DistroFile
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
       pkey = in.readCompressedInt();
-      operating_system_version = in.readCompressedInt();
+      operatingSystemVersion = in.readCompressedInt();
       path = PosixPath.valueOf(in.readCompressedUTF());
       optional = in.readBoolean();
       type = in.readCompressedUTF().intern();
       mode = in.readLong();
-      linux_account = User.Name.valueOf(in.readCompressedUTF()).intern();
-      linux_group = Group.Name.valueOf(in.readCompressedUTF()).intern();
+      linuxAccount = User.Name.valueOf(in.readCompressedUTF()).intern();
+      linuxGroup = Group.Name.valueOf(in.readCompressedUTF()).intern();
       size = in.readLong();
-      has_file_sha256 = in.readBoolean();
-      if (has_file_sha256) {
-        file_sha256_0 = in.readLong();
-        file_sha256_1 = in.readLong();
-        file_sha256_2 = in.readLong();
-        file_sha256_3 = in.readLong();
+      hasFileSha = in.readBoolean();
+      if (hasFileSha) {
+        fileSha0 = in.readLong();
+        fileSha1 = in.readLong();
+        fileSha2 = in.readLong();
+        fileSha3 = in.readLong();
       } else {
-        file_sha256_0 = 0;
-        file_sha256_1 = 0;
-        file_sha256_2 = 0;
-        file_sha256_3 = 0;
+        fileSha0 = 0;
+        fileSha1 = 0;
+        fileSha2 = 0;
+        fileSha3 = 0;
       }
-      symlink_target = in.readBoolean() ? in.readCompressedUTF() : null;
+      symlinkTarget = in.readBoolean() ? in.readCompressedUTF() : null;
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -296,27 +308,27 @@ public final class DistroFile extends FilesystemCachedObject<Integer, DistroFile
   public void readRecord(DataInputStream in) throws IOException {
     try {
       pkey = in.readInt();
-      operating_system_version = in.readInt();
+      operatingSystemVersion = in.readInt();
       path = PosixPath.valueOf(readChars(in));
       optional = in.readBoolean();
       type = readChars(in).intern();
       mode = in.readLong();
-      linux_account = User.Name.valueOf(readChars(in)).intern();
-      linux_group = Group.Name.valueOf(readChars(in)).intern();
+      linuxAccount = User.Name.valueOf(readChars(in)).intern();
+      linuxGroup = Group.Name.valueOf(readChars(in)).intern();
       size = in.readLong();
-      has_file_sha256 = in.readBoolean();
-      if (has_file_sha256) {
-        file_sha256_0 = in.readLong();
-        file_sha256_1 = in.readLong();
-        file_sha256_2 = in.readLong();
-        file_sha256_3 = in.readLong();
+      hasFileSha = in.readBoolean();
+      if (hasFileSha) {
+        fileSha0 = in.readLong();
+        fileSha1 = in.readLong();
+        fileSha2 = in.readLong();
+        fileSha3 = in.readLong();
       } else {
-        file_sha256_0 = 0;
-        file_sha256_1 = 0;
-        file_sha256_2 = 0;
-        file_sha256_3 = 0;
+        fileSha0 = 0;
+        fileSha1 = 0;
+        fileSha2 = 0;
+        fileSha3 = 0;
       }
-      symlink_target = in.readBoolean() ? readChars(in) : null;
+      symlinkTarget = in.readBoolean() ? readChars(in) : null;
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -326,36 +338,36 @@ public final class DistroFile extends FilesystemCachedObject<Integer, DistroFile
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_108) >= 0) {
       out.writeCompressedInt(pkey);
-      out.writeCompressedInt(operating_system_version);
+      out.writeCompressedInt(operatingSystemVersion);
     }
     out.writeCompressedUTF(path.toString(), 0);
     out.writeBoolean(optional);
     out.writeCompressedUTF(type, 1);
     out.writeLong(mode);
-    out.writeCompressedUTF(linux_account.toString(), 2);
-    out.writeCompressedUTF(linux_group.toString(), 3);
+    out.writeCompressedUTF(linuxAccount.toString(), 2);
+    out.writeCompressedUTF(linuxGroup.toString(), 3);
     out.writeLong(size);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_80) >= 0) {
-      out.writeBoolean(has_file_sha256);
-      if (has_file_sha256) {
-        out.writeLong(file_sha256_0);
-        out.writeLong(file_sha256_1);
-        out.writeLong(file_sha256_2);
-        out.writeLong(file_sha256_3);
+      out.writeBoolean(hasFileSha);
+      if (hasFileSha) {
+        out.writeLong(fileSha0);
+        out.writeLong(fileSha1);
+        out.writeLong(fileSha2);
+        out.writeLong(fileSha3);
       }
     } else {
       out.writeBoolean(false); // has_file_md5
     }
-    out.writeBoolean(symlink_target != null);
-    if (symlink_target != null) {
-      out.writeCompressedUTF(symlink_target, 4);
+    out.writeBoolean(symlinkTarget != null);
+    if (symlinkTarget != null) {
+      out.writeCompressedUTF(symlinkTarget, 4);
     }
   }
 
   @Override
   public void writeRecord(DataOutputStream out) throws IOException {
     out.writeInt(pkey);
-    out.writeInt(operating_system_version);
+    out.writeInt(operatingSystemVersion);
     String pathStr = path.toString();
     if (pathStr.length() > MAX_PATH_LENGTH) {
       throw new IOException("path.length()>" + MAX_PATH_LENGTH + ": " + pathStr.length());
@@ -367,34 +379,34 @@ public final class DistroFile extends FilesystemCachedObject<Integer, DistroFile
     }
     writeChars(type, out);
     out.writeLong(mode);
-    {
-      String linux_accountStr = linux_account.toString();
-      if (linux_accountStr.length() > MAX_LINUX_ACCOUNT_LENGTH) {
-        throw new IOException("linux_account.length()>" + MAX_LINUX_ACCOUNT_LENGTH + ": " + linux_accountStr.length());
+      {
+        String linuxAccountStr = linuxAccount.toString();
+        if (linuxAccountStr.length() > MAX_LINUX_ACCOUNT_LENGTH) {
+          throw new IOException("linux_account.length()>" + MAX_LINUX_ACCOUNT_LENGTH + ": " + linuxAccountStr.length());
+        }
+        writeChars(linuxAccountStr, out);
       }
-      writeChars(linux_accountStr, out);
-    }
-    {
-      String linux_groupStr = linux_group.toString();
-      if (linux_groupStr.length() > MAX_LINUX_GROUP_LENGTH) {
-        throw new IOException("linux_group.length()>" + MAX_LINUX_GROUP_LENGTH + ": " + linux_groupStr.length());
+      {
+        String linuxGroupStr = linuxGroup.toString();
+        if (linuxGroupStr.length() > MAX_LINUX_GROUP_LENGTH) {
+          throw new IOException("linux_group.length()>" + MAX_LINUX_GROUP_LENGTH + ": " + linuxGroupStr.length());
+        }
+        writeChars(linuxGroupStr, out);
       }
-      writeChars(linux_groupStr, out);
-    }
     out.writeLong(size);
-    out.writeBoolean(has_file_sha256);
-    if (has_file_sha256) {
-      out.writeLong(file_sha256_0);
-      out.writeLong(file_sha256_1);
-      out.writeLong(file_sha256_2);
-      out.writeLong(file_sha256_3);
+    out.writeBoolean(hasFileSha);
+    if (hasFileSha) {
+      out.writeLong(fileSha0);
+      out.writeLong(fileSha1);
+      out.writeLong(fileSha2);
+      out.writeLong(fileSha3);
     }
-    out.writeBoolean(symlink_target != null);
-    if (symlink_target != null) {
-      if (symlink_target.length() > MAX_SYMLINK_TARGET_LENGTH) {
-        throw new IOException("symlink_target.length()>" + MAX_SYMLINK_TARGET_LENGTH + ": " + symlink_target.length());
+    out.writeBoolean(symlinkTarget != null);
+    if (symlinkTarget != null) {
+      if (symlinkTarget.length() > MAX_SYMLINK_TARGET_LENGTH) {
+        throw new IOException("symlink_target.length()>" + MAX_SYMLINK_TARGET_LENGTH + ": " + symlinkTarget.length());
       }
-      writeChars(symlink_target, out);
+      writeChars(symlinkTarget, out);
     }
   }
 }

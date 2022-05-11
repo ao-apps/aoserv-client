@@ -30,7 +30,7 @@ package com.aoindustries.aoserv.client;
  *
  * @author  AO Industries, Inc.
  */
-public abstract class GlobalObject<K, T extends GlobalObject<K, T>> extends AOServObject<K, T> {
+public abstract class GlobalObject<K, T extends GlobalObject<K, T>> extends AoservObject<K, T> {
 
   /**
    * @deprecated  Only required for implementation, do not use directly.

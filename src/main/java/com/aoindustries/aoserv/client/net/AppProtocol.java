@@ -27,7 +27,7 @@ import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.lang.validation.ValidationException;
 import com.aoapps.net.Port;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalObjectStringKey;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -51,50 +51,48 @@ public final class AppProtocol extends GlobalObjectStringKey<AppProtocol> {
   static final int COLUMN_PROTOCOL = 0;
   static final String COLUMN_PORT_name = "port";
 
-  public static final String
-      AOSERV_DAEMON = "aoserv-daemon",
-      AOSERV_DAEMON_SSL = "aoserv-daemon-ssl",
-      AOSERV_MASTER = "aoserv-master",
-      AOSERV_MASTER_SSL = "aoserv-master-ssl",
-      AUTH = "auth",
-      CVSPSERVER = "cvspserver",
-      DNS = "DNS",
-      FTP = "FTP",
-      FTP_DATA = "FTP-DATA",
-      HTTP = "HTTP",
-      HTTPS = "HTTPS",
-      HYPERSONIC = "hypersonic",
-      IMAP2 = "IMAP2",
-      JMX = "JMX",
-      JNP = "JNP",
-      MEMCACHED = "memcached",
-      MILTER = "milter",
-      MYSQL = "MySQL",
-      NTALK = "ntalk",
-      POP3 = "POP3",
-      POSTGRESQL = "PostgreSQL",
-      REDIS = "redis",
-      REDIS_CLUSTER = "redis-cluster",
-      REDIS_SENTINEL = "redis-sentinel",
-      RFB = "RFB",
-      RMI = "RMI",
-      SIEVE = "sieve",
-      SIMAP = "SIMAP",
-      SPAMD = "spamd",
-      SPOP3 = "SPOP3",
-      SSH = "SSH",
-      SMTP = "SMTP",
-      SMTPS = "SMTPS",
-      SUBMISSION = "submission",
-      TALK = "talk",
-      TELNET = "Telnet",
-      TOMCAT4_SHUTDOWN = "tomcat4-shutdown",
-      WEBSERVER = "webserver"
-  ;
+  public static final String AOSERV_DAEMON = "aoserv-daemon";
+  public static final String AOSERV_DAEMON_SSL = "aoserv-daemon-ssl";
+  public static final String AOSERV_MASTER = "aoserv-master";
+  public static final String AOSERV_MASTER_SSL = "aoserv-master-ssl";
+  public static final String AUTH = "auth";
+  public static final String CVSPSERVER = "cvspserver";
+  public static final String DNS = "DNS";
+  public static final String FTP = "FTP";
+  public static final String FTP_DATA = "FTP-DATA";
+  public static final String HTTP = "HTTP";
+  public static final String HTTPS = "HTTPS";
+  public static final String HYPERSONIC = "hypersonic";
+  public static final String IMAP2 = "IMAP2";
+  public static final String JMX = "JMX";
+  public static final String JNP = "JNP";
+  public static final String MEMCACHED = "memcached";
+  public static final String MILTER = "milter";
+  public static final String MYSQL = "MySQL";
+  public static final String NTALK = "ntalk";
+  public static final String POP3 = "POP3";
+  public static final String POSTGRESQL = "PostgreSQL";
+  public static final String REDIS = "redis";
+  public static final String REDIS_CLUSTER = "redis-cluster";
+  public static final String REDIS_SENTINEL = "redis-sentinel";
+  public static final String RFB = "RFB";
+  public static final String RMI = "RMI";
+  public static final String SIEVE = "sieve";
+  public static final String SIMAP = "SIMAP";
+  public static final String SPAMD = "spamd";
+  public static final String SPOP3 = "SPOP3";
+  public static final String SSH = "SSH";
+  public static final String SMTP = "SMTP";
+  public static final String SMTPS = "SMTPS";
+  public static final String SUBMISSION = "submission";
+  public static final String TALK = "talk";
+  public static final String TELNET = "Telnet";
+  public static final String TOMCAT4_SHUTDOWN = "tomcat4-shutdown";
+  public static final String WEBSERVER = "webserver";
 
   private Port port;
   private String name;
-  private boolean is_user_service;
+  private boolean isUserService;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -110,15 +108,20 @@ public final class AppProtocol extends GlobalObjectStringKey<AppProtocol> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PROTOCOL: return pkey;
-      case 1: return port;
-      case 2: return name;
-      case 3: return is_user_service;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PROTOCOL:
+        return pkey;
+      case 1:
+        return port;
+      case 2:
+        return name;
+      case 3:
+        return isUserService;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
-  public JkProtocol getHttpdJKProtocol(AOServConnector connector) throws IOException, SQLException {
+  public JkProtocol getHttpdJkProtocol(AoservConnector connector) throws IOException, SQLException {
     return connector.getWeb_tomcat().getJkProtocol().get(pkey);
   }
 
@@ -127,7 +130,7 @@ public final class AppProtocol extends GlobalObjectStringKey<AppProtocol> {
   }
 
   public boolean isUserService() {
-    return is_user_service;
+    return isUserService;
   }
 
   public Port getPort() {
@@ -142,8 +145,8 @@ public final class AppProtocol extends GlobalObjectStringKey<AppProtocol> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.PROTOCOLS;
+  public Table.TableId getTableId() {
+    return Table.TableId.PROTOCOLS;
   }
 
   @Override
@@ -152,7 +155,7 @@ public final class AppProtocol extends GlobalObjectStringKey<AppProtocol> {
       pkey = result.getString(1);
       int portNum = result.getInt(2);
       name = result.getString(3);
-      is_user_service = result.getBoolean(4);
+      isUserService = result.getBoolean(4);
       port = Port.valueOf(
           portNum,
           com.aoapps.net.Protocol.valueOf(result.getString(5).toUpperCase(Locale.ROOT))
@@ -168,7 +171,7 @@ public final class AppProtocol extends GlobalObjectStringKey<AppProtocol> {
       pkey = in.readUTF().intern();
       int portNum = in.readCompressedInt();
       name = in.readUTF();
-      is_user_service = in.readBoolean();
+      isUserService = in.readBoolean();
       port = Port.valueOf(
           portNum,
           in.readEnum(com.aoapps.net.Protocol.class)
@@ -184,7 +187,7 @@ public final class AppProtocol extends GlobalObjectStringKey<AppProtocol> {
     out.writeCompressedInt(port.getPort());
     out.writeUTF(name);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_105) >= 0) {
-      out.writeBoolean(is_user_service);
+      out.writeBoolean(isUserService);
       if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_80_0) < 0) {
         out.writeUTF(port.getProtocol().name().toLowerCase(Locale.ROOT));
       } else {

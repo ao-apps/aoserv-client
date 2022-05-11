@@ -49,14 +49,12 @@ import java.util.Objects;
  */
 public final class CyrusImapdBind extends CachedObjectIntegerKey<CyrusImapdBind> {
 
-  static final int
-      COLUMN_NET_BIND = 0,
-      COLUMN_CYRUS_IMAPD_SERVER = 1,
-      COLUMN_SSL_CERTIFICATE = 3
-  ;
+  static final int COLUMN_NET_BIND = 0;
+  static final int COLUMN_CYRUS_IMAPD_SERVER = 1;
+  static final int COLUMN_SSL_CERTIFICATE = 3;
   static final String COLUMN_NET_BIND_name = "net_bind";
 
-  private int cyrus_imapd_server;
+  private int cyrusImapdServer;
   private DomainName servername;
   private int certificate;
   private Boolean allowPlaintextAuth;
@@ -82,18 +80,24 @@ public final class CyrusImapdBind extends CachedObjectIntegerKey<CyrusImapdBind>
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_NET_BIND: return pkey;
-      case COLUMN_CYRUS_IMAPD_SERVER: return cyrus_imapd_server;
-      case 2: return servername;
-      case COLUMN_SSL_CERTIFICATE: return certificate == -1 ? null : certificate;
-      case 4: return allowPlaintextAuth;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_NET_BIND:
+        return pkey;
+      case COLUMN_CYRUS_IMAPD_SERVER:
+        return cyrusImapdServer;
+      case 2:
+        return servername;
+      case COLUMN_SSL_CERTIFICATE:
+        return certificate == -1 ? null : certificate;
+      case 4:
+        return allowPlaintextAuth;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.CYRUS_IMAPD_BINDS;
+  public Table.TableId getTableId() {
+    return Table.TableId.CYRUS_IMAPD_BINDS;
   }
 
   @Override
@@ -101,7 +105,7 @@ public final class CyrusImapdBind extends CachedObjectIntegerKey<CyrusImapdBind>
     try {
       int pos = 1;
       pkey = result.getInt(pos++);
-      cyrus_imapd_server = result.getInt(pos++);
+      cyrusImapdServer = result.getInt(pos++);
       servername = DomainName.valueOf(result.getString(pos++));
       certificate = result.getInt(pos++);
       if (result.wasNull()) {
@@ -120,7 +124,7 @@ public final class CyrusImapdBind extends CachedObjectIntegerKey<CyrusImapdBind>
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
       pkey = in.readCompressedInt();
-      cyrus_imapd_server = in.readCompressedInt();
+      cyrusImapdServer = in.readCompressedInt();
       servername = DomainName.valueOf(in.readNullUTF());
       certificate = in.readCompressedInt();
       allowPlaintextAuth = in.readNullBoolean();
@@ -132,7 +136,7 @@ public final class CyrusImapdBind extends CachedObjectIntegerKey<CyrusImapdBind>
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeCompressedInt(cyrus_imapd_server);
+    out.writeCompressedInt(cyrusImapdServer);
     out.writeNullUTF(Objects.toString(servername, null));
     out.writeCompressedInt(certificate);
     out.writeNullBoolean(allowPlaintextAuth);
@@ -147,17 +151,18 @@ public final class CyrusImapdBind extends CachedObjectIntegerKey<CyrusImapdBind>
   }
 
   public CyrusImapdServer getCyrusImapdServer() throws SQLException, IOException {
-    CyrusImapdServer obj = table.getConnector().getEmail().getCyrusImapdServer().get(cyrus_imapd_server);
+    CyrusImapdServer obj = table.getConnector().getEmail().getCyrusImapdServer().get(cyrusImapdServer);
     if (obj == null) {
-      throw new SQLException("Unable to find CyrusImapd: " + cyrus_imapd_server);
+      throw new SQLException("Unable to find CyrusImapd: " + cyrusImapdServer);
     }
     return obj;
   }
 
   /**
    * The fully qualified hostname for <code>servername</code>.
-   *
+   * <p>
    * When {@code null}, defaults to {@link CyrusImapdServer#getServername()}.
+   * </p>
    */
   public DomainName getServername() {
     return servername;
@@ -178,8 +183,9 @@ public final class CyrusImapdBind extends CachedObjectIntegerKey<CyrusImapdBind>
 
   /**
    * Allows plaintext authentication (PLAIN/LOGIN) on non-TLS links.
-   *
+   * <p>
    * When {@code null}, defaults to {@link CyrusImapdServer#getAllowPlaintextAuth()}.
+   * </p>
    */
   public Boolean getAllowPlaintextAuth() {
     return allowPlaintextAuth;

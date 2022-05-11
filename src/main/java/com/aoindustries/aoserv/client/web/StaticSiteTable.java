@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.web;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -37,7 +37,7 @@ import java.sql.SQLException;
  */
 public final class StaticSiteTable extends CachedTableIntegerKey<StaticSite> {
 
-  StaticSiteTable(AOServConnector connector) {
+  StaticSiteTable(AoservConnector connector) {
     super(connector, StaticSite.class);
   }
 
@@ -58,7 +58,7 @@ public final class StaticSiteTable extends CachedTableIntegerKey<StaticSite> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.HTTPD_STATIC_SITES;
+  public Table.TableId getTableId() {
+    return Table.TableId.HTTPD_STATIC_SITES;
   }
 }

@@ -25,7 +25,7 @@ package com.aoindustries.aoserv.client.distribution;
 
 import com.aoapps.lang.Strings;
 import com.aoapps.sql.UnmodifiableTimestamp;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTableIntegerKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -54,7 +54,7 @@ public final class SoftwareVersionTable extends GlobalTableIntegerKey<SoftwareVe
 
   private static UnmodifiableTimestamp maximumUpdatedTime = null;
 
-  SoftwareVersionTable(AOServConnector connector) {
+  SoftwareVersionTable(AoservConnector connector) {
     super(connector, SoftwareVersion.class);
   }
 
@@ -107,18 +107,18 @@ public final class SoftwareVersionTable extends GlobalTableIntegerKey<SoftwareVe
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.TECHNOLOGY_VERSIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.TECHNOLOGY_VERSIONS;
   }
 
   SoftwareVersion getTechnologyVersion(Software techName, String version, OperatingSystemVersion osv) throws IOException, SQLException {
     String name = techName.getName();
-    int osvPKey = osv.getPkey();
+    int osvPkey = osv.getPkey();
     List<SoftwareVersion> table = getRows();
     int size = table.size();
     for (int c = 0; c < size; c++) {
       SoftwareVersion tv = table.get(c);
-      if (tv.getTechnologyName_name().equals(name) && tv.getVersion().equals(version) && tv.getOperatingSystemVersion_id() == osvPKey) {
+      if (tv.getTechnologyName_name().equals(name) && tv.getVersion().equals(version) && tv.getOperatingSystemVersion_id() == osvPkey) {
         return tv;
       }
     }

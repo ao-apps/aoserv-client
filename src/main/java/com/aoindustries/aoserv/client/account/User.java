@@ -106,8 +106,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       Comparable<Name>,
       FastExternalizable,
       DtoFactory<com.aoindustries.aoserv.client.dto.UserName>,
-      Internable<Name>
-  {
+      Internable<Name> {
 
     public static final int MAX_LENGTH = 255;
 
@@ -146,20 +145,37 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
           return new InvalidResult(RESOURCES, "Name.validate.noCapital");
         }
         switch (ch) {
-          case ',' : return new InvalidResult(RESOURCES, "Name.validate.comma");
-          case ':' : return new InvalidResult(RESOURCES, "Name.validate.colon");
-          case '(' : return new InvalidResult(RESOURCES, "Name.validate.leftParen");
-          case ')' : return new InvalidResult(RESOURCES, "Name.validate.rightParen");
-          case '[' : return new InvalidResult(RESOURCES, "Name.validate.leftSquare");
-          case ']' : return new InvalidResult(RESOURCES, "Name.validate.rightSquare");
-          case '\'' : return new InvalidResult(RESOURCES, "Name.validate.apostrophe");
-          case '"' : return new InvalidResult(RESOURCES, "Name.validate.quote");
-          case '|' : return new InvalidResult(RESOURCES, "Name.validate.verticalBar");
-          case '&' : return new InvalidResult(RESOURCES, "Name.validate.ampersand");
-          case ';' : return new InvalidResult(RESOURCES, "Name.validate.semicolon");
-          case '\\' : return new InvalidResult(RESOURCES, "Name.validate.backslash");
-          case '/' : return new InvalidResult(RESOURCES, "Name.validate.slash");
-          case '@' : hasAt = true; break;
+          case ',':
+            return new InvalidResult(RESOURCES, "Name.validate.comma");
+          case ':':
+            return new InvalidResult(RESOURCES, "Name.validate.colon");
+          case '(':
+            return new InvalidResult(RESOURCES, "Name.validate.leftParen");
+          case ')':
+            return new InvalidResult(RESOURCES, "Name.validate.rightParen");
+          case '[':
+            return new InvalidResult(RESOURCES, "Name.validate.leftSquare");
+          case ']':
+            return new InvalidResult(RESOURCES, "Name.validate.rightSquare");
+          case '\'':
+            return new InvalidResult(RESOURCES, "Name.validate.apostrophe");
+          case '"':
+            return new InvalidResult(RESOURCES, "Name.validate.quote");
+          case '|':
+            return new InvalidResult(RESOURCES, "Name.validate.verticalBar");
+          case '&':
+            return new InvalidResult(RESOURCES, "Name.validate.ampersand");
+          case ';':
+            return new InvalidResult(RESOURCES, "Name.validate.semicolon");
+          case '\\':
+            return new InvalidResult(RESOURCES, "Name.validate.backslash");
+          case '/':
+            return new InvalidResult(RESOURCES, "Name.validate.slash");
+          case '@':
+            hasAt = true;
+            break;
+          default:
+            // fall-through
         }
       }
 
@@ -223,8 +239,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
     public final boolean equals(Object obj) {
       return
           obj instanceof Name
-              && name.equals(((Name) obj).name)
-      ;
+              && name.equals(((Name) obj).name);
     }
 
     @Override
@@ -333,14 +348,12 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
     // </editor-fold>
   }
 
-  static final int
-      COLUMN_USERNAME = 0,
-      COLUMN_PACKAGE = 1
-  ;
+  static final int COLUMN_USERNAME = 0;
+  static final int COLUMN_PACKAGE = 1;
   static final String COLUMN_USERNAME_name = "username";
 
   private Account.Name packageName;
-  private int disable_log;
+  private int disableLog;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -395,18 +408,18 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
   public void addLinuxAccount(
       Group primaryGroup,
       Gecos name,
-      Gecos office_location,
-      Gecos office_phone,
-      Gecos home_phone,
+      Gecos officeLocation,
+      Gecos officePhone,
+      Gecos homePhone,
       UserType typeObject,
       Shell shellObject
   ) throws IOException, SQLException {
     addLinuxAccount(
         primaryGroup.getName(),
         name,
-        office_location,
-        office_phone,
-        home_phone,
+        officeLocation,
+        officePhone,
+        homePhone,
         typeObject.getName(),
         shellObject.getPath()
     );
@@ -415,9 +428,9 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
   public void addLinuxAccount(
       Group.Name primaryGroup,
       Gecos name,
-      Gecos office_location,
-      Gecos office_phone,
-      Gecos home_phone,
+      Gecos officeLocation,
+      Gecos officePhone,
+      Gecos homePhone,
       String type,
       PosixPath shell
   ) throws IOException, SQLException {
@@ -425,17 +438,17 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
         this,
         primaryGroup,
         name,
-        office_location,
-        office_phone,
-        home_phone,
+        officeLocation,
+        officePhone,
+        homePhone,
         type,
         shell
     );
   }
 
-  public void addMySQLUser() throws IOException, SQLException {
+  public void addMysqlUser() throws IOException, SQLException {
     try {
-      table.getConnector().getMysql().getUser().addMySQLUser(com.aoindustries.aoserv.client.mysql.User.Name.valueOf(pkey.toString()));
+      table.getConnector().getMysql().getUser().addMysqlUser(com.aoindustries.aoserv.client.mysql.User.Name.valueOf(pkey.toString()));
     } catch (ValidationException e) {
       throw new SQLException(e);
     }
@@ -461,7 +474,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
     if (la != null) {
       pps.add(la);
     }
-    com.aoindustries.aoserv.client.mysql.User mu = getMySQLUser();
+    com.aoindustries.aoserv.client.mysql.User mu = getMysqlUser();
     if (mu != null) {
       pps.add(mu);
     }
@@ -474,14 +487,14 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
 
   @Override
   public boolean canDisable() throws IOException, SQLException {
-    if (disable_log != -1) {
+    if (disableLog != -1) {
       return false;
     }
     com.aoindustries.aoserv.client.linux.User la = getLinuxAccount();
     if (la != null && !la.isDisabled()) {
       return false;
     }
-    com.aoindustries.aoserv.client.mysql.User mu = getMySQLUser();
+    com.aoindustries.aoserv.client.mysql.User mu = getMysqlUser();
     if (mu != null && !mu.isDisabled()) {
       return false;
     }
@@ -520,7 +533,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       }
     }
 
-    com.aoindustries.aoserv.client.mysql.User mu = getMySQLUser();
+    com.aoindustries.aoserv.client.mysql.User mu = getMysqlUser();
     if (mu != null) {
       List<PasswordChecker.Result> results = mu.checkPassword(password);
       if (PasswordChecker.hasResults(results)) {
@@ -541,12 +554,12 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
 
   @Override
   public void disable(DisableLog dl) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.DISABLE, Table.TableID.USERNAMES, dl.getPkey(), pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.DISABLE, Table.TableId.USERNAMES, dl.getPkey(), pkey);
   }
 
   @Override
   public void enable() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.ENABLE, Table.TableID.USERNAMES, pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.ENABLE, Table.TableId.USERNAMES, pkey);
   }
 
   // TODO: See where used, and favor direct lookup in other tables:
@@ -557,26 +570,30 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_USERNAME: return pkey;
-      case COLUMN_PACKAGE: return packageName;
-      case 2: return disable_log == -1 ? null : disable_log;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_USERNAME:
+        return pkey;
+      case COLUMN_PACKAGE:
+        return packageName;
+      case 2:
+        return disableLog == -1 ? null : disableLog;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   @Override
   public boolean isDisabled() {
-    return disable_log != -1;
+    return disableLog != -1;
   }
 
   @Override
   public DisableLog getDisableLog() throws SQLException, IOException {
-    if (disable_log == -1) {
+    if (disableLog == -1) {
       return null;
     }
-    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disable_log);
+    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disableLog);
     if (obj == null) {
-      throw new SQLException("Unable to find DisableLog: " + disable_log);
+      throw new SQLException("Unable to find DisableLog: " + disableLog);
     }
     return obj;
   }
@@ -596,7 +613,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
   }
 
   // TODO: See where used, and favor direct lookup in other tables:
-  public com.aoindustries.aoserv.client.mysql.User getMySQLUser() throws IOException, SQLException {
+  public com.aoindustries.aoserv.client.mysql.User getMysqlUser() throws IOException, SQLException {
     String username = pkey.toString();
     if (com.aoindustries.aoserv.client.mysql.User.Name.validate(username).isValid()) {
       try {
@@ -636,8 +653,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.USERNAMES;
+  public Table.TableId getTableId() {
+    return Table.TableId.USERNAMES;
   }
 
   public User.Name getUsername() {
@@ -663,9 +680,9 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
     try {
       pkey = User.Name.valueOf(result.getString(1));
       packageName = Account.Name.valueOf(result.getString(2));
-      disable_log = result.getInt(3);
+      disableLog = result.getInt(3);
       if (result.wasNull()) {
-        disable_log = -1;
+        disableLog = -1;
       }
     } catch (ValidationException e) {
       throw new SQLException(e);
@@ -676,9 +693,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
     return
         getLinuxAccount() != null
             || getAdministrator() != null
-            || getMySQLUser() != null
-            || getPostgresUser() != null
-    ;
+            || getMysqlUser() != null
+            || getPostgresUser() != null;
   }
 
   @Override
@@ -686,7 +702,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
     try {
       pkey = User.Name.valueOf(in.readUTF()).intern();
       packageName = Account.Name.valueOf(in.readUTF()).intern();
-      disable_log = in.readCompressedInt();
+      disableLog = in.readCompressedInt();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -704,7 +720,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
     if (ba != null) {
       reasons.add(new CannotRemoveReason<>("Used by Administrator: " + ba.getUsername().getUsername(), ba));
     }
-    com.aoindustries.aoserv.client.mysql.User mu = getMySQLUser();
+    com.aoindustries.aoserv.client.mysql.User mu = getMysqlUser();
     if (mu != null) {
       reasons.add(new CannotRemoveReason<>("Used by MySQL user: " + mu.getUsername().getUsername(), mu));
     }
@@ -718,10 +734,10 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
 
   @Override
   public void remove() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.REMOVE,
-        Table.TableID.USERNAMES,
+        AoservProtocol.CommandId.REMOVE,
+        Table.TableId.USERNAMES,
         pkey
     );
   }
@@ -738,7 +754,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       la.setPassword(password);
     }
 
-    com.aoindustries.aoserv.client.mysql.User mu = getMySQLUser();
+    com.aoindustries.aoserv.client.mysql.User mu = getMysqlUser();
     if (mu != null) {
       mu.setPassword(password);
     }
@@ -751,7 +767,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
 
   @Override
   public boolean canSetPassword() throws IOException, SQLException {
-    if (disable_log != -1) {
+    if (disableLog != -1) {
       return false;
     }
 
@@ -765,7 +781,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       return false;
     }
 
-    com.aoindustries.aoserv.client.mysql.User mu = getMySQLUser();
+    com.aoindustries.aoserv.client.mysql.User mu = getMysqlUser();
     if (mu != null && !mu.canSetPassword()) {
       return false;
     }
@@ -782,6 +798,6 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeUTF(pkey.toString());
     out.writeUTF(packageName.toString());
-    out.writeCompressedInt(disable_log);
+    out.writeCompressedInt(disableLog);
   }
 }

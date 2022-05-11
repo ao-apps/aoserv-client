@@ -24,10 +24,10 @@
 package com.aoindustries.aoserv.client.email;
 
 import com.aoapps.hodgepodge.io.TerminalWriter;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.linux.GroupServer;
@@ -48,7 +48,7 @@ import java.util.ArrayList;
  */
 public final class ListTable extends CachedTableIntegerKey<List> {
 
-  ListTable(AOServConnector connector) {
+  ListTable(AoservConnector connector) {
     super(connector, List.class);
   }
 
@@ -68,24 +68,24 @@ public final class ListTable extends CachedTableIntegerKey<List> {
       UserServer lsa,
       GroupServer lsg
   ) throws IllegalArgumentException, IOException, SQLException {
-    Server lsaAO = lsa.getServer();
-    Server lsgAO = lsg.getServer();
-    if (!lsaAO.equals(lsgAO)) {
-      throw new IllegalArgumentException("Mismatched servers: " + lsaAO + " and " + lsgAO);
+    Server lsaServer = lsa.getServer();
+    Server lsgServer = lsg.getServer();
+    if (!lsaServer.equals(lsgServer)) {
+      throw new IllegalArgumentException("Mismatched servers: " + lsaServer + " and " + lsgServer);
     }
     if (
         !List.isValidRegularPath(
             path,
-            lsaAO.getHost().getOperatingSystemVersion_id()
+            lsaServer.getHost().getOperatingSystemVersion_id()
         )
     ) {
       throw new IllegalArgumentException("Invalid list path: " + path);
     }
 
-    return connector.requestIntQueryIL(
+    return connector.requestIntQueryInvalidating(
         true,
-        AoservProtocol.CommandID.ADD,
-        Table.TableID.EMAIL_LISTS,
+        AoservProtocol.CommandId.ADD,
+        Table.TableId.EMAIL_LISTS,
         path,
         lsa.getPkey(),
         lsg.getPkey()
@@ -138,12 +138,12 @@ public final class ListTable extends CachedTableIntegerKey<List> {
   }
 
   public List getEmailList(Server ao, PosixPath path) throws IOException, SQLException {
-    int aoPKey = ao.getServer_pkey();
+    int aoPkey = ao.getServer_pkey();
     java.util.List<List> cached = getRows();
     int size = cached.size();
     for (int c = 0; c < size; c++) {
       List list = cached.get(c);
-      if (list.getLinuxServerGroup().getServer_host_id() == aoPKey && list.getPath().equals(path)) {
+      if (list.getLinuxServerGroup().getServer_host_id() == aoPkey && list.getPath().equals(path)) {
         return list;
       }
     }
@@ -151,32 +151,32 @@ public final class ListTable extends CachedTableIntegerKey<List> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.EMAIL_LISTS;
+  public Table.TableId getTableId() {
+    return Table.TableId.EMAIL_LISTS;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_EMAIL_LIST)) {
-      if (AOSH.checkParamCount(Command.ADD_EMAIL_LIST, args, 4, err)) {
+      if (Aosh.checkParamCount(Command.ADD_EMAIL_LIST, args, 4, err)) {
         out.println(
-            connector.getSimpleAOClient().addEmailList(
+            connector.getSimpleClient().addEmailList(
                 args[1],
-                AOSH.parseUnixPath(args[2], "path"),
-                AOSH.parseLinuxUserName(args[3], "username"),
-                AOSH.parseGroupName(args[4], "group")
+                Aosh.parseUnixPath(args[2], "path"),
+                Aosh.parseLinuxUserName(args[3], "username"),
+                Aosh.parseGroupName(args[4], "group")
             )
         );
         out.flush();
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.CHECK_EMAIL_LIST_PATH)) {
-      if (AOSH.checkParamCount(Command.CHECK_EMAIL_LIST_PATH, args, 2, err)) {
+      if (Aosh.checkParamCount(Command.CHECK_EMAIL_LIST_PATH, args, 2, err)) {
         try {
-          connector.getSimpleAOClient().checkEmailListPath(
+          connector.getSimpleClient().checkEmailListPath(
               args[1],
-              AOSH.parseUnixPath(args[2], "path")
+              Aosh.parseUnixPath(args[2], "path")
           );
           out.print(args[2]);
           out.print(": ");
@@ -190,10 +190,10 @@ public final class ListTable extends CachedTableIntegerKey<List> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.DISABLE_EMAIL_LIST)) {
-      if (AOSH.checkParamCount(Command.DISABLE_EMAIL_LIST, args, 3, err)) {
+      if (Aosh.checkParamCount(Command.DISABLE_EMAIL_LIST, args, 3, err)) {
         out.println(
-            connector.getSimpleAOClient().disableEmailList(
-                AOSH.parseUnixPath(args[1], "path"),
+            connector.getSimpleClient().disableEmailList(
+                Aosh.parseUnixPath(args[1], "path"),
                 args[2],
                 args[3]
             )
@@ -202,18 +202,18 @@ public final class ListTable extends CachedTableIntegerKey<List> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.ENABLE_EMAIL_LIST)) {
-      if (AOSH.checkParamCount(Command.ENABLE_EMAIL_LIST, args, 2, err)) {
-        connector.getSimpleAOClient().enableEmailList(
-            AOSH.parseUnixPath(args[1], "path"),
+      if (Aosh.checkParamCount(Command.ENABLE_EMAIL_LIST, args, 2, err)) {
+        connector.getSimpleClient().enableEmailList(
+            Aosh.parseUnixPath(args[1], "path"),
             args[2]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.GET_EMAIL_LIST)) {
-      if (AOSH.checkParamCount(Command.GET_EMAIL_LIST, args, 2, err)) {
+      if (Aosh.checkParamCount(Command.GET_EMAIL_LIST, args, 2, err)) {
         out.println(
-            connector.getSimpleAOClient().getEmailListAddressList(
-                AOSH.parseUnixPath(args[1], "path"),
+            connector.getSimpleClient().getEmailListAddressList(
+                Aosh.parseUnixPath(args[1], "path"),
                 args[2]
             )
         );
@@ -221,17 +221,17 @@ public final class ListTable extends CachedTableIntegerKey<List> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.REMOVE_EMAIL_LIST)) {
-      if (AOSH.checkParamCount(Command.REMOVE_EMAIL_LIST, args, 2, err)) {
-        connector.getSimpleAOClient().removeEmailList(
-            AOSH.parseUnixPath(args[1], "path"),
+      if (Aosh.checkParamCount(Command.REMOVE_EMAIL_LIST, args, 2, err)) {
+        connector.getSimpleClient().removeEmailList(
+            Aosh.parseUnixPath(args[1], "path"),
             args[2]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_EMAIL_LIST)) {
-      if (AOSH.checkParamCount(Command.SET_EMAIL_LIST, args, 3, err)) {
-        connector.getSimpleAOClient().setEmailListAddressList(
-            AOSH.parseUnixPath(args[1], "path"),
+      if (Aosh.checkParamCount(Command.SET_EMAIL_LIST, args, 3, err)) {
+        connector.getSimpleClient().setEmailListAddressList(
+            Aosh.parseUnixPath(args[1], "path"),
             args[2],
             args[3]
         );

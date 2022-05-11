@@ -30,8 +30,8 @@ import com.aoapps.lang.util.InternUtils;
 import com.aoapps.lang.validation.ValidationException;
 import com.aoapps.sql.SQLStreamables;
 import com.aoapps.sql.UnmodifiableTimestamp;
-import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.AOServStreamable;
+import com.aoindustries.aoserv.client.AoservConnector;
+import com.aoindustries.aoserv.client.AoservStreamable;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.Administrator;
 import com.aoindustries.aoserv.client.account.User;
@@ -53,7 +53,7 @@ import java.util.Objects;
  *
  * @author  AO Industries, Inc.
  */
-public final class TransactionSearchCriteria implements AOServStreamable {
+public final class TransactionSearchCriteria implements AoservStreamable {
 
   /**
    * Value representing any in a search.
@@ -220,7 +220,7 @@ public final class TransactionSearchCriteria implements AOServStreamable {
    * @deprecated  Please use {@link TransactionTable#get(com.aoindustries.aoserv.client.billing.TransactionSearchCriteria)} directly.
    */
   @Deprecated
-  public List<Transaction> getTransactions(AOServConnector connector) throws IOException, SQLException {
+  public List<Transaction> getTransactions(AoservConnector connector) throws IOException, SQLException {
     return connector.getBilling().getTransaction().get(this);
   }
 
@@ -229,6 +229,8 @@ public final class TransactionSearchCriteria implements AOServStreamable {
   }
 
   /**
+   * {@inheritDoc}
+   *
    * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
    *
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
@@ -316,6 +318,8 @@ public final class TransactionSearchCriteria implements AOServStreamable {
   }
 
   /**
+   * {@inheritDoc}
+   *
    * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
    *
    * @see  #write(com.aoapps.hodgepodge.io.stream.StreamableOutput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)

@@ -33,7 +33,7 @@ import com.aoapps.security.HashedPassword;
 import com.aoapps.security.SecurityStreamables;
 import com.aoapps.sql.SQLStreamables;
 import com.aoapps.sql.UnmodifiableTimestamp;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Disablable;
 import com.aoindustries.aoserv.client.Removable;
@@ -73,31 +73,26 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
   static final String COLUMN_USERNAME_name = "username";
 
   private HashedPassword password;
-  private String
-      name,
-      title
-  ;
+  private String name;
+  private String title;
   private long birthday;
   private boolean isPreferred;
   private boolean isPrivate;
   private UnmodifiableTimestamp created;
-  private String
-      work_phone,
-      home_phone,
-      cell_phone,
-      fax;
+  private String workPhone;
+  private String homePhone;
+  private String cellPhone;
+  private String fax;
   private Email email;
-  private String
-      address1,
-      address2,
-      city,
-      state,
-      country,
-      zip
-  ;
-  private int disable_log;
-  private boolean can_switch_users;
-  private String support_code;
+  private String address1;
+  private String address2;
+  private String city;
+  private String state;
+  private String country;
+  private String zip;
+  private int disableLog;
+  private boolean canSwitchUsers;
+  private String supportCode;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -114,22 +109,22 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
   public int arePasswordsSet() throws IOException, SQLException {
     return table.getConnector().requestBooleanQuery(
         true,
-        AoservProtocol.CommandID.IS_BUSINESS_ADMINISTRATOR_PASSWORD_SET,
+        AoservProtocol.CommandId.IS_BUSINESS_ADMINISTRATOR_PASSWORD_SET,
         pkey
     ) ? PasswordProtected.ALL : PasswordProtected.NONE;
   }
 
   @Override
   public boolean canDisable() throws SQLException, IOException {
-    return disable_log == -1 && !equals(table.getConnector().getCurrentAdministrator());
+    return disableLog == -1 && !equals(table.getConnector().getCurrentAdministrator());
   }
 
   public boolean canSwitchUsers() {
-    return can_switch_users;
+    return canSwitchUsers;
   }
 
   public String getSupportCode() {
-    return support_code;
+    return supportCode;
   }
 
   public boolean canSwitchUser(Administrator other) throws SQLException, IOException {
@@ -165,13 +160,13 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
     return PasswordChecker.checkPassword(username, password, PasswordChecker.PasswordStrength.STRICT);
   }
 
-  /**
-   * Validates a password and returns a description of the problem.  If the
-   * password is valid, then {@code null} is returned.
-   */
-  /*public String checkPasswordDescribe(String password) {
-  return checkPasswordDescribe(pkey, password);
-  }*/
+  ///**
+  // * Validates a password and returns a description of the problem.  If the
+  // * password is valid, then {@code null} is returned.
+  // */
+  //public String checkPasswordDescribe(String password) {
+  //  return checkPasswordDescribe(pkey, password);
+  //}
 
   /**
    * Validates a password and returns a description of the problem.  If the
@@ -183,12 +178,12 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
 
   @Override
   public void disable(DisableLog dl) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.DISABLE, Table.TableID.BUSINESS_ADMINISTRATORS, dl.getPkey(), pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.DISABLE, Table.TableId.BUSINESS_ADMINISTRATORS, dl.getPkey(), pkey);
   }
 
   @Override
   public void enable() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.ENABLE, Table.TableID.BUSINESS_ADMINISTRATORS, pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.ENABLE, Table.TableId.BUSINESS_ADMINISTRATORS, pkey);
   }
 
   public List<Action> getTicketActions() throws IOException, SQLException {
@@ -212,7 +207,7 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
   }
 
   public String getCellPhone() {
-    return cell_phone;
+    return cellPhone;
   }
 
   public String getCity() {
@@ -223,29 +218,52 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
   @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_USERNAME: return pkey;
-      case 1: return password;
-      case 2: return name;
-      case 3: return title;
-      case 4: return getBirthday();
-      case 5: return isPreferred;
-      case 6: return isPrivate;
-      case 7: return created;
-      case 8: return work_phone;
-      case 9: return home_phone;
-      case 10: return cell_phone;
-      case 11: return fax;
-      case 12: return email;
-      case 13: return address1;
-      case 14: return address2;
-      case 15: return city;
-      case 16: return state;
-      case 17: return country;
-      case 18: return zip;
-      case 19: return disable_log == -1 ? null : disable_log;
-      case 20: return can_switch_users;
-      case 21: return support_code;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_USERNAME:
+        return pkey;
+      case 1:
+        return password;
+      case 2:
+        return name;
+      case 3:
+        return title;
+      case 4:
+        return getBirthday();
+      case 5:
+        return isPreferred;
+      case 6:
+        return isPrivate;
+      case 7:
+        return created;
+      case 8:
+        return workPhone;
+      case 9:
+        return homePhone;
+      case 10:
+        return cellPhone;
+      case 11:
+        return fax;
+      case 12:
+        return email;
+      case 13:
+        return address1;
+      case 14:
+        return address2;
+      case 15:
+        return city;
+      case 16:
+        return state;
+      case 17:
+        return country;
+      case 18:
+        return zip;
+      case 19:
+        return disableLog == -1 ? null : disableLog;
+      case 20:
+        return canSwitchUsers;
+      case 21:
+        return supportCode;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -271,17 +289,17 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
 
   @Override
   public boolean isDisabled() {
-    return disable_log != -1;
+    return disableLog != -1;
   }
 
   @Override
   public DisableLog getDisableLog() throws SQLException, IOException {
-    if (disable_log == -1) {
+    if (disableLog == -1) {
       return null;
     }
-    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disable_log);
+    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disableLog);
     if (obj == null) {
-      throw new SQLException("Unable to find DisableLog: " + disable_log);
+      throw new SQLException("Unable to find DisableLog: " + disableLog);
     }
     return obj;
   }
@@ -295,7 +313,7 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
   }
 
   public String getHomePhone() {
-    return home_phone;
+    return homePhone;
   }
 
   public com.aoindustries.aoserv.client.master.User getMasterUser() throws IOException, SQLException {
@@ -315,7 +333,7 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
    * available if all communication has been over secure connections.  Otherwise,
    * all passwords will be changed to <code>NO_PASSWORD</code>.
    *
-   * @see  AOServConnector#isSecure
+   * @see  AoservConnector#isSecure
    */
   public HashedPassword getPassword() {
     return password;
@@ -326,8 +344,8 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.BUSINESS_ADMINISTRATORS;
+  public Table.TableId getTableId() {
+    return Table.TableId.BUSINESS_ADMINISTRATORS;
   }
 
   public String getTitle() {
@@ -355,10 +373,10 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
   }
 
   public String getWorkPhone() {
-    return work_phone;
+    return workPhone;
   }
 
-  public String getZIP() {
+  public String getZip() {
     return zip;
   }
 
@@ -367,8 +385,7 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
     return
         user != null
             && user.isActive()
-            && user.canAccessAccounting()
-    ;
+            && user.canAccessAccounting();
   }
 
   public boolean isActiveBankAccounting() throws IOException, SQLException {
@@ -376,17 +393,15 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
     return
         user != null
             && user.isActive()
-            && user.canAccessBankAccount()
-    ;
+            && user.canAccessBankAccount();
   }
 
-  public boolean isActiveDNSAdmin() throws IOException, SQLException {
+  public boolean isActiveDnsAdmin() throws IOException, SQLException {
     com.aoindustries.aoserv.client.master.User user = getMasterUser();
     return
         user != null
             && user.isActive()
-            && user.isDNSAdmin()
-    ;
+            && user.isDnsAdmin();
   }
 
   public boolean isActiveTableInvalidator() throws IOException, SQLException {
@@ -394,8 +409,7 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
     return
         user != null
             && user.isActive()
-            && user.canInvalidateTables()
-    ;
+            && user.canInvalidateTables();
   }
 
   public boolean isActiveWebAdmin() throws IOException, SQLException {
@@ -403,8 +417,7 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
     return
         user != null
             && user.isActive()
-            && user.isWebAdmin()
-    ;
+            && user.isWebAdmin();
   }
 
   public boolean isPreferred() {
@@ -422,7 +435,7 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
       password = HashedPassword.valueOf(
           HashedPassword.Algorithm.findAlgorithm(result.getString("password.algorithm")),
           result.getBytes("password.salt"),
-          result.getInt  ("password.iterations"),
+          result.getInt("password.iterations"),
           result.getBytes("password.hash")
       );
       name = result.getString("name");
@@ -432,9 +445,9 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
       isPreferred = result.getBoolean("is_preferred");
       isPrivate = result.getBoolean("private");
       created = UnmodifiableTimestamp.valueOf(result.getTimestamp("created"));
-      work_phone = result.getString("work_phone");
-      home_phone = result.getString("home_phone");
-      cell_phone = result.getString("cell_phone");
+      workPhone = result.getString("work_phone");
+      homePhone = result.getString("home_phone");
+      cellPhone = result.getString("cell_phone");
       fax = result.getString("fax");
       email = USE_SQL_DATA ? result.getObject("email", Email.class) : Email.valueOf(result.getString("email"));
       address1 = result.getString("address1");
@@ -443,12 +456,12 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
       state = result.getString("state");
       country = result.getString("country");
       zip = result.getString("zip");
-      disable_log = result.getInt("disable_log");
+      disableLog = result.getInt("disable_log");
       if (result.wasNull()) {
-        disable_log = -1;
+        disableLog = -1;
       }
-      can_switch_users = result.getBoolean("can_switch_users");
-      support_code = result.getString("support_code");
+      canSwitchUsers = result.getBoolean("can_switch_users");
+      supportCode = result.getString("support_code");
     } catch (ValidationException e) {
       throw new SQLException(e);
     }
@@ -465,9 +478,9 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
       isPreferred = in.readBoolean();
       isPrivate = in.readBoolean();
       created = SQLStreamables.readUnmodifiableTimestamp(in);
-      work_phone = in.readUTF();
-      home_phone = in.readNullUTF();
-      cell_phone = in.readNullUTF();
+      workPhone = in.readUTF();
+      homePhone = in.readNullUTF();
+      cellPhone = in.readNullUTF();
       fax = in.readNullUTF();
       email = Email.valueOf(in.readUTF());
       address1 = in.readNullUTF();
@@ -476,9 +489,9 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
       state = InternUtils.intern(in.readNullUTF());
       country = InternUtils.intern(in.readNullUTF());
       zip = in.readNullUTF();
-      disable_log = in.readCompressedInt();
-      can_switch_users = in.readBoolean();
-      support_code = in.readNullUTF();
+      disableLog = in.readCompressedInt();
+      canSwitchUsers = in.readBoolean();
+      supportCode = in.readNullUTF();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -488,7 +501,7 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
   public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws SQLException, IOException {
     List<CannotRemoveReason<?>> reasons = new ArrayList<>();
 
-    AOServConnector conn = table.getConnector();
+    AoservConnector conn = table.getConnector();
 
     if (equals(conn.getCurrentAdministrator())) {
       reasons.add(new CannotRemoveReason<>("Not allowed to remove self", this));
@@ -514,10 +527,10 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
 
   @Override
   public void remove() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.REMOVE,
-        Table.TableID.BUSINESS_ADMINISTRATORS,
+        AoservProtocol.CommandId.REMOVE,
+        Table.TableId.BUSINESS_ADMINISTRATORS,
         pkey
     );
   }
@@ -529,11 +542,11 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
    */
   @Override
   public void setPassword(String plaintext) throws IOException, SQLException {
-    AOServConnector connector = table.getConnector();
+    AoservConnector connector = table.getConnector();
     if (!connector.isSecure()) {
       throw new IOException("Passwords for business_administrators may only be set when using secure protocols.  Currently using the " + connector.getProtocol() + " protocol, which is not secure.");
     }
-    connector.requestUpdateIL(true, AoservProtocol.CommandID.SET_BUSINESS_ADMINISTRATOR_PASSWORD, pkey, plaintext);
+    connector.requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_BUSINESS_ADMINISTRATOR_PASSWORD, pkey, plaintext);
   }
 
   public void setProfile(
@@ -595,8 +608,8 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
     final String finalZip = zip;
     table.getConnector().requestUpdate(
         true,
-        AoservProtocol.CommandID.SET_BUSINESS_ADMINISTRATOR_PROFILE,
-        new AOServConnector.UpdateRequest() {
+        AoservProtocol.CommandId.SET_BUSINESS_ADMINISTRATOR_PROFILE,
+        new AoservConnector.UpdateRequest() {
           private IntList invalidateList;
 
           @Override
@@ -653,7 +666,7 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
           public void readResponse(StreamableInput in) throws IOException, SQLException {
             int code = in.readByte();
             if (code == AoservProtocol.DONE) {
-              invalidateList = AOServConnector.readInvalidateList(in);
+              invalidateList = AoservConnector.readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
               throw new IOException("Unexpected response code: " + code);
@@ -709,9 +722,9 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
     } else {
       SQLStreamables.writeTimestamp(created, out);
     }
-    out.writeUTF(work_phone);
-    out.writeNullUTF(home_phone);
-    out.writeNullUTF(cell_phone);
+    out.writeUTF(workPhone);
+    out.writeNullUTF(homePhone);
+    out.writeNullUTF(cellPhone);
     out.writeNullUTF(fax);
     out.writeUTF(email.toString());
     out.writeNullUTF(address1);
@@ -720,18 +733,18 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
     out.writeNullUTF(state);
     out.writeNullUTF(country);
     out.writeNullUTF(zip);
-    out.writeCompressedInt(disable_log);
+    out.writeCompressedInt(disableLog);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_118) >= 0) {
-      out.writeBoolean(can_switch_users);
+      out.writeBoolean(canSwitchUsers);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_44) >= 0) {
-      out.writeNullUTF(support_code);
+      out.writeNullUTF(supportCode);
     }
   }
 
   @Override
   public boolean canSetPassword() {
-    return disable_log == -1;
+    return disableLog == -1;
   }
 
   public List<AdministratorPermission> getPermissions() throws IOException, SQLException {
@@ -761,11 +774,12 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
 
   /**
    * Sorts by username.
-   *
-   * TODO: Consider handling comparisons at the AOServTable and making all
-   * AOServObject's comparable.  We could then return things as sets where
+   * <p>
+   * TODO: Consider handling comparisons at the AoservTable and making all
+   * AoservObject's comparable.  We could then return things as sets where
    * appropriate.  Maybe have getMap, getList, getSet, and getSortedSet
    * as appropriate?
+   * </p>
    */
   @Override
   public int compareTo(Administrator o) {

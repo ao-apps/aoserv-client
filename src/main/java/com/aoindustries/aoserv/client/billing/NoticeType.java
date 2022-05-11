@@ -45,13 +45,11 @@ public final class NoticeType extends GlobalObjectStringKey<NoticeType> {
 
   private String description;
 
-  public static final String
-      NONPAY = "nonpay",
-      BADCARD = "badcard",
-      DISABLE_WARNING = "disable_warning",
-      DISABLED = "disabled",
-      ENABLED = "enabled"
-  ;
+  public static final String NONPAY = "nonpay";
+  public static final String BADCARD = "badcard";
+  public static final String DISABLE_WARNING = "disable_warning";
+  public static final String DISABLED = "disabled";
+  public static final String ENABLED = "enabled";
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -80,8 +78,8 @@ public final class NoticeType extends GlobalObjectStringKey<NoticeType> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.NOTICE_TYPES;
+  public Table.TableId getTableId() {
+    return Table.TableId.NOTICE_TYPES;
   }
 
   public String getType() {

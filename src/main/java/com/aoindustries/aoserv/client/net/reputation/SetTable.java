@@ -24,9 +24,9 @@
 package com.aoindustries.aoserv.client.net.reputation;
 
 import com.aoapps.hodgepodge.io.TerminalWriter;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -40,7 +40,7 @@ import java.sql.SQLException;
  */
 public final class SetTable extends CachedTableIntegerKey<Set> {
 
-  SetTable(AOServConnector connector) {
+  SetTable(AoservConnector connector) {
     super(connector, Set.class);
   }
 
@@ -70,21 +70,21 @@ public final class SetTable extends CachedTableIntegerKey<Set> {
    */
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.IP_REPUTATION_SETS;
+  public Table.TableId getTableId() {
+    return Table.TableId.IP_REPUTATION_SETS;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_IP_REPUTATION)) {
-      if (AOSH.checkParamCount(Command.ADD_IP_REPUTATION, args, 5, err)) {
-        connector.getSimpleAOClient().addIpReputation(
+      if (Aosh.checkParamCount(Command.ADD_IP_REPUTATION, args, 5, err)) {
+        connector.getSimpleClient().addIpReputation(
             args[1],
             args[2],
             args[3],
             args[4],
-            AOSH.parseShort(args[5], "score")
+            Aosh.parseShort(args[5], "score")
         );
       }
       return true;

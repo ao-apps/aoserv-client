@@ -90,8 +90,8 @@ public final class UserAcl extends CachedObjectIntegerKey<UserAcl> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.MASTER_HOSTS;
+  public Table.TableId getTableId() {
+    return Table.TableId.MASTER_HOSTS;
   }
 
   @Override

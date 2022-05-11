@@ -46,9 +46,9 @@ public final class TcpRedirect extends CachedObjectIntegerKey<TcpRedirect> {
   static final String COLUMN_NET_BIND_name = "net_bind";
 
   private int cps;
-  private int cps_overload_sleep_time;
-  private HostAddress destination_host;
-  private Port destination_port;
+  private int cpsOverloadSleepTime;
+  private HostAddress destinationHost;
+  private Port destinationPort;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -64,12 +64,18 @@ public final class TcpRedirect extends CachedObjectIntegerKey<TcpRedirect> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_NET_BIND: return pkey;
-      case 1: return cps;
-      case 2: return cps_overload_sleep_time;
-      case 3: return destination_host;
-      case 4: return destination_port;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_NET_BIND:
+        return pkey;
+      case 1:
+        return cps;
+      case 2:
+        return cpsOverloadSleepTime;
+      case 3:
+        return destinationHost;
+      case 4:
+        return destinationPort;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -86,20 +92,20 @@ public final class TcpRedirect extends CachedObjectIntegerKey<TcpRedirect> {
   }
 
   public int getConnectionsPerSecondOverloadSleepTime() {
-    return cps_overload_sleep_time;
+    return cpsOverloadSleepTime;
   }
 
   public HostAddress getDestinationHost() {
-    return destination_host;
+    return destinationHost;
   }
 
   public Port getDestinationPort() {
-    return destination_port;
+    return destinationPort;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.NET_TCP_REDIRECTS;
+  public Table.TableId getTableId() {
+    return Table.TableId.NET_TCP_REDIRECTS;
   }
 
   @Override
@@ -107,9 +113,9 @@ public final class TcpRedirect extends CachedObjectIntegerKey<TcpRedirect> {
     try {
       pkey = result.getInt(1);
       cps = result.getInt(2);
-      cps_overload_sleep_time = result.getInt(3);
-      destination_host = HostAddress.valueOf(result.getString(4));
-      destination_port = Port.valueOf(
+      cpsOverloadSleepTime = result.getInt(3);
+      destinationHost = HostAddress.valueOf(result.getString(4));
+      destinationPort = Port.valueOf(
           result.getInt(5),
           com.aoapps.net.Protocol.TCP
       );
@@ -123,9 +129,9 @@ public final class TcpRedirect extends CachedObjectIntegerKey<TcpRedirect> {
     try {
       pkey = in.readCompressedInt();
       cps = in.readCompressedInt();
-      cps_overload_sleep_time = in.readCompressedInt();
-      destination_host = HostAddress.valueOf(in.readUTF()).intern();
-      destination_port = Port.valueOf(
+      cpsOverloadSleepTime = in.readCompressedInt();
+      destinationHost = HostAddress.valueOf(in.readUTF()).intern();
+      destinationPort = Port.valueOf(
           in.readCompressedInt(),
           com.aoapps.net.Protocol.TCP
       );
@@ -136,15 +142,15 @@ public final class TcpRedirect extends CachedObjectIntegerKey<TcpRedirect> {
 
   @Override
   public String toStringImpl() throws SQLException, IOException {
-    return getNetBind().toStringImpl() + "->" + destination_host.toBracketedString() + ':' + destination_port.getPort();
+    return getNetBind().toStringImpl() + "->" + destinationHost.toBracketedString() + ':' + destinationPort.getPort();
   }
 
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
     out.writeCompressedInt(cps);
-    out.writeCompressedInt(cps_overload_sleep_time);
-    out.writeUTF(destination_host.toString());
-    out.writeCompressedInt(destination_port.getPort());
+    out.writeCompressedInt(cpsOverloadSleepTime);
+    out.writeUTF(destinationHost.toString());
+    out.writeCompressedInt(destinationPort.getPort());
   }
 }

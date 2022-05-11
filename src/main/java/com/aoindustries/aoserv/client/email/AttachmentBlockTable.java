@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.email;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.linux.UserServer;
@@ -39,7 +39,7 @@ import java.util.List;
  */
 public final class AttachmentBlockTable extends CachedTableIntegerKey<AttachmentBlock> {
 
-  AttachmentBlockTable(AOServConnector connector) {
+  AttachmentBlockTable(AoservConnector connector) {
     super(connector, AttachmentBlock.class);
   }
 
@@ -65,7 +65,7 @@ public final class AttachmentBlockTable extends CachedTableIntegerKey<Attachment
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.EMAIL_ATTACHMENT_BLOCKS;
+  public Table.TableId getTableId() {
+    return Table.TableId.EMAIL_ATTACHMENT_BLOCKS;
   }
 }

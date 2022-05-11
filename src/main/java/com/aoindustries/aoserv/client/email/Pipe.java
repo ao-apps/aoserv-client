@@ -53,18 +53,16 @@ import java.util.List;
  */
 public final class Pipe extends CachedObjectIntegerKey<Pipe> implements Removable, Disablable {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_AO_SERVER = 1,
-      COLUMN_PACKAGE = 3
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_AO_SERVER = 1;
+  static final int COLUMN_PACKAGE = 3;
   static final String COLUMN_AO_SERVER_name = "ao_server";
   static final String COLUMN_COMMAND_name = "command";
 
-  private int ao_server;
+  private int aoServer;
   private String command;
   private Account.Name packageName;
-  private int disable_log;
+  private int disableLog;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -83,7 +81,7 @@ public final class Pipe extends CachedObjectIntegerKey<Pipe> implements Removabl
 
   @Override
   public boolean canDisable() {
-    return disable_log == -1;
+    return disableLog == -1;
   }
 
   @Override
@@ -98,39 +96,45 @@ public final class Pipe extends CachedObjectIntegerKey<Pipe> implements Removabl
 
   @Override
   public void disable(DisableLog dl) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.DISABLE, Table.TableID.EMAIL_PIPES, dl.getPkey(), pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.DISABLE, Table.TableId.EMAIL_PIPES, dl.getPkey(), pkey);
   }
 
   @Override
   public void enable() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.ENABLE, Table.TableID.EMAIL_PIPES, pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.ENABLE, Table.TableId.EMAIL_PIPES, pkey);
   }
 
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_AO_SERVER: return ao_server;
-      case 2: return command;
-      case COLUMN_PACKAGE: return packageName;
-      case 4: return disable_log == -1 ? null : disable_log;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_AO_SERVER:
+        return aoServer;
+      case 2:
+        return command;
+      case COLUMN_PACKAGE:
+        return packageName;
+      case 4:
+        return disableLog == -1 ? null : disableLog;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   @Override
   public boolean isDisabled() {
-    return disable_log != -1;
+    return disableLog != -1;
   }
 
   @Override
   public DisableLog getDisableLog() throws SQLException, IOException {
-    if (disable_log == -1) {
+    if (disableLog == -1) {
       return null;
     }
-    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disable_log);
+    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disableLog);
     if (obj == null) {
-      throw new SQLException("Unable to find DisableLog: " + disable_log);
+      throw new SQLException("Unable to find DisableLog: " + disableLog);
     }
     return obj;
   }
@@ -148,28 +152,28 @@ public final class Pipe extends CachedObjectIntegerKey<Pipe> implements Removabl
   }
 
   public Server getLinuxServer() throws SQLException, IOException {
-    Server ao = table.getConnector().getLinux().getServer().get(ao_server);
+    Server ao = table.getConnector().getLinux().getServer().get(aoServer);
     if (ao == null) {
-      throw new SQLException("Unable to find linux.Server: " + ao_server);
+      throw new SQLException("Unable to find linux.Server: " + aoServer);
     }
     return ao;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.EMAIL_PIPES;
+  public Table.TableId getTableId() {
+    return Table.TableId.EMAIL_PIPES;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     try {
       pkey = result.getInt(1);
-      ao_server = result.getInt(2);
+      aoServer = result.getInt(2);
       command = result.getString(3);
       packageName = Account.Name.valueOf(result.getString(4));
-      disable_log = result.getInt(5);
+      disableLog = result.getInt(5);
       if (result.wasNull()) {
-        disable_log = -1;
+        disableLog = -1;
       }
     } catch (ValidationException e) {
       throw new SQLException(e);
@@ -180,10 +184,10 @@ public final class Pipe extends CachedObjectIntegerKey<Pipe> implements Removabl
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
       pkey = in.readCompressedInt();
-      ao_server = in.readCompressedInt();
+      aoServer = in.readCompressedInt();
       command = in.readUTF();
       packageName = Account.Name.valueOf(in.readUTF()).intern();
-      disable_log = in.readCompressedInt();
+      disableLog = in.readCompressedInt();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -196,25 +200,25 @@ public final class Pipe extends CachedObjectIntegerKey<Pipe> implements Removabl
 
   @Override
   public void remove() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.REMOVE,
-        Table.TableID.EMAIL_PIPES,
+        AoservProtocol.CommandId.REMOVE,
+        Table.TableId.EMAIL_PIPES,
         pkey
     );
   }
 
   @Override
   public String toStringImpl() {
-    return ao_server + ":" + command;
+    return aoServer + ":" + command;
   }
 
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeCompressedInt(ao_server);
+    out.writeCompressedInt(aoServer);
     out.writeUTF(command);
     out.writeUTF(packageName.toString());
-    out.writeCompressedInt(disable_log);
+    out.writeCompressedInt(disableLog);
   }
 }

@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.web;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.net.Bind;
@@ -41,16 +41,20 @@ import java.util.List;
  */
 public final class HeaderTable extends CachedTableIntegerKey<Header> {
 
-  HeaderTable(AOServConnector connector) {
+  HeaderTable(AoservConnector connector) {
     super(connector, Header.class);
   }
 
   private static final OrderBy[] defaultOrderBy = {
       new OrderBy(Header.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_SITE_name + '.' + Site.COLUMN_NAME_name, ASCENDING),
-      new OrderBy(Header.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_SITE_name + '.' + Site.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
-      new OrderBy(Header.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_IP_ADDRESS_name + '.' + IpAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
-      new OrderBy(Header.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_IP_ADDRESS_name + '.' + IpAddress.COLUMN_DEVICE_name + '.' + Device.COLUMN_DEVICE_ID_name, ASCENDING),
-      new OrderBy(Header.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_PORT_name, ASCENDING),
+      new OrderBy(Header.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_SITE_name + '.' + Site.COLUMN_AO_SERVER_name
+          + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
+      new OrderBy(Header.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name
+          + '.' + Bind.COLUMN_IP_ADDRESS_name + '.' + IpAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
+      new OrderBy(Header.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name
+          + '.' + Bind.COLUMN_IP_ADDRESS_name + '.' + IpAddress.COLUMN_DEVICE_name + '.' + Device.COLUMN_DEVICE_ID_name, ASCENDING),
+      new OrderBy(Header.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name
+          + '.' + Bind.COLUMN_PORT_name, ASCENDING),
       new OrderBy(Header.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_NAME_name, ASCENDING),
       new OrderBy(Header.COLUMN_SORT_ORDER_name, ASCENDING)
   };
@@ -71,7 +75,7 @@ public final class HeaderTable extends CachedTableIntegerKey<Header> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.HTTPD_SITE_BIND_HEADERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.HTTPD_SITE_BIND_HEADERS;
   }
 }

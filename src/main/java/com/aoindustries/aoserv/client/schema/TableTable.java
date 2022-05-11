@@ -28,14 +28,14 @@ import com.aoapps.hodgepodge.sort.JavaSort;
 import com.aoapps.lang.Throwables;
 import com.aoapps.lang.exception.WrappedException;
 import com.aoapps.sql.SQLUtility;
-import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.AOServObject;
-import com.aoindustries.aoserv.client.AOServTable;
+import com.aoindustries.aoserv.client.AoservConnector;
+import com.aoindustries.aoserv.client.AoservObject;
+import com.aoindustries.aoserv.client.AoservTable;
 import com.aoindustries.aoserv.client.GlobalTableIntegerKey;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.sql.Parser;
-import com.aoindustries.aoserv.client.sql.SQLExpression;
+import com.aoindustries.aoserv.client.sql.SqlExpression;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;
@@ -53,7 +53,7 @@ import java.util.NoSuchElementException;
  */
 public final class TableTable extends GlobalTableIntegerKey<Table> {
 
-  TableTable(AOServConnector connector) {
+  TableTable(AoservConnector connector) {
     super(connector, Table.class);
   }
 
@@ -64,7 +64,7 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
   }
 
   /**
-   * Supports Integer (table_id), String(name), and SchemaTable.TableID (table_id) keys.
+   * Supports Integer (table_id), String(name), and SchemaTable.TableId (table_id) keys.
    *
    * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
    */
@@ -77,15 +77,15 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
       return get(((Number) pkey).intValue());
     } else if (pkey instanceof String) {
       return get((String) pkey);
-    } else if (pkey instanceof Table.TableID) {
-      return get((Table.TableID) pkey);
+    } else if (pkey instanceof Table.TableId) {
+      return get((Table.TableId) pkey);
     } else {
-      throw new IllegalArgumentException("Must be an Integer, a String, or a SchemaTable.TableID");
+      throw new IllegalArgumentException("Must be an Integer, a String, or a SchemaTable.TableId");
     }
   }
 
   /** Avoid repeated array copies. */
-  private static final int numTables = Table.TableID.values().length;
+  private static final int numTables = Table.TableId.values().length;
 
   @Override
   public List<Table> getRows() throws IOException, SQLException {
@@ -98,11 +98,13 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
   }
 
   /**
+   * {@inheritDoc}
+   *
    * @see  #get(java.lang.Object)
    */
   @Override
-  public Table get(int table_id) throws IOException, SQLException {
-    return getRows().get(table_id);
+  public Table get(int tableId) throws IOException, SQLException {
+    return getRows().get(tableId);
   }
 
   /**
@@ -115,20 +117,20 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
   /**
    * @see  #get(java.lang.Object)
    */
-  public Table get(Table.TableID tableID) throws IOException, SQLException {
-    return get(tableID.ordinal());
+  public Table get(Table.TableId tableId) throws IOException, SQLException {
+    return get(tableId.ordinal());
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.SCHEMA_TABLES;
+  public Table.TableId getTableId() {
+    return Table.TableId.SCHEMA_TABLES;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws SQLException, IOException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.DESC) || command.equalsIgnoreCase(Command.DESCRIBE)) {
-      if (AOSH.checkParamCount(Command.DESCRIBE, args, 1, err)) {
+      if (Aosh.checkParamCount(Command.DESCRIBE, args, 1, err)) {
         String tableName = Parser.unquote(args[1]);
         Table table = connector.getSchema().getTable().get(tableName);
         if (table != null) {
@@ -180,7 +182,7 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
       if (table != null) {
         SQLUtility.printTable(
             new String[]{"count"},
-            (Iterable<Object[]>) Collections.singleton(new Object[]{table.getAOServTable(connector).size()}),
+            (Iterable<Object[]>) Collections.singleton(new Object[]{table.getAoservTable(connector).size()}),
             out,
             isInteractive,
             new boolean[]{true}
@@ -252,10 +254,10 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
         }
       }
 
-      AOServTable<?, ?> aoServTable = schemaTable.getAOServTable(connector);
+      AoservTable<?, ?> aoServTable = schemaTable.getAoservTable(connector);
 
       // Parse any order by clause
-      List<SQLExpression> orderExpressions = new ArrayList<>();
+      List<SqlExpression> orderExpressions = new ArrayList<>();
       List<Boolean> sortOrders = new ArrayList<>();
       if (c < argCount) {
         String arg = args[c++];
@@ -281,7 +283,7 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
                               || "ascending".equalsIgnoreCase(expr)
                       )
                   ) {
-                    sortOrders.set(sortOrders.size() - 1, AOServTable.ASCENDING);
+                    sortOrders.set(sortOrders.size() - 1, AoservTable.ASCENDING);
                   } else if (
                       !orderExpressions.isEmpty()
                           && (
@@ -289,10 +291,10 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
                               || "descending".equalsIgnoreCase(expr)
                       )
                   ) {
-                    sortOrders.set(sortOrders.size() - 1, AOServTable.DESCENDING);
+                    sortOrders.set(sortOrders.size() - 1, AoservTable.DESCENDING);
                   } else { // if (!expr.isEmpty()) {
-                    orderExpressions.add(Parser.parseSQLExpression(aoServTable, expr));
-                    sortOrders.add(AOServTable.ASCENDING);
+                    orderExpressions.add(Parser.parseSqlExpression(aoServTable, expr));
+                    sortOrders.add(AoservTable.ASCENDING);
                   }
                 } while (!orderBy.isEmpty());
               }
@@ -312,12 +314,12 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
 
       // Figure out the expressions for each columns
       final int numExpressions = expressions.size();
-      final SQLExpression[] valueExpressions = new SQLExpression[numExpressions];
+      final SqlExpression[] valueExpressions = new SqlExpression[numExpressions];
       final Type[] valueTypes = new Type[numExpressions];
       int supportsAnyPrecisionCount = 0;
       boolean[] rightAligns = new boolean[numExpressions];
       for (int d = 0; d < numExpressions; d++) {
-        SQLExpression sql = Parser.parseSQLExpression(aoServTable, expressions.get(d));
+        SqlExpression sql = Parser.parseSqlExpression(aoServTable, expressions.get(d));
         Type type = sql.getType();
         valueExpressions[d] = sql;
         valueTypes[d] = type;
@@ -328,24 +330,24 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
       }
 
       // Get the data
-      List<AOServObject> rows = null;
+      List<AoservObject> rows = null;
       boolean rowsCopied = false;
       Throwable t0 = null;
       try {
         // Sort if needed
         if (!orderExpressions.isEmpty()) {
-          SQLExpression[] exprs = orderExpressions.toArray(new SQLExpression[orderExpressions.size()]);
+          SqlExpression[] exprs = orderExpressions.toArray(new SqlExpression[orderExpressions.size()]);
           boolean[] orders = new boolean[exprs.length];
           for (int d = 0; d < orders.length; d++) {
             orders[d] = sortOrders.get(d);
           }
-          rows = (List<AOServObject>) aoServTable.getRowsCopy();
+          rows = (List<AoservObject>) aoServTable.getRowsCopy();
           rowsCopied = true;
           connector.sort(JavaSort.getInstance(), rows, exprs, orders);
         } else {
-          rows = (List<AOServObject>) aoServTable.getRows();
+          rows = (List<AoservObject>) aoServTable.getRows();
         }
-        final List<AOServObject> finalRows = rows;
+        final List<AoservObject> finalRows = rows;
         final int numRows = rows.size();
 
         // Evaluate the expressions while finding the maximum precisions per column.
@@ -356,8 +358,8 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
         if (supportsAnyPrecisionCount > 0) {
           // Stop searching if all max precisions have been found
           int precisionsNotMaxedCount = supportsAnyPrecisionCount;
-          ROWS :
-          for (AOServObject<?, ?> row : rows) {
+          ROWS:
+          for (AoservObject<?, ?> row : rows) {
             for (int col = 0; col < numExpressions; col++) {
               Type type = valueTypes[col];
               // Skip evaluation when precision not supported
@@ -413,7 +415,7 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
                   }
                   try {
                     // Convert the results to strings
-                    AOServObject<?, ?> row = finalRows.get(index);
+                    AoservObject<?, ?> row = finalRows.get(index);
                     String[] strings = new String[numExpressions];
                     for (int col = 0; col < numExpressions; col++) {
                       strings[col] = valueTypes[col].getString(

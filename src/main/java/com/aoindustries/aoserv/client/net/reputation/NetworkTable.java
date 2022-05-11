@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.net.reputation;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableLongKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -37,7 +37,7 @@ import java.util.List;
  */
 public final class NetworkTable extends CachedTableLongKey<Network> {
 
-  NetworkTable(AOServConnector connector) {
+  NetworkTable(AoservConnector connector) {
     super(connector, Network.class);
   }
 
@@ -62,7 +62,7 @@ public final class NetworkTable extends CachedTableLongKey<Network> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.IP_REPUTATION_SET_NETWORKS;
+  public Table.TableId getTableId() {
+    return Table.TableId.IP_REPUTATION_SET_NETWORKS;
   }
 }

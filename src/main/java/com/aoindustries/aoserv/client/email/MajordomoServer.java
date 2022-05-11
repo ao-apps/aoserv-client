@@ -79,15 +79,14 @@ public final class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
    */
   public static final String
       OWNER_MAJORDOMO_ADDRESS = "owner-majordomo",
-      MAJORDOMO_OWNER_ADDRESS = "majordomo-owner"
-  ;
+      MAJORDOMO_OWNER_ADDRESS = "majordomo-owner";
 
-  private int linux_server_account;
-  private int linux_server_group;
+  private int linuxServerAccount;
+  private int linuxServerGroup;
   private String version;
-  private int majordomo_pipe_address;
-  private int owner_majordomo_add;
-  private int majordomo_owner_add;
+  private int majordomoPipeAddress;
+  private int ownerMajordomoAdd;
+  private int majordomoOwnerAdd;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -114,14 +113,22 @@ public final class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_DOMAIN: return pkey;
-      case 1: return linux_server_account;
-      case 2: return linux_server_group;
-      case 3: return version;
-      case 4: return majordomo_pipe_address;
-      case 5: return owner_majordomo_add;
-      case 6: return majordomo_owner_add;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_DOMAIN:
+        return pkey;
+      case 1:
+        return linuxServerAccount;
+      case 2:
+        return linuxServerGroup;
+      case 3:
+        return version;
+      case 4:
+        return majordomoPipeAddress;
+      case 5:
+        return ownerMajordomoAdd;
+      case 6:
+        return majordomoOwnerAdd;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -134,33 +141,33 @@ public final class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
   }
 
   public int getLinuxServerAccount_pkey() {
-    return linux_server_account;
+    return linuxServerAccount;
   }
 
   public UserServer getLinuxServerAccount() throws SQLException, IOException {
-    UserServer obj = table.getConnector().getLinux().getUserServer().get(linux_server_account);
+    UserServer obj = table.getConnector().getLinux().getUserServer().get(linuxServerAccount);
     if (obj == null) {
-      throw new SQLException("Unable to find LinuxServerAccount: " + linux_server_account);
+      throw new SQLException("Unable to find LinuxServerAccount: " + linuxServerAccount);
     }
     return obj;
   }
 
   public int getLinuxServerGroup_pkey() {
-    return linux_server_group;
+    return linuxServerGroup;
   }
 
   public GroupServer getLinuxServerGroup() throws SQLException, IOException {
-    GroupServer obj = table.getConnector().getLinux().getGroupServer().get(linux_server_group);
+    GroupServer obj = table.getConnector().getLinux().getGroupServer().get(linuxServerGroup);
     if (obj == null) {
-      throw new SQLException("Unable to find LinuxServerGroup: " + linux_server_group);
+      throw new SQLException("Unable to find LinuxServerGroup: " + linuxServerGroup);
     }
     return obj;
   }
 
   public PipeAddress getMajordomoPipeAddress() throws SQLException, IOException {
-    PipeAddress obj = table.getConnector().getEmail().getPipeAddress().get(majordomo_pipe_address);
+    PipeAddress obj = table.getConnector().getEmail().getPipeAddress().get(majordomoPipeAddress);
     if (obj == null) {
-      throw new SQLException("Unable to find EmailPipeAddress: " + majordomo_pipe_address);
+      throw new SQLException("Unable to find EmailPipeAddress: " + majordomoPipeAddress);
     }
     return obj;
   }
@@ -174,32 +181,32 @@ public final class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
   }
 
   public int getMajordomoOwnerAddress_id() {
-    return majordomo_owner_add;
+    return majordomoOwnerAdd;
   }
 
   public Address getMajordomoOwnerAddress() throws SQLException, IOException {
-    Address obj = table.getConnector().getEmail().getAddress().get(majordomo_owner_add);
+    Address obj = table.getConnector().getEmail().getAddress().get(majordomoOwnerAdd);
     if (obj == null) {
-      throw new SQLException("Unable to find EmailAddress: " + majordomo_owner_add);
+      throw new SQLException("Unable to find EmailAddress: " + majordomoOwnerAdd);
     }
     return obj;
   }
 
   public int getOwnerMajordomoAddress_id() {
-    return owner_majordomo_add;
+    return ownerMajordomoAdd;
   }
 
   public Address getOwnerMajordomoAddress() throws SQLException, IOException {
-    Address obj = table.getConnector().getEmail().getAddress().get(owner_majordomo_add);
+    Address obj = table.getConnector().getEmail().getAddress().get(ownerMajordomoAdd);
     if (obj == null) {
-      throw new SQLException("Unable to find EmailAddress: " + owner_majordomo_add);
+      throw new SQLException("Unable to find EmailAddress: " + ownerMajordomoAdd);
     }
     return obj;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.MAJORDOMO_SERVERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.MAJORDOMO_SERVERS;
   }
 
   public MajordomoVersion getVersion() throws SQLException, IOException {
@@ -213,31 +220,31 @@ public final class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
   @Override
   public void init(ResultSet result) throws SQLException {
     pkey = result.getInt(1);
-    linux_server_account = result.getInt(2);
-    linux_server_group = result.getInt(3);
+    linuxServerAccount = result.getInt(2);
+    linuxServerGroup = result.getInt(3);
     version = result.getString(4);
-    majordomo_pipe_address = result.getInt(5);
-    owner_majordomo_add = result.getInt(6);
-    majordomo_owner_add = result.getInt(7);
+    majordomoPipeAddress = result.getInt(5);
+    ownerMajordomoAdd = result.getInt(6);
+    majordomoOwnerAdd = result.getInt(7);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readCompressedInt();
-    linux_server_account = in.readCompressedInt();
-    linux_server_group = in.readCompressedInt();
+    linuxServerAccount = in.readCompressedInt();
+    linuxServerGroup = in.readCompressedInt();
     version = in.readUTF().intern();
-    majordomo_pipe_address = in.readCompressedInt();
-    owner_majordomo_add = in.readCompressedInt();
-    majordomo_owner_add = in.readCompressedInt();
+    majordomoPipeAddress = in.readCompressedInt();
+    ownerMajordomoAdd = in.readCompressedInt();
+    majordomoOwnerAdd = in.readCompressedInt();
   }
 
   @Override
   public void remove() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.REMOVE,
-        Table.TableID.MAJORDOMO_SERVERS,
+        AoservProtocol.CommandId.REMOVE,
+        Table.TableId.MAJORDOMO_SERVERS,
         pkey
     );
   }
@@ -245,12 +252,12 @@ public final class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeCompressedInt(linux_server_account);
-    out.writeCompressedInt(linux_server_group);
+    out.writeCompressedInt(linuxServerAccount);
+    out.writeCompressedInt(linuxServerGroup);
     out.writeUTF(version);
-    out.writeCompressedInt(majordomo_pipe_address);
-    out.writeCompressedInt(owner_majordomo_add);
-    out.writeCompressedInt(majordomo_owner_add);
+    out.writeCompressedInt(majordomoPipeAddress);
+    out.writeCompressedInt(ownerMajordomoAdd);
+    out.writeCompressedInt(majordomoOwnerAdd);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30) <= 0) {
       out.writeShort(0);
       out.writeShort(7);

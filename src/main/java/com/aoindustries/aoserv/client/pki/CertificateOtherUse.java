@@ -37,10 +37,8 @@ import java.sql.SQLException;
  */
 public final class CertificateOtherUse extends CachedObjectIntegerKey<CertificateOtherUse> {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_SSL_CERTIFICATE = 1
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_SSL_CERTIFICATE = 1;
   static final String COLUMN_SSL_CERTIFICATE_name = "ssl_certificate";
   static final String COLUMN_SORT_ORDER_name = "sort_order";
 
@@ -68,18 +66,24 @@ public final class CertificateOtherUse extends CachedObjectIntegerKey<Certificat
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_SSL_CERTIFICATE: return sslCertificate;
-      case 2: return sortOrder;
-      case 3: return count;
-      case 4: return display;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_SSL_CERTIFICATE:
+        return sslCertificate;
+      case 2:
+        return sortOrder;
+      case 3:
+        return count;
+      case 4:
+        return display;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.SSL_CERTIFICATE_OTHER_USES;
+  public Table.TableId getTableId() {
+    return Table.TableId.SSL_CERTIFICATE_OTHER_USES;
   }
 
   @Override

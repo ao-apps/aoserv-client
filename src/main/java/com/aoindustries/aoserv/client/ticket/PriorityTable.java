@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.ticket;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTableStringKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.sql.SQLException;
  */
 public final class PriorityTable extends GlobalTableStringKey<Priority> {
 
-  PriorityTable(AOServConnector connector) {
+  PriorityTable(AoservConnector connector) {
     super(connector, Priority.class);
   }
 
@@ -51,8 +51,8 @@ public final class PriorityTable extends GlobalTableStringKey<Priority> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.TICKET_PRIORITIES;
+  public Table.TableId getTableId() {
+    return Table.TableId.TICKET_PRIORITIES;
   }
 
   @Override

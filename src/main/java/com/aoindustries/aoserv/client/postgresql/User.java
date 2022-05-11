@@ -74,8 +74,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
    * @author  AO Industries, Inc.
    */
   public static final class Name extends com.aoindustries.aoserv.client.linux.User.Name implements
-      FastExternalizable
-  {
+      FastExternalizable {
 
     /**
      * The maximum length of a PostgreSQL username.
@@ -301,13 +300,11 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
 
   public static final String NO_PASSWORD_DB_VALUE = "";
 
-  private boolean
-      createdb,
-      trace,
-      superPriv,
-      catupd
-  ;
-  private int disable_log;
+  private boolean createdb;
+  private boolean trace;
+  private boolean superPriv;
+  private boolean catupd;
+  private int disableLog;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -332,11 +329,11 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
     return com.aoindustries.aoserv.client.account.User.groupPasswordsSet(getPostgresServerUsers());
   }
 
-  public boolean canCatUPD() {
+  public boolean canCatupd() {
     return catupd;
   }
 
-  public boolean canCreateDB() {
+  public boolean canCreatedb() {
     return createdb;
   }
 
@@ -392,7 +389,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
     if (isSpecial()) {
       throw new SQLException("Refusing to disable special PostgreSQL user: " + this);
     }
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.DISABLE, Table.TableID.POSTGRES_USERS, dl.getPkey(), pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.DISABLE, Table.TableId.POSTGRES_USERS, dl.getPkey(), pkey);
   }
 
   @Override
@@ -400,7 +397,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
     if (isSpecial()) {
       throw new SQLException("Refusing to enable special PostgreSQL user: " + this);
     }
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.ENABLE, Table.TableID.POSTGRES_USERS, pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.ENABLE, Table.TableId.POSTGRES_USERS, pkey);
   }
 
   @Override
@@ -428,21 +425,21 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
 
   @Override
   public boolean isDisabled() {
-    return disable_log != -1;
+    return disableLog != -1;
   }
 
   public Integer getDisableLog_id() {
-    return disable_log == -1 ? null : disable_log;
+    return disableLog == -1 ? null : disableLog;
   }
 
   @Override
   public DisableLog getDisableLog() throws SQLException, IOException {
-    if (disable_log == -1) {
+    if (disableLog == -1) {
       return null;
     }
-    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disable_log);
+    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disableLog);
     if (obj == null) {
-      throw new SQLException("Unable to find DisableLog: " + disable_log);
+      throw new SQLException("Unable to find DisableLog: " + disableLog);
     }
     return obj;
   }
@@ -456,8 +453,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.POSTGRES_USERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.POSTGRES_USERS;
   }
 
   public Name getUsername_username_id() {
@@ -484,9 +481,9 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
       trace = result.getBoolean(3);
       superPriv = result.getBoolean(4);
       catupd = result.getBoolean(5);
-      disable_log = result.getInt(6);
+      disableLog = result.getInt(6);
       if (result.wasNull()) {
-        disable_log = -1;
+        disableLog = -1;
       }
     } catch (ValidationException e) {
       throw new SQLException(e);
@@ -505,7 +502,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
       trace = in.readBoolean();
       superPriv = in.readBoolean();
       catupd = in.readBoolean();
-      disable_log = in.readCompressedInt();
+      disableLog = in.readCompressedInt();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -533,10 +530,10 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
     if (isSpecial()) {
       throw new SQLException("Refusing to remove special PostgreSQL user: " + this);
     }
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.REMOVE,
-        Table.TableID.POSTGRES_USERS,
+        AoservProtocol.CommandId.REMOVE,
+        Table.TableId.POSTGRES_USERS,
         pkey
     );
   }
@@ -557,7 +554,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
     out.writeBoolean(trace);
     out.writeBoolean(superPriv);
     out.writeBoolean(catupd);
-    out.writeCompressedInt(disable_log);
+    out.writeCompressedInt(disableLog);
   }
 
   @Override

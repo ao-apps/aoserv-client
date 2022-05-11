@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.account;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTable;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 public abstract class CachedTableUserNameKey<V extends CachedObjectUserNameKey<V>> extends CachedTable<User.Name, V> {
 
-  protected CachedTableUserNameKey(AOServConnector connector, Class<V> clazz) {
+  protected CachedTableUserNameKey(AoservConnector connector, Class<V> clazz) {
     super(connector, clazz);
   }
 

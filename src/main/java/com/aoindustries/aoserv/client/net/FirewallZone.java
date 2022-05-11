@@ -89,8 +89,7 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
       Comparable<Name>,
       Serializable,
       DtoFactory<com.aoindustries.aoserv.client.dto.FirewallZoneName>,
-      Internable<Name>
-  {
+      Internable<Name> {
 
     private static final long serialVersionUID = 1L;
 
@@ -201,8 +200,7 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
     public boolean equals(Object obj) {
       return
           (obj instanceof Name)
-              && name.equals(((Name) obj).name)
-      ;
+              && name.equals(((Name) obj).name);
     }
 
     @Override
@@ -255,8 +253,7 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
       HOME,
       INTERNAL,
       PUBLIC,
-      WORK
-  ;
+      WORK;
 
   static {
     try {
@@ -271,16 +268,14 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
     }
   }
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_SERVER = 1
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_SERVER = 1;
   static final String COLUMN_SERVER_name = "server";
   static final String COLUMN_NAME_name = "name";
 
   private int server;
   private Name name;
-  private String _short;
+  private String shart;
   private String description;
   private boolean fail2ban;
 
@@ -298,13 +293,20 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_SERVER: return server;
-      case 2: return name;
-      case 3: return _short;
-      case 4: return description;
-      case 5: return fail2ban;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_SERVER:
+        return server;
+      case 2:
+        return name;
+      case 3:
+        return shart;
+      case 4:
+        return description;
+      case 5:
+        return fail2ban;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -321,7 +323,7 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
   }
 
   public String getShort() {
-    return _short;
+    return shart;
   }
 
   public String getDescription() {
@@ -346,8 +348,8 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.FIREWALLD_ZONES;
+  public Table.TableId getTableId() {
+    return Table.TableId.FIREWALLD_ZONES;
   }
 
   @Override
@@ -356,7 +358,7 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
       pkey        = result.getInt(1);
       server      = result.getInt(2);
       name        = Name.valueOf(result.getString(3));
-      _short      = result.getString(4);
+      shart      = result.getString(4);
       description = result.getString(5);
       fail2ban    = result.getBoolean(6);
     } catch (ValidationException e) {
@@ -370,7 +372,7 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
       pkey = in.readCompressedInt();
       server = in.readCompressedInt();
       name = Name.valueOf(in.readUTF()).intern();
-      _short = InternUtils.intern(in.readNullUTF());
+      shart = InternUtils.intern(in.readNullUTF());
       description = InternUtils.intern(in.readNullUTF());
       fail2ban = in.readBoolean();
     } catch (ValidationException e) {
@@ -388,7 +390,7 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
     out.writeCompressedInt(pkey);
     out.writeCompressedInt(server);
     out.writeUTF(name.toString());
-    out.writeNullUTF(_short);
+    out.writeNullUTF(shart);
     out.writeNullUTF(description);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_9) >= 0) {
       out.writeBoolean(fail2ban);

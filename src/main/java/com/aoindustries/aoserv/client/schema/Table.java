@@ -28,9 +28,9 @@ import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.lang.util.InternUtils;
 import com.aoapps.sql.SQLUtility;
-import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.AOServObject;
-import com.aoindustries.aoserv.client.AOServTable;
+import com.aoindustries.aoserv.client.AoservConnector;
+import com.aoindustries.aoserv.client.AoservObject;
+import com.aoindustries.aoserv.client.AoservTable;
 import com.aoindustries.aoserv.client.GlobalObjectIntegerKey;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.sql.Parser;
@@ -50,7 +50,7 @@ public final class Table extends GlobalObjectIntegerKey<Table> {
   /**
    * Each set of tables in the protocol used by this client version.
    */
-  public enum TableID {
+  public enum TableId {
     AO_SERVER_DAEMON_HOSTS,
     AO_SERVERS,
     AOSERV_PERMISSIONS,
@@ -274,14 +274,22 @@ public final class Table extends GlobalObjectIntegerKey<Table> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case 0: return pkey;
-      case COLUMN_NAME: return name;
-      case 2: return sinceVersion;
-      case 3: return lastVersion;
-      case 4: return display;
-      case 5: return isPublic;
-      case 6: return description;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case 0:
+        return pkey;
+      case COLUMN_NAME:
+        return name;
+      case 2:
+        return sinceVersion;
+      case 3:
+        return lastVersion;
+      case 4:
+        return display;
+      case 5:
+        return isPublic;
+      case 6:
+        return description;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -297,10 +305,10 @@ public final class Table extends GlobalObjectIntegerKey<Table> {
     return sinceVersion;
   }
 
-  public AoservProtocol getSinceVersion(AOServConnector connector) throws SQLException, IOException {
+  public AoservProtocol getSinceVersion(AoservConnector connector) throws SQLException, IOException {
     AoservProtocol obj = connector.getSchema().getAoservProtocol().get(sinceVersion);
     if (obj == null) {
-      throw new SQLException("Unable to find AOServProtocol: " + sinceVersion);
+      throw new SQLException("Unable to find AoservProtocol: " + sinceVersion);
     }
     return obj;
   }
@@ -309,13 +317,13 @@ public final class Table extends GlobalObjectIntegerKey<Table> {
     return lastVersion;
   }
 
-  public AoservProtocol getLastVersion(AOServConnector connector) throws SQLException, IOException {
+  public AoservProtocol getLastVersion(AoservConnector connector) throws SQLException, IOException {
     if (lastVersion == null) {
       return null;
     }
     AoservProtocol obj = connector.getSchema().getAoservProtocol().get(lastVersion);
     if (obj == null) {
-      throw new SQLException("Unable to find AOServProtocol: " + lastVersion);
+      throw new SQLException("Unable to find AoservProtocol: " + lastVersion);
     }
     return obj;
   }
@@ -333,8 +341,8 @@ public final class Table extends GlobalObjectIntegerKey<Table> {
   }
 
   @Override
-  public TableID getTableID() {
-    return TableID.SCHEMA_TABLES;
+  public TableId getTableId() {
+    return TableId.SCHEMA_TABLES;
   }
 
   @Override
@@ -401,27 +409,27 @@ public final class Table extends GlobalObjectIntegerKey<Table> {
     return name;
   }
 
-  public AOServTable<?, ? extends AOServObject<?, ?>> getAOServTable(AOServConnector connector) {
+  public AoservTable<?, ? extends AoservObject<?, ?>> getAoservTable(AoservConnector connector) {
     return connector.getTable(pkey);
   }
 
-  public List<Command> getAOSHCommands(AOServConnector connector) throws IOException, SQLException {
-    return connector.getAosh().getCommand().getAOSHCommands(this);
+  public List<Command> getAoshCommands(AoservConnector connector) throws IOException, SQLException {
+    return connector.getAosh().getCommand().getAoshCommands(this);
   }
 
-  public Column getSchemaColumn(AOServConnector connector, String name) throws IOException, SQLException {
+  public Column getSchemaColumn(AoservConnector connector, String name) throws IOException, SQLException {
     return connector.getSchema().getColumn().getSchemaColumn(this, name);
   }
 
-  public Column getSchemaColumn(AOServConnector connector, int index) throws IOException, SQLException {
+  public Column getSchemaColumn(AoservConnector connector, int index) throws IOException, SQLException {
     return connector.getSchema().getColumn().getSchemaColumn(this, index);
   }
 
-  public List<Column> getSchemaColumns(AOServConnector connector) throws IOException, SQLException {
+  public List<Column> getSchemaColumns(AoservConnector connector) throws IOException, SQLException {
     return connector.getSchema().getColumn().getSchemaColumns(this);
   }
 
-  public List<ForeignKey> getSchemaForeignKeys(AOServConnector connector) throws IOException, SQLException {
+  public List<ForeignKey> getSchemaForeignKeys(AoservConnector connector) throws IOException, SQLException {
     return connector.getSchema().getForeignKey().getSchemaForeignKeys(this);
   }
 
@@ -439,7 +447,7 @@ public final class Table extends GlobalObjectIntegerKey<Table> {
       Type.alignRight(Type.STRING) // description
   };
 
-  private static String formatForeignKeys(AOServConnector connector, List<ForeignKey> fkeys, boolean foreign) throws IOException, SQLException {
+  private static String formatForeignKeys(AoservConnector connector, List<ForeignKey> fkeys, boolean foreign) throws IOException, SQLException {
     if (!fkeys.isEmpty()) {
       StringBuilder sb = new StringBuilder();
       for (ForeignKey key : fkeys) {
@@ -458,7 +466,7 @@ public final class Table extends GlobalObjectIntegerKey<Table> {
     }
   }
 
-  public void printDescription(AOServConnector connector, TerminalWriter out, boolean isInteractive) throws IOException, SQLException {
+  public void printDescription(AoservConnector connector, TerminalWriter out, boolean isInteractive) throws IOException, SQLException {
     out.println();
     out.boldOn();
     out.print("TABLE NAME");

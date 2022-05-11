@@ -25,10 +25,10 @@ package com.aoindustries.aoserv.client.email;
 
 import com.aoapps.hodgepodge.io.TerminalWriter;
 import com.aoapps.net.Email;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
@@ -48,7 +48,7 @@ import java.util.List;
  */
 public final class ForwardingTable extends CachedTableIntegerKey<Forwarding> {
 
-  ForwardingTable(AOServConnector connector) {
+  ForwardingTable(AoservConnector connector) {
     super(connector, Forwarding.class);
   }
 
@@ -66,10 +66,10 @@ public final class ForwardingTable extends CachedTableIntegerKey<Forwarding> {
   }
 
   int addEmailForwarding(Address emailAddressObject, Email destination) throws IOException, SQLException {
-    return connector.requestIntQueryIL(
+    return connector.requestIntQueryInvalidating(
         true,
-        AoservProtocol.CommandID.ADD,
-        Table.TableID.EMAIL_FORWARDING,
+        AoservProtocol.CommandId.ADD,
+        Table.TableId.EMAIL_FORWARDING,
         emailAddressObject.getPkey(),
         destination
     );
@@ -122,13 +122,13 @@ public final class ForwardingTable extends CachedTableIntegerKey<Forwarding> {
   }
 
   public List<Forwarding> getEmailForwarding(Server ao) throws SQLException, IOException {
-    int aoPKey = ao.getPkey();
+    int aoPkey = ao.getPkey();
     List<Forwarding> cached = getRows();
     int len = cached.size();
     List<Forwarding> matches = new ArrayList<>(len);
     for (int c = 0; c < len; c++) {
       Forwarding forward = cached.get(c);
-      if (forward.getEmailAddress().getDomain().getLinuxServer_host_id() == aoPKey) {
+      if (forward.getEmailAddress().getDomain().getLinuxServer_host_id() == aoPkey) {
         matches.add(forward);
       }
     }
@@ -136,15 +136,15 @@ public final class ForwardingTable extends CachedTableIntegerKey<Forwarding> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.EMAIL_FORWARDING;
+  public Table.TableId getTableId() {
+    return Table.TableId.EMAIL_FORWARDING;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_EMAIL_FORWARDING)) {
-      if (AOSH.checkMinParamCount(Command.ADD_EMAIL_FORWARDING, args, 3, err)) {
+      if (Aosh.checkMinParamCount(Command.ADD_EMAIL_FORWARDING, args, 3, err)) {
         if ((args.length % 3) != 1) {
           err.println("aosh: " + Command.ADD_EMAIL_FORWARDING + ": must have multiple of three number of parameters");
           err.flush();
@@ -158,11 +158,11 @@ public final class ForwardingTable extends CachedTableIntegerKey<Forwarding> {
               err.flush();
             } else {
               out.println(
-                  connector.getSimpleAOClient().addEmailForwarding(
+                  connector.getSimpleClient().addEmailForwarding(
                       addr.substring(0, pos),
-                      AOSH.parseDomainName(addr.substring(pos + 1), "address"),
+                      Aosh.parseDomainName(addr.substring(pos + 1), "address"),
                       args[c + 1],
-                      AOSH.parseEmail(args[c + 2], "to_address")
+                      Aosh.parseEmail(args[c + 2], "to_address")
                   )
               );
               out.flush();
@@ -172,7 +172,7 @@ public final class ForwardingTable extends CachedTableIntegerKey<Forwarding> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.REMOVE_EMAIL_FORWARDING)) {
-      if (AOSH.checkParamCount(Command.REMOVE_EMAIL_FORWARDING, args, 3, err)) {
+      if (Aosh.checkParamCount(Command.REMOVE_EMAIL_FORWARDING, args, 3, err)) {
         String addr = args[1];
         int pos = addr.indexOf('@');
         if (pos == -1) {
@@ -180,11 +180,11 @@ public final class ForwardingTable extends CachedTableIntegerKey<Forwarding> {
           err.println(addr);
           err.flush();
         } else {
-          connector.getSimpleAOClient().removeEmailForwarding(
+          connector.getSimpleClient().removeEmailForwarding(
               addr.substring(0, pos),
-              AOSH.parseDomainName(addr.substring(pos + 1), "domain"),
+              Aosh.parseDomainName(addr.substring(pos + 1), "domain"),
               args[2],
-              AOSH.parseEmail(args[3], "destination")
+              Aosh.parseEmail(args[3], "destination")
           );
         }
       }

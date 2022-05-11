@@ -53,10 +53,8 @@ import java.util.Collections;
  */
 public final class List extends CachedObjectIntegerKey<List> implements Removable, Disablable {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_LINUX_SERVER_ACCOUNT = 2
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_LINUX_SERVER_ACCOUNT = 2;
   static final String COLUMN_LINUX_SERVER_ACCOUNT_name = "linux_server_account";
   static final String COLUMN_PATH_name = "path";
 
@@ -71,9 +69,9 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
   public static final int MAX_NAME_LENGTH = 64;
 
   private PosixPath path;
-  private int linux_server_account;
-  private int linux_server_group;
-  private int disable_log;
+  private int linuxServerAccount;
+  private int linuxserverGroup;
+  private int disableLog;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -92,7 +90,7 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
 
   @Override
   public boolean canDisable() {
-    return disable_log == -1;
+    return disableLog == -1;
   }
 
   @Override
@@ -104,19 +102,18 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
       return
           dl.canEnable()
               && !getLinuxServerGroup().getLinuxGroup().getPackage().isDisabled()
-              && !getLinuxServerAccount().isDisabled()
-      ;
+              && !getLinuxServerAccount().isDisabled();
     }
   }
 
   @Override
   public void disable(DisableLog dl) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.DISABLE, Table.TableID.EMAIL_LISTS, dl.getPkey(), pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.DISABLE, Table.TableId.EMAIL_LISTS, dl.getPkey(), pkey);
   }
 
   @Override
   public void enable() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.ENABLE, Table.TableID.EMAIL_LISTS, pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.ENABLE, Table.TableId.EMAIL_LISTS, pkey);
   }
 
   /**
@@ -124,7 +121,7 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
    * The list is obtained from a file on the server that hosts the list.
    */
   public String getAddressList() throws IOException, SQLException {
-    return table.getConnector().requestStringQuery(true, AoservProtocol.CommandID.GET_EMAIL_LIST_ADDRESS_LIST, pkey);
+    return table.getConnector().requestStringQuery(true, AoservProtocol.CommandId.GET_EMAIL_LIST_ADDRESS_LIST, pkey);
   }
 
   /**
@@ -146,28 +143,34 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case 1: return path;
-      case COLUMN_LINUX_SERVER_ACCOUNT: return linux_server_account;
-      case 3: return linux_server_group;
-      case 4: return disable_log == -1 ? null : disable_log;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case 1:
+        return path;
+      case COLUMN_LINUX_SERVER_ACCOUNT:
+        return linuxServerAccount;
+      case 3:
+        return linuxserverGroup;
+      case 4:
+        return disableLog == -1 ? null : disableLog;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   @Override
   public boolean isDisabled() {
-    return disable_log != -1;
+    return disableLog != -1;
   }
 
   @Override
   public DisableLog getDisableLog() throws SQLException, IOException {
-    if (disable_log == -1) {
+    if (disableLog == -1) {
       return null;
     }
-    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disable_log);
+    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disableLog);
     if (obj == null) {
-      throw new SQLException("Unable to find DisableLog: " + disable_log);
+      throw new SQLException("Unable to find DisableLog: " + disableLog);
     }
     return obj;
   }
@@ -181,25 +184,25 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
   }
 
   public int getLinuxServerAccount_pkey() {
-    return linux_server_account;
+    return linuxServerAccount;
   }
 
   public UserServer getLinuxServerAccount() throws SQLException, IOException {
-    UserServer linuxServerAccountObject = table.getConnector().getLinux().getUserServer().get(linux_server_account);
+    UserServer linuxServerAccountObject = table.getConnector().getLinux().getUserServer().get(linuxServerAccount);
     if (linuxServerAccountObject == null) {
-      throw new SQLException("Unable to find LinuxServerAccount: " + linux_server_account);
+      throw new SQLException("Unable to find LinuxServerAccount: " + linuxServerAccount);
     }
     return linuxServerAccountObject;
   }
 
   public int getLinuxServerGroup_pkey() {
-    return linux_server_group;
+    return linuxserverGroup;
   }
 
   public GroupServer getLinuxServerGroup() throws SQLException, IOException {
-    GroupServer linuxServerGroupObject = table.getConnector().getLinux().getGroupServer().get(linux_server_group);
+    GroupServer linuxServerGroupObject = table.getConnector().getLinux().getGroupServer().get(linuxserverGroup);
     if (linuxServerGroupObject == null) {
-      throw new SQLException("Unable to find LinuxServerGroup: " + linux_server_group);
+      throw new SQLException("Unable to find LinuxServerGroup: " + linuxserverGroup);
     }
     return linuxServerGroupObject;
   }
@@ -211,7 +214,7 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
    */
   public static PosixPath getListPath(String name, int osv) throws ValidationException {
     switch (osv) {
-      case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64 :
+      case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64:
         if (name.length() > 1) {
           return PosixPath.valueOf(
               LIST_DIRECTORY
@@ -226,7 +229,7 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
           PosixPath.valueOf(invalidPath);
           throw new AssertionError(invalidPath + " is invalid and should have already thrown " + ValidationException.class.getName());
         }
-      case OperatingSystemVersion.CENTOS_7_X86_64 :
+      case OperatingSystemVersion.CENTOS_7_X86_64:
         if (name.length() > 1) {
           return PosixPath.valueOf(
               LIST_DIRECTORY
@@ -239,7 +242,7 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
           PosixPath.valueOf(invalidPath);
           throw new AssertionError(invalidPath + " is invalid and should have already thrown " + ValidationException.class.getName());
         }
-      default :
+      default:
         throw new AssertionError("Unexpected OperatingSystemVersion: " + osv);
     }
   }
@@ -253,8 +256,8 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.EMAIL_LISTS;
+  public Table.TableId getTableId() {
+    return Table.TableId.EMAIL_LISTS;
   }
 
   @Override
@@ -262,11 +265,11 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
     try {
       pkey = result.getInt(1);
       path = PosixPath.valueOf(result.getString(2));
-      linux_server_account = result.getInt(3);
-      linux_server_group = result.getInt(4);
-      disable_log = result.getInt(5);
+      linuxServerAccount = result.getInt(3);
+      linuxserverGroup = result.getInt(4);
+      disableLog = result.getInt(5);
       if (result.wasNull()) {
-        disable_log = -1;
+        disableLog = -1;
       }
     } catch (ValidationException e) {
       throw new SQLException(e);
@@ -275,8 +278,9 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
 
   /**
    * Checks the validity of a list name.
-   *
+   * <p>
    * TODO: Self-validating type
+   * </p>
    *
    * @see  OperatingSystemVersion#isValidEmailListRegularPath(com.aoindustries.aoserv.client.linux.PosixPath)
    */
@@ -291,7 +295,7 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
     }
     pathStr = pathStr.substring(LIST_DIRECTORY.length() + 1);
     switch (osv) {
-      case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64 : {
+      case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64: {
         if (pathStr.length() < 2) {
           return false;
         }
@@ -331,7 +335,7 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
         }
         return true;
       }
-      case OperatingSystemVersion.CENTOS_7_X86_64 : {
+      case OperatingSystemVersion.CENTOS_7_X86_64: {
         int len = pathStr.length();
         if (len < 1 || len > MAX_NAME_LENGTH) {
           return false;
@@ -361,7 +365,7 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
         }
         return true;
       }
-      default :
+      default:
         throw new AssertionError("Unexpected OperatingSystemVersion: " + osv);
     }
   }
@@ -371,9 +375,9 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
     try {
       pkey = in.readCompressedInt();
       path = PosixPath.valueOf(in.readUTF());
-      linux_server_account = in.readCompressedInt();
-      linux_server_group = in.readCompressedInt();
-      disable_log = in.readCompressedInt();
+      linuxServerAccount = in.readCompressedInt();
+      linuxserverGroup = in.readCompressedInt();
+      disableLog = in.readCompressedInt();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -386,28 +390,28 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
 
   @Override
   public void remove() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.REMOVE,
-        Table.TableID.EMAIL_LISTS,
+        AoservProtocol.CommandId.REMOVE,
+        Table.TableId.EMAIL_LISTS,
         pkey
     );
   }
 
   public void setAddressList(String addresses) throws IOException, SQLException {
-    table.getConnector().requestUpdate(true, AoservProtocol.CommandID.SET_EMAIL_LIST_ADDRESS_LIST, pkey, addresses);
+    table.getConnector().requestUpdate(true, AoservProtocol.CommandId.SET_EMAIL_LIST_ADDRESS_LIST, pkey, addresses);
   }
 
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
     out.writeUTF(path.toString());
-    out.writeCompressedInt(linux_server_account);
-    out.writeCompressedInt(linux_server_group);
+    out.writeCompressedInt(linuxServerAccount);
+    out.writeCompressedInt(linuxserverGroup);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30) <= 0) {
       out.writeShort(0);
       out.writeShort(7);
     }
-    out.writeCompressedInt(disable_log);
+    out.writeCompressedInt(disableLog);
   }
 }

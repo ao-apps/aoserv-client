@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.linux;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 public final class ShellTable extends GlobalTablePosixPathKey<Shell> {
 
-  ShellTable(AOServConnector connector) {
+  ShellTable(AoservConnector connector) {
     super(connector, Shell.class);
   }
 
@@ -50,8 +50,8 @@ public final class ShellTable extends GlobalTablePosixPathKey<Shell> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.SHELLS;
+  public Table.TableId getTableId() {
+    return Table.TableId.SHELLS;
   }
 
   @Override

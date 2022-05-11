@@ -33,8 +33,8 @@ import com.aoapps.security.SecurityStreamables;
 import com.aoapps.security.SmallIdentifier;
 import com.aoapps.sql.SQLStreamables;
 import com.aoapps.sql.UnmodifiableTimestamp;
-import com.aoindustries.aoserv.client.AOServObject;
-import com.aoindustries.aoserv.client.AOServTable;
+import com.aoindustries.aoserv.client.AoservObject;
+import com.aoindustries.aoserv.client.AoservTable;
 import com.aoindustries.aoserv.client.SingleTableObject;
 import com.aoindustries.aoserv.client.account.Administrator;
 import com.aoindustries.aoserv.client.account.User;
@@ -52,7 +52,7 @@ import java.util.Objects;
  *
  * @author  AO Industries, Inc.
  */
-public class Process extends AOServObject<SmallIdentifier, Process> implements SingleTableObject<SmallIdentifier, Process> {
+public class Process extends AoservObject<SmallIdentifier, Process> implements SingleTableObject<SmallIdentifier, Process> {
 
   static final int COLUMN_ID = 0;
 
@@ -62,29 +62,28 @@ public class Process extends AOServObject<SmallIdentifier, Process> implements S
   public static final String
       LOGIN = "login",
       RUN = "run",
-      SLEEP = "sleep"
-  ;
+      SLEEP = "sleep";
 
   protected SmallIdentifier id;
   protected Identifier connectorId;
-  protected User.Name authenticated_user;
-  protected User.Name effective_user;
-  protected int daemon_server;
+  protected User.Name authenticatedUser;
+  protected User.Name effectiveUser;
+  protected int daemonServer;
   protected InetAddress host;
   protected String protocol;
-  protected String aoserv_protocol;
-  protected boolean is_secure;
-  protected UnmodifiableTimestamp connect_time;
-  protected long use_count;
-  protected long total_time;
+  protected String aoservProtocol;
+  protected boolean isSecure;
+  protected UnmodifiableTimestamp connectTime;
+  protected long useCount;
+  protected long totalTime;
   protected int priority;
   protected String state;
   private String[] command;
   // TODO: Add tracking of which daemon(s) is(are) currently connected to by the master process.
   //       This would greatly aid in seeing when a daemon is stalling the system.
-  protected UnmodifiableTimestamp state_start_time;
+  protected UnmodifiableTimestamp stateStartTime;
 
-  private AOServTable<SmallIdentifier, Process> table;
+  private AoservTable<SmallIdentifier, Process> table;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -102,28 +101,45 @@ public class Process extends AOServObject<SmallIdentifier, Process> implements S
   @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_ID: return id;
-      case 1: return connectorId;
-      case 2: return authenticated_user;
-      case 3: return effective_user;
-      case 4: return daemon_server == -1 ? null : daemon_server;
-      case 5: return host;
-      case 6: return protocol;
-      case 7: return aoserv_protocol;
-      case 8: return is_secure;
-      case 9: return connect_time;
-      case 10: return use_count;
-      case 11: return total_time;
-      case 12: return priority;
-      case 13: return state;
-      case 14: return combineCommand(getCommand()); // TODO: Support arrays
-      case 15: return state_start_time;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_ID:
+        return id;
+      case 1:
+        return connectorId;
+      case 2:
+        return authenticatedUser;
+      case 3:
+        return effectiveUser;
+      case 4:
+        return daemonServer == -1 ? null : daemonServer;
+      case 5:
+        return host;
+      case 6:
+        return protocol;
+      case 7:
+        return aoservProtocol;
+      case 8:
+        return isSecure;
+      case 9:
+        return connectTime;
+      case 10:
+        return useCount;
+      case 11:
+        return totalTime;
+      case 12:
+        return priority;
+      case 13:
+        return state;
+      case 14:
+        return combineCommand(getCommand()); // TODO: Support arrays
+      case 15:
+        return stateStartTime;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   public int getDaemonServer() {
-    return daemon_server;
+    return daemonServer;
   }
 
   public int getPriority() {
@@ -139,22 +155,22 @@ public class Process extends AOServObject<SmallIdentifier, Process> implements S
   }
 
   public User.Name getAuthenticatedAdministrator_username() {
-    return authenticated_user;
+    return authenticatedUser;
   }
 
   public Administrator getAuthenticatedAdministrator() throws IOException, SQLException {
     // Null OK when filtered
-    return table.getConnector().getAccount().getAdministrator().get(authenticated_user);
+    return table.getConnector().getAccount().getAdministrator().get(authenticatedUser);
   }
 
   public User.Name getEffectiveAdministrator_username() {
-    return effective_user;
+    return effectiveUser;
   }
 
   public Administrator getEffectiveAdministrator() throws SQLException, IOException {
-    Administrator obj = table.getConnector().getAccount().getAdministrator().get(effective_user);
+    Administrator obj = table.getConnector().getAccount().getAdministrator().get(effectiveUser);
     if (obj == null) {
-      throw new SQLException("Unable to find Administrator: " + effective_user);
+      throw new SQLException("Unable to find Administrator: " + effectiveUser);
     }
     return obj;
   }
@@ -167,25 +183,25 @@ public class Process extends AOServObject<SmallIdentifier, Process> implements S
     return protocol;
   }
 
-  public String getAOServProtocol() {
-    return aoserv_protocol;
+  public String getAoservProtocol() {
+    return aoservProtocol;
   }
 
   public boolean isSecure() {
-    return is_secure;
+    return isSecure;
   }
 
   @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
   public UnmodifiableTimestamp getConnectTime() {
-    return connect_time;
+    return connectTime;
   }
 
   public long getUseCount() {
-    return use_count;
+    return useCount;
   }
 
   public long getTotalTime() {
-    return total_time;
+    return totalTime;
   }
 
   public String getState() {
@@ -194,7 +210,7 @@ public class Process extends AOServObject<SmallIdentifier, Process> implements S
 
   @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
   public UnmodifiableTimestamp getStateStartTime() {
-    return state_start_time;
+    return stateStartTime;
   }
 
   @Override
@@ -203,13 +219,13 @@ public class Process extends AOServObject<SmallIdentifier, Process> implements S
   }
 
   @Override
-  public AOServTable<SmallIdentifier, Process> getTable() {
+  public AoservTable<SmallIdentifier, Process> getTable() {
     return table;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.MASTER_PROCESSES;
+  public Table.TableId getTableId() {
+    return Table.TableId.MASTER_PROCESSES;
   }
 
   @Override
@@ -222,16 +238,16 @@ public class Process extends AOServObject<SmallIdentifier, Process> implements S
     try {
       id = SecurityStreamables.readSmallIdentifier(in);
       connectorId = SecurityStreamables.readNullIdentifier(in);
-      authenticated_user = InternUtils.intern(User.Name.valueOf(in.readNullUTF()));
-      effective_user = InternUtils.intern(User.Name.valueOf(in.readNullUTF()));
-      daemon_server = in.readCompressedInt();
+      authenticatedUser = InternUtils.intern(User.Name.valueOf(in.readNullUTF()));
+      effectiveUser = InternUtils.intern(User.Name.valueOf(in.readNullUTF()));
+      daemonServer = in.readCompressedInt();
       host = InetAddress.valueOf(in.readUTF()).intern();
       protocol = in.readUTF().intern();
-      aoserv_protocol = InternUtils.intern(in.readNullUTF());
-      is_secure = in.readBoolean();
-      connect_time = SQLStreamables.readUnmodifiableTimestamp(in);
-      use_count = in.readLong();
-      total_time = in.readLong();
+      aoservProtocol = InternUtils.intern(in.readNullUTF());
+      isSecure = in.readBoolean();
+      connectTime = SQLStreamables.readUnmodifiableTimestamp(in);
+      useCount = in.readLong();
+      totalTime = in.readLong();
       priority = in.readCompressedInt();
       state = in.readUTF().intern();
       int len = in.readCompressedInt();
@@ -243,7 +259,7 @@ public class Process extends AOServObject<SmallIdentifier, Process> implements S
           command[i] = in.readNullUTF();
         }
       }
-      state_start_time = SQLStreamables.readUnmodifiableTimestamp(in);
+      stateStartTime = SQLStreamables.readUnmodifiableTimestamp(in);
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -273,7 +289,7 @@ public class Process extends AOServObject<SmallIdentifier, Process> implements S
   }
 
   @Override
-  public void setTable(AOServTable<SmallIdentifier, Process> table) {
+  public void setTable(AoservTable<SmallIdentifier, Process> table) {
     if (this.table != null) {
       throw new IllegalStateException("table already set");
     }
@@ -284,80 +300,80 @@ public class Process extends AOServObject<SmallIdentifier, Process> implements S
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     // Get values under lock before writing.  This is done here because
     // these objects are used on the master to track process states, and the objects can change at any time
-    SmallIdentifier _id;
-    Identifier _connectorId;
-    User.Name _authenticated_user;
-    User.Name _effective_user;
-    int _daemon_server;
-    InetAddress _host;
-    String _protocol;
-    String _aoserv_protocol;
-    boolean _is_secure;
-    UnmodifiableTimestamp _connect_time;
-    long _use_count;
-    long _total_time;
-    int _priority;
-    String _state;
-    String[] _command;
-    UnmodifiableTimestamp _state_start_time;
+    SmallIdentifier myId;
+    Identifier myConnectorId;
+    User.Name myAuthenticatedUser;
+    User.Name myEffectiveUser;
+    int myDaemonServer;
+    InetAddress myHost;
+    String myProtocol;
+    String myAoservProtocol;
+    boolean myIsSecure;
+    UnmodifiableTimestamp myConnectTime;
+    long myUseCount;
+    long myTotalTime;
+    int myPriority;
+    String myState;
+    String[] myCommand;
+    UnmodifiableTimestamp myStateStartTime;
     synchronized (this) {
-      _id = id;
-      _connectorId = connectorId;
-      _authenticated_user = authenticated_user;
-      _effective_user = effective_user;
-      _daemon_server = daemon_server;
-      _host = host;
-      _protocol = protocol;
-      _aoserv_protocol = aoserv_protocol;
-      _is_secure = is_secure;
-      _connect_time = connect_time;
-      _use_count = use_count;
-      _total_time = total_time;
-      _priority = priority;
-      _state = state;
-      _command = getCommand(); // Using method since subclass overrides this to generate command from master server-side objects
-      _state_start_time = state_start_time;
+      myId = id;
+      myConnectorId = connectorId;
+      myAuthenticatedUser = authenticatedUser;
+      myEffectiveUser = effectiveUser;
+      myDaemonServer = daemonServer;
+      myHost = host;
+      myProtocol = protocol;
+      myAoservProtocol = aoservProtocol;
+      myIsSecure = isSecure;
+      myConnectTime = connectTime;
+      myUseCount = useCount;
+      myTotalTime = totalTime;
+      myPriority = priority;
+      myState = state;
+      myCommand = getCommand(); // Using method since subclass overrides this to generate command from master server-side objects
+      myStateStartTime = stateStartTime;
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
-      out.writeLong(_id.getValue());
+      out.writeLong(myId.getValue());
       // Old clients had a 64-bit ID, just send them the low-order bits
-      out.writeLong(_connectorId == null ? -1 : _connectorId.getLo());
+      out.writeLong(myConnectorId == null ? -1 : myConnectorId.getLo());
     } else {
-      SecurityStreamables.writeSmallIdentifier(_id, out);
-      SecurityStreamables.writeNullIdentifier(_connectorId, out);
+      SecurityStreamables.writeSmallIdentifier(myId, out);
+      SecurityStreamables.writeNullIdentifier(myConnectorId, out);
     }
-    out.writeNullUTF(Objects.toString(_authenticated_user, null));
-    out.writeNullUTF(Objects.toString(_effective_user, null));
-    out.writeCompressedInt(_daemon_server);
-    out.writeUTF(_host.toString());
-    out.writeUTF(_protocol);
+    out.writeNullUTF(Objects.toString(myAuthenticatedUser, null));
+    out.writeNullUTF(Objects.toString(myEffectiveUser, null));
+    out.writeCompressedInt(myDaemonServer);
+    out.writeUTF(myHost.toString());
+    out.writeUTF(myProtocol);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_101) >= 0) {
-      out.writeNullUTF(_aoserv_protocol);
+      out.writeNullUTF(myAoservProtocol);
     }
-    out.writeBoolean(_is_secure);
+    out.writeBoolean(myIsSecure);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
-      out.writeLong(_connect_time.getTime());
+      out.writeLong(myConnectTime.getTime());
     } else {
-      SQLStreamables.writeTimestamp(_connect_time, out);
+      SQLStreamables.writeTimestamp(myConnectTime, out);
     }
-    out.writeLong(_use_count);
-    out.writeLong(_total_time);
-    out.writeCompressedInt(_priority);
-    out.writeUTF(_state);
+    out.writeLong(myUseCount);
+    out.writeLong(myTotalTime);
+    out.writeCompressedInt(myPriority);
+    out.writeUTF(myState);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
-      out.writeNullUTF(combineCommand(_command));
-      out.writeLong(_state_start_time.getTime());
+      out.writeNullUTF(combineCommand(myCommand));
+      out.writeLong(myStateStartTime.getTime());
     } else {
-      if (_command == null) {
+      if (myCommand == null) {
         out.writeCompressedInt(-1);
       } else {
-        int len = _command.length;
+        int len = myCommand.length;
         out.writeCompressedInt(len);
         for (int i = 0; i < len; i++) {
-          out.writeNullUTF(_command[i]);
+          out.writeNullUTF(myCommand[i]);
         }
       }
-      SQLStreamables.writeTimestamp(_state_start_time, out);
+      SQLStreamables.writeTimestamp(myStateStartTime, out);
     }
   }
 }

@@ -66,8 +66,8 @@ public final class ForbiddenZone extends GlobalObjectStringKey<ForbiddenZone> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.DNS_FORBIDDEN_ZONES;
+  public Table.TableId getTableId() {
+    return Table.TableId.DNS_FORBIDDEN_ZONES;
   }
 
   public String getZone() {

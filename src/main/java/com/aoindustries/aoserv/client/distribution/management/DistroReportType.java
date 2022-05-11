@@ -61,8 +61,7 @@ public final class DistroReportType extends GlobalObjectStringKey<DistroReportTy
       PERMISSIONS    = "PR",
       SETUID         = "SU",
       SYMLINK        = "SY",
-      TYPE           = "TY"
-  ;
+      TYPE           = "TY";
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -100,8 +99,8 @@ public final class DistroReportType extends GlobalObjectStringKey<DistroReportTy
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.DISTRO_REPORT_TYPES;
+  public Table.TableId getTableId() {
+    return Table.TableId.DISTRO_REPORT_TYPES;
   }
 
   @Override

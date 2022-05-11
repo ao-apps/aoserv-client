@@ -45,13 +45,11 @@ import java.sql.SQLException;
  */
 public final class HttpdBind extends CachedObjectIntegerKey<HttpdBind> {
 
-  static final int
-      COLUMN_NET_BIND = 0,
-      COLUMN_HTTPD_SERVER = 1
-  ;
+  static final int COLUMN_NET_BIND = 0;
+  static final int COLUMN_HTTPD_SERVER = 1;
   static final String COLUMN_NET_BIND_name = "net_bind";
 
-  private int httpd_server;
+  private int httpdServer;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -67,20 +65,23 @@ public final class HttpdBind extends CachedObjectIntegerKey<HttpdBind> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_NET_BIND: return pkey;
-      case COLUMN_HTTPD_SERVER: return httpd_server;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_NET_BIND:
+        return pkey;
+      case COLUMN_HTTPD_SERVER:
+        return httpdServer;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   public int getHttpdServer_pkey() {
-    return httpd_server;
+    return httpdServer;
   }
 
   public HttpdServer getHttpdServer() throws SQLException, IOException {
-    HttpdServer obj = table.getConnector().getWeb().getHttpdServer().get(httpd_server);
+    HttpdServer obj = table.getConnector().getWeb().getHttpdServer().get(httpdServer);
     if (obj == null) {
-      throw new SQLException("Unable to find HttpdServer: " + httpd_server);
+      throw new SQLException("Unable to find HttpdServer: " + httpdServer);
     }
     return obj;
   }
@@ -94,20 +95,20 @@ public final class HttpdBind extends CachedObjectIntegerKey<HttpdBind> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.HTTPD_BINDS;
+  public Table.TableId getTableId() {
+    return Table.TableId.HTTPD_BINDS;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     pkey = result.getInt(1);
-    httpd_server = result.getInt(2);
+    httpdServer = result.getInt(2);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readCompressedInt();
-    httpd_server = in.readCompressedInt();
+    httpdServer = in.readCompressedInt();
   }
 
   @Override
@@ -120,6 +121,6 @@ public final class HttpdBind extends CachedObjectIntegerKey<HttpdBind> {
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeCompressedInt(httpd_server);
+    out.writeCompressedInt(httpdServer);
   }
 }

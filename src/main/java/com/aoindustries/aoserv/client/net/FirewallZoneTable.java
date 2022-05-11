@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.net;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -38,7 +38,7 @@ import java.util.List;
  */
 public final class FirewallZoneTable extends CachedTableIntegerKey<FirewallZone> {
 
-  FirewallZoneTable(AOServConnector connector) {
+  FirewallZoneTable(AoservConnector connector) {
     super(connector, FirewallZone.class);
   }
 
@@ -64,7 +64,7 @@ public final class FirewallZoneTable extends CachedTableIntegerKey<FirewallZone>
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.FIREWALLD_ZONES;
+  public Table.TableId getTableId() {
+    return Table.TableId.FIREWALLD_ZONES;
   }
 }

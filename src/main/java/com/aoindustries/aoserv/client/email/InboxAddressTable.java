@@ -24,9 +24,9 @@
 package com.aoindustries.aoserv.client.email;
 
 import com.aoapps.hodgepodge.io.TerminalWriter;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.linux.UserServer;
@@ -45,7 +45,7 @@ import java.util.List;
  */
 public final class InboxAddressTable extends CachedTableIntegerKey<InboxAddress> {
 
-  InboxAddressTable(AOServConnector connector) {
+  InboxAddressTable(AoservConnector connector) {
     super(connector, InboxAddress.class);
   }
 
@@ -63,10 +63,10 @@ public final class InboxAddressTable extends CachedTableIntegerKey<InboxAddress>
   }
 
   public int addLinuxAccAddress(Address emailAddressObject, UserServer lsa) throws IOException, SQLException {
-    return connector.requestIntQueryIL(
+    return connector.requestIntQueryInvalidating(
         true,
-        AoservProtocol.CommandID.ADD,
-        Table.TableID.LINUX_ACC_ADDRESSES,
+        AoservProtocol.CommandId.ADD,
+        Table.TableId.LINUX_ACC_ADDRESSES,
         emailAddressObject.getPkey(),
         lsa.getPkey()
     );
@@ -95,12 +95,12 @@ public final class InboxAddressTable extends CachedTableIntegerKey<InboxAddress>
 
   public InboxAddress getLinuxAccAddress(Address address, UserServer lsa) throws IOException, SQLException {
     int address_id = address.getPkey();
-    int lsaPKey = lsa.getPkey();
+    int lsaPkey = lsa.getPkey();
     List<InboxAddress> cached = getRows();
     int size = cached.size();
     for (int c = 0; c < size; c++) {
       InboxAddress laa = cached.get(c);
-      if (laa.getEmailAddress_id() == address_id && laa.getLinuxServerAccount_id() == lsaPKey) {
+      if (laa.getEmailAddress_id() == address_id && laa.getLinuxServerAccount_id() == lsaPkey) {
         return laa;
       }
     }
@@ -108,13 +108,13 @@ public final class InboxAddressTable extends CachedTableIntegerKey<InboxAddress>
   }
 
   public List<InboxAddress> getLinuxAccAddresses(Server ao) throws IOException, SQLException {
-    int aoPKey = ao.getPkey();
+    int aoPkey = ao.getPkey();
     List<InboxAddress> cached = getRows();
     int len = cached.size();
     List<InboxAddress> matches = new ArrayList<>(len);
     for (int c = 0; c < len; c++) {
       InboxAddress acc = cached.get(c);
-      if (acc.getEmailAddress().getDomain().getLinuxServer_host_id() == aoPKey) {
+      if (acc.getEmailAddress().getDomain().getLinuxServer_host_id() == aoPkey) {
         matches.add(acc);
       }
     }
@@ -143,15 +143,15 @@ public final class InboxAddressTable extends CachedTableIntegerKey<InboxAddress>
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.LINUX_ACC_ADDRESSES;
+  public Table.TableId getTableId() {
+    return Table.TableId.LINUX_ACC_ADDRESSES;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_LINUX_ACC_ADDRESS)) {
-      if (AOSH.checkParamCount(Command.ADD_LINUX_ACC_ADDRESS, args, 3, err)) {
+      if (Aosh.checkParamCount(Command.ADD_LINUX_ACC_ADDRESS, args, 3, err)) {
         String addr = args[1];
         int pos = addr.indexOf('@');
         if (pos == -1) {
@@ -160,11 +160,11 @@ public final class InboxAddressTable extends CachedTableIntegerKey<InboxAddress>
           err.flush();
         } else {
           out.println(
-              connector.getSimpleAOClient().addLinuxAccAddress(
+              connector.getSimpleClient().addLinuxAccAddress(
                   addr.substring(0, pos),
-                  AOSH.parseDomainName(addr.substring(pos + 1), "address"),
+                  Aosh.parseDomainName(addr.substring(pos + 1), "address"),
                   args[2],
-                  AOSH.parseLinuxUserName(args[3], "username")
+                  Aosh.parseLinuxUserName(args[3], "username")
               )
           );
           out.flush();
@@ -172,7 +172,7 @@ public final class InboxAddressTable extends CachedTableIntegerKey<InboxAddress>
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.REMOVE_LINUX_ACC_ADDRESS)) {
-      if (AOSH.checkParamCount(Command.REMOVE_LINUX_ACC_ADDRESS, args, 3, err)) {
+      if (Aosh.checkParamCount(Command.REMOVE_LINUX_ACC_ADDRESS, args, 3, err)) {
         String addr = args[1];
         int pos = addr.indexOf('@');
         if (pos == -1) {
@@ -180,11 +180,11 @@ public final class InboxAddressTable extends CachedTableIntegerKey<InboxAddress>
           err.println(addr);
           err.flush();
         } else {
-          connector.getSimpleAOClient().removeLinuxAccAddress(
+          connector.getSimpleClient().removeLinuxAccAddress(
               addr.substring(0, pos),
-              AOSH.parseDomainName(addr.substring(pos + 1), "address"),
+              Aosh.parseDomainName(addr.substring(pos + 1), "address"),
               args[2],
-              AOSH.parseLinuxUserName(args[3], "username")
+              Aosh.parseLinuxUserName(args[3], "username")
           );
         }
       }

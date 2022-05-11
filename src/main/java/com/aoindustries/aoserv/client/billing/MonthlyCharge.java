@@ -72,7 +72,7 @@ public final class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
   private int quantity;
   private Money rate;
   private UnmodifiableTimestamp created;
-  private User.Name created_by;
+  private User.Name createdBy;
   private boolean active;
 
   /**
@@ -107,7 +107,7 @@ public final class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
     this.quantity = quantity;
     this.rate = rate;
     this.created = new UnmodifiableTimestamp(System.currentTimeMillis());
-    this.created_by = createdByObject.getUsername_userId();
+    this.createdBy = createdByObject.getUsername_userId();
     this.active = active;
   }
 
@@ -115,17 +115,28 @@ public final class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
   @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey == -1 ? null : pkey;
-      case 1: return accounting;
-      case 2: return packageName;
-      case 3: return type;
-      case 4: return description;
-      case 5: return quantity;
-      case 6: return rate;
-      case 7: return created;
-      case 8: return created_by;
-      case 9: return active;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey == -1 ? null : pkey;
+      case 1:
+        return accounting;
+      case 2:
+        return packageName;
+      case 3:
+        return type;
+      case 4:
+        return description;
+      case 5:
+        return quantity;
+      case 6:
+        return rate;
+      case 7:
+        return created;
+      case 8:
+        return createdBy;
+      case 9:
+        return active;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -135,9 +146,9 @@ public final class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
   }
 
   public Administrator getCreatedBy() throws SQLException, IOException {
-    Administrator obj = table.getConnector().getAccount().getAdministrator().get(created_by);
+    Administrator obj = table.getConnector().getAccount().getAdministrator().get(createdBy);
     if (obj == null) {
-      throw new SQLException("Unable to find Administrator: " + created_by);
+      throw new SQLException("Unable to find Administrator: " + createdBy);
     }
     return obj;
   }
@@ -185,8 +196,8 @@ public final class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.MONTHLY_CHARGES;
+  public Table.TableId getTableId() {
+    return Table.TableId.MONTHLY_CHARGES;
   }
 
   public TransactionType getType() throws SQLException, IOException {
@@ -208,7 +219,7 @@ public final class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
       quantity = SQLUtility.parseDecimal3(result.getString("quantity"));
       rate = MoneyUtil.getMoney(result, "rate.currency", "rate.value");
       created = UnmodifiableTimestamp.valueOf(result.getTimestamp("created"));
-      created_by = User.Name.valueOf(result.getString("created_by"));
+      createdBy = User.Name.valueOf(result.getString("created_by"));
       active = result.getBoolean("active");
     } catch (ValidationException e) {
       throw new SQLException(e);
@@ -230,7 +241,7 @@ public final class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
       quantity = in.readCompressedInt();
       rate = MoneyUtil.readNullMoney(in);
       created = SQLStreamables.readUnmodifiableTimestamp(in);
-      created_by = User.Name.valueOf(in.readUTF()).intern();
+      createdBy = User.Name.valueOf(in.readUTF()).intern();
       active = in.readBoolean();
     } catch (ValidationException e) {
       throw new IOException(e);
@@ -264,7 +275,7 @@ public final class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
     } else {
       SQLStreamables.writeTimestamp(created, out);
     }
-    out.writeUTF(created_by.toString());
+    out.writeUTF(createdBy.toString());
     out.writeBoolean(active);
   }
 }

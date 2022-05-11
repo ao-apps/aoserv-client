@@ -66,8 +66,8 @@ public final class ExpenseCategory extends CachedObjectStringKey<ExpenseCategory
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.EXPENSE_CATEGORIES;
+  public Table.TableId getTableId() {
+    return Table.TableId.EXPENSE_CATEGORIES;
   }
 
   @Override

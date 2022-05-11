@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.web.tomcat;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTableStringKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.sql.SQLException;
  */
 public final class WorkerNameTable extends GlobalTableStringKey<WorkerName> {
 
-  WorkerNameTable(AOServConnector connector) {
+  WorkerNameTable(AoservConnector connector) {
     super(connector, WorkerName.class);
   }
 
@@ -56,7 +56,7 @@ public final class WorkerNameTable extends GlobalTableStringKey<WorkerName> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.HTTPD_JK_CODES;
+  public Table.TableId getTableId() {
+    return Table.TableId.HTTPD_JK_CODES;
   }
 }

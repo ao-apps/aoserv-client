@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.distribution;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTableIntegerKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -37,7 +37,7 @@ import java.util.List;
  */
 public final class SoftwareCategorizationTable extends GlobalTableIntegerKey<SoftwareCategorization> {
 
-  SoftwareCategorizationTable(AOServConnector connector) {
+  SoftwareCategorizationTable(AoservConnector connector) {
     super(connector, SoftwareCategorization.class);
   }
 
@@ -53,8 +53,8 @@ public final class SoftwareCategorizationTable extends GlobalTableIntegerKey<Sof
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.TECHNOLOGIES;
+  public Table.TableId getTableId() {
+    return Table.TableId.TECHNOLOGIES;
   }
 
   @Override

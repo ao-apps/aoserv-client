@@ -70,8 +70,8 @@ public final class WorkerName extends GlobalObjectStringKey<WorkerName> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.HTTPD_JK_CODES;
+  public Table.TableId getTableId() {
+    return Table.TableId.HTTPD_JK_CODES;
   }
 
   @Override

@@ -27,8 +27,8 @@ import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.sql.SQLStreamables;
 import com.aoapps.sql.UnmodifiableTimestamp;
-import com.aoindustries.aoserv.client.AOServObject;
-import com.aoindustries.aoserv.client.AOServTable;
+import com.aoindustries.aoserv.client.AoservObject;
+import com.aoindustries.aoserv.client.AoservTable;
 import com.aoindustries.aoserv.client.SingleTableObject;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -43,13 +43,13 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-public final class FileReplicationLog extends AOServObject<Integer, FileReplicationLog> implements SingleTableObject<Integer, FileReplicationLog> {
+public final class FileReplicationLog extends AoservObject<Integer, FileReplicationLog> implements SingleTableObject<Integer, FileReplicationLog> {
 
   static final int COLUMN_PKEY = 0;
   static final String COLUMN_REPLICATION_name = "replication";
   static final String COLUMN_END_TIME_name = "end_time";
 
-  private AOServTable<Integer, FileReplicationLog> table;
+  private AoservTable<Integer, FileReplicationLog> table;
 
   private int pkey;
   private int replication;
@@ -58,7 +58,7 @@ public final class FileReplicationLog extends AOServObject<Integer, FileReplicat
   private int scanned;
   private int updated;
   private long bytes;
-  private boolean is_successful;
+  private boolean isSuccessful;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -75,8 +75,7 @@ public final class FileReplicationLog extends AOServObject<Integer, FileReplicat
   public boolean equals(Object obj) {
     return
         (obj instanceof FileReplicationLog)
-            && ((FileReplicationLog) obj).pkey == pkey
-    ;
+            && ((FileReplicationLog) obj).pkey == pkey;
   }
 
   public long getBytes() {
@@ -87,15 +86,24 @@ public final class FileReplicationLog extends AOServObject<Integer, FileReplicat
   @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case 1: return replication;
-      case 2: return startTime;
-      case 3: return endTime;
-      case 4: return scanned;
-      case 5: return updated;
-      case 6: return bytes;
-      case 7: return is_successful;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case 1:
+        return replication;
+      case 2:
+        return startTime;
+      case 3:
+        return endTime;
+      case 4:
+        return scanned;
+      case 5:
+        return updated;
+      case 6:
+        return bytes;
+      case 7:
+        return isSuccessful;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -131,13 +139,13 @@ public final class FileReplicationLog extends AOServObject<Integer, FileReplicat
   }
 
   @Override
-  public AOServTable<Integer, FileReplicationLog> getTable() {
+  public AoservTable<Integer, FileReplicationLog> getTable() {
     return table;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.FAILOVER_FILE_LOG;
+  public Table.TableId getTableId() {
+    return Table.TableId.FAILOVER_FILE_LOG;
   }
 
   public int getUpdated() {
@@ -158,11 +166,11 @@ public final class FileReplicationLog extends AOServObject<Integer, FileReplicat
     scanned = result.getInt(5);
     updated = result.getInt(6);
     bytes = result.getLong(7);
-    is_successful = result.getBoolean(8);
+    isSuccessful = result.getBoolean(8);
   }
 
   public boolean isSuccessful() {
-    return is_successful;
+    return isSuccessful;
   }
 
   @Override
@@ -174,11 +182,11 @@ public final class FileReplicationLog extends AOServObject<Integer, FileReplicat
     scanned = in.readCompressedInt();
     updated = in.readCompressedInt();
     bytes = in.readLong();
-    is_successful = in.readBoolean();
+    isSuccessful = in.readBoolean();
   }
 
   @Override
-  public void setTable(AOServTable<Integer, FileReplicationLog> table) {
+  public void setTable(AoservTable<Integer, FileReplicationLog> table) {
     if (this.table != null) {
       throw new IllegalStateException("table already set");
     }
@@ -199,6 +207,6 @@ public final class FileReplicationLog extends AOServObject<Integer, FileReplicat
     out.writeCompressedInt(scanned);
     out.writeCompressedInt(updated);
     out.writeLong(bytes);
-    out.writeBoolean(is_successful);
+    out.writeBoolean(isSuccessful);
   }
 }

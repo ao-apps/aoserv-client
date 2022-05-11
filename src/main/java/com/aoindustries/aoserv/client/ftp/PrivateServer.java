@@ -42,9 +42,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * When a <code>PrivateFTPServer</code> is attached to a
+ * When a <code>PrivateFtpServer</code> is attached to a
  * <code>NetBind</code>, the FTP server reponds as configured
- * in the <code>PrivateFTPServer</code>.
+ * in the <code>PrivateFtpServer</code>.
  *
  * @see  Bind
  *
@@ -59,8 +59,8 @@ public final class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
   private DomainName hostname;
   private Email email;
   private UnmodifiableTimestamp created;
-  private int pub_linux_server_account;
-  private boolean allow_anonymous;
+  private int pubLinuxServerAccount;
+  private boolean allowAnonymous;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -77,14 +77,22 @@ public final class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
   @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_NET_BIND: return pkey;
-      case 1: return logfile;
-      case 2: return hostname;
-      case 3: return email;
-      case 4: return created;
-      case 5: return pub_linux_server_account;
-      case 6: return allow_anonymous;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_NET_BIND:
+        return pkey;
+      case 1:
+        return logfile;
+      case 2:
+        return hostname;
+      case 3:
+        return email;
+      case 4:
+        return created;
+      case 5:
+        return pubLinuxServerAccount;
+      case 6:
+        return allowAnonymous;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -114,13 +122,13 @@ public final class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
   }
 
   public int getLinuxServerAccount_pkey() {
-    return pub_linux_server_account;
+    return pubLinuxServerAccount;
   }
 
   public UserServer getLinuxServerAccount() throws SQLException, IOException {
-    UserServer lsa = table.getConnector().getLinux().getUserServer().get(pub_linux_server_account);
+    UserServer lsa = table.getConnector().getLinux().getUserServer().get(pubLinuxServerAccount);
     if (lsa == null) {
-      throw new SQLException("Unable to find LinuxServerAccount: " + pub_linux_server_account);
+      throw new SQLException("Unable to find LinuxServerAccount: " + pubLinuxServerAccount);
     }
     return lsa;
   }
@@ -134,7 +142,7 @@ public final class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
   }
 
   public boolean allowAnonymous() {
-    return allow_anonymous;
+    return allowAnonymous;
   }
 
   /**
@@ -146,8 +154,8 @@ public final class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.PRIVATE_FTP_SERVERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.PRIVATE_FTP_SERVERS;
   }
 
   @Override
@@ -158,8 +166,8 @@ public final class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
       hostname = DomainName.valueOf(result.getString(3));
       email = Email.valueOf(result.getString(4));
       created = UnmodifiableTimestamp.valueOf(result.getTimestamp(5));
-      pub_linux_server_account = result.getInt(6);
-      allow_anonymous = result.getBoolean(7);
+      pubLinuxServerAccount = result.getInt(6);
+      allowAnonymous = result.getBoolean(7);
     } catch (ValidationException e) {
       throw new SQLException(e);
     }
@@ -173,8 +181,8 @@ public final class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
       hostname = DomainName.valueOf(in.readUTF());
       email = Email.valueOf(in.readUTF());
       created = SQLStreamables.readUnmodifiableTimestamp(in);
-      pub_linux_server_account = in.readCompressedInt();
-      allow_anonymous = in.readBoolean();
+      pubLinuxServerAccount = in.readCompressedInt();
+      allowAnonymous = in.readBoolean();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -188,7 +196,9 @@ public final class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_113) < 0) {
-      throw new IOException("PrivateFTPServer on AOServProtocol version less than " + AoservProtocol.Version.VERSION_1_0_A_113.getVersion() + " is no longer supported.  Please upgrade your AOServ Client software packages.");
+      throw new IOException("PrivateFtpServer on AoservProtocol version less than "
+          + AoservProtocol.Version.VERSION_1_0_A_113.getVersion()
+          + " is no longer supported.  Please upgrade your AOServ Client software packages.");
     }
     out.writeCompressedInt(pkey);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_38) <= 0) {
@@ -205,10 +215,10 @@ public final class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
     } else {
       SQLStreamables.writeTimestamp(created, out);
     }
-    out.writeCompressedInt(pub_linux_server_account);
+    out.writeCompressedInt(pubLinuxServerAccount);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_38) <= 0) {
       out.writeCompressedInt(-1);
     }
-    out.writeBoolean(allow_anonymous);
+    out.writeBoolean(allowAnonymous);
   }
 }

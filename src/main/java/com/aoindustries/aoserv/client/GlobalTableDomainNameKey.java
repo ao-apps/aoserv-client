@@ -34,7 +34,7 @@ import java.sql.SQLException;
  */
 public abstract class GlobalTableDomainNameKey<V extends GlobalObjectDomainNameKey<V>> extends GlobalTable<DomainName, V> {
 
-  protected GlobalTableDomainNameKey(AOServConnector connector, Class<V> clazz) {
+  protected GlobalTableDomainNameKey(AoservConnector connector, Class<V> clazz) {
     super(connector, clazz);
   }
 

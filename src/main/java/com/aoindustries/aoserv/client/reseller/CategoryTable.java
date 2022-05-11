@@ -26,7 +26,7 @@ package com.aoindustries.aoserv.client.reseller;
 import com.aoapps.hodgepodge.tree.Node;
 import com.aoapps.hodgepodge.tree.Tree;
 import com.aoapps.hodgepodge.tree.TreeCopy;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.ticket.Ticket;
@@ -44,7 +44,7 @@ import java.util.List;
  */
 public final class CategoryTable extends CachedTableIntegerKey<Category> {
 
-  CategoryTable(AOServConnector connector) {
+  CategoryTable(AoservConnector connector) {
     super(connector, Category.class);
   }
 
@@ -85,8 +85,8 @@ public final class CategoryTable extends CachedTableIntegerKey<Category> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.TICKET_CATEGORIES;
+  public Table.TableId getTableId() {
+    return Table.TableId.TICKET_CATEGORIES;
   }
 
   /**

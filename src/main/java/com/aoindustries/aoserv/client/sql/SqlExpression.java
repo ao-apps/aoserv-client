@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2002-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -21,18 +21,34 @@
  * along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.aoindustries.aoserv.client;
+package com.aoindustries.aoserv.client.sql;
 
-import com.aoapps.hodgepodge.io.stream.StreamableInput;
-import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.AoservConnector;
+import com.aoindustries.aoserv.client.AoservObject;
+import com.aoindustries.aoserv.client.schema.Table;
+import com.aoindustries.aoserv.client.schema.Type;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
- * Something that can be read with a given version represented by {@link com.aoindustries.aoserv.client.schema.AoservProtocol.Version}.
+ * An expression in used in select statements and internal sorting.
  *
  * @author  AO Industries, Inc.
  */
-public interface AOServReadable {
+public interface SqlExpression {
 
-  void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException;
+  String getColumnName();
+
+  /**
+   * Evaluates the expression on the given connector and object.
+   */
+  Object evaluate(AoservConnector conn, AoservObject<?, ?> obj) throws IOException, SQLException;
+
+  Type getType();
+
+  /**
+   * Gets all of the tables referenced by this expression.
+   */
+  void getReferencedTables(AoservConnector conn, List<Table> tables) throws IOException, SQLException;
 }

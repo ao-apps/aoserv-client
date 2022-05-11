@@ -64,8 +64,7 @@ public final class PosixPath implements
     Comparable<PosixPath>,
     Serializable,
     DtoFactory<com.aoindustries.aoserv.client.dto.PosixPath>,
-    Internable<PosixPath>
-{
+    Internable<PosixPath> {
 
   private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, PosixPath.class);
 
@@ -172,8 +171,7 @@ public final class PosixPath implements
   public boolean equals(Object obj) {
     return
         (obj instanceof PosixPath)
-            && path.equals(((PosixPath) obj).path)
-    ;
+            && path.equals(((PosixPath) obj).path);
   }
 
   @Override

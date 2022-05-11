@@ -35,7 +35,7 @@ import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 /**
- * A <code>PackageCategory</code> represents one type of service
+ * A <code>PackageCategory</code> represents one type of service.
  *
  * @see  PackageDefinition
  *
@@ -48,17 +48,15 @@ public final class PackageCategory extends GlobalObjectStringKey<PackageCategory
   static final int COLUMN_NAME = 0;
   static final String COLUMN_NAME_name = "name";
 
-  public static final String
-      AOSERV = "aoserv",
-      APPLICATION = "application",
-      DEDICATED = "dedicated",
-      MANAGED = "managed",
-      RESELLER = "reseller",
-      SYSADMIN = "sysadmin",
-      VIRTUAL = "virtual",
-      VIRTUAL_DEDICATED = "virtual_dedicated",
-      VIRTUAL_MANAGED = "virtual_managed"
-  ;
+  public static final String AOSERV = "aoserv";
+  public static final String APPLICATION = "application";
+  public static final String DEDICATED = "dedicated";
+  public static final String MANAGED = "managed";
+  public static final String RESELLER = "reseller";
+  public static final String SYSADMIN = "sysadmin";
+  public static final String VIRTUAL = "virtual";
+  public static final String VIRTUAL_DEDICATED = "virtual_dedicated";
+  public static final String VIRTUAL_MANAGED = "virtual_managed";
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -74,8 +72,10 @@ public final class PackageCategory extends GlobalObjectStringKey<PackageCategory
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_NAME: return pkey;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_NAME:
+        return pkey;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -84,8 +84,8 @@ public final class PackageCategory extends GlobalObjectStringKey<PackageCategory
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.PACKAGE_CATEGORIES;
+  public Table.TableId getTableId() {
+    return Table.TableId.PACKAGE_CATEGORIES;
   }
 
   @Override

@@ -25,7 +25,7 @@ package com.aoindustries.aoserv.client.web.jboss;
 
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalObjectIntegerKey;
 import com.aoindustries.aoserv.client.distribution.SoftwareVersion;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
@@ -35,10 +35,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * An <code>HttpdJBossVersion</code> flags which
+ * An <code>HttpdJbossVersion</code> flags which
  * <code>TechnologyVersion</code>s are a version of the JBoss
  * EJB Container.  Sites configured to use JBoss are called
- * HttpdJBossSites.
+ * HttpdJbossSites.
  *
  * @see  Site
  * @see  SoftwareVersion
@@ -55,8 +55,7 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
   public static final String TECHNOLOGY_NAME = "JBoss";
 
   public static final String
-      VERSION_2_2_2 = "2.2.2"
-  ;
+      VERSION_2_2_2 = "2.2.2";
 
   public static final String DEFAULT_VERSION = VERSION_2_2_2;
 
@@ -85,7 +84,7 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
     throw new IllegalArgumentException("Invalid index: " + i);
   }
 
-  public com.aoindustries.aoserv.client.web.tomcat.Version getHttpdTomcatVersion(AOServConnector connector) throws SQLException, IOException {
+  public com.aoindustries.aoserv.client.web.tomcat.Version getHttpdTomcatVersion(AoservConnector connector) throws SQLException, IOException {
     com.aoindustries.aoserv.client.web.tomcat.Version obj = connector.getWeb_tomcat().getVersion().get(tomcatVersion);
     if (obj == null) {
       throw new SQLException("Unable to find HttpdTomcatVersion: " + tomcatVersion);
@@ -94,11 +93,11 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.HTTPD_JBOSS_VERSIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.HTTPD_JBOSS_VERSIONS;
   }
 
-  public SoftwareVersion getTechnologyVersion(AOServConnector connector) throws SQLException, IOException {
+  public SoftwareVersion getTechnologyVersion(AoservConnector connector) throws SQLException, IOException {
     SoftwareVersion obj = connector.getDistribution().getSoftwareVersion().get(pkey);
     if (obj == null) {
       throw new SQLException("Unable to find TechnologyVersion: " + pkey);

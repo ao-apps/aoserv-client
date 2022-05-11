@@ -103,8 +103,8 @@ public final class TopLevelDomain extends GlobalObjectDomainNameKey<TopLevelDoma
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.DNS_TLDS;
+  public Table.TableId getTableId() {
+    return Table.TableId.DNS_TLDS;
   }
 
   @Override

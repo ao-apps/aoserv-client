@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.email;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.net.Bind;
@@ -42,7 +42,7 @@ import java.util.List;
  */
 public final class SendmailBindTable extends CachedTableIntegerKey<SendmailBind> {
 
-  SendmailBindTable(AOServConnector connector) {
+  SendmailBindTable(AoservConnector connector) {
     super(connector, SendmailBind.class);
   }
 
@@ -70,7 +70,7 @@ public final class SendmailBindTable extends CachedTableIntegerKey<SendmailBind>
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.SENDMAIL_BINDS;
+  public Table.TableId getTableId() {
+    return Table.TableId.SENDMAIL_BINDS;
   }
 }

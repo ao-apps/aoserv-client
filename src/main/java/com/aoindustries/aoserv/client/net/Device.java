@@ -48,27 +48,25 @@ import java.util.Objects;
  */
 public final class Device extends CachedObjectIntegerKey<Device> {
 
-  static final int
-      COLUMN_ID = 0,
-      COLUMN_SERVER = 1
-  ;
+  static final int COLUMN_ID = 0;
+  static final int COLUMN_SERVER = 1;
   public static final String COLUMN_SERVER_name = "server";
   public static final String COLUMN_DEVICE_ID_name = "deviceId";
 
   private int server;
   private String deviceId;
   private String description;
-  private String delete_route;
+  private String deleteRoute;
   private InetAddress gateway;
   private InetAddress network;
   private InetAddress broadcast;
-  private MacAddress mac_address;
-  private long max_bit_rate;
-  private long monitoring_bit_rate_low;
-  private long monitoring_bit_rate_medium;
-  private long monitoring_bit_rate_high;
-  private long monitoring_bit_rate_critical;
-  private boolean monitoring_enabled;
+  private MacAddress macAddress;
+  private long maxBitRate;
+  private long monitoringBitRateLow;
+  private long monitoringBitTateMedium;
+  private long monitoringBitRateHigh;
+  private long monitoringBitRateCritical;
+  private boolean monitoringEnabled;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -84,22 +82,38 @@ public final class Device extends CachedObjectIntegerKey<Device> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_ID: return pkey;
-      case COLUMN_SERVER: return server;
-      case 2: return deviceId;
-      case 3: return description;
-      case 4: return delete_route;
-      case 5: return gateway;
-      case 6: return network;
-      case 7: return broadcast;
-      case 8: return mac_address;
-      case 9: return max_bit_rate == -1 ? null : max_bit_rate;
-      case 10: return monitoring_bit_rate_low == -1 ? null : monitoring_bit_rate_low;
-      case 11: return monitoring_bit_rate_medium == -1 ? null : monitoring_bit_rate_medium;
-      case 12: return monitoring_bit_rate_high == -1 ? null : monitoring_bit_rate_high;
-      case 13: return monitoring_bit_rate_critical == -1 ? null : monitoring_bit_rate_critical;
-      case 14: return monitoring_enabled;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_ID:
+        return pkey;
+      case COLUMN_SERVER:
+        return server;
+      case 2:
+        return deviceId;
+      case 3:
+        return description;
+      case 4:
+        return deleteRoute;
+      case 5:
+        return gateway;
+      case 6:
+        return network;
+      case 7:
+        return broadcast;
+      case 8:
+        return macAddress;
+      case 9:
+        return maxBitRate == -1 ? null : maxBitRate;
+      case 10:
+        return monitoringBitRateLow == -1 ? null : monitoringBitRateLow;
+      case 11:
+        return monitoringBitTateMedium == -1 ? null : monitoringBitTateMedium;
+      case 12:
+        return monitoringBitRateHigh == -1 ? null : monitoringBitRateHigh;
+      case 13:
+        return monitoringBitRateCritical == -1 ? null : monitoringBitRateCritical;
+      case 14:
+        return monitoringEnabled;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -126,7 +140,7 @@ public final class Device extends CachedObjectIntegerKey<Device> {
   public DeviceId getDeviceId() throws SQLException, IOException {
     DeviceId obj = table.getConnector().getNet().getDeviceId().get(deviceId);
     if (obj == null) {
-      throw new SQLException("Unable to find NetDeviceID: " + deviceId);
+      throw new SQLException("Unable to find DeviceId: " + deviceId);
     }
     return obj;
   }
@@ -136,7 +150,7 @@ public final class Device extends CachedObjectIntegerKey<Device> {
   }
 
   public String getDeleteRoute() {
-    return delete_route;
+    return deleteRoute;
   }
 
   public InetAddress getGateway() {
@@ -152,7 +166,7 @@ public final class Device extends CachedObjectIntegerKey<Device> {
   }
 
   public MacAddress getMacAddress() {
-    return mac_address;
+    return macAddress;
   }
 
   /**
@@ -160,7 +174,7 @@ public final class Device extends CachedObjectIntegerKey<Device> {
    * if unknown.
    */
   public long getMaxBitRate() {
-    return max_bit_rate;
+    return maxBitRate;
   }
 
   /**
@@ -168,7 +182,7 @@ public final class Device extends CachedObjectIntegerKey<Device> {
    * <code>-1</code> if no alert allowed at this level.
    */
   public long getMonitoringBitRateLow() {
-    return monitoring_bit_rate_low;
+    return monitoringBitRateLow;
   }
 
   /**
@@ -176,7 +190,7 @@ public final class Device extends CachedObjectIntegerKey<Device> {
    * <code>-1</code> if no alert allowed at this level.
    */
   public long getMonitoringBitRateMedium() {
-    return monitoring_bit_rate_medium;
+    return monitoringBitTateMedium;
   }
 
   /**
@@ -184,7 +198,7 @@ public final class Device extends CachedObjectIntegerKey<Device> {
    * <code>-1</code> if no alert allowed at this level.
    */
   public long getMonitoringBitRateHigh() {
-    return monitoring_bit_rate_high;
+    return monitoringBitRateHigh;
   }
 
   /**
@@ -193,14 +207,14 @@ public final class Device extends CachedObjectIntegerKey<Device> {
    * that will alert people 24x7.
    */
   public long getMonitoringBitRateCritical() {
-    return monitoring_bit_rate_critical;
+    return monitoringBitRateCritical;
   }
 
   /**
    * The monitoring of a net_devices may be enabled or disabled.
    */
   public boolean isMonitoringEnabled() {
-    return monitoring_enabled;
+    return monitoringEnabled;
   }
 
   @Override
@@ -211,32 +225,32 @@ public final class Device extends CachedObjectIntegerKey<Device> {
       server = result.getInt(pos++);
       deviceId = result.getString(pos++);
       description = result.getString(pos++);
-      delete_route = result.getString(pos++);
+      deleteRoute = result.getString(pos++);
       gateway = InetAddress.valueOf(result.getString(pos++));
       network = InetAddress.valueOf(result.getString(pos++));
       broadcast = InetAddress.valueOf(result.getString(pos++));
-      mac_address = MacAddress.valueOf(result.getString(pos++));
-      max_bit_rate = result.getLong(pos++);
+      macAddress = MacAddress.valueOf(result.getString(pos++));
+      maxBitRate = result.getLong(pos++);
       if (result.wasNull()) {
-        max_bit_rate = -1;
+        maxBitRate = -1;
       }
-      monitoring_bit_rate_low = result.getLong(pos++);
+      monitoringBitRateLow = result.getLong(pos++);
       if (result.wasNull()) {
-        monitoring_bit_rate_low = -1;
+        monitoringBitRateLow = -1;
       }
-      monitoring_bit_rate_medium = result.getLong(pos++);
+      monitoringBitTateMedium = result.getLong(pos++);
       if (result.wasNull()) {
-        monitoring_bit_rate_medium = -1;
+        monitoringBitTateMedium = -1;
       }
-      monitoring_bit_rate_high = result.getLong(pos++);
+      monitoringBitRateHigh = result.getLong(pos++);
       if (result.wasNull()) {
-        monitoring_bit_rate_high = -1;
+        monitoringBitRateHigh = -1;
       }
-      monitoring_bit_rate_critical = result.getLong(pos++);
+      monitoringBitRateCritical = result.getLong(pos++);
       if (result.wasNull()) {
-        monitoring_bit_rate_critical = -1;
+        monitoringBitRateCritical = -1;
       }
-      monitoring_enabled = result.getBoolean(pos++);
+      monitoringEnabled = result.getBoolean(pos++);
     } catch (ValidationException e) {
       throw new SQLException(e);
     }
@@ -249,17 +263,17 @@ public final class Device extends CachedObjectIntegerKey<Device> {
       server = in.readCompressedInt();
       deviceId = in.readUTF().intern();
       description = in.readUTF();
-      delete_route = InternUtils.intern(in.readNullUTF());
+      deleteRoute = InternUtils.intern(in.readNullUTF());
       gateway = InternUtils.intern(InetAddress.valueOf(in.readNullUTF()));
       network = InternUtils.intern(InetAddress.valueOf(in.readNullUTF()));
       broadcast = InternUtils.intern(InetAddress.valueOf(in.readNullUTF()));
-      mac_address = MacAddress.valueOf(in.readNullUTF());
-      max_bit_rate = in.readLong();
-      monitoring_bit_rate_low = in.readLong();
-      monitoring_bit_rate_medium = in.readLong();
-      monitoring_bit_rate_high = in.readLong();
-      monitoring_bit_rate_critical = in.readLong();
-      monitoring_enabled = in.readBoolean();
+      macAddress = MacAddress.valueOf(in.readNullUTF());
+      maxBitRate = in.readLong();
+      monitoringBitRateLow = in.readLong();
+      monitoringBitTateMedium = in.readLong();
+      monitoringBitRateHigh = in.readLong();
+      monitoringBitRateCritical = in.readLong();
+      monitoringEnabled = in.readBoolean();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -271,7 +285,7 @@ public final class Device extends CachedObjectIntegerKey<Device> {
     out.writeCompressedInt(server);
     out.writeUTF(deviceId);
     out.writeUTF(description);
-    out.writeNullUTF(delete_route);
+    out.writeNullUTF(deleteRoute);
     out.writeNullUTF(Objects.toString(gateway, null));
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_37) <= 0) {
       out.writeUTF("255.255.255.0");
@@ -281,25 +295,25 @@ public final class Device extends CachedObjectIntegerKey<Device> {
       out.writeNullUTF(Objects.toString(broadcast, null));
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_128) >= 0) {
-      out.writeNullUTF(Objects.toString(mac_address, null));
+      out.writeNullUTF(Objects.toString(macAddress, null));
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_2) >= 0) {
-      out.writeLong(max_bit_rate);
+      out.writeLong(maxBitRate);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_35) >= 0) {
-      out.writeLong(monitoring_bit_rate_low);
-      out.writeLong(monitoring_bit_rate_medium);
-      out.writeLong(monitoring_bit_rate_high);
-      out.writeLong(monitoring_bit_rate_critical);
+      out.writeLong(monitoringBitRateLow);
+      out.writeLong(monitoringBitTateMedium);
+      out.writeLong(monitoringBitRateHigh);
+      out.writeLong(monitoringBitRateCritical);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_70) >= 0) {
-      out.writeBoolean(monitoring_enabled);
+      out.writeBoolean(monitoringEnabled);
     }
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.NET_DEVICES;
+  public Table.TableId getTableId() {
+    return Table.TableId.NET_DEVICES;
   }
 
   @Override
@@ -307,16 +321,16 @@ public final class Device extends CachedObjectIntegerKey<Device> {
     return getHost().toStringImpl() + '|' + deviceId;
   }
 
-  public IpAddress getIPAddress(InetAddress inetAddress) throws IOException, SQLException {
-    return table.getConnector().getNet().getIpAddress().getIPAddress(this, inetAddress);
+  public IpAddress getIpAddress(InetAddress inetAddress) throws IOException, SQLException {
+    return table.getConnector().getNet().getIpAddress().getIpAddress(this, inetAddress);
   }
 
-  public List<IpAddress> getIPAddresses() throws IOException, SQLException {
-    return table.getConnector().getNet().getIpAddress().getIPAddresses(this);
+  public List<IpAddress> getIpAddresses() throws IOException, SQLException {
+    return table.getConnector().getNet().getIpAddress().getIpAddresses(this);
   }
 
-  public IpAddress getPrimaryIPAddress() throws SQLException, IOException {
-    List<IpAddress> ips = getIPAddresses();
+  public IpAddress getPrimaryIpAddress() throws SQLException, IOException {
+    List<IpAddress> ips = getIpAddresses();
     List<IpAddress> matches = new ArrayList<>();
     for (IpAddress ip : ips) {
       if (!ip.isAlias()) {
@@ -324,10 +338,10 @@ public final class Device extends CachedObjectIntegerKey<Device> {
       }
     }
     if (matches.isEmpty()) {
-      throw new SQLException("Unable to find primary IPAddress for NetDevice: " + deviceId + " on " + server);
+      throw new SQLException("Unable to find primary IpAddress for NetDevice: " + deviceId + " on " + server);
     }
     if (matches.size() > 1) {
-      throw new SQLException("Found more than one primary IPAddress for NetDevice: " + deviceId + " on " + server);
+      throw new SQLException("Found more than one primary IpAddress for NetDevice: " + deviceId + " on " + server);
     }
     return matches.get(0);
   }
@@ -340,7 +354,7 @@ public final class Device extends CachedObjectIntegerKey<Device> {
     if (!deviceId.startsWith("bond")) {
       return null;
     }
-    return table.getConnector().requestStringQuery(true, AoservProtocol.CommandID.GET_NET_DEVICE_BONDING_REPORT, pkey);
+    return table.getConnector().requestStringQuery(true, AoservProtocol.CommandId.GET_NET_DEVICE_BONDING_REPORT, pkey);
   }
 
   /**
@@ -348,6 +362,6 @@ public final class Device extends CachedObjectIntegerKey<Device> {
    * or {@code null} if not a {@link Server}.
    */
   public String getStatisticsReport() throws IOException, SQLException {
-    return table.getConnector().requestStringQuery(true, AoservProtocol.CommandID.GET_NET_DEVICE_STATISTICS_REPORT, pkey);
+    return table.getConnector().requestStringQuery(true, AoservProtocol.CommandId.GET_NET_DEVICE_STATISTICS_REPORT, pkey);
   }
 }

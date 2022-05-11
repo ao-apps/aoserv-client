@@ -41,14 +41,10 @@ import java.sql.SQLException;
  */
 public final class Network extends CachedObjectLongKey<Network> {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_SET  = 1
-  ;
-  static final String
-      COLUMN_SET_name      = "set",
-      COLUMN_NETWORK_name  = "network"
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_SET  = 1;
+  static final String COLUMN_SET_name      = "set";
+  static final String COLUMN_NETWORK_name  = "network";
 
   private int set;
   private int network;
@@ -66,8 +62,8 @@ public final class Network extends CachedObjectLongKey<Network> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.IP_REPUTATION_SET_NETWORKS;
+  public Table.TableId getTableId() {
+    return Table.TableId.IP_REPUTATION_SET_NETWORKS;
   }
 
   @Override
@@ -98,11 +94,16 @@ public final class Network extends CachedObjectLongKey<Network> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY : return pkey;
-      case COLUMN_SET  : return set;
-      case 2           : return getNetworkAddress();
-      case 3           : return counter;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_SET:
+        return set;
+      case 2:
+        return getNetworkAddress();
+      case 3:
+        return counter;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 

@@ -24,9 +24,9 @@
 package com.aoindustries.aoserv.client.email;
 
 import com.aoapps.hodgepodge.io.TerminalWriter;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
@@ -43,7 +43,7 @@ import java.util.ArrayList;
  */
 public final class ListAddressTable extends CachedTableIntegerKey<ListAddress> {
 
-  ListAddressTable(AOServConnector connector) {
+  ListAddressTable(AoservConnector connector) {
     super(connector, ListAddress.class);
   }
 
@@ -61,10 +61,10 @@ public final class ListAddressTable extends CachedTableIntegerKey<ListAddress> {
   }
 
   int addEmailListAddress(Address emailAddressObject, List emailListObject) throws IOException, SQLException {
-    return connector.requestIntQueryIL(
+    return connector.requestIntQueryInvalidating(
         true,
-        AoservProtocol.CommandID.ADD,
-        Table.TableID.EMAIL_LIST_ADDRESSES,
+        AoservProtocol.CommandId.ADD,
+        Table.TableId.EMAIL_LIST_ADDRESSES,
         emailAddressObject.getPkey(),
         emailListObject.getPkey()
     );
@@ -134,13 +134,13 @@ public final class ListAddressTable extends CachedTableIntegerKey<ListAddress> {
   }
 
   public java.util.List<ListAddress> getEmailListAddresses(Server ao) throws IOException, SQLException {
-    int aoPKey = ao.getPkey();
+    int aoPkey = ao.getPkey();
     java.util.List<ListAddress> cached = getRows();
     int len = cached.size();
     java.util.List<ListAddress> matches = new ArrayList<>(len);
     for (int c = 0; c < len; c++) {
       ListAddress list = cached.get(c);
-      if (list.getEmailAddress().getDomain().getLinuxServer_host_id() == aoPKey) {
+      if (list.getEmailAddress().getDomain().getLinuxServer_host_id() == aoPkey) {
         matches.add(list);
       }
     }
@@ -148,15 +148,15 @@ public final class ListAddressTable extends CachedTableIntegerKey<ListAddress> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.EMAIL_LIST_ADDRESSES;
+  public Table.TableId getTableId() {
+    return Table.TableId.EMAIL_LIST_ADDRESSES;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_EMAIL_LIST_ADDRESS)) {
-      if (AOSH.checkMinParamCount(Command.ADD_EMAIL_LIST_ADDRESS, args, 3, err)) {
+      if (Aosh.checkMinParamCount(Command.ADD_EMAIL_LIST_ADDRESS, args, 3, err)) {
         if ((args.length % 3) != 1) {
           err.println("aosh: " + Command.ADD_EMAIL_LIST_ADDRESS + ": must have multiples of three number of parameters");
           err.flush();
@@ -170,10 +170,10 @@ public final class ListAddressTable extends CachedTableIntegerKey<ListAddress> {
               err.flush();
             } else {
               out.println(
-                  connector.getSimpleAOClient().addEmailListAddress(
+                  connector.getSimpleClient().addEmailListAddress(
                       addr.substring(0, pos),
-                      AOSH.parseDomainName(addr.substring(pos + 1), "address"),
-                      AOSH.parseUnixPath(args[c + 1], "path"),
+                      Aosh.parseDomainName(addr.substring(pos + 1), "address"),
+                      Aosh.parseUnixPath(args[c + 1], "path"),
                       args[c + 2]
                   )
               );
@@ -184,7 +184,7 @@ public final class ListAddressTable extends CachedTableIntegerKey<ListAddress> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.REMOVE_EMAIL_LIST_ADDRESS)) {
-      if (AOSH.checkParamCount(Command.REMOVE_EMAIL_LIST_ADDRESS, args, 3, err)) {
+      if (Aosh.checkParamCount(Command.REMOVE_EMAIL_LIST_ADDRESS, args, 3, err)) {
         String addr = args[1];
         int pos = addr.indexOf('@');
         if (pos == -1) {
@@ -192,10 +192,10 @@ public final class ListAddressTable extends CachedTableIntegerKey<ListAddress> {
           err.println(addr);
           err.flush();
         } else {
-          connector.getSimpleAOClient().removeEmailListAddress(
+          connector.getSimpleClient().removeEmailListAddress(
               addr.substring(0, pos),
-              AOSH.parseDomainName(addr.substring(pos + 1), "address"),
-              AOSH.parseUnixPath(args[2], "path"),
+              Aosh.parseDomainName(addr.substring(pos + 1), "address"),
+              Aosh.parseUnixPath(args[2], "path"),
               args[3]
           );
         }

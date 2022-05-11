@@ -26,7 +26,7 @@ package com.aoindustries.aoserv.client.pki;
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.lang.validation.ValidationException;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.email.CyrusImapdBind;
@@ -52,15 +52,13 @@ import java.util.Objects;
  */
 public final class Certificate extends CachedObjectIntegerKey<Certificate> {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_AO_SERVER = 1,
-      COLUMN_PACKAGE = 2
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_AO_SERVER = 1;
+  static final int COLUMN_PACKAGE = 2;
   static final String COLUMN_AO_SERVER_name = "ao_server";
   static final String COLUMN_CERT_FILE_name = "cert_file";
 
-  private int ao_server;
+  private int aoServer;
   private int packageNum;
   private PosixPath keyFile;
   private PosixPath csrFile;
@@ -87,21 +85,30 @@ public final class Certificate extends CachedObjectIntegerKey<Certificate> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_AO_SERVER: return ao_server;
-      case COLUMN_PACKAGE: return packageNum;
-      case 3: return keyFile;
-      case 4: return csrFile;
-      case 5: return certFile;
-      case 6: return chainFile;
-      case 7: return certbotName;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_AO_SERVER:
+        return aoServer;
+      case COLUMN_PACKAGE:
+        return packageNum;
+      case 3:
+        return keyFile;
+      case 4:
+        return csrFile;
+      case 5:
+        return certFile;
+      case 6:
+        return chainFile;
+      case 7:
+        return certbotName;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.SSL_CERTIFICATES;
+  public Table.TableId getTableId() {
+    return Table.TableId.SSL_CERTIFICATES;
   }
 
   @Override
@@ -109,7 +116,7 @@ public final class Certificate extends CachedObjectIntegerKey<Certificate> {
     try {
       int pos = 1;
       pkey = result.getInt(pos++);
-      ao_server = result.getInt(pos++);
+      aoServer = result.getInt(pos++);
       packageNum = result.getInt(pos++);
       keyFile = PosixPath.valueOf(result.getString(pos++));
       csrFile = PosixPath.valueOf(result.getString(pos++));
@@ -125,7 +132,7 @@ public final class Certificate extends CachedObjectIntegerKey<Certificate> {
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
       pkey = in.readCompressedInt();
-      ao_server = in.readCompressedInt();
+      aoServer = in.readCompressedInt();
       packageNum = in.readCompressedInt();
       keyFile = PosixPath.valueOf(in.readUTF());
       csrFile = PosixPath.valueOf(in.readNullUTF());
@@ -140,7 +147,7 @@ public final class Certificate extends CachedObjectIntegerKey<Certificate> {
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeCompressedInt(ao_server);
+    out.writeCompressedInt(aoServer);
     out.writeCompressedInt(packageNum);
     out.writeUTF(keyFile.toString());
     out.writeNullUTF(Objects.toString(csrFile, null));
@@ -293,8 +300,8 @@ public final class Certificate extends CachedObjectIntegerKey<Certificate> {
   public List<Check> check(final boolean allowCached) throws IOException, SQLException {
     return table.getConnector().requestResult(
         true,
-        AoservProtocol.CommandID.CHECK_SSL_CERTIFICATE,
-        new AOServConnector.ResultRequest<List<Check>>() {
+        AoservProtocol.CommandId.CHECK_SSL_CERTIFICATE,
+        new AoservConnector.ResultRequest<List<Check>>() {
           private List<Check> result;
 
           @Override

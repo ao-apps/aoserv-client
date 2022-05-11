@@ -31,7 +31,7 @@ import java.util.TimeZone;
 /**
  * @author  AO Industries, Inc.
  */
-public class LinuxServer extends AOServObject {
+public class LinuxServer extends AoservObject {
 
   private int server;
   private DomainName hostname;

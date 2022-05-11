@@ -26,7 +26,7 @@ package com.aoindustries.aoserv.client.linux;
 import com.aoindustries.aoserv.client.CachedObject;
 
 /**
- * An object that is cached and uses {@link Group.Name} as its primary key,
+ * An object that is cached and uses {@link Group.Name} as its primary key.
  *
  * @author  AO Industries, Inc.
  */
@@ -50,8 +50,7 @@ public abstract class CachedObjectGroupNameKey<V extends CachedObjectGroupNameKe
     return
         obj != null
             && obj.getClass() == getClass()
-            && ((CachedObjectGroupNameKey<?>) obj).pkey.equals(pkey)
-    ;
+            && ((CachedObjectGroupNameKey<?>) obj).pkey.equals(pkey);
   }
 
   @Override

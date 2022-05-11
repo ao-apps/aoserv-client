@@ -56,8 +56,7 @@ public final class TicketType extends GlobalObjectStringKey<TicketType> {
       LOGS = "logs",
       SUPPORT = "support",
       PROJECTS = "projects",
-      INTERNAL = "internal"
-  ;
+      INTERNAL = "internal";
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -84,8 +83,8 @@ public final class TicketType extends GlobalObjectStringKey<TicketType> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.TICKET_TYPES;
+  public Table.TableId getTableId() {
+    return Table.TableId.TICKET_TYPES;
   }
 
   public String getType() {

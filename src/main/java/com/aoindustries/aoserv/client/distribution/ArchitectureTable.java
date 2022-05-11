@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.distribution;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTableStringKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.sql.SQLException;
  */
 public final class ArchitectureTable extends GlobalTableStringKey<Architecture> {
 
-  ArchitectureTable(AOServConnector connector) {
+  ArchitectureTable(AoservConnector connector) {
     super(connector, Architecture.class);
   }
 
@@ -56,7 +56,7 @@ public final class ArchitectureTable extends GlobalTableStringKey<Architecture> 
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.ARCHITECTURES;
+  public Table.TableId getTableId() {
+    return Table.TableId.ARCHITECTURES;
   }
 }

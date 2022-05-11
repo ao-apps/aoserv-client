@@ -46,7 +46,7 @@ public final class ServerFarm extends CachedObjectStringKey<ServerFarm> {
 
   private String description;
   private int owner;
-  private boolean use_restricted_smtp_port;
+  private boolean useRestrictedSmtpPort;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -62,11 +62,16 @@ public final class ServerFarm extends CachedObjectStringKey<ServerFarm> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_NAME: return pkey;
-      case 1: return description;
-      case 2: return owner;
-      case 3: return use_restricted_smtp_port;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_NAME:
+        return pkey;
+      case 1:
+        return description;
+      case 2:
+        return owner;
+      case 3:
+        return useRestrictedSmtpPort;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -79,7 +84,7 @@ public final class ServerFarm extends CachedObjectStringKey<ServerFarm> {
    * TODO: Remove this flag once all servers are CentOS 7+ with firewalld-based egress filters.
    */
   public boolean useRestrictedSmtpPort() {
-    return use_restricted_smtp_port;
+    return useRestrictedSmtpPort;
   }
 
   public String getDescription() {
@@ -91,8 +96,8 @@ public final class ServerFarm extends CachedObjectStringKey<ServerFarm> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.SERVER_FARMS;
+  public Table.TableId getTableId() {
+    return Table.TableId.SERVER_FARMS;
   }
 
   @Override
@@ -100,7 +105,7 @@ public final class ServerFarm extends CachedObjectStringKey<ServerFarm> {
     pkey = result.getString(1);
     description = result.getString(2);
     owner = result.getInt(3);
-    use_restricted_smtp_port = result.getBoolean(4);
+    useRestrictedSmtpPort = result.getBoolean(4);
   }
 
   @Override
@@ -108,7 +113,7 @@ public final class ServerFarm extends CachedObjectStringKey<ServerFarm> {
     pkey = in.readUTF().intern();
     description = in.readUTF();
     owner = in.readCompressedInt();
-    use_restricted_smtp_port = in.readBoolean();
+    useRestrictedSmtpPort = in.readBoolean();
   }
 
   @Override
@@ -129,7 +134,7 @@ public final class ServerFarm extends CachedObjectStringKey<ServerFarm> {
       out.writeCompressedInt(owner);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_26) >= 0) {
-      out.writeBoolean(use_restricted_smtp_port);
+      out.writeBoolean(useRestrictedSmtpPort);
     }
   }
 }

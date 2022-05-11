@@ -28,9 +28,9 @@ import com.aoapps.lang.validation.ValidationException;
 import com.aoapps.net.DomainLabel;
 import com.aoapps.net.DomainName;
 import com.aoapps.net.InetAddress;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableStringKey;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
@@ -48,7 +48,7 @@ import java.util.List;
  */
 public final class ZoneTable extends CachedTableStringKey<Zone> {
 
-  ZoneTable(AOServConnector connector) {
+  ZoneTable(AoservConnector connector) {
     super(connector, Zone.class);
   }
 
@@ -67,7 +67,7 @@ public final class ZoneTable extends CachedTableStringKey<Zone> {
     return getUniqueRow(Zone.COLUMN_ZONE, zone);
   }
 
-  private List<DomainName> getDNSTLDs() throws IOException, SQLException {
+  private List<DomainName> getTopLevelDomains() throws IOException, SQLException {
     List<TopLevelDomain> tlds = connector.getDns().getTopLevelDomain().getRows();
     List<DomainName> names = new ArrayList<>(tlds.size());
     for (TopLevelDomain tld : tlds) {
@@ -76,11 +76,11 @@ public final class ZoneTable extends CachedTableStringKey<Zone> {
     return names;
   }
 
-  public void addDNSZone(Package packageObj, String zone, InetAddress ip, int ttl) throws IOException, SQLException {
-    connector.requestUpdateIL(
+  public void addDnsZone(Package packageObj, String zone, InetAddress ip, int ttl) throws IOException, SQLException {
+    connector.requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.ADD,
-        Table.TableID.DNS_ZONES,
+        AoservProtocol.CommandId.ADD,
+        Table.TableId.DNS_ZONES,
         packageObj.getName(),
         zone,
         ip,
@@ -91,14 +91,14 @@ public final class ZoneTable extends CachedTableStringKey<Zone> {
   /**
    * Checks the formatting for a DNS zone.  The format of a DNS zone must be <code><i>name</i>.<i>tld</i>.</code>
    */
-  public boolean checkDNSZone(String zone) throws IOException, SQLException {
-    return checkDNSZone(zone, getDNSTLDs());
+  public boolean checkDnsZone(String zone) throws IOException, SQLException {
+    return checkDnsZone(zone, getTopLevelDomains());
   }
 
   /**
    * Checks the formatting for a DNS zone.  The format of a DNS zone must be <code><i>name</i>.<i>tld</i>.</code>
    */
-  public static boolean checkDNSZone(String zone, List<DomainName> tlds) {
+  public static boolean checkDnsZone(String zone, List<DomainName> tlds) {
     int zoneLen = zone.length();
 
     String shortestName = null;
@@ -123,8 +123,8 @@ public final class ZoneTable extends CachedTableStringKey<Zone> {
     return false;
   }
 
-  public String getDNSZoneForHostname(String hostname) throws IllegalArgumentException, IOException, SQLException {
-    return getDNSZoneForHostname(hostname, getDNSTLDs());
+  public String getZoneForHostname(String hostname) throws IllegalArgumentException, IOException, SQLException {
+    return getZoneForHostname(hostname, getTopLevelDomains());
   }
 
   /**
@@ -132,7 +132,7 @@ public final class ZoneTable extends CachedTableStringKey<Zone> {
    *
    * @return  the zone in the format <code><i>name</i>.<i>tld</i>.</code>
    */
-  public static String getDNSZoneForHostname(String hostname, List<DomainName> tlds) throws IllegalArgumentException {
+  public static String getZoneForHostname(String hostname, List<DomainName> tlds) throws IllegalArgumentException {
     int hlen = hostname.length();
     if (hlen > 0 && hostname.charAt(hlen - 1) == '.') {
       hostname = hostname.substring(0, --hlen);
@@ -162,7 +162,7 @@ public final class ZoneTable extends CachedTableStringKey<Zone> {
     return zone + longestTld + ".";
   }
 
-  public List<Zone> getDNSZones(Package packageObj) throws IOException, SQLException {
+  public List<Zone> getDnsZones(Package packageObj) throws IOException, SQLException {
     return getIndexedRows(Zone.COLUMN_PACKAGE, packageObj.getName());
   }
 
@@ -171,7 +171,7 @@ public final class ZoneTable extends CachedTableStringKey<Zone> {
    *
    * @exception  IllegalArgumentException  if hostname cannot be resolved to a top level domain
    */
-  public static DomainName getHostTLD(DomainName hostname, List<DomainName> tlds) throws IllegalArgumentException {
+  public static DomainName getHostTld(DomainName hostname, List<DomainName> tlds) throws IllegalArgumentException {
     String hostnameStr = hostname.toLowerCase();
     int hostnameLen = hostnameStr.length();
     for (DomainName o : tlds) {
@@ -198,32 +198,32 @@ public final class ZoneTable extends CachedTableStringKey<Zone> {
     throw new IllegalArgumentException("Unable to determine the host.tld format of " + hostname);
   }
 
-  public DomainName getHostTLD(DomainName hostname) throws IllegalArgumentException, IOException, SQLException {
-    return getHostTLD(hostname, getDNSTLDs());
+  public DomainName getHostTld(DomainName hostname) throws IllegalArgumentException, IOException, SQLException {
+    return getHostTld(hostname, getTopLevelDomains());
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.DNS_ZONES;
+  public Table.TableId getTableId() {
+    return Table.TableId.DNS_ZONES;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_DNS_ZONE)) {
-      if (AOSH.checkParamCount(Command.ADD_DNS_ZONE, args, 4, err)) {
-        connector.getSimpleAOClient().addDNSZone(
-            AOSH.parseAccountingCode(args[1], "package"),
+      if (Aosh.checkParamCount(Command.ADD_DNS_ZONE, args, 4, err)) {
+        connector.getSimpleClient().addDnsZone(
+            Aosh.parseAccountingCode(args[1], "package"),
             args[2],
-            AOSH.parseInetAddress(args[3], "ip_address"),
-            AOSH.parseInt(args[4], "ttl")
+            Aosh.parseInetAddress(args[3], "ip_address"),
+            Aosh.parseInt(args[4], "ttl")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.CHECK_DNS_ZONE)) {
-      if (AOSH.checkParamCount(Command.CHECK_DNS_ZONE, args, 1, err)) {
+      if (Aosh.checkParamCount(Command.CHECK_DNS_ZONE, args, 1, err)) {
         try {
-          connector.getSimpleAOClient().checkDNSZone(
+          connector.getSimpleClient().checkDnsZone(
               args[1]
           );
           out.println("true");
@@ -235,9 +235,9 @@ public final class ZoneTable extends CachedTableStringKey<Zone> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.IS_DNS_ZONE_AVAILABLE)) {
-      if (AOSH.checkParamCount(Command.IS_DNS_ZONE_AVAILABLE, args, 1, err)) {
+      if (Aosh.checkParamCount(Command.IS_DNS_ZONE_AVAILABLE, args, 1, err)) {
         try {
-          out.println(connector.getSimpleAOClient().isDNSZoneAvailable(args[1]));
+          out.println(connector.getSimpleClient().isDnsZoneAvailable(args[1]));
           out.flush();
         } catch (IllegalArgumentException iae) {
           err.print("aosh: " + Command.IS_DNS_ZONE_AVAILABLE + ": ");
@@ -247,8 +247,8 @@ public final class ZoneTable extends CachedTableStringKey<Zone> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.PRINT_ZONE_FILE)) {
-      if (AOSH.checkParamCount(Command.PRINT_ZONE_FILE, args, 1, err)) {
-        connector.getSimpleAOClient().printZoneFile(
+      if (Aosh.checkParamCount(Command.PRINT_ZONE_FILE, args, 1, err)) {
+        connector.getSimpleClient().printZoneFile(
             args[1],
             out
         );
@@ -256,29 +256,29 @@ public final class ZoneTable extends CachedTableStringKey<Zone> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.REMOVE_DNS_ZONE)) {
-      if (AOSH.checkParamCount(Command.REMOVE_DNS_ZONE, args, 1, err)) {
-        connector.getSimpleAOClient().removeDNSZone(
+      if (Aosh.checkParamCount(Command.REMOVE_DNS_ZONE, args, 1, err)) {
+        connector.getSimpleClient().removeDnsZone(
             args[1]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_DNS_ZONE_TTL)) {
-      if (AOSH.checkParamCount(Command.REMOVE_DNS_ZONE, args, 2, err)) {
-        connector.getSimpleAOClient().setDNSZoneTTL(
+      if (Aosh.checkParamCount(Command.REMOVE_DNS_ZONE, args, 2, err)) {
+        connector.getSimpleClient().setDnsZoneTtl(
             args[1],
-            AOSH.parseInt(args[2], "ttl")
+            Aosh.parseInt(args[2], "ttl")
         );
       }
     }
     return false;
   }
 
-  public boolean isDNSZoneAvailable(String zone) throws IOException, SQLException {
-    return connector.requestBooleanQuery(true, AoservProtocol.CommandID.IS_DNS_ZONE_AVAILABLE, zone);
+  public boolean isDnsZoneAvailable(String zone) throws IOException, SQLException {
+    return connector.requestBooleanQuery(true, AoservProtocol.CommandId.IS_DNS_ZONE_AVAILABLE, zone);
   }
 
   /**
-   * TODO: Is this redundant with {@link DomainLabel}?
+   * TODO: Is this redundant with {@link DomainLabel}?.
    */
   public static boolean isValidHostnamePart(String name) {
     // Must not be an empty string

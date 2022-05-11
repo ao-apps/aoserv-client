@@ -43,7 +43,7 @@ import com.aoapps.security.Identifier;
 import com.aoapps.security.SmallIdentifier;
 import com.aoapps.sql.SQLUtility;
 import com.aoapps.sql.UnmodifiableTimestamp;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalObjectIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.linux.LinuxId;
@@ -66,7 +66,7 @@ import java.util.TimeZone;
  * A {@link Type} is a unique data type used for
  * {@link Column}.
  *
- * @see  Column#getType(com.aoindustries.aoserv.client.AOServConnector)
+ * @see  Column#getType(com.aoindustries.aoserv.client.AoservConnector)
  *
  * @author  AO Industries, Inc.
  */
@@ -99,7 +99,7 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
   //public static final int COUNTRY =  4; // java.lang.String
 
   /**
-   * TODO: UnmodifiableDate
+   * TODO: UnmodifiableDate.
    *
    * @see java.sql.Date
    */
@@ -279,7 +279,7 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
   public static final int MYSQL_SERVER_NAME = 42;
 
   /**
-   * @see com.aoindustries.aoserv.client.mysql.Table_Name
+   * @see com.aoindustries.aoserv.client.mysql.TableName
    */
   public static final int MYSQL_TABLE_NAME = 43;
 
@@ -455,7 +455,7 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
    *             HASHED_KEY                                       X                                                     X
    * </pre>
    */
-  public Object cast(AOServConnector conn, Object value, Type castToType) throws IOException, SQLException {
+  public Object cast(AoservConnector conn, Object value, Type castToType) throws IOException, SQLException {
     try {
       // When castToType is this type, just return value directly
       if (pkey == castToType.pkey) {
@@ -466,249 +466,413 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
         return getString(value, pkey);
       }
       switch (pkey) {
-        case ACCOUNTING:
+        case ACCOUNTING: {
           // No special casts
           break;
-        case BOOLEAN:
+        }
+        case BOOLEAN: {
           switch (castToType.getId()) {
-            case DECIMAL_2: return value == null ? null : Integer.valueOf((Boolean) value ? -100 : 0);
-            case DECIMAL_3: return value == null ? null : Integer.valueOf((Boolean) value ? -1000 : 0);
-            case DOUBLE: return value == null ? null : Double.valueOf((Boolean) value ? -1 : 0);
-            case FLOAT: return value == null ? null : Float.valueOf((Boolean) value ? -1 : 0);
-            case INT: return value == null ? null : Integer.valueOf((Boolean) value ? -1 : 0);
+            case DECIMAL_2:
+              return value == null ? null : Integer.valueOf((Boolean) value ? -100 : 0);
+            case DECIMAL_3:
+              return value == null ? null : Integer.valueOf((Boolean) value ? -1000 : 0);
+            case DOUBLE:
+              return value == null ? null : Double.valueOf((Boolean) value ? -1 : 0);
+            case FLOAT:
+              return value == null ? null : Float.valueOf((Boolean) value ? -1 : 0);
+            case INT:
+              return value == null ? null : Integer.valueOf((Boolean) value ? -1 : 0);
             case LONG:
             case OCTAL_LONG:
               return value == null ? null : Long.valueOf((Boolean) value ? -1 : 0);
-            case SHORT: return value == null ? null : Short.valueOf((Boolean) value ? (short) -1 : 0);
-            case BIG_DECIMAL: return value == null ? null : (Boolean) value ? bigDecimalNegativeOne : BigDecimal.ZERO;
+            case SHORT:
+              return value == null ? null : Short.valueOf((Boolean) value ? (short) -1 : 0);
+            case BIG_DECIMAL:
+              return value == null ? null : (Boolean) value ? bigDecimalNegativeOne : BigDecimal.ZERO;
+            default:
+              // fall-through to throw exception
           }
           break;
-        case DATE:
-        {
+        }
+        case DATE: {
           long tvalue = value == null ? 0 : ((java.sql.Date) value).getTime();
           switch (castToType.getId()) {
-            case DECIMAL_2: return value == null ? null : Integer.valueOf((int) (getDaysFromMillis(tvalue) * 100));
-            case DECIMAL_3: return value == null ? null : Integer.valueOf((int) (getDaysFromMillis(tvalue) * 1000));
-            case DOUBLE: return value == null ? null : Double.valueOf(getDaysFromMillis(tvalue));
-            case FLOAT: return value == null ? null : Float.valueOf(getDaysFromMillis(tvalue));
-            case INT: return value == null ? null : Integer.valueOf((int) (getDaysFromMillis(tvalue)));
+            case DECIMAL_2:
+              return value == null ? null : Integer.valueOf((int) (getDaysFromMillis(tvalue) * 100));
+            case DECIMAL_3:
+              return value == null ? null : Integer.valueOf((int) (getDaysFromMillis(tvalue) * 1000));
+            case DOUBLE:
+              return value == null ? null : Double.valueOf(getDaysFromMillis(tvalue));
+            case FLOAT:
+              return value == null ? null : Float.valueOf(getDaysFromMillis(tvalue));
+            case INT:
+              return value == null ? null : Integer.valueOf((int) (getDaysFromMillis(tvalue)));
             case LONG:
             case OCTAL_LONG:
               return value == null ? null : Long.valueOf(getDaysFromMillis(tvalue));
-            case SHORT: return value == null ? null : Short.valueOf((short) (getDaysFromMillis(tvalue)));
-            case TIME: return value == null ? null : new UnmodifiableTimestamp(roundToDate(tvalue));
-            case BIG_DECIMAL: return value == null ? null : BigDecimal.valueOf(getDaysFromMillis(tvalue));
+            case SHORT:
+              return value == null ? null : Short.valueOf((short) (getDaysFromMillis(tvalue)));
+            case TIME:
+              return value == null ? null : new UnmodifiableTimestamp(roundToDate(tvalue));
+            case BIG_DECIMAL:
+              return value == null ? null : BigDecimal.valueOf(getDaysFromMillis(tvalue));
+            default:
+              // fall-through to throw exception
           }
-        }
           break;
-        case DECIMAL_2:
+        }
+        case DECIMAL_2: {
           switch (castToType.getId()) {
-            case BOOLEAN: return value == null ? null : (Integer) value != 0;
-            case DATE: return value == null ? null : new java.sql.Date(getMillisFromDays((Integer) value / 100));
-            case DECIMAL_3: return value == null ? null : Integer.valueOf((Integer) value * 10);
-            case DOUBLE: return value == null ? null : Double.valueOf((double) (Integer) value / 100);
-            case FLOAT: return value == null ? null : Float.valueOf((float) (Integer) value / 100);
-            case INT: return value == null ? null : Integer.valueOf((Integer) value / 100);
-            case INTERVAL: return value == null ? null : Long.valueOf((Integer) value / 100);
+            case BOOLEAN:
+              return value == null ? null : (Integer) value != 0;
+            case DATE:
+              return value == null ? null : new java.sql.Date(getMillisFromDays((Integer) value / 100));
+            case DECIMAL_3:
+              return value == null ? null : Integer.valueOf((Integer) value * 10);
+            case DOUBLE:
+              return value == null ? null : Double.valueOf((double) (Integer) value / 100);
+            case FLOAT:
+              return value == null ? null : Float.valueOf((float) (Integer) value / 100);
+            case INT:
+              return value == null ? null : Integer.valueOf((Integer) value / 100);
+            case INTERVAL:
+              return value == null ? null : Long.valueOf((Integer) value / 100);
             case LONG:
             case OCTAL_LONG:
               return value == null ? null : Long.valueOf((Integer) value / 100);
-            case SHORT: return value == null ? null : Short.valueOf((short) ((Integer) value / 100));
-            case BIG_DECIMAL: return value == null ? null : BigDecimal.valueOf((Integer) value, 2);
+            case SHORT:
+              return value == null ? null : Short.valueOf((short) ((Integer) value / 100));
+            case BIG_DECIMAL:
+              return value == null ? null : BigDecimal.valueOf((Integer) value, 2);
+            default:
+              // fall-through to throw exception
           }
           break;
-        case DECIMAL_3:
+        }
+        case DECIMAL_3: {
           switch (castToType.getId()) {
-            case BOOLEAN: return value == null ? null : (Integer) value != 0;
-            case DATE: return value == null ? null : new java.sql.Date(getMillisFromDays((Integer) value / 1000));
-            case DECIMAL_2: return value == null ? null : Integer.valueOf((Integer) value / 10);
-            case DOUBLE: return value == null ? null : Double.valueOf((double) (Integer) value / 1000);
-            case FLOAT: return value == null ? null : Float.valueOf((float) (Integer) value / 1000);
-            case INT: return value == null ? null : Integer.valueOf((Integer) value / 1000);
-            case INTERVAL: return value == null ? null : Long.valueOf((Integer) value / 1000);
+            case BOOLEAN:
+              return value == null ? null : (Integer) value != 0;
+            case DATE:
+              return value == null ? null : new java.sql.Date(getMillisFromDays((Integer) value / 1000));
+            case DECIMAL_2:
+              return value == null ? null : Integer.valueOf((Integer) value / 10);
+            case DOUBLE:
+              return value == null ? null : Double.valueOf((double) (Integer) value / 1000);
+            case FLOAT:
+              return value == null ? null : Float.valueOf((float) (Integer) value / 1000);
+            case INT:
+              return value == null ? null : Integer.valueOf((Integer) value / 1000);
+            case INTERVAL:
+              return value == null ? null : Long.valueOf((Integer) value / 1000);
             case LONG:
             case OCTAL_LONG:
               return value == null ? null : Long.valueOf((Integer) value / 1000);
-            case SHORT: return value == null ? null : Short.valueOf((short) ((Integer) value / 1000));
-            case BIG_DECIMAL: return value == null ? null : BigDecimal.valueOf((Integer) value, 3);
+            case SHORT:
+              return value == null ? null : Short.valueOf((short) ((Integer) value / 1000));
+            case BIG_DECIMAL:
+              return value == null ? null : BigDecimal.valueOf((Integer) value, 3);
+            default:
+              // fall-through to throw exception
           }
           break;
-        case DOUBLE:
+        }
+        case DOUBLE: {
           switch (castToType.getId()) {
-            case BOOLEAN: return value == null ? null : (Double) value != 0;
-            case DATE: return value == null ? null : new java.sql.Date(getMillisFromDays(((Double) value).longValue()));
-            case DECIMAL_2: return value == null ? null : Integer.valueOf((int) ((Double) value * 100));
-            case DECIMAL_3: return value == null ? null : Integer.valueOf((int) ((Double) value * 1000));
-            case FLOAT: return value == null ? null : Float.valueOf(((Double) value).floatValue());
-            case INT: return value == null ? null : Integer.valueOf(((Double) value).intValue());
-            case INTERVAL: return value == null ? null : Long.valueOf(((Double) value).longValue());
+            case BOOLEAN:
+              return value == null ? null : (Double) value != 0;
+            case DATE:
+              return value == null ? null : new java.sql.Date(getMillisFromDays(((Double) value).longValue()));
+            case DECIMAL_2:
+              return value == null ? null : Integer.valueOf((int) ((Double) value * 100));
+            case DECIMAL_3:
+              return value == null ? null : Integer.valueOf((int) ((Double) value * 1000));
+            case FLOAT:
+              return value == null ? null : Float.valueOf(((Double) value).floatValue());
+            case INT:
+              return value == null ? null : Integer.valueOf(((Double) value).intValue());
+            case INTERVAL:
+              return value == null ? null : Long.valueOf(((Double) value).longValue());
             case LONG:
             case OCTAL_LONG:
               return value == null ? null : Long.valueOf(((Double) value).longValue());
-            case SHORT: return value == null ? null : Short.valueOf(((Double) value).shortValue());
-            case BIG_DECIMAL: return value == null ? null : BigDecimal.valueOf((Double) value);
+            case SHORT:
+              return value == null ? null : Short.valueOf(((Double) value).shortValue());
+            case BIG_DECIMAL:
+              return value == null ? null : BigDecimal.valueOf((Double) value);
+            default:
+              // fall-through to throw exception
           }
           break;
-        case EMAIL:
+        }
+        case EMAIL: {
           switch (castToType.getId()) {
-            case HOSTNAME:       return value == null ? null : HostAddress.valueOf(((Email) value).getDomain());
-            case URL:            return value == null ? null : "mailto:" + value;
-            case USERNAME:       return value == null ? null : com.aoindustries.aoserv.client.account.User.Name.valueOf(getUsernameForEmail((Email) value));
-            case ZONE:           return value == null ? null : getZoneForDomainName(conn, ((Email) value).getDomain());
-            case DOMAIN_NAME:    return value == null ? null : ((Email) value).getDomain();
-            case LINUX_USERNAME: return value == null ? null : com.aoindustries.aoserv.client.linux.User.Name.valueOf(getUsernameForEmail((Email) value));
+            case HOSTNAME:
+              return value == null ? null : HostAddress.valueOf(((Email) value).getDomain());
+            case URL:
+              return value == null ? null : "mailto:" + value;
+            case USERNAME:
+              return value == null ? null : com.aoindustries.aoserv.client.account.User.Name.valueOf(getUsernameForEmail((Email) value));
+            case ZONE:
+              return value == null ? null : getZoneForDomainName(conn, ((Email) value).getDomain());
+            case DOMAIN_NAME:
+              return value == null ? null : ((Email) value).getDomain();
+            case LINUX_USERNAME:
+              return value == null ? null : com.aoindustries.aoserv.client.linux.User.Name.valueOf(getUsernameForEmail((Email) value));
+            default:
+              // fall-through to throw exception
           }
           break;
-        case FKEY:
+        }
+        case FKEY: {
           switch (castToType.getId()) {
             case INT:
             case PKEY:
               return value;
+            default:
+              // fall-through to throw exception
           }
           break;
-        case FLOAT:
+        }
+        case FLOAT: {
           switch (castToType.getId()) {
-            case BOOLEAN: return value == null ? null : (Float) value != 0;
-            case DATE: return value == null ? null : new java.sql.Date(getMillisFromDays(((Float) value).longValue()));
-            case DECIMAL_2: return value == null ? null : Integer.valueOf((int) ((Float) value * 100));
-            case DECIMAL_3: return value == null ? null : Integer.valueOf((int) ((Float) value * 1000));
-            case DOUBLE: return value == null ? null : Double.valueOf(((Float) value).doubleValue());
-            case INT: return value == null ? null : Integer.valueOf(((Float) value).intValue());
-            case INTERVAL: return value == null ? null : Long.valueOf(((Float) value).longValue());
+            case BOOLEAN:
+              return value == null ? null : (Float) value != 0;
+            case DATE:
+              return value == null ? null : new java.sql.Date(getMillisFromDays(((Float) value).longValue()));
+            case DECIMAL_2:
+              return value == null ? null : Integer.valueOf((int) ((Float) value * 100));
+            case DECIMAL_3:
+              return value == null ? null : Integer.valueOf((int) ((Float) value * 1000));
+            case DOUBLE:
+              return value == null ? null : Double.valueOf(((Float) value).doubleValue());
+            case INT:
+              return value == null ? null : Integer.valueOf(((Float) value).intValue());
+            case INTERVAL:
+              return value == null ? null : Long.valueOf(((Float) value).longValue());
             case LONG:
             case OCTAL_LONG:
               return value == null ? null : Long.valueOf(((Float) value).longValue());
-            case SHORT: return value == null ? null : Short.valueOf(((Float) value).shortValue());
-            case BIG_DECIMAL: return value == null ? null : BigDecimal.valueOf(((Float) value).doubleValue());
+            case SHORT:
+              return value == null ? null : Short.valueOf(((Float) value).shortValue());
+            case BIG_DECIMAL:
+              return value == null ? null : BigDecimal.valueOf(((Float) value).doubleValue());
+            default:
+              // fall-through to throw exception
           }
           break;
-        case HOSTNAME:
+        }
+        case HOSTNAME: {
           switch (castToType.getId()) {
-            case IP_ADDRESS:  return value == null ? null : ((HostAddress) value).getInetAddress();
-            case ZONE:        return value == null ? null : getZoneForDomainName(conn, ((HostAddress) value).getDomainName());
-            case DOMAIN_NAME: return value == null ? null : ((HostAddress) value).getDomainName();
+            case IP_ADDRESS:
+              return value == null ? null : ((HostAddress) value).getInetAddress();
+            case ZONE:
+              return value == null ? null : getZoneForDomainName(conn, ((HostAddress) value).getDomainName());
+            case DOMAIN_NAME:
+              return value == null ? null : ((HostAddress) value).getDomainName();
+            default:
+              // fall-through to throw exception
           }
           break;
-        case INT:
+        }
+        case INT: {
           switch (castToType.getId()) {
-            case BOOLEAN: return value == null ? null : (Integer) value != 0;
-            case DATE: return value == null ? null : new java.sql.Date(getMillisFromDays((Integer) value));
-            case DECIMAL_2: return value == null ? null : Integer.valueOf((Integer) value * 100);
-            case DECIMAL_3: return value == null ? null : Integer.valueOf((Integer) value * 1000);
-            case DOUBLE: return value == null ? null : Double.valueOf(((Integer) value).doubleValue());
-            case FKEY: return value;
-            case FLOAT: return value == null ? null : Float.valueOf(((Integer) value).floatValue());
-            case INTERVAL: return value == null ? null : Long.valueOf(((Integer) value).longValue());
-            case IP_ADDRESS: return value == null ? null : InetAddress.valueOf(IpAddress.getIPAddressForInt((Integer) value));
+            case BOOLEAN:
+              return value == null ? null : (Integer) value != 0;
+            case DATE:
+              return value == null ? null : new java.sql.Date(getMillisFromDays((Integer) value));
+            case DECIMAL_2:
+              return value == null ? null : Integer.valueOf((Integer) value * 100);
+            case DECIMAL_3:
+              return value == null ? null : Integer.valueOf((Integer) value * 1000);
+            case DOUBLE:
+              return value == null ? null : Double.valueOf(((Integer) value).doubleValue());
+            case FKEY:
+              return value;
+            case FLOAT:
+              return value == null ? null : Float.valueOf(((Integer) value).floatValue());
+            case INTERVAL:
+              return value == null ? null : Long.valueOf(((Integer) value).longValue());
+            case IP_ADDRESS:
+              return value == null ? null : InetAddress.valueOf(IpAddress.getIpAddressForInt((Integer) value));
             case LONG:
             case OCTAL_LONG:
               return value == null ? null : Long.valueOf(((Integer) value).longValue());
-            case PKEY: return value;
-            case SHORT: return value == null ? null : Short.valueOf(((Integer) value).shortValue());
-            case BIG_DECIMAL: return value == null ? null : BigDecimal.valueOf(((Integer) value).doubleValue());
-            case LINUX_ID: return value == null ? null : LinuxId.valueOf((Integer) value);
+            case PKEY:
+              return value;
+            case SHORT:
+              return value == null ? null : Short.valueOf(((Integer) value).shortValue());
+            case BIG_DECIMAL:
+              return value == null ? null : BigDecimal.valueOf(((Integer) value).doubleValue());
+            case LINUX_ID:
+              return value == null ? null : LinuxId.valueOf((Integer) value);
+            default:
+              // fall-through to throw exception
           }
           break;
-        case INTERVAL:
+        }
+        case INTERVAL: {
           switch (castToType.getId()) {
-            case DECIMAL_2: return value == null ? null : Integer.valueOf((int) ((Long) value * 100));
-            case DECIMAL_3: return value == null ? null : Integer.valueOf((int) ((Long) value * 1000));
-            case DOUBLE: return value == null ? null : Double.valueOf(((Long) value).doubleValue());
-            case FLOAT: return value == null ? null : Float.valueOf(((Long) value).floatValue());
-            case INT: return value == null ? null : Integer.valueOf(((Long) value).intValue());
+            case DECIMAL_2:
+              return value == null ? null : Integer.valueOf((int) ((Long) value * 100));
+            case DECIMAL_3:
+              return value == null ? null : Integer.valueOf((int) ((Long) value * 1000));
+            case DOUBLE:
+              return value == null ? null : Double.valueOf(((Long) value).doubleValue());
+            case FLOAT:
+              return value == null ? null : Float.valueOf(((Long) value).floatValue());
+            case INT:
+              return value == null ? null : Integer.valueOf(((Long) value).intValue());
             case LONG:
             case OCTAL_LONG:
               return value;
-            case SHORT: return value == null ? null : Short.valueOf(((Long) value).shortValue());
-            case BIG_DECIMAL: return value == null ? null : BigDecimal.valueOf((Long) value);
+            case SHORT:
+              return value == null ? null : Short.valueOf(((Long) value).shortValue());
+            case BIG_DECIMAL:
+              return value == null ? null : BigDecimal.valueOf((Long) value);
             // TODO: Should casts to/from Interval add decimal places, since interval represents milliseconds
             //       Interval of (long)234 would become (decimal_2)23, (decimal_3)234, BigDecimal(0.234), ...
+            default:
+              // fall-through to throw exception
           }
           break;
-        case IP_ADDRESS:
+        }
+        case IP_ADDRESS: {
           // No special casts
           break;
+        }
         case LONG:
-        case OCTAL_LONG:
+        case OCTAL_LONG: {
           switch (castToType.getId()) {
-            case BOOLEAN: return value == null ? null : (Long) value != 0;
-            case DATE: return value == null ? null : new java.sql.Date(getMillisFromDays((Long) value));
-            case DECIMAL_2: return value == null ? null : Integer.valueOf((int) ((Long) value * 100));
-            case DECIMAL_3: return value == null ? null : Integer.valueOf((int) ((Long) value * 1000));
-            case DOUBLE: return value == null ? null : Double.valueOf(((Long) value).doubleValue());
-            case FLOAT: return value == null ? null : Float.valueOf(((Long) value).floatValue());
-            case INT: return value == null ? null : Integer.valueOf(((Long) value).intValue());
-            case INTERVAL: return value;
+            case BOOLEAN:
+              return value == null ? null : (Long) value != 0;
+            case DATE:
+              return value == null ? null : new java.sql.Date(getMillisFromDays((Long) value));
+            case DECIMAL_2:
+              return value == null ? null : Integer.valueOf((int) ((Long) value * 100));
+            case DECIMAL_3:
+              return value == null ? null : Integer.valueOf((int) ((Long) value * 1000));
+            case DOUBLE:
+              return value == null ? null : Double.valueOf(((Long) value).doubleValue());
+            case FLOAT:
+              return value == null ? null : Float.valueOf(((Long) value).floatValue());
+            case INT:
+              return value == null ? null : Integer.valueOf(((Long) value).intValue());
+            case INTERVAL:
+              return value;
             case LONG:
             case OCTAL_LONG:
               return value;
-            case SHORT: return value == null ? null : Short.valueOf(((Long) value).shortValue());
-            case TIME: return value == null ? null : new UnmodifiableTimestamp((Long) value);
-            case BIG_DECIMAL: return value == null ? null : BigDecimal.valueOf((Long) value);
-            case SMALL_IDENTIFIER: return value == null ? null : new SmallIdentifier((Long) value);
+            case SHORT:
+              return value == null ? null : Short.valueOf(((Long) value).shortValue());
+            case TIME:
+              return value == null ? null : new UnmodifiableTimestamp((Long) value);
+            case BIG_DECIMAL:
+              return value == null ? null : BigDecimal.valueOf((Long) value);
+            case SMALL_IDENTIFIER:
+              return value == null ? null : new SmallIdentifier((Long) value);
+            default:
+              // fall-through to throw exception
           }
           break;
-        case PKEY:
+        }
+        case PKEY: {
           switch (castToType.getId()) {
             case FKEY:
             case INT:
               return value;
+            default:
+              // fall-through to throw exception
           }
           break;
-        case PATH:
+        }
+        case PATH: {
           // No special casts
           break;
-        case PHONE:
+        }
+        case PHONE: {
           switch (castToType.getId()) {
-            case URL: return value == null ? null : "tel:" + ((String) value).replace(' ', '-');
+            case URL:
+              return value == null ? null : "tel:" + ((String) value).replace(' ', '-');
+            default:
+              // fall-through to throw exception
           }
           break;
-        case SHORT:
+        }
+        case SHORT: {
           switch (castToType.getId()) {
-            case BOOLEAN: return value == null ? null : (Short) value != 0;
-            case DATE: return value == null ? null : new java.sql.Date(getMillisFromDays((Short) value));
-            case DECIMAL_2: return value == null ? null : Integer.valueOf((Short) value * 100);
-            case DECIMAL_3: return value == null ? null : Integer.valueOf((Short) value * 1000);
-            case DOUBLE: return value == null ? null : Double.valueOf(((Short) value).doubleValue());
-            case FLOAT: return value == null ? null : Float.valueOf(((Short) value).floatValue());
-            case INT: return value == null ? null : Integer.valueOf(((Short) value).intValue());
-            case INTERVAL: return value == null ? null : Long.valueOf(((Short) value).longValue());
+            case BOOLEAN:
+              return value == null ? null : (Short) value != 0;
+            case DATE:
+              return value == null ? null : new java.sql.Date(getMillisFromDays((Short) value));
+            case DECIMAL_2:
+              return value == null ? null : Integer.valueOf((Short) value * 100);
+            case DECIMAL_3:
+              return value == null ? null : Integer.valueOf((Short) value * 1000);
+            case DOUBLE:
+              return value == null ? null : Double.valueOf(((Short) value).doubleValue());
+            case FLOAT:
+              return value == null ? null : Float.valueOf(((Short) value).floatValue());
+            case INT:
+              return value == null ? null : Integer.valueOf(((Short) value).intValue());
+            case INTERVAL:
+              return value == null ? null : Long.valueOf(((Short) value).longValue());
             case LONG:
             case OCTAL_LONG:
               return value == null ? null : Long.valueOf(((Short) value).longValue());
-            case BIG_DECIMAL: return value == null ? null : BigDecimal.valueOf(((Short) value).longValue());
+            case BIG_DECIMAL:
+              return value == null ? null : BigDecimal.valueOf(((Short) value).longValue());
+            default:
+              // fall-through to throw exception
           }
           break;
-        case STRING:
+        }
+        case STRING: {
           return castToType.parseString((String) value);
-        case TIME:
-        {
+        }
+        case TIME: {
           long lvalue = value == null ? 0 : ((Timestamp) value).getTime();
           switch (castToType.getId()) {
-            case DATE: return value == null ? null : new java.sql.Date(roundToDate(lvalue));
+            case DATE:
+              return value == null ? null : new java.sql.Date(roundToDate(lvalue));
             case LONG:
             case OCTAL_LONG:
               return value == null ? null : Long.valueOf(lvalue);
+            default:
+              // fall-through to throw exception
           }
-        }
           break;
-        case URL:
+        }
+        case URL: {
           // TODO: URL as URI (no resolve stuff)?
           switch (castToType.getId()) {
-            case HOSTNAME: return value == null ? null : HostAddress.valueOf(new URL((String) value).getHost());
-            case PATH: return value == null ? null : PosixPath.valueOf(new URL((String) value).getPath());
-            case ZONE: return value == null ? null : getZoneForDomainName(conn, DomainName.valueOf(new URL((String) value).getHost()));
-            case DOMAIN_NAME: return value == null ? null : DomainName.valueOf(new URL((String) value).getHost());
+            case HOSTNAME:
+              return value == null ? null : HostAddress.valueOf(new URL((String) value).getHost());
+            case PATH:
+              return value == null ? null : PosixPath.valueOf(new URL((String) value).getPath());
+            case ZONE:
+              return value == null ? null : getZoneForDomainName(conn, DomainName.valueOf(new URL((String) value).getHost()));
+            case DOMAIN_NAME:
+              return value == null ? null : DomainName.valueOf(new URL((String) value).getHost());
+            default:
+              // fall-through to throw exception
           }
           break;
-        case USERNAME:
+        }
+        case USERNAME: {
           switch (castToType.getId()) {
-            case MYSQL_USERNAME: return value == null ? null : com.aoindustries.aoserv.client.mysql.User.Name.valueOf(((com.aoindustries.aoserv.client.account.User.Name) value).toString());
-            case POSTGRES_USERNAME: return value == null ? null : com.aoindustries.aoserv.client.postgresql.User.Name.valueOf(((com.aoindustries.aoserv.client.account.User.Name) value).toString());
-            case LINUX_USERNAME: return value == null ? null : com.aoindustries.aoserv.client.linux.User.Name.valueOf(((com.aoindustries.aoserv.client.account.User.Name) value).toString());
+            case MYSQL_USERNAME:
+              return value == null ? null : com.aoindustries.aoserv.client.mysql.User.Name.valueOf(((com.aoindustries.aoserv.client.account.User.Name) value).toString());
+            case POSTGRES_USERNAME:
+              return value == null ? null : com.aoindustries.aoserv.client.postgresql.User.Name.valueOf(((com.aoindustries.aoserv.client.account.User.Name) value).toString());
+            case LINUX_USERNAME:
+              return value == null ? null : com.aoindustries.aoserv.client.linux.User.Name.valueOf(((com.aoindustries.aoserv.client.account.User.Name) value).toString());
+            default:
+              // fall-through to throw exception
           }
           break;
-        case ZONE:
+        }
+        case ZONE: {
           // TODO: com.aoapps.net.DomainName (once no longer ends with ".")
           switch (castToType.getId()) {
             case HOSTNAME: {
@@ -718,110 +882,181 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
               }
               return HostAddress.valueOf(hname);
             }
-            case DOMAIN_NAME: return value == null ? null : getDomainNameForZone((String) value);
+            case DOMAIN_NAME:
+              return value == null ? null : getDomainNameForZone((String) value);
+            default:
+              // fall-through to throw exception
           }
           break;
-        case BIG_DECIMAL:
+        }
+        case BIG_DECIMAL: {
           switch (castToType.getId()) {
-            case BOOLEAN: return value == null ? null : ((BigDecimal) value).compareTo(BigDecimal.ZERO) != 0;
-            case DATE: return value == null ? null : new java.sql.Date(getMillisFromDays(((BigDecimal) value).longValue()));
-            case DECIMAL_2: return value == null ? null : ((BigDecimal) value).scaleByPowerOfTen(2).intValue();
-            case DECIMAL_3: return value == null ? null : ((BigDecimal) value).scaleByPowerOfTen(3).intValue();
-            case DOUBLE: return value == null ? null : ((BigDecimal) value).doubleValue();
-            case FLOAT: return value == null ? null : ((BigDecimal) value).floatValue();
-            case INT: return value == null ? null : ((BigDecimal) value).intValue();
-            case INTERVAL: return value == null ? null : ((BigDecimal) value).longValue();
+            case BOOLEAN:
+              return value == null ? null : ((BigDecimal) value).compareTo(BigDecimal.ZERO) != 0;
+            case DATE:
+              return value == null ? null : new java.sql.Date(getMillisFromDays(((BigDecimal) value).longValue()));
+            case DECIMAL_2:
+              return value == null ? null : ((BigDecimal) value).scaleByPowerOfTen(2).intValue();
+            case DECIMAL_3:
+              return value == null ? null : ((BigDecimal) value).scaleByPowerOfTen(3).intValue();
+            case DOUBLE:
+              return value == null ? null : ((BigDecimal) value).doubleValue();
+            case FLOAT:
+              return value == null ? null : ((BigDecimal) value).floatValue();
+            case INT:
+              return value == null ? null : ((BigDecimal) value).intValue();
+            case INTERVAL:
+              return value == null ? null : ((BigDecimal) value).longValue();
             case LONG:
             case OCTAL_LONG:
               return value == null ? null : ((BigDecimal) value).longValue();
-            case SHORT: return value == null ? null : ((BigDecimal) value).shortValue();
-            case SMALL_IDENTIFIER: return value == null ? null : new SmallIdentifier(((BigDecimal) value).longValue());
+            case SHORT:
+              return value == null ? null : ((BigDecimal) value).shortValue();
+            case SMALL_IDENTIFIER:
+              return value == null ? null : new SmallIdentifier(((BigDecimal) value).longValue());
+            default:
+              // fall-through to throw exception
           }
           break;
-        case DOMAIN_LABEL:
+        }
+        case DOMAIN_LABEL: {
           switch (castToType.getId()) {
-            case DOMAIN_LABELS: return value == null ? null : DomainLabels.valueOf(((DomainLabel) value).toString());
-            case DOMAIN_NAME: return value == null ? null : DomainName.valueOf(((DomainLabel) value).toString());
+            case DOMAIN_LABELS:
+              return value == null ? null : DomainLabels.valueOf(((DomainLabel) value).toString());
+            case DOMAIN_NAME:
+              return value == null ? null : DomainName.valueOf(((DomainLabel) value).toString());
+            default:
+              // fall-through to throw exception
           }
           break;
-        case DOMAIN_LABELS:
+        }
+        case DOMAIN_LABELS: {
           switch (castToType.getId()) {
-            case DOMAIN_NAME: return DomainName.valueOf(((DomainLabels) value).toString());
+            case DOMAIN_NAME:
+              return DomainName.valueOf(((DomainLabels) value).toString());
+            default:
+              // fall-through to throw exception
           }
           break;
-        case DOMAIN_NAME:
+        }
+        case DOMAIN_NAME: {
           switch (castToType.getId()) {
-            case HOSTNAME: return HostAddress.valueOf((DomainName) value);
-            case ZONE: return ((DomainName) value).toString() + '.';
-            case DOMAIN_LABELS: return DomainLabels.valueOf(((DomainName) value).toString());
+            case HOSTNAME:
+              return HostAddress.valueOf((DomainName) value);
+            case ZONE:
+              return ((DomainName) value).toString() + '.';
+            case DOMAIN_LABELS:
+              return DomainLabels.valueOf(((DomainName) value).toString());
+            default:
+              // fall-through to throw exception
           }
           break;
-        case GECOS:
+        }
+        case GECOS: {
           // No special casts
           break;
-        case GROUP_ID:
+        }
+        case GROUP_ID: {
           // No special casts
           break;
-        case HASHED_PASSWORD:
+        }
+        case HASHED_PASSWORD: {
           // No special casts
           break;
-        case LINUX_ID:
+        }
+        case LINUX_ID: {
           switch (castToType.getId()) {
-            case BOOLEAN: return value == null ? null : ((LinuxId) value).getId() != 0;
-            case INT: return value == null ? null : Integer.valueOf(((LinuxId) value).getId());
+            case BOOLEAN:
+              return value == null ? null : ((LinuxId) value).getId() != 0;
+            case INT:
+              return value == null ? null : Integer.valueOf(((LinuxId) value).getId());
+            default:
+              // fall-through to throw exception
           }
           break;
-        case MAC_ADDRESS:
+        }
+        case MAC_ADDRESS: {
           // No special casts
           break;
-        case MONEY:
+        }
+        case MONEY: {
           switch (castToType.getId()) {
-            case BIG_DECIMAL: return value == null ? null : ((Money) value).getValue();
+            case BIG_DECIMAL:
+              return value == null ? null : ((Money) value).getValue();
+            default:
+              // fall-through to throw exception
           }
           break;
-        case MYSQL_DATABASE_NAME:
+        }
+        case MYSQL_DATABASE_NAME: {
           // No special casts
           break;
-        case MYSQL_SERVER_NAME:
+        }
+        case MYSQL_SERVER_NAME: {
           // No special casts
           break;
-        case MYSQL_TABLE_NAME:
+        }
+        case MYSQL_TABLE_NAME: {
           // No special casts
           break;
-        case MYSQL_USERNAME:
+        }
+        case MYSQL_USERNAME: {
           switch (castToType.getId()) {
-            case USERNAME: return value == null ? null : com.aoindustries.aoserv.client.account.User.Name.valueOf(((com.aoindustries.aoserv.client.mysql.User.Name) value).toString());
-            case LINUX_USERNAME: return value == null ? null : com.aoindustries.aoserv.client.linux.User.Name.valueOf(((com.aoindustries.aoserv.client.mysql.User.Name) value).toString());
+            case USERNAME:
+              return value == null ? null : com.aoindustries.aoserv.client.account.User.Name.valueOf(((com.aoindustries.aoserv.client.mysql.User.Name) value).toString());
+            case LINUX_USERNAME:
+              return value == null ? null : com.aoindustries.aoserv.client.linux.User.Name.valueOf(((com.aoindustries.aoserv.client.mysql.User.Name) value).toString());
+            default:
+              // fall-through to throw exception
           }
           break;
-        case NET_PORT:
+        }
+        case NET_PORT: {
           switch (castToType.getId()) {
-            case INT: return value == null ? null : Integer.valueOf(((Port) value).getPort());
+            case INT:
+              return value == null ? null : Integer.valueOf(((Port) value).getPort());
+            default:
+              // fall-through to throw exception
           }
           break;
-        case POSTGRES_DATABASE_NAME:
+        }
+        case POSTGRES_DATABASE_NAME: {
           // No special casts
           break;
-        case POSTGRES_SERVER_NAME:
+        }
+        case POSTGRES_SERVER_NAME: {
           // No special casts
           break;
-        case POSTGRES_USERNAME:
+        }
+        case POSTGRES_USERNAME: {
           switch (castToType.getId()) {
-            case USERNAME: return value == null ? null : com.aoindustries.aoserv.client.account.User.Name.valueOf(((com.aoindustries.aoserv.client.postgresql.User.Name) value).toString());
-            case LINUX_USERNAME: return value == null ? null : com.aoindustries.aoserv.client.linux.User.Name.valueOf(((com.aoindustries.aoserv.client.postgresql.User.Name) value).toString());
+            case USERNAME:
+              return value == null ? null : com.aoindustries.aoserv.client.account.User.Name.valueOf(((com.aoindustries.aoserv.client.postgresql.User.Name) value).toString());
+            case LINUX_USERNAME:
+              return value == null ? null : com.aoindustries.aoserv.client.linux.User.Name.valueOf(((com.aoindustries.aoserv.client.postgresql.User.Name) value).toString());
+            default:
+              // fall-through to throw exception
           }
           break;
-        case FIREWALLD_ZONE_NAME:
+        }
+        case FIREWALLD_ZONE_NAME: {
           // No special casts
           break;
-        case LINUX_USERNAME:
+        }
+        case LINUX_USERNAME: {
           switch (castToType.getId()) {
-            case USERNAME: return value == null ? null : com.aoindustries.aoserv.client.account.User.Name.valueOf(((com.aoindustries.aoserv.client.linux.User.Name) value).toString());
-            case MYSQL_USERNAME: return value == null ? null : com.aoindustries.aoserv.client.mysql.User.Name.valueOf(((com.aoindustries.aoserv.client.linux.User.Name) value).toString());
-            case POSTGRES_USERNAME: return value == null ? null : com.aoindustries.aoserv.client.postgresql.User.Name.valueOf(((com.aoindustries.aoserv.client.linux.User.Name) value).toString());
+            case USERNAME:
+              return value == null ? null : com.aoindustries.aoserv.client.account.User.Name.valueOf(((com.aoindustries.aoserv.client.linux.User.Name) value).toString());
+            case MYSQL_USERNAME:
+              return value == null ? null : com.aoindustries.aoserv.client.mysql.User.Name.valueOf(((com.aoindustries.aoserv.client.linux.User.Name) value).toString());
+            case POSTGRES_USERNAME:
+              return value == null ? null : com.aoindustries.aoserv.client.postgresql.User.Name.valueOf(((com.aoindustries.aoserv.client.linux.User.Name) value).toString());
+            default:
+              // fall-through to throw exception
           }
           break;
-        case IDENTIFIER:
+        }
+        case IDENTIFIER: {
           switch (castToType.getId()) {
             case BIG_DECIMAL:
               if (value == null) {
@@ -839,20 +1074,29 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
               combined.append(hexLo);
               assert combined.length() == combinedLen;
               return new BigDecimal(new BigInteger(combined.toString(), 16));
+            default:
+              // fall-through to throw exception
           }
           break;
-        case SMALL_IDENTIFIER:
+        }
+        case SMALL_IDENTIFIER: {
           switch (castToType.getId()) {
             case LONG:
             case OCTAL_LONG:
               return (value == null) ? null : ((SmallIdentifier) value).getValue();
             case BIG_DECIMAL:
               return (value == null) ? null : new BigDecimal(new BigInteger(Long.toHexString(((SmallIdentifier) value).getValue()), 16));
+            default:
+              // fall-through to throw exception
           }
           break;
-        case HASHED_KEY:
+        }
+        case HASHED_KEY: {
           // No special casts
           break;
+        }
+        default:
+          // fall-through to throw exception
       }
       throw new IllegalArgumentException("Unable to cast from " + name + " to " + castToType.getName());
     } catch (ValidationException e) {
@@ -896,7 +1140,7 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
   }
 
   /**
-   * Gets the username for an email address, which is the local part, up to the first '+' address (at position >= 1) (skipping any plus addressing)
+   * Gets the username for an email address, which is the local part, up to the first '+' address (at position >= 1) (skipping any plus addressing).
    */
   private static String getUsernameForEmail(Email email) {
     String localPart = email.getLocalPart();
@@ -907,11 +1151,11 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
     return localPart.substring(0, plusPos);
   }
 
-  private static String getZoneForDomainName(AOServConnector conn, DomainName domainName) throws IOException, IllegalArgumentException, SQLException {
+  private static String getZoneForDomainName(AoservConnector conn, DomainName domainName) throws IOException, IllegalArgumentException, SQLException {
     if (domainName == null) {
       return null;
     }
-    return conn.getDns().getZone().getHostTLD(domainName) + ".";
+    return conn.getDns().getZone().getHostTld(domainName) + ".";
   }
 
   public int compareTo(Object value1, Object value2) throws IllegalArgumentException, SQLException, UnknownHostException {
@@ -1010,7 +1254,7 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
         case MYSQL_SERVER_NAME:
           return ((com.aoindustries.aoserv.client.mysql.Server.Name) value1).compareTo((com.aoindustries.aoserv.client.mysql.Server.Name) value2);
         case MYSQL_TABLE_NAME:
-          return ((com.aoindustries.aoserv.client.mysql.Table_Name) value1).compareTo((com.aoindustries.aoserv.client.mysql.Table_Name) value2);
+          return ((com.aoindustries.aoserv.client.mysql.TableName) value1).compareTo((com.aoindustries.aoserv.client.mysql.TableName) value2);
         case MYSQL_USERNAME:
           return ((com.aoindustries.aoserv.client.mysql.User.Name) value1).compareTo((com.aoindustries.aoserv.client.mysql.User.Name) value2);
         case NET_PORT:
@@ -1031,7 +1275,8 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
           return ((SmallIdentifier) value1).compareTo((SmallIdentifier) value2);
         case HASHED_KEY:
           return ((HashedKey) value1).compareTo((HashedKey) value2);
-        default: throw new IllegalArgumentException("Unknown type: " + id);
+        default:
+          throw new IllegalArgumentException("Unknown type: " + id);
       }
     }
   }
@@ -1039,11 +1284,16 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case 0: return pkey;
-      case COLUMN_NAME: return name;
-      case 2: return sinceVersion;
-      case 3: return lastVersion;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case 0:
+        return pkey;
+      case COLUMN_NAME:
+        return name;
+      case 2:
+        return sinceVersion;
+      case 3:
+        return lastVersion;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -1059,10 +1309,10 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
     return sinceVersion;
   }
 
-  public AoservProtocol getSinceVersion(AOServConnector connector) throws SQLException, IOException {
+  public AoservProtocol getSinceVersion(AoservConnector connector) throws SQLException, IOException {
     AoservProtocol obj = connector.getSchema().getAoservProtocol().get(sinceVersion);
     if (obj == null) {
-      throw new SQLException("Unable to find AOServProtocol: " + sinceVersion);
+      throw new SQLException("Unable to find AoservProtocol: " + sinceVersion);
     }
     return obj;
   }
@@ -1071,20 +1321,20 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
     return lastVersion;
   }
 
-  public AoservProtocol getLastVersion(AOServConnector connector) throws SQLException, IOException {
+  public AoservProtocol getLastVersion(AoservConnector connector) throws SQLException, IOException {
     if (lastVersion == null) {
       return null;
     }
     AoservProtocol obj = connector.getSchema().getAoservProtocol().get(lastVersion);
     if (obj == null) {
-      throw new SQLException("Unable to find AOServProtocol: " + lastVersion);
+      throw new SQLException("Unable to find AoservProtocol: " + lastVersion);
     }
     return obj;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.SCHEMA_TYPES;
+  public Table.TableId getTableId() {
+    return Table.TableId.SCHEMA_TYPES;
   }
 
   @Override
@@ -1155,8 +1405,10 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
   // Return Integer with null when unbounded
   public static int getMaxPrecision(int type) {
     switch (type) {
-      case TIME: return 29;
-      default: return -1;
+      case TIME:
+        return 29;
+      default:
+        return -1;
     }
   }
 
@@ -1196,26 +1448,46 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
       return null;
     }
     switch (type) {
-      case ACCOUNTING: return ((Account.Name) value).toString();
-      case BOOLEAN: return ((Boolean) value).toString();
-      case DATE: return SQLUtility.formatDate((java.sql.Date) value, DATE_TIME_ZONE);
-      case DECIMAL_2: return SQLUtility.formatDecimal2(((Integer) value));
-      case DECIMAL_3: return SQLUtility.formatDecimal3(((Integer) value));
-      case DOUBLE: return ((Double) value).toString();
-      case EMAIL: return ((Email) value).toString();
-      case FKEY: return ((Integer) value).toString();
-      case FLOAT: return ((Float) value).toString();
-      case HOSTNAME: return ((HostAddress) value).toString();
-      case INT: return ((Integer) value).toString();
-      case INTERVAL: return Strings.getDecimalTimeLengthString(((Long) value));
-      case IP_ADDRESS: return ((InetAddress) value).toString();
-      case LONG: return ((Long) value).toString();
-      case OCTAL_LONG: return Long.toOctalString(((Long) value));
-      case PATH: return ((PosixPath) value).toString();
-      case PHONE: return (String) value;
-      case PKEY: return ((Integer) value).toString();
-      case SHORT: return ((Short) value).toString();
-      case STRING: return (String) value;
+      case ACCOUNTING:
+        return ((Account.Name) value).toString();
+      case BOOLEAN:
+        return ((Boolean) value).toString();
+      case DATE:
+        return SQLUtility.formatDate((java.sql.Date) value, DATE_TIME_ZONE);
+      case DECIMAL_2:
+        return SQLUtility.formatDecimal2(((Integer) value));
+      case DECIMAL_3:
+        return SQLUtility.formatDecimal3(((Integer) value));
+      case DOUBLE:
+        return ((Double) value).toString();
+      case EMAIL:
+        return ((Email) value).toString();
+      case FKEY:
+        return ((Integer) value).toString();
+      case FLOAT:
+        return ((Float) value).toString();
+      case HOSTNAME:
+        return ((HostAddress) value).toString();
+      case INT:
+        return ((Integer) value).toString();
+      case INTERVAL:
+        return Strings.getDecimalTimeLengthString(((Long) value));
+      case IP_ADDRESS:
+        return ((InetAddress) value).toString();
+      case LONG:
+        return ((Long) value).toString();
+      case OCTAL_LONG:
+        return Long.toOctalString(((Long) value));
+      case PATH:
+        return ((PosixPath) value).toString();
+      case PHONE:
+        return (String) value;
+      case PKEY:
+        return ((Integer) value).toString();
+      case SHORT:
+        return ((Short) value).toString();
+      case STRING:
+        return (String) value;
       case TIME: {
         Timestamp ts = (Timestamp) value;
         String seconds = SQLUtility.formatDateTime(ts); // TODO: Make a formatDateTimeNanos?
@@ -1256,33 +1528,60 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
         assert formatted.length() == slen + 1 + endDigits;
         return formatted.toString();
       }
-      case URL: return (String) value;
-      case USERNAME: return ((com.aoindustries.aoserv.client.account.User.Name) value).toString();
-      case ZONE: return (String) value; // TODO: com.aoapps.net.DomainName (once no longer ends with ".")
-      case BIG_DECIMAL: return ((BigDecimal) value).toString();
-      case DOMAIN_LABEL: return ((DomainLabel) value).toString();
-      case DOMAIN_LABELS: return ((DomainLabels) value).toString();
-      case DOMAIN_NAME: return ((DomainName) value).toString();
-      case GECOS: return ((Gecos) value).toString();
-      case GROUP_ID: return ((com.aoindustries.aoserv.client.linux.Group.Name) value).toString();
-      case HASHED_PASSWORD: return ((HashedPassword) value).toString();
-      case LINUX_ID: return ((LinuxId) value).toString();
-      case MAC_ADDRESS: return ((MacAddress) value).toString();
-      case MONEY: return ((Money) value).toString();
-      case MYSQL_DATABASE_NAME: return ((com.aoindustries.aoserv.client.mysql.Database.Name) value).toString();
-      case MYSQL_SERVER_NAME: return ((com.aoindustries.aoserv.client.mysql.Server.Name) value).toString();
-      case MYSQL_TABLE_NAME: return ((com.aoindustries.aoserv.client.mysql.Table_Name) value).toString();
-      case MYSQL_USERNAME: return ((com.aoindustries.aoserv.client.mysql.User.Name) value).toString();
-      case NET_PORT: return ((Port) value).toString();
-      case POSTGRES_DATABASE_NAME: return ((com.aoindustries.aoserv.client.postgresql.Database.Name) value).toString();
-      case POSTGRES_SERVER_NAME: return ((com.aoindustries.aoserv.client.postgresql.Server.Name) value).toString();
-      case POSTGRES_USERNAME: return ((com.aoindustries.aoserv.client.postgresql.User.Name) value).toString();
-      case FIREWALLD_ZONE_NAME: return ((FirewallZone.Name) value).toString();
-      case LINUX_USERNAME: return ((com.aoindustries.aoserv.client.linux.User.Name) value).toString();
-      case IDENTIFIER: return ((Identifier) value).toString();
-      case SMALL_IDENTIFIER: return ((SmallIdentifier) value).toString();
-      case HASHED_KEY: return ((HashedKey) value).toString();
-      default: throw new IllegalArgumentException("Unknown SchemaType: " + type);
+      case URL:
+        return (String) value;
+      case USERNAME:
+        return ((com.aoindustries.aoserv.client.account.User.Name) value).toString();
+      case ZONE:
+        return (String) value; // TODO: com.aoapps.net.DomainName (once no longer ends with ".")
+      case BIG_DECIMAL:
+        return ((BigDecimal) value).toString();
+      case DOMAIN_LABEL:
+        return ((DomainLabel) value).toString();
+      case DOMAIN_LABELS:
+        return ((DomainLabels) value).toString();
+      case DOMAIN_NAME:
+        return ((DomainName) value).toString();
+      case GECOS:
+        return ((Gecos) value).toString();
+      case GROUP_ID:
+        return ((com.aoindustries.aoserv.client.linux.Group.Name) value).toString();
+      case HASHED_PASSWORD:
+        return ((HashedPassword) value).toString();
+      case LINUX_ID:
+        return ((LinuxId) value).toString();
+      case MAC_ADDRESS:
+        return ((MacAddress) value).toString();
+      case MONEY:
+        return ((Money) value).toString();
+      case MYSQL_DATABASE_NAME:
+        return ((com.aoindustries.aoserv.client.mysql.Database.Name) value).toString();
+      case MYSQL_SERVER_NAME:
+        return ((com.aoindustries.aoserv.client.mysql.Server.Name) value).toString();
+      case MYSQL_TABLE_NAME:
+        return ((com.aoindustries.aoserv.client.mysql.TableName) value).toString();
+      case MYSQL_USERNAME:
+        return ((com.aoindustries.aoserv.client.mysql.User.Name) value).toString();
+      case NET_PORT:
+        return ((Port) value).toString();
+      case POSTGRES_DATABASE_NAME:
+        return ((com.aoindustries.aoserv.client.postgresql.Database.Name) value).toString();
+      case POSTGRES_SERVER_NAME:
+        return ((com.aoindustries.aoserv.client.postgresql.Server.Name) value).toString();
+      case POSTGRES_USERNAME:
+        return ((com.aoindustries.aoserv.client.postgresql.User.Name) value).toString();
+      case FIREWALLD_ZONE_NAME:
+        return ((FirewallZone.Name) value).toString();
+      case LINUX_USERNAME:
+        return ((com.aoindustries.aoserv.client.linux.User.Name) value).toString();
+      case IDENTIFIER:
+        return ((Identifier) value).toString();
+      case SMALL_IDENTIFIER:
+        return ((SmallIdentifier) value).toString();
+      case HASHED_KEY:
+        return ((HashedKey) value).toString();
+      default:
+        throw new IllegalArgumentException("Unknown SchemaType: " + type);
     }
   }
 
@@ -1380,11 +1679,10 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
         case MYSQL_SERVER_NAME:
           return com.aoindustries.aoserv.client.mysql.Server.Name.valueOf(s);
         case MYSQL_TABLE_NAME:
-          return com.aoindustries.aoserv.client.mysql.Table_Name.valueOf(s);
+          return com.aoindustries.aoserv.client.mysql.TableName.valueOf(s);
         case MYSQL_USERNAME:
           return com.aoindustries.aoserv.client.mysql.User.Name.valueOf(s);
-        case NET_PORT:
-        {
+        case NET_PORT: {
           int slashPos = s.indexOf('/');
           if (slashPos == -1) {
             throw new IllegalArgumentException("Slash (/) not found for Port: " + s);

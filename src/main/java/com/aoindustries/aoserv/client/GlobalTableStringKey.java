@@ -33,7 +33,7 @@ import java.sql.SQLException;
  */
 public abstract class GlobalTableStringKey<V extends GlobalObjectStringKey<V>> extends GlobalTable<String, V> {
 
-  protected GlobalTableStringKey(AOServConnector connector, Class<V> clazz) {
+  protected GlobalTableStringKey(AoservConnector connector, Class<V> clazz) {
     super(connector, clazz);
   }
 

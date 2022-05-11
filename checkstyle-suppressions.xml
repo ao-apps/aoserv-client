@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+aoserv-client - Java client for the AOServ Platform.
+Copyright (C) 2022  AO Industries, Inc.
+    support@aoindustries.com
+    7262 Bull Pen Cir
+    Mobile, AL 36695
+
+This file is part of aoserv-client.
+
+aoserv-client is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+aoserv-client is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<!DOCTYPE suppressions PUBLIC
+  "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+  "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+
+<suppressions>
+
+  <!-- TODO: Complete Javadocs -->
+  <suppress checks="(MissingJavadocMethod|MissingJavadocType|SummaryJavadoc)" />
+
+  <!-- TODO: Implement tests -->
+  <suppress
+    checks="AbbreviationAsWordInName"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]AoservConnectorTODO\.java$"
+    message="'AoservConnectorTODO'"
+  />
+  <suppress
+    checks="AbbreviationAsWordInName"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]GetDefaultOrderBySqlExpressionsTODO\.java$"
+    message="'GetDefaultOrderBySqlExpressionsTODO'"
+  />
+  <suppress
+    checks="AbbreviationAsWordInName"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]GetIndexedRowTODO\.java$"
+    message="'GetIndexedRowTODO'"
+  />
+  <suppress
+    checks="AbbreviationAsWordInName"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]GetTableSizesTODO\.java$"
+    message="'GetTableSizesTODO'"
+  />
+  <suppress
+    checks="AbbreviationAsWordInName"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]GetUniqueRowTODO\.java$"
+    message="'GetUniqueRowTODO'"
+  />
+  <suppress
+    checks="AbbreviationAsWordInName"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]ObjectTypesTODO\.java$"
+    message="'ObjectTypesTODO'"
+  />
+  <suppress
+    checks="AbbreviationAsWordInName"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]mysql[/\\]MysqlTODO\.java$"
+    message="'MysqlTODO'"
+  />
+
+  <!-- Schemas have public fields that match the capitalized database table name -->
+  <suppress
+    checks="MemberName"
+    files="[/\\]Schema\.java$"
+    message="'([A-Z][a-z]+)+'"
+  />
+
+  <!-- Allowing underscore separators for methods and data that span database joins -->
+  <suppress
+    checks="(LocalVariableName|MemberName|ParameterName)"
+    message="'[a-z]([a-z0-9][a-zA-Z0-9]*)?(_[a-z]([a-z0-9][a-zA-Z0-9]*)?)*'"
+  />
+
+  <!-- Will not split declaration to avoid duplicating Javadoc comment -->
+  <suppress
+    checks="MultipleVariableDeclarations"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]aosh[/\\]Command\.java$"
+  />
+  <suppress
+    checks="MultipleVariableDeclarations"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]billing[/\\]Transaction\.java$"
+  />
+  <suppress
+    checks="MultipleVariableDeclarations"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]distribution[/\\]Architecture\.java$"
+  />
+  <suppress
+    checks="MultipleVariableDeclarations"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]distribution[/\\]SoftwareCategory\.java$"
+  />
+  <suppress
+    checks="MultipleVariableDeclarations"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]distribution[/\\]SoftwareVersionTable\.java$"
+  />
+  <suppress
+    checks="MultipleVariableDeclarations"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]distribution[/\\]management[/\\]DistroFileType\.java$"
+  />
+  <suppress
+    checks="MultipleVariableDeclarations"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]distribution[/\\]management[/\\]DistroReportType\.java$"
+  />
+  <suppress
+    checks="MultipleVariableDeclarations"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]dns[/\\]RecordType\.java$"
+  />
+  <suppress
+    checks="MultipleVariableDeclarations"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]email[/\\]MajordomoServer\.java$"
+  />
+  <suppress
+    checks="MultipleVariableDeclarations"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]email[/\\]SmtpRelayType\.java$"
+  />
+  <suppress
+    checks="MultipleVariableDeclarations"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]infrastructure[/\\]VirtualServer\.java$"
+  />
+  <suppress
+    checks="MultipleVariableDeclarations"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]linux[/\\]Group\.java$"
+  />
+  <suppress
+    checks="MultipleVariableDeclarations"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]linux[/\\]GroupType\.java$"
+  />
+  <suppress
+    checks="MultipleVariableDeclarations"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]linux[/\\]User\.java$"
+  />
+  <suppress
+    checks="MultipleVariableDeclarations"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]linux[/\\]UserType\.java$"
+  />
+  <suppress
+    checks="MultipleVariableDeclarations"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]master[/\\]Process\.java$"
+  />
+  <suppress
+    checks="MultipleVariableDeclarations"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]mysql[/\\]Database\.java$"
+  />
+  <suppress
+    checks="MultipleVariableDeclarations"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]mysql[/\\]Server\.java$"
+  />
+  <suppress
+    checks="MultipleVariableDeclarations"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]mysql[/\\]UserServer\.java$"
+  />
+  <suppress
+    checks="MultipleVariableDeclarations"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]net[/\\]FirewallZone\.java$"
+  />
+  <suppress
+    checks="MultipleVariableDeclarations"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]payment[/\\]PaymentType\.java$"
+  />
+  <suppress
+    checks="MultipleVariableDeclarations"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]postgresql[/\\]Database\.java$"
+  />
+  <suppress
+    checks="MultipleVariableDeclarations"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]postgresql[/\\]Encoding\.java$"
+  />
+  <suppress
+    checks="MultipleVariableDeclarations"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]postgresql[/\\]User\.java$"
+  />
+  <suppress
+    checks="MultipleVariableDeclarations"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]ticket[/\\]Priority\.java$"
+  />
+  <suppress
+    checks="MultipleVariableDeclarations"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]ticket[/\\]Status\.java$"
+  />
+  <suppress
+    checks="MultipleVariableDeclarations"
+    files="[/\\]com[/\\]aoindustries[/\\]aoserv[/\\]client[/\\]ticket[/\\]TicketType\.java$"
+  />
+
+  <!-- Will not reorder overloads -->
+  <suppress checks="OverloadMethodsDeclarationOrder" />
+
+</suppressions>

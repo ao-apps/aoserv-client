@@ -43,13 +43,11 @@ import java.sql.SQLException;
  */
 public final class SharedTomcatSite extends CachedObjectIntegerKey<SharedTomcatSite> {
 
-  static final int
-      COLUMN_TOMCAT_SITE = 0,
-      COLUMN_HTTPD_SHARED_TOMCAT = 1
-  ;
+  static final int COLUMN_TOMCAT_SITE = 0;
+  static final int COLUMN_HTTPD_SHARED_TOMCAT = 1;
   static final String COLUMN_TOMCAT_SITE_name = "tomcat_site";
 
-  private int httpd_shared_tomcat;
+  private int httpdSharedTomcat;
 
   public static final String DEFAULT_TOMCAT_VERSION_PREFIX = Version.VERSION_10_0_PREFIX;
 
@@ -94,15 +92,18 @@ public final class SharedTomcatSite extends CachedObjectIntegerKey<SharedTomcatS
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_TOMCAT_SITE: return pkey;
-      case COLUMN_HTTPD_SHARED_TOMCAT: return httpd_shared_tomcat;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_TOMCAT_SITE:
+        return pkey;
+      case COLUMN_HTTPD_SHARED_TOMCAT:
+        return httpdSharedTomcat;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   public SharedTomcat getHttpdSharedTomcat() throws SQLException, IOException {
     // May be null when filtered
-    return table.getConnector().getWeb_tomcat().getSharedTomcat().get(httpd_shared_tomcat);
+    return table.getConnector().getWeb_tomcat().getSharedTomcat().get(httpdSharedTomcat);
   }
 
   public Site getHttpdTomcatSite() throws SQLException, IOException {
@@ -114,20 +115,20 @@ public final class SharedTomcatSite extends CachedObjectIntegerKey<SharedTomcatS
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.HTTPD_TOMCAT_SHARED_SITES;
+  public Table.TableId getTableId() {
+    return Table.TableId.HTTPD_TOMCAT_SHARED_SITES;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     pkey = result.getInt(1);
-    httpd_shared_tomcat = result.getInt(2);
+    httpdSharedTomcat = result.getInt(2);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readCompressedInt();
-    httpd_shared_tomcat = in.readCompressedInt();
+    httpdSharedTomcat = in.readCompressedInt();
   }
 
   @Override
@@ -138,6 +139,6 @@ public final class SharedTomcatSite extends CachedObjectIntegerKey<SharedTomcatS
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeCompressedInt(httpd_shared_tomcat);
+    out.writeCompressedInt(httpdSharedTomcat);
   }
 }

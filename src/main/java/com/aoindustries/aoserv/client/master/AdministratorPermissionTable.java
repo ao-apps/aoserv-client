@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.master;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.account.Administrator;
 import com.aoindustries.aoserv.client.account.User;
@@ -43,7 +43,7 @@ import java.util.TreeSet;
  */
 public final class AdministratorPermissionTable extends CachedTableIntegerKey<AdministratorPermission> {
 
-  AdministratorPermissionTable(AOServConnector connector) {
+  AdministratorPermissionTable(AoservConnector connector) {
     super(connector, AdministratorPermission.class);
   }
 
@@ -64,8 +64,8 @@ public final class AdministratorPermissionTable extends CachedTableIntegerKey<Ad
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.BUSINESS_ADMINISTRATOR_PERMISSIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.BUSINESS_ADMINISTRATOR_PERMISSIONS;
   }
 
   public List<AdministratorPermission> getPermissions(Administrator ba) throws IOException, SQLException {
@@ -92,7 +92,7 @@ public final class AdministratorPermissionTable extends CachedTableIntegerKey<Ad
         List<AdministratorPermission> baps = getRows();
         for (AdministratorPermission bap : baps) {
           User.Name bapUsername = bap.getAdministrator_username();
-          String bapPermission = bap.getAOServPermission_name();
+          String bapPermission = bap.getAoservPermission_name();
           SortedSet<String> perms = newCachedPermissions.get(bapUsername);
           if (perms == null) {
             newCachedPermissions.put(bapUsername, perms = new TreeSet<>());

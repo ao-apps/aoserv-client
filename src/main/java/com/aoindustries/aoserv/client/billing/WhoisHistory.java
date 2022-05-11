@@ -29,7 +29,7 @@ import com.aoapps.lang.validation.ValidationException;
 import com.aoapps.net.DomainName;
 import com.aoapps.sql.SQLStreamables;
 import com.aoapps.sql.UnmodifiableTimestamp;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
@@ -46,11 +46,9 @@ import java.util.List;
  */
 public final class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 
-  static final int
-      COLUMN_id = 0,
-      COLUMN_output = 4,
-      COLUMN_error = 5
-  ;
+  static final int COLUMN_id = 0;
+  static final int COLUMN_output = 4;
+  static final int COLUMN_error = 5;
   static final String COLUMN_registrableDomain_name = "registrableDomain";
   static final String COLUMN_time_name = "time";
 
@@ -64,6 +62,7 @@ public final class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
   private static class OutputLock {
     // Empty lock class to help heap profile
   }
+
   private final OutputLock outputLock = new OutputLock();
   private String output;
   private String error;
@@ -86,13 +85,20 @@ public final class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
   @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
   protected Object getColumnImpl(int i) throws IOException, SQLException {
     switch (i) {
-      case COLUMN_id: return pkey;
-      case 1: return registrableDomain;
-      case 2: return time;
-      case 3: return exitStatus;
-      case COLUMN_output: return getOutput();
-      case COLUMN_error: return getError();
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_id:
+        return pkey;
+      case 1:
+        return registrableDomain;
+      case 2:
+        return time;
+      case 3:
+        return exitStatus;
+      case COLUMN_output:
+        return getOutput();
+      case COLUMN_error:
+        return getError();
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -117,16 +123,16 @@ public final class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
   }
 
   /**
-   * Loads output and error when first needed
+   * Loads output and error when first needed.
    */
   private void loadOutput() throws IOException, SQLException {
     assert Thread.holdsLock(outputLock);
     if (error == null) {
       table.getConnector().requestResult(
           true,
-          AoservProtocol.CommandID.GET_WHOIS_HISTORY_WHOIS_OUTPUT,
-          // Java 9: new AOServConnector.ResultRequest<>
-          new AOServConnector.ResultRequest<Void>() {
+          AoservProtocol.CommandId.GET_WHOIS_HISTORY_WHOIS_OUTPUT,
+          // Java 9: new AoservConnector.ResultRequest<>
+          new AoservConnector.ResultRequest<Void>() {
             @Override
             public void writeRequest(StreamableOutput out) throws IOException {
               out.writeCompressedInt(pkey);
@@ -157,9 +163,10 @@ public final class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
    * Gets the whois output from the database.  The first access to this, or {@link #getError()}, for a specific object instance
    * will query the master server for the information and then cache the results.  This is done
    * to conserve heap space while still yielding high performance through the caching of the rest of the fields.
-   *
+   * <p>
    * From an outside point of view, the object is still immutable and will yield constant return
    * values per instance.
+   * </p>
    */
   public String getOutput() throws IOException, SQLException {
     synchronized (outputLock) {
@@ -172,9 +179,10 @@ public final class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
    * Gets the whois error from the database.  The first access to this, or {@link #getOutput()}, for a specific object instance
    * will query the master server for the information and then cache the results.  This is done
    * to conserve heap space while still yielding high performance through the caching of the rest of the fields.
-   *
+   * <p>
    * From an outside point of view, the object is still immutable and will yield constant return
    * values per instance.
+   * </p>
    */
   public String getError() throws IOException, SQLException {
     synchronized (outputLock) {
@@ -184,8 +192,8 @@ public final class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.WhoisHistory;
+  public Table.TableId getTableId() {
+    return Table.TableId.WhoisHistory;
   }
 
   @Override

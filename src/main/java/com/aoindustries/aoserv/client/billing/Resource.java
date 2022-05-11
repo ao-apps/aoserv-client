@@ -51,32 +51,30 @@ public final class Resource extends GlobalObjectStringKey<Resource> {
   static final int COLUMN_NAME = 0;
   static final String COLUMN_NAME_name = "name";
 
-  public static final String
-      AOSERV_DAEMON = "aoserv_daemon",
-      AOSERV_MASTER = "aoserv_master",
-      BANDWIDTH = "bandwidth",
-      CONSULTING = "consulting",
-      DISK = "disk",
-      DISTRIBUTION_SCAN = "distribution_scan",
-      DRUPAL = "drupal",
-      EMAIL = "email",
-      FAILOVER = "failover",
-      HARDWARE_DISK_7200_120 = "hardware_disk_7200_120",
-      HTTPD = "httpd",
-      IP = "ip",
-      JAVAVM = "javavm",
-      JOOMLA = "joomla",
-      MYSQL_REPLICATION = "mysql_replication",
-      RACK = "rack",
-      SERVER_DATABASE = "server_database",
-      SERVER_ENTERPRISE = "server_enterprise",
-      SERVER_P4 = "server_p4",
-      SERVER_SCSI = "server_scsi",
-      SERVER_XEON = "server_xeon",
-      SITE = "site",
-      SYSADMIN = "sysadmin",
-      USER = "user"
-  ;
+  public static final String AOSERV_DAEMON = "aoserv_daemon";
+  public static final String AOSERV_MASTER = "aoserv_master";
+  public static final String BANDWIDTH = "bandwidth";
+  public static final String CONSULTING = "consulting";
+  public static final String DISK = "disk";
+  public static final String DISTRIBUTION_SCAN = "distribution_scan";
+  public static final String DRUPAL = "drupal";
+  public static final String EMAIL = "email";
+  public static final String FAILOVER = "failover";
+  public static final String HARDWARE_DISK_7200_120 = "hardware_disk_7200_120";
+  public static final String HTTPD = "httpd";
+  public static final String IP = "ip";
+  public static final String JAVAVM = "javavm";
+  public static final String JOOMLA = "joomla";
+  public static final String MYSQL_REPLICATION = "mysql_replication";
+  public static final String RACK = "rack";
+  public static final String SERVER_DATABASE = "server_database";
+  public static final String SERVER_ENTERPRISE = "server_enterprise";
+  public static final String SERVER_P4 = "server_p4";
+  public static final String SERVER_SCSI = "server_scsi";
+  public static final String SERVER_XEON = "server_xeon";
+  public static final String SITE = "site";
+  public static final String SYSADMIN = "sysadmin";
+  public static final String USER = "user";
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -92,8 +90,10 @@ public final class Resource extends GlobalObjectStringKey<Resource> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_NAME: return pkey;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_NAME:
+        return pkey;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -105,8 +105,8 @@ public final class Resource extends GlobalObjectStringKey<Resource> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.RESOURCES;
+  public Table.TableId getTableId() {
+    return Table.TableId.RESOURCES;
   }
 
   public String getDisplayUnit(int quantity) {

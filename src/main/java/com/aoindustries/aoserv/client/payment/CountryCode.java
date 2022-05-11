@@ -53,8 +53,8 @@ public final class CountryCode extends GlobalObjectStringKey<CountryCode> {
   public static final String US = "US";
 
   private String name;
-  private boolean charge_com_supported;
-  private String charge_com_name;
+  private boolean chargeComSupported;
+  private String chargeComName;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -83,10 +83,10 @@ public final class CountryCode extends GlobalObjectStringKey<CountryCode> {
       return name;
     }
     if (i == 2) {
-      return charge_com_supported;
+      return chargeComSupported;
     }
     if (i == 3) {
-      return charge_com_name;
+      return chargeComName;
     }
     throw new IllegalArgumentException("Invalid index: " + i);
   }
@@ -96,32 +96,32 @@ public final class CountryCode extends GlobalObjectStringKey<CountryCode> {
   }
 
   public boolean getChargeComSupported() {
-    return charge_com_supported;
+    return chargeComSupported;
   }
 
   public String getChargeComName() {
-    return charge_com_name == null ? name : charge_com_name;
+    return chargeComName == null ? name : chargeComName;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.COUNTRY_CODES;
+  public Table.TableId getTableId() {
+    return Table.TableId.COUNTRY_CODES;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     pkey = result.getString(1);
     name = result.getString(2);
-    charge_com_supported = result.getBoolean(3);
-    charge_com_name = result.getString(4);
+    chargeComSupported = result.getBoolean(3);
+    chargeComName = result.getString(4);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readUTF().intern();
     name = in.readUTF();
-    charge_com_supported = in.readBoolean();
-    charge_com_name = in.readNullUTF();
+    chargeComSupported = in.readBoolean();
+    chargeComName = in.readNullUTF();
   }
 
   @Override
@@ -133,7 +133,7 @@ public final class CountryCode extends GlobalObjectStringKey<CountryCode> {
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeUTF(pkey);
     out.writeUTF(name);
-    out.writeBoolean(charge_com_supported);
-    out.writeNullUTF(charge_com_name);
+    out.writeBoolean(chargeComSupported);
+    out.writeNullUTF(chargeComName);
   }
 }

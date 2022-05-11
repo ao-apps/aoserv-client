@@ -85,8 +85,7 @@ public final class Server extends CachedObjectIntegerKey<Server> {
       Comparable<Name>,
       Serializable,
       DtoFactory<com.aoindustries.aoserv.client.dto.PostgresServerName>,
-      Internable<Name>
-  {
+      Internable<Name> {
 
     private static final long serialVersionUID = 7935268259991524802L;
 
@@ -189,8 +188,7 @@ public final class Server extends CachedObjectIntegerKey<Server> {
     public boolean equals(Object obj) {
       return
           (obj instanceof Name)
-              && name.equals(((Name) obj).name)
-      ;
+              && name.equals(((Name) obj).name);
     }
 
     @Override
@@ -405,19 +403,17 @@ public final class Server extends CachedObjectIntegerKey<Server> {
   }
   // </editor-fold>
 
-  static final int
-      COLUMN_BIND = 0,
-      COLUMN_AO_SERVER = 2
-  ;
+  static final int COLUMN_BIND = 0;
+  static final int COLUMN_AO_SERVER = 2;
   static final String COLUMN_NAME_name = "name";
   static final String COLUMN_AO_SERVER_name = "ao_server";
 
   private Name name;
-  private int ao_server;
+  private int aoServer;
   private int version;
-  private int max_connections;
-  private int sort_mem;
-  private int shared_buffers;
+  private int maxConnections;
+  private int sortMem;
+  private int sharedBuffers;
   private boolean fsync;
 
   /**
@@ -434,15 +430,24 @@ public final class Server extends CachedObjectIntegerKey<Server> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_BIND: return pkey;
-      case 1: return name;
-      case COLUMN_AO_SERVER: return ao_server;
-      case 3: return version;
-      case 4: return max_connections;
-      case 5: return sort_mem;
-      case 6: return shared_buffers;
-      case 7: return fsync;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_BIND:
+        return pkey;
+      case 1:
+        return name;
+      case COLUMN_AO_SERVER:
+        return aoServer;
+      case 3:
+        return version;
+      case 4:
+        return maxConnections;
+      case 5:
+        return sortMem;
+      case 6:
+        return sharedBuffers;
+      case 7:
+        return fsync;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -459,13 +464,13 @@ public final class Server extends CachedObjectIntegerKey<Server> {
   }
 
   public int getAoServer_server_pkey() {
-    return ao_server;
+    return aoServer;
   }
 
   public com.aoindustries.aoserv.client.linux.Server getLinuxServer() throws SQLException, IOException {
-    com.aoindustries.aoserv.client.linux.Server ao = table.getConnector().getLinux().getServer().get(ao_server);
+    com.aoindustries.aoserv.client.linux.Server ao = table.getConnector().getLinux().getServer().get(aoServer);
     if (ao == null) {
-      throw new SQLException("Unable to find linux.Server: " + ao_server);
+      throw new SQLException("Unable to find linux.Server: " + aoServer);
     }
     return ao;
   }
@@ -489,18 +494,18 @@ public final class Server extends CachedObjectIntegerKey<Server> {
   }
 
   public int getMaxConnections() {
-    return max_connections;
+    return maxConnections;
   }
 
   public int getSortMem() {
-    return sort_mem;
+    return sortMem;
   }
 
   public int getSharedBuffers() {
-    return shared_buffers;
+    return sharedBuffers;
   }
 
-  public boolean getFSync() {
+  public boolean getFsync() {
     return fsync;
   }
 
@@ -510,11 +515,11 @@ public final class Server extends CachedObjectIntegerKey<Server> {
       int pos = 1;
       pkey = result.getInt(pos++);
       name = Name.valueOf(result.getString(pos++));
-      ao_server = result.getInt(pos++);
+      aoServer = result.getInt(pos++);
       version = result.getInt(pos++);
-      max_connections = result.getInt(pos++);
-      sort_mem = result.getInt(pos++);
-      shared_buffers = result.getInt(pos++);
+      maxConnections = result.getInt(pos++);
+      sortMem = result.getInt(pos++);
+      sharedBuffers = result.getInt(pos++);
       fsync = result.getBoolean(pos++);
     } catch (ValidationException e) {
       throw new SQLException(e);
@@ -526,11 +531,11 @@ public final class Server extends CachedObjectIntegerKey<Server> {
     try {
       pkey = in.readCompressedInt();
       name = Name.valueOf(in.readUTF()).intern();
-      ao_server = in.readCompressedInt();
+      aoServer = in.readCompressedInt();
       version = in.readCompressedInt();
-      max_connections = in.readCompressedInt();
-      sort_mem = in.readCompressedInt();
-      shared_buffers = in.readCompressedInt();
+      maxConnections = in.readCompressedInt();
+      sortMem = in.readCompressedInt();
+      sharedBuffers = in.readCompressedInt();
       fsync = in.readBoolean();
     } catch (ValidationException e) {
       throw new IOException(e);
@@ -541,14 +546,14 @@ public final class Server extends CachedObjectIntegerKey<Server> {
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
     out.writeUTF(name.toString());
-    out.writeCompressedInt(ao_server);
+    out.writeCompressedInt(aoServer);
     out.writeCompressedInt(version);
-    out.writeCompressedInt(max_connections);
+    out.writeCompressedInt(maxConnections);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_17) <= 0) {
       out.writeCompressedInt(pkey); // net_bind
     }
-    out.writeCompressedInt(sort_mem);
-    out.writeCompressedInt(shared_buffers);
+    out.writeCompressedInt(sortMem);
+    out.writeCompressedInt(sharedBuffers);
     out.writeBoolean(fsync);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_130) <= 0) {
       out.writeCompressedInt(-1);
@@ -556,8 +561,8 @@ public final class Server extends CachedObjectIntegerKey<Server> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.POSTGRES_SERVERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.POSTGRES_SERVERS;
   }
 
   @Override
@@ -622,15 +627,15 @@ public final class Server extends CachedObjectIntegerKey<Server> {
     return table.getConnector().getPostgresql().getDatabase().isPostgresDatabaseNameAvailable(name, this);
   }
 
-  public void restartPostgreSQL() throws IOException, SQLException {
-    table.getConnector().requestUpdate(false, AoservProtocol.CommandID.RESTART_POSTGRESQL, pkey);
+  public void restartPostgresql() throws IOException, SQLException {
+    table.getConnector().requestUpdate(false, AoservProtocol.CommandId.RESTART_POSTGRESQL, pkey);
   }
 
-  public void startPostgreSQL() throws IOException, SQLException {
-    table.getConnector().requestUpdate(false, AoservProtocol.CommandID.START_POSTGRESQL, pkey);
+  public void startPostgresql() throws IOException, SQLException {
+    table.getConnector().requestUpdate(false, AoservProtocol.CommandId.START_POSTGRESQL, pkey);
   }
 
-  public void stopPostgreSQL() throws IOException, SQLException {
-    table.getConnector().requestUpdate(false, AoservProtocol.CommandID.STOP_POSTGRESQL, pkey);
+  public void stopPostgresql() throws IOException, SQLException {
+    table.getConnector().requestUpdate(false, AoservProtocol.CommandId.STOP_POSTGRESQL, pkey);
   }
 }

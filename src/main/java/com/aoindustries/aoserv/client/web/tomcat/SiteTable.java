@@ -24,9 +24,9 @@
 package com.aoindustries.aoserv.client.web.tomcat;
 
 import com.aoapps.hodgepodge.io.TerminalWriter;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -41,7 +41,7 @@ import java.sql.SQLException;
  */
 public final class SiteTable extends CachedTableIntegerKey<Site> {
 
-  SiteTable(AOServConnector connector) {
+  SiteTable(AoservConnector connector) {
     super(connector, Site.class);
   }
 
@@ -57,8 +57,8 @@ public final class SiteTable extends CachedTableIntegerKey<Site> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.HTTPD_TOMCAT_SITES;
+  public Table.TableId getTableId() {
+    return Table.TableId.HTTPD_TOMCAT_SITES;
   }
 
   @Override
@@ -70,17 +70,17 @@ public final class SiteTable extends CachedTableIntegerKey<Site> {
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.SET_HTTPD_TOMCAT_SITE_BLOCK_WEBINF)) {
-      if (AOSH.checkParamCount(Command.SET_HTTPD_TOMCAT_SITE_BLOCK_WEBINF, args, 3, err)) {
-        connector.getSimpleAOClient().setHttpdTomcatSiteBlockWebinf(
+      if (Aosh.checkParamCount(Command.SET_HTTPD_TOMCAT_SITE_BLOCK_WEBINF, args, 3, err)) {
+        connector.getSimpleClient().setHttpdTomcatSiteBlockWebinf(
             args[1],
             args[2],
-            AOSH.parseBoolean(args[3], "block_webinf")
+            Aosh.parseBoolean(args[3], "block_webinf")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.START_JVM)) {
-      if (AOSH.checkParamCount(Command.START_JVM, args, 2, err)) {
-        String message = connector.getSimpleAOClient().startJVM(args[1], args[2]);
+      if (Aosh.checkParamCount(Command.START_JVM, args, 2, err)) {
+        String message = connector.getSimpleClient().startJvm(args[1], args[2]);
         if (message != null) {
           err.println("aosh: " + Command.START_JVM + ": " + message);
           err.flush();
@@ -88,8 +88,8 @@ public final class SiteTable extends CachedTableIntegerKey<Site> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.STOP_JVM)) {
-      if (AOSH.checkParamCount(Command.STOP_JVM, args, 2, err)) {
-        String message = connector.getSimpleAOClient().stopJVM(args[1], args[2]);
+      if (Aosh.checkParamCount(Command.STOP_JVM, args, 2, err)) {
+        String message = connector.getSimpleClient().stopJvm(args[1], args[2]);
         if (message != null) {
           err.println("aosh: " + Command.STOP_JVM + ": " + message);
           err.flush();

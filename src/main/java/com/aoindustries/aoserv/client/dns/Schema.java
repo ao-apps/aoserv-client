@@ -23,8 +23,8 @@
 
 package com.aoindustries.aoserv.client.dns;
 
-import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.AOServTable;
+import com.aoindustries.aoserv.client.AoservConnector;
+import com.aoindustries.aoserv.client.AoservTable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -64,12 +64,12 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
     return Zone;
   }
 
-  private final List<? extends AOServTable<?, ?>> tables;
+  private final List<? extends AoservTable<?, ?>> tables;
 
-  public Schema(AOServConnector connector) {
+  public Schema(AoservConnector connector) {
     super(connector);
 
-    ArrayList<AOServTable<?, ?>> newTables = new ArrayList<>();
+    ArrayList<AoservTable<?, ?>> newTables = new ArrayList<>();
     newTables.add(ForbiddenZone = new ForbiddenZoneTable(connector));
     newTables.add(Record = new RecordTable(connector));
     newTables.add(RecordType = new RecordTypeTable(connector));
@@ -81,7 +81,7 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 
   @Override
   @SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
-  public List<? extends AOServTable<?, ?>> getTables() {
+  public List<? extends AoservTable<?, ?>> getTables() {
     return tables;
   }
 

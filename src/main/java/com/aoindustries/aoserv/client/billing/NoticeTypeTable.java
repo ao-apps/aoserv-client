@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.billing;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTableStringKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.sql.SQLException;
  */
 public final class NoticeTypeTable extends GlobalTableStringKey<NoticeType> {
 
-  NoticeTypeTable(AOServConnector connector) {
+  NoticeTypeTable(AoservConnector connector) {
     super(connector, NoticeType.class);
   }
 
@@ -56,7 +56,7 @@ public final class NoticeTypeTable extends GlobalTableStringKey<NoticeType> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.NOTICE_TYPES;
+  public Table.TableId getTableId() {
+    return Table.TableId.NOTICE_TYPES;
   }
 }

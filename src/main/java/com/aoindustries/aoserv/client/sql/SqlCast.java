@@ -23,8 +23,8 @@
 
 package com.aoindustries.aoserv.client.sql;
 
-import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.AOServObject;
+import com.aoindustries.aoserv.client.AoservConnector;
+import com.aoindustries.aoserv.client.AoservObject;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.schema.Type;
 import java.io.IOException;
@@ -36,12 +36,12 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-public final class SQLCast implements SQLExpression {
+public final class SqlCast implements SqlExpression {
 
-  private final SQLExpression expression;
+  private final SqlExpression expression;
   private final Type castToType;
 
-  public SQLCast(SQLExpression expression, Type castToType) {
+  public SqlCast(SqlExpression expression, Type castToType) {
     this.expression = expression;
     this.castToType = castToType;
   }
@@ -57,7 +57,7 @@ public final class SQLCast implements SQLExpression {
   }
 
   @Override
-  public Object evaluate(AOServConnector conn, AOServObject<?, ?> obj) throws IOException, SQLException {
+  public Object evaluate(AoservConnector conn, AoservObject<?, ?> obj) throws IOException, SQLException {
     return expression.getType().cast(conn, expression.evaluate(conn, obj), castToType);
   }
 
@@ -67,7 +67,7 @@ public final class SQLCast implements SQLExpression {
   }
 
   @Override
-  public void getReferencedTables(AOServConnector conn, List<Table> tables) throws IOException, SQLException {
+  public void getReferencedTables(AoservConnector conn, List<Table> tables) throws IOException, SQLException {
     expression.getReferencedTables(conn, tables);
   }
 }

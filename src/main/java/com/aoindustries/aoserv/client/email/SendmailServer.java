@@ -51,13 +51,11 @@ import java.util.Objects;
  */
 public final class SendmailServer extends CachedObjectIntegerKey<SendmailServer> {
 
-  static final int
-      COLUMN_ID = 0,
-      COLUMN_AO_SERVER = 1,
-      COLUMN_PACKAGE = 3,
-      COLUMN_SERVER_CERTIFICATE = 5,
-      COLUMN_CLIENT_CERTIFICATE = 6
-  ;
+  static final int COLUMN_ID = 0;
+  static final int COLUMN_AO_SERVER = 1;
+  static final int COLUMN_PACKAGE = 3;
+  static final int COLUMN_SERVER_CERTIFICATE = 5;
+  static final int COLUMN_CLIENT_CERTIFICATE = 6;
   static final String COLUMN_AO_SERVER_name = "ao_server";
   static final String COLUMN_NAME_name = "name";
 
@@ -116,7 +114,7 @@ public final class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
    */
   public static final int DEFAULT_MIN_FREE_BLOCKS = 65536;
 
-  private int ao_server;
+  private int linuxServer_server_id;
   private String name;
   private int packageNum;
   private DomainName hostname;
@@ -125,9 +123,9 @@ public final class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
   private boolean allowPlaintextAuth;
   private int maxQueueChildren;
   private int niceQueueRun;
-  private int delayLA;
-  private int queueLA;
-  private int refuseLA;
+  private int delayLa;
+  private int queueLa;
+  private int refuseLa;
   private int maxDaemonChildren;
   private int badRcptThrottle;
   private int connectionRateThrottle;
@@ -155,33 +153,54 @@ public final class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_ID: return pkey;
-      case COLUMN_AO_SERVER: return ao_server;
-      case 2: return name;
-      case COLUMN_PACKAGE: return packageNum;
-      case 4: return hostname;
-      case COLUMN_SERVER_CERTIFICATE: return serverCertificate;
-      case COLUMN_CLIENT_CERTIFICATE: return clientCertificate;
-      case 7: return allowPlaintextAuth;
-      case 8: return maxQueueChildren == -1 ? null : maxQueueChildren;
-      case 9: return niceQueueRun == -1 ? null : niceQueueRun;
-      case 10: return delayLA == -1 ? null : delayLA;
-      case 11: return queueLA == -1 ? null : queueLA;
-      case 12: return refuseLA == -1 ? null : refuseLA;
-      case 13: return maxDaemonChildren == -1 ? null : maxDaemonChildren;
-      case 14: return badRcptThrottle == -1 ? null : badRcptThrottle;
-      case 15: return connectionRateThrottle == -1 ? null : connectionRateThrottle;
-      case 16: return maxMessageSize == -1 ? null : maxMessageSize;
-      case 17: return minFreeBlocks == -1 ? null : minFreeBlocks;
-      case 18: return clientAddrInet == -1 ? null : clientAddrInet;
-      case 19: return clientAddrInet6 == -1 ? null : clientAddrInet6;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_ID:
+        return pkey;
+      case COLUMN_AO_SERVER:
+        return linuxServer_server_id;
+      case 2:
+        return name;
+      case COLUMN_PACKAGE:
+        return packageNum;
+      case 4:
+        return hostname;
+      case COLUMN_SERVER_CERTIFICATE:
+        return serverCertificate;
+      case COLUMN_CLIENT_CERTIFICATE:
+        return clientCertificate;
+      case 7:
+        return allowPlaintextAuth;
+      case 8:
+        return maxQueueChildren == -1 ? null : maxQueueChildren;
+      case 9:
+        return niceQueueRun == -1 ? null : niceQueueRun;
+      case 10:
+        return delayLa == -1 ? null : delayLa;
+      case 11:
+        return queueLa == -1 ? null : queueLa;
+      case 12:
+        return refuseLa == -1 ? null : refuseLa;
+      case 13:
+        return maxDaemonChildren == -1 ? null : maxDaemonChildren;
+      case 14:
+        return badRcptThrottle == -1 ? null : badRcptThrottle;
+      case 15:
+        return connectionRateThrottle == -1 ? null : connectionRateThrottle;
+      case 16:
+        return maxMessageSize == -1 ? null : maxMessageSize;
+      case 17:
+        return minFreeBlocks == -1 ? null : minFreeBlocks;
+      case 18:
+        return clientAddrInet == -1 ? null : clientAddrInet;
+      case 19:
+        return clientAddrInet6 == -1 ? null : clientAddrInet6;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.SENDMAIL_SERVERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.SENDMAIL_SERVERS;
   }
 
   @Override
@@ -189,7 +208,7 @@ public final class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
     try {
       int pos = 1;
       pkey = result.getInt(pos++);
-      ao_server = result.getInt(pos++);
+      linuxServer_server_id = result.getInt(pos++);
       name = result.getString(pos++);
       packageNum = result.getInt(pos++);
       hostname = DomainName.valueOf(result.getString(pos++));
@@ -204,17 +223,17 @@ public final class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
       if (result.wasNull()) {
         niceQueueRun = -1;
       }
-      delayLA = result.getInt(pos++);
+      delayLa = result.getInt(pos++);
       if (result.wasNull()) {
-        delayLA = -1;
+        delayLa = -1;
       }
-      queueLA = result.getInt(pos++);
+      queueLa = result.getInt(pos++);
       if (result.wasNull()) {
-        queueLA = -1;
+        queueLa = -1;
       }
-      refuseLA = result.getInt(pos++);
+      refuseLa = result.getInt(pos++);
       if (result.wasNull()) {
-        refuseLA = -1;
+        refuseLa = -1;
       }
       maxDaemonChildren = result.getInt(pos++);
       if (result.wasNull()) {
@@ -253,7 +272,7 @@ public final class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
       pkey = in.readCompressedInt();
-      ao_server = in.readCompressedInt();
+      linuxServer_server_id = in.readCompressedInt();
       name = in.readNullUTF();
       packageNum = in.readCompressedInt();
       hostname = DomainName.valueOf(in.readNullUTF());
@@ -262,9 +281,9 @@ public final class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
       allowPlaintextAuth = in.readBoolean();
       maxQueueChildren = in.readCompressedInt();
       niceQueueRun = in.readCompressedInt();
-      delayLA = in.readCompressedInt();
-      queueLA = in.readCompressedInt();
-      refuseLA = in.readCompressedInt();
+      delayLa = in.readCompressedInt();
+      queueLa = in.readCompressedInt();
+      refuseLa = in.readCompressedInt();
       maxDaemonChildren = in.readCompressedInt();
       badRcptThrottle = in.readCompressedInt();
       connectionRateThrottle = in.readCompressedInt();
@@ -280,7 +299,7 @@ public final class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeCompressedInt(ao_server);
+    out.writeCompressedInt(linuxServer_server_id);
     out.writeNullUTF(name);
     out.writeCompressedInt(packageNum);
     out.writeNullUTF(Objects.toString(hostname, null));
@@ -289,9 +308,9 @@ public final class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
     out.writeBoolean(allowPlaintextAuth);
     out.writeCompressedInt(maxQueueChildren);
     out.writeCompressedInt(niceQueueRun);
-    out.writeCompressedInt(delayLA);
-    out.writeCompressedInt(queueLA);
-    out.writeCompressedInt(refuseLA);
+    out.writeCompressedInt(delayLa);
+    out.writeCompressedInt(queueLa);
+    out.writeCompressedInt(refuseLa);
     out.writeCompressedInt(maxDaemonChildren);
     out.writeCompressedInt(badRcptThrottle);
     out.writeCompressedInt(connectionRateThrottle);
@@ -305,14 +324,14 @@ public final class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
     return pkey;
   }
 
-  public int getAOServer_server_pkey() {
-    return ao_server;
+  public int getLinuxServer_server_id() {
+    return linuxServer_server_id;
   }
 
   public Server getLinuxServer() throws SQLException, IOException {
-    Server obj = table.getConnector().getLinux().getServer().get(ao_server);
+    Server obj = table.getConnector().getLinux().getServer().get(linuxServer_server_id);
     if (obj == null) {
-      throw new SQLException("Unable to find linux.Server: " + ao_server);
+      throw new SQLException("Unable to find linux.Server: " + linuxServer_server_id);
     }
     return obj;
   }
@@ -352,8 +371,9 @@ public final class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 
   /**
    * The fully qualified hostname for <code>Dw</code>, <code>Dm</code>, and <code>Dj</code>.
-   *
+   * <p>
    * When {@code null}, defaults to {@link Server#getHostname()}.
+   * </p>
    */
   public DomainName getHostname() {
     return hostname;
@@ -412,22 +432,22 @@ public final class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
   /**
    * The value for <code>confDELAY_LA</code> or {@code -1} if not set.
    */
-  public int getDelayLA() {
-    return delayLA;
+  public int getDelayLa() {
+    return delayLa;
   }
 
   /**
    * The value for <code>confQUEUE_LA</code> or {@code -1} if not set.
    */
-  public int getQueueLA() {
-    return queueLA;
+  public int getQueueLa() {
+    return queueLa;
   }
 
   /**
    * The value for <code>confREFUSE_LA</code> or {@code -1} if not set.
    */
-  public int getRefuseLA() {
-    return refuseLA;
+  public int getRefuseLa() {
+    return refuseLa;
   }
 
   /**
@@ -479,7 +499,7 @@ public final class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
     }
     IpAddress obj = table.getConnector().getNet().getIpAddress().get(clientAddrInet);
     if (obj == null) {
-      throw new SQLException("Unable to find IPAddress: " + clientAddrInet);
+      throw new SQLException("Unable to find IpAddress: " + clientAddrInet);
     }
     InetAddress address = obj.getInetAddress();
     com.aoapps.net.AddressFamily family = address.getAddressFamily();
@@ -490,7 +510,7 @@ public final class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
       throw new SQLException("May not use unspecified address for clientAddrInet #" + clientAddrInet);
     }
     if (!getLinuxServer().getHost().equals(obj.getDevice().getHost())) {
-      throw new SQLException("IPAddress is not on this server for clientAddrInet #" + clientAddrInet);
+      throw new SQLException("IpAddress is not on this server for clientAddrInet #" + clientAddrInet);
     }
     return obj;
   }
@@ -509,7 +529,7 @@ public final class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
     }
     IpAddress obj = table.getConnector().getNet().getIpAddress().get(clientAddrInet6);
     if (obj == null) {
-      throw new SQLException("Unable to find IPAddress: " + clientAddrInet6);
+      throw new SQLException("Unable to find IpAddress: " + clientAddrInet6);
     }
     InetAddress address = obj.getInetAddress();
     com.aoapps.net.AddressFamily family = address.getAddressFamily();
@@ -520,7 +540,7 @@ public final class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
       throw new SQLException("May not use unspecified address for clientAddrInet6 #" + clientAddrInet6);
     }
     if (!getLinuxServer().getHost().equals(obj.getDevice().getHost())) {
-      throw new SQLException("IPAddress is not on this server for clientAddrInet6 #" + clientAddrInet6);
+      throw new SQLException("IpAddress is not on this server for clientAddrInet6 #" + clientAddrInet6);
     }
     return obj;
   }

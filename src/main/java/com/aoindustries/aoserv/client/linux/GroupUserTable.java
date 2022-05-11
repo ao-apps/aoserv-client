@@ -27,9 +27,9 @@ import com.aoapps.collections.AoCollections;
 import com.aoapps.hodgepodge.io.TerminalWriter;
 import com.aoapps.hodgepodge.util.Tuple2;
 import com.aoapps.lang.NullArgumentException;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -59,7 +59,7 @@ public final class GroupUserTable extends CachedTableIntegerKey<GroupUser> {
   private boolean primaryHashBuilt;
   private final Map<User.Name, Group.Name> primaryHash = new HashMap<>();
 
-  GroupUserTable(AOServConnector connector) {
+  GroupUserTable(AoservConnector connector) {
     super(connector, GroupUser.class);
   }
 
@@ -78,10 +78,10 @@ public final class GroupUserTable extends CachedTableIntegerKey<GroupUser> {
       Group groupObject,
       User userObject
   ) throws IOException, SQLException {
-    int pkey = connector.requestIntQueryIL(
+    int pkey = connector.requestIntQueryInvalidating(
         true,
-        AoservProtocol.CommandID.ADD,
-        Table.TableID.LINUX_GROUP_ACCOUNTS,
+        AoservProtocol.CommandId.ADD,
+        Table.TableId.LINUX_GROUP_ACCOUNTS,
         groupObject.getName(),
         userObject.getUsername()
     );
@@ -183,37 +183,37 @@ public final class GroupUserTable extends CachedTableIntegerKey<GroupUser> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.LINUX_GROUP_ACCOUNTS;
+  public Table.TableId getTableId() {
+    return Table.TableId.LINUX_GROUP_ACCOUNTS;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_LINUX_GROUP_ACCOUNT)) {
-      if (AOSH.checkParamCount(Command.ADD_LINUX_GROUP_ACCOUNT, args, 2, err)) {
+      if (Aosh.checkParamCount(Command.ADD_LINUX_GROUP_ACCOUNT, args, 2, err)) {
         out.println(
-            connector.getSimpleAOClient().addLinuxGroupAccount(
-                AOSH.parseGroupName(args[1], "group"),
-                AOSH.parseLinuxUserName(args[2], "username")
+            connector.getSimpleClient().addLinuxGroupAccount(
+                Aosh.parseGroupName(args[1], "group"),
+                Aosh.parseLinuxUserName(args[2], "username")
             )
         );
         out.flush();
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.REMOVE_LINUX_GROUP_ACCOUNT)) {
-      if (AOSH.checkParamCount(Command.REMOVE_LINUX_GROUP_ACCOUNT, args, 2, err)) {
-        connector.getSimpleAOClient().removeLinuxGroupAccount(
-            AOSH.parseGroupName(args[1], "group"),
-            AOSH.parseLinuxUserName(args[2], "username")
+      if (Aosh.checkParamCount(Command.REMOVE_LINUX_GROUP_ACCOUNT, args, 2, err)) {
+        connector.getSimpleClient().removeLinuxGroupAccount(
+            Aosh.parseGroupName(args[1], "group"),
+            Aosh.parseLinuxUserName(args[2], "username")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_PRIMARY_LINUX_GROUP_ACCOUNT)) {
-      if (AOSH.checkParamCount(Command.SET_PRIMARY_LINUX_GROUP_ACCOUNT, args, 2, err)) {
-        connector.getSimpleAOClient().setPrimaryLinuxGroupAccount(
-            AOSH.parseGroupName(args[1], "group"),
-            AOSH.parseLinuxUserName(args[2], "username")
+      if (Aosh.checkParamCount(Command.SET_PRIMARY_LINUX_GROUP_ACCOUNT, args, 2, err)) {
+        connector.getSimpleClient().setPrimaryLinuxGroupAccount(
+            Aosh.parseGroupName(args[1], "group"),
+            Aosh.parseLinuxUserName(args[2], "username")
         );
       }
       return true;

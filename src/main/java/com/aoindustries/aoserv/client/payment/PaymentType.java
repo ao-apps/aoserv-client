@@ -58,8 +58,7 @@ public final class PaymentType extends GlobalObjectStringKey<PaymentType> {
       MONEY_ORDER = "money_order",
       PAYPAL = "paypal",
       VISA = "visa",
-      WIRE = "wire"
-  ;
+      WIRE = "wire";
 
   private String description;
 
@@ -108,8 +107,8 @@ public final class PaymentType extends GlobalObjectStringKey<PaymentType> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.PAYMENT_TYPES;
+  public Table.TableId getTableId() {
+    return Table.TableId.PAYMENT_TYPES;
   }
 
   @Override

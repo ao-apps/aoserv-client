@@ -23,8 +23,8 @@
 
 package com.aoindustries.aoserv.client.accounting;
 
-import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.AOServTable;
+import com.aoindustries.aoserv.client.AoservConnector;
+import com.aoindustries.aoserv.client.AoservTable;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.schema.Type;
@@ -38,9 +38,9 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-public final class BankTransactionTable extends AOServTable<Integer, BankTransaction> {
+public final class BankTransactionTable extends AoservTable<Integer, BankTransaction> {
 
-  BankTransactionTable(AOServConnector connector) {
+  BankTransactionTable(AoservConnector connector) {
     super(connector, BankTransaction.class);
   }
 
@@ -56,6 +56,8 @@ public final class BankTransactionTable extends AOServTable<Integer, BankTransac
   }
 
   /**
+   * {@inheritDoc}
+   *
    * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
    */
   @Deprecated
@@ -71,23 +73,23 @@ public final class BankTransactionTable extends AOServTable<Integer, BankTransac
    * @see  #get(java.lang.Object)
    */
   public BankTransaction get(int transid) throws IOException, SQLException {
-    return getObject(true, AoservProtocol.CommandID.GET_OBJECT, Table.TableID.BANK_TRANSACTIONS, transid);
+    return getObject(true, AoservProtocol.CommandId.GET_OBJECT, Table.TableId.BANK_TRANSACTIONS, transid);
   }
 
   List<BankTransaction> getBankTransactions(BankAccount account) throws IOException, SQLException {
-    return getObjects(true, AoservProtocol.CommandID.GET_BANK_TRANSACTIONS_ACCOUNT, account.getName());
+    return getObjects(true, AoservProtocol.CommandId.GET_BANK_TRANSACTIONS_ACCOUNT, account.getName());
   }
 
   @Override
   public List<BankTransaction> getRowsCopy() throws IOException, SQLException {
     List<BankTransaction> list = new ArrayList<>();
-    getObjects(true, list, AoservProtocol.CommandID.GET_TABLE, Table.TableID.BANK_TRANSACTIONS);
+    getObjects(true, list, AoservProtocol.CommandId.GET_TABLE, Table.TableId.BANK_TRANSACTIONS);
     return list;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.BANK_TRANSACTIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.BANK_TRANSACTIONS;
   }
 
   @Override

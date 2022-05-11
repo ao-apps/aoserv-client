@@ -24,9 +24,9 @@
 package com.aoindustries.aoserv.client.email;
 
 import com.aoapps.hodgepodge.io.TerminalWriter;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
@@ -44,7 +44,7 @@ import java.util.List;
  */
 public final class PipeAddressTable extends CachedTableIntegerKey<PipeAddress> {
 
-  PipeAddressTable(AOServConnector connector) {
+  PipeAddressTable(AoservConnector connector) {
     super(connector, PipeAddress.class);
   }
 
@@ -62,10 +62,10 @@ public final class PipeAddressTable extends CachedTableIntegerKey<PipeAddress> {
   }
 
   int addEmailPipeAddress(Address emailAddressObject, Pipe emailPipeObject) throws IOException, SQLException {
-    return connector.requestIntQueryIL(
+    return connector.requestIntQueryInvalidating(
         true,
-        AoservProtocol.CommandID.ADD,
-        Table.TableID.EMAIL_PIPE_ADDRESSES,
+        AoservProtocol.CommandId.ADD,
+        Table.TableId.EMAIL_PIPE_ADDRESSES,
         emailAddressObject.getPkey(),
         emailPipeObject.getPkey()
     );
@@ -114,12 +114,12 @@ public final class PipeAddressTable extends CachedTableIntegerKey<PipeAddress> {
 
   PipeAddress getEmailPipeAddress(Address address, Pipe pipe) throws IOException, SQLException {
     int address_id = address.getPkey();
-    int pipePKey = pipe.getPkey();
+    int pipe_id = pipe.getPkey();
     List<PipeAddress> cached = getRows();
     int len = cached.size();
     for (int c = 0; c < len; c++) {
       PipeAddress epa = cached.get(c);
-      if (epa.getEmailAddress_id() == address_id && epa.getEmailPipe_id() == pipePKey) {
+      if (epa.getEmailAddress_id() == address_id && epa.getEmailPipe_id() == pipe_id) {
         return epa;
       }
     }
@@ -127,13 +127,13 @@ public final class PipeAddressTable extends CachedTableIntegerKey<PipeAddress> {
   }
 
   public List<PipeAddress> getEmailPipeAddresses(Server ao) throws IOException, SQLException {
-    int aoPKey = ao.getPkey();
+    int aoPkey = ao.getPkey();
     List<PipeAddress> cached = getRows();
     int len = cached.size();
     List<PipeAddress> matches = new ArrayList<>(len);
     for (int c = 0; c < len; c++) {
       PipeAddress pipe = cached.get(c);
-      if (pipe.getEmailAddress().getDomain().getLinuxServer_host_id() == aoPKey) {
+      if (pipe.getEmailAddress().getDomain().getLinuxServer_host_id() == aoPkey) {
         matches.add(pipe);
       }
     }
@@ -141,15 +141,15 @@ public final class PipeAddressTable extends CachedTableIntegerKey<PipeAddress> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.EMAIL_PIPE_ADDRESSES;
+  public Table.TableId getTableId() {
+    return Table.TableId.EMAIL_PIPE_ADDRESSES;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_EMAIL_PIPE_ADDRESS)) {
-      if (AOSH.checkMinParamCount(Command.ADD_EMAIL_PIPE_ADDRESS, args, 2, err)) {
+      if (Aosh.checkMinParamCount(Command.ADD_EMAIL_PIPE_ADDRESS, args, 2, err)) {
         if ((args.length & 1) == 0) {
           err.println("aosh: " + Command.ADD_EMAIL_PIPE_ADDRESS + ": must have even number of parameters");
           err.flush();
@@ -163,10 +163,10 @@ public final class PipeAddressTable extends CachedTableIntegerKey<PipeAddress> {
               err.flush();
             } else {
               out.println(
-                  connector.getSimpleAOClient().addEmailPipeAddress(
+                  connector.getSimpleClient().addEmailPipeAddress(
                       addr.substring(0, pos),
-                      AOSH.parseDomainName(addr.substring(pos + 1), "address"),
-                      AOSH.parseInt(args[c + 1], "pkey")
+                      Aosh.parseDomainName(addr.substring(pos + 1), "address"),
+                      Aosh.parseInt(args[c + 1], "pkey")
                   )
               );
               out.flush();
@@ -176,7 +176,7 @@ public final class PipeAddressTable extends CachedTableIntegerKey<PipeAddress> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.REMOVE_EMAIL_PIPE_ADDRESS)) {
-      if (AOSH.checkParamCount(Command.REMOVE_EMAIL_PIPE_ADDRESS, args, 2, err)) {
+      if (Aosh.checkParamCount(Command.REMOVE_EMAIL_PIPE_ADDRESS, args, 2, err)) {
         String addr = args[1];
         int pos = addr.indexOf('@');
         if (pos == -1) {
@@ -184,10 +184,10 @@ public final class PipeAddressTable extends CachedTableIntegerKey<PipeAddress> {
           err.println(addr);
           err.flush();
         } else {
-          connector.getSimpleAOClient().removeEmailPipeAddress(
+          connector.getSimpleClient().removeEmailPipeAddress(
               addr.substring(0, pos),
-              AOSH.parseDomainName(addr.substring(pos + 1), "address"),
-              AOSH.parseInt(args[2], "pkey")
+              Aosh.parseDomainName(addr.substring(pos + 1), "address"),
+              Aosh.parseInt(args[2], "pkey")
           );
         }
       }

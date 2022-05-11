@@ -28,7 +28,7 @@ import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.lang.validation.ValidationException;
 import com.aoapps.net.DomainName;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.Disablable;
 import com.aoindustries.aoserv.client.account.DisableLog;
@@ -51,26 +51,24 @@ import java.util.Objects;
  */
 public final class VirtualHost extends CachedObjectIntegerKey<VirtualHost> implements Disablable {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_HTTPD_SITE = 1,
-      COLUMN_SSL_CERTIFICATE = 6
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_HTTPD_SITE = 1;
+  static final int COLUMN_SSL_CERTIFICATE = 6;
   static final String COLUMN_HTTPD_SITE_name = "httpd_site";
   static final String COLUMN_HTTPD_BIND_name = "httpd_bind";
   static final String COLUMN_NAME_name = "name";
 
-  private int httpd_site;
-  private int httpd_bind;
+  private int httpdSite;
+  private int httpdBind;
   private String name;
-  private PosixPath access_log;
-  private PosixPath error_log;
+  private PosixPath accessLog;
+  private PosixPath errorLog;
   private int certificate;
-  private int disable_log;
-  private String predisable_config;
+  private int disableLog;
+  private String predisableConfig;
   private boolean isManual;
-  private boolean redirect_to_primary_hostname;
-  private String include_site_config;
+  private boolean redirectToPrimaryHostname;
+  private String includeSiteConfig;
 
   // Used for protocol conversion only
   private PosixPath oldSslCertFile;
@@ -102,25 +100,38 @@ public final class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_HTTPD_SITE: return httpd_site;
-      case 2: return httpd_bind;
-      case 3: return name;
-      case 4: return access_log;
-      case 5: return error_log;
-      case COLUMN_SSL_CERTIFICATE: return certificate == -1 ? null : certificate;
-      case 7: return disable_log == -1 ? null : disable_log;
-      case 8: return predisable_config;
-      case 9: return isManual;
-      case 10: return redirect_to_primary_hostname;
-      case 11: return include_site_config;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_HTTPD_SITE:
+        return httpdSite;
+      case 2:
+        return httpdBind;
+      case 3:
+        return name;
+      case 4:
+        return accessLog;
+      case 5:
+        return errorLog;
+      case COLUMN_SSL_CERTIFICATE:
+        return certificate == -1 ? null : certificate;
+      case 7:
+        return disableLog == -1 ? null : disableLog;
+      case 8:
+        return predisableConfig;
+      case 9:
+        return isManual;
+      case 10:
+        return redirectToPrimaryHostname;
+      case 11:
+        return includeSiteConfig;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.HTTPD_SITE_BINDS;
+  public Table.TableId getTableId() {
+    return Table.TableId.HTTPD_SITE_BINDS;
   }
 
   @Override
@@ -128,23 +139,23 @@ public final class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
     try {
       int pos = 1;
       pkey = result.getInt(pos++);
-      httpd_site = result.getInt(pos++);
-      httpd_bind = result.getInt(pos++);
+      httpdSite = result.getInt(pos++);
+      httpdBind = result.getInt(pos++);
       name = result.getString(pos++);
-      access_log = PosixPath.valueOf(result.getString(pos++));
-      error_log = PosixPath.valueOf(result.getString(pos++));
+      accessLog = PosixPath.valueOf(result.getString(pos++));
+      errorLog = PosixPath.valueOf(result.getString(pos++));
       certificate = result.getInt(pos++);
       if (result.wasNull()) {
         certificate = -1;
       }
-      disable_log = result.getInt(pos++);
+      disableLog = result.getInt(pos++);
       if (result.wasNull()) {
-        disable_log = -1;
+        disableLog = -1;
       }
-      predisable_config = result.getString(pos++);
+      predisableConfig = result.getString(pos++);
       isManual = result.getBoolean(pos++);
-      redirect_to_primary_hostname = result.getBoolean(pos++);
-      include_site_config = result.getString(pos++);
+      redirectToPrimaryHostname = result.getBoolean(pos++);
+      includeSiteConfig = result.getString(pos++);
       oldSslCertFile = PosixPath.valueOf(result.getString(pos++));
       oldSslCertKeyFile = PosixPath.valueOf(result.getString(pos++));
       oldSslCertChainFile = PosixPath.valueOf(result.getString(pos++));
@@ -157,17 +168,17 @@ public final class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
       pkey = in.readCompressedInt();
-      httpd_site = in.readCompressedInt();
-      httpd_bind = in.readCompressedInt();
+      httpdSite = in.readCompressedInt();
+      httpdBind = in.readCompressedInt();
       name = in.readNullUTF();
-      access_log = PosixPath.valueOf(in.readUTF());
-      error_log = PosixPath.valueOf(in.readUTF());
+      accessLog = PosixPath.valueOf(in.readUTF());
+      errorLog = PosixPath.valueOf(in.readUTF());
       certificate = in.readCompressedInt();
-      disable_log = in.readCompressedInt();
-      predisable_config = in.readNullUTF();
+      disableLog = in.readCompressedInt();
+      predisableConfig = in.readNullUTF();
       isManual = in.readBoolean();
-      redirect_to_primary_hostname = in.readBoolean();
-      include_site_config = in.readNullUTF();
+      redirectToPrimaryHostname = in.readBoolean();
+      includeSiteConfig = in.readNullUTF();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -176,13 +187,13 @@ public final class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeCompressedInt(httpd_site);
-    out.writeCompressedInt(httpd_bind);
+    out.writeCompressedInt(httpdSite);
+    out.writeCompressedInt(httpdBind);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_14) >= 0) {
       out.writeNullUTF(name);
     }
-    out.writeUTF(access_log.toString());
-    out.writeUTF(error_log.toString());
+    out.writeUTF(accessLog.toString());
+    out.writeUTF(errorLog.toString());
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_10) >= 0) {
       out.writeCompressedInt(certificate);
     } else {
@@ -192,29 +203,29 @@ public final class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
         out.writeNullUTF(Objects.toString(oldSslCertChainFile, null));
       }
     }
-    out.writeCompressedInt(disable_log);
-    out.writeNullUTF(predisable_config);
+    out.writeCompressedInt(disableLog);
+    out.writeNullUTF(predisableConfig);
     out.writeBoolean(isManual);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_19) >= 0) {
-      out.writeBoolean(redirect_to_primary_hostname);
+      out.writeBoolean(redirectToPrimaryHostname);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_10) >= 0) {
-      out.writeNullUTF(include_site_config);
+      out.writeNullUTF(includeSiteConfig);
     }
   }
 
   public Site getHttpdSite() throws SQLException, IOException {
-    Site obj = table.getConnector().getWeb().getSite().get(httpd_site);
+    Site obj = table.getConnector().getWeb().getSite().get(httpdSite);
     if (obj == null) {
-      throw new SQLException("Unable to find HttpdSite: " + httpd_site);
+      throw new SQLException("Unable to find HttpdSite: " + httpdSite);
     }
     return obj;
   }
 
   public HttpdBind getHttpdBind() throws SQLException, IOException {
-    HttpdBind obj = table.getConnector().getWeb().getHttpdBind().get(httpd_bind);
+    HttpdBind obj = table.getConnector().getWeb().getHttpdBind().get(httpdBind);
     if (obj == null) {
-      throw new SQLException("Unable to find HttpdBind: " + httpd_bind + " for HttpdSite=" + httpd_site);
+      throw new SQLException("Unable to find HttpdBind: " + httpdBind + " for HttpdSite=" + httpdSite);
     }
     return obj;
   }
@@ -242,11 +253,11 @@ public final class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
   }
 
   public PosixPath getAccessLog() {
-    return access_log;
+    return accessLog;
   }
 
   public PosixPath getErrorLog() {
-    return error_log;
+    return errorLog;
   }
 
   /**
@@ -277,24 +288,24 @@ public final class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
 
   @Override
   public DisableLog getDisableLog() throws SQLException, IOException {
-    if (disable_log == -1) {
+    if (disableLog == -1) {
       return null;
     }
-    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disable_log);
+    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disableLog);
     if (obj == null) {
-      throw new SQLException("Unable to find DisableLog: " + disable_log);
+      throw new SQLException("Unable to find DisableLog: " + disableLog);
     }
     return obj;
   }
 
   @Override
   public boolean isDisabled() {
-    return disable_log != -1;
+    return disableLog != -1;
   }
 
   @Override
   public boolean canDisable() {
-    return disable_log == -1;
+    return disableLog == -1;
   }
 
   @Override
@@ -309,23 +320,23 @@ public final class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
 
   @Override
   public void disable(DisableLog dl) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.DISABLE, Table.TableID.HTTPD_SITE_BINDS, dl.getPkey(), pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.DISABLE, Table.TableId.HTTPD_SITE_BINDS, dl.getPkey(), pkey);
   }
 
   @Override
   public void enable() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.ENABLE, Table.TableID.HTTPD_SITE_BINDS, pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.ENABLE, Table.TableId.HTTPD_SITE_BINDS, pkey);
   }
 
   public String getPredisableConfig() {
-    return predisable_config;
+    return predisableConfig;
   }
 
   public void setPredisableConfig(final String config) throws IOException, SQLException {
     table.getConnector().requestUpdate(
         true,
-        AoservProtocol.CommandID.SET_HTTPD_SITE_BIND_PREDISABLE_CONFIG,
-        new AOServConnector.UpdateRequest() {
+        AoservProtocol.CommandId.SET_HTTPD_SITE_BIND_PREDISABLE_CONFIG,
+        new AoservConnector.UpdateRequest() {
           private IntList invalidateList;
 
           @Override
@@ -338,7 +349,7 @@ public final class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
           public void readResponse(StreamableInput in) throws IOException, SQLException {
             int code = in.readByte();
             if (code == AoservProtocol.DONE) {
-              invalidateList = AOServConnector.readInvalidateList(in);
+              invalidateList = AoservConnector.readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
               throw new IOException("Unexpected response code: " + code);
@@ -358,15 +369,15 @@ public final class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
   }
 
   public void setIsManual(boolean isManual) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_HTTPD_SITE_BIND_IS_MANUAL, pkey, isManual);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_HTTPD_SITE_BIND_IS_MANUAL, pkey, isManual);
   }
 
   public boolean getRedirectToPrimaryHostname() {
-    return redirect_to_primary_hostname;
+    return redirectToPrimaryHostname;
   }
 
   public void setRedirectToPrimaryHostname(boolean redirectToPrimaryHostname) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_HTTPD_SITE_BIND_REDIRECT_TO_PRIMARY_HOSTNAME, pkey, redirectToPrimaryHostname);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_HTTPD_SITE_BIND_REDIRECT_TO_PRIMARY_HOSTNAME, pkey, redirectToPrimaryHostname);
   }
 
   /**
@@ -382,23 +393,23 @@ public final class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
    * </ul>
    */
   public String getIncludeSiteConfig() {
-    return include_site_config;
+    return includeSiteConfig;
   }
 
-  public List<VirtualHostName> getHttpdSiteURLs() throws IOException, SQLException {
-    return table.getConnector().getWeb().getVirtualHostName().getHttpdSiteURLs(this);
+  public List<VirtualHostName> getVirtualHostNames() throws IOException, SQLException {
+    return table.getConnector().getWeb().getVirtualHostName().getVirtualHostNames(this);
   }
 
-  public VirtualHostName getPrimaryHttpdSiteURL() throws SQLException, IOException {
-    return table.getConnector().getWeb().getVirtualHostName().getPrimaryHttpdSiteURL(this);
+  public VirtualHostName getPrimaryVirtualHostName() throws SQLException, IOException {
+    return table.getConnector().getWeb().getVirtualHostName().getPrimaryVirtualHostName(this);
   }
 
-  public List<VirtualHostName> getAltHttpdSiteURLs() throws IOException, SQLException {
-    return table.getConnector().getWeb().getVirtualHostName().getAltHttpdSiteURLs(this);
+  public List<VirtualHostName> getAltVirtualHostNames() throws IOException, SQLException {
+    return table.getConnector().getWeb().getVirtualHostName().getAltVirtualHostNames(this);
   }
 
-  public int addHttpdSiteURL(DomainName hostname) throws IOException, SQLException {
-    return table.getConnector().getWeb().getVirtualHostName().addHttpdSiteURL(this, hostname);
+  public int addVirtualHostName(DomainName hostname) throws IOException, SQLException {
+    return table.getConnector().getWeb().getVirtualHostName().addVirtualHostName(this, hostname);
   }
 
   public List<Header> getHttpdSiteBindHeaders() throws IOException, SQLException {

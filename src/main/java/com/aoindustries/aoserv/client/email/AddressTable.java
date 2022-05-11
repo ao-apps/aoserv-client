@@ -26,9 +26,9 @@ package com.aoindustries.aoserv.client.email;
 import com.aoapps.hodgepodge.io.TerminalWriter;
 import com.aoapps.lang.validation.ValidationResult;
 import com.aoapps.net.Email;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
@@ -46,7 +46,7 @@ import java.util.List;
  */
 public final class AddressTable extends CachedTableIntegerKey<Address> {
 
-  AddressTable(AOServConnector connector) {
+  AddressTable(AoservConnector connector) {
     super(connector, Address.class);
   }
 
@@ -67,10 +67,10 @@ public final class AddressTable extends CachedTableIntegerKey<Address> {
     if (!result.isValid()) {
       throw new SQLException("Invalid email address: " + result.toString());
     }
-    return connector.requestIntQueryIL(
+    return connector.requestIntQueryInvalidating(
         true,
-        AoservProtocol.CommandID.ADD,
-        Table.TableID.EMAIL_ADDRESSES,
+        AoservProtocol.CommandId.ADD,
+        Table.TableId.EMAIL_ADDRESSES,
         address,
         domainObject.getPkey()
     );
@@ -96,13 +96,13 @@ public final class AddressTable extends CachedTableIntegerKey<Address> {
   }
 
   public List<Address> getEmailAddresses(Server ao) throws IOException, SQLException {
-    int aoPKey = ao.getPkey();
+    int aoPkey = ao.getPkey();
     List<Address> addresses = getRows();
     int len = addresses.size();
     List<Address> matches = new ArrayList<>(len);
     for (int c = 0; c < len; c++) {
       Address address = addresses.get(c);
-      if (address.getDomain().getLinuxServer_host_id() == aoPKey) {
+      if (address.getDomain().getLinuxServer_host_id() == aoPkey) {
         matches.add(address);
       }
     }
@@ -110,15 +110,15 @@ public final class AddressTable extends CachedTableIntegerKey<Address> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.EMAIL_ADDRESSES;
+  public Table.TableId getTableId() {
+    return Table.TableId.EMAIL_ADDRESSES;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.CHECK_EMAIL_ADDRESS)) {
-      if (AOSH.checkMinParamCount(Command.CHECK_EMAIL_ADDRESS, args, 1, err)) {
+      if (Aosh.checkMinParamCount(Command.CHECK_EMAIL_ADDRESS, args, 1, err)) {
         for (int c = 1; c < args.length; c++) {
           String addr = args[c];
           ValidationResult validationResult = Email.validate(addr);
@@ -141,7 +141,7 @@ public final class AddressTable extends CachedTableIntegerKey<Address> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.REMOVE_EMAIL_ADDRESS)) {
-      if (AOSH.checkMinParamCount(Command.REMOVE_EMAIL_ADDRESS, args, 2, err)) {
+      if (Aosh.checkMinParamCount(Command.REMOVE_EMAIL_ADDRESS, args, 2, err)) {
         if ((args.length & 1) != 0) {
           for (int c = 1; c < args.length; c += 2) {
             String addr = args[c];
@@ -151,9 +151,9 @@ public final class AddressTable extends CachedTableIntegerKey<Address> {
               err.println(addr);
               err.flush();
             } else {
-              connector.getSimpleAOClient().removeEmailAddress(
+              connector.getSimpleClient().removeEmailAddress(
                   addr.substring(0, pos),
-                  AOSH.parseDomainName(addr.substring(pos + 1), "address"),
+                  Aosh.parseDomainName(addr.substring(pos + 1), "address"),
                   args[c + 1]
               );
             }

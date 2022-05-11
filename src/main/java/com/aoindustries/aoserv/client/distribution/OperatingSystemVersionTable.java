@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.distribution;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTableIntegerKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -38,7 +38,7 @@ import java.sql.SQLException;
  */
 public final class OperatingSystemVersionTable extends GlobalTableIntegerKey<OperatingSystemVersion> {
 
-  OperatingSystemVersionTable(AOServConnector connector) {
+  OperatingSystemVersionTable(AoservConnector connector) {
     super(connector, OperatingSystemVersion.class);
   }
 
@@ -73,7 +73,7 @@ public final class OperatingSystemVersionTable extends GlobalTableIntegerKey<Ope
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.OPERATING_SYSTEM_VERSIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.OPERATING_SYSTEM_VERSIONS;
   }
 }

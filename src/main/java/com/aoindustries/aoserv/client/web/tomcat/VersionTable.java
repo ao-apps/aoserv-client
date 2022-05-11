@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.web.tomcat;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTableIntegerKey;
 import com.aoindustries.aoserv.client.distribution.OperatingSystemVersion;
 import com.aoindustries.aoserv.client.distribution.SoftwareVersion;
@@ -38,7 +38,7 @@ import java.sql.SQLException;
  */
 public final class VersionTable extends GlobalTableIntegerKey<Version> {
 
-  VersionTable(AOServConnector connector) {
+  VersionTable(AoservConnector connector) {
     super(connector, Version.class);
   }
 
@@ -66,7 +66,7 @@ public final class VersionTable extends GlobalTableIntegerKey<Version> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.HTTPD_TOMCAT_VERSIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.HTTPD_TOMCAT_VERSIONS;
   }
 }

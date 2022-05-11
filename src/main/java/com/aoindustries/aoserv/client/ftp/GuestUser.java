@@ -40,7 +40,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * If a <code>LinuxAccount</code> has a <code>FTPGuestUser</code> attached to it,
+ * If a <code>LinuxAccount</code> has a <code>FtpGuestUser</code> attached to it,
  * FTP connections will be limited with their home directory as the root
  * directory.
  *
@@ -82,8 +82,8 @@ public final class GuestUser extends CachedObjectUserNameKey<GuestUser> implemen
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.FTP_GUEST_USERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.FTP_GUEST_USERS;
   }
 
   @Override
@@ -111,10 +111,10 @@ public final class GuestUser extends CachedObjectUserNameKey<GuestUser> implemen
 
   @Override
   public void remove() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.REMOVE,
-        Table.TableID.FTP_GUEST_USERS,
+        AoservProtocol.CommandId.REMOVE,
+        Table.TableId.FTP_GUEST_USERS,
         pkey
     );
   }

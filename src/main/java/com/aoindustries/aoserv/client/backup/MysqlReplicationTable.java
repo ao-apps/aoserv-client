@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.backup;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.mysql.Server;
@@ -41,7 +41,7 @@ import java.util.List;
  */
 public final class MysqlReplicationTable extends CachedTableIntegerKey<MysqlReplication> {
 
-  MysqlReplicationTable(AOServConnector connector) {
+  MysqlReplicationTable(AoservConnector connector) {
     super(connector, MysqlReplication.class);
   }
 
@@ -63,31 +63,31 @@ public final class MysqlReplicationTable extends CachedTableIntegerKey<MysqlRepl
     return getUniqueRow(MysqlReplication.COLUMN_PKEY, pkey);
   }
 
-  public List<MysqlReplication> getFailoverMySQLReplications(Package pk) throws IOException, SQLException {
+  public List<MysqlReplication> getFailoverMysqlReplications(Package pk) throws IOException, SQLException {
     List<MysqlReplication> matches = new ArrayList<>();
     for (Bind nb : pk.getNetBinds()) {
-      Server ms = nb.getMySQLServer();
+      Server ms = nb.getMysqlServer();
       if (ms != null) {
-        matches.addAll(ms.getFailoverMySQLReplications());
+        matches.addAll(ms.getFailoverMysqlReplications());
       }
     }
     return matches;
   }
 
-  public List<MysqlReplication> getFailoverMySQLReplications(Server mysqlServer) throws IOException, SQLException {
+  public List<MysqlReplication> getFailoverMysqlReplications(Server mysqlServer) throws IOException, SQLException {
     return getIndexedRows(MysqlReplication.COLUMN_MYSQL_SERVER, mysqlServer.getPkey());
   }
 
-  public List<MysqlReplication> getFailoverMySQLReplications(com.aoindustries.aoserv.client.linux.Server aoServer) throws IOException, SQLException {
+  public List<MysqlReplication> getFailoverMysqlReplications(com.aoindustries.aoserv.client.linux.Server aoServer) throws IOException, SQLException {
     return getIndexedRows(MysqlReplication.COLUMN_AO_SERVER, aoServer.getPkey());
   }
 
-  List<MysqlReplication> getFailoverMySQLReplications(FileReplication replication) throws IOException, SQLException {
+  List<MysqlReplication> getFailoverMysqlReplications(FileReplication replication) throws IOException, SQLException {
     return getIndexedRows(MysqlReplication.COLUMN_REPLICATION, replication.getPkey());
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.FAILOVER_MYSQL_REPLICATIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.FAILOVER_MYSQL_REPLICATIONS;
   }
 }

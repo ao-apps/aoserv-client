@@ -42,14 +42,10 @@ import java.sql.SQLException;
  */
 public final class Host extends CachedObjectLongKey<Host> {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_SET = 1
-  ;
-  static final String
-      COLUMN_SET_name  = "set",
-      COLUMN_HOST_name = "host"
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_SET = 1;
+  static final String COLUMN_SET_name  = "set";
+  static final String COLUMN_HOST_name = "host";
 
   private int set;
   private int host;
@@ -68,8 +64,8 @@ public final class Host extends CachedObjectLongKey<Host> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.IP_REPUTATION_SET_HOSTS;
+  public Table.TableId getTableId() {
+    return Table.TableId.IP_REPUTATION_SET_HOSTS;
   }
 
   @Override
@@ -103,12 +99,18 @@ public final class Host extends CachedObjectLongKey<Host> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY     : return pkey;
-      case COLUMN_SET      : return set;
-      case 2               : return getHostAddress();
-      case 3               : return goodReputation;
-      case 4               : return badReputation;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_SET:
+        return set;
+      case 2:
+        return getHostAddress();
+      case 3:
+        return goodReputation;
+      case 4:
+        return badReputation;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 

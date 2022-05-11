@@ -25,7 +25,7 @@ package com.aoindustries.aoserv.client.linux;
 
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalObjectStringKey;
 import com.aoindustries.aoserv.client.password.PasswordChecker;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
@@ -41,8 +41,9 @@ import java.util.List;
  * controls which systems the account may access.  If the
  * <code>LinuxAccount</code> is able to access multiple
  * <code>Server</code>s, its type will be the same on all servers.
- *
+ * <p>
  * TODO: Make this class an enum?  How would API version compatibility work?  Same for group type.
+ * </p>
  *
  * @see  User
  * @see  UserServer
@@ -64,8 +65,7 @@ public final class UserType extends GlobalObjectStringKey<UserType> {
       USER = "user",
       MERCENARY = "mercenary",
       SYSTEM = "system",
-      APPLICATION = "application"
-  ;
+      APPLICATION = "application";
 
   private static final PosixPath[] backupShells = {
       Shell.BASH
@@ -91,14 +91,14 @@ public final class UserType extends GlobalObjectStringKey<UserType> {
       Shell.SYNC,
       Shell.HALT,
       Shell.SHUTDOWN//,
-  //Shell.TRUE
+      //Shell.TRUE
   };
 
   private static final PosixPath[] applicationShells = {
       Shell.BASH,
       Shell.FALSE//,
-  //Shell.NULL,
-  //Shell.TRUE
+      //Shell.NULL,
+      //Shell.TRUE
   };
 
   private static final PosixPath[] userShells = {
@@ -112,11 +112,11 @@ public final class UserType extends GlobalObjectStringKey<UserType> {
       Shell.SH,
       Shell.TCSH,
       Shell.GIT_SHELL//,
-  //Shell.TRUE
+      //Shell.TRUE
   };
 
   private String description;
-  private boolean is_email;
+  private boolean isEmail;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -137,7 +137,7 @@ public final class UserType extends GlobalObjectStringKey<UserType> {
     return type.equals(EMAIL) ? PasswordChecker.PasswordStrength.SUPER_LAX : PasswordChecker.PasswordStrength.STRICT;
   }
 
-  public List<Shell> getAllowedShells(AOServConnector connector) throws SQLException, IOException {
+  public List<Shell> getAllowedShells(AoservConnector connector) throws SQLException, IOException {
     PosixPath[] paths = getShellList(pkey);
 
     ShellTable shellTable = connector.getLinux().getShell();
@@ -162,7 +162,7 @@ public final class UserType extends GlobalObjectStringKey<UserType> {
       return description;
     }
     if (i == 2) {
-      return is_email;
+      return isEmail;
     }
     throw new IllegalArgumentException("Invalid index: " + i);
   }
@@ -202,15 +202,15 @@ public final class UserType extends GlobalObjectStringKey<UserType> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.LINUX_ACCOUNT_TYPES;
+  public Table.TableId getTableId() {
+    return Table.TableId.LINUX_ACCOUNT_TYPES;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     pkey = result.getString(1);
     description = result.getString(2);
-    is_email = result.getBoolean(3);
+    isEmail = result.getBoolean(3);
   }
 
   public boolean canPostgresIdent() {
@@ -243,14 +243,14 @@ public final class UserType extends GlobalObjectStringKey<UserType> {
   }
 
   public boolean isEmail() {
-    return is_email;
+    return isEmail;
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readUTF().intern();
     description = in.readUTF();
-    is_email = in.readBoolean();
+    isEmail = in.readBoolean();
   }
 
   @Override
@@ -262,7 +262,7 @@ public final class UserType extends GlobalObjectStringKey<UserType> {
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeUTF(pkey);
     out.writeUTF(description);
-    out.writeBoolean(is_email);
+    out.writeBoolean(isEmail);
   }
 
   public static boolean canSetPassword(String type) {
@@ -270,8 +270,7 @@ public final class UserType extends GlobalObjectStringKey<UserType> {
         APPLICATION.equals(type)
             || EMAIL.equals(type)
             || FTPONLY.equals(type)
-            || USER.equals(type)
-    ;
+            || USER.equals(type);
   }
 
   public boolean canSetPassword() {

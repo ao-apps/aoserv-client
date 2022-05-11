@@ -25,9 +25,9 @@ package com.aoindustries.aoserv.client.postgresql;
 
 import com.aoapps.hodgepodge.io.TerminalWriter;
 import com.aoapps.lang.validation.ValidationResult;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.net.Bind;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
@@ -44,7 +44,7 @@ import java.util.List;
  */
 public final class ServerTable extends CachedTableIntegerKey<Server> {
 
-  ServerTable(AOServConnector connector) {
+  ServerTable(AoservConnector connector) {
     super(connector, Server.class);
   }
 
@@ -68,10 +68,10 @@ public final class ServerTable extends CachedTableIntegerKey<Server> {
       int sharedBuffers,
       boolean fsync
   ) throws IOException, SQLException {
-    return connector.requestIntQueryIL(
+    return connector.requestIntQueryInvalidating(
         true,
-        AoservProtocol.CommandID.ADD,
-        Table.TableID.POSTGRES_SERVERS,
+        AoservProtocol.CommandId.ADD,
+        Table.TableId.POSTGRES_SERVERS,
         name,
         aoServer.getPkey(),
         version.getPkey(),
@@ -109,15 +109,15 @@ public final class ServerTable extends CachedTableIntegerKey<Server> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.POSTGRES_SERVERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.POSTGRES_SERVERS;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.CHECK_POSTGRES_SERVER_NAME)) {
-      if (AOSH.checkParamCount(Command.CHECK_POSTGRES_SERVER_NAME, args, 1, err)) {
+      if (Aosh.checkParamCount(Command.CHECK_POSTGRES_SERVER_NAME, args, 1, err)) {
         ValidationResult validationResult = Server.Name.validate(args[1]);
         out.println(validationResult.isValid());
         out.flush();
@@ -129,11 +129,11 @@ public final class ServerTable extends CachedTableIntegerKey<Server> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.IS_POSTGRES_SERVER_NAME_AVAILABLE)) {
-      if (AOSH.checkParamCount(Command.IS_POSTGRES_SERVER_NAME_AVAILABLE, args, 2, err)) {
+      if (Aosh.checkParamCount(Command.IS_POSTGRES_SERVER_NAME_AVAILABLE, args, 2, err)) {
         try {
           out.println(
-              connector.getSimpleAOClient().isPostgresServerNameAvailable(
-                  AOSH.parsePostgresServerName(args[1], "server_name"),
+              connector.getSimpleClient().isPostgresServerNameAvailable(
+                  Aosh.parsePostgresServerName(args[1], "server_name"),
                   args[2]
               )
           );
@@ -146,32 +146,32 @@ public final class ServerTable extends CachedTableIntegerKey<Server> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.RESTART_POSTGRESQL)) {
-      if (AOSH.checkParamCount(Command.RESTART_POSTGRESQL, args, 2, err)) {
-        connector.getSimpleAOClient().restartPostgreSQL(
-            AOSH.parsePostgresServerName(args[1], "postgres_server"),
+      if (Aosh.checkParamCount(Command.RESTART_POSTGRESQL, args, 2, err)) {
+        connector.getSimpleClient().restartPostgresql(
+            Aosh.parsePostgresServerName(args[1], "postgres_server"),
             args[2]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.START_POSTGRESQL)) {
-      if (AOSH.checkParamCount(Command.START_POSTGRESQL, args, 2, err)) {
-        connector.getSimpleAOClient().startPostgreSQL(
-            AOSH.parsePostgresServerName(args[1], "postgres_server"),
+      if (Aosh.checkParamCount(Command.START_POSTGRESQL, args, 2, err)) {
+        connector.getSimpleClient().startPostgresql(
+            Aosh.parsePostgresServerName(args[1], "postgres_server"),
             args[2]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.STOP_POSTGRESQL)) {
-      if (AOSH.checkParamCount(Command.STOP_POSTGRESQL, args, 2, err)) {
-        connector.getSimpleAOClient().stopPostgreSQL(
-            AOSH.parsePostgresServerName(args[1], "postgres_server"),
+      if (Aosh.checkParamCount(Command.STOP_POSTGRESQL, args, 2, err)) {
+        connector.getSimpleClient().stopPostgresql(
+            Aosh.parsePostgresServerName(args[1], "postgres_server"),
             args[2]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.WAIT_FOR_POSTGRES_SERVER_REBUILD)) {
-      if (AOSH.checkParamCount(Command.WAIT_FOR_POSTGRES_SERVER_REBUILD, args, 1, err)) {
-        connector.getSimpleAOClient().waitForPostgresServerRebuild(args[1]);
+      if (Aosh.checkParamCount(Command.WAIT_FOR_POSTGRES_SERVER_REBUILD, args, 1, err)) {
+        connector.getSimpleClient().waitForPostgresServerRebuild(args[1]);
       }
       return true;
     }
@@ -179,14 +179,14 @@ public final class ServerTable extends CachedTableIntegerKey<Server> {
   }
 
   public boolean isPostgresServerNameAvailable(Server.Name name, com.aoindustries.aoserv.client.linux.Server ao) throws IOException, SQLException {
-    return connector.requestBooleanQuery(true, AoservProtocol.CommandID.IS_POSTGRES_SERVER_NAME_AVAILABLE, name, ao.getPkey());
+    return connector.requestBooleanQuery(true, AoservProtocol.CommandId.IS_POSTGRES_SERVER_NAME_AVAILABLE, name, ao.getPkey());
   }
 
   public void waitForRebuild(com.aoindustries.aoserv.client.linux.Server aoServer) throws IOException, SQLException {
     connector.requestUpdate(
         true,
-        AoservProtocol.CommandID.WAIT_FOR_REBUILD,
-        Table.TableID.POSTGRES_SERVERS,
+        AoservProtocol.CommandId.WAIT_FOR_REBUILD,
+        Table.TableId.POSTGRES_SERVERS,
         aoServer.getPkey()
     );
   }

@@ -66,10 +66,14 @@ public final class Currency extends GlobalObjectStringKey<Currency> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_currencyCode : return pkey;
-      case 1 : return fractionDigits;
-      case 2 : return autoEnableMinimumPayment;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_currencyCode:
+        return pkey;
+      case 1:
+        return fractionDigits;
+      case 2:
+        return autoEnableMinimumPayment;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -91,8 +95,8 @@ public final class Currency extends GlobalObjectStringKey<Currency> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.Currency;
+  public Table.TableId getTableId() {
+    return Table.TableId.Currency;
   }
 
   @Override

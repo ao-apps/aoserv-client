@@ -24,9 +24,9 @@
 package com.aoindustries.aoserv.client.email;
 
 import com.aoapps.hodgepodge.io.TerminalWriter;
-import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.AOServTable;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.AoservConnector;
+import com.aoindustries.aoserv.client.AoservTable;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -42,9 +42,9 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-public final class SpamMessageTable extends AOServTable<Integer, SpamMessage> {
+public final class SpamMessageTable extends AoservTable<Integer, SpamMessage> {
 
-  SpamMessageTable(AOServConnector connector) {
+  SpamMessageTable(AoservConnector connector) {
     super(connector, SpamMessage.class);
   }
 
@@ -59,10 +59,10 @@ public final class SpamMessageTable extends AOServTable<Integer, SpamMessage> {
   }
 
   int addSpamEmailMessage(SmtpRelay esr, String message) throws IOException, SQLException {
-    return connector.requestIntQueryIL(
+    return connector.requestIntQueryInvalidating(
         true,
-        AoservProtocol.CommandID.ADD,
-        Table.TableID.SPAM_EMAIL_MESSAGES,
+        AoservProtocol.CommandId.ADD,
+        Table.TableId.SPAM_EMAIL_MESSAGES,
         esr.getPkey(),
         message
     );
@@ -71,16 +71,18 @@ public final class SpamMessageTable extends AOServTable<Integer, SpamMessage> {
   @Override
   public List<SpamMessage> getRowsCopy() throws IOException, SQLException {
     List<SpamMessage> list = new ArrayList<>();
-    getObjects(true, list, AoservProtocol.CommandID.GET_TABLE, Table.TableID.SPAM_EMAIL_MESSAGES);
+    getObjects(true, list, AoservProtocol.CommandId.GET_TABLE, Table.TableId.SPAM_EMAIL_MESSAGES);
     return list;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.SPAM_EMAIL_MESSAGES;
+  public Table.TableId getTableId() {
+    return Table.TableId.SPAM_EMAIL_MESSAGES;
   }
 
   /**
+   * {@inheritDoc}
+   *
    * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
    */
   @Deprecated
@@ -96,7 +98,7 @@ public final class SpamMessageTable extends AOServTable<Integer, SpamMessage> {
    * @see  #get(java.lang.Object)
    */
   public SpamMessage get(int pkey) throws IOException, SQLException {
-    return getObject(true, AoservProtocol.CommandID.GET_OBJECT, Table.TableID.SPAM_EMAIL_MESSAGES, pkey);
+    return getObject(true, AoservProtocol.CommandId.GET_OBJECT, Table.TableId.SPAM_EMAIL_MESSAGES, pkey);
   }
 
   List<SpamMessage> getSpamEmailMessages(SmtpRelay esr) throws IOException, SQLException {
@@ -104,7 +106,7 @@ public final class SpamMessageTable extends AOServTable<Integer, SpamMessage> {
   }
 
   List<SpamMessage> getSpamEmailMessages(int esr) throws IOException, SQLException {
-    return getObjects(true, AoservProtocol.CommandID.GET_SPAM_EMAIL_MESSAGES_FOR_EMAIL_SMTP_RELAY, esr);
+    return getObjects(true, AoservProtocol.CommandId.GET_SPAM_EMAIL_MESSAGES_FOR_EMAIL_SMTP_RELAY, esr);
   }
 
   @Override
@@ -135,10 +137,10 @@ public final class SpamMessageTable extends AOServTable<Integer, SpamMessage> {
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_SPAM_EMAIL_MESSAGE)) {
-      if (AOSH.checkParamCount(Command.ADD_SPAM_EMAIL_MESSAGE, args, 2, err)) {
+      if (Aosh.checkParamCount(Command.ADD_SPAM_EMAIL_MESSAGE, args, 2, err)) {
         out.println(
-            connector.getSimpleAOClient().addSpamEmailMessage(
-                AOSH.parseInt(args[1], "email_relay"),
+            connector.getSimpleClient().addSpamEmailMessage(
+                Aosh.parseInt(args[1], "email_relay"),
                 args[2]
             )
         );

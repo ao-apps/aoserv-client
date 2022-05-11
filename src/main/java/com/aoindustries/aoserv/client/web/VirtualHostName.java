@@ -56,14 +56,12 @@ import java.util.List;
  */
 public final class VirtualHostName extends CachedObjectIntegerKey<VirtualHostName> implements Removable {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_HTTPD_SITE_BIND = 1
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_HTTPD_SITE_BIND = 1;
   static final String COLUMN_HOSTNAME_name = "hostname";
   static final String COLUMN_HTTPD_SITE_BIND_name = "httpd_site_bind";
 
-  private int httpd_site_bind;
+  private int httpdSiteBind;
   private DomainName hostname;
   private boolean isPrimary;
 
@@ -85,7 +83,7 @@ public final class VirtualHostName extends CachedObjectIntegerKey<VirtualHostNam
     if (isPrimary) {
       reasons.add(new CannotRemoveReason<>("Not allowed to remove the primary URL", this));
     }
-    if (isTestURL()) {
+    if (isTestUrl()) {
       reasons.add(new CannotRemoveReason<>("Not allowed to remove the test URL", this));
     }
 
@@ -95,11 +93,16 @@ public final class VirtualHostName extends CachedObjectIntegerKey<VirtualHostNam
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_HTTPD_SITE_BIND: return httpd_site_bind;
-      case 2: return hostname;
-      case 3: return isPrimary;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_HTTPD_SITE_BIND:
+        return httpdSiteBind;
+      case 2:
+        return hostname;
+      case 3:
+        return isPrimary;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -108,19 +111,19 @@ public final class VirtualHostName extends CachedObjectIntegerKey<VirtualHostNam
   }
 
   public VirtualHost getHttpdSiteBind() throws SQLException, IOException {
-    VirtualHost obj = table.getConnector().getWeb().getVirtualHost().get(httpd_site_bind);
+    VirtualHost obj = table.getConnector().getWeb().getVirtualHost().get(httpdSiteBind);
     if (obj == null) {
-      throw new SQLException("Unable to find HttpdSiteBind: " + httpd_site_bind);
+      throw new SQLException("Unable to find HttpdSiteBind: " + httpdSiteBind);
     }
     return obj;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.HTTPD_SITE_URLS;
+  public Table.TableId getTableId() {
+    return Table.TableId.HTTPD_SITE_URLS;
   }
 
-  public String getURL() throws SQLException, IOException {
+  public String getUrl() throws SQLException, IOException {
     VirtualHost siteBind = getHttpdSiteBind();
     Bind netBind = siteBind.getHttpdBind().getNetBind();
     Port port = netBind.getPort();
@@ -142,7 +145,7 @@ public final class VirtualHostName extends CachedObjectIntegerKey<VirtualHostNam
     return url.toString();
   }
 
-  public String getURLNoSlash() throws SQLException, IOException {
+  public String getUrlNoSlash() throws SQLException, IOException {
     VirtualHost siteBind = getHttpdSiteBind();
     Bind netBind = siteBind.getHttpdBind().getNetBind();
     Port port = netBind.getPort();
@@ -167,7 +170,7 @@ public final class VirtualHostName extends CachedObjectIntegerKey<VirtualHostNam
   public void init(ResultSet result) throws SQLException {
     try {
       pkey = result.getInt(1);
-      httpd_site_bind = result.getInt(2);
+      httpdSiteBind = result.getInt(2);
       hostname = DomainName.valueOf(result.getString(3));
       isPrimary = result.getBoolean(4);
     } catch (ValidationException e) {
@@ -182,7 +185,7 @@ public final class VirtualHostName extends CachedObjectIntegerKey<VirtualHostNam
     return isPrimary;
   }
 
-  public boolean isTestURL() throws SQLException, IOException {
+  public boolean isTestUrl() throws SQLException, IOException {
     Site hs = getHttpdSiteBind().getHttpdSite();
     return hostname.toString().equalsIgnoreCase(hs.getName() + "." + hs.getLinuxServer().getHostname());
   }
@@ -191,7 +194,7 @@ public final class VirtualHostName extends CachedObjectIntegerKey<VirtualHostNam
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
       pkey = in.readCompressedInt();
-      httpd_site_bind = in.readCompressedInt();
+      httpdSiteBind = in.readCompressedInt();
       hostname = DomainName.valueOf(in.readUTF());
       isPrimary = in.readBoolean();
     } catch (ValidationException e) {
@@ -201,11 +204,11 @@ public final class VirtualHostName extends CachedObjectIntegerKey<VirtualHostNam
 
   @Override
   public void remove() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.REMOVE, Table.TableID.HTTPD_SITE_URLS, pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.REMOVE, Table.TableId.HTTPD_SITE_URLS, pkey);
   }
 
   public void setAsPrimary() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_PRIMARY_HTTPD_SITE_URL, pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_PRIMARY_HTTPD_SITE_URL, pkey);
   }
 
   @Override
@@ -216,7 +219,7 @@ public final class VirtualHostName extends CachedObjectIntegerKey<VirtualHostNam
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeCompressedInt(httpd_site_bind);
+    out.writeCompressedInt(httpdSiteBind);
     out.writeUTF(hostname.toString());
     out.writeBoolean(isPrimary);
   }

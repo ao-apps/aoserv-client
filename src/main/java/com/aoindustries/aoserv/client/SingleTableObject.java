@@ -28,14 +28,14 @@ package com.aoindustries.aoserv.client;
  *
  * @author  AO Industries, Inc.
  */
-public interface SingleTableObject<K, V extends AOServObject<K, V>> {
+public interface SingleTableObject<K, V extends AoservObject<K, V>> {
 
   /**
-   * Gets the <code>AOServTable</code> that contains this <code>AOServObject</code>.
+   * Gets the <code>AoservTable</code> that contains this <code>AoservObject</code>.
    *
-   * @return  the <code>AOServTable</code>.
+   * @return  the <code>AoservTable</code>.
    */
-  AOServTable<K, V> getTable();
+  AoservTable<K, V> getTable();
 
-  void setTable(AOServTable<K, V> table);
+  void setTable(AoservTable<K, V> table);
 }

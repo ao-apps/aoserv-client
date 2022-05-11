@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.billing;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTableStringKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.sql.SQLException;
  */
 public final class CurrencyTable extends GlobalTableStringKey<Currency> {
 
-  CurrencyTable(AOServConnector connector) {
+  CurrencyTable(AoservConnector connector) {
     super(connector, Currency.class);
   }
 
@@ -66,6 +66,8 @@ public final class CurrencyTable extends GlobalTableStringKey<Currency> {
   }
 
   /**
+   * {@inheritDoc}
+   *
    * @see  #get(java.lang.String)
    * @see  #get(java.util.Currency)
    *
@@ -87,7 +89,7 @@ public final class CurrencyTable extends GlobalTableStringKey<Currency> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.Currency;
+  public Table.TableId getTableId() {
+    return Table.TableId.Currency;
   }
 }

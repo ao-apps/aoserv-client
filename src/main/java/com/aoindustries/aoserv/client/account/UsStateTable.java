@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.account;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTableStringKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.sql.SQLException;
  */
 public final class UsStateTable extends GlobalTableStringKey<UsState> {
 
-  UsStateTable(AOServConnector connector) {
+  UsStateTable(AoservConnector connector) {
     super(connector, UsState.class);
   }
 
@@ -51,8 +51,8 @@ public final class UsStateTable extends GlobalTableStringKey<UsState> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.US_STATES;
+  public Table.TableId getTableId() {
+    return Table.TableId.US_STATES;
   }
 
   @Override

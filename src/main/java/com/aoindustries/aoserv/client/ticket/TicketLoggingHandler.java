@@ -27,8 +27,8 @@ import com.aoapps.hodgepodge.logging.QueuedHandler;
 import com.aoapps.lang.Strings;
 import com.aoapps.lang.exception.ConfigurationException;
 import com.aoapps.lang.validation.ValidationException;
-import com.aoindustries.aoserv.client.AOServClientConfiguration;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservClientConfiguration;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.reseller.Brand;
@@ -99,9 +99,9 @@ public class TicketLoggingHandler extends QueuedHandler {
 
   /**
    * Only one TicketLoggingHandler will be created per unique summaryPrefix,
-   * AOServConnector, and categoryDotPath.
+   * AoservConnector, and categoryDotPath.
    */
-  public static TicketLoggingHandler getHandler(String summaryPrefix, AOServConnector connector, String categoryDotPath) {
+  public static TicketLoggingHandler getHandler(String summaryPrefix, AoservConnector connector, String categoryDotPath) {
     synchronized (handlers) {
       TicketLoggingHandler handler = null;
       Iterator<WeakReference<TicketLoggingHandler>> iter = handlers.iterator();
@@ -134,10 +134,10 @@ public class TicketLoggingHandler extends QueuedHandler {
   }
 
   private final String summaryPrefix;
-  private final AOServConnector connector;
+  private final AoservConnector connector;
   private final String categoryDotPath;
 
-  protected TicketLoggingHandler(String summaryPrefix, AOServConnector connector, String categoryDotPath) {
+  protected TicketLoggingHandler(String summaryPrefix, AoservConnector connector, String categoryDotPath) {
     super(getExecutor());
     // super("Ticket logger for " + connector.toString());
     synchronized (handlers) {
@@ -180,17 +180,17 @@ public class TicketLoggingHandler extends QueuedHandler {
           )
       );
       if (username == null) {
-        username = AOServClientConfiguration.getUsername();
+        username = AoservClientConfiguration.getUsername();
       }
 
       String password = Strings.trimNullIfEmpty(
           manager.getProperty(cname + ".password")
       );
       if (password == null) {
-        password = AOServClientConfiguration.getPassword();
+        password = AoservClientConfiguration.getPassword();
       }
 
-      this.connector = AOServConnector.getConnector(username, password);
+      this.connector = AoservConnector.getConnector(username, password);
 
       this.categoryDotPath = Strings.trimNullIfEmpty(
           manager.getProperty(cname + ".categoryDotPath")
@@ -274,13 +274,13 @@ public class TicketLoggingHandler extends QueuedHandler {
     }
     Level level = rec.getLevel();
     // Generate the summary from level, prefix classname, method
-    StringBuilder tempSB = new StringBuilder();
-    tempSB.append('[').append(level).append(']');
+    StringBuilder tempSb = new StringBuilder();
+    tempSb.append('[').append(level).append(']');
     if (summaryPrefix != null) {
-      tempSB.append(' ').append(summaryPrefix);
+      tempSb.append(' ').append(summaryPrefix);
     }
-    tempSB.append(" - ").append(rec.getSourceClassName()).append(" - ").append(rec.getSourceMethodName());
-    String summary = tempSB.toString();
+    tempSb.append(" - ").append(rec.getSourceClassName()).append(" - ").append(rec.getSourceMethodName());
+    String summary = tempSb.toString();
     // Look for an existing ticket to append
     Ticket existingTicket = null;
     for (Ticket ticket : connector.getTicket().getTicket()) {
@@ -331,7 +331,7 @@ public class TicketLoggingHandler extends QueuedHandler {
 
   public static String generateActionSummary(Formatter formatter, LogRecord rec) {
     // Generate the annotation summary as localized message + thrown
-    StringBuilder tempSB = new StringBuilder();
+    StringBuilder tempSb = new StringBuilder();
     String message = formatter.formatMessage(rec);
     if (message != null) {
       message = message.trim();
@@ -342,16 +342,16 @@ public class TicketLoggingHandler extends QueuedHandler {
         doEllipsis = true;
       }
       if (message.length() > 0) {
-        tempSB.append(message);
+        tempSb.append(message);
         if (doEllipsis) {
-          tempSB.append('\u2026');
+          tempSb.append('…');
         }
       }
     }
     Throwable thrown = rec.getThrown();
     if (thrown != null) {
-      if (tempSB.length() > 0) {
-        tempSB.append(" - ");
+      if (tempSb.length() > 0) {
+        tempSb.append(" - ");
       }
       String thrownMessage = thrown.getMessage();
       boolean doEllipsis = false;
@@ -364,15 +364,15 @@ public class TicketLoggingHandler extends QueuedHandler {
         }
       }
       if (thrownMessage != null && thrownMessage.length() > 0) {
-        tempSB.append(thrownMessage);
+        tempSb.append(thrownMessage);
         if (doEllipsis) {
-          tempSB.append('\u2026');
+          tempSb.append('…');
         }
       } else {
-        tempSB.append(thrown.toString());
+        tempSb.append(thrown.toString());
       }
     }
-    return tempSB.toString();
+    return tempSb.toString();
   }
 
   /**

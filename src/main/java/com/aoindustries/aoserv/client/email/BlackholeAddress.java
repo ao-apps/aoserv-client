@@ -78,8 +78,8 @@ public final class BlackholeAddress extends CachedObjectIntegerKey<BlackholeAddr
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.BLACKHOLE_EMAIL_ADDRESSES;
+  public Table.TableId getTableId() {
+    return Table.TableId.BLACKHOLE_EMAIL_ADDRESSES;
   }
 
   @Override
@@ -99,10 +99,10 @@ public final class BlackholeAddress extends CachedObjectIntegerKey<BlackholeAddr
 
   @Override
   public void remove() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.REMOVE,
-        Table.TableID.BLACKHOLE_EMAIL_ADDRESSES,
+        AoservProtocol.CommandId.REMOVE,
+        Table.TableId.BLACKHOLE_EMAIL_ADDRESSES,
         pkey
     );
   }

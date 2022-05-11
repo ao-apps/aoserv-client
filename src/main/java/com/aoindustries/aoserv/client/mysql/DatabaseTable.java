@@ -26,10 +26,10 @@ package com.aoindustries.aoserv.client.mysql;
 import com.aoapps.hodgepodge.io.TerminalWriter;
 import com.aoapps.lang.validation.ValidationException;
 import com.aoapps.lang.validation.ValidationResult;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.StreamHandler;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
@@ -47,7 +47,7 @@ import java.util.List;
  */
 public final class DatabaseTable extends CachedTableIntegerKey<Database> {
 
-  DatabaseTable(AOServConnector connector) {
+  DatabaseTable(AoservConnector connector) {
     super(connector, Database.class);
   }
 
@@ -63,7 +63,7 @@ public final class DatabaseTable extends CachedTableIntegerKey<Database> {
     return defaultOrderBy;
   }
 
-  public int addMySQLDatabase(
+  public int addMysqlDatabase(
       Database.Name name,
       Server mysqlServer,
       Package packageObj
@@ -71,19 +71,19 @@ public final class DatabaseTable extends CachedTableIntegerKey<Database> {
     if (Database.isSpecial(name)) {
       throw new SQLException("Refusing to add special MySQL database: " + name + " on " + mysqlServer);
     }
-    return connector.requestIntQueryIL(
+    return connector.requestIntQueryInvalidating(
         true,
-        AoservProtocol.CommandID.ADD,
-        Table.TableID.MYSQL_DATABASES,
+        AoservProtocol.CommandId.ADD,
+        Table.TableId.MYSQL_DATABASES,
         name,
         mysqlServer.getBind_id(),
         packageObj.getName()
     );
   }
 
-  public Database.Name generateMySQLDatabaseName(String template_base, String template_added) throws IOException, SQLException {
+  public Database.Name generateMysqlDatabaseName(String templateBase, String templateAdded) throws IOException, SQLException {
     try {
-      return Database.Name.valueOf(connector.requestStringQuery(true, AoservProtocol.CommandID.GENERATE_MYSQL_DATABASE_NAME, template_base, template_added));
+      return Database.Name.valueOf(connector.requestStringQuery(true, AoservProtocol.CommandId.GENERATE_MYSQL_DATABASE_NAME, templateBase, templateAdded));
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -94,9 +94,9 @@ public final class DatabaseTable extends CachedTableIntegerKey<Database> {
     return getUniqueRow(Database.COLUMN_PKEY, pkey);
   }
 
-  Database getMySQLDatabase(Database.Name name, Server ms) throws IOException, SQLException {
+  Database getMysqlDatabase(Database.Name name, Server ms) throws IOException, SQLException {
     // Use index first
-    for (Database md : getMySQLDatabases(ms)) {
+    for (Database md : getMysqlDatabases(ms)) {
       if (md.getName().equals(name)) {
         return md;
       }
@@ -104,17 +104,17 @@ public final class DatabaseTable extends CachedTableIntegerKey<Database> {
     return null;
   }
 
-  public List<Database> getMySQLDatabases(Package pack) throws IOException, SQLException {
+  public List<Database> getMysqlDatabases(Package pack) throws IOException, SQLException {
     return getIndexedRows(Database.COLUMN_PACKAGE, pack.getName());
   }
 
-  List<Database> getMySQLDatabases(Server ms) throws IOException, SQLException {
+  List<Database> getMysqlDatabases(Server ms) throws IOException, SQLException {
     return getIndexedRows(Database.COLUMN_MYSQL_SERVER, ms.getBind_id());
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.MYSQL_DATABASES;
+  public Table.TableId getTableId() {
+    return Table.TableId.MYSQL_DATABASES;
   }
 
   @Override
@@ -122,20 +122,20 @@ public final class DatabaseTable extends CachedTableIntegerKey<Database> {
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_MYSQL_DATABASE)) {
-      if (AOSH.checkParamCount(Command.ADD_MYSQL_DATABASE, args, 4, err)) {
+      if (Aosh.checkParamCount(Command.ADD_MYSQL_DATABASE, args, 4, err)) {
         out.println(
-            connector.getSimpleAOClient().addMySQLDatabase(
-                AOSH.parseMySQLDatabaseName(args[1], "database_name"),
-                AOSH.parseMySQLServerName(args[2], "mysql_server"),
+            connector.getSimpleClient().addMysqlDatabase(
+                Aosh.parseMysqlDatabaseName(args[1], "database_name"),
+                Aosh.parseMysqlServerName(args[2], "mysql_server"),
                 args[3],
-                AOSH.parseAccountingCode(args[4], "package")
+                Aosh.parseAccountingCode(args[4], "package")
             )
         );
         out.flush();
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.CHECK_MYSQL_DATABASE_NAME)) {
-      if (AOSH.checkParamCount(Command.CHECK_MYSQL_DATABASE_NAME, args, 1, err)) {
+      if (Aosh.checkParamCount(Command.CHECK_MYSQL_DATABASE_NAME, args, 1, err)) {
         ValidationResult validationResult = Database.Name.validate(args[1]);
         out.println(validationResult.isValid());
         out.flush();
@@ -147,13 +147,13 @@ public final class DatabaseTable extends CachedTableIntegerKey<Database> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.DUMP_MYSQL_DATABASE)) {
-      if (AOSH.checkParamCount(Command.DUMP_MYSQL_DATABASE, args, 4, err)) {
+      if (Aosh.checkParamCount(Command.DUMP_MYSQL_DATABASE, args, 4, err)) {
         try {
-          Database.Name dbName = AOSH.parseMySQLDatabaseName(args[1], "database_name");
-          Server.Name serverName = AOSH.parseMySQLServerName(args[2], "mysql_server");
+          Database.Name dbName = Aosh.parseMysqlDatabaseName(args[1], "database_name");
+          Server.Name serverName = Aosh.parseMysqlServerName(args[2], "mysql_server");
           String aoServer = args[3];
-          if (AOSH.parseBoolean(args[4], "gzip")) {
-            connector.getSimpleAOClient().dumpMySQLDatabase(
+          if (Aosh.parseBoolean(args[4], "gzip")) {
+            connector.getSimpleClient().dumpMysqlDatabase(
                 dbName,
                 serverName,
                 aoServer,
@@ -163,6 +163,7 @@ public final class DatabaseTable extends CachedTableIntegerKey<Database> {
                   public void onDumpSize(long dumpSize) {
                     // Do nothing
                   }
+
                   @Override
                   public OutputStream getOut() {
                     return System.out; // By-pass TerminalWriter stuff to avoid possible encoding issues.
@@ -171,7 +172,7 @@ public final class DatabaseTable extends CachedTableIntegerKey<Database> {
             );
             System.out.flush();
           } else {
-            connector.getSimpleAOClient().dumpMySQLDatabase(
+            connector.getSimpleClient().dumpMysqlDatabase(
                 dbName,
                 serverName,
                 aoServer,
@@ -187,18 +188,18 @@ public final class DatabaseTable extends CachedTableIntegerKey<Database> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.GENERATE_MYSQL_DATABASE_NAME)) {
-      if (AOSH.checkParamCount(Command.GENERATE_MYSQL_DATABASE_NAME, args, 2, err)) {
-        out.println(connector.getSimpleAOClient().generateMySQLDatabaseName(args[1], args[2]));
+      if (Aosh.checkParamCount(Command.GENERATE_MYSQL_DATABASE_NAME, args, 2, err)) {
+        out.println(connector.getSimpleClient().generateMysqlDatabaseName(args[1], args[2]));
         out.flush();
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.IS_MYSQL_DATABASE_NAME_AVAILABLE)) {
-      if (AOSH.checkParamCount(Command.IS_MYSQL_DATABASE_NAME_AVAILABLE, args, 3, err)) {
+      if (Aosh.checkParamCount(Command.IS_MYSQL_DATABASE_NAME_AVAILABLE, args, 3, err)) {
         try {
           out.println(
-              connector.getSimpleAOClient().isMySQLDatabaseNameAvailable(
-                  AOSH.parseMySQLDatabaseName(args[1], "database_name"),
-                  AOSH.parseMySQLServerName(args[2], "mysql_server"),
+              connector.getSimpleClient().isMysqlDatabaseNameAvailable(
+                  Aosh.parseMysqlDatabaseName(args[1], "database_name"),
+                  Aosh.parseMysqlServerName(args[2], "mysql_server"),
                   args[3]
               )
           );
@@ -211,32 +212,32 @@ public final class DatabaseTable extends CachedTableIntegerKey<Database> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.REMOVE_MYSQL_DATABASE)) {
-      if (AOSH.checkParamCount(Command.REMOVE_MYSQL_DATABASE, args, 3, err)) {
-        connector.getSimpleAOClient().removeMySQLDatabase(
-            AOSH.parseMySQLDatabaseName(args[1], "database_name"),
-            AOSH.parseMySQLServerName(args[2], "mysql_server"),
+      if (Aosh.checkParamCount(Command.REMOVE_MYSQL_DATABASE, args, 3, err)) {
+        connector.getSimpleClient().removeMysqlDatabase(
+            Aosh.parseMysqlDatabaseName(args[1], "database_name"),
+            Aosh.parseMysqlServerName(args[2], "mysql_server"),
             args[3]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.WAIT_FOR_MYSQL_DATABASE_REBUILD)) {
-      if (AOSH.checkParamCount(Command.WAIT_FOR_MYSQL_DATABASE_REBUILD, args, 1, err)) {
-        connector.getSimpleAOClient().waitForMySQLDatabaseRebuild(args[1]);
+      if (Aosh.checkParamCount(Command.WAIT_FOR_MYSQL_DATABASE_REBUILD, args, 1, err)) {
+        connector.getSimpleClient().waitForMysqlDatabaseRebuild(args[1]);
       }
       return true;
     }
     return false;
   }
 
-  boolean isMySQLDatabaseNameAvailable(Database.Name name, Server mysqlServer) throws IOException, SQLException {
-    return connector.requestBooleanQuery(true, AoservProtocol.CommandID.IS_MYSQL_DATABASE_NAME_AVAILABLE, name, mysqlServer.getPkey());
+  boolean isMysqlDatabaseNameAvailable(Database.Name name, Server mysqlServer) throws IOException, SQLException {
+    return connector.requestBooleanQuery(true, AoservProtocol.CommandId.IS_MYSQL_DATABASE_NAME_AVAILABLE, name, mysqlServer.getPkey());
   }
 
   public void waitForRebuild(com.aoindustries.aoserv.client.linux.Server aoServer) throws IOException, SQLException {
     connector.requestUpdate(
         true,
-        AoservProtocol.CommandID.WAIT_FOR_REBUILD,
-        Table.TableID.MYSQL_DATABASES,
+        AoservProtocol.CommandId.WAIT_FOR_REBUILD,
+        Table.TableId.MYSQL_DATABASES,
         aoServer.getPkey()
     );
   }

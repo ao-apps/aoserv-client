@@ -24,7 +24,7 @@
 package com.aoindustries.aoserv.client.aosh;
 
 import com.aoapps.hodgepodge.io.TerminalWriter;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTableStringKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.schema.TableTable;
@@ -48,7 +48,7 @@ public final class CommandTable extends GlobalTableStringKey<Command> {
 
   private final Map<String, List<Command>> tableCommands = new HashMap<>();
 
-  CommandTable(AOServConnector connector) {
+  CommandTable(AoservConnector connector) {
     super(connector, Command.class);
   }
 
@@ -62,7 +62,7 @@ public final class CommandTable extends GlobalTableStringKey<Command> {
     return defaultOrderBy;
   }
 
-  public List<Command> getAOSHCommands(Table table) throws IOException, SQLException {
+  public List<Command> getAoshCommands(Table table) throws IOException, SQLException {
     synchronized (this) {
       // Table might be null
       String name = (table == null) ? GLOBAL_COMMANDS : table.getName();
@@ -90,19 +90,19 @@ public final class CommandTable extends GlobalTableStringKey<Command> {
     }
   }
 
-  public List<Command> getGlobalAOSHCommands() throws IOException, SQLException {
-    return getAOSHCommands(null);
+  public List<Command> getGlobalAoshCommands() throws IOException, SQLException {
+    return getAoshCommands(null);
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.AOSH_COMMANDS;
+  public Table.TableId getTableId() {
+    return Table.TableId.AOSH_COMMANDS;
   }
 
   /**
    * Avoid repeated array copies.
    */
-  private static final int numTables = Table.TableID.values().length;
+  private static final int numTables = Table.TableId.values().length;
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IOException, SQLException {
@@ -116,11 +116,11 @@ public final class CommandTable extends GlobalTableStringKey<Command> {
           List<Command> commands;
           if (c == -1) {
             title = "Global Commands:";
-            commands = getGlobalAOSHCommands();
+            commands = getGlobalAoshCommands();
           } else {
             Table schemaTable = schemaTableTable.get(c);
             title = schemaTable.getDisplay() + ':';
-            commands = schemaTable.getAOSHCommands(connector);
+            commands = schemaTable.getAoshCommands(connector);
           }
           printHelpList(out, title, commands, true, c >= 0);
         }
@@ -133,11 +133,11 @@ public final class CommandTable extends GlobalTableStringKey<Command> {
             List<Command> commands;
             if (c == -1) {
               title = "Global Commands:";
-              commands = getGlobalAOSHCommands();
+              commands = getGlobalAoshCommands();
             } else {
               Table schemaTable = schemaTableTable.get(c);
               title = schemaTable.getDisplay() + ':';
-              commands = schemaTable.getAOSHCommands(connector);
+              commands = schemaTable.getAoshCommands(connector);
             }
             printHelpList(out, title, commands, false, c >= 0);
           }
@@ -194,7 +194,7 @@ public final class CommandTable extends GlobalTableStringKey<Command> {
         }
         // Print the description without the HTML tags
         String desc = shortOrSchema ? aoshCom.getDescription() : aoshCom.getSyntax();
-        Command.printNoHTML(out, desc);
+        Command.printNoHtml(out, desc);
         out.println();
       }
     }

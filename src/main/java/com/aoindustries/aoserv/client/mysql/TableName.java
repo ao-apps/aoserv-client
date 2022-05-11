@@ -48,14 +48,13 @@ import java.util.ResourceBundle;
  * @author  AO Industries, Inc.
  */
 // TODO: PostgreSQL type will be "Table.Name" - move to inner class of Table to match, once there is a "Table" class.
-public final class Table_Name implements
-    Comparable<Table_Name>,
+public final class TableName implements
+    Comparable<TableName>,
     Serializable,
-    DtoFactory<com.aoindustries.aoserv.client.dto.MySQLTableName>
-{
+    DtoFactory<com.aoindustries.aoserv.client.dto.MysqlTableName> {
 
   private static final Resources RESOURCES =
-      Resources.getResources(ResourceBundle::getBundle, Table_Name.class.getPackage(), null, "Table.Name.");
+      Resources.getResources(ResourceBundle::getBundle, TableName.class.getPackage(), null, "Table.Name.");
 
   private static final long serialVersionUID = -4427431696460618301L;
 
@@ -111,16 +110,16 @@ public final class Table_Name implements
   /**
    * @param name  when {@code null}, returns {@code null}
    */
-  public static Table_Name valueOf(String name) throws ValidationException {
+  public static TableName valueOf(String name) throws ValidationException {
     if (name == null) {
       return null;
     }
-    return new Table_Name(name);
+    return new TableName(name);
   }
 
   private final String name;
 
-  private Table_Name(String name) throws ValidationException {
+  private TableName(String name) throws ValidationException {
     this.name = name;
     validate();
   }
@@ -149,9 +148,8 @@ public final class Table_Name implements
   @Override
   public boolean equals(Object obj) {
     return
-        (obj instanceof Table_Name)
-            && name.equals(((Table_Name) obj).name)
-    ;
+        (obj instanceof TableName)
+            && name.equals(((TableName) obj).name);
   }
 
   @Override
@@ -160,7 +158,7 @@ public final class Table_Name implements
   }
 
   @Override
-  public int compareTo(Table_Name other) {
+  public int compareTo(TableName other) {
     return this == other ? 0 : name.compareTo(other.name);
   }
 
@@ -170,7 +168,7 @@ public final class Table_Name implements
   }
 
   @Override
-  public com.aoindustries.aoserv.client.dto.MySQLTableName getDto() {
-    return new com.aoindustries.aoserv.client.dto.MySQLTableName(name);
+  public com.aoindustries.aoserv.client.dto.MysqlTableName getDto() {
+    return new com.aoindustries.aoserv.client.dto.MysqlTableName(name);
   }
 }

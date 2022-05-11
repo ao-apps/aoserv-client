@@ -85,8 +85,8 @@ public final class MajordomoVersion extends GlobalObjectStringKey<MajordomoVersi
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.MAJORDOMO_VERSIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.MAJORDOMO_VERSIONS;
   }
 
   public String getVersion() {

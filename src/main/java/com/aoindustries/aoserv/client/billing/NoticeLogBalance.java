@@ -42,10 +42,8 @@ import java.sql.SQLException;
  */
 public final class NoticeLogBalance extends CachedObjectIntegerKey<NoticeLogBalance> {
 
-  static final int
-      COLUMN_id = 0,
-      COLUMN_noticeLog = 1
-  ;
+  static final int COLUMN_id = 0;
+  static final int COLUMN_noticeLog = 1;
   static final String COLUMN_noticeLog_name = "noticeLog";
   static final String COLUMN_balance_name = "balance";
 
@@ -86,16 +84,20 @@ public final class NoticeLogBalance extends CachedObjectIntegerKey<NoticeLogBala
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_id : return pkey;
-      case COLUMN_noticeLog : return noticeLog;
-      case 2: return balance;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_id:
+        return pkey;
+      case COLUMN_noticeLog:
+        return noticeLog;
+      case 2:
+        return balance;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.NoticeLogBalance;
+  public Table.TableId getTableId() {
+    return Table.TableId.NoticeLogBalance;
   }
 
   @Override

@@ -200,8 +200,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
     public boolean equals(Object obj) {
       return
           (obj instanceof Gecos)
-              && value.equals(((Gecos) obj).value)
-      ;
+              && value.equals(((Gecos) obj).value);
     }
 
     @Override
@@ -270,8 +269,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
   // TODO: Update for IEEE Std 1003.1.2001 "3.426 User Name"? https://paulgorman.org/technical/presentations/linux_username_conventions.pdf
   // TODO: Rename "LinuxName" and combined with "GroupName" as "PosixName" (and an associated "PosixPortableFilename")?
   public static class Name extends com.aoindustries.aoserv.client.account.User.Name implements
-      FastExternalizable
-  {
+      FastExternalizable {
 
     /**
      * The maximum length of a Linux username.
@@ -317,20 +315,37 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
           return new InvalidResult(RESOURCES, "Name.validate.noCapital");
         }
         switch (ch) {
-          case ',' : return new InvalidResult(RESOURCES, "Name.validate.comma");
-          case ':' : return new InvalidResult(RESOURCES, "Name.validate.colon");
-          case '(' : return new InvalidResult(RESOURCES, "Name.validate.leftParen");
-          case ')' : return new InvalidResult(RESOURCES, "Name.validate.rightParen");
-          case '[' : return new InvalidResult(RESOURCES, "Name.validate.leftSquare");
-          case ']' : return new InvalidResult(RESOURCES, "Name.validate.rightSquare");
-          case '\'' : return new InvalidResult(RESOURCES, "Name.validate.apostrophe");
-          case '"' : return new InvalidResult(RESOURCES, "Name.validate.quote");
-          case '|' : return new InvalidResult(RESOURCES, "Name.validate.verticalBar");
-          case '&' : return new InvalidResult(RESOURCES, "Name.validate.ampersand");
-          case ';' : return new InvalidResult(RESOURCES, "Name.validate.semicolon");
-          case '\\' : return new InvalidResult(RESOURCES, "Name.validate.backslash");
-          case '/' : return new InvalidResult(RESOURCES, "Name.validate.slash");
-          case '@' : hasAt = true; break;
+          case ',':
+            return new InvalidResult(RESOURCES, "Name.validate.comma");
+          case ':':
+            return new InvalidResult(RESOURCES, "Name.validate.colon");
+          case '(':
+            return new InvalidResult(RESOURCES, "Name.validate.leftParen");
+          case ')':
+            return new InvalidResult(RESOURCES, "Name.validate.rightParen");
+          case '[':
+            return new InvalidResult(RESOURCES, "Name.validate.leftSquare");
+          case ']':
+            return new InvalidResult(RESOURCES, "Name.validate.rightSquare");
+          case '\'':
+            return new InvalidResult(RESOURCES, "Name.validate.apostrophe");
+          case '"':
+            return new InvalidResult(RESOURCES, "Name.validate.quote");
+          case '|':
+            return new InvalidResult(RESOURCES, "Name.validate.verticalBar");
+          case '&':
+            return new InvalidResult(RESOURCES, "Name.validate.ampersand");
+          case ';':
+            return new InvalidResult(RESOURCES, "Name.validate.semicolon");
+          case '\\':
+            return new InvalidResult(RESOURCES, "Name.validate.backslash");
+          case '/':
+            return new InvalidResult(RESOURCES, "Name.validate.slash");
+          case '@':
+            hasAt = true;
+            break;
+          default:
+            // fall-through to continue loop
         }
       }
 
@@ -570,13 +585,13 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
   public static final String NO_PASSWORD_CONFIG_VALUE = "!!";
 
   private Gecos name;
-  private Gecos office_location;
-  private Gecos office_phone;
-  private Gecos home_phone;
+  private Gecos officeLocation;
+  private Gecos officePhone;
+  private Gecos homePhone;
   private String type;
   private PosixPath shell;
   private UnmodifiableTimestamp created;
-  private int disable_log;
+  private int disableLog;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -589,8 +604,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
     // Do nothing
   }
 
-  public void addFTPGuestUser() throws IOException, SQLException {
-    table.getConnector().getFtp().getGuestUser().addFTPGuestUser(pkey);
+  public void addFtpGuestUser() throws IOException, SQLException {
+    table.getConnector().getFtp().getGuestUser().addFtpGuestUser(pkey);
   }
 
   public void addLinuxGroup(Group group) throws IOException, SQLException {
@@ -609,7 +624,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
   @Override
   public boolean canDisable() throws IOException, SQLException {
     // Already disabled
-    if (disable_log != -1) {
+    if (disableLog != -1) {
       return false;
     }
 
@@ -652,28 +667,38 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
 
   @Override
   public void disable(DisableLog dl) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.DISABLE, Table.TableID.LINUX_ACCOUNTS, dl.getPkey(), pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.DISABLE, Table.TableId.LINUX_ACCOUNTS, dl.getPkey(), pkey);
   }
 
   @Override
   public void enable() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.ENABLE, Table.TableID.LINUX_ACCOUNTS, pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.ENABLE, Table.TableId.LINUX_ACCOUNTS, pkey);
   }
 
   @Override
   @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_USERNAME: return pkey;
-      case 1: return name;
-      case 2: return office_location;
-      case 3: return office_phone;
-      case 4: return home_phone;
-      case 5: return type;
-      case 6: return shell;
-      case 7: return created;
-      case 8: return disable_log == -1 ? null : disable_log;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_USERNAME:
+        return pkey;
+      case 1:
+        return name;
+      case 2:
+        return officeLocation;
+      case 3:
+        return officePhone;
+      case 4:
+        return homePhone;
+      case 5:
+        return type;
+      case 6:
+        return shell;
+      case 7:
+        return created;
+      case 8:
+        return disableLog == -1 ? null : disableLog;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -684,27 +709,27 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
 
   @Override
   public boolean isDisabled() {
-    return disable_log != -1;
+    return disableLog != -1;
   }
 
   @Override
   public DisableLog getDisableLog() throws SQLException, IOException {
-    if (disable_log == -1) {
+    if (disableLog == -1) {
       return null;
     }
-    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disable_log);
+    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disableLog);
     if (obj == null) {
-      throw new SQLException("Unable to find DisableLog: " + disable_log);
+      throw new SQLException("Unable to find DisableLog: " + disableLog);
     }
     return obj;
   }
 
-  public GuestUser getFTPGuestUser() throws IOException, SQLException {
+  public GuestUser getFtpGuestUser() throws IOException, SQLException {
     return table.getConnector().getFtp().getGuestUser().get(pkey);
   }
 
   public Gecos getHomePhone() {
-    return home_phone;
+    return homePhone;
   }
 
   public List<Group> getLinuxGroups() throws IOException, SQLException {
@@ -724,11 +749,11 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
   }
 
   public Gecos getOfficeLocation() {
-    return office_location;
+    return officeLocation;
   }
 
   public Gecos getOfficePhone() {
-    return office_phone;
+    return officePhone;
   }
 
   public Group getPrimaryGroup() throws IOException, SQLException {
@@ -744,8 +769,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.LINUX_ACCOUNTS;
+  public Table.TableId getTableId() {
+    return Table.TableId.LINUX_ACCOUNTS;
   }
 
   public UserType getType() throws IOException, SQLException {
@@ -812,15 +837,15 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
     try {
       pkey = Name.valueOf(result.getString(1));
       name = Gecos.valueOf(result.getString(2));
-      office_location = Gecos.valueOf(result.getString(3));
-      office_phone = Gecos.valueOf(result.getString(4));
-      home_phone = Gecos.valueOf(result.getString(5));
+      officeLocation = Gecos.valueOf(result.getString(3));
+      officePhone = Gecos.valueOf(result.getString(4));
+      homePhone = Gecos.valueOf(result.getString(5));
       type = result.getString(6);
       shell = PosixPath.valueOf(result.getString(7));
       created = UnmodifiableTimestamp.valueOf(result.getTimestamp(8));
-      disable_log = result.getInt(9);
+      disableLog = result.getInt(9);
       if (result.wasNull()) {
-        disable_log = -1;
+        disableLog = -1;
       }
     } catch (ValidationException e) {
       throw new SQLException(e);
@@ -832,13 +857,13 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
     try {
       pkey = Name.valueOf(in.readUTF()).intern();
       name = Gecos.valueOf(in.readNullUTF());
-      office_location = Gecos.valueOf(in.readNullUTF());
-      office_phone = Gecos.valueOf(in.readNullUTF());
-      home_phone = Gecos.valueOf(in.readNullUTF());
+      officeLocation = Gecos.valueOf(in.readNullUTF());
+      officePhone = Gecos.valueOf(in.readNullUTF());
+      homePhone = Gecos.valueOf(in.readNullUTF());
       type = in.readUTF().intern();
       shell = PosixPath.valueOf(in.readUTF()).intern();
       created = SQLStreamables.readUnmodifiableTimestamp(in);
-      disable_log = in.readCompressedInt();
+      disableLog = in.readCompressedInt();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -858,10 +883,10 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
 
   @Override
   public void remove() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.REMOVE,
-        Table.TableID.LINUX_ACCOUNTS,
+        AoservProtocol.CommandId.REMOVE,
+        Table.TableId.LINUX_ACCOUNTS,
         pkey
     );
   }
@@ -873,24 +898,24 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
   }
 
   public void setHomePhone(Gecos phone) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_LINUX_ACCOUNT_HOME_PHONE, pkey, phone == null ? "" : phone.toString());
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_LINUX_ACCOUNT_HOME_PHONE, pkey, phone == null ? "" : phone.toString());
   }
 
   public void setName(Gecos name) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.SET_LINUX_ACCOUNT_NAME,
+        AoservProtocol.CommandId.SET_LINUX_ACCOUNT_NAME,
         pkey,
         name == null ? "" : name.toString()
     );
   }
 
   public void setOfficeLocation(Gecos location) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_LINUX_ACCOUNT_OFFICE_LOCATION, pkey, location == null ? "" : location.toString());
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_LINUX_ACCOUNT_OFFICE_LOCATION, pkey, location == null ? "" : location.toString());
   }
 
   public void setOfficePhone(Gecos phone) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_LINUX_ACCOUNT_OFFICE_PHONE, pkey, phone == null ? "" : phone.toString());
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_LINUX_ACCOUNT_OFFICE_PHONE, pkey, phone == null ? "" : phone.toString());
   }
 
   @Override
@@ -903,7 +928,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
   }
 
   public void setShell(Shell shell) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_LINUX_ACCOUNT_SHELL, pkey, shell.getPath());
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_LINUX_ACCOUNT_SHELL, pkey, shell.getPath());
   }
 
   @Override
@@ -915,9 +940,9 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
     } else {
       out.writeNullUTF(Objects.toString(name, null));
     }
-    out.writeNullUTF(Objects.toString(office_location, null));
-    out.writeNullUTF(Objects.toString(office_phone, null));
-    out.writeNullUTF(Objects.toString(home_phone, null));
+    out.writeNullUTF(Objects.toString(officeLocation, null));
+    out.writeNullUTF(Objects.toString(officePhone, null));
+    out.writeNullUTF(Objects.toString(homePhone, null));
     out.writeUTF(type);
     out.writeUTF(shell.toString());
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
@@ -925,12 +950,12 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
     } else {
       SQLStreamables.writeTimestamp(created, out);
     }
-    out.writeCompressedInt(disable_log);
+    out.writeCompressedInt(disableLog);
   }
 
   @Override
   public boolean canSetPassword() throws IOException, SQLException {
-    return disable_log == -1 && getType().canSetPassword();
+    return disableLog == -1 && getType().canSetPassword();
   }
 
   public void setPrimaryLinuxGroup(Group group) throws SQLException, IOException {

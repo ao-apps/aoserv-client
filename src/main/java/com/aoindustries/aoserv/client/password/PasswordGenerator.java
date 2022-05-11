@@ -26,7 +26,7 @@ package com.aoindustries.aoserv.client.password;
 import com.aoapps.lang.Strings;
 import com.aoapps.security.Identifier;
 import com.aoapps.security.SmallIdentifier;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import java.io.IOException;
 import java.security.SecureRandom;
 
@@ -123,7 +123,7 @@ public final class PasswordGenerator {
    * {@linkplain SecureRandom#getInstanceStrong() strong instance} to avoid blocking.
    */
   public static String generatePassword() throws IOException {
-    return generatePassword(AOServConnector.getSecureRandom());
+    return generatePassword(AoservConnector.getSecureRandom());
   }
 
   /**
@@ -167,6 +167,8 @@ public final class PasswordGenerator {
             entropy *= 2;
             break;
           }
+          default:
+            throw new AssertionError();
         }
         // parse the word templates
         StringBuilder word1 = new StringBuilder();
@@ -206,6 +208,8 @@ public final class PasswordGenerator {
                 entropy *= (a ? CONS : TERM_CONS).length;
                 break;
               }
+              default:
+                // fall-through to continue loop
             }
             digit = currTemp % 10;
           }

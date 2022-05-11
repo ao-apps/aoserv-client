@@ -30,31 +30,31 @@ import java.io.Closeable;
 import java.io.IOException;
 
 /**
- * An <code>AOServConnection</code> is one stream of communication
+ * An <code>AoservConnection</code> is one stream of communication
  * between the client and the server.
  *
- * @see  AOServConnector
+ * @see  AoservConnector
  *
  * @author  AO Industries, Inc.
  */
-public abstract class AOServConnection implements Closeable {
+public abstract class AoservConnection implements Closeable {
 
   /**
    * The connector that this connection is part of.
    */
-  protected final AOServConnector connector;
+  protected final AoservConnector connector;
 
   /**
-   * Creates a new <code>AOServConnection</code>.
+   * Creates a new <code>AoservConnection</code>.
    */
-  protected AOServConnection(AOServConnector connector) {
+  protected AoservConnection(AoservConnector connector) {
     this.connector = connector;
   }
 
   /**
    * Releases this connection back to the pool.
    *
-   * @see  AOServConnector#release(com.aoindustries.aoserv.client.AOServConnection)
+   * @see  AoservConnector#release(com.aoindustries.aoserv.client.AoservConnection)
    */
   @Override
   public void close() throws IOException {
@@ -70,7 +70,7 @@ public abstract class AOServConnection implements Closeable {
   /**
    * Gets the stream to write to the server.
    */
-  abstract StreamableOutput getRequestOut(AoservProtocol.CommandID commID) throws IOException;
+  abstract StreamableOutput getRequestOut(AoservProtocol.CommandId commandId) throws IOException;
 
   /**
    * Gets the stream to read from the server.

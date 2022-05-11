@@ -43,10 +43,8 @@ import java.util.List;
  */
 public final class Processor extends CachedObjectStringKey<Processor> {
 
-  static final int
-      COLUMN_PROVIDER_ID = 0,
-      COLUMN_ACCOUNTING = 1
-  ;
+  static final int COLUMN_PROVIDER_ID = 0;
+  static final int COLUMN_ACCOUNTING = 1;
   static final String COLUMN_ACCOUNTING_name = "accounting";
   static final String COLUMN_PROVIDER_ID_name = "provider_id";
 
@@ -59,8 +57,8 @@ public final class Processor extends CachedObjectStringKey<Processor> {
   private boolean enabled;
   private int weight;
   private String description;
-  private int encryption_from;
-  private int encryption_recipient;
+  private int encryptionFrom;
+  private int encryptionRecipient;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -88,19 +86,32 @@ public final class Processor extends CachedObjectStringKey<Processor> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PROVIDER_ID: return pkey;
-      case COLUMN_ACCOUNTING: return accounting;
-      case 2: return className;
-      case 3: return param1;
-      case 4: return param2;
-      case 5: return param3;
-      case 6: return param4;
-      case 7: return enabled;
-      case 8: return weight;
-      case 9: return description;
-      case 10: return encryption_from == -1 ? null : encryption_from;
-      case 11: return encryption_recipient == -1 ? null : encryption_recipient;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PROVIDER_ID:
+        return pkey;
+      case COLUMN_ACCOUNTING:
+        return accounting;
+      case 2:
+        return className;
+      case 3:
+        return param1;
+      case 4:
+        return param2;
+      case 5:
+        return param3;
+      case 6:
+        return param4;
+      case 7:
+        return enabled;
+      case 8:
+        return weight;
+      case 9:
+        return description;
+      case 10:
+        return encryptionFrom == -1 ? null : encryptionFrom;
+      case 11:
+        return encryptionRecipient == -1 ? null : encryptionRecipient;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -145,12 +156,12 @@ public final class Processor extends CachedObjectStringKey<Processor> {
    * if the card is not stored in the database.
    */
   public EncryptionKey getEncryptionFrom() throws SQLException, IOException {
-    if (encryption_from == -1) {
+    if (encryptionFrom == -1) {
       return null;
     }
-    EncryptionKey ek = table.getConnector().getPki().getEncryptionKey().get(encryption_from);
+    EncryptionKey ek = table.getConnector().getPki().getEncryptionKey().get(encryptionFrom);
     if (ek == null) {
-      throw new SQLException("Unable to find EncryptionKey: " + encryption_from);
+      throw new SQLException("Unable to find EncryptionKey: " + encryptionFrom);
     }
     return ek;
   }
@@ -160,19 +171,19 @@ public final class Processor extends CachedObjectStringKey<Processor> {
    * if the card is not stored in the database.
    */
   public EncryptionKey getEncryptionRecipient() throws SQLException, IOException {
-    if (encryption_recipient == -1) {
+    if (encryptionRecipient == -1) {
       return null;
     }
-    EncryptionKey ek = table.getConnector().getPki().getEncryptionKey().get(encryption_recipient);
+    EncryptionKey ek = table.getConnector().getPki().getEncryptionKey().get(encryptionRecipient);
     if (ek == null) {
-      throw new SQLException("Unable to find EncryptionKey: " + encryption_recipient);
+      throw new SQLException("Unable to find EncryptionKey: " + encryptionRecipient);
     }
     return ek;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.CREDIT_CARD_PROCESSORS;
+  public Table.TableId getTableId() {
+    return Table.TableId.CREDIT_CARD_PROCESSORS;
   }
 
   @Override
@@ -189,13 +200,13 @@ public final class Processor extends CachedObjectStringKey<Processor> {
       enabled = result.getBoolean(pos++);
       weight = result.getInt(pos++);
       description = result.getString(pos++);
-      encryption_from = result.getInt(pos++);
+      encryptionFrom = result.getInt(pos++);
       if (result.wasNull()) {
-        encryption_from = -1;
+        encryptionFrom = -1;
       }
-      encryption_recipient = result.getInt(pos++);
+      encryptionRecipient = result.getInt(pos++);
       if (result.wasNull()) {
-        encryption_recipient = -1;
+        encryptionRecipient = -1;
       }
     } catch (ValidationException e) {
       throw new SQLException(e);
@@ -215,8 +226,8 @@ public final class Processor extends CachedObjectStringKey<Processor> {
       enabled = in.readBoolean();
       weight = in.readCompressedInt();
       description = in.readNullUTF();
-      encryption_from = in.readCompressedInt();
-      encryption_recipient = in.readCompressedInt();
+      encryptionFrom = in.readCompressedInt();
+      encryptionRecipient = in.readCompressedInt();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -235,8 +246,8 @@ public final class Processor extends CachedObjectStringKey<Processor> {
     out.writeCompressedInt(weight);
     out.writeNullUTF(description);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_31) >= 0) {
-      out.writeCompressedInt(encryption_from);
-      out.writeCompressedInt(encryption_recipient);
+      out.writeCompressedInt(encryptionFrom);
+      out.writeCompressedInt(encryptionRecipient);
     }
   }
 

@@ -40,16 +40,14 @@ import java.sql.SQLException;
  */
 public final class BindFirewallZone extends CachedObjectIntegerKey<BindFirewallZone> {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_NET_BIND = 1,
-      COLUMN_FIREWALLD_ZONE = 2
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_NET_BIND = 1;
+  static final int COLUMN_FIREWALLD_ZONE = 2;
   static final String COLUMN_NET_BIND_name = "net_bind";
   static final String COLUMN_FIREWALLD_ZONE_name = "firewalld_zone";
 
-  private int net_bind;
-  private int firewalld_zone;
+  private int netBind;
+  private int firewalldZone;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -63,17 +61,17 @@ public final class BindFirewallZone extends CachedObjectIntegerKey<BindFirewallZ
   }
 
   public Bind getNetBind() throws SQLException, IOException {
-    Bind obj = table.getConnector().getNet().getBind().get(net_bind);
+    Bind obj = table.getConnector().getNet().getBind().get(netBind);
     if (obj == null) {
-      throw new SQLException("Unable to find NetBind: " + net_bind);
+      throw new SQLException("Unable to find NetBind: " + netBind);
     }
     return obj;
   }
 
   public FirewallZone getFirewalldZone() throws SQLException, IOException {
-    FirewallZone obj = table.getConnector().getNet().getFirewallZone().get(firewalld_zone);
+    FirewallZone obj = table.getConnector().getNet().getFirewallZone().get(firewalldZone);
     if (obj == null) {
-      throw new SQLException("Unable to find FirewalldZone: " + firewalld_zone);
+      throw new SQLException("Unable to find FirewalldZone: " + firewalldZone);
     }
     return obj;
   }
@@ -81,36 +79,40 @@ public final class BindFirewallZone extends CachedObjectIntegerKey<BindFirewallZ
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_NET_BIND: return net_bind;
-      case COLUMN_FIREWALLD_ZONE: return firewalld_zone;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_NET_BIND:
+        return netBind;
+      case COLUMN_FIREWALLD_ZONE:
+        return firewalldZone;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.NET_BIND_FIREWALLD_ZONES;
+  public Table.TableId getTableId() {
+    return Table.TableId.NET_BIND_FIREWALLD_ZONES;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     pkey = result.getInt(1);
-    net_bind = result.getInt(2);
-    firewalld_zone = result.getInt(3);
+    netBind = result.getInt(2);
+    firewalldZone = result.getInt(3);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readCompressedInt();
-    net_bind = in.readCompressedInt();
-    firewalld_zone = in.readCompressedInt();
+    netBind = in.readCompressedInt();
+    firewalldZone = in.readCompressedInt();
   }
 
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeCompressedInt(net_bind);
-    out.writeCompressedInt(firewalld_zone);
+    out.writeCompressedInt(netBind);
+    out.writeCompressedInt(firewalldZone);
   }
 }

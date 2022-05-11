@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.email;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTableStringKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.sql.SQLException;
  */
 public final class SpamAssassinModeTable extends GlobalTableStringKey<SpamAssassinMode> {
 
-  SpamAssassinModeTable(AOServConnector connector) {
+  SpamAssassinModeTable(AoservConnector connector) {
     super(connector, SpamAssassinMode.class);
   }
 
@@ -56,7 +56,7 @@ public final class SpamAssassinModeTable extends GlobalTableStringKey<SpamAssass
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.EMAIL_SPAMASSASSIN_INTEGRATION_MODES;
+  public Table.TableId getTableId() {
+    return Table.TableId.EMAIL_SPAMASSASSIN_INTEGRATION_MODES;
   }
 }

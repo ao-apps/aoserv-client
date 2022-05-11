@@ -33,7 +33,7 @@ import com.aoapps.lang.validation.ValidationException;
 import com.aoapps.sql.SQLStreamables;
 import com.aoapps.sql.SQLUtility;
 import com.aoapps.sql.UnmodifiableTimestamp;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.Administrator;
@@ -60,12 +60,10 @@ import java.sql.SQLException;
  */
 public final class Transaction extends CachedObjectIntegerKey<Transaction> {
 
-  static final int
-      COLUMN_TRANSID = 1,
-      COLUMN_ACCOUNTING = 2,
-      COLUMN_SOURCE_ACCOUNTING = 3,
-      COLUMN_ADMINISTRATOR = 4
-  ;
+  static final int COLUMN_TRANSID = 1;
+  static final int COLUMN_ACCOUNTING = 2;
+  static final int COLUMN_SOURCE_ACCOUNTING = 3;
+  static final int COLUMN_ADMINISTRATOR = 4;
   static final String COLUMN_TIME_name = "time";
   static final String COLUMN_TRANSID_name = "transid";
   static final String COLUMN_SOURCE_ACCOUNTING_name = "source_accounting";
@@ -77,19 +75,21 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
 
   private UnmodifiableTimestamp time;
   private Account.Name accounting;
-  private Account.Name source_accounting;
+  private Account.Name sourceAccounting;
   private User.Name username;
   private String type;
   private String description;
 
   /**
-   * The quantity in 1000th's of a unit
+   * The quantity in 1000th's of a unit.
    */
   private int quantity;
 
   private Money rate;
 
-  private String payment_type, payment_info, processor;
+  private String paymentType;
+  private String paymentInfo;
+  private String processor;
   private int creditCardTransaction;
 
   /**
@@ -108,7 +108,7 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
     assert paymentConfirmedLabels.length == NUM_PAYMENT_CONFIRMATION_STATES;
   }
 
-  private byte payment_confirmed;
+  private byte paymentConfirmed;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -127,8 +127,8 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
   public void approved(final int creditCardTransaction, final String paymentInfo) throws IOException, SQLException {
     table.getConnector().requestUpdate(
         true,
-        AoservProtocol.CommandID.TRANSACTION_APPROVED,
-        new AOServConnector.UpdateRequest() {
+        AoservProtocol.CommandId.TRANSACTION_APPROVED,
+        new AoservConnector.UpdateRequest() {
           private IntList invalidateList;
 
           @Override
@@ -142,7 +142,7 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
           public void readResponse(StreamableInput in) throws IOException, SQLException {
             int code = in.readByte();
             if (code == AoservProtocol.DONE) {
-              invalidateList = AOServConnector.readInvalidateList(in);
+              invalidateList = AoservConnector.readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
               throw new IOException("Unexpected response code: " + code);
@@ -173,8 +173,8 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
   public void declined(final int creditCardTransaction, final String paymentInfo) throws IOException, SQLException {
     table.getConnector().requestUpdate(
         true,
-        AoservProtocol.CommandID.TRANSACTION_DECLINED,
-        new AOServConnector.UpdateRequest() {
+        AoservProtocol.CommandId.TRANSACTION_DECLINED,
+        new AoservConnector.UpdateRequest() {
           private IntList invalidateList;
 
           @Override
@@ -188,7 +188,7 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
           public void readResponse(StreamableInput in) throws IOException, SQLException {
             int code = in.readByte();
             if (code == AoservProtocol.DONE) {
-              invalidateList = AOServConnector.readInvalidateList(in);
+              invalidateList = AoservConnector.readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
               throw new IOException("Unexpected response code: " + code);
@@ -219,8 +219,8 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
   public void held(final int creditCardTransaction, final String paymentInfo) throws IOException, SQLException {
     table.getConnector().requestUpdate(
         true,
-        AoservProtocol.CommandID.TRANSACTION_HELD,
-        new AOServConnector.UpdateRequest() {
+        AoservProtocol.CommandId.TRANSACTION_HELD,
+        new AoservConnector.UpdateRequest() {
           private IntList invalidateList;
 
           @Override
@@ -234,7 +234,7 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
           public void readResponse(StreamableInput in) throws IOException, SQLException {
             int code = in.readByte();
             if (code == AoservProtocol.DONE) {
-              invalidateList = AOServConnector.readInvalidateList(in);
+              invalidateList = AoservConnector.readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
               throw new IOException("Unexpected response code: " + code);
@@ -285,13 +285,13 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
   }
 
   public Account.Name getSourceAccount_name() {
-    return source_accounting;
+    return sourceAccounting;
   }
 
   public Account getSourceAccount() throws SQLException, IOException {
-    Account business = table.getConnector().getAccount().getAccount().get(source_accounting);
+    Account business = table.getConnector().getAccount().getAccount().get(sourceAccounting);
     if (business == null) {
-      throw new SQLException("Unable to find Account: " + source_accounting);
+      throw new SQLException("Unable to find Account: " + sourceAccounting);
     }
     return business;
   }
@@ -317,21 +317,36 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
   @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case 0: return time;
-      case COLUMN_TRANSID: return pkey;
-      case COLUMN_ACCOUNTING: return accounting;
-      case COLUMN_SOURCE_ACCOUNTING: return source_accounting;
-      case COLUMN_ADMINISTRATOR: return username;
-      case 5: return type;
-      case 6: return description;
-      case 7: return quantity;
-      case 8: return rate;
-      case 9: return payment_type;
-      case 10: return payment_info;
-      case 11: return processor;
-      case 12: return getPayment_id();
-      case 13: return payment_confirmed == CONFIRMED ? "Y" : payment_confirmed == NOT_CONFIRMED ? "N" : "W";
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case 0:
+        return time;
+      case COLUMN_TRANSID:
+        return pkey;
+      case COLUMN_ACCOUNTING:
+        return accounting;
+      case COLUMN_SOURCE_ACCOUNTING:
+        return sourceAccounting;
+      case COLUMN_ADMINISTRATOR:
+        return username;
+      case 5:
+        return type;
+      case 6:
+        return description;
+      case 7:
+        return quantity;
+      case 8:
+        return rate;
+      case 9:
+        return paymentType;
+      case 10:
+        return paymentInfo;
+      case 11:
+        return processor;
+      case 12:
+        return getPayment_id();
+      case 13:
+        return paymentConfirmed == CONFIRMED ? "Y" : paymentConfirmed == NOT_CONFIRMED ? "N" : "W";
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -370,7 +385,7 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
   }
 
   public byte getPaymentConfirmed() {
-    return payment_confirmed;
+    return paymentConfirmed;
   }
 
   public static String getPaymentConfirmedLabel(int index) {
@@ -378,20 +393,20 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
   }
 
   public String getPaymentInfo() {
-    return payment_info;
+    return paymentInfo;
   }
 
   public String getPaymentType_name() {
-    return payment_type;
+    return paymentType;
   }
 
   public PaymentType getPaymentType() throws SQLException, IOException {
-    if (payment_type == null) {
+    if (this.paymentType == null) {
       return null;
     }
-    PaymentType paymentType = table.getConnector().getPayment().getPaymentType().get(payment_type);
+    PaymentType paymentType = table.getConnector().getPayment().getPaymentType().get(this.paymentType);
     if (paymentType == null) {
-      throw new SQLException("Unable to find PaymentType: " + payment_type);
+      throw new SQLException("Unable to find PaymentType: " + this.paymentType);
     }
     return paymentType;
   }
@@ -412,8 +427,8 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.TRANSACTIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.TRANSACTIONS;
   }
 
   @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
@@ -444,14 +459,14 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
       time = UnmodifiableTimestamp.valueOf(result.getTimestamp("time"));
       pkey = result.getInt("transid");
       accounting = Account.Name.valueOf(result.getString("accounting"));
-      source_accounting = Account.Name.valueOf(result.getString("source_accounting"));
+      sourceAccounting = Account.Name.valueOf(result.getString("source_accounting"));
       username = User.Name.valueOf(result.getString("username"));
       type = result.getString("type");
       description = result.getString("description");
       quantity = SQLUtility.parseDecimal3(result.getString("quantity"));
       rate = MoneyUtil.getMoney(result, "rate.currency", "rate.value");
-      payment_type = result.getString("payment_type");
-      payment_info = result.getString("payment_info");
+      paymentType = result.getString("payment_type");
+      paymentInfo = result.getString("payment_info");
       processor = result.getString("processor");
       creditCardTransaction = result.getInt("credit_card_transaction");
       if (result.wasNull()) {
@@ -459,11 +474,11 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
       }
       String typeString = result.getString("payment_confirmed");
       if ("Y".equals(typeString)) {
-        payment_confirmed = CONFIRMED;
+        paymentConfirmed = CONFIRMED;
       } else if ("N".equals(typeString)) {
-        payment_confirmed = NOT_CONFIRMED;
+        paymentConfirmed = NOT_CONFIRMED;
       } else if ("W".equals(typeString)) {
-        payment_confirmed = WAITING_CONFIRMATION;
+        paymentConfirmed = WAITING_CONFIRMATION;
       } else {
         throw new SQLException("Unknown payment_confirmed '" + typeString + "' for transid=" + pkey);
       }
@@ -478,17 +493,17 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
       time = SQLStreamables.readUnmodifiableTimestamp(in);
       pkey = in.readCompressedInt();
       accounting = Account.Name.valueOf(in.readCompressedUTF()).intern();
-      source_accounting = Account.Name.valueOf(in.readCompressedUTF()).intern();
+      sourceAccounting = Account.Name.valueOf(in.readCompressedUTF()).intern();
       username = User.Name.valueOf(in.readCompressedUTF()).intern();
       type = in.readCompressedUTF().intern();
       description = in.readCompressedUTF();
       quantity = in.readCompressedInt();
       rate = MoneyUtil.readMoney(in);
-      payment_type = InternUtils.intern(in.readNullUTF());
-      payment_info = in.readNullUTF();
+      paymentType = InternUtils.intern(in.readNullUTF());
+      paymentInfo = in.readNullUTF();
       processor = InternUtils.intern(in.readNullUTF());
       creditCardTransaction = in.readCompressedInt();
-      payment_confirmed = in.readByte();
+      paymentConfirmed = in.readByte();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -501,7 +516,7 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
             + "|"
             + accounting
             + '|'
-            + source_accounting
+            + sourceAccounting
             + '|'
             + type
             + '|'
@@ -510,11 +525,10 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
             + rate
             + '|'
             + (
-            payment_confirmed == CONFIRMED ? 'Y'
-                : payment_confirmed == NOT_CONFIRMED ? 'N'
+            paymentConfirmed == CONFIRMED ? 'Y'
+                : paymentConfirmed == NOT_CONFIRMED ? 'N'
                 : 'W'
-        )
-    ;
+        );
   }
 
   @Override
@@ -526,7 +540,7 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
     }
     out.writeCompressedInt(pkey);
     out.writeCompressedUTF(accounting.toString(), 0);
-    out.writeCompressedUTF(source_accounting.toString(), 1);
+    out.writeCompressedUTF(sourceAccounting.toString(), 1);
     out.writeCompressedUTF(username.toString(), 2);
     out.writeCompressedUTF(type, 3);
     out.writeCompressedUTF(description, 4);
@@ -540,8 +554,8 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
     } else {
       MoneyUtil.writeMoney(rate, out);
     }
-    out.writeNullUTF(payment_type);
-    out.writeNullUTF(payment_info);
+    out.writeNullUTF(paymentType);
+    out.writeNullUTF(paymentInfo);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_29) < 0) {
       out.writeNullUTF(null);
     } else {
@@ -553,6 +567,6 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
     } else if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_29) < 0) {
       out.writeNullUTF(null);
     }
-    out.writeByte(payment_confirmed);
+    out.writeByte(paymentConfirmed);
   }
 }

@@ -34,7 +34,7 @@ import com.aoapps.lang.validation.ValidResult;
 import com.aoapps.lang.validation.ValidationException;
 import com.aoapps.lang.validation.ValidationResult;
 import com.aoapps.net.Port;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.backup.MysqlReplication;
@@ -61,10 +61,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * A <code>MySQLServer</code> corresponds to a unique MySQL install
+ * A <code>MysqlServer</code> corresponds to a unique MySQL install
  * space on one server.  The server name must be unique per server.
- * <code>MySQLDatabase</code>s and <code>MySQLServerUser</code>s are
- * unique per <code>MySQLServer</code>.
+ * <code>MysqlDatabase</code>s and <code>MysqlServerUser</code>s are
+ * unique per <code>MysqlServer</code>.
  *
  * @see  Database
  * @see  UserServer
@@ -90,9 +90,8 @@ public final class Server extends CachedObjectIntegerKey<Server> {
   public static final class Name implements
       Comparable<Name>,
       Serializable,
-      DtoFactory<com.aoindustries.aoserv.client.dto.MySQLServerName>,
-      Internable<Name>
-  {
+      DtoFactory<com.aoindustries.aoserv.client.dto.MysqlServerName>,
+      Internable<Name> {
 
     private static final long serialVersionUID = 6148467549389988813L;
 
@@ -195,8 +194,7 @@ public final class Server extends CachedObjectIntegerKey<Server> {
     public boolean equals(Object obj) {
       return
           (obj instanceof Name)
-              && name.equals(((Name) obj).name)
-      ;
+              && name.equals(((Name) obj).name);
     }
 
     @Override
@@ -235,8 +233,8 @@ public final class Server extends CachedObjectIntegerKey<Server> {
     }
 
     @Override
-    public com.aoindustries.aoserv.client.dto.MySQLServerName getDto() {
-      return new com.aoindustries.aoserv.client.dto.MySQLServerName(name);
+    public com.aoindustries.aoserv.client.dto.MysqlServerName getDto() {
+      return new com.aoindustries.aoserv.client.dto.MysqlServerName(name);
     }
   }
 
@@ -264,8 +262,7 @@ public final class Server extends CachedObjectIntegerKey<Server> {
       VERSION_5_1_PREFIX = "5.1.",
       VERSION_5_0_PREFIX = "5.0.",
       VERSION_4_1_PREFIX = "4.1.",
-      VERSION_4_0_PREFIX = "4.0."
-  ;
+      VERSION_4_0_PREFIX = "4.0.";
 
   /**
    * The directory that contains the MySQL data files.
@@ -556,10 +553,8 @@ public final class Server extends CachedObjectIntegerKey<Server> {
   }
   // </editor-fold>
 
-  static final int
-      COLUMN_BIND = 0,
-      COLUMN_AO_SERVER = 2
-  ;
+  static final int COLUMN_BIND = 0;
+  static final int COLUMN_AO_SERVER = 2;
   public static final String COLUMN_AO_SERVER_name = "ao_server";
   public static final String COLUMN_NAME_name = "name";
 
@@ -572,9 +567,9 @@ public final class Server extends CachedObjectIntegerKey<Server> {
   public static final int MAX_SERVER_NAME_LENGTH = Name.MAX_LENGTH;
 
   private Name name;
-  private int ao_server;
+  private int aoServer;
   private int version;
-  private int max_connections;
+  private int maxConnections;
   // Protocol conversion
   private Account.Name packageName;
 
@@ -592,12 +587,18 @@ public final class Server extends CachedObjectIntegerKey<Server> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_BIND: return pkey;
-      case 1: return name;
-      case COLUMN_AO_SERVER: return ao_server;
-      case 3: return version;
-      case 4: return max_connections;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_BIND:
+        return pkey;
+      case 1:
+        return name;
+      case COLUMN_AO_SERVER:
+        return aoServer;
+      case 3:
+        return version;
+      case 4:
+        return maxConnections;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -618,13 +619,13 @@ public final class Server extends CachedObjectIntegerKey<Server> {
   }
 
   public int getAoServer_server_pkey() {
-    return ao_server;
+    return aoServer;
   }
 
   public com.aoindustries.aoserv.client.linux.Server getLinuxServer() throws SQLException, IOException {
-    com.aoindustries.aoserv.client.linux.Server ao = table.getConnector().getLinux().getServer().get(ao_server);
+    com.aoindustries.aoserv.client.linux.Server ao = table.getConnector().getLinux().getServer().get(aoServer);
     if (ao == null) {
-      throw new SQLException("Unable to find linux.Server: " + ao_server);
+      throw new SQLException("Unable to find linux.Server: " + aoServer);
     }
     return ao;
   }
@@ -638,13 +639,13 @@ public final class Server extends CachedObjectIntegerKey<Server> {
         obj.getOperatingSystemVersion(table.getConnector()).getPkey()
             != getLinuxServer().getHost().getOperatingSystemVersion_id()
     ) {
-      throw new SQLException("resource/operating system version mismatch on MySQLServer: #" + pkey);
+      throw new SQLException("resource/operating system version mismatch on MysqlServer: #" + pkey);
     }
     return obj;
   }
 
   public int getMaxConnections() {
-    return max_connections;
+    return maxConnections;
   }
 
   @Override
@@ -653,9 +654,9 @@ public final class Server extends CachedObjectIntegerKey<Server> {
       int pos = 1;
       pkey = result.getInt(pos++);
       name = Name.valueOf(result.getString(pos++));
-      ao_server = result.getInt(pos++);
+      aoServer = result.getInt(pos++);
       version = result.getInt(pos++);
-      max_connections = result.getInt(pos++);
+      maxConnections = result.getInt(pos++);
       // Protocol conversion
       packageName = Account.Name.valueOf(result.getString(pos++));
     } catch (ValidationException e) {
@@ -668,9 +669,9 @@ public final class Server extends CachedObjectIntegerKey<Server> {
     try {
       pkey = in.readCompressedInt();
       name = Server.Name.valueOf(in.readUTF()).intern();
-      ao_server = in.readCompressedInt();
+      aoServer = in.readCompressedInt();
       version = in.readCompressedInt();
-      max_connections = in.readCompressedInt();
+      maxConnections = in.readCompressedInt();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -680,9 +681,9 @@ public final class Server extends CachedObjectIntegerKey<Server> {
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
     out.writeUTF(name.toString());
-    out.writeCompressedInt(ao_server);
+    out.writeCompressedInt(aoServer);
     out.writeCompressedInt(version);
-    out.writeCompressedInt(max_connections);
+    out.writeCompressedInt(maxConnections);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_17) <= 0) {
       out.writeCompressedInt(pkey);
       if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_28) >= 0) {
@@ -691,11 +692,11 @@ public final class Server extends CachedObjectIntegerKey<Server> {
     }
   }
 
-  public int addMySQLDatabase(
+  public int addMysqlDatabase(
       Database.Name name,
       Package pack
   ) throws IOException, SQLException {
-    return table.getConnector().getMysql().getDatabase().addMySQLDatabase(
+    return table.getConnector().getMysql().getDatabase().addMysqlDatabase(
         name,
         this,
         pack
@@ -731,59 +732,59 @@ public final class Server extends CachedObjectIntegerKey<Server> {
     return s;
   }
 
-  public Database getMySQLDatabase(Database.Name name) throws IOException, SQLException {
-    return table.getConnector().getMysql().getDatabase().getMySQLDatabase(name, this);
+  public Database getMysqlDatabase(Database.Name name) throws IOException, SQLException {
+    return table.getConnector().getMysql().getDatabase().getMysqlDatabase(name, this);
   }
 
-  public List<MysqlReplication> getFailoverMySQLReplications() throws IOException, SQLException {
-    return table.getConnector().getBackup().getMysqlReplication().getFailoverMySQLReplications(this);
+  public List<MysqlReplication> getFailoverMysqlReplications() throws IOException, SQLException {
+    return table.getConnector().getBackup().getMysqlReplication().getFailoverMysqlReplications(this);
   }
 
-  public List<Database> getMySQLDatabases() throws IOException, SQLException {
-    return table.getConnector().getMysql().getDatabase().getMySQLDatabases(this);
+  public List<Database> getMysqlDatabases() throws IOException, SQLException {
+    return table.getConnector().getMysql().getDatabase().getMysqlDatabases(this);
   }
 
-  public List<DatabaseUser> getMySQLDBUsers() throws IOException, SQLException {
-    return table.getConnector().getMysql().getDatabaseUser().getMySQLDBUsers(this);
+  public List<DatabaseUser> getMysqlDbUsers() throws IOException, SQLException {
+    return table.getConnector().getMysql().getDatabaseUser().getMysqlDbUsers(this);
   }
 
-  public UserServer getMySQLServerUser(User.Name username) throws IOException, SQLException {
-    return table.getConnector().getMysql().getUserServer().getMySQLServerUser(username, this);
+  public UserServer getMysqlServerUser(User.Name username) throws IOException, SQLException {
+    return table.getConnector().getMysql().getUserServer().getMysqlServerUser(username, this);
   }
 
-  public List<UserServer> getMySQLServerUsers() throws IOException, SQLException {
-    return table.getConnector().getMysql().getUserServer().getMySQLServerUsers(this);
+  public List<UserServer> getMysqlServerUsers() throws IOException, SQLException {
+    return table.getConnector().getMysql().getUserServer().getMysqlServerUsers(this);
   }
 
-  public List<User> getMySQLUsers() throws IOException, SQLException {
-    List<UserServer> psu = getMySQLServerUsers();
+  public List<User> getMysqlUsers() throws IOException, SQLException {
+    List<UserServer> psu = getMysqlServerUsers();
     int len = psu.size();
     List<User> pu = new ArrayList<>(len);
     for (int c = 0; c < len; c++) {
-      pu.add(psu.get(c).getMySQLUser());
+      pu.add(psu.get(c).getMysqlUser());
     }
     return pu;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.MYSQL_SERVERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.MYSQL_SERVERS;
   }
 
-  public boolean isMySQLDatabaseNameAvailable(Database.Name name) throws IOException, SQLException {
-    return table.getConnector().getMysql().getDatabase().isMySQLDatabaseNameAvailable(name, this);
+  public boolean isMysqlDatabaseNameAvailable(Database.Name name) throws IOException, SQLException {
+    return table.getConnector().getMysql().getDatabase().isMysqlDatabaseNameAvailable(name, this);
   }
 
-  public void restartMySQL() throws IOException, SQLException {
-    table.getConnector().requestUpdate(false, AoservProtocol.CommandID.RESTART_MYSQL, pkey);
+  public void restartMysql() throws IOException, SQLException {
+    table.getConnector().requestUpdate(false, AoservProtocol.CommandId.RESTART_MYSQL, pkey);
   }
 
-  public void startMySQL() throws IOException, SQLException {
-    table.getConnector().requestUpdate(false, AoservProtocol.CommandID.START_MYSQL, pkey);
+  public void startMysql() throws IOException, SQLException {
+    table.getConnector().requestUpdate(false, AoservProtocol.CommandId.START_MYSQL, pkey);
   }
 
-  public void stopMySQL() throws IOException, SQLException {
-    table.getConnector().requestUpdate(false, AoservProtocol.CommandID.STOP_MYSQL, pkey);
+  public void stopMysql() throws IOException, SQLException {
+    table.getConnector().requestUpdate(false, AoservProtocol.CommandId.STOP_MYSQL, pkey);
   }
 
   @Override
@@ -820,9 +821,9 @@ public final class Server extends CachedObjectIntegerKey<Server> {
   public MasterStatus getMasterStatus() throws IOException, SQLException {
     return table.getConnector().requestResult(
         true,
-        AoservProtocol.CommandID.GET_MYSQL_MASTER_STATUS,
-        // Java 9: new AOServConnector.ResultRequest<>
-        new AOServConnector.ResultRequest<MasterStatus>() {
+        AoservProtocol.CommandId.GET_MYSQL_MASTER_STATUS,
+        // Java 9: new AoservConnector.ResultRequest<>
+        new AoservConnector.ResultRequest<MasterStatus>() {
           private MasterStatus result;
 
           @Override

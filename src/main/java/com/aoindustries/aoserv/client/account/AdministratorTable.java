@@ -28,9 +28,9 @@ import com.aoapps.hodgepodge.io.TerminalWriter;
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.net.Email;
-import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.SimpleAOClient;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.AoservConnector;
+import com.aoindustries.aoserv.client.SimpleAoservClient;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.password.PasswordChecker;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
@@ -48,7 +48,7 @@ import java.util.List;
  */
 public final class AdministratorTable extends CachedTableUserNameKey<Administrator> {
 
-  AdministratorTable(AOServConnector connector) {
+  AdministratorTable(AoservConnector connector) {
     super(connector, Administrator.class);
   }
 
@@ -123,12 +123,12 @@ public final class AdministratorTable extends CachedTableUserNameKey<Administrat
     final String finalZip = zip;
     connector.requestUpdate(
         true,
-        AoservProtocol.CommandID.ADD,
-        new AOServConnector.UpdateRequest() {
+        AoservProtocol.CommandId.ADD,
+        new AoservConnector.UpdateRequest() {
           private IntList invalidateList;
           @Override
           public void writeRequest(StreamableOutput out) throws IOException {
-            out.writeCompressedInt(Table.TableID.BUSINESS_ADMINISTRATORS.ordinal());
+            out.writeCompressedInt(Table.TableId.BUSINESS_ADMINISTRATORS.ordinal());
             out.writeUTF(username.getUsername().toString());
             out.writeUTF(name);
             out.writeBoolean(finalTitle != null);
@@ -182,7 +182,7 @@ public final class AdministratorTable extends CachedTableUserNameKey<Administrat
           public void readResponse(StreamableInput in) throws IOException, SQLException {
             int code = in.readByte();
             if (code == AoservProtocol.DONE) {
-              invalidateList = AOServConnector.readInvalidateList(in);
+              invalidateList = AoservConnector.readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
               throw new IOException("Unexpected response code: " + code);
@@ -206,8 +206,8 @@ public final class AdministratorTable extends CachedTableUserNameKey<Administrat
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.BUSINESS_ADMINISTRATORS;
+  public Table.TableId getTableId() {
+    return Table.TableId.BUSINESS_ADMINISTRATORS;
   }
 
   @SuppressWarnings("deprecation")
@@ -215,32 +215,32 @@ public final class AdministratorTable extends CachedTableUserNameKey<Administrat
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_BUSINESS_ADMINISTRATOR)) {
-      if (AOSH.checkParamCount(Command.ADD_BUSINESS_ADMINISTRATOR, args, 17, err)) {
-        connector.getSimpleAOClient().addAdministrator(
-            AOSH.parseUserName(args[1], "username"),
+      if (Aosh.checkParamCount(Command.ADD_BUSINESS_ADMINISTRATOR, args, 17, err)) {
+        connector.getSimpleClient().addAdministrator(
+            Aosh.parseUserName(args[1], "username"),
             args[2],
             args[3],
-            args[4].length() == 0 ? null : AOSH.parseDate(args[4], "birthday"),
-            AOSH.parseBoolean(args[5], "is_private"),
+            args[4].length() == 0 ? null : Aosh.parseDate(args[4], "birthday"),
+            Aosh.parseBoolean(args[5], "is_private"),
             args[6],
             args[7],
             args[8],
             args[9],
-            AOSH.parseEmail(args[10], "email"),
+            Aosh.parseEmail(args[10], "email"),
             args[11],
             args[12],
             args[13],
             args[14],
             args[15],
             args[16],
-            AOSH.parseBoolean(args[17], "enable_email_support")
+            Aosh.parseBoolean(args[17], "enable_email_support")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.CHECK_BUSINESS_ADMINISTRATOR_PASSWORD)) {
-      if (AOSH.checkParamCount(Command.CHECK_BUSINESS_ADMINISTRATOR_PASSWORD, args, 2, err)) {
-        List<PasswordChecker.Result> results = SimpleAOClient.checkAdministratorPassword(
-            AOSH.parseUserName(args[1], "username"),
+      if (Aosh.checkParamCount(Command.CHECK_BUSINESS_ADMINISTRATOR_PASSWORD, args, 2, err)) {
+        List<PasswordChecker.Result> results = SimpleAoservClient.checkAdministratorPassword(
+            Aosh.parseUserName(args[1], "username"),
             args[2]
         );
         if (PasswordChecker.hasResults(results)) {
@@ -250,10 +250,10 @@ public final class AdministratorTable extends CachedTableUserNameKey<Administrat
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.DISABLE_BUSINESS_ADMINISTRATOR)) {
-      if (AOSH.checkParamCount(Command.DISABLE_BUSINESS_ADMINISTRATOR, args, 2, err)) {
+      if (Aosh.checkParamCount(Command.DISABLE_BUSINESS_ADMINISTRATOR, args, 2, err)) {
         out.println(
-            connector.getSimpleAOClient().disableAdministrator(
-                AOSH.parseUserName(args[1], "username"),
+            connector.getSimpleClient().disableAdministrator(
+                Aosh.parseUserName(args[1], "username"),
                 args[2]
             )
         );
@@ -261,50 +261,50 @@ public final class AdministratorTable extends CachedTableUserNameKey<Administrat
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.ENABLE_BUSINESS_ADMINISTRATOR)) {
-      if (AOSH.checkParamCount(Command.ENABLE_BUSINESS_ADMINISTRATOR, args, 1, err)) {
-        connector.getSimpleAOClient().enableAdministrator(
-            AOSH.parseUserName(args[1], "username")
+      if (Aosh.checkParamCount(Command.ENABLE_BUSINESS_ADMINISTRATOR, args, 1, err)) {
+        connector.getSimpleClient().enableAdministrator(
+            Aosh.parseUserName(args[1], "username")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.IS_BUSINESS_ADMINISTRATOR_PASSWORD_SET)) {
-      if (AOSH.checkParamCount(Command.IS_BUSINESS_ADMINISTRATOR_PASSWORD_SET, args, 1, err)) {
+      if (Aosh.checkParamCount(Command.IS_BUSINESS_ADMINISTRATOR_PASSWORD_SET, args, 1, err)) {
         out.println(
-            connector.getSimpleAOClient().isAdministratorPasswordSet(
-                AOSH.parseUserName(args[1], "username")
+            connector.getSimpleClient().isAdministratorPasswordSet(
+                Aosh.parseUserName(args[1], "username")
             )
         );
         out.flush();
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.REMOVE_BUSINESS_ADMINISTRATOR)) {
-      if (AOSH.checkParamCount(Command.REMOVE_BUSINESS_ADMINISTRATOR, args, 1, err)) {
-        connector.getSimpleAOClient().removeAdministrator(
-            AOSH.parseUserName(args[1], "username")
+      if (Aosh.checkParamCount(Command.REMOVE_BUSINESS_ADMINISTRATOR, args, 1, err)) {
+        connector.getSimpleClient().removeAdministrator(
+            Aosh.parseUserName(args[1], "username")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_BUSINESS_ADMINISTRATOR_PASSWORD)) {
-      if (AOSH.checkParamCount(Command.SET_BUSINESS_ADMINISTRATOR_PASSWORD, args, 2, err)) {
-        connector.getSimpleAOClient().setAdministratorPassword(
-            AOSH.parseUserName(args[1], "username"),
+      if (Aosh.checkParamCount(Command.SET_BUSINESS_ADMINISTRATOR_PASSWORD, args, 2, err)) {
+        connector.getSimpleClient().setAdministratorPassword(
+            Aosh.parseUserName(args[1], "username"),
             args[2]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_BUSINESS_ADMINISTRATOR_PROFILE)) {
-      if (AOSH.checkParamCount(Command.SET_BUSINESS_ADMINISTRATOR_PROFILE, args, 16, err)) {
-        connector.getSimpleAOClient().setAdministratorProfile(
-            AOSH.parseUserName(args[1], "username"),
+      if (Aosh.checkParamCount(Command.SET_BUSINESS_ADMINISTRATOR_PROFILE, args, 16, err)) {
+        connector.getSimpleClient().setAdministratorProfile(
+            Aosh.parseUserName(args[1], "username"),
             args[2],
             args[3],
-            AOSH.parseDate(args[4], "birthday"),
-            AOSH.parseBoolean(args[5], "is_private"),
+            Aosh.parseDate(args[4], "birthday"),
+            Aosh.parseBoolean(args[5], "is_private"),
             args[6],
             args[7],
             args[8],
             args[9],
-            AOSH.parseEmail(args[10], "email"),
+            Aosh.parseEmail(args[10], "email"),
             args[11],
             args[12],
             args[13],
@@ -315,8 +315,8 @@ public final class AdministratorTable extends CachedTableUserNameKey<Administrat
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.CRYPT)) {
-      if (AOSH.checkRangeParamCount(Command.CRYPT, args, 1, 2, err)) {
-        String encrypted = SimpleAOClient.crypt(
+      if (Aosh.checkRangeParamCount(Command.CRYPT, args, 1, 2, err)) {
+        String encrypted = SimpleAoservClient.crypt(
             args[1],
             args.length == 3 ? args[2] : null
         );

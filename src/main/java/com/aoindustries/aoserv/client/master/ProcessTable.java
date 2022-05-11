@@ -24,8 +24,8 @@
 package com.aoindustries.aoserv.client.master;
 
 import com.aoapps.security.SmallIdentifier;
-import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.AOServTable;
+import com.aoindustries.aoserv.client.AoservConnector;
+import com.aoindustries.aoserv.client.AoservTable;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -38,9 +38,9 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-public final class ProcessTable extends AOServTable<SmallIdentifier, Process> {
+public final class ProcessTable extends AoservTable<SmallIdentifier, Process> {
 
-  ProcessTable(AOServConnector connector) {
+  ProcessTable(AoservConnector connector) {
     super(connector, Process.class);
   }
 
@@ -53,6 +53,8 @@ public final class ProcessTable extends AOServTable<SmallIdentifier, Process> {
   }
 
   /**
+   * {@inheritDoc}
+   *
    * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
    */
   @Deprecated
@@ -82,13 +84,13 @@ public final class ProcessTable extends AOServTable<SmallIdentifier, Process> {
   @Override
   public List<Process> getRowsCopy() throws IOException, SQLException {
     List<Process> list = new ArrayList<>();
-    getObjects(true, list, AoservProtocol.CommandID.GET_TABLE, Table.TableID.MASTER_PROCESSES);
+    getObjects(true, list, AoservProtocol.CommandId.GET_TABLE, Table.TableId.MASTER_PROCESSES);
     return list;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.MASTER_PROCESSES;
+  public Table.TableId getTableId() {
+    return Table.TableId.MASTER_PROCESSES;
   }
 
   @Override

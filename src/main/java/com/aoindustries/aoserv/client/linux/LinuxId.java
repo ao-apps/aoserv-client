@@ -46,8 +46,7 @@ import java.util.concurrent.atomic.AtomicReferenceArray;
 public final class LinuxId implements
     Comparable<LinuxId>,
     Serializable,
-    DtoFactory<com.aoindustries.aoserv.client.dto.LinuxId>
-{
+    DtoFactory<com.aoindustries.aoserv.client.dto.LinuxId> {
 
   private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, LinuxId.class);
 
@@ -126,8 +125,7 @@ public final class LinuxId implements
   public boolean equals(Object obj) {
     return
         (obj instanceof LinuxId)
-            && ((LinuxId) obj).id == id
-    ;
+            && ((LinuxId) obj).id == id;
   }
 
   @Override

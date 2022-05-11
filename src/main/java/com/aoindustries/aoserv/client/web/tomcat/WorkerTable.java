@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.web.tomcat;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.net.Bind;
@@ -47,7 +47,7 @@ public final class WorkerTable extends CachedTableIntegerKey<Worker> {
 
   private static final Logger logger = Logger.getLogger(WorkerTable.class.getName());
 
-  WorkerTable(AOServConnector connector) {
+  WorkerTable(AoservConnector connector) {
     super(connector, Worker.class);
   }
 
@@ -69,7 +69,7 @@ public final class WorkerTable extends CachedTableIntegerKey<Worker> {
   }
 
   public List<Worker> getHttpdWorkers(HttpdServer server) throws IOException, SQLException {
-    int serverPKey = server.getPkey();
+    int serverPkey = server.getPkey();
     List<Worker> cached = getRows();
     int size = cached.size();
     List<Worker> matches = new ArrayList<>(size);
@@ -81,7 +81,7 @@ public final class WorkerTable extends CachedTableIntegerKey<Worker> {
         List<VirtualHost> binds = hts.getHttpdSite().getHttpdSiteBinds();
         // If one of the binds is this server, then count as a match
         for (VirtualHost bind : binds) {
-          if (bind.getHttpdBind().getHttpdServer_pkey() == serverPKey) {
+          if (bind.getHttpdBind().getHttpdServer_pkey() == serverPkey) {
             matches.add(worker);
             continue Loop;
           }
@@ -93,7 +93,7 @@ public final class WorkerTable extends CachedTableIntegerKey<Worker> {
           for (SharedTomcatSite htss : hst.getHttpdTomcatSharedSites()) {
             List<VirtualHost> binds = htss.getHttpdTomcatSite().getHttpdSite().getHttpdSiteBinds();
             for (VirtualHost bind : binds) {
-              if (bind.getHttpdBind().getHttpdServer_pkey() == serverPKey) {
+              if (bind.getHttpdBind().getHttpdServer_pkey() == serverPkey) {
                 matches.add(worker);
                 continue Loop;
               }
@@ -116,7 +116,7 @@ public final class WorkerTable extends CachedTableIntegerKey<Worker> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.HTTPD_WORKERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.HTTPD_WORKERS;
   }
 }

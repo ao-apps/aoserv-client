@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.dns;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTableStringKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.sql.SQLException;
  */
 public final class ForbiddenZoneTable extends GlobalTableStringKey<ForbiddenZone> {
 
-  ForbiddenZoneTable(AOServConnector connector) {
+  ForbiddenZoneTable(AoservConnector connector) {
     super(connector, ForbiddenZone.class);
   }
 
@@ -56,7 +56,7 @@ public final class ForbiddenZoneTable extends GlobalTableStringKey<ForbiddenZone
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.DNS_FORBIDDEN_ZONES;
+  public Table.TableId getTableId() {
+    return Table.TableId.DNS_FORBIDDEN_ZONES;
   }
 }

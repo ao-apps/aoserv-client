@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.linux;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTable;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 public abstract class CachedTableGroupNameKey<V extends CachedObjectGroupNameKey<V>> extends CachedTable<Group.Name, V> {
 
-  protected CachedTableGroupNameKey(AOServConnector connector, Class<V> clazz) {
+  protected CachedTableGroupNameKey(AoservConnector connector, Class<V> clazz) {
     super(connector, clazz);
   }
 

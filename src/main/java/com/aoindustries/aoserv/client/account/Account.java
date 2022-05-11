@@ -45,9 +45,9 @@ import com.aoapps.lang.validation.ValidationResult;
 import com.aoapps.net.Email;
 import com.aoapps.sql.SQLStreamables;
 import com.aoapps.sql.UnmodifiableTimestamp;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.Disablable;
-import com.aoindustries.aoserv.client.SimpleAOClient;
+import com.aoindustries.aoserv.client.SimpleAoservClient;
 import com.aoindustries.aoserv.client.billing.MonthlyCharge;
 import com.aoindustries.aoserv.client.billing.NoticeLog;
 import com.aoindustries.aoserv.client.billing.NoticeLogTable;
@@ -128,8 +128,7 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
       Comparable<Name>,
       FastExternalizable,
       DtoFactory<com.aoindustries.aoserv.client.dto.AccountName>,
-      Internable<Name>
-  {
+      Internable<Name> {
 
     public static final int MIN_LENGTH = 2;
 
@@ -237,8 +236,7 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
     public boolean equals(Object obj) {
       return
           (obj instanceof Name)
-              && upperName.equals(((Name) obj).upperName)
-      ;
+              && upperName.equals(((Name) obj).upperName);
     }
 
     @Override
@@ -359,14 +357,14 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
 
   private Name parent;
 
-  private boolean can_add_backup_server;
-  private boolean can_add_businesses;
-  private boolean can_see_prices;
+  private boolean canAddBackupServer;
+  private boolean canAddBusinesses;
+  private boolean canSeePrices;
 
-  private int disable_log;
-  private String do_not_disable_reason;
-  private boolean auto_enable;
-  private boolean bill_parent;
+  private int disableLog;
+  private String doNotDisableReason;
+  private boolean autoEnable;
+  private boolean billParent;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -606,7 +604,7 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
       String type,
       int transid
   ) throws IOException, SQLException {
-    AOServConnector connector = table.getConnector();
+    AoservConnector connector = table.getConnector();
     NoticeType nt = connector.getBilling().getNoticeType().get(type);
     if (nt == null) {
       throw new IllegalArgumentException("Unable to find NoticeType: " + type);
@@ -648,7 +646,7 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
       int timeType,
       Timestamp time,
       Account sourceAccount,
-      Administrator business_administrator,
+      Administrator administrator,
       TransactionType type,
       String description,
       int quantity,
@@ -656,14 +654,14 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
       PaymentType paymentType,
       String paymentInfo,
       Processor processor,
-      byte payment_confirmed
+      byte paymentConfirmed
   ) throws IOException, SQLException {
     return table.getConnector().getBilling().getTransaction().add(
         timeType,
         time,
         this,
         sourceAccount,
-        business_administrator,
+        administrator,
         type,
         description,
         quantity,
@@ -671,22 +669,22 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
         paymentType,
         paymentInfo,
         processor,
-        payment_confirmed
+        paymentConfirmed
     );
   }
 
   public boolean canAddBackupServer() {
-    return can_add_backup_server;
+    return canAddBackupServer;
   }
 
   public boolean canAddAccounts() {
-    return can_add_businesses;
+    return canAddBusinesses;
   }
 
   public void cancel(String cancelReason) throws IllegalArgumentException, IOException, SQLException {
     // Automatically disable if not already disabled
-    if (disable_log == -1) {
-      new SimpleAOClient(table.getConnector()).disableAccount(pkey, "Account canceled");
+    if (disableLog == -1) {
+      new SimpleAoservClient(table.getConnector()).disableAccount(pkey, "Account canceled");
     }
 
     // Now cancel the account
@@ -696,8 +694,8 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
     final String finalCancelReason = cancelReason;
     table.getConnector().requestUpdate(
         true,
-        AoservProtocol.CommandID.CANCEL_BUSINESS,
-        new AOServConnector.UpdateRequest() {
+        AoservProtocol.CommandId.CANCEL_BUSINESS,
+        new AoservConnector.UpdateRequest() {
           private IntList invalidateList;
 
           @Override
@@ -710,7 +708,7 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
           public void readResponse(StreamableInput in) throws IOException, SQLException {
             int code = in.readByte();
             if (code == AoservProtocol.DONE) {
-              invalidateList = AOServConnector.readInvalidateList(in);
+              invalidateList = AoservConnector.readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
               throw new IOException("Unexpected response code: " + code);
@@ -750,7 +748,7 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
   @Override
   public boolean canDisable() throws IOException, SQLException {
     // already disabled
-    if (disable_log != -1) {
+    if (disableLog != -1) {
       return false;
     }
 
@@ -785,17 +783,17 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
   }
 
   public boolean canSeePrices() {
-    return can_see_prices;
+    return canSeePrices;
   }
 
   @Override
   public void disable(DisableLog dl) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.DISABLE, Table.TableID.BUSINESSES, dl.getPkey(), pkey.toString());
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.DISABLE, Table.TableId.BUSINESSES, dl.getPkey(), pkey.toString());
   }
 
   @Override
   public void enable() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.ENABLE, Table.TableID.BUSINESSES, pkey.toString());
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.ENABLE, Table.TableId.BUSINESSES, pkey.toString());
   }
 
   /**
@@ -843,11 +841,11 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
   }
 
   public boolean getAutoEnable() {
-    return auto_enable;
+    return autoEnable;
   }
 
   public boolean billParent() {
-    return bill_parent;
+    return billParent;
   }
 
   // TODO: Re-implement auto-enabled on payment forms, and preferably on the master itself during add_transaction
@@ -878,7 +876,7 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
   }
 
   public String getDoNotDisableReason() {
-    return do_not_disable_reason;
+    return doNotDisableReason;
   }
 
   /**
@@ -903,7 +901,7 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
    */
   public Account getBillingAccount() throws SQLException, IOException {
     Account bu = this;
-    while (bu.bill_parent) {
+    while (bu.billParent) {
       bu = bu.getParent();
       if (bu == null) {
         throw new SQLException("Unable to find the billing account for '" + pkey + '\'');
@@ -952,20 +950,34 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
   @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_ACCOUNTING: return pkey;
-      case 1: return contractVersion;
-      case 2: return created;
-      case 3: return canceled;
-      case 4: return cancelReason;
-      case 5: return parent;
-      case 6: return can_add_backup_server;
-      case 7: return can_add_businesses;
-      case 8: return can_see_prices;
-      case 9: return disable_log == -1 ? null : disable_log;
-      case 10: return do_not_disable_reason;
-      case 11: return auto_enable;
-      case 12: return bill_parent;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_ACCOUNTING:
+        return pkey;
+      case 1:
+        return contractVersion;
+      case 2:
+        return created;
+      case 3:
+        return canceled;
+      case 4:
+        return cancelReason;
+      case 5:
+        return parent;
+      case 6:
+        return canAddBackupServer;
+      case 7:
+        return canAddBusinesses;
+      case 8:
+        return canSeePrices;
+      case 9:
+        return disableLog == -1 ? null : disableLog;
+      case 10:
+        return doNotDisableReason;
+      case 11:
+        return autoEnable;
+      case 12:
+        return billParent;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -1009,17 +1021,17 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
 
   @Override
   public boolean isDisabled() {
-    return disable_log != -1;
+    return disableLog != -1;
   }
 
   @Override
   public DisableLog getDisableLog() throws SQLException, IOException {
-    if (disable_log == -1) {
+    if (disableLog == -1) {
       return null;
     }
-    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disable_log);
+    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disableLog);
     if (obj == null) {
-      throw new SQLException("Unable to find DisableLog: " + disable_log);
+      throw new SQLException("Unable to find DisableLog: " + disableLog);
     }
     return obj;
   }
@@ -1132,8 +1144,8 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.BUSINESSES;
+  public Table.TableId getTableId() {
+    return Table.TableId.BUSINESSES;
   }
 
   /**
@@ -1475,16 +1487,16 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
       canceled = UnmodifiableTimestamp.valueOf(result.getTimestamp(4));
       cancelReason = result.getString(5);
       parent = Name.valueOf(result.getString(6));
-      can_add_backup_server = result.getBoolean(7);
-      can_add_businesses = result.getBoolean(8);
-      can_see_prices = result.getBoolean(9);
-      disable_log = result.getInt(10);
+      canAddBackupServer = result.getBoolean(7);
+      canAddBusinesses = result.getBoolean(8);
+      canSeePrices = result.getBoolean(9);
+      disableLog = result.getInt(10);
       if (result.wasNull()) {
-        disable_log = -1;
+        disableLog = -1;
       }
-      do_not_disable_reason = result.getString(11);
-      auto_enable = result.getBoolean(12);
-      bill_parent = result.getBoolean(13);
+      doNotDisableReason = result.getString(11);
+      autoEnable = result.getBoolean(12);
+      billParent = result.getBoolean(13);
     } catch (ValidationException e) {
       throw new SQLException(e);
     }
@@ -1499,20 +1511,20 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
       canceled = SQLStreamables.readNullUnmodifiableTimestamp(in);
       cancelReason = in.readNullUTF();
       parent = InternUtils.intern(Name.valueOf(in.readNullUTF()));
-      can_add_backup_server = in.readBoolean();
-      can_add_businesses = in.readBoolean();
-      can_see_prices = in.readBoolean();
-      disable_log = in.readCompressedInt();
-      do_not_disable_reason = in.readNullUTF();
-      auto_enable = in.readBoolean();
-      bill_parent = in.readBoolean();
+      canAddBackupServer = in.readBoolean();
+      canAddBusinesses = in.readBoolean();
+      canSeePrices = in.readBoolean();
+      disableLog = in.readCompressedInt();
+      doNotDisableReason = in.readNullUTF();
+      autoEnable = in.readBoolean();
+      billParent = in.readBoolean();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
   }
 
   public void setName(Name name) throws SQLException, IOException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_BUSINESS_ACCOUNTING, this.pkey.toString(), name.toString());
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_BUSINESS_ACCOUNTING, this.pkey.toString(), name.toString());
   }
 
   @Override
@@ -1535,19 +1547,19 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
     out.writeNullUTF(cancelReason);
     out.writeNullUTF(Objects.toString(parent, null));
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_102) >= 0) {
-      out.writeBoolean(can_add_backup_server);
+      out.writeBoolean(canAddBackupServer);
     }
-    out.writeBoolean(can_add_businesses);
+    out.writeBoolean(canAddBusinesses);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_122) <= 0) {
       out.writeBoolean(false);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_103) >= 0) {
-      out.writeBoolean(can_see_prices);
+      out.writeBoolean(canSeePrices);
     }
-    out.writeCompressedInt(disable_log);
-    out.writeNullUTF(do_not_disable_reason);
-    out.writeBoolean(auto_enable);
-    out.writeBoolean(bill_parent);
+    out.writeCompressedInt(disableLog);
+    out.writeNullUTF(doNotDisableReason);
+    out.writeBoolean(autoEnable);
+    out.writeBoolean(billParent);
   }
 
   public List<Ticket> getTickets() throws SQLException, IOException {
@@ -1566,9 +1578,9 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
    * be deselected.  If <code>creditCard</code> is null, none will be used automatically.
    */
   public void setUseMonthlyCreditCard(CreditCard creditCard) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.SET_CREDIT_CARD_USE_MONTHLY,
+        AoservProtocol.CommandId.SET_CREDIT_CARD_USE_MONTHLY,
         pkey.toString(),
         creditCard == null ? -1 : creditCard.getPkey()
     );

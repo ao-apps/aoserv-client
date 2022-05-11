@@ -53,11 +53,9 @@ public final class TransactionType extends GlobalObjectStringKey<TransactionType
   static final int COLUMN_NAME = 0;
   static final String COLUMN_NAME_name = "name";
 
-  public static final String
-      HTTPD = "httpd",
-      PAYMENT = "payment",
-      VIRTUAL = "virtual"
-  ;
+  public static final String HTTPD = "httpd";
+  public static final String PAYMENT = "payment";
+  public static final String VIRTUAL = "virtual";
 
   /**
    * If <code>true</code> this <code>TransactionType</code> represents a credit to
@@ -79,9 +77,12 @@ public final class TransactionType extends GlobalObjectStringKey<TransactionType
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_NAME: return pkey;
-      case 1: return isCredit;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_NAME:
+        return pkey;
+      case 1:
+        return isCredit;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -97,8 +98,8 @@ public final class TransactionType extends GlobalObjectStringKey<TransactionType
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.TRANSACTION_TYPES;
+  public Table.TableId getTableId() {
+    return Table.TableId.TRANSACTION_TYPES;
   }
 
   public String getUnit() {

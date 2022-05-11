@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.email;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTableStringKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.sql.SQLException;
  */
 public final class AttachmentTypeTable extends GlobalTableStringKey<AttachmentType> {
 
-  AttachmentTypeTable(AOServConnector connector) {
+  AttachmentTypeTable(AoservConnector connector) {
     super(connector, AttachmentType.class);
   }
 
@@ -56,7 +56,7 @@ public final class AttachmentTypeTable extends GlobalTableStringKey<AttachmentTy
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.EMAIL_ATTACHMENT_TYPES;
+  public Table.TableId getTableId() {
+    return Table.TableId.EMAIL_ATTACHMENT_TYPES;
   }
 }

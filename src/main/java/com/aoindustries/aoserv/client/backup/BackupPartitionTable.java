@@ -24,9 +24,9 @@
 package com.aoindustries.aoserv.client.backup;
 
 import com.aoapps.hodgepodge.io.TerminalWriter;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -42,7 +42,7 @@ import java.util.List;
  */
 public final class BackupPartitionTable extends CachedTableIntegerKey<BackupPartition> {
 
-  BackupPartitionTable(AOServConnector connector) {
+  BackupPartitionTable(AoservConnector connector) {
     super(connector, BackupPartition.class);
   }
 
@@ -80,16 +80,16 @@ public final class BackupPartitionTable extends CachedTableIntegerKey<BackupPart
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.BACKUP_PARTITIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.BACKUP_PARTITIONS;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.GET_BACKUP_PARTITION_TOTAL_SIZE)) {
-      if (AOSH.checkParamCount(Command.GET_BACKUP_PARTITION_TOTAL_SIZE, args, 2, err)) {
-        long size = connector.getSimpleAOClient().getBackupPartitionTotalSize(
+      if (Aosh.checkParamCount(Command.GET_BACKUP_PARTITION_TOTAL_SIZE, args, 2, err)) {
+        long size = connector.getSimpleClient().getBackupPartitionTotalSize(
             args[1],
             args[2]
         );
@@ -102,8 +102,8 @@ public final class BackupPartitionTable extends CachedTableIntegerKey<BackupPart
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.GET_BACKUP_PARTITION_USED_SIZE)) {
-      if (AOSH.checkParamCount(Command.GET_BACKUP_PARTITION_USED_SIZE, args, 2, err)) {
-        long size = connector.getSimpleAOClient().getBackupPartitionUsedSize(
+      if (Aosh.checkParamCount(Command.GET_BACKUP_PARTITION_USED_SIZE, args, 2, err)) {
+        long size = connector.getSimpleClient().getBackupPartitionUsedSize(
             args[1],
             args[2]
         );

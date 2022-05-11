@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 /**
- * An object that is cached and uses a long as its primary key,
+ * An object that is cached and uses a long as its primary key.
  *
  * @author  AO Industries, Inc.
  */
@@ -51,8 +51,7 @@ public abstract class CachedObjectLongKey<V extends CachedObjectLongKey<V>> exte
     return
         obj != null
             && obj.getClass() == getClass()
-            && ((CachedObjectLongKey<?>) obj).pkey == pkey
-    ;
+            && ((CachedObjectLongKey<?>) obj).pkey == pkey;
   }
 
   public long getPkey() {

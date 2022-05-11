@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.reseller;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.ticket.Ticket;
@@ -39,7 +39,7 @@ import java.util.List;
  */
 public final class BrandCategoryTable extends CachedTableIntegerKey<BrandCategory> {
 
-  BrandCategoryTable(AOServConnector connector) {
+  BrandCategoryTable(AoservConnector connector) {
     super(connector, BrandCategory.class);
   }
 
@@ -68,7 +68,7 @@ public final class BrandCategoryTable extends CachedTableIntegerKey<BrandCategor
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.TICKET_BRAND_CATEGORIES;
+  public Table.TableId getTableId() {
+    return Table.TableId.TICKET_BRAND_CATEGORIES;
   }
 }

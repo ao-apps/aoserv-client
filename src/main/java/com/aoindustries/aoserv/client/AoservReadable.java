@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2010, 2011, 2016, 2017, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2019, 2020, 2021, 2022  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -21,28 +21,18 @@
  * along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.aoindustries.aoserv.client.dto;
+package com.aoindustries.aoserv.client;
+
+import com.aoapps.hodgepodge.io.stream.StreamableInput;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import java.io.IOException;
 
 /**
+ * Something that can be read with a given version represented by {@link com.aoindustries.aoserv.client.schema.AoservProtocol.Version}.
+ *
  * @author  AO Industries, Inc.
  */
-public class MySQLServerName {
+public interface AoservReadable {
 
-  private String name;
-
-  public MySQLServerName() {
-    // Do nothing
-  }
-
-  public MySQLServerName(String name) {
-    this.name = name;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
+  void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException;
 }

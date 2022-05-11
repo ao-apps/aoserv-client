@@ -24,49 +24,49 @@
 package com.aoindustries.aoserv.client.net.reputation;
 
 /**
- * The set of possible classes
+ * The set of possible classes.
  *
  * @author  AO Industries, Inc.
  */
 // Matches aoserv-master-db/aoindustries/net/reputation/Class-type.sql
 public enum Class {
   /**
-   * Manual Good
+   * Manual Good.
    */
   gm,
 
   /**
-   * Manual Bad
+   * Manual Bad.
    */
   bm,
 
   /**
-   * Definite Bad
+   * Definite Bad.
    */
   bd,
 
   /**
-   * Uncertain Bad
+   * Uncertain Bad.
    */
   bu,
 
   /**
-   * Uncertain Good
+   * Uncertain Good.
    */
   gu,
 
   /**
-   * Definite Good
+   * Definite Good.
    */
   gd,
 
   /**
-   * Network Good
+   * Network Good.
    */
   gn,
 
   /**
-   * Unknown
+   * Unknown.
    */
   uu
 }

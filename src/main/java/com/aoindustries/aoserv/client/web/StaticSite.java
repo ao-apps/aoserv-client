@@ -73,8 +73,8 @@ public final class StaticSite extends CachedObjectIntegerKey<StaticSite> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.HTTPD_STATIC_SITES;
+  public Table.TableId getTableId() {
+    return Table.TableId.HTTPD_STATIC_SITES;
   }
 
   @Override

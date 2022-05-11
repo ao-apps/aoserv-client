@@ -24,7 +24,7 @@
 package com.aoindustries.aoserv.client;
 
 /**
- * An object that is cached and uses a String as its primary key,
+ * An object that is cached and uses a String as its primary key.
  *
  * @author  AO Industries, Inc.
  */
@@ -48,8 +48,7 @@ public abstract class GlobalObjectStringKey<T extends GlobalObjectStringKey<T>> 
     return
         obj != null
             && obj.getClass() == getClass()
-            && ((GlobalObjectStringKey) obj).pkey.equals(pkey)
-    ;
+            && ((GlobalObjectStringKey) obj).pkey.equals(pkey);
   }
 
   @Override

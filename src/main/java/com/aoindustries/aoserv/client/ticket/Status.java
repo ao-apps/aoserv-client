@@ -60,10 +60,9 @@ public final class Status extends GlobalObjectStringKey<Status> implements Compa
       CLOSED = "closed",
       BOUNCED = "bounced",
       HOLD = "hold",
-      OPEN = "open"
-  ;
+      OPEN = "open";
 
-  private short sort_order;
+  private short sortOrder;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -82,13 +81,13 @@ public final class Status extends GlobalObjectStringKey<Status> implements Compa
       return pkey;
     }
     if (i == 1) {
-      return sort_order;
+      return sortOrder;
     }
     throw new IllegalArgumentException("Invalid index: " + i);
   }
 
   public short getSortOrder() {
-    return sort_order;
+    return sortOrder;
   }
 
   public String getStatus() {
@@ -96,20 +95,20 @@ public final class Status extends GlobalObjectStringKey<Status> implements Compa
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.TICKET_STATI;
+  public Table.TableId getTableId() {
+    return Table.TableId.TICKET_STATI;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     pkey = result.getString(1);
-    sort_order = result.getShort(2);
+    sortOrder = result.getShort(2);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readUTF().intern();
-    sort_order = in.readShort();
+    sortOrder = in.readShort();
   }
 
   @Override
@@ -119,7 +118,7 @@ public final class Status extends GlobalObjectStringKey<Status> implements Compa
       out.writeUTF(pkey);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_44) >= 0) {
-      out.writeShort(sort_order);
+      out.writeShort(sortOrder);
     }
   }
 
@@ -137,8 +136,8 @@ public final class Status extends GlobalObjectStringKey<Status> implements Compa
 
   @Override
   public int compareTo(Status o) {
-    short sortOrder1 = sort_order;
-    short sortOrder2 = o.sort_order;
+    short sortOrder1 = sortOrder;
+    short sortOrder2 = o.sortOrder;
     if (sortOrder1 < sortOrder2) {
       return -1;
     }

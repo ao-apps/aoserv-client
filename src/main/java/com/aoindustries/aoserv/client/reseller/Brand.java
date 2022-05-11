@@ -63,40 +63,40 @@ public final class Brand extends CachedObjectAccountNameKey<Brand> {
   private DomainName nameserver2;
   private DomainName nameserver3;
   private DomainName nameserver4;
-  private int smtp_linux_server_account;
-  private HostAddress smtp_host;
-  private String smtp_password;
-  private int imap_linux_server_account;
-  private HostAddress imap_host;
-  private String imap_password;
-  private int support_email_address;
-  private String support_email_display;
-  private int signup_email_address;
-  private String signup_email_display;
-  private int ticket_encryption_from;
-  private int ticket_encryption_recipient;
-  private int signup_encryption_from;
-  private int signup_encryption_recipient;
-  private String support_toll_free;
-  private String support_day_phone;
-  private String support_emergency_phone1;
-  private String support_emergency_phone2;
-  private String support_fax;
-  private String support_mailing_address1;
-  private String support_mailing_address2;
-  private String support_mailing_address3;
-  private String support_mailing_address4;
-  private boolean english_enabled;
-  private boolean japanese_enabled;
-  private String aoweb_struts_http_url_base;
-  private String aoweb_struts_https_url_base;
-  private String aoweb_struts_google_verify_content;
-  private boolean aoweb_struts_noindex;
-  private String aoweb_struts_google_analytics_new_tracking_code;
-  private String aoweb_struts_signup_admin_address;
-  private int aoweb_struts_vnc_bind;
-  private String aoweb_struts_keystore_type;
-  private String aoweb_struts_keystore_password;
+  private int smtpLinuxServerAccount;
+  private HostAddress smtpHost;
+  private String smtpPassword;
+  private int imapLinuxServerAccount;
+  private HostAddress imapHost;
+  private String imapPassword;
+  private int supportEailAddress;
+  private String supportEmailDisplay;
+  private int signupEmailAddress;
+  private String signupEmailDisplay;
+  private int ticketEncryptionFrom;
+  private int ticketEncryptionRecipient;
+  private int signupEncryptionFrom;
+  private int signupEncryptionRecipient;
+  private String supportTollFree;
+  private String supportDayPhone;
+  private String supportEmergencyPhone1;
+  private String supportEmergencyPhone2;
+  private String supportFax;
+  private String supportMailingAddress1;
+  private String supportMailingAddress2;
+  private String supportMailingAddress3;
+  private String supportMailingAddress4;
+  private boolean englishEnabled;
+  private boolean japaneseEnabled;
+  private String aowebStrutsHttpUrlBase;
+  private String aowebStrutsHttpsUrlBase;
+  private String aowebStrutsGoogleVerifyContent;
+  private boolean aowebStrutsNoindex;
+  private String aowebStrutsGoogleAnalyticsNewTrackingCode;
+  private String aowebAtrutsSignupAdminAddress;
+  private int aowebStrutsVncBind;
+  private String aowebStrutsKeystoreType;
+  private String aowebStrutsKeystorePassword;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -112,46 +112,86 @@ public final class Brand extends CachedObjectAccountNameKey<Brand> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_ACCOUNTING : return pkey;
-      case 1: return nameserver1;
-      case 2: return nameserver2;
-      case 3: return nameserver3;
-      case 4: return nameserver4;
-      case 5: return smtp_linux_server_account;
-      case 6: return smtp_host;
-      case 7: return smtp_password;
-      case 8: return imap_linux_server_account;
-      case 9: return imap_host;
-      case 10: return imap_password;
-      case 11: return support_email_address;
-      case 12: return support_email_display;
-      case 13: return signup_email_address;
-      case 14: return signup_email_display;
-      case 15: return ticket_encryption_from;
-      case 16: return ticket_encryption_recipient;
-      case 17: return signup_encryption_from;
-      case 18: return signup_encryption_recipient;
-      case 19: return support_toll_free;
-      case 20: return support_day_phone;
-      case 21: return support_emergency_phone1;
-      case 22: return support_emergency_phone2;
-      case 23: return support_fax;
-      case 24: return support_mailing_address1;
-      case 25: return support_mailing_address2;
-      case 26: return support_mailing_address3;
-      case 27: return support_mailing_address4;
-      case 28: return english_enabled;
-      case 29: return japanese_enabled;
-      case 30: return aoweb_struts_http_url_base;
-      case 31: return aoweb_struts_https_url_base;
-      case 32: return aoweb_struts_google_verify_content;
-      case 33: return aoweb_struts_noindex;
-      case 34: return aoweb_struts_google_analytics_new_tracking_code;
-      case 35: return aoweb_struts_signup_admin_address;
-      case 36: return aoweb_struts_vnc_bind;
-      case 37: return aoweb_struts_keystore_type;
-      case 38: return aoweb_struts_keystore_password;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_ACCOUNTING:
+        return pkey;
+      case 1:
+        return nameserver1;
+      case 2:
+        return nameserver2;
+      case 3:
+        return nameserver3;
+      case 4:
+        return nameserver4;
+      case 5:
+        return smtpLinuxServerAccount;
+      case 6:
+        return smtpHost;
+      case 7:
+        return smtpPassword;
+      case 8:
+        return imapLinuxServerAccount;
+      case 9:
+        return imapHost;
+      case 10:
+        return imapPassword;
+      case 11:
+        return supportEailAddress;
+      case 12:
+        return supportEmailDisplay;
+      case 13:
+        return signupEmailAddress;
+      case 14:
+        return signupEmailDisplay;
+      case 15:
+        return ticketEncryptionFrom;
+      case 16:
+        return ticketEncryptionRecipient;
+      case 17:
+        return signupEncryptionFrom;
+      case 18:
+        return signupEncryptionRecipient;
+      case 19:
+        return supportTollFree;
+      case 20:
+        return supportDayPhone;
+      case 21:
+        return supportEmergencyPhone1;
+      case 22:
+        return supportEmergencyPhone2;
+      case 23:
+        return supportFax;
+      case 24:
+        return supportMailingAddress1;
+      case 25:
+        return supportMailingAddress2;
+      case 26:
+        return supportMailingAddress3;
+      case 27:
+        return supportMailingAddress4;
+      case 28:
+        return englishEnabled;
+      case 29:
+        return japaneseEnabled;
+      case 30:
+        return aowebStrutsHttpUrlBase;
+      case 31:
+        return aowebStrutsHttpsUrlBase;
+      case 32:
+        return aowebStrutsGoogleVerifyContent;
+      case 33:
+        return aowebStrutsNoindex;
+      case 34:
+        return aowebStrutsGoogleAnalyticsNewTrackingCode;
+      case 35:
+        return aowebAtrutsSignupAdminAddress;
+      case 36:
+        return aowebStrutsVncBind;
+      case 37:
+        return aowebStrutsKeystoreType;
+      case 38:
+        return aowebStrutsKeystorePassword;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -184,9 +224,9 @@ public final class Brand extends CachedObjectAccountNameKey<Brand> {
   }
 
   public UserServer getSmtpLinuxServerAccount() throws IOException, SQLException {
-    UserServer lsa = table.getConnector().getLinux().getUserServer().get(smtp_linux_server_account);
+    UserServer lsa = table.getConnector().getLinux().getUserServer().get(smtpLinuxServerAccount);
     if (lsa == null) {
-      throw new SQLException("Unable to find LinuxServerAccount: " + smtp_linux_server_account);
+      throw new SQLException("Unable to find LinuxServerAccount: " + smtpLinuxServerAccount);
     }
     return lsa;
   }
@@ -196,17 +236,17 @@ public final class Brand extends CachedObjectAccountNameKey<Brand> {
    * of the SmtpLinuxServerAccount's {@link Server} if smtp_host is null.
    */
   public HostAddress getSmtpHost() throws IOException, SQLException {
-    return smtp_host != null ? smtp_host : HostAddress.valueOf(getSmtpLinuxServerAccount().getServer().getHostname());
+    return smtpHost != null ? smtpHost : HostAddress.valueOf(getSmtpLinuxServerAccount().getServer().getHostname());
   }
 
   public String getSmtpPassword() {
-    return smtp_password;
+    return smtpPassword;
   }
 
   public UserServer getImapLinuxServerAccount() throws SQLException, IOException {
-    UserServer lsa = table.getConnector().getLinux().getUserServer().get(imap_linux_server_account);
+    UserServer lsa = table.getConnector().getLinux().getUserServer().get(imapLinuxServerAccount);
     if (lsa == null) {
-      throw new SQLException("Unable to find LinuxServerAccount: " + imap_linux_server_account);
+      throw new SQLException("Unable to find LinuxServerAccount: " + imapLinuxServerAccount);
     }
     return lsa;
   }
@@ -216,164 +256,164 @@ public final class Brand extends CachedObjectAccountNameKey<Brand> {
    * of the ImapLinuxServerAccount's {@link Server} if imap_host is null.
    */
   public HostAddress getImapHost() throws IOException, SQLException {
-    return imap_host != null ? imap_host : HostAddress.valueOf(getImapLinuxServerAccount().getServer().getHostname());
+    return imapHost != null ? imapHost : HostAddress.valueOf(getImapLinuxServerAccount().getServer().getHostname());
   }
 
   public String getImapPassword() {
-    return imap_password;
+    return imapPassword;
   }
 
   public Address getSupportEmailAddress() throws IOException, SQLException {
-    Address ea = table.getConnector().getEmail().getAddress().get(support_email_address);
+    Address ea = table.getConnector().getEmail().getAddress().get(supportEailAddress);
     if (ea == null) {
-      throw new SQLException("Unable to find EmailAddress: " + support_email_address);
+      throw new SQLException("Unable to find EmailAddress: " + supportEailAddress);
     }
     return ea;
   }
 
   public String getSupportEmailDisplay() {
-    return support_email_display;
+    return supportEmailDisplay;
   }
 
   public Address getSignupEmailAddress() throws IOException, SQLException {
-    Address ea = table.getConnector().getEmail().getAddress().get(signup_email_address);
+    Address ea = table.getConnector().getEmail().getAddress().get(signupEmailAddress);
     if (ea == null) {
-      throw new SQLException("Unable to find EmailAddress: " + signup_email_address);
+      throw new SQLException("Unable to find EmailAddress: " + signupEmailAddress);
     }
     return ea;
   }
 
   public String getSignupEmailDisplay() {
-    return signup_email_display;
+    return signupEmailDisplay;
   }
 
   public EncryptionKey getTicketEncryptionFrom() throws IOException, SQLException {
-    EncryptionKey ek = table.getConnector().getPki().getEncryptionKey().get(ticket_encryption_from);
+    EncryptionKey ek = table.getConnector().getPki().getEncryptionKey().get(ticketEncryptionFrom);
     if (ek == null) {
-      throw new SQLException("Unable to find EncryptionKey: " + ticket_encryption_from);
+      throw new SQLException("Unable to find EncryptionKey: " + ticketEncryptionFrom);
     }
     return ek;
   }
 
   public EncryptionKey getTicketEncryptionRecipient() throws IOException, SQLException {
-    EncryptionKey ek = table.getConnector().getPki().getEncryptionKey().get(ticket_encryption_recipient);
+    EncryptionKey ek = table.getConnector().getPki().getEncryptionKey().get(ticketEncryptionRecipient);
     if (ek == null) {
-      throw new SQLException("Unable to find EncryptionKey: " + ticket_encryption_recipient);
+      throw new SQLException("Unable to find EncryptionKey: " + ticketEncryptionRecipient);
     }
     return ek;
   }
 
   public EncryptionKey getSignupEncryptionFrom() throws IOException, SQLException {
-    EncryptionKey ek = table.getConnector().getPki().getEncryptionKey().get(signup_encryption_from);
+    EncryptionKey ek = table.getConnector().getPki().getEncryptionKey().get(signupEncryptionFrom);
     if (ek == null) {
-      throw new SQLException("Unable to find EncryptionKey: " + signup_encryption_from);
+      throw new SQLException("Unable to find EncryptionKey: " + signupEncryptionFrom);
     }
     return ek;
   }
 
   public EncryptionKey getSignupEncryptionRecipient() throws IOException, SQLException {
-    EncryptionKey ek = table.getConnector().getPki().getEncryptionKey().get(signup_encryption_recipient);
+    EncryptionKey ek = table.getConnector().getPki().getEncryptionKey().get(signupEncryptionRecipient);
     if (ek == null) {
-      throw new SQLException("Unable to find EncryptionKey: " + signup_encryption_recipient);
+      throw new SQLException("Unable to find EncryptionKey: " + signupEncryptionRecipient);
     }
     return ek;
   }
 
   public String getSupportTollFree() {
-    return support_toll_free;
+    return supportTollFree;
   }
 
   public String getSupportDayPhone() {
-    return support_day_phone;
+    return supportDayPhone;
   }
 
   public String getSupportEmergencyPhone1() {
-    return support_emergency_phone1;
+    return supportEmergencyPhone1;
   }
 
   public String getSupportEmergencyPhone2() {
-    return support_emergency_phone2;
+    return supportEmergencyPhone2;
   }
 
   public String getSupportFax() {
-    return support_fax;
+    return supportFax;
   }
 
   public String getSupportMailingAddress1() {
-    return support_mailing_address1;
+    return supportMailingAddress1;
   }
 
   public String getSupportMailingAddress2() {
-    return support_mailing_address2;
+    return supportMailingAddress2;
   }
 
   public String getSupportMailingAddress3() {
-    return support_mailing_address3;
+    return supportMailingAddress3;
   }
 
   public String getSupportMailingAddress4() {
-    return support_mailing_address4;
+    return supportMailingAddress4;
   }
 
   public boolean getEnglishEnabled() {
-    return english_enabled;
+    return englishEnabled;
   }
 
   public boolean getJapaneseEnabled() {
-    return japanese_enabled;
+    return japaneseEnabled;
   }
 
   public String getAowebStrutsHttpUrlBase() {
-    return aoweb_struts_http_url_base;
+    return aowebStrutsHttpUrlBase;
   }
 
-  public URL getAowebStrutsHttpURL() throws MalformedURLException {
-    return new URL(aoweb_struts_http_url_base);
+  public URL getAowebStrutsHttpUrl() throws MalformedURLException {
+    return new URL(aowebStrutsHttpUrlBase);
   }
 
   public String getAowebStrutsHttpsUrlBase() {
-    return aoweb_struts_https_url_base;
+    return aowebStrutsHttpsUrlBase;
   }
 
-  public URL getAowebStrutsHttpsURL() throws MalformedURLException {
-    return new URL(aoweb_struts_https_url_base);
+  public URL getAowebStrutsHttpsUrl() throws MalformedURLException {
+    return new URL(aowebStrutsHttpsUrlBase);
   }
 
   public String getAowebStrutsGoogleVerifyContent() {
-    return aoweb_struts_google_verify_content;
+    return aowebStrutsGoogleVerifyContent;
   }
 
   public boolean getAowebStrutsNoindex() {
-    return aoweb_struts_noindex;
+    return aowebStrutsNoindex;
   }
 
   public String getAowebStrutsGoogleAnalyticsNewTrackingCode() {
-    return aoweb_struts_google_analytics_new_tracking_code;
+    return aowebStrutsGoogleAnalyticsNewTrackingCode;
   }
 
   public String getAowebStrutsSignupAdminAddress() {
-    return aoweb_struts_signup_admin_address;
+    return aowebAtrutsSignupAdminAddress;
   }
 
   public Bind getAowebStrutsVncBind() throws IOException, SQLException {
-    Bind nb = table.getConnector().getNet().getBind().get(aoweb_struts_vnc_bind);
+    Bind nb = table.getConnector().getNet().getBind().get(aowebStrutsVncBind);
     if (nb == null) {
-      throw new SQLException("Unable to find NetBind: " + aoweb_struts_vnc_bind);
+      throw new SQLException("Unable to find NetBind: " + aowebStrutsVncBind);
     }
     return nb;
   }
 
   public String getAowebStrutsKeystoreType() {
-    return aoweb_struts_keystore_type;
+    return aowebStrutsKeystoreType;
   }
 
   public String getAowebStrutsKeystorePassword() {
-    return aoweb_struts_keystore_password;
+    return aowebStrutsKeystorePassword;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.BRANDS;
+  public Table.TableId getTableId() {
+    return Table.TableId.BRANDS;
   }
 
   @Override
@@ -385,40 +425,40 @@ public final class Brand extends CachedObjectAccountNameKey<Brand> {
       nameserver2 = DomainName.valueOf(result.getString(pos++));
       nameserver3 = DomainName.valueOf(result.getString(pos++));
       nameserver4 = DomainName.valueOf(result.getString(pos++));
-      smtp_linux_server_account = result.getInt(pos++);
-      smtp_host = HostAddress.valueOf(result.getString(pos++));
-      smtp_password = result.getString(pos++);
-      imap_linux_server_account = result.getInt(pos++);
-      imap_host = HostAddress.valueOf(result.getString(pos++));
-      imap_password = result.getString(pos++);
-      support_email_address = result.getInt(pos++);
-      support_email_display = result.getString(pos++);
-      signup_email_address = result.getInt(pos++);
-      signup_email_display = result.getString(pos++);
-      ticket_encryption_from = result.getInt(pos++);
-      ticket_encryption_recipient = result.getInt(pos++);
-      signup_encryption_from = result.getInt(pos++);
-      signup_encryption_recipient = result.getInt(pos++);
-      support_toll_free = result.getString(pos++);
-      support_day_phone = result.getString(pos++);
-      support_emergency_phone1 = result.getString(pos++);
-      support_emergency_phone2 = result.getString(pos++);
-      support_fax = result.getString(pos++);
-      support_mailing_address1 = result.getString(pos++);
-      support_mailing_address2 = result.getString(pos++);
-      support_mailing_address3 = result.getString(pos++);
-      support_mailing_address4 = result.getString(pos++);
-      english_enabled = result.getBoolean(pos++);
-      japanese_enabled = result.getBoolean(pos++);
-      aoweb_struts_http_url_base = result.getString(pos++);
-      aoweb_struts_https_url_base = result.getString(pos++);
-      aoweb_struts_google_verify_content = result.getString(pos++);
-      aoweb_struts_noindex = result.getBoolean(pos++);
-      aoweb_struts_google_analytics_new_tracking_code = result.getString(pos++);
-      aoweb_struts_signup_admin_address = result.getString(pos++);
-      aoweb_struts_vnc_bind = result.getInt(pos++);
-      aoweb_struts_keystore_type = result.getString(pos++);
-      aoweb_struts_keystore_password = result.getString(pos++);
+      smtpLinuxServerAccount = result.getInt(pos++);
+      smtpHost = HostAddress.valueOf(result.getString(pos++));
+      smtpPassword = result.getString(pos++);
+      imapLinuxServerAccount = result.getInt(pos++);
+      imapHost = HostAddress.valueOf(result.getString(pos++));
+      imapPassword = result.getString(pos++);
+      supportEailAddress = result.getInt(pos++);
+      supportEmailDisplay = result.getString(pos++);
+      signupEmailAddress = result.getInt(pos++);
+      signupEmailDisplay = result.getString(pos++);
+      ticketEncryptionFrom = result.getInt(pos++);
+      ticketEncryptionRecipient = result.getInt(pos++);
+      signupEncryptionFrom = result.getInt(pos++);
+      signupEncryptionRecipient = result.getInt(pos++);
+      supportTollFree = result.getString(pos++);
+      supportDayPhone = result.getString(pos++);
+      supportEmergencyPhone1 = result.getString(pos++);
+      supportEmergencyPhone2 = result.getString(pos++);
+      supportFax = result.getString(pos++);
+      supportMailingAddress1 = result.getString(pos++);
+      supportMailingAddress2 = result.getString(pos++);
+      supportMailingAddress3 = result.getString(pos++);
+      supportMailingAddress4 = result.getString(pos++);
+      englishEnabled = result.getBoolean(pos++);
+      japaneseEnabled = result.getBoolean(pos++);
+      aowebStrutsHttpUrlBase = result.getString(pos++);
+      aowebStrutsHttpsUrlBase = result.getString(pos++);
+      aowebStrutsGoogleVerifyContent = result.getString(pos++);
+      aowebStrutsNoindex = result.getBoolean(pos++);
+      aowebStrutsGoogleAnalyticsNewTrackingCode = result.getString(pos++);
+      aowebAtrutsSignupAdminAddress = result.getString(pos++);
+      aowebStrutsVncBind = result.getInt(pos++);
+      aowebStrutsKeystoreType = result.getString(pos++);
+      aowebStrutsKeystorePassword = result.getString(pos++);
     } catch (ValidationException e) {
       throw new SQLException(e);
     }
@@ -432,40 +472,40 @@ public final class Brand extends CachedObjectAccountNameKey<Brand> {
       nameserver2 = DomainName.valueOf(in.readUTF());
       nameserver3 = DomainName.valueOf(in.readNullUTF());
       nameserver4 = DomainName.valueOf(in.readNullUTF());
-      smtp_linux_server_account = in.readCompressedInt();
-      smtp_host = HostAddress.valueOf(in.readNullUTF());
-      smtp_password = in.readUTF();
-      imap_linux_server_account = in.readCompressedInt();
-      imap_host = HostAddress.valueOf(in.readNullUTF());
-      imap_password = in.readUTF();
-      support_email_address = in.readCompressedInt();
-      support_email_display = in.readUTF();
-      signup_email_address = in.readCompressedInt();
-      signup_email_display = in.readUTF();
-      ticket_encryption_from = in.readCompressedInt();
-      ticket_encryption_recipient = in.readCompressedInt();
-      signup_encryption_from = in.readCompressedInt();
-      signup_encryption_recipient = in.readCompressedInt();
-      support_toll_free = in.readNullUTF();
-      support_day_phone = in.readNullUTF();
-      support_emergency_phone1 = in.readNullUTF();
-      support_emergency_phone2 = in.readNullUTF();
-      support_fax = in.readNullUTF();
-      support_mailing_address1 = in.readNullUTF();
-      support_mailing_address2 = in.readNullUTF();
-      support_mailing_address3 = in.readNullUTF();
-      support_mailing_address4 = in.readNullUTF();
-      english_enabled = in.readBoolean();
-      japanese_enabled = in.readBoolean();
-      aoweb_struts_http_url_base = in.readUTF();
-      aoweb_struts_https_url_base = in.readUTF();
-      aoweb_struts_google_verify_content = in.readNullUTF();
-      aoweb_struts_noindex = in.readBoolean();
-      aoweb_struts_google_analytics_new_tracking_code = in.readNullUTF();
-      aoweb_struts_signup_admin_address = in.readUTF();
-      aoweb_struts_vnc_bind = in.readCompressedInt();
-      aoweb_struts_keystore_type = in.readUTF();
-      aoweb_struts_keystore_password = in.readUTF();
+      smtpLinuxServerAccount = in.readCompressedInt();
+      smtpHost = HostAddress.valueOf(in.readNullUTF());
+      smtpPassword = in.readUTF();
+      imapLinuxServerAccount = in.readCompressedInt();
+      imapHost = HostAddress.valueOf(in.readNullUTF());
+      imapPassword = in.readUTF();
+      supportEailAddress = in.readCompressedInt();
+      supportEmailDisplay = in.readUTF();
+      signupEmailAddress = in.readCompressedInt();
+      signupEmailDisplay = in.readUTF();
+      ticketEncryptionFrom = in.readCompressedInt();
+      ticketEncryptionRecipient = in.readCompressedInt();
+      signupEncryptionFrom = in.readCompressedInt();
+      signupEncryptionRecipient = in.readCompressedInt();
+      supportTollFree = in.readNullUTF();
+      supportDayPhone = in.readNullUTF();
+      supportEmergencyPhone1 = in.readNullUTF();
+      supportEmergencyPhone2 = in.readNullUTF();
+      supportFax = in.readNullUTF();
+      supportMailingAddress1 = in.readNullUTF();
+      supportMailingAddress2 = in.readNullUTF();
+      supportMailingAddress3 = in.readNullUTF();
+      supportMailingAddress4 = in.readNullUTF();
+      englishEnabled = in.readBoolean();
+      japaneseEnabled = in.readBoolean();
+      aowebStrutsHttpUrlBase = in.readUTF();
+      aowebStrutsHttpsUrlBase = in.readUTF();
+      aowebStrutsGoogleVerifyContent = in.readNullUTF();
+      aowebStrutsNoindex = in.readBoolean();
+      aowebStrutsGoogleAnalyticsNewTrackingCode = in.readNullUTF();
+      aowebAtrutsSignupAdminAddress = in.readUTF();
+      aowebStrutsVncBind = in.readCompressedInt();
+      aowebStrutsKeystoreType = in.readUTF();
+      aowebStrutsKeystorePassword = in.readUTF();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -478,47 +518,47 @@ public final class Brand extends CachedObjectAccountNameKey<Brand> {
     out.writeUTF(nameserver2.toString());
     out.writeNullUTF(Objects.toString(nameserver3, null));
     out.writeNullUTF(Objects.toString(nameserver4, null));
-    out.writeCompressedInt(smtp_linux_server_account);
+    out.writeCompressedInt(smtpLinuxServerAccount);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_46) >= 0) {
-      out.writeNullUTF(Objects.toString(smtp_host, null));
+      out.writeNullUTF(Objects.toString(smtpHost, null));
     }
-    out.writeUTF(smtp_password);
-    out.writeCompressedInt(imap_linux_server_account);
+    out.writeUTF(smtpPassword);
+    out.writeCompressedInt(imapLinuxServerAccount);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_46) >= 0) {
-      out.writeNullUTF(Objects.toString(imap_host, null));
+      out.writeNullUTF(Objects.toString(imapHost, null));
     }
-    out.writeUTF(imap_password);
-    out.writeCompressedInt(support_email_address);
-    out.writeUTF(support_email_display);
-    out.writeCompressedInt(signup_email_address);
-    out.writeUTF(signup_email_display);
-    out.writeCompressedInt(ticket_encryption_from);
-    out.writeCompressedInt(ticket_encryption_recipient);
-    out.writeCompressedInt(signup_encryption_from);
-    out.writeCompressedInt(signup_encryption_recipient);
-    out.writeNullUTF(support_toll_free);
-    out.writeNullUTF(support_day_phone);
-    out.writeNullUTF(support_emergency_phone1);
-    out.writeNullUTF(support_emergency_phone2);
-    out.writeNullUTF(support_fax);
-    out.writeNullUTF(support_mailing_address1);
-    out.writeNullUTF(support_mailing_address2);
-    out.writeNullUTF(support_mailing_address3);
-    out.writeNullUTF(support_mailing_address4);
-    out.writeBoolean(english_enabled);
-    out.writeBoolean(japanese_enabled);
-    out.writeUTF(aoweb_struts_http_url_base);
-    out.writeUTF(aoweb_struts_https_url_base);
-    out.writeNullUTF(aoweb_struts_google_verify_content);
-    out.writeBoolean(aoweb_struts_noindex);
-    out.writeNullUTF(aoweb_struts_google_analytics_new_tracking_code);
-    out.writeUTF(aoweb_struts_signup_admin_address);
+    out.writeUTF(imapPassword);
+    out.writeCompressedInt(supportEailAddress);
+    out.writeUTF(supportEmailDisplay);
+    out.writeCompressedInt(signupEmailAddress);
+    out.writeUTF(signupEmailDisplay);
+    out.writeCompressedInt(ticketEncryptionFrom);
+    out.writeCompressedInt(ticketEncryptionRecipient);
+    out.writeCompressedInt(signupEncryptionFrom);
+    out.writeCompressedInt(signupEncryptionRecipient);
+    out.writeNullUTF(supportTollFree);
+    out.writeNullUTF(supportDayPhone);
+    out.writeNullUTF(supportEmergencyPhone1);
+    out.writeNullUTF(supportEmergencyPhone2);
+    out.writeNullUTF(supportFax);
+    out.writeNullUTF(supportMailingAddress1);
+    out.writeNullUTF(supportMailingAddress2);
+    out.writeNullUTF(supportMailingAddress3);
+    out.writeNullUTF(supportMailingAddress4);
+    out.writeBoolean(englishEnabled);
+    out.writeBoolean(japaneseEnabled);
+    out.writeUTF(aowebStrutsHttpUrlBase);
+    out.writeUTF(aowebStrutsHttpsUrlBase);
+    out.writeNullUTF(aowebStrutsGoogleVerifyContent);
+    out.writeBoolean(aowebStrutsNoindex);
+    out.writeNullUTF(aowebStrutsGoogleAnalyticsNewTrackingCode);
+    out.writeUTF(aowebAtrutsSignupAdminAddress);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_52) >= 0) {
-      out.writeCompressedInt(aoweb_struts_vnc_bind);
+      out.writeCompressedInt(aowebStrutsVncBind);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_53) >= 0) {
-      out.writeUTF(aoweb_struts_keystore_type);
-      out.writeUTF(aoweb_struts_keystore_password);
+      out.writeUTF(aowebStrutsKeystoreType);
+      out.writeUTF(aowebStrutsKeystorePassword);
     }
   }
 

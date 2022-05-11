@@ -39,11 +39,9 @@ import java.sql.SQLException;
  */
 public final class Rack extends CachedObjectIntegerKey<Rack> {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_FARM = 1,
-      COLUMN_NAME = 2
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_FARM = 1;
+  static final int COLUMN_NAME = 2;
   static final String COLUMN_FARM_name = "farm";
   static final String COLUMN_NAME_name = "name";
 
@@ -66,12 +64,18 @@ public final class Rack extends CachedObjectIntegerKey<Rack> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_FARM: return farm;
-      case COLUMN_NAME: return name;
-      case 3: return Float.isNaN(maxPower) ? null : maxPower;
-      case 4: return totalRackUnits == -1 ? null : totalRackUnits;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_FARM:
+        return farm;
+      case COLUMN_NAME:
+        return name;
+      case 3:
+        return Float.isNaN(maxPower) ? null : maxPower;
+      case 4:
+        return totalRackUnits == -1 ? null : totalRackUnits;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -102,8 +106,8 @@ public final class Rack extends CachedObjectIntegerKey<Rack> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.RACKS;
+  public Table.TableId getTableId() {
+    return Table.TableId.RACKS;
   }
 
   @Override

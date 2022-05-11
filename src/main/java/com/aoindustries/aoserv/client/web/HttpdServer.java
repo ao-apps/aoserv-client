@@ -54,60 +54,58 @@ import java.util.List;
  */
 public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_AO_SERVER = 1,
-      COLUMN_PACKAGE = 8
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_AO_SERVER = 1;
+  static final int COLUMN_PACKAGE = 8;
   static final String COLUMN_AO_SERVER_name = "ao_server";
   static final String COLUMN_NAME_name = "name";
 
-  private int ao_server;
+  private int aoServer;
   private String name;
-  private boolean can_add_sites;
-  private int linux_server_account;
-  private int linux_server_group;
-  private int mod_php_version;
-  private boolean use_suexec;
+  private boolean canAddSites;
+  private int linuxServerAccount;
+  private int linuxServerGroup;
+  private int modPhpVersion;
+  private boolean useSuexec;
   private int packageNum;
-  private boolean is_shared;
-  private boolean use_mod_perl;
+  private boolean isShared;
+  private boolean useModPerl;
   private int timeout;
-  private int max_concurrency;
-  private int monitoring_concurrency_low;
-  private int monitoring_concurrency_medium;
-  private int monitoring_concurrency_high;
-  private int monitoring_concurrency_critical;
-  private Boolean mod_access_compat;
-  private Boolean mod_actions;
-  private Boolean mod_alias;
-  private Boolean mod_auth_basic;
-  private Boolean mod_authn_core;
-  private Boolean mod_authn_file;
-  private Boolean mod_authz_core;
-  private Boolean mod_authz_groupfile;
-  private Boolean mod_authz_host;
-  private Boolean mod_authz_user;
-  private Boolean mod_autoindex;
-  private Boolean mod_deflate;
-  private Boolean mod_dir;
-  private Boolean mod_filter;
-  private Boolean mod_headers;
-  private Boolean mod_include;
-  private Boolean mod_jk;
-  private Boolean mod_log_config;
-  private Boolean mod_mime;
-  private Boolean mod_mime_magic;
-  private Boolean mod_negotiation;
-  private Boolean mod_proxy;
-  private Boolean mod_proxy_http;
-  private Boolean mod_reqtimeout;
-  private Boolean mod_rewrite;
-  private Boolean mod_setenvif;
-  private Boolean mod_socache_shmcb;
-  private Boolean mod_ssl;
-  private Boolean mod_status;
-  private Boolean mod_wsgi;
+  private int maxConcurrency;
+  private int monitoringConcurrencyLow;
+  private int monitoringConcurrencyMedium;
+  private int monitoringConcurrencyHigh;
+  private int monitoringConcurrencyCritical;
+  private Boolean modAccessCompat;
+  private Boolean modActions;
+  private Boolean modAlias;
+  private Boolean modAuthBasic;
+  private Boolean modAuthnCore;
+  private Boolean modAuthnFile;
+  private Boolean modAuthzCore;
+  private Boolean modAuthzGroupfile;
+  private Boolean modAuthzHost;
+  private Boolean modAuthzUser;
+  private Boolean modAutoindex;
+  private Boolean modDeflate;
+  private Boolean modDir;
+  private Boolean modFilter;
+  private Boolean modHeaders;
+  private Boolean modInclude;
+  private Boolean modJk;
+  private Boolean modLogConfig;
+  private Boolean modMime;
+  private Boolean modMimeMagic;
+  private Boolean modNegotiation;
+  private Boolean modProxy;
+  private Boolean modProxyHttp;
+  private Boolean modReqtimeout;
+  private Boolean modRewrite;
+  private Boolean modSetenvif;
+  private Boolean modSocacheShmcb;
+  private Boolean modSsl;
+  private Boolean modStatus;
+  private Boolean modWsgi;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -121,60 +119,108 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
   }
 
   public boolean canAddSites() {
-    return can_add_sites;
+    return canAddSites;
   }
 
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_AO_SERVER: return ao_server;
-      case 2: return name;
-      case 3: return can_add_sites;
-      case 4: return linux_server_account;
-      case 5: return linux_server_group;
-      case 6: return (mod_php_version == -1) ? null : mod_php_version;
-      case 7: return use_suexec;
-      case COLUMN_PACKAGE: return packageNum;
-      case 9: return is_shared;
-      case 10: return use_mod_perl;
-      case 11: return timeout;
-      case 12: return max_concurrency;
-      case 13: return (monitoring_concurrency_low == -1) ? null : monitoring_concurrency_low;
-      case 14: return (monitoring_concurrency_medium == -1) ? null : monitoring_concurrency_medium;
-      case 15: return (monitoring_concurrency_high == -1) ? null : monitoring_concurrency_high;
-      case 16: return (monitoring_concurrency_critical == -1) ? null : monitoring_concurrency_critical;
-      case 17: return mod_access_compat;
-      case 18: return mod_actions;
-      case 19: return mod_alias;
-      case 20: return mod_auth_basic;
-      case 21: return mod_authn_core;
-      case 22: return mod_authn_file;
-      case 23: return mod_authz_core;
-      case 24: return mod_authz_groupfile;
-      case 25: return mod_authz_host;
-      case 26: return mod_authz_user;
-      case 27: return mod_autoindex;
-      case 28: return mod_deflate;
-      case 29: return mod_dir;
-      case 30: return mod_filter;
-      case 31: return mod_headers;
-      case 32: return mod_include;
-      case 33: return mod_jk;
-      case 34: return mod_log_config;
-      case 35: return mod_mime;
-      case 36: return mod_mime_magic;
-      case 37: return mod_negotiation;
-      case 38: return mod_proxy;
-      case 39: return mod_proxy_http;
-      case 40: return mod_reqtimeout;
-      case 41: return mod_rewrite;
-      case 42: return mod_setenvif;
-      case 43: return mod_socache_shmcb;
-      case 44: return mod_ssl;
-      case 45: return mod_status;
-      case 46: return mod_wsgi;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_AO_SERVER:
+        return aoServer;
+      case 2:
+        return name;
+      case 3:
+        return canAddSites;
+      case 4:
+        return linuxServerAccount;
+      case 5:
+        return linuxServerGroup;
+      case 6:
+        return (modPhpVersion == -1) ? null : modPhpVersion;
+      case 7:
+        return useSuexec;
+      case COLUMN_PACKAGE:
+        return packageNum;
+      case 9:
+        return isShared;
+      case 10:
+        return useModPerl;
+      case 11:
+        return timeout;
+      case 12:
+        return maxConcurrency;
+      case 13:
+        return (monitoringConcurrencyLow == -1) ? null : monitoringConcurrencyLow;
+      case 14:
+        return (monitoringConcurrencyMedium == -1) ? null : monitoringConcurrencyMedium;
+      case 15:
+        return (monitoringConcurrencyHigh == -1) ? null : monitoringConcurrencyHigh;
+      case 16:
+        return (monitoringConcurrencyCritical == -1) ? null : monitoringConcurrencyCritical;
+      case 17:
+        return modAccessCompat;
+      case 18:
+        return modActions;
+      case 19:
+        return modAlias;
+      case 20:
+        return modAuthBasic;
+      case 21:
+        return modAuthnCore;
+      case 22:
+        return modAuthnFile;
+      case 23:
+        return modAuthzCore;
+      case 24:
+        return modAuthzGroupfile;
+      case 25:
+        return modAuthzHost;
+      case 26:
+        return modAuthzUser;
+      case 27:
+        return modAutoindex;
+      case 28:
+        return modDeflate;
+      case 29:
+        return modDir;
+      case 30:
+        return modFilter;
+      case 31:
+        return modHeaders;
+      case 32:
+        return modInclude;
+      case 33:
+        return modJk;
+      case 34:
+        return modLogConfig;
+      case 35:
+        return modMime;
+      case 36:
+        return modMimeMagic;
+      case 37:
+        return modNegotiation;
+      case 38:
+        return modProxy;
+      case 39:
+        return modProxyHttp;
+      case 40:
+        return modReqtimeout;
+      case 41:
+        return modRewrite;
+      case 42:
+        return modSetenvif;
+      case 43:
+        return modSocacheShmcb;
+      case 44:
+        return modSsl;
+      case 45:
+        return modStatus;
+      case 46:
+        return modWsgi;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -191,36 +237,36 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
   }
 
   public int getLinuxServerAccount_pkey() {
-    return linux_server_account;
+    return linuxServerAccount;
   }
 
   public UserServer getLinuxServerAccount() throws SQLException, IOException {
-    UserServer lsa = table.getConnector().getLinux().getUserServer().get(linux_server_account);
+    UserServer lsa = table.getConnector().getLinux().getUserServer().get(linuxServerAccount);
     if (lsa == null) {
-      throw new SQLException("Unable to find LinuxServerAccount: " + linux_server_account);
+      throw new SQLException("Unable to find LinuxServerAccount: " + linuxServerAccount);
     }
     return lsa;
   }
 
   public int getLinuxServerGroup_pkey() {
-    return linux_server_group;
+    return linuxServerGroup;
   }
 
   public GroupServer getLinuxServerGroup() throws SQLException, IOException {
-    GroupServer lsg = table.getConnector().getLinux().getGroupServer().get(linux_server_group);
+    GroupServer lsg = table.getConnector().getLinux().getGroupServer().get(linuxServerGroup);
     if (lsg == null) {
-      throw new SQLException("Unable to find LinuxServerGroup: " + linux_server_group);
+      throw new SQLException("Unable to find LinuxServerGroup: " + linuxServerGroup);
     }
     return lsg;
   }
 
   public SoftwareVersion getModPhpVersion() throws SQLException, IOException {
-    if (mod_php_version == -1) {
+    if (modPhpVersion == -1) {
       return null;
     }
-    SoftwareVersion tv = table.getConnector().getDistribution().getSoftwareVersion().get(mod_php_version);
+    SoftwareVersion tv = table.getConnector().getDistribution().getSoftwareVersion().get(modPhpVersion);
     if (tv == null) {
-      throw new SQLException("Unable to find TechnologyVersion: " + mod_php_version);
+      throw new SQLException("Unable to find TechnologyVersion: " + modPhpVersion);
     }
     if (
         tv.getOperatingSystemVersion(table.getConnector()).getPkey()
@@ -232,7 +278,7 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
   }
 
   public boolean useSuexec() {
-    return use_suexec;
+    return useSuexec;
   }
 
   public Package getPackage() throws IOException, SQLException {
@@ -241,11 +287,11 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
   }
 
   public boolean isShared() {
-    return is_shared;
+    return isShared;
   }
 
-  public boolean useModPERL() {
-    return use_mod_perl;
+  public boolean useModPerl() {
+    return useModPerl;
   }
 
   /**
@@ -259,7 +305,7 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
    * Gets the maximum concurrency of this server (number of children processes/threads).
    */
   public int getMaxConcurrency() {
-    return max_concurrency;
+    return maxConcurrency;
   }
 
   /**
@@ -267,7 +313,7 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
    * <code>-1</code> if no alert allowed at this level.
    */
   public int getMonitoringConcurrencyLow() {
-    return monitoring_concurrency_low;
+    return monitoringConcurrencyLow;
   }
 
   /**
@@ -275,7 +321,7 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
    * <code>-1</code> if no alert allowed at this level.
    */
   public int getMonitoringConcurrencyMedium() {
-    return monitoring_concurrency_medium;
+    return monitoringConcurrencyMedium;
   }
 
   /**
@@ -283,7 +329,7 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
    * <code>-1</code> if no alert allowed at this level.
    */
   public int getMonitoringConcurrencyHigh() {
-    return monitoring_concurrency_high;
+    return monitoringConcurrencyHigh;
   }
 
   /**
@@ -292,7 +338,7 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
    * This is the level that will alert people 24x7.
    */
   public int getMonitoringConcurrencyCritical() {
-    return monitoring_concurrency_critical;
+    return monitoringConcurrencyCritical;
   }
 
   /**
@@ -320,344 +366,344 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
   }
 
   public Server getLinuxServer() throws SQLException, IOException {
-    Server obj = table.getConnector().getLinux().getServer().get(ao_server);
+    Server obj = table.getConnector().getLinux().getServer().get(aoServer);
     if (obj == null) {
-      throw new SQLException("Unable to find linux.Server: " + ao_server);
+      throw new SQLException("Unable to find linux.Server: " + aoServer);
     }
     return obj;
   }
 
   public Boolean getModAccessCompat() {
-    return mod_access_compat;
+    return modAccessCompat;
   }
 
   public Boolean getModActions() {
-    return mod_actions;
+    return modActions;
   }
 
   public Boolean getModAlias() {
-    return mod_alias;
+    return modAlias;
   }
 
   public Boolean getModAuthBasic() {
-    return mod_auth_basic;
+    return modAuthBasic;
   }
 
   public Boolean getModAuthnCore() {
-    return mod_authn_core;
+    return modAuthnCore;
   }
 
   public Boolean getModAuthnFile() {
-    return mod_authn_file;
+    return modAuthnFile;
   }
 
   public Boolean getModAuthzCore() {
-    return mod_authz_core;
+    return modAuthzCore;
   }
 
   public Boolean getModAuthzGroupfile() {
-    return mod_authz_groupfile;
+    return modAuthzGroupfile;
   }
 
   public Boolean getModAuthzHost() {
-    return mod_authz_host;
+    return modAuthzHost;
   }
 
   public Boolean getModAuthzUser() {
-    return mod_authz_user;
+    return modAuthzUser;
   }
 
   public Boolean getModAutoindex() {
-    return mod_autoindex;
+    return modAutoindex;
   }
 
   public Boolean getModDeflate() {
-    return mod_deflate;
+    return modDeflate;
   }
 
   public Boolean getModDir() {
-    return mod_dir;
+    return modDir;
   }
 
   public Boolean getModFilter() {
-    return mod_filter;
+    return modFilter;
   }
 
   public Boolean getModHeaders() {
-    return mod_headers;
+    return modHeaders;
   }
 
   public Boolean getModInclude() {
-    return mod_include;
+    return modInclude;
   }
 
   public Boolean getModJk() {
-    return mod_jk;
+    return modJk;
   }
 
   public Boolean getModLogConfig() {
-    return mod_log_config;
+    return modLogConfig;
   }
 
   public Boolean getModMime() {
-    return mod_mime;
+    return modMime;
   }
 
   public Boolean getModMimeMagic() {
-    return mod_mime_magic;
+    return modMimeMagic;
   }
 
   public Boolean getModNegotiation() {
-    return mod_negotiation;
+    return modNegotiation;
   }
 
   public Boolean getModProxy() {
-    return mod_proxy;
+    return modProxy;
   }
 
   public Boolean getModProxyHttp() {
-    return mod_proxy_http;
+    return modProxyHttp;
   }
 
   public Boolean getModReqtimeout() {
-    return mod_reqtimeout;
+    return modReqtimeout;
   }
 
   public Boolean getModRewrite() {
-    return mod_rewrite;
+    return modRewrite;
   }
 
   public Boolean getModSetenvif() {
-    return mod_setenvif;
+    return modSetenvif;
   }
 
   public Boolean getModSocacheShmcb() {
-    return mod_socache_shmcb;
+    return modSocacheShmcb;
   }
 
   public Boolean getModSsl() {
-    return mod_ssl;
+    return modSsl;
   }
 
   public Boolean getModStatus() {
-    return mod_status;
+    return modStatus;
   }
 
   public Boolean getModWsgi() {
-    return mod_wsgi;
+    return modWsgi;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.HTTPD_SERVERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.HTTPD_SERVERS;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     int pos = 1;
     pkey = result.getInt(pos++);
-    ao_server = result.getInt(pos++);
+    aoServer = result.getInt(pos++);
     name = result.getString(pos++);
-    can_add_sites = result.getBoolean(pos++);
-    linux_server_account = result.getInt(pos++);
-    linux_server_group = result.getInt(pos++);
-    mod_php_version = result.getInt(pos++);
+    canAddSites = result.getBoolean(pos++);
+    linuxServerAccount = result.getInt(pos++);
+    linuxServerGroup = result.getInt(pos++);
+    modPhpVersion = result.getInt(pos++);
     if (result.wasNull()) {
-      mod_php_version = -1;
+      modPhpVersion = -1;
     }
-    use_suexec = result.getBoolean(pos++);
+    useSuexec = result.getBoolean(pos++);
     packageNum = result.getInt(pos++);
-    is_shared = result.getBoolean(pos++);
-    use_mod_perl = result.getBoolean(pos++);
+    isShared = result.getBoolean(pos++);
+    useModPerl = result.getBoolean(pos++);
     timeout = result.getInt(pos++);
-    max_concurrency = result.getInt(pos++);
-    monitoring_concurrency_low = result.getInt(pos++);
+    maxConcurrency = result.getInt(pos++);
+    monitoringConcurrencyLow = result.getInt(pos++);
     if (result.wasNull()) {
-      monitoring_concurrency_low = -1;
+      monitoringConcurrencyLow = -1;
     }
-    monitoring_concurrency_medium = result.getInt(pos++);
+    monitoringConcurrencyMedium = result.getInt(pos++);
     if (result.wasNull()) {
-      monitoring_concurrency_medium = -1;
+      monitoringConcurrencyMedium = -1;
     }
-    monitoring_concurrency_high = result.getInt(pos++);
+    monitoringConcurrencyHigh = result.getInt(pos++);
     if (result.wasNull()) {
-      monitoring_concurrency_high = -1;
+      monitoringConcurrencyHigh = -1;
     }
-    monitoring_concurrency_critical = result.getInt(pos++);
+    monitoringConcurrencyCritical = result.getInt(pos++);
     if (result.wasNull()) {
-      monitoring_concurrency_critical = -1;
+      monitoringConcurrencyCritical = -1;
     }
-    mod_access_compat = result.getBoolean(pos++);
+    modAccessCompat = result.getBoolean(pos++);
     if (result.wasNull()) {
-      mod_access_compat = null;
+      modAccessCompat = null;
     }
-    mod_actions = result.getBoolean(pos++);
+    modActions = result.getBoolean(pos++);
     if (result.wasNull()) {
-      mod_actions = null;
+      modActions = null;
     }
-    mod_alias = result.getBoolean(pos++);
+    modAlias = result.getBoolean(pos++);
     if (result.wasNull()) {
-      mod_alias = null;
+      modAlias = null;
     }
-    mod_auth_basic = result.getBoolean(pos++);
+    modAuthBasic = result.getBoolean(pos++);
     if (result.wasNull()) {
-      mod_auth_basic = null;
+      modAuthBasic = null;
     }
-    mod_authn_core = result.getBoolean(pos++);
+    modAuthnCore = result.getBoolean(pos++);
     if (result.wasNull()) {
-      mod_authn_core = null;
+      modAuthnCore = null;
     }
-    mod_authn_file = result.getBoolean(pos++);
+    modAuthnFile = result.getBoolean(pos++);
     if (result.wasNull()) {
-      mod_authn_file = null;
+      modAuthnFile = null;
     }
-    mod_authz_core = result.getBoolean(pos++);
+    modAuthzCore = result.getBoolean(pos++);
     if (result.wasNull()) {
-      mod_authz_core = null;
+      modAuthzCore = null;
     }
-    mod_authz_groupfile = result.getBoolean(pos++);
+    modAuthzGroupfile = result.getBoolean(pos++);
     if (result.wasNull()) {
-      mod_authz_groupfile = null;
+      modAuthzGroupfile = null;
     }
-    mod_authz_host = result.getBoolean(pos++);
+    modAuthzHost = result.getBoolean(pos++);
     if (result.wasNull()) {
-      mod_authz_host = null;
+      modAuthzHost = null;
     }
-    mod_authz_user = result.getBoolean(pos++);
+    modAuthzUser = result.getBoolean(pos++);
     if (result.wasNull()) {
-      mod_authz_user = null;
+      modAuthzUser = null;
     }
-    mod_autoindex = result.getBoolean(pos++);
+    modAutoindex = result.getBoolean(pos++);
     if (result.wasNull()) {
-      mod_autoindex = null;
+      modAutoindex = null;
     }
-    mod_deflate = result.getBoolean(pos++);
+    modDeflate = result.getBoolean(pos++);
     if (result.wasNull()) {
-      mod_deflate = null;
+      modDeflate = null;
     }
-    mod_dir = result.getBoolean(pos++);
+    modDir = result.getBoolean(pos++);
     if (result.wasNull()) {
-      mod_dir = null;
+      modDir = null;
     }
-    mod_filter = result.getBoolean(pos++);
+    modFilter = result.getBoolean(pos++);
     if (result.wasNull()) {
-      mod_filter = null;
+      modFilter = null;
     }
-    mod_headers = result.getBoolean(pos++);
+    modHeaders = result.getBoolean(pos++);
     if (result.wasNull()) {
-      mod_headers = null;
+      modHeaders = null;
     }
-    mod_include = result.getBoolean(pos++);
+    modInclude = result.getBoolean(pos++);
     if (result.wasNull()) {
-      mod_include = null;
+      modInclude = null;
     }
-    mod_jk = result.getBoolean(pos++);
+    modJk = result.getBoolean(pos++);
     if (result.wasNull()) {
-      mod_jk = null;
+      modJk = null;
     }
-    mod_log_config = result.getBoolean(pos++);
+    modLogConfig = result.getBoolean(pos++);
     if (result.wasNull()) {
-      mod_log_config = null;
+      modLogConfig = null;
     }
-    mod_mime = result.getBoolean(pos++);
+    modMime = result.getBoolean(pos++);
     if (result.wasNull()) {
-      mod_mime = null;
+      modMime = null;
     }
-    mod_mime_magic = result.getBoolean(pos++);
+    modMimeMagic = result.getBoolean(pos++);
     if (result.wasNull()) {
-      mod_mime_magic = null;
+      modMimeMagic = null;
     }
-    mod_negotiation = result.getBoolean(pos++);
+    modNegotiation = result.getBoolean(pos++);
     if (result.wasNull()) {
-      mod_negotiation = null;
+      modNegotiation = null;
     }
-    mod_proxy = result.getBoolean(pos++);
+    modProxy = result.getBoolean(pos++);
     if (result.wasNull()) {
-      mod_proxy = null;
+      modProxy = null;
     }
-    mod_proxy_http = result.getBoolean(pos++);
+    modProxyHttp = result.getBoolean(pos++);
     if (result.wasNull()) {
-      mod_proxy_http = null;
+      modProxyHttp = null;
     }
-    mod_reqtimeout = result.getBoolean(pos++);
+    modReqtimeout = result.getBoolean(pos++);
     if (result.wasNull()) {
-      mod_reqtimeout = null;
+      modReqtimeout = null;
     }
-    mod_rewrite = result.getBoolean(pos++);
+    modRewrite = result.getBoolean(pos++);
     if (result.wasNull()) {
-      mod_rewrite = null;
+      modRewrite = null;
     }
-    mod_setenvif = result.getBoolean(pos++);
+    modSetenvif = result.getBoolean(pos++);
     if (result.wasNull()) {
-      mod_setenvif = null;
+      modSetenvif = null;
     }
-    mod_socache_shmcb = result.getBoolean(pos++);
+    modSocacheShmcb = result.getBoolean(pos++);
     if (result.wasNull()) {
-      mod_socache_shmcb = null;
+      modSocacheShmcb = null;
     }
-    mod_ssl = result.getBoolean(pos++);
+    modSsl = result.getBoolean(pos++);
     if (result.wasNull()) {
-      mod_ssl = null;
+      modSsl = null;
     }
-    mod_status = result.getBoolean(pos++);
+    modStatus = result.getBoolean(pos++);
     if (result.wasNull()) {
-      mod_status = null;
+      modStatus = null;
     }
-    mod_wsgi = result.getBoolean(pos++);
+    modWsgi = result.getBoolean(pos++);
     if (result.wasNull()) {
-      mod_wsgi = null;
+      modWsgi = null;
     }
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readCompressedInt();
-    ao_server = in.readCompressedInt();
+    aoServer = in.readCompressedInt();
     name = in.readNullUTF();
-    can_add_sites = in.readBoolean();
-    linux_server_account = in.readCompressedInt();
-    linux_server_group = in.readCompressedInt();
-    mod_php_version = in.readCompressedInt();
-    use_suexec = in.readBoolean();
+    canAddSites = in.readBoolean();
+    linuxServerAccount = in.readCompressedInt();
+    linuxServerGroup = in.readCompressedInt();
+    modPhpVersion = in.readCompressedInt();
+    useSuexec = in.readBoolean();
     packageNum = in.readCompressedInt();
-    is_shared = in.readBoolean();
-    use_mod_perl = in.readBoolean();
+    isShared = in.readBoolean();
+    useModPerl = in.readBoolean();
     timeout = in.readCompressedInt();
-    max_concurrency = in.readCompressedInt();
-    monitoring_concurrency_low = in.readCompressedInt();
-    monitoring_concurrency_medium = in.readCompressedInt();
-    monitoring_concurrency_high = in.readCompressedInt();
-    monitoring_concurrency_critical = in.readCompressedInt();
-    mod_access_compat = in.readNullBoolean();
-    mod_actions = in.readNullBoolean();
-    mod_alias = in.readNullBoolean();
-    mod_auth_basic = in.readNullBoolean();
-    mod_authn_core = in.readNullBoolean();
-    mod_authn_file = in.readNullBoolean();
-    mod_authz_core = in.readNullBoolean();
-    mod_authz_groupfile = in.readNullBoolean();
-    mod_authz_host = in.readNullBoolean();
-    mod_authz_user = in.readNullBoolean();
-    mod_autoindex = in.readNullBoolean();
-    mod_deflate = in.readNullBoolean();
-    mod_dir = in.readNullBoolean();
-    mod_filter = in.readNullBoolean();
-    mod_headers = in.readNullBoolean();
-    mod_include = in.readNullBoolean();
-    mod_jk = in.readNullBoolean();
-    mod_log_config = in.readNullBoolean();
-    mod_mime = in.readNullBoolean();
-    mod_mime_magic = in.readNullBoolean();
-    mod_negotiation = in.readNullBoolean();
-    mod_proxy = in.readNullBoolean();
-    mod_proxy_http = in.readNullBoolean();
-    mod_reqtimeout = in.readNullBoolean();
-    mod_rewrite = in.readNullBoolean();
-    mod_setenvif = in.readNullBoolean();
-    mod_socache_shmcb = in.readNullBoolean();
-    mod_ssl = in.readNullBoolean();
-    mod_status = in.readNullBoolean();
-    mod_wsgi = in.readNullBoolean();
+    maxConcurrency = in.readCompressedInt();
+    monitoringConcurrencyLow = in.readCompressedInt();
+    monitoringConcurrencyMedium = in.readCompressedInt();
+    monitoringConcurrencyHigh = in.readCompressedInt();
+    monitoringConcurrencyCritical = in.readCompressedInt();
+    modAccessCompat = in.readNullBoolean();
+    modActions = in.readNullBoolean();
+    modAlias = in.readNullBoolean();
+    modAuthBasic = in.readNullBoolean();
+    modAuthnCore = in.readNullBoolean();
+    modAuthnFile = in.readNullBoolean();
+    modAuthzCore = in.readNullBoolean();
+    modAuthzGroupfile = in.readNullBoolean();
+    modAuthzHost = in.readNullBoolean();
+    modAuthzUser = in.readNullBoolean();
+    modAutoindex = in.readNullBoolean();
+    modDeflate = in.readNullBoolean();
+    modDir = in.readNullBoolean();
+    modFilter = in.readNullBoolean();
+    modHeaders = in.readNullBoolean();
+    modInclude = in.readNullBoolean();
+    modJk = in.readNullBoolean();
+    modLogConfig = in.readNullBoolean();
+    modMime = in.readNullBoolean();
+    modMimeMagic = in.readNullBoolean();
+    modNegotiation = in.readNullBoolean();
+    modProxy = in.readNullBoolean();
+    modProxyHttp = in.readNullBoolean();
+    modReqtimeout = in.readNullBoolean();
+    modRewrite = in.readNullBoolean();
+    modSetenvif = in.readNullBoolean();
+    modSocacheShmcb = in.readNullBoolean();
+    modSsl = in.readNullBoolean();
+    modStatus = in.readNullBoolean();
+    modWsgi = in.readNullBoolean();
   }
 
   @Override
@@ -668,76 +714,76 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeCompressedInt(ao_server);
+    out.writeCompressedInt(aoServer);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_8) < 0) {
       out.writeCompressedInt(name == null ? 1 : Integer.parseInt(name));
     } else {
       out.writeNullUTF(name);
     }
-    out.writeBoolean(can_add_sites);
+    out.writeBoolean(canAddSites);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_9) <= 0) {
       out.writeBoolean(true); // is_mod_jk
       out.writeCompressedInt(128); // max_binds
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_102) >= 0) {
-      out.writeCompressedInt(linux_server_account);
-      out.writeCompressedInt(linux_server_group);
-      out.writeCompressedInt(mod_php_version);
-      out.writeBoolean(use_suexec);
+      out.writeCompressedInt(linuxServerAccount);
+      out.writeCompressedInt(linuxServerGroup);
+      out.writeCompressedInt(modPhpVersion);
+      out.writeBoolean(useSuexec);
       out.writeCompressedInt(packageNum);
       if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_122) <= 0) {
         out.writeCompressedInt(-1);
       }
-      out.writeBoolean(is_shared);
+      out.writeBoolean(isShared);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_103) >= 0) {
-      out.writeBoolean(use_mod_perl);
+      out.writeBoolean(useModPerl);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_130) >= 0) {
       out.writeCompressedInt(timeout);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_68) >= 0) {
-      out.writeCompressedInt(max_concurrency);
+      out.writeCompressedInt(maxConcurrency);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_11) >= 0) {
-      out.writeCompressedInt(monitoring_concurrency_low);
-      out.writeCompressedInt(monitoring_concurrency_medium);
-      out.writeCompressedInt(monitoring_concurrency_high);
-      out.writeCompressedInt(monitoring_concurrency_critical);
+      out.writeCompressedInt(monitoringConcurrencyLow);
+      out.writeCompressedInt(monitoringConcurrencyMedium);
+      out.writeCompressedInt(monitoringConcurrencyHigh);
+      out.writeCompressedInt(monitoringConcurrencyCritical);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_7) >= 0) {
-      out.writeNullBoolean(mod_access_compat);
-      out.writeNullBoolean(mod_actions);
-      out.writeNullBoolean(mod_alias);
-      out.writeNullBoolean(mod_auth_basic);
-      out.writeNullBoolean(mod_authn_core);
-      out.writeNullBoolean(mod_authn_file);
-      out.writeNullBoolean(mod_authz_core);
-      out.writeNullBoolean(mod_authz_groupfile);
-      out.writeNullBoolean(mod_authz_host);
-      out.writeNullBoolean(mod_authz_user);
-      out.writeNullBoolean(mod_autoindex);
-      out.writeNullBoolean(mod_deflate);
-      out.writeNullBoolean(mod_dir);
-      out.writeNullBoolean(mod_filter);
-      out.writeNullBoolean(mod_headers);
-      out.writeNullBoolean(mod_include);
-      out.writeNullBoolean(mod_jk);
-      out.writeNullBoolean(mod_log_config);
-      out.writeNullBoolean(mod_mime);
-      out.writeNullBoolean(mod_mime_magic);
-      out.writeNullBoolean(mod_negotiation);
-      out.writeNullBoolean(mod_proxy);
-      out.writeNullBoolean(mod_proxy_http);
-      out.writeNullBoolean(mod_reqtimeout);
-      out.writeNullBoolean(mod_rewrite);
-      out.writeNullBoolean(mod_setenvif);
-      out.writeNullBoolean(mod_socache_shmcb);
-      out.writeNullBoolean(mod_ssl);
-      out.writeNullBoolean(mod_status);
+      out.writeNullBoolean(modAccessCompat);
+      out.writeNullBoolean(modActions);
+      out.writeNullBoolean(modAlias);
+      out.writeNullBoolean(modAuthBasic);
+      out.writeNullBoolean(modAuthnCore);
+      out.writeNullBoolean(modAuthnFile);
+      out.writeNullBoolean(modAuthzCore);
+      out.writeNullBoolean(modAuthzGroupfile);
+      out.writeNullBoolean(modAuthzHost);
+      out.writeNullBoolean(modAuthzUser);
+      out.writeNullBoolean(modAutoindex);
+      out.writeNullBoolean(modDeflate);
+      out.writeNullBoolean(modDir);
+      out.writeNullBoolean(modFilter);
+      out.writeNullBoolean(modHeaders);
+      out.writeNullBoolean(modInclude);
+      out.writeNullBoolean(modJk);
+      out.writeNullBoolean(modLogConfig);
+      out.writeNullBoolean(modMime);
+      out.writeNullBoolean(modMimeMagic);
+      out.writeNullBoolean(modNegotiation);
+      out.writeNullBoolean(modProxy);
+      out.writeNullBoolean(modProxyHttp);
+      out.writeNullBoolean(modReqtimeout);
+      out.writeNullBoolean(modRewrite);
+      out.writeNullBoolean(modSetenvif);
+      out.writeNullBoolean(modSocacheShmcb);
+      out.writeNullBoolean(modSsl);
+      out.writeNullBoolean(modStatus);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_10) >= 0) {
-      out.writeNullBoolean(mod_wsgi);
+      out.writeNullBoolean(modWsgi);
     }
   }
 
@@ -747,7 +793,7 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
   public int getConcurrency() throws IOException, SQLException {
     return table.getConnector().requestIntQuery(
         true,
-        AoservProtocol.CommandID.GET_HTTPD_SERVER_CONCURRENCY,
+        AoservProtocol.CommandId.GET_HTTPD_SERVER_CONCURRENCY,
         pkey
     );
   }

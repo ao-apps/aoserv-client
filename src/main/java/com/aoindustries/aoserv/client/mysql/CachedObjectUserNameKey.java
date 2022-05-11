@@ -26,7 +26,7 @@ package com.aoindustries.aoserv.client.mysql;
 import com.aoindustries.aoserv.client.CachedObject;
 
 /**
- * An object that is cached and uses {@link User.Name} as its primary key,
+ * An object that is cached and uses {@link User.Name} as its primary key.
  *
  * @author  AO Industries, Inc.
  */
@@ -50,8 +50,7 @@ public abstract class CachedObjectUserNameKey<V extends CachedObjectUserNameKey<
     return
         obj != null
             && obj.getClass() == getClass()
-            && ((CachedObjectUserNameKey<?>) obj).pkey.equals(pkey)
-    ;
+            && ((CachedObjectUserNameKey<?>) obj).pkey.equals(pkey);
   }
 
   @Override

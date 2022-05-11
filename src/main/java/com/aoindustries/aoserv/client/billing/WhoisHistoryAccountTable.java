@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.billing;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -38,7 +38,7 @@ import java.util.List;
  */
 public final class WhoisHistoryAccountTable extends CachedTableIntegerKey<WhoisHistoryAccount> {
 
-  WhoisHistoryAccountTable(AOServConnector connector) {
+  WhoisHistoryAccountTable(AoservConnector connector) {
     super(connector, WhoisHistoryAccount.class);
   }
 
@@ -60,8 +60,8 @@ public final class WhoisHistoryAccountTable extends CachedTableIntegerKey<WhoisH
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.WhoisHistoryAccount;
+  public Table.TableId getTableId() {
+    return Table.TableId.WhoisHistoryAccount;
   }
 
   /**

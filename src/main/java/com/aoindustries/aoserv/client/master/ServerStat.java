@@ -25,8 +25,8 @@ package com.aoindustries.aoserv.client.master;
 
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
-import com.aoindustries.aoserv.client.AOServObject;
-import com.aoindustries.aoserv.client.AOServTable;
+import com.aoindustries.aoserv.client.AoservObject;
+import com.aoindustries.aoserv.client.AoservTable;
 import com.aoindustries.aoserv.client.SingleTableObject;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -41,58 +41,56 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-public final class ServerStat extends AOServObject<String, ServerStat> implements SingleTableObject<String, ServerStat> {
+public final class ServerStat extends AoservObject<String, ServerStat> implements SingleTableObject<String, ServerStat> {
 
-  public static final String
-      BYTE_ARRAY_CACHE_CREATES = "byte_array_cache_creates",
-      BYTE_ARRAY_CACHE_USES = "byte_array_cache_uses",
-      BYTE_ARRAY_CACHE_ZERO_FILLS = "byte_array_cache_zero_fills",
-      BYTE_ARRAY_CACHE_COLLECTED = "byte_array_cache_collected",
-      CHAR_ARRAY_CACHE_CREATES = "char_array_cache_creates",
-      CHAR_ARRAY_CACHE_USES = "char_array_cache_uses",
-      CHAR_ARRAY_CACHE_ZERO_FILLS = "char_array_cache_zero_fills",
-      CHAR_ARRAY_CACHE_COLLECTED = "char_array_cache_collected",
-      DAEMON_CONCURRENCY = "daemon_concurrency",
-      DAEMON_CONNECTIONS = "daemon_connections",
-      DAEMON_CONNECTS = "daemon_connects",
-      DAEMON_COUNT = "daemon_count",
-      DAEMON_DOWN_COUNT = "daemon_down_count",
-      DAEMON_MAX_CONCURRENCY = "daemon_max_concurrency",
-      DAEMON_POOL_SIZE = "daemon_pool_size",
-      DAEMON_TOTAL_TIME = "daemon_total_time",
-      DAEMON_TRANSACTIONS = "daemon_transactions",
-      DB_CONCURRENCY = "db_concurrency",
-      DB_CONNECTIONS = "db_connections",
-      DB_CONNECTS = "db_connects",
-      DB_MAX_CONCURRENCY = "db_max_concurrency",
-      DB_POOL_SIZE = "db_pool_size",
-      DB_TOTAL_TIME = "db_total_time",
-      DB_TRANSACTIONS = "db_transactions",
-      ENTROPY_AVAIL = "entropy_avail",
-      ENTROPY_POOLSIZE = "entropy_poolsize",
-      ENTROPY_READ_BYTES = "entropy_read_bytes",
-      ENTROPY_READ_COUNT = "entropy_read_count",
-      ENTROPY_WRITE_BYTES = "entropy_write_bytes",
-      ENTROPY_WRITE_COUNT = "entropy_write_count",
-      MEMORY_FREE = "memory_free",
-      MEMORY_TOTAL = "memory_total",
-      // TODO: Coalesce version ranges
-      PROTOCOL_VERSION = "protocol_version",
-      REQUEST_CONCURRENCY = "request_concurrency",
-      REQUEST_CONNECTIONS = "request_connections",
-      REQUEST_MAX_CONCURRENCY = "request_max_concurrency",
-      REQUEST_TOTAL_TIME = "request_total_time",
-      REQUEST_TRANSACTIONS = "request_transactions",
-      THREAD_COUNT = "thread_count",
-      UPTIME = "uptime"
-  ;
+  public static final String BYTE_ARRAY_CACHE_CREATES = "byte_array_cache_creates";
+  public static final String BYTE_ARRAY_CACHE_USES = "byte_array_cache_uses";
+  public static final String BYTE_ARRAY_CACHE_ZERO_FILLS = "byte_array_cache_zero_fills";
+  public static final String BYTE_ARRAY_CACHE_COLLECTED = "byte_array_cache_collected";
+  public static final String CHAR_ARRAY_CACHE_CREATES = "char_array_cache_creates";
+  public static final String CHAR_ARRAY_CACHE_USES = "char_array_cache_uses";
+  public static final String CHAR_ARRAY_CACHE_ZERO_FILLS = "char_array_cache_zero_fills";
+  public static final String CHAR_ARRAY_CACHE_COLLECTED = "char_array_cache_collected";
+  public static final String DAEMON_CONCURRENCY = "daemon_concurrency";
+  public static final String DAEMON_CONNECTIONS = "daemon_connections";
+  public static final String DAEMON_CONNECTS = "daemon_connects";
+  public static final String DAEMON_COUNT = "daemon_count";
+  public static final String DAEMON_DOWN_COUNT = "daemon_down_count";
+  public static final String DAEMON_MAX_CONCURRENCY = "daemon_max_concurrency";
+  public static final String DAEMON_POOL_SIZE = "daemon_pool_size";
+  public static final String DAEMON_TOTAL_TIME = "daemon_total_time";
+  public static final String DAEMON_TRANSACTIONS = "daemon_transactions";
+  public static final String DB_CONCURRENCY = "db_concurrency";
+  public static final String DB_CONNECTIONS = "db_connections";
+  public static final String DB_CONNECTS = "db_connects";
+  public static final String DB_MAX_CONCURRENCY = "db_max_concurrency";
+  public static final String DB_POOL_SIZE = "db_pool_size";
+  public static final String DB_TOTAL_TIME = "db_total_time";
+  public static final String DB_TRANSACTIONS = "db_transactions";
+  public static final String ENTROPY_AVAIL = "entropy_avail";
+  public static final String ENTROPY_POOLSIZE = "entropy_poolsize";
+  public static final String ENTROPY_READ_BYTES = "entropy_read_bytes";
+  public static final String ENTROPY_READ_COUNT = "entropy_read_count";
+  public static final String ENTROPY_WRITE_BYTES = "entropy_write_bytes";
+  public static final String ENTROPY_WRITE_COUNT = "entropy_write_count";
+  public static final String MEMORY_FREE = "memory_free";
+  public static final String MEMORY_TOTAL = "memory_total";
+  // TODO: Coalesce version ranges
+  public static final String PROTOCOL_VERSION = "protocol_version";
+  public static final String REQUEST_CONCURRENCY = "request_concurrency";
+  public static final String REQUEST_CONNECTIONS = "request_connections";
+  public static final String REQUEST_MAX_CONCURRENCY = "request_max_concurrency";
+  public static final String REQUEST_TOTAL_TIME = "request_total_time";
+  public static final String REQUEST_TRANSACTIONS = "request_transactions";
+  public static final String THREAD_COUNT = "thread_count";
+  public static final String UPTIME = "uptime";
 
   static final int COLUMN_NAME = 0;
 
   private String name;
   private String value;
   private String description;
-  private AOServTable<String, ServerStat> table;
+  private AoservTable<String, ServerStat> table;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -119,10 +117,14 @@ public final class ServerStat extends AOServObject<String, ServerStat> implement
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_NAME: return name;
-      case 1: return value;
-      case 2: return description;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_NAME:
+        return name;
+      case 1:
+        return value;
+      case 2:
+        return description;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -140,13 +142,13 @@ public final class ServerStat extends AOServObject<String, ServerStat> implement
   }
 
   @Override
-  public AOServTable<String, ServerStat> getTable() {
+  public AoservTable<String, ServerStat> getTable() {
     return table;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.MASTER_SERVER_STATS;
+  public Table.TableId getTableId() {
+    return Table.TableId.MASTER_SERVER_STATS;
   }
 
   public String getValue() {
@@ -166,7 +168,7 @@ public final class ServerStat extends AOServObject<String, ServerStat> implement
   }
 
   @Override
-  public void setTable(AOServTable<String, ServerStat> table) {
+  public void setTable(AoservTable<String, ServerStat> table) {
     if (this.table != null) {
       throw new IllegalStateException("table already set");
     }

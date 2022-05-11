@@ -44,12 +44,10 @@ import java.sql.SQLException;
  */
 public final class Assignment extends CachedObjectIntegerKey<Assignment> {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_TICKET = 1,
-      COLUMN_RESELLER = 2,
-      COLUMN_ADMINISTRATOR = 3
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_TICKET = 1;
+  static final int COLUMN_RESELLER = 2;
+  static final int COLUMN_ADMINISTRATOR = 3;
   static final String COLUMN_PKEY_name = "pkey";
   static final String COLUMN_TICKET_name = "ticket";
   static final String COLUMN_RESELLER_name = "reseller";
@@ -73,11 +71,16 @@ public final class Assignment extends CachedObjectIntegerKey<Assignment> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_TICKET: return ticket;
-      case COLUMN_RESELLER: return reseller;
-      case COLUMN_ADMINISTRATOR: return administrator;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_TICKET:
+        return ticket;
+      case COLUMN_RESELLER:
+        return reseller;
+      case COLUMN_ADMINISTRATOR:
+        return administrator;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -111,8 +114,8 @@ public final class Assignment extends CachedObjectIntegerKey<Assignment> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.TICKET_ASSIGNMENTS;
+  public Table.TableId getTableId() {
+    return Table.TableId.TICKET_ASSIGNMENTS;
   }
 
   @Override

@@ -83,12 +83,18 @@ public final class GroupUser extends CachedObjectIntegerKey<GroupUser> implement
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_ID: return pkey;
-      case 1: return group;
-      case 2: return user;
-      case 3: return isPrimary;
-      case 4: return operatingSystemVersion == -1 ? null : operatingSystemVersion;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_ID:
+        return pkey;
+      case 1:
+        return group;
+      case 2:
+        return user;
+      case 3:
+        return isPrimary;
+      case 4:
+        return operatingSystemVersion == -1 ? null : operatingSystemVersion;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -181,8 +187,8 @@ public final class GroupUser extends CachedObjectIntegerKey<GroupUser> implement
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.LINUX_GROUP_ACCOUNTS;
+  public Table.TableId getTableId() {
+    return Table.TableId.LINUX_GROUP_ACCOUNTS;
   }
 
   @Override
@@ -196,18 +202,18 @@ public final class GroupUser extends CachedObjectIntegerKey<GroupUser> implement
 
   @Override
   public void remove() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.REMOVE,
-        Table.TableID.LINUX_GROUP_ACCOUNTS,
+        AoservProtocol.CommandId.REMOVE,
+        Table.TableId.LINUX_GROUP_ACCOUNTS,
         pkey
     );
   }
 
   void setAsPrimary() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.SET_PRIMARY_LINUX_GROUP_ACCOUNT,
+        AoservProtocol.CommandId.SET_PRIMARY_LINUX_GROUP_ACCOUNT,
         pkey
     );
   }

@@ -193,7 +193,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
       <plugin>
         <groupId>org.codehaus.mojo</groupId><artifactId>exec-maven-plugin</artifactId>
         <configuration>
-          <mainClass>com.aoindustries.aoserv.client.aosh.AOSH</mainClass>
+          <mainClass>com.aoindustries.aoserv.client.aosh.Aosh</mainClass>
           <additionalClasspathElements>
             <additionalClasspathElement>${user.home}/.config/aoserv-client</additionalClasspathElement>
           </additionalClasspathElements>
@@ -218,13 +218,6 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
           </exclusions>
           -->
           <failOnDryRunResults>false</failOnDryRunResults>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId><artifactId>maven-checkstyle-plugin</artifactId>
-        <configuration>
-          <!-- TODO: Clean-up Checkstyle -->
-          <failOnViolation>false</failOnViolation>
         </configuration>
       </plugin>
       <plugin>

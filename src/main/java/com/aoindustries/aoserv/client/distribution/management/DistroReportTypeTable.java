@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.distribution.management;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTableStringKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.sql.SQLException;
  */
 public final class DistroReportTypeTable extends GlobalTableStringKey<DistroReportType> {
 
-  DistroReportTypeTable(AOServConnector connector) {
+  DistroReportTypeTable(AoservConnector connector) {
     super(connector, DistroReportType.class);
   }
 
@@ -56,7 +56,7 @@ public final class DistroReportTypeTable extends GlobalTableStringKey<DistroRepo
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.DISTRO_REPORT_TYPES;
+  public Table.TableId getTableId() {
+    return Table.TableId.DISTRO_REPORT_TYPES;
   }
 }

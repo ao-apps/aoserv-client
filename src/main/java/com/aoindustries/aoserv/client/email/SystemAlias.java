@@ -43,14 +43,12 @@ import java.sql.SQLException;
  */
 public final class SystemAlias extends CachedObjectIntegerKey<SystemAlias> {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_AO_SERVER = 1
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_AO_SERVER = 1;
   static final String COLUMN_AO_SERVER_name = "ao_server";
   static final String COLUMN_ADDRESS_name = "address";
 
-  private int ao_server;
+  private int aoServer;
   private String address;
   private String destination;
 
@@ -72,11 +70,16 @@ public final class SystemAlias extends CachedObjectIntegerKey<SystemAlias> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_AO_SERVER: return ao_server;
-      case 2: return address;
-      case 3: return destination;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_AO_SERVER:
+        return aoServer;
+      case 2:
+        return address;
+      case 3:
+        return destination;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -85,22 +88,22 @@ public final class SystemAlias extends CachedObjectIntegerKey<SystemAlias> {
   }
 
   public Server getLinuxServer() throws SQLException, IOException {
-    Server ao = table.getConnector().getLinux().getServer().get(ao_server);
+    Server ao = table.getConnector().getLinux().getServer().get(aoServer);
     if (ao == null) {
-      throw new SQLException("Unable to find linux.Server: " + ao_server);
+      throw new SQLException("Unable to find linux.Server: " + aoServer);
     }
     return ao;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.SYSTEM_EMAIL_ALIASES;
+  public Table.TableId getTableId() {
+    return Table.TableId.SYSTEM_EMAIL_ALIASES;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     pkey = result.getInt(1);
-    ao_server = result.getInt(2);
+    aoServer = result.getInt(2);
     address = result.getString(3);
     destination = result.getString(4);
   }
@@ -108,7 +111,7 @@ public final class SystemAlias extends CachedObjectIntegerKey<SystemAlias> {
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readCompressedInt();
-    ao_server = in.readCompressedInt();
+    aoServer = in.readCompressedInt();
     address = in.readUTF().intern();
     destination = in.readUTF().intern();
   }
@@ -116,7 +119,7 @@ public final class SystemAlias extends CachedObjectIntegerKey<SystemAlias> {
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeCompressedInt(ao_server);
+    out.writeCompressedInt(aoServer);
     out.writeUTF(address);
     out.writeUTF(destination);
   }

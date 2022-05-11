@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.ticket;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTableStringKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.sql.SQLException;
  */
 public final class StatusTable extends GlobalTableStringKey<Status> {
 
-  StatusTable(AOServConnector connector) {
+  StatusTable(AoservConnector connector) {
     super(connector, Status.class);
   }
 
@@ -51,8 +51,8 @@ public final class StatusTable extends GlobalTableStringKey<Status> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.TICKET_STATI;
+  public Table.TableId getTableId() {
+    return Table.TableId.TICKET_STATI;
   }
 
   @Override

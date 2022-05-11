@@ -26,13 +26,13 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class MySQLUserName extends LinuxUserName {
+public class MysqlUserName extends LinuxUserName {
 
-  public MySQLUserName() {
+  public MysqlUserName() {
     // Do nothing
   }
 
-  public MySQLUserName(String name) {
+  public MysqlUserName(String name) {
     super(name);
   }
 }

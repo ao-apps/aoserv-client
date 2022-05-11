@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.ticket;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.account.Administrator;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -39,7 +39,7 @@ import java.util.List;
  */
 public final class ActionTable extends CachedTableIntegerKey<Action> {
 
-  ActionTable(AOServConnector connector) {
+  ActionTable(AoservConnector connector) {
     super(connector, Action.class);
   }
 
@@ -61,7 +61,7 @@ public final class ActionTable extends CachedTableIntegerKey<Action> {
   }
 
   List<Action> getActions(Ticket ticket) throws IOException, SQLException {
-    return getIndexedRows(Action.COLUMN_TICKET, ticket.getTicketID());
+    return getIndexedRows(Action.COLUMN_TICKET, ticket.getTicketId());
   }
 
   public List<Action> getActions(Administrator ba) throws IOException, SQLException {
@@ -69,7 +69,7 @@ public final class ActionTable extends CachedTableIntegerKey<Action> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.TICKET_ACTIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.TICKET_ACTIONS;
   }
 }

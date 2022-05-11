@@ -26,7 +26,7 @@ package com.aoindustries.aoserv.client;
 import com.aoapps.net.DomainName;
 
 /**
- * An object that is cached and uses a DomainName as its primary key,
+ * An object that is cached and uses a DomainName as its primary key.
  *
  * @author  AO Industries, Inc.
  */
@@ -50,8 +50,7 @@ public abstract class GlobalObjectDomainNameKey<T extends GlobalObjectDomainName
     return
         obj != null
             && obj.getClass() == getClass()
-            && ((GlobalObjectDomainNameKey) obj).pkey.equals(pkey)
-    ;
+            && ((GlobalObjectDomainNameKey) obj).pkey.equals(pkey);
   }
 
   @Override

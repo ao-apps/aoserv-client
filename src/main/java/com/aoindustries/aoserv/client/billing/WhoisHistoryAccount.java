@@ -41,11 +41,9 @@ import java.sql.SQLException;
  */
 public final class WhoisHistoryAccount extends CachedObjectIntegerKey<WhoisHistoryAccount> {
 
-  static final int
-      COLUMN_id = 0,
-      COLUMN_whoisHistory = 1,
-      COLUMN_account = 2
-  ;
+  static final int COLUMN_id = 0;
+  static final int COLUMN_whoisHistory = 1;
+  static final int COLUMN_account = 2;
   static final String COLUMN_whoisHistory_name = "whoisHistory";
   static final String COLUMN_account_name = "account";
 
@@ -66,10 +64,14 @@ public final class WhoisHistoryAccount extends CachedObjectIntegerKey<WhoisHisto
   @Override
   protected Object getColumnImpl(int i) throws IOException, SQLException {
     switch (i) {
-      case COLUMN_id: return pkey;
-      case COLUMN_whoisHistory: return whoisHistory;
-      case COLUMN_account: return account;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_id:
+        return pkey;
+      case COLUMN_whoisHistory:
+        return whoisHistory;
+      case COLUMN_account:
+        return account;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -114,8 +116,8 @@ public final class WhoisHistoryAccount extends CachedObjectIntegerKey<WhoisHisto
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.WhoisHistoryAccount;
+  public Table.TableId getTableId() {
+    return Table.TableId.WhoisHistoryAccount;
   }
 
   @Override

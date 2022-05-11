@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 /**
- * An object that is cached and uses an int as its primary key,
+ * An object that is cached and uses an int as its primary key.
  *
  * @author  AO Industries, Inc.
  */
@@ -51,8 +51,7 @@ public abstract class CachedObjectIntegerKey<V extends CachedObjectIntegerKey<V>
     return
         obj != null
             && obj.getClass() == getClass()
-            && ((CachedObjectIntegerKey) obj).pkey == pkey
-    ;
+            && ((CachedObjectIntegerKey) obj).pkey == pkey;
   }
 
   public int getPkey() {

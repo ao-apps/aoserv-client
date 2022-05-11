@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.accounting;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableStringKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.sql.SQLException;
  */
 public final class ExpenseCategoryTable extends CachedTableStringKey<ExpenseCategory> {
 
-  ExpenseCategoryTable(AOServConnector connector) {
+  ExpenseCategoryTable(AoservConnector connector) {
     super(connector, ExpenseCategory.class);
   }
 
@@ -56,7 +56,7 @@ public final class ExpenseCategoryTable extends CachedTableStringKey<ExpenseCate
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.EXPENSE_CATEGORIES;
+  public Table.TableId getTableId() {
+    return Table.TableId.EXPENSE_CATEGORIES;
   }
 }

@@ -34,11 +34,11 @@ import com.aoapps.lang.i18n.Money;
 import com.aoapps.lang.i18n.Monies;
 import com.aoapps.sql.SQLStreamables;
 import com.aoapps.sql.SQLUtility;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.Administrator;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.payment.PaymentType;
 import com.aoindustries.aoserv.client.payment.Processor;
@@ -70,7 +70,7 @@ public final class TransactionTable extends CachedTableIntegerKey<Transaction> {
   private final Map<Account.Name, Monies> confirmedAccountBalances = new HashMap<>();
   private final Map<Transaction, Monies> transactionBalances = new HashMap<>();
 
-  TransactionTable(AOServConnector connector) {
+  TransactionTable(AoservConnector connector) {
     super(connector, Transaction.class);
   }
 
@@ -118,15 +118,15 @@ public final class TransactionTable extends CachedTableIntegerKey<Transaction> {
     }
     return connector.requestResult(
         false,
-        AoservProtocol.CommandID.ADD,
-        // Java 9: new AOServConnector.ResultRequest<>
-        new AOServConnector.ResultRequest<Integer>() {
+        AoservProtocol.CommandId.ADD,
+        // Java 9: new AoservConnector.ResultRequest<>
+        new AoservConnector.ResultRequest<Integer>() {
           private int transid;
           private IntList invalidateList;
 
           @Override
           public void writeRequest(StreamableOutput out) throws IOException {
-            out.writeCompressedInt(Table.TableID.TRANSACTIONS.ordinal());
+            out.writeCompressedInt(Table.TableId.TRANSACTIONS.ordinal());
             if (timeType == Type.DATE) {
               out.writeByte('D');
               // No need to send full precision, since the server will round to the date anyway
@@ -158,7 +158,7 @@ public final class TransactionTable extends CachedTableIntegerKey<Transaction> {
             int code = in.readByte();
             if (code == AoservProtocol.DONE) {
               transid = in.readCompressedInt();
-              invalidateList = AOServConnector.readInvalidateList(in);
+              invalidateList = AoservConnector.readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
               throw new IOException("Unexpected response code: " + code);
@@ -432,8 +432,8 @@ public final class TransactionTable extends CachedTableIntegerKey<Transaction> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.TRANSACTIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.TRANSACTIONS;
   }
 
   private static boolean matchesWords(String value, String words) {
@@ -520,63 +520,63 @@ public final class TransactionTable extends CachedTableIntegerKey<Transaction> {
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.BILLING_TRANSACTION_ADD)) {
-      if (AOSH.checkParamCount(Command.BILLING_TRANSACTION_ADD, args, 13, err)) {
+      if (Aosh.checkParamCount(Command.BILLING_TRANSACTION_ADD, args, 13, err)) {
         byte pc;
-        {
-          String paymentConfirmed = args[13];
-          if (
-              "Confirmed".equals(paymentConfirmed)
-                  // Backwards compatibility
-                  || "Y".equals(paymentConfirmed)
-          ) {
-            pc = Transaction.CONFIRMED;
-          } else if (
-              "Pending".equals(paymentConfirmed)
-                  // Backwards compatibility
-                  || "W".equals(paymentConfirmed)
-          ) {
-            pc = Transaction.WAITING_CONFIRMATION;
-          } else if (
-              "Failed".equals(paymentConfirmed)
-                  // Backwards compatibility
-                  || "N".equals(paymentConfirmed)
-          ) {
-            pc = Transaction.NOT_CONFIRMED;
-          } else {
-            throw new IllegalArgumentException("Unknown value for payment_confirmed, should be one of \"Pending\", \"Confirmed\", or \"Failed\": " + paymentConfirmed);
+          {
+            String paymentConfirmed = args[13];
+            if (
+                "Confirmed".equals(paymentConfirmed)
+                    // Backwards compatibility
+                    || "Y".equals(paymentConfirmed)
+            ) {
+              pc = Transaction.CONFIRMED;
+            } else if (
+                "Pending".equals(paymentConfirmed)
+                    // Backwards compatibility
+                    || "W".equals(paymentConfirmed)
+            ) {
+              pc = Transaction.WAITING_CONFIRMATION;
+            } else if (
+                "Failed".equals(paymentConfirmed)
+                    // Backwards compatibility
+                    || "N".equals(paymentConfirmed)
+            ) {
+              pc = Transaction.NOT_CONFIRMED;
+            } else {
+              throw new IllegalArgumentException("Unknown value for payment_confirmed, should be one of \"Pending\", \"Confirmed\", or \"Failed\": " + paymentConfirmed);
+            }
           }
-        }
         int timeType;
         Timestamp time;
-        {
-          String timeStr = args[1];
-          if ("now".equalsIgnoreCase(timeStr)) {
-            timeType = Type.TIME;
-            time = null;
-          } else if ("today".equalsIgnoreCase(timeStr)) {
-            timeType = Type.DATE;
-            time = null;
-          } else if (timeStr.length() <= "YYYY-MM-DD".length()) {
-            timeType = Type.DATE;
-            time = SQLUtility.parseDateTime(timeStr, Type.DATE_TIME_ZONE);
-          } else {
-            timeType = Type.TIME;
-            time = SQLUtility.parseDateTime(timeStr);
+          {
+            String timeStr = args[1];
+            if ("now".equalsIgnoreCase(timeStr)) {
+              timeType = Type.TIME;
+              time = null;
+            } else if ("today".equalsIgnoreCase(timeStr)) {
+              timeType = Type.DATE;
+              time = null;
+            } else if (timeStr.length() <= "YYYY-MM-DD".length()) {
+              timeType = Type.DATE;
+              time = SQLUtility.parseDateTime(timeStr, Type.DATE_TIME_ZONE);
+            } else {
+              timeType = Type.TIME;
+              time = SQLUtility.parseDateTime(timeStr);
+            }
           }
-        }
         out.println(
-            connector.getSimpleAOClient().addTransaction(
+            connector.getSimpleClient().addTransaction(
                 timeType,
                 time,
-                AOSH.parseAccountingCode(args[2], "business"),
-                AOSH.parseAccountingCode(args[3], "source_business"),
-                AOSH.parseUserName(args[4], "business_administrator"),
+                Aosh.parseAccountingCode(args[2], "business"),
+                Aosh.parseAccountingCode(args[3], "source_business"),
+                Aosh.parseUserName(args[4], "business_administrator"),
                 args[5],
                 args[6],
-                AOSH.parseDecimal3(args[7], "quantity"),
+                Aosh.parseDecimal3(args[7], "quantity"),
                 new Money(
                     java.util.Currency.getInstance(args[8]),
-                    AOSH.parseBigDecimal(args[9], "rate")
+                    Aosh.parseBigDecimal(args[9], "rate")
                 ),
                 args[10],
                 args[11],

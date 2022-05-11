@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.distribution;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTableStringKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.sql.SQLException;
  */
 public final class SoftwareTable extends GlobalTableStringKey<Software> {
 
-  SoftwareTable(AOServConnector connector) {
+  SoftwareTable(AoservConnector connector) {
     super(connector, Software.class);
   }
 
@@ -51,8 +51,8 @@ public final class SoftwareTable extends GlobalTableStringKey<Software> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.TECHNOLOGY_NAMES;
+  public Table.TableId getTableId() {
+    return Table.TableId.TECHNOLOGY_NAMES;
   }
 
   @Override

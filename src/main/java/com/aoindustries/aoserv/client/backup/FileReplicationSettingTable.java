@@ -27,9 +27,9 @@ import com.aoapps.collections.IntList;
 import com.aoapps.hodgepodge.io.TerminalWriter;
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.linux.Server;
@@ -48,15 +48,19 @@ import java.util.List;
  */
 public final class FileReplicationSettingTable extends CachedTableIntegerKey<FileReplicationSetting> {
 
-  FileReplicationSettingTable(AOServConnector connector) {
+  FileReplicationSettingTable(AoservConnector connector) {
     super(connector, FileReplicationSetting.class);
   }
 
   private static final OrderBy[] defaultOrderBy = {
-      new OrderBy(FileReplicationSetting.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_SERVER_name + '.' + Host.COLUMN_PACKAGE_name + '.' + Package.COLUMN_NAME_name, ASCENDING),
-      new OrderBy(FileReplicationSetting.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_SERVER_name + '.' + Host.COLUMN_NAME_name, ASCENDING),
-      new OrderBy(FileReplicationSetting.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_BACKUP_PARTITION_name + '.' + BackupPartition.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
-      new OrderBy(FileReplicationSetting.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_BACKUP_PARTITION_name + '.' + BackupPartition.COLUMN_PATH_name, ASCENDING),
+      new OrderBy(FileReplicationSetting.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_SERVER_name
+          + '.' + Host.COLUMN_PACKAGE_name + '.' + Package.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(FileReplicationSetting.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_SERVER_name
+          + '.' + Host.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(FileReplicationSetting.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_BACKUP_PARTITION_name
+          + '.' + BackupPartition.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
+      new OrderBy(FileReplicationSetting.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_BACKUP_PARTITION_name
+          + '.' + BackupPartition.COLUMN_PATH_name, ASCENDING),
       new OrderBy(FileReplicationSetting.COLUMN_PATH_name, ASCENDING)
   };
 
@@ -67,10 +71,10 @@ public final class FileReplicationSettingTable extends CachedTableIntegerKey<Fil
   }
 
   int addFileBackupSetting(FileReplication replication, String path, boolean backupEnabled, boolean required) throws IOException, SQLException {
-    return connector.requestIntQueryIL(
+    return connector.requestIntQueryInvalidating(
         true,
-        AoservProtocol.CommandID.ADD,
-        Table.TableID.FILE_BACKUP_SETTINGS,
+        AoservProtocol.CommandId.ADD,
+        Table.TableId.FILE_BACKUP_SETTINGS,
         replication.getPkey(),
         path,
         backupEnabled,
@@ -98,41 +102,41 @@ public final class FileReplicationSettingTable extends CachedTableIntegerKey<Fil
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.FILE_BACKUP_SETTINGS;
+  public Table.TableId getTableId() {
+    return Table.TableId.FILE_BACKUP_SETTINGS;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_FILE_BACKUP_SETTING)) {
-      if (AOSH.checkParamCount(Command.ADD_FILE_BACKUP_SETTING, args, 4, err)) {
+      if (Aosh.checkParamCount(Command.ADD_FILE_BACKUP_SETTING, args, 4, err)) {
         out.println(
-            connector.getSimpleAOClient().addFileBackupSetting(
-                AOSH.parseInt(args[1], "replication"),
+            connector.getSimpleClient().addFileBackupSetting(
+                Aosh.parseInt(args[1], "replication"),
                 args[2],
-                AOSH.parseBoolean(args[3], "backup_enabled"),
-                AOSH.parseBoolean(args[4], "required")
+                Aosh.parseBoolean(args[3], "backup_enabled"),
+                Aosh.parseBoolean(args[4], "required")
             )
         );
         out.flush();
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.REMOVE_FILE_BACKUP_SETTING)) {
-      if (AOSH.checkParamCount(Command.REMOVE_FILE_BACKUP_SETTING, args, 2, err)) {
-        connector.getSimpleAOClient().removeFileBackupSetting(
-            AOSH.parseInt(args[1], "replication"),
+      if (Aosh.checkParamCount(Command.REMOVE_FILE_BACKUP_SETTING, args, 2, err)) {
+        connector.getSimpleClient().removeFileBackupSetting(
+            Aosh.parseInt(args[1], "replication"),
             args[2]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_FILE_BACKUP_SETTING)) {
-      if (AOSH.checkParamCount(Command.SET_FILE_BACKUP_SETTING, args, 4, err)) {
-        connector.getSimpleAOClient().setFileBackupSetting(
-            AOSH.parseInt(args[1], "replication"),
+      if (Aosh.checkParamCount(Command.SET_FILE_BACKUP_SETTING, args, 4, err)) {
+        connector.getSimpleClient().setFileBackupSetting(
+            Aosh.parseInt(args[1], "replication"),
             args[2],
-            AOSH.parseBoolean(args[3], "backup_enabled"),
-            AOSH.parseBoolean(args[4], "required")
+            Aosh.parseBoolean(args[3], "backup_enabled"),
+            Aosh.parseBoolean(args[4], "required")
         );
       }
       return true;
@@ -155,8 +159,8 @@ public final class FileReplicationSettingTable extends CachedTableIntegerKey<Fil
 
     connector.requestUpdate(
         true,
-        AoservProtocol.CommandID.SET_FILE_BACKUP_SETTINGS_ALL_AT_ONCE,
-        new AOServConnector.UpdateRequest() {
+        AoservProtocol.CommandId.SET_FILE_BACKUP_SETTINGS_ALL_AT_ONCE,
+        new AoservConnector.UpdateRequest() {
           private IntList invalidateList;
 
           @Override
@@ -175,7 +179,7 @@ public final class FileReplicationSettingTable extends CachedTableIntegerKey<Fil
           public void readResponse(StreamableInput in) throws IOException, SQLException {
             int code = in.readByte();
             if (code == AoservProtocol.DONE) {
-              invalidateList = AOServConnector.readInvalidateList(in);
+              invalidateList = AoservConnector.readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
               throw new IOException("Unexpected response code: " + code);

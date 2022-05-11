@@ -64,13 +64,20 @@ public final class IpAddressMonitoring extends CachedObjectIntegerKey<IpAddressM
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_ID: return pkey;
-      case 1: return enabled;
-      case 2: return pingMonitorEnabled;
-      case 3: return checkBlacklistsOverSmtp;
-      case 4: return verifyDnsPtr;
-      case 5: return verifyDnsA;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_ID:
+        return pkey;
+      case 1:
+        return enabled;
+      case 2:
+        return pingMonitorEnabled;
+      case 3:
+        return checkBlacklistsOverSmtp;
+      case 4:
+        return verifyDnsPtr;
+      case 5:
+        return verifyDnsA;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -81,7 +88,7 @@ public final class IpAddressMonitoring extends CachedObjectIntegerKey<IpAddressM
   public IpAddress getIpAddress() throws SQLException, IOException {
     IpAddress obj = table.getConnector().getNet().getIpAddress().get(pkey);
     if (obj == null) {
-      throw new SQLException("Unable to find IPAddress: " + pkey);
+      throw new SQLException("Unable to find IpAddress: " + pkey);
     }
     return obj;
   }
@@ -114,17 +121,17 @@ public final class IpAddressMonitoring extends CachedObjectIntegerKey<IpAddressM
   }
 
   public void setEnabled(boolean enabled) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.SET_IP_ADDRESS_MONITORING_ENABLED,
+        AoservProtocol.CommandId.SET_IP_ADDRESS_MONITORING_ENABLED,
         pkey,
         enabled
     );
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.IpAddressMonitoring;
+  public Table.TableId getTableId() {
+    return Table.TableId.IpAddressMonitoring;
   }
 
   @Override

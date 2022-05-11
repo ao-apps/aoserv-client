@@ -47,10 +47,8 @@ import java.util.List;
  */
 public final class Location extends CachedObjectIntegerKey<Location> implements Removable {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_HTTPD_SITE = 1
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_HTTPD_SITE = 1;
   static final String COLUMN_HTTPD_SITE_name = "httpd_site";
 
   /**
@@ -118,12 +116,12 @@ public final class Location extends CachedObjectIntegerKey<Location> implements 
     return validateNonQuoteAscii(require, "Require");
   }
 
-  private int httpd_site;
+  private int httpdSite;
   private String path;
-  private boolean is_regular_expression;
-  private String auth_name;
-  private PosixPath auth_group_file;
-  private PosixPath auth_user_file;
+  private boolean isRegularExpression;
+  private String authName;
+  private PosixPath authGroupFile;
+  private PosixPath authUserFile;
   private String require;
   private String handler;
 
@@ -146,23 +144,33 @@ public final class Location extends CachedObjectIntegerKey<Location> implements 
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_HTTPD_SITE: return httpd_site;
-      case 2: return path;
-      case 3: return is_regular_expression;
-      case 4: return auth_name;
-      case 5: return auth_group_file;
-      case 6: return auth_user_file;
-      case 7: return require;
-      case 8: return handler;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_HTTPD_SITE:
+        return httpdSite;
+      case 2:
+        return path;
+      case 3:
+        return isRegularExpression;
+      case 4:
+        return authName;
+      case 5:
+        return authGroupFile;
+      case 6:
+        return authUserFile;
+      case 7:
+        return require;
+      case 8:
+        return handler;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   public Site getHttpdSite() throws SQLException, IOException {
-    Site obj = table.getConnector().getWeb().getSite().get(httpd_site);
+    Site obj = table.getConnector().getWeb().getSite().get(httpdSite);
     if (obj == null) {
-      throw new SQLException("Unable to find HttpdSite: " + httpd_site);
+      throw new SQLException("Unable to find HttpdSite: " + httpdSite);
     }
     return obj;
   }
@@ -172,19 +180,19 @@ public final class Location extends CachedObjectIntegerKey<Location> implements 
   }
 
   public boolean getIsRegularExpression() {
-    return is_regular_expression;
+    return isRegularExpression;
   }
 
   public String getAuthName() {
-    return auth_name;
+    return authName;
   }
 
   public PosixPath getAuthGroupFile() {
-    return auth_group_file;
+    return authGroupFile;
   }
 
   public PosixPath getAuthUserFile() {
-    return auth_user_file;
+    return authUserFile;
   }
 
   public String getRequire() {
@@ -201,26 +209,26 @@ public final class Location extends CachedObjectIntegerKey<Location> implements 
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.HTTPD_SITE_AUTHENTICATED_LOCATIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.HTTPD_SITE_AUTHENTICATED_LOCATIONS;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     try {
       pkey = result.getInt(1);
-      httpd_site = result.getInt(2);
+      httpdSite = result.getInt(2);
       path = result.getString(3);
-      is_regular_expression = result.getBoolean(4);
-      auth_name = result.getString(5);
-      {
-        String s = result.getString(6);
-        auth_group_file = s.isEmpty() ? null : PosixPath.valueOf(s);
-      }
-      {
-        String s = result.getString(7);
-        auth_user_file = s.isEmpty() ? null : PosixPath.valueOf(s);
-      }
+      isRegularExpression = result.getBoolean(4);
+      authName = result.getString(5);
+        {
+          String s = result.getString(6);
+          authGroupFile = s.isEmpty() ? null : PosixPath.valueOf(s);
+        }
+        {
+          String s = result.getString(7);
+          authUserFile = s.isEmpty() ? null : PosixPath.valueOf(s);
+        }
       require = result.getString(8);
       handler = result.getString(9);
     } catch (ValidationException e) {
@@ -232,18 +240,18 @@ public final class Location extends CachedObjectIntegerKey<Location> implements 
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
       pkey = in.readCompressedInt();
-      httpd_site = in.readCompressedInt();
+      httpdSite = in.readCompressedInt();
       path = in.readCompressedUTF();
-      is_regular_expression = in.readBoolean();
-      auth_name = in.readCompressedUTF();
-      {
-        String s = in.readCompressedUTF();
-        auth_group_file = s.isEmpty() ? null : PosixPath.valueOf(s);
-      }
-      {
-        String s = in.readCompressedUTF();
-        auth_user_file = s.isEmpty() ? null : PosixPath.valueOf(s);
-      }
+      isRegularExpression = in.readBoolean();
+      authName = in.readCompressedUTF();
+        {
+          String s = in.readCompressedUTF();
+          authGroupFile = s.isEmpty() ? null : PosixPath.valueOf(s);
+        }
+        {
+          String s = in.readCompressedUTF();
+          authUserFile = s.isEmpty() ? null : PosixPath.valueOf(s);
+        }
       require = in.readCompressedUTF().intern();
       handler = in.readBoolean() ? in.readCompressedUTF().intern() : null;
     } catch (ValidationException e) {
@@ -253,7 +261,7 @@ public final class Location extends CachedObjectIntegerKey<Location> implements 
 
   @Override
   public void remove() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.REMOVE, Table.TableID.HTTPD_SITE_AUTHENTICATED_LOCATIONS, pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.REMOVE, Table.TableId.HTTPD_SITE_AUTHENTICATED_LOCATIONS, pkey);
   }
 
   public void setAttributes(
@@ -265,9 +273,9 @@ public final class Location extends CachedObjectIntegerKey<Location> implements 
       String require,
       String handler
   ) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.SET_HTTPD_SITE_AUTHENTICATED_LOCATION_ATTRIBUTES,
+        AoservProtocol.CommandId.SET_HTTPD_SITE_AUTHENTICATED_LOCATION_ATTRIBUTES,
         pkey,
         path,
         isRegularExpression,
@@ -288,12 +296,12 @@ public final class Location extends CachedObjectIntegerKey<Location> implements 
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeCompressedInt(httpd_site);
+    out.writeCompressedInt(httpdSite);
     out.writeCompressedUTF(path, 0);
-    out.writeBoolean(is_regular_expression);
-    out.writeCompressedUTF(auth_name, 1);
-    out.writeCompressedUTF(auth_group_file == null ? "" : auth_group_file.toString(), 2);
-    out.writeCompressedUTF(auth_user_file == null ? "" : auth_user_file.toString(), 3);
+    out.writeBoolean(isRegularExpression);
+    out.writeCompressedUTF(authName, 1);
+    out.writeCompressedUTF(authGroupFile == null ? "" : authGroupFile.toString(), 2);
+    out.writeCompressedUTF(authUserFile == null ? "" : authUserFile.toString(), 3);
     out.writeCompressedUTF(require, 4);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_13) >= 0) {
       out.writeBoolean(handler != null);

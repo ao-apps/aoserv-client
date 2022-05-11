@@ -27,7 +27,7 @@ import com.aoapps.collections.IntList;
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.lang.validation.ValidationException;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Disablable;
@@ -54,18 +54,16 @@ import java.util.List;
  */
 public final class UserServer extends CachedObjectIntegerKey<UserServer> implements Removable, PasswordProtected, Disablable {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_USERNAME = 1,
-      COLUMN_POSTGRES_SERVER = 2
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_USERNAME = 1;
+  static final int COLUMN_POSTGRES_SERVER = 2;
   static final String COLUMN_USERNAME_name = "username";
   static final String COLUMN_POSTGRES_SERVER_name = "postgres_server";
 
   private User.Name username;
-  private int postgres_server;
-  private int disable_log;
-  private String predisable_password;
+  private int postgresServer;
+  private int disableLog;
+  private String predisablePassword;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -83,7 +81,7 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
     if (isSpecial()) {
       throw new SQLException("Refusing to check if passwords set on special PostgreSQL user: " + this);
     }
-    return table.getConnector().requestBooleanQuery(true, AoservProtocol.CommandID.IS_POSTGRES_SERVER_USER_PASSWORD_SET, pkey)
+    return table.getConnector().requestBooleanQuery(true, AoservProtocol.CommandId.IS_POSTGRES_SERVER_USER_PASSWORD_SET, pkey)
         ? PasswordProtected.ALL
         : PasswordProtected.NONE;
   }
@@ -120,7 +118,7 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
     if (isSpecial()) {
       throw new SQLException("Refusing to disable special PostgreSQL user: " + this);
     }
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.DISABLE, Table.TableID.POSTGRES_SERVER_USERS, dl.getPkey(), pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.DISABLE, Table.TableId.POSTGRES_SERVER_USERS, dl.getPkey(), pkey);
   }
 
   @Override
@@ -128,38 +126,44 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
     if (isSpecial()) {
       throw new SQLException("Refusing to enable special PostgreSQL user: " + this);
     }
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.ENABLE, Table.TableID.POSTGRES_SERVER_USERS, pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.ENABLE, Table.TableId.POSTGRES_SERVER_USERS, pkey);
   }
 
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_USERNAME: return username;
-      case COLUMN_POSTGRES_SERVER: return postgres_server;
-      case 3: return getDisableLog_id();
-      case 4: return predisable_password;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_USERNAME:
+        return username;
+      case COLUMN_POSTGRES_SERVER:
+        return postgresServer;
+      case 3:
+        return getDisableLog_id();
+      case 4:
+        return predisablePassword;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   @Override
   public boolean isDisabled() {
-    return disable_log != -1;
+    return disableLog != -1;
   }
 
   public Integer getDisableLog_id() {
-    return disable_log == -1 ? null : disable_log;
+    return disableLog == -1 ? null : disableLog;
   }
 
   @Override
   public DisableLog getDisableLog() throws IOException, SQLException {
-    if (disable_log == -1) {
+    if (disableLog == -1) {
       return null;
     }
-    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disable_log);
+    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disableLog);
     if (obj == null) {
-      throw new SQLException("Unable to find DisableLog: " + disable_log);
+      throw new SQLException("Unable to find DisableLog: " + disableLog);
     }
     return obj;
   }
@@ -185,21 +189,21 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
   }
 
   public String getPredisablePassword() {
-    return predisable_password;
+    return predisablePassword;
   }
 
   public int getPostgresServer_bind_id() {
-    return postgres_server;
+    return postgresServer;
   }
 
   public Server getPostgresServer() throws IOException, SQLException {
     // May be filtered
-    return table.getConnector().getPostgresql().getServer().get(postgres_server);
+    return table.getConnector().getPostgresql().getServer().get(postgresServer);
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.POSTGRES_SERVER_USERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.POSTGRES_SERVER_USERS;
   }
 
   @Override
@@ -207,12 +211,12 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
     try {
       pkey = result.getInt(1);
       username = User.Name.valueOf(result.getString(2));
-      postgres_server = result.getInt(3);
-      disable_log = result.getInt(4);
+      postgresServer = result.getInt(3);
+      disableLog = result.getInt(4);
       if (result.wasNull()) {
-        disable_log = -1;
+        disableLog = -1;
       }
-      predisable_password = result.getString(5);
+      predisablePassword = result.getString(5);
     } catch (ValidationException e) {
       throw new SQLException(e);
     }
@@ -223,9 +227,9 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
     try {
       pkey = in.readCompressedInt();
       username = User.Name.valueOf(in.readUTF()).intern();
-      postgres_server = in.readCompressedInt();
-      disable_log = in.readCompressedInt();
-      predisable_password = in.readNullUTF();
+      postgresServer = in.readCompressedInt();
+      disableLog = in.readCompressedInt();
+      predisablePassword = in.readNullUTF();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -262,10 +266,10 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
     if (isSpecial()) {
       throw new SQLException("Refusing to remove special PostgreSQL user: " + this);
     }
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.REMOVE,
-        Table.TableID.POSTGRES_SERVER_USERS,
+        AoservProtocol.CommandId.REMOVE,
+        Table.TableId.POSTGRES_SERVER_USERS,
         pkey
     );
   }
@@ -276,15 +280,15 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
       throw new SQLException("Refusing to set the password for a special PostgreSQL user: " + this);
     }
 
-    AOServConnector connector = table.getConnector();
+    AoservConnector connector = table.getConnector();
     if (!connector.isSecure()) {
       throw new IOException("Passwords for PostgreSQL users may only be set when using secure protocols.  Currently using the " + connector.getProtocol() + " protocol, which is not secure.");
     }
 
     connector.requestUpdate(
         true,
-        AoservProtocol.CommandID.SET_POSTGRES_SERVER_USER_PASSWORD,
-        new AOServConnector.UpdateRequest() {
+        AoservProtocol.CommandId.SET_POSTGRES_SERVER_USER_PASSWORD,
+        new AoservConnector.UpdateRequest() {
           @Override
           public void writeRequest(StreamableOutput out) throws IOException {
             out.writeCompressedInt(pkey);
@@ -293,6 +297,7 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
               out.writeUTF(password);
             }
           }
+
           @Override
           public void readResponse(StreamableInput in) throws IOException, SQLException {
             int code = in.readByte();
@@ -301,6 +306,7 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
               throw new IOException("Unexpected response code: " + code);
             }
           }
+
           @Override
           public void afterRelease() {
             // Do nothing
@@ -315,24 +321,27 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
     }
     table.getConnector().requestUpdate(
         true,
-        AoservProtocol.CommandID.SET_POSTGRES_SERVER_USER_PREDISABLE_PASSWORD,
-        new AOServConnector.UpdateRequest() {
+        AoservProtocol.CommandId.SET_POSTGRES_SERVER_USER_PREDISABLE_PASSWORD,
+        new AoservConnector.UpdateRequest() {
           private IntList invalidateList;
+
           @Override
           public void writeRequest(StreamableOutput out) throws IOException {
             out.writeCompressedInt(pkey);
             out.writeNullUTF(password);
           }
+
           @Override
           public void readResponse(StreamableInput in) throws IOException, SQLException {
             int code = in.readByte();
             if (code == AoservProtocol.DONE) {
-              invalidateList = AOServConnector.readInvalidateList(in);
+              invalidateList = AoservConnector.readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
               throw new IOException("Unexpected response code: " + code);
             }
           }
+
           @Override
           public void afterRelease() {
             table.getConnector().tablesUpdated(invalidateList);
@@ -350,12 +359,12 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
     out.writeUTF(username.toString());
-    out.writeCompressedInt(postgres_server);
+    out.writeCompressedInt(postgresServer);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_130) <= 0) {
       out.writeCompressedInt(-1);
     }
-    out.writeCompressedInt(disable_log);
-    out.writeNullUTF(predisable_password);
+    out.writeCompressedInt(disableLog);
+    out.writeNullUTF(predisablePassword);
   }
 
   @Override

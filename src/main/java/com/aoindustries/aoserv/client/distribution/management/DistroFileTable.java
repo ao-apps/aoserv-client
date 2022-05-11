@@ -24,9 +24,9 @@
 package com.aoindustries.aoserv.client.distribution.management;
 
 import com.aoapps.hodgepodge.io.TerminalWriter;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.FilesystemCachedTable;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
@@ -42,7 +42,7 @@ import java.sql.SQLException;
  */
 public final class DistroFileTable extends FilesystemCachedTable<Integer, DistroFile> {
 
-  DistroFileTable(AOServConnector connector) {
+  DistroFileTable(AoservConnector connector) {
     super(connector, DistroFile.class);
   }
 
@@ -58,6 +58,8 @@ public final class DistroFileTable extends FilesystemCachedTable<Integer, Distro
   }
 
   /**
+   * {@inheritDoc}
+   *
    * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
    */
   @Deprecated
@@ -76,18 +78,17 @@ public final class DistroFileTable extends FilesystemCachedTable<Integer, Distro
   @Override
   public int getRecordLength() {
     return
-        4                                             // pkey
-            + 4                                             // operating_system_version
+        4                                                       // pkey
+            + 4                                                 // operating_system_version
             + 4 + DistroFile.MAX_PATH_LENGTH * 2                // path
-            + 1                                             // optional
+            + 1                                                 // optional
             + 4 + DistroFile.MAX_TYPE_LENGTH * 2                // type
-            + 8                                             // mode
+            + 8                                                 // mode
             + 4 + DistroFile.MAX_LINUX_ACCOUNT_LENGTH * 2       // linux_account
             + 4 + DistroFile.MAX_LINUX_GROUP_LENGTH * 2         // linux_group
-            + 8                                             // size
-            + 1 + 8 + 8 + 8 + 8                                     // file_sha256
-            + 1 + 4 + DistroFile.MAX_SYMLINK_TARGET_LENGTH * 2    // symlink_target
-    ;
+            + 8                                                 // size
+            + 1 + 8 + 8 + 8 + 8                                 // file_sha256
+            + 1 + 4 + DistroFile.MAX_SYMLINK_TARGET_LENGTH * 2; // symlink_target
   }
 
   @Override
@@ -95,7 +96,7 @@ public final class DistroFileTable extends FilesystemCachedTable<Integer, Distro
     if (isLoaded()) {
       return super.getCachedRowCount();
     } else {
-      return connector.requestIntQuery(true, AoservProtocol.CommandID.GET_CACHED_ROW_COUNT, Table.TableID.DISTRO_FILES);
+      return connector.requestIntQuery(true, AoservProtocol.CommandId.GET_CACHED_ROW_COUNT, Table.TableId.DISTRO_FILES);
     }
   }
 
@@ -104,23 +105,23 @@ public final class DistroFileTable extends FilesystemCachedTable<Integer, Distro
     if (isLoaded()) {
       return super.size();
     } else {
-      return connector.requestIntQuery(true, AoservProtocol.CommandID.GET_ROW_COUNT, Table.TableID.DISTRO_FILES);
+      return connector.requestIntQuery(true, AoservProtocol.CommandId.GET_ROW_COUNT, Table.TableId.DISTRO_FILES);
     }
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.DISTRO_FILES;
+  public Table.TableId getTableId() {
+    return Table.TableId.DISTRO_FILES;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.START_DISTRO)) {
-      if (AOSH.checkParamCount(Command.START_DISTRO, args, 2, err)) {
-        connector.getSimpleAOClient().startDistro(
+      if (Aosh.checkParamCount(Command.START_DISTRO, args, 2, err)) {
+        connector.getSimpleClient().startDistro(
             args[1],
-            AOSH.parseBoolean(args[2], "include_user")
+            Aosh.parseBoolean(args[2], "include_user")
         );
       }
       return true;
@@ -131,7 +132,7 @@ public final class DistroFileTable extends FilesystemCachedTable<Integer, Distro
   public void startDistro(Server server, boolean includeUser) throws IOException, SQLException {
     connector.requestUpdate(
         true,
-        AoservProtocol.CommandID.START_DISTRO,
+        AoservProtocol.CommandId.START_DISTRO,
         server.getPkey(),
         includeUser
     );

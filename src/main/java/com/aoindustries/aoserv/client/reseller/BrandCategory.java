@@ -42,11 +42,9 @@ import java.sql.SQLException;
  */
 public final class BrandCategory extends CachedObjectIntegerKey<BrandCategory> {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_BRAND = 1,
-      COLUMN_CATEGORY = 2
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_BRAND = 1;
+  static final int COLUMN_CATEGORY = 2;
   static final String COLUMN_PKEY_name = "pkey";
   static final String COLUMN_BRAND_name = "brand";
   static final String COLUMN_CATEGORY_name = "category";
@@ -69,11 +67,16 @@ public final class BrandCategory extends CachedObjectIntegerKey<BrandCategory> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_BRAND: return brand;
-      case COLUMN_CATEGORY: return category;
-      case 3: return enabled;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_BRAND:
+        return brand;
+      case COLUMN_CATEGORY:
+        return category;
+      case 3:
+        return enabled;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -98,8 +101,8 @@ public final class BrandCategory extends CachedObjectIntegerKey<BrandCategory> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.TICKET_BRAND_CATEGORIES;
+  public Table.TableId getTableId() {
+    return Table.TableId.TICKET_BRAND_CATEGORIES;
   }
 
   @Override

@@ -41,14 +41,14 @@ import java.util.Properties;
  * The default client configuration is stored in a properties resource named
  * <code>/com/aoindustries/aoserv/client/aoesrv-client.properties</code>.
  *
- * @see  AOServConnector#getConnector()
+ * @see  AoservConnector#getConnector()
  *
  * @author  AO Industries, Inc.
  */
-public final class AOServClientConfiguration {
+public final class AoservClientConfiguration {
 
   /** Make no instances. */
-  private AOServClientConfiguration() {
+  private AoservClientConfiguration() {
     throw new AssertionError();
   }
 
@@ -57,6 +57,7 @@ public final class AOServClientConfiguration {
       // Empty lock class to help heap profile
     }
   }
+
   private static final PropsLock propsLock = new PropsLock();
   private static Properties props;
 
@@ -65,7 +66,7 @@ public final class AOServClientConfiguration {
       synchronized (propsLock) {
         if (props == null) {
           props = PropertiesUtils.loadFromResource(
-              AOServClientConfiguration.class,
+              AoservClientConfiguration.class,
               "/com/aoindustries/aoserv/client/aoserv-client.properties"
           );
         }
@@ -201,8 +202,9 @@ public final class AOServClientConfiguration {
 
   /**
    * Gets the optional SSL truststore path.
-   *
+   * <p>
    * For use by aoserv-daemon and aoserv-backup only.
+   * </p>
    */
   public static String getSslTruststorePath() throws ConfigurationException {
     return getProperty("aoserv.client.ssl.truststore.path");
@@ -210,8 +212,9 @@ public final class AOServClientConfiguration {
 
   /**
    * Gets the optional SSL truststore password.
-   *
+   * <p>
    * For use by aoserv-daemon and aoserv-backup only.
+   * </p>
    */
   public static String getSslTruststorePassword() throws ConfigurationException {
     return getProperty("aoserv.client.ssl.truststore.password");
@@ -244,7 +247,7 @@ public final class AOServClientConfiguration {
 
   /**
    * Gets the hostname of this daemon for daemon-specific locking.  Leave
-   * this blank for non-AOServDaemon connections.
+   * this blank for non-AoservDaemon connections.
    */
   static DomainName getDaemonServer() throws ConfigurationException {
     String domainServer = getProperty("aoserv.client.daemon.server");

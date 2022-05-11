@@ -53,23 +53,23 @@ import java.util.logging.Level;
 import javax.swing.SwingUtilities;
 
 /**
- * A <code>TCPConnector</code> provides the connection between
+ * A <code>TcpConnector</code> provides the connection between
  * the object layer and the data over a pool of un-secured sockets.
  *
  * @see  SocketConnection
  *
  * @author  AO Industries, Inc.
  */
-public class TCPConnector extends AOServConnector {
+public class TcpConnector extends AoservConnector {
 
-  private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, TCPConnector.class);
+  private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, TcpConnector.class);
 
   /**
    * Close cache monitor after 90 minutes of inactivity,
    * when there is some sort of non-global-cached data.
    * <p>
    * The cache monitor is only shutdown when there are no registered
-   * {@linkplain AOServTable#addTableListener(com.aoapps.hodgepodge.table.TableListener) table listeners}.
+   * {@linkplain AoservTable#addTableListener(com.aoapps.hodgepodge.table.TableListener) table listeners}.
    * </p>
    */
   private static final long MAX_IDLE_LISTEN_CACHES = 90L * 60 * 1000;
@@ -85,7 +85,7 @@ public class TCPConnector extends AOServConnector {
    * </p>
    * <p>
    * The cache monitor is only shutdown when there are no registered
-   * {@linkplain AOServTable#addTableListener(com.aoapps.hodgepodge.table.TableListener) table listeners}.
+   * {@linkplain AoservTable#addTableListener(com.aoapps.hodgepodge.table.TableListener) table listeners}.
    * </p>
    */
   // TODO: Use this value, somehow, in a meaningful way.
@@ -94,7 +94,7 @@ public class TCPConnector extends AOServConnector {
   class CacheMonitor extends Thread {
 
     CacheMonitor() {
-      super("TCPConnector - CacheMonitor");
+      super("TcpConnector - CacheMonitor");
       setDaemon(true);
     }
 
@@ -102,14 +102,14 @@ public class TCPConnector extends AOServConnector {
     @SuppressWarnings({"SleepWhileInLoop", "UseSpecificCatch", "TooBroadCatch"})
     public void run() {
       try {
-        //System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Starting");
+        //System.err.println("DEBUG: TcpConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Starting");
         boolean runMore = true;
         while (runMore && !Thread.currentThread().isInterrupted()) {
           try {
             try (SocketConnection conn = getConnection(1)) {
               try {
-                //System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: conn.identityHashCode="+System.identityHashCode(conn));
-                StreamableOutput out = conn.getRequestOut(AoservProtocol.CommandID.LISTEN_CACHES);
+                //System.err.println("DEBUG: TcpConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: conn.identityHashCode="+System.identityHashCode(conn));
+                StreamableOutput out = conn.getRequestOut(AoservProtocol.CommandId.LISTEN_CACHES);
                 // TODO: Only listen for caches on tables where there is either something currently cached
                 // TODO: (how to handle shared caches of global cached tables?) or where there is
                 // TODO: at least one registered table listener.  Otherwise the cache signals are
@@ -132,7 +132,7 @@ public class TCPConnector extends AOServConnector {
                     } else if (timeSince >= MAX_IDLE_LISTEN_CACHES) {
                       // Must also not have any invalidate listeners
                       boolean foundListener = false;
-                      for (AOServTable<?, ?> table : getTables()) {
+                      for (AoservTable<?, ?> table : getTables()) {
                         if (table.hasAnyTableListener()) {
                           foundListener = true;
                           break;
@@ -152,8 +152,8 @@ public class TCPConnector extends AOServConnector {
                     int size = in.readCompressedInt();
                     if (size != -1) {
                       for (int c = 0; c < size; c++) {
-                        int tableID = in.readCompressedInt();
-                        tableList.add(tableID);
+                        int tableId = in.readCompressedInt();
+                        tableList.add(tableId);
                       }
                     }
                     // No tables listed for "ping"
@@ -187,7 +187,7 @@ public class TCPConnector extends AOServConnector {
             } else {
               getLogger().log(Level.INFO, null, err);
               try {
-                //System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Sleeping after exception");
+                //System.err.println("DEBUG: TcpConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Sleeping after exception");
                 sleep(getFastRandom().nextInt(50000) + 10000); // Wait between 10 and 60 seconds
               } catch (InterruptedException err2) {
                 getLogger().log(Level.WARNING, null, err2);
@@ -203,7 +203,7 @@ public class TCPConnector extends AOServConnector {
             } else {
               getLogger().log(Level.SEVERE, null, t);
               try {
-                //System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Sleeping after exception");
+                //System.err.println("DEBUG: TcpConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Sleeping after exception");
                 sleep(getFastRandom().nextInt(50000) + 10000); // Wait between 10 and 60 seconds
               } catch (InterruptedException err2) {
                 getLogger().log(Level.WARNING, null, err2);
@@ -212,12 +212,12 @@ public class TCPConnector extends AOServConnector {
               }
             }
           } finally {
-            //System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Clearing caches");
+            //System.err.println("DEBUG: TcpConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Clearing caches");
             clearCaches();
           }
         }
       } finally {
-        //System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Ending");
+        //System.err.println("DEBUG: TcpConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Ending");
         synchronized (cacheMonitorLock) {
           if (cacheMonitor == this) {
             cacheMonitor = null;
@@ -241,7 +241,7 @@ public class TCPConnector extends AOServConnector {
   /**
    * Instances of connectors are created once and then reused.
    */
-  private static final List<TCPConnector> connectors = new ArrayList<>();
+  private static final List<TcpConnector> connectors = new ArrayList<>();
 
   /**
    * The maximum size of the connection pool.
@@ -252,13 +252,14 @@ public class TCPConnector extends AOServConnector {
   private static class CacheMonitorLock {
     // Empty lock class to help heap profile
   }
+
   private final CacheMonitorLock cacheMonitorLock = new CacheMonitorLock();
   private long connectionLastUsed;
   private CacheMonitor cacheMonitor;
 
-  protected TCPConnector(
+  protected TcpConnector(
       HostAddress hostname,
-      com.aoapps.net.InetAddress local_ip,
+      com.aoapps.net.InetAddress localIp,
       Port port,
       User.Name connectAs,
       User.Name authenticateAs,
@@ -267,7 +268,7 @@ public class TCPConnector extends AOServConnector {
       int poolSize,
       long maxConnectionAge
   ) {
-    super(hostname, local_ip, port, connectAs, authenticateAs, password, daemonServer);
+    super(hostname, localIp, port, connectAs, authenticateAs, password, daemonServer);
     if (port.getProtocol() != com.aoapps.net.Protocol.TCP) {
       throw new IllegalArgumentException("Only TCP supported: " + port);
     }
@@ -292,7 +293,7 @@ public class TCPConnector extends AOServConnector {
     }
     startCacheMonitor();
     SocketConnection conn = pool.getConnection(maxConnections);
-    //System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorId()+"): getConnection("+maxConnections+"): conn.identityHashCode="+System.identityHashCode(conn));
+    //System.err.println("DEBUG: TcpConnector("+connectAs+"-"+getConnectorId()+"): getConnection("+maxConnections+"): conn.identityHashCode="+System.identityHashCode(conn));
     return conn;
   }
 
@@ -311,8 +312,8 @@ public class TCPConnector extends AOServConnector {
       socket.setKeepAlive(true);
       socket.setSoLinger(true, AOPool.DEFAULT_SOCKET_SO_LINGER);
       socket.setTcpNoDelay(true);
-      if (local_ip != null && !local_ip.isUnspecified()) {
-        socket.bind(new InetSocketAddress(local_ip.toString(), 0));
+      if (localIp != null && !localIp.isUnspecified()) {
+        socket.bind(new InetSocketAddress(localIp.toString(), 0));
       }
       socket.connect(new InetSocketAddress(hostname.toString(), port.getPort()), AOPool.DEFAULT_CONNECT_TIMEOUT);
       return socket;
@@ -321,9 +322,9 @@ public class TCPConnector extends AOServConnector {
     }
   }
 
-  public static synchronized TCPConnector getTCPConnector(
+  public static synchronized TcpConnector getTcpConnector(
       HostAddress hostname,
-      com.aoapps.net.InetAddress local_ip,
+      com.aoapps.net.InetAddress localIp,
       Port port,
       User.Name connectAs,
       User.Name authenticateAs,
@@ -343,7 +344,7 @@ public class TCPConnector extends AOServConnector {
     }
     int size = connectors.size();
     for (int c = 0; c < size; c++) {
-      TCPConnector connector = connectors.get(c);
+      TcpConnector connector = connectors.get(c);
       if (connector == null) {
         throw new NullPointerException("connector is null");
       }
@@ -358,7 +359,7 @@ public class TCPConnector extends AOServConnector {
       }
       if (
           connector.hostname.equals(hostname)
-              && Objects.equals(local_ip, connector.local_ip)
+              && Objects.equals(localIp, connector.localIp)
               && connector.port == port
               && connector.connectAs.equals(connectAs)
               && connector.authenticateAs.equals(authenticateAs)
@@ -370,9 +371,9 @@ public class TCPConnector extends AOServConnector {
         return connector;
       }
     }
-    TCPConnector newConnector = new TCPConnector(
+    TcpConnector newConnector = new TcpConnector(
         hostname,
-        local_ip,
+        localIp,
         port,
         connectAs,
         authenticateAs,
@@ -407,8 +408,7 @@ public class TCPConnector extends AOServConnector {
         return
             address[0] == localAddress[0]
                 && address[1] == localAddress[1]
-                && address[2] == localAddress[2]
-        ;
+                && address[2] == localAddress[2];
       } catch (Throwable t) {
         throw Throwables.wrap(conn.abort(t), IOException.class, IOException::new);
       }
@@ -416,24 +416,23 @@ public class TCPConnector extends AOServConnector {
   }
 
   @Override
-  public final void printConnectionStatsHTML(Appendable out, boolean isXhtml) throws IOException {
-    pool.printStatisticsHTML(out, isXhtml);
+  public final void printConnectionStatsHtml(Appendable out, boolean isXhtml) throws IOException {
+    pool.printStatisticsHtml(out, isXhtml);
   }
 
   @Override
-  protected final void release(AOServConnection conn) throws IOException {
-    //System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorId()+"): release("+System.identityHashCode(conn)+"): conn.identityHashCode="+System.identityHashCode(conn));
+  protected final void release(AoservConnection conn) throws IOException {
+    //System.err.println("DEBUG: TcpConnector("+connectAs+"-"+getConnectorId()+"): release("+System.identityHashCode(conn)+"): conn.identityHashCode="+System.identityHashCode(conn));
     pool.release((SocketConnection) conn);
   }
 
   @Override
-  public AOServConnector switchUsers(User.Name username) throws IOException {
+  public AoservConnector switchUsers(User.Name username) throws IOException {
     if (username.equals(connectAs)) {
       return this;
     }
-    return getTCPConnector(
-        hostname,
-        local_ip,
+    return getTcpConnector(hostname,
+        localIp,
         port,
         username,
         authenticateAs,

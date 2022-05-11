@@ -48,10 +48,8 @@ import java.util.List;
  */
 public final class Record extends CachedObjectIntegerKey<Record> implements Removable {
 
-  static final int
-      COLUMN_ID = 0,
-      COLUMN_ZONE = 1
-  ;
+  static final int COLUMN_ID = 0;
+  static final int COLUMN_ZONE = 1;
   static final String COLUMN_ZONE_name        = "zone";
   static final String COLUMN_DOMAIN_name      = "domain";
   static final String COLUMN_TYPE_name        = "type";
@@ -98,19 +96,32 @@ public final class Record extends CachedObjectIntegerKey<Record> implements Remo
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_ID: return pkey;
-      case COLUMN_ZONE: return zone;
-      case 2: return domain;
-      case 3: return type;
-      case 4: return priority == NO_PRIORITY ? null : priority;
-      case 5: return weight == NO_WEIGHT     ? null : weight;
-      case 6: return port == NO_PORT         ? null : port;
-      case 7: return flag == NO_FLAG         ? null : flag;
-      case 8: return tag;
-      case 9: return destination;
-      case 10: return dhcpAddress == -1      ? null : dhcpAddress;
-      case 11: return ttl == NO_TTL          ? null : ttl;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_ID:
+        return pkey;
+      case COLUMN_ZONE:
+        return zone;
+      case 2:
+        return domain;
+      case 3:
+        return type;
+      case 4:
+        return priority == NO_PRIORITY ? null : priority;
+      case 5:
+        return weight == NO_WEIGHT     ? null : weight;
+      case 6:
+        return port == NO_PORT         ? null : port;
+      case 7:
+        return flag == NO_FLAG         ? null : flag;
+      case 8:
+        return tag;
+      case 9:
+        return destination;
+      case 10:
+        return dhcpAddress == -1      ? null : dhcpAddress;
+      case 11:
+        return ttl == NO_TTL          ? null : ttl;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -191,7 +202,7 @@ public final class Record extends CachedObjectIntegerKey<Record> implements Remo
     }
     IpAddress ia = table.getConnector().getNet().getIpAddress().get(dhcpAddress);
     if (ia == null) {
-      throw new SQLException("Unable to find IPAddress: " + dhcpAddress);
+      throw new SQLException("Unable to find IpAddress: " + dhcpAddress);
     }
     return ia;
   }
@@ -360,8 +371,8 @@ public final class Record extends CachedObjectIntegerKey<Record> implements Remo
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.DNS_RECORDS;
+  public Table.TableId getTableId() {
+    return Table.TableId.DNS_RECORDS;
   }
 
   @Override
@@ -371,7 +382,7 @@ public final class Record extends CachedObjectIntegerKey<Record> implements Remo
 
   @Override
   public void remove() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.REMOVE, Table.TableID.DNS_RECORDS, pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.REMOVE, Table.TableId.DNS_RECORDS, pkey);
   }
 
   @Override

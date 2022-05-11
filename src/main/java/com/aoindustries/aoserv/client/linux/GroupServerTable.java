@@ -24,10 +24,10 @@
 package com.aoindustries.aoserv.client.linux;
 
 import com.aoapps.hodgepodge.io.TerminalWriter;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
@@ -46,7 +46,7 @@ import java.util.Map;
  */
 public final class GroupServerTable extends CachedTableIntegerKey<GroupServer> {
 
-  GroupServerTable(AOServConnector connector) {
+  GroupServerTable(AoservConnector connector) {
     super(connector, GroupServer.class);
   }
 
@@ -62,10 +62,10 @@ public final class GroupServerTable extends CachedTableIntegerKey<GroupServer> {
   }
 
   int addLinuxServerGroup(Group linuxGroup, Server aoServer) throws IOException, SQLException {
-    int pkey = connector.requestIntQueryIL(
+    int pkey = connector.requestIntQueryInvalidating(
         true,
-        AoservProtocol.CommandID.ADD,
-        Table.TableID.LINUX_SERVER_GROUPS,
+        AoservProtocol.CommandId.ADD,
+        Table.TableId.LINUX_SERVER_GROUPS,
         linuxGroup.getName(),
         aoServer.getPkey()
     );
@@ -73,9 +73,9 @@ public final class GroupServerTable extends CachedTableIntegerKey<GroupServer> {
   }
 
   int addSystemGroup(Server aoServer, Group.Name groupName, int gid) throws IOException, SQLException {
-    return connector.requestIntQueryIL(
+    return connector.requestIntQueryInvalidating(
         true,
-        AoservProtocol.CommandID.ADD_SYSTEM_GROUP,
+        AoservProtocol.CommandId.ADD_SYSTEM_GROUP,
         aoServer.getPkey(),
         groupName,
         gid
@@ -100,14 +100,14 @@ public final class GroupServerTable extends CachedTableIntegerKey<GroupServer> {
 
   public GroupServer getLinuxServerGroup(Server aoServer, Account business) throws IOException, SQLException {
     Account.Name accounting = business.getName();
-    int aoPKey = aoServer.getPkey();
+    int aoPkey = aoServer.getPkey();
 
     List<GroupServer> list = getRows();
     int len = list.size();
     for (int c = 0; c < len; c++) {
       // Must be for the correct server
       GroupServer group = list.get(c);
-      if (aoPKey == group.getServer_host_id()) {
+      if (aoPkey == group.getServer_host_id()) {
         // Must be for the correct business
         Group linuxGroup = group.getLinuxGroup();
         Package pk = linuxGroup.getPackage();
@@ -125,7 +125,7 @@ public final class GroupServerTable extends CachedTableIntegerKey<GroupServer> {
   private boolean nameHashBuilt;
   private final Map<Integer, Map<Group.Name, GroupServer>> nameHash = new HashMap<>();
 
-  public GroupServer getLinuxServerGroup(Server aoServer, Group.Name group_name) throws IOException, SQLException {
+  public GroupServer getLinuxServerGroup(Server aoServer, Group.Name groupName) throws IOException, SQLException {
     synchronized (nameHash) {
       if (!nameHashBuilt) {
         nameHash.clear();
@@ -153,7 +153,7 @@ public final class GroupServerTable extends CachedTableIntegerKey<GroupServer> {
       if (serverHash == null) {
         return null;
       }
-      return serverHash.get(group_name);
+      return serverHash.get(groupName);
     }
   }
 
@@ -198,7 +198,7 @@ public final class GroupServerTable extends CachedTableIntegerKey<GroupServer> {
   }
 
   /**
-   * Gets the primary <code>LinuxServerGroup</code> for this <code>LinuxServerAccount</code>
+   * Gets the primary {@link GroupServer} for this {@link UserServer}.
    *
    * @exception  SQLException  if the primary group is not found
    *                           or two or more groups are marked as primary
@@ -223,18 +223,18 @@ public final class GroupServerTable extends CachedTableIntegerKey<GroupServer> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.LINUX_SERVER_GROUPS;
+  public Table.TableId getTableId() {
+    return Table.TableId.LINUX_SERVER_GROUPS;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_LINUX_SERVER_GROUP)) {
-      if (AOSH.checkParamCount(Command.ADD_LINUX_SERVER_GROUP, args, 2, err)) {
+      if (Aosh.checkParamCount(Command.ADD_LINUX_SERVER_GROUP, args, 2, err)) {
         out.println(
-            connector.getSimpleAOClient().addLinuxServerGroup(
-                AOSH.parseGroupName(args[1], "group"),
+            connector.getSimpleClient().addLinuxServerGroup(
+                Aosh.parseGroupName(args[1], "group"),
                 args[2]
             )
         );
@@ -242,9 +242,9 @@ public final class GroupServerTable extends CachedTableIntegerKey<GroupServer> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.REMOVE_LINUX_SERVER_GROUP)) {
-      if (AOSH.checkParamCount(Command.REMOVE_LINUX_SERVER_GROUP, args, 2, err)) {
-        connector.getSimpleAOClient().removeLinuxServerGroup(
-            AOSH.parseGroupName(args[1], "group"),
+      if (Aosh.checkParamCount(Command.REMOVE_LINUX_SERVER_GROUP, args, 2, err)) {
+        connector.getSimpleClient().removeLinuxServerGroup(
+            Aosh.parseGroupName(args[1], "group"),
             args[2]
         );
       }

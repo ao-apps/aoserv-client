@@ -26,8 +26,8 @@ package com.aoindustries.aoserv.client.schema;
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.lang.util.InternUtils;
-import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.AOServObject;
+import com.aoindustries.aoserv.client.AoservConnector;
+import com.aoindustries.aoserv.client.AoservObject;
 import com.aoindustries.aoserv.client.GlobalObjectIntegerKey;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -35,12 +35,12 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * Meta-data for every field of every <code>AOServObject</code> is available as
- * a <code>SchemaColumn</code>.   This allows <code>AOServObject</code>s to be
+ * Meta-data for every field of every <code>AoservObject</code> is available as
+ * a <code>SchemaColumn</code>.   This allows <code>AoservObject</code>s to be
  * treated in a uniform manner, while still accessing all of their attributes.
  *
  * @see  Table
- * @see  AOServObject
+ * @see  AoservObject
  *
  * @author  AO Industries, Inc.
  */
@@ -101,18 +101,30 @@ public final class Column extends GlobalObjectIntegerKey<Column> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_ID: return pkey;
-      case 1: return table;
-      case 2: return name;
-      case 3: return sinceVersion;
-      case 4: return lastVersion;
-      case 5: return index;
-      case 6: return type;
-      case 7: return isNullable;
-      case 8: return isUnique;
-      case 9: return isPublic;
-      case 10: return description;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_ID:
+        return pkey;
+      case 1:
+        return table;
+      case 2:
+        return name;
+      case 3:
+        return sinceVersion;
+      case 4:
+        return lastVersion;
+      case 5:
+        return index;
+      case 6:
+        return type;
+      case 7:
+        return isNullable;
+      case 8:
+        return isUnique;
+      case 9:
+        return isPublic;
+      case 10:
+        return description;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -124,7 +136,7 @@ public final class Column extends GlobalObjectIntegerKey<Column> {
     return table;
   }
 
-  public Table getTable(AOServConnector connector) throws SQLException, IOException {
+  public Table getTable(AoservConnector connector) throws SQLException, IOException {
     Table obj = connector.getSchema().getTable().get(table);
     if (obj == null) {
       throw new SQLException("Unable to find SchemaTable: " + table);
@@ -140,10 +152,10 @@ public final class Column extends GlobalObjectIntegerKey<Column> {
     return sinceVersion;
   }
 
-  public AoservProtocol getSinceVersion(AOServConnector connector) throws SQLException, IOException {
+  public AoservProtocol getSinceVersion(AoservConnector connector) throws SQLException, IOException {
     AoservProtocol obj = connector.getSchema().getAoservProtocol().get(sinceVersion);
     if (obj == null) {
-      throw new SQLException("Unable to find AOServProtocol: " + sinceVersion);
+      throw new SQLException("Unable to find AoservProtocol: " + sinceVersion);
     }
     return obj;
   }
@@ -152,13 +164,13 @@ public final class Column extends GlobalObjectIntegerKey<Column> {
     return lastVersion;
   }
 
-  public AoservProtocol getLastVersion(AOServConnector connector) throws SQLException, IOException {
+  public AoservProtocol getLastVersion(AoservConnector connector) throws SQLException, IOException {
     if (lastVersion == null) {
       return null;
     }
     AoservProtocol obj = connector.getSchema().getAoservProtocol().get(lastVersion);
     if (obj == null) {
-      throw new SQLException("Unable to find AOServProtocol: " + lastVersion);
+      throw new SQLException("Unable to find AoservProtocol: " + lastVersion);
     }
     return obj;
   }
@@ -171,7 +183,7 @@ public final class Column extends GlobalObjectIntegerKey<Column> {
     return type;
   }
 
-  public Type getType(AOServConnector connector) throws SQLException, IOException {
+  public Type getType(AoservConnector connector) throws SQLException, IOException {
     Type obj = connector.getSchema().getType().get(type);
     if (obj == null) {
       throw new SQLException("Unable to find SchemaType: " + type);
@@ -196,8 +208,8 @@ public final class Column extends GlobalObjectIntegerKey<Column> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.SCHEMA_COLUMNS;
+  public Table.TableId getTableId() {
+    return Table.TableId.SCHEMA_COLUMNS;
   }
 
   @Override
@@ -265,11 +277,11 @@ public final class Column extends GlobalObjectIntegerKey<Column> {
     return table + '.' + name;
   }
 
-  public List<ForeignKey> getReferencedBy(AOServConnector connector) throws IOException, SQLException {
+  public List<ForeignKey> getReferencedBy(AoservConnector connector) throws IOException, SQLException {
     return connector.getSchema().getForeignKey().getSchemaForeignKeysReferencing(this);
   }
 
-  public List<ForeignKey> getReferences(AOServConnector connector) throws IOException, SQLException {
+  public List<ForeignKey> getReferences(AoservConnector connector) throws IOException, SQLException {
     return connector.getSchema().getForeignKey().getSchemaForeignKeysReferencedBy(this);
   }
 }

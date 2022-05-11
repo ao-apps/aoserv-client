@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.email;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.net.Bind;
@@ -41,7 +41,7 @@ import java.sql.SQLException;
  */
 public final class SmtpSmartHostTable extends CachedTableIntegerKey<SmtpSmartHost> {
 
-  SmtpSmartHostTable(AOServConnector connector) {
+  SmtpSmartHostTable(AoservConnector connector) {
     super(connector, SmtpSmartHost.class);
   }
 
@@ -65,7 +65,7 @@ public final class SmtpSmartHostTable extends CachedTableIntegerKey<SmtpSmartHos
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.EMAIL_SMTP_SMART_HOSTS;
+  public Table.TableId getTableId() {
+    return Table.TableId.EMAIL_SMTP_SMART_HOSTS;
   }
 }

@@ -40,10 +40,8 @@ import java.sql.SQLException;
  */
 public final class FileReplicationSchedule extends CachedObjectIntegerKey<FileReplicationSchedule> {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_REPLICATION = 1
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_REPLICATION = 1;
   static final String COLUMN_REPLICATION_name = "replication";
   static final String COLUMN_HOUR_name = "hour";
   static final String COLUMN_MINUTE_name = "minute";
@@ -67,12 +65,18 @@ public final class FileReplicationSchedule extends CachedObjectIntegerKey<FileRe
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_REPLICATION: return replication;
-      case 2: return hour;
-      case 3: return minute;
-      case 4: return enabled;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_REPLICATION:
+        return replication;
+      case 2:
+        return hour;
+      case 3:
+        return minute;
+      case 4:
+        return enabled;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -97,8 +101,8 @@ public final class FileReplicationSchedule extends CachedObjectIntegerKey<FileRe
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.FAILOVER_FILE_SCHEDULE;
+  public Table.TableId getTableId() {
+    return Table.TableId.FAILOVER_FILE_SCHEDULE;
   }
 
   @Override

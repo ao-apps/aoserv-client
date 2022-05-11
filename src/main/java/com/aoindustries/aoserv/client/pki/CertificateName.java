@@ -41,10 +41,8 @@ public final class CertificateName extends CachedObjectIntegerKey<CertificateNam
 
   public static final String WILDCARD_PREFIX = "*.";
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_SSL_CERTIFICATE = 1
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_SSL_CERTIFICATE = 1;
   static final String COLUMN_SSL_CERTIFICATE_name = "ssl_certificate";
   static final String COLUMN_IS_COMMON_NAME_name = "is_common_name";
   static final String COLUMN_IS_WILDCARD_name = "is_wildcard";
@@ -78,18 +76,24 @@ public final class CertificateName extends CachedObjectIntegerKey<CertificateNam
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_SSL_CERTIFICATE: return sslCertificate;
-      case 2: return isCommonName;
-      case 3: return isWildcard;
-      case 4: return domain;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_SSL_CERTIFICATE:
+        return sslCertificate;
+      case 2:
+        return isCommonName;
+      case 3:
+        return isWildcard;
+      case 4:
+        return domain;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.SSL_CERTIFICATE_NAMES;
+  public Table.TableId getTableId() {
+    return Table.TableId.SSL_CERTIFICATE_NAMES;
   }
 
   @Override

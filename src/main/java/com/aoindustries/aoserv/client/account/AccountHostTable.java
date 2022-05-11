@@ -24,9 +24,9 @@
 package com.aoindustries.aoserv.client.account;
 
 import com.aoapps.hodgepodge.io.TerminalWriter;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.net.Host;
@@ -45,7 +45,7 @@ import java.util.List;
  */
 public final class AccountHostTable extends CachedTableIntegerKey<AccountHost> {
 
-  AccountHostTable(AOServConnector connector) {
+  AccountHostTable(AoservConnector connector) {
     super(connector, AccountHost.class);
   }
 
@@ -62,7 +62,7 @@ public final class AccountHostTable extends CachedTableIntegerKey<AccountHost> {
   }
 
   int addAccountHost(Account business, Host server) throws IOException, SQLException {
-    return connector.requestIntQueryIL(true, AoservProtocol.CommandID.ADD, Table.TableID.BUSINESS_SERVERS, business.getName().toString(), server.getPkey());
+    return connector.requestIntQueryInvalidating(true, AoservProtocol.CommandId.ADD, Table.TableId.BUSINESS_SERVERS, business.getName().toString(), server.getPkey());
   }
 
   @Override
@@ -118,18 +118,18 @@ public final class AccountHostTable extends CachedTableIntegerKey<AccountHost> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.BUSINESS_SERVERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.BUSINESS_SERVERS;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_BUSINESS_SERVER)) {
-      if (AOSH.checkParamCount(Command.ADD_BUSINESS_SERVER, args, 2, err)) {
+      if (Aosh.checkParamCount(Command.ADD_BUSINESS_SERVER, args, 2, err)) {
         out.println(
-            connector.getSimpleAOClient().addAccountHost(
-                AOSH.parseAccountingCode(args[1], "business"),
+            connector.getSimpleClient().addAccountHost(
+                Aosh.parseAccountingCode(args[1], "business"),
                 args[2]
             )
         );
@@ -137,17 +137,17 @@ public final class AccountHostTable extends CachedTableIntegerKey<AccountHost> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.REMOVE_BUSINESS_SERVER)) {
-      if (AOSH.checkParamCount(Command.REMOVE_BUSINESS_SERVER, args, 2, err)) {
-        connector.getSimpleAOClient().removeAccountHost(
-            AOSH.parseAccountingCode(args[1], "business"),
+      if (Aosh.checkParamCount(Command.REMOVE_BUSINESS_SERVER, args, 2, err)) {
+        connector.getSimpleClient().removeAccountHost(
+            Aosh.parseAccountingCode(args[1], "business"),
             args[2]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_DEFAULT_BUSINESS_SERVER)) {
-      if (AOSH.checkParamCount(Command.SET_DEFAULT_BUSINESS_SERVER, args, 2, err)) {
-        connector.getSimpleAOClient().setDefaultAccountHost(
-            AOSH.parseAccountingCode(args[1], "business"),
+      if (Aosh.checkParamCount(Command.SET_DEFAULT_BUSINESS_SERVER, args, 2, err)) {
+        connector.getSimpleClient().setDefaultAccountHost(
+            Aosh.parseAccountingCode(args[1], "business"),
             args[2]
         );
       }

@@ -25,7 +25,7 @@ package com.aoindustries.aoserv.client.web.tomcat;
 
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.net.AppProtocol;
 import com.aoindustries.aoserv.client.net.Bind;
@@ -48,10 +48,8 @@ import java.sql.SQLException;
  */
 public final class Worker extends CachedObjectIntegerKey<Worker> {
 
-  static final int
-      COLUMN_BIND = 0,
-      COLUMN_TOMCAT_SITE = 2
-  ;
+  static final int COLUMN_BIND = 0;
+  static final int COLUMN_TOMCAT_SITE = 2;
   static final String COLUMN_BIND_name = "bind";
   static final String COLUMN_NAME_name = "name";
 
@@ -72,10 +70,14 @@ public final class Worker extends CachedObjectIntegerKey<Worker> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_BIND: return pkey;
-      case 1: return name;
-      case COLUMN_TOMCAT_SITE: return tomcatSite == -1 ? null : tomcatSite;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_BIND:
+        return pkey;
+      case 1:
+        return name;
+      case COLUMN_TOMCAT_SITE:
+        return tomcatSite == -1 ? null : tomcatSite;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -119,8 +121,8 @@ public final class Worker extends CachedObjectIntegerKey<Worker> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.HTTPD_WORKERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.HTTPD_WORKERS;
   }
 
   @Override
@@ -156,11 +158,11 @@ public final class Worker extends CachedObjectIntegerKey<Worker> {
     return pkey + "|" + name;
   }
 
-  public JkProtocol getHttpdJKProtocol(AOServConnector connector) throws IOException, SQLException {
+  public JkProtocol getHttpdJkProtocol(AoservConnector connector) throws IOException, SQLException {
     AppProtocol appProtocol = getBind().getAppProtocol();
-    JkProtocol obj = appProtocol.getHttpdJKProtocol(connector);
+    JkProtocol obj = appProtocol.getHttpdJkProtocol(connector);
     if (obj == null) {
-      throw new SQLException("Unable to find HttpdJKProtocol: " + appProtocol);
+      throw new SQLException("Unable to find HttpdJkProtocol: " + appProtocol);
     }
     return obj;
   }

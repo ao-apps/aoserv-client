@@ -28,7 +28,7 @@ import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.lang.validation.ValidationException;
 import com.aoapps.sql.SQLStreamables;
 import com.aoapps.sql.UnmodifiableTimestamp;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalObjectIntegerKey;
 import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
@@ -67,31 +67,40 @@ public final class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
   private String version;
   private UnmodifiableTimestamp updated;
   private User.Name owner;
-  private int operating_system_version;
-  private UnmodifiableTimestamp disable_time;
-  private String disable_reason;
+  private int operatingSystemVersion;
+  private UnmodifiableTimestamp disableTime;
+  private String disableReason;
 
   @Override
   @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case 1: return name;
-      case 2: return version;
-      case 3: return updated;
-      case 4: return owner;
-      case 5: return operating_system_version == -1 ? null : operating_system_version;
-      case 6: return disable_time;
-      case 7: return disable_reason;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case 1:
+        return name;
+      case 2:
+        return version;
+      case 3:
+        return updated;
+      case 4:
+        return owner;
+      case 5:
+        return operatingSystemVersion == -1 ? null : operatingSystemVersion;
+      case 6:
+        return disableTime;
+      case 7:
+        return disableReason;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
-  public Version getHttpdTomcatVersion(AOServConnector connector) throws IOException, SQLException {
+  public Version getHttpdTomcatVersion(AoservConnector connector) throws IOException, SQLException {
     return connector.getWeb_tomcat().getVersion().get(pkey);
   }
 
-  public com.aoindustries.aoserv.client.master.User getOwner(AOServConnector connector) throws SQLException, IOException {
+  public com.aoindustries.aoserv.client.master.User getOwner(AoservConnector connector) throws SQLException, IOException {
     // May be filtered
     if (owner == null) {
       return null;
@@ -104,13 +113,13 @@ public final class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
   }
 
   public int getOperatingSystemVersion_id() {
-    return operating_system_version;
+    return operatingSystemVersion;
   }
 
-  public OperatingSystemVersion getOperatingSystemVersion(AOServConnector conn) throws SQLException, IOException {
-    OperatingSystemVersion osv = conn.getDistribution().getOperatingSystemVersion().get(operating_system_version);
+  public OperatingSystemVersion getOperatingSystemVersion(AoservConnector conn) throws SQLException, IOException {
+    OperatingSystemVersion osv = conn.getDistribution().getOperatingSystemVersion().get(operatingSystemVersion);
     if (osv == null) {
-      throw new SQLException("Unable to find OperatingSystemVersion: " + operating_system_version);
+      throw new SQLException("Unable to find OperatingSystemVersion: " + operatingSystemVersion);
     }
     return osv;
   }
@@ -119,28 +128,28 @@ public final class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
    * Checks if enabled at the given time.
    */
   public boolean isEnabled(long time) {
-    return disable_time == null || disable_time.getTime() > time;
+    return disableTime == null || disableTime.getTime() > time;
   }
 
   @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
   public UnmodifiableTimestamp getDisableTime() {
-    return disable_time;
+    return disableTime;
   }
 
   public String getDisableReason() {
-    return disable_reason;
+    return disableReason;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.TECHNOLOGY_VERSIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.TECHNOLOGY_VERSIONS;
   }
 
   public String getTechnologyName_name() {
     return name;
   }
 
-  public Software getTechnologyName(AOServConnector connector) throws SQLException, IOException {
+  public Software getTechnologyName(AoservConnector connector) throws SQLException, IOException {
     Software technologyName = connector.getDistribution().getSoftware().get(name);
     if (technologyName == null) {
       throw new SQLException("Unable to find TechnologyName: " + name);
@@ -164,16 +173,16 @@ public final class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
       name = result.getString(2);
       version = result.getString(3);
       updated = UnmodifiableTimestamp.valueOf(result.getTimestamp(4));
-      {
-        String s = result.getString(5);
-        owner = AoservProtocol.FILTERED.equals(s) ? null : User.Name.valueOf(s);
-      }
-      operating_system_version = result.getInt(6);
+        {
+          String s = result.getString(5);
+          owner = AoservProtocol.FILTERED.equals(s) ? null : User.Name.valueOf(s);
+        }
+      operatingSystemVersion = result.getInt(6);
       if (result.wasNull()) {
-        operating_system_version = -1;
+        operatingSystemVersion = -1;
       }
-      disable_time = UnmodifiableTimestamp.valueOf(result.getTimestamp(7));
-      disable_reason = result.getString(8);
+      disableTime = UnmodifiableTimestamp.valueOf(result.getTimestamp(7));
+      disableReason = result.getString(8);
     } catch (ValidationException e) {
       throw new SQLException(e);
     }
@@ -186,17 +195,17 @@ public final class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
       name = in.readUTF().intern();
       version = in.readUTF();
       updated = SQLStreamables.readUnmodifiableTimestamp(in);
-      {
-        String s = in.readUTF();
-        if (AoservProtocol.FILTERED.equals(s)) {
-          owner = null;
-        } else {
-          owner = User.Name.valueOf(s).intern();
+        {
+          String s = in.readUTF();
+          if (AoservProtocol.FILTERED.equals(s)) {
+            owner = null;
+          } else {
+            owner = User.Name.valueOf(s).intern();
+          }
         }
-      }
-      operating_system_version = in.readCompressedInt();
-      disable_time = SQLStreamables.readNullUnmodifiableTimestamp(in);
-      disable_reason = in.readNullUTF();
+      operatingSystemVersion = in.readCompressedInt();
+      disableTime = SQLStreamables.readNullUnmodifiableTimestamp(in);
+      disableReason = in.readNullUTF();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -214,15 +223,15 @@ public final class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
     }
     out.writeUTF(owner == null ? AoservProtocol.FILTERED : owner.toString());
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_108) >= 0) {
-      out.writeCompressedInt(operating_system_version);
+      out.writeCompressedInt(operatingSystemVersion);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_78) >= 0) {
       if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
-        out.writeLong(disable_time == null ? -1 : disable_time.getTime());
+        out.writeLong(disableTime == null ? -1 : disableTime.getTime());
       } else {
-        SQLStreamables.writeNullTimestamp(disable_time, out);
+        SQLStreamables.writeNullTimestamp(disableTime, out);
       }
-      out.writeNullUTF(disable_reason);
+      out.writeNullUTF(disableReason);
     }
   }
 }

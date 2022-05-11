@@ -60,8 +60,7 @@ public final class GroupType extends GlobalObjectStringKey<GroupType> {
       FTPONLY = "ftponly",
       SYSTEM = "system",
       BACKUP = "backup",
-      APPLICATION = "application"
-  ;
+      APPLICATION = "application";
 
   private String description;
 
@@ -96,8 +95,8 @@ public final class GroupType extends GlobalObjectStringKey<GroupType> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.LINUX_GROUP_TYPES;
+  public Table.TableId getTableId() {
+    return Table.TableId.LINUX_GROUP_TYPES;
   }
 
   @Override

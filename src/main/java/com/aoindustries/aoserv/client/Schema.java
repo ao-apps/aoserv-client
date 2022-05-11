@@ -31,13 +31,13 @@ import java.util.List;
  */
 public abstract class Schema implements SchemaParent {
 
-  protected final AOServConnector connector;
+  protected final AoservConnector connector;
 
-  protected Schema(AOServConnector connector) {
+  protected Schema(AoservConnector connector) {
     this.connector = connector;
   }
 
-  public final AOServConnector getConnector() {
+  public final AoservConnector getConnector() {
     return connector;
   }
 
@@ -56,7 +56,7 @@ public abstract class Schema implements SchemaParent {
   /**
    * Gets an unmodifiable list of all of the tables in the schema.
    */
-  public abstract List<? extends AOServTable<?, ?>> getTables();
+  public abstract List<? extends AoservTable<?, ?>> getTables();
 
   /**
    * Gets the unique name of the schema.
@@ -64,6 +64,8 @@ public abstract class Schema implements SchemaParent {
   public abstract String getName();
 
   /**
+   * {@inheritDoc}
+   *
    * @see  #getName()
    */
   @Override

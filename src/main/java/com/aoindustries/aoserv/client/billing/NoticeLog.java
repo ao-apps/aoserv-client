@@ -50,23 +50,21 @@ import java.util.List;
  */
 public final class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_ACCOUNTING = 2
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_ACCOUNTING = 2;
   static final String COLUMN_PKEY_name = "pkey";
   static final String COLUMN_CREATE_TIME_name = "create_time";
 
   public static final int NO_TRANSACTION = -1;
 
-  private UnmodifiableTimestamp create_time;
+  private UnmodifiableTimestamp createTime;
   private Account.Name accounting;
-  private String billing_contact;
-  private Email billing_email;
-  private String notice_type;
+  private String billingContact;
+  private Email billingEmail;
+  private String noticeType;
   private int transid;
 
-  /** Protocol compatibility */
+  /** Protocol compatibility. */
   private int balance;
 
   /**
@@ -86,7 +84,7 @@ public final class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 
   @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
   public UnmodifiableTimestamp getCreateTime() {
-    return create_time;
+    return createTime;
   }
 
   public Account.Name getAccount_name() {
@@ -102,21 +100,21 @@ public final class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
   }
 
   public String getBillingContact() {
-    return billing_contact;
+    return billingContact;
   }
 
   public Email getBillingEmail() {
-    return billing_email;
+    return billingEmail;
   }
 
   public String getNoticeType_type() {
-    return notice_type;
+    return noticeType;
   }
 
   public NoticeType getNoticeType() throws SQLException, IOException {
-    NoticeType obj = table.getConnector().getBilling().getNoticeType().get(notice_type);
+    NoticeType obj = table.getConnector().getBilling().getNoticeType().get(noticeType);
     if (obj == null) {
-      throw new SQLException("Unable to find NoticeType: " + notice_type);
+      throw new SQLException("Unable to find NoticeType: " + noticeType);
     }
     return obj;
   }
@@ -140,31 +138,39 @@ public final class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
   @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case 1: return create_time;
-      case COLUMN_ACCOUNTING: return accounting;
-      case 3: return billing_contact;
-      case 4: return billing_email;
-      case 5: return notice_type;
-      case 6: return getTransaction_id();
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case 1:
+        return createTime;
+      case COLUMN_ACCOUNTING:
+        return accounting;
+      case 3:
+        return billingContact;
+      case 4:
+        return billingEmail;
+      case 5:
+        return noticeType;
+      case 6:
+        return getTransaction_id();
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.NOTICE_LOG;
+  public Table.TableId getTableId() {
+    return Table.TableId.NOTICE_LOG;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     try {
       pkey = result.getInt("id");
-      create_time = UnmodifiableTimestamp.valueOf(result.getTimestamp("create_time"));
+      createTime = UnmodifiableTimestamp.valueOf(result.getTimestamp("create_time"));
       accounting = Account.Name.valueOf(result.getString("accounting"));
-      billing_contact = result.getString("billing_contact");
-      billing_email = Email.valueOf(result.getString("billing_email"));
-      notice_type = result.getString("notice_type");
+      billingContact = result.getString("billing_contact");
+      billingEmail = Email.valueOf(result.getString("billing_email"));
+      noticeType = result.getString("notice_type");
       transid = result.getInt("transid");
       if (result.wasNull()) {
         transid = NO_TRANSACTION;
@@ -180,11 +186,11 @@ public final class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
       pkey = in.readCompressedInt();
-      create_time = SQLStreamables.readUnmodifiableTimestamp(in);
+      createTime = SQLStreamables.readUnmodifiableTimestamp(in);
       accounting = Account.Name.valueOf(in.readUTF()).intern();
-      billing_contact = in.readUTF();
-      billing_email = Email.valueOf(in.readUTF());
-      notice_type = in.readUTF().intern();
+      billingContact = in.readUTF();
+      billingEmail = Email.valueOf(in.readUTF());
+      noticeType = in.readUTF().intern();
       transid = in.readCompressedInt();
     } catch (ValidationException e) {
       throw new IOException(e);
@@ -193,24 +199,24 @@ public final class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 
   @Override
   public String toStringImpl() {
-    return pkey + "|" + accounting + '|' + notice_type;
+    return pkey + "|" + accounting + '|' + noticeType;
   }
 
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
-      out.writeLong(create_time.getTime());
+      out.writeLong(createTime.getTime());
     } else {
-      SQLStreamables.writeTimestamp(create_time, out);
+      SQLStreamables.writeTimestamp(createTime, out);
     }
     out.writeUTF(accounting.toString());
-    out.writeUTF(billing_contact);
-    out.writeUTF(billing_email.toString());
+    out.writeUTF(billingContact);
+    out.writeUTF(billingEmail.toString());
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
       out.writeCompressedInt(balance);
     }
-    out.writeUTF(notice_type);
+    out.writeUTF(noticeType);
     out.writeCompressedInt(transid);
   }
 

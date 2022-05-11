@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.linux;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTable;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 public abstract class GlobalTablePosixPathKey<V extends GlobalObjectPosixPathKey<V>> extends GlobalTable<PosixPath, V> {
 
-  protected GlobalTablePosixPathKey(AOServConnector connector, Class<V> clazz) {
+  protected GlobalTablePosixPathKey(AoservConnector connector, Class<V> clazz) {
     super(connector, clazz);
   }
 

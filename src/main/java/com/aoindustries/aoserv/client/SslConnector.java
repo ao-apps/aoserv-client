@@ -39,14 +39,14 @@ import java.util.Objects;
 import javax.net.ssl.SSLSocketFactory;
 
 /**
- * A <code>SSLConnector</code> provides the connection between
+ * A <code>SslConnector</code> provides the connection between
  * the client and server over secured SSL sockets.
  *
- * @see  AOServConnector
+ * @see  AoservConnector
  *
  * @author  AO Industries, Inc.
  */
-public class SSLConnector extends TCPConnector {
+public class SslConnector extends TcpConnector {
 
   /**
    * The trust store used for this connector.
@@ -66,11 +66,11 @@ public class SSLConnector extends TCPConnector {
   /**
    * Instances of connectors are created once and then reused.
    */
-  private static final List<SSLConnector> connectors = new ArrayList<>();
+  private static final List<SslConnector> connectors = new ArrayList<>();
 
-  protected SSLConnector(
+  protected SslConnector(
       HostAddress hostname,
-      InetAddress local_ip,
+      InetAddress localIp,
       Port port,
       User.Name connectAs,
       User.Name authenticateAs,
@@ -81,27 +81,27 @@ public class SSLConnector extends TCPConnector {
       String trustStorePath,
       String trustStorePassword
   ) {
-    super(hostname, local_ip, port, connectAs, authenticateAs, password, daemonServer, poolSize, maxConnectionAge);
+    super(hostname, localIp, port, connectAs, authenticateAs, password, daemonServer, poolSize, maxConnectionAge);
     if (
         (
-            SSLConnector.trustStorePath != null
-                && !SSLConnector.trustStorePath.equals(trustStorePath)
+            SslConnector.trustStorePath != null
+                && !SslConnector.trustStorePath.equals(trustStorePath)
         ) || (
-            SSLConnector.trustStorePassword != null
-                && !SSLConnector.trustStorePassword.equals(trustStorePassword)
+            SslConnector.trustStorePassword != null
+                && !SslConnector.trustStorePassword.equals(trustStorePassword)
         )
     ) {
       throw new IllegalArgumentException(
           "Trust store path and password may only be set once, currently '"
-              + SSLConnector.trustStorePath
+              + SslConnector.trustStorePath
               + "', trying to set to '"
               + trustStorePath
               + "'"
       );
     }
-    if (SSLConnector.trustStorePath == null) {
-      SSLConnector.trustStorePath = trustStorePath;
-      SSLConnector.trustStorePassword = trustStorePassword;
+    if (SslConnector.trustStorePath == null) {
+      SslConnector.trustStorePath = trustStorePath;
+      SslConnector.trustStorePassword = trustStorePassword;
     }
   }
 
@@ -126,8 +126,8 @@ public class SSLConnector extends TCPConnector {
       socket.setKeepAlive(true);
       socket.setSoLinger(true, AOPool.DEFAULT_SOCKET_SO_LINGER);
       socket.setTcpNoDelay(true);
-      if (local_ip != null && !local_ip.isUnspecified()) {
-        socket.bind(new InetSocketAddress(local_ip.toString(), 0));
+      if (localIp != null && !localIp.isUnspecified()) {
+        socket.bind(new InetSocketAddress(localIp.toString(), 0));
       }
       socket.connect(new InetSocketAddress(hostname.toString(), port.getPort()), AOPool.DEFAULT_CONNECT_TIMEOUT);
       return sslFact.createSocket(socket, hostname.toString(), port.getPort(), true);
@@ -136,9 +136,9 @@ public class SSLConnector extends TCPConnector {
     }
   }
 
-  public static synchronized SSLConnector getSSLConnector(
+  public static synchronized SslConnector getSslConnector(
       HostAddress hostname,
-      InetAddress local_ip,
+      InetAddress localIp,
       Port port,
       User.Name connectAs,
       User.Name authenticateAs,
@@ -160,7 +160,7 @@ public class SSLConnector extends TCPConnector {
     }
     int size = connectors.size();
     for (int c = 0; c < size; c++) {
-      SSLConnector connector = connectors.get(c);
+      SslConnector connector = connectors.get(c);
       if (connector == null) {
         throw new NullPointerException("connector is null");
       }
@@ -175,7 +175,7 @@ public class SSLConnector extends TCPConnector {
       }
       if (
           connector.hostname.equals(hostname)
-              && Objects.equals(local_ip, connector.local_ip)
+              && Objects.equals(localIp, connector.localIp)
               && connector.port == port
               && connector.connectAs.equals(connectAs)
               && connector.authenticateAs.equals(authenticateAs)
@@ -183,15 +183,15 @@ public class SSLConnector extends TCPConnector {
               && Objects.equals(daemonServer, connector.daemonServer)
               && connector.poolSize == poolSize
               && connector.maxConnectionAge == maxConnectionAge
-              && Objects.equals(SSLConnector.trustStorePath, trustStorePath)
-              && Objects.equals(SSLConnector.trustStorePassword, trustStorePassword)
+              && Objects.equals(SslConnector.trustStorePath, trustStorePath)
+              && Objects.equals(SslConnector.trustStorePassword, trustStorePassword)
       ) {
         return connector;
       }
     }
-    SSLConnector newConnector = new SSLConnector(
+    SslConnector newConnector = new SslConnector(
         hostname,
-        local_ip,
+        localIp,
         port,
         connectAs,
         authenticateAs,
@@ -212,13 +212,13 @@ public class SSLConnector extends TCPConnector {
   }
 
   @Override
-  public AOServConnector switchUsers(User.Name username) {
+  public AoservConnector switchUsers(User.Name username) {
     if (username.equals(connectAs)) {
       return this;
     }
-    return getSSLConnector(
+    return getSslConnector(
         hostname,
-        local_ip,
+        localIp,
         port,
         username,
         authenticateAs,

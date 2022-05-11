@@ -45,7 +45,7 @@ import java.util.Map;
  *
  * @author  AO Industries, Inc.
  */
-public abstract class CachedTable<K, V extends CachedObject<K, V>> extends AOServTable<K, V> {
+public abstract class CachedTable<K, V extends CachedObject<K, V>> extends AoservTable<K, V> {
 
   /**
    * The last time that the data was loaded, or
@@ -62,7 +62,7 @@ public abstract class CachedTable<K, V extends CachedObject<K, V>> extends AOSer
 
   /**
    * The internal objects are stored in <code>HashMaps</code> of <code>CachedObject[]</code>
-   * based on indexed columns.  Each of the contained List<T> are unmodifiable.
+   * based on indexed columns.  Each of the contained {@code List<T>} are unmodifiable.
    */
   private List<Map<Object, List<V>>> indexHashes;
   private BitSet indexesHashed;
@@ -73,7 +73,7 @@ public abstract class CachedTable<K, V extends CachedObject<K, V>> extends AOSer
    */
   private List<V> tableData;
 
-  protected CachedTable(AOServConnector connector, Class<V> clazz) {
+  protected CachedTable(AoservConnector connector, Class<V> clazz) {
     super(connector, clazz);
   }
 
@@ -155,7 +155,7 @@ public abstract class CachedTable<K, V extends CachedObject<K, V>> extends AOSer
             Object old = map.put(cvalue, row);
             if (old != null) {
               throw new SQLException(
-                  "Duplicate unique entry for table #" + getTableID() + " (" + getTableName()
+                  "Duplicate unique entry for table #" + getTableId() + " (" + getTableName()
                       + "), column " + col + ": " + cvalue
               );
             }
@@ -190,8 +190,7 @@ public abstract class CachedTable<K, V extends CachedObject<K, V>> extends AOSer
   boolean isHashed(int uniqueColumn) {
     return
         columnsHashed != null
-            && columnsHashed.get(uniqueColumn)
-    ;
+            && columnsHashed.get(uniqueColumn);
   }
 
   /**
@@ -200,8 +199,7 @@ public abstract class CachedTable<K, V extends CachedObject<K, V>> extends AOSer
   boolean isIndexed(int uniqueColumn) {
     return
         indexesHashed != null
-            && indexesHashed.get(uniqueColumn)
-    ;
+            && indexesHashed.get(uniqueColumn);
   }
 
   @Override
@@ -256,7 +254,7 @@ public abstract class CachedTable<K, V extends CachedObject<K, V>> extends AOSer
             // If the system time was reset to previous time
             || currentTime < lastLoaded
     ) {
-      tableData = Collections.unmodifiableList(getObjects(true, AoservProtocol.CommandID.GET_TABLE, getTableID()));
+      tableData = Collections.unmodifiableList(getObjects(true, AoservProtocol.CommandId.GET_TABLE, getTableId()));
       lastLoaded = currentTime;
       if (columnHashes != null) {
         int len = columnHashes.size();

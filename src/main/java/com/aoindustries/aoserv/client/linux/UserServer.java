@@ -29,7 +29,7 @@ import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.lang.validation.ValidationException;
 import com.aoapps.sql.SQLStreamables;
 import com.aoapps.sql.UnmodifiableTimestamp;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Disablable;
@@ -70,16 +70,15 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
   /**
    * The UID of the root user.
-   *
+   * <p>
    * Note: Copied from PosixFile.java to avoid interproject dependency.
+   * </p>
    */
   public static final int ROOT_UID = 0;
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_USERNAME = 1,
-      COLUMN_AO_SERVER = 2
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_USERNAME = 1;
+  static final int COLUMN_AO_SERVER = 2;
   public static final String COLUMN_USERNAME_name = "username";
   public static final String COLUMN_AO_SERVER_name = "ao_server";
 
@@ -115,28 +114,28 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
   }
 
   private User.Name username;
-  private int ao_server;
+  private int aoServer;
   private LinuxId uid;
   private PosixPath home;
-  private int autoresponder_from;
-  private String autoresponder_subject;
-  private String autoresponder_path;
-  private boolean is_autoresponder_enabled;
-  private int disable_log;
-  private String predisable_password;
+  private int autoresponderFrom;
+  private String autoresponderSubject;
+  private String autoresponderPath;
+  private boolean isAutoresponderEnabled;
+  private int disableLog;
+  private String predisablePassword;
   private UnmodifiableTimestamp created;
-  private boolean use_inbox;
-  private int trash_email_retention;
-  private int junk_email_retention;
-  private String sa_integration_mode;
-  private float sa_required_score;
-  private int sa_discard_score;
+  private boolean useInbox;
+  private int trashEmailRetention;
+  private int junkEmailRetention;
+  private String saIntegrationMode;
+  private float saRequiredScore;
+  private int saDiscardScore;
   private String sudo;
 
   @Override
   public boolean canDisable() throws IOException, SQLException {
     // already disabled
-    if (disable_log != -1) {
+    if (disableLog != -1) {
       return false;
     }
 
@@ -178,7 +177,7 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
   @Override
   public boolean isDisabled() {
-    return disable_log != -1;
+    return disableLog != -1;
   }
 
   @Override
@@ -199,9 +198,9 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
   public long copyHomeDirectory(final Server toServer) throws IOException, SQLException {
     return table.getConnector().requestResult(
         false,
-        AoservProtocol.CommandID.COPY_HOME_DIRECTORY,
-        // Java 9: new AOServConnector.ResultRequest<>
-        new AOServConnector.ResultRequest<Long>() {
+        AoservProtocol.CommandId.COPY_HOME_DIRECTORY,
+        // Java 9: new AoservConnector.ResultRequest<>
+        new AoservConnector.ResultRequest<Long>() {
           private long result;
           @Override
           public void writeRequest(StreamableOutput out) throws IOException {
@@ -228,43 +227,63 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
   }
 
   public void copyPassword(UserServer other) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.COPY_LINUX_SERVER_ACCOUNT_PASSWORD, pkey, other.getPkey());
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.COPY_LINUX_SERVER_ACCOUNT_PASSWORD, pkey, other.getPkey());
   }
 
   @Override
   public void disable(DisableLog dl) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.DISABLE, Table.TableID.LINUX_SERVER_ACCOUNTS, dl.getPkey(), pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.DISABLE, Table.TableId.LINUX_SERVER_ACCOUNTS, dl.getPkey(), pkey);
   }
 
   @Override
   public void enable() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.ENABLE, Table.TableID.LINUX_SERVER_ACCOUNTS, pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.ENABLE, Table.TableId.LINUX_SERVER_ACCOUNTS, pkey);
   }
 
   @Override
   @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_USERNAME: return username;
-      case COLUMN_AO_SERVER: return ao_server;
-      case 3: return uid;
-      case 4: return home;
-      case 5: return autoresponder_from == -1 ? null : autoresponder_from;
-      case 6: return autoresponder_subject;
-      case 7: return autoresponder_path;
-      case 8: return is_autoresponder_enabled;
-      case 9: return disable_log == -1 ? null : disable_log;
-      case 10: return predisable_password;
-      case 11: return created;
-      case 12: return use_inbox;
-      case 13: return trash_email_retention == -1 ? null : trash_email_retention;
-      case 14: return junk_email_retention == -1 ? null : junk_email_retention;
-      case 15: return sa_integration_mode;
-      case 16: return sa_required_score;
-      case 17: return sa_discard_score == -1 ? null : sa_discard_score;
-      case 18: return sudo;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_USERNAME:
+        return username;
+      case COLUMN_AO_SERVER:
+        return aoServer;
+      case 3:
+        return uid;
+      case 4:
+        return home;
+      case 5:
+        return autoresponderFrom == -1 ? null : autoresponderFrom;
+      case 6:
+        return autoresponderSubject;
+      case 7:
+        return autoresponderPath;
+      case 8:
+        return isAutoresponderEnabled;
+      case 9:
+        return disableLog == -1 ? null : disableLog;
+      case 10:
+        return predisablePassword;
+      case 11:
+        return created;
+      case 12:
+        return useInbox;
+      case 13:
+        return trashEmailRetention == -1 ? null : trashEmailRetention;
+      case 14:
+        return junkEmailRetention == -1 ? null : junkEmailRetention;
+      case 15:
+        return saIntegrationMode;
+      case 16:
+        return saRequiredScore;
+      case 17:
+        return saDiscardScore == -1 ? null : saDiscardScore;
+      case 18:
+        return sudo;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -277,7 +296,7 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
   }
 
   public String getAutoresponderContent() throws IOException, SQLException {
-    String content = table.getConnector().requestStringQuery(true, AoservProtocol.CommandID.GET_AUTORESPONDER_CONTENT, pkey);
+    String content = table.getConnector().requestStringQuery(true, AoservProtocol.CommandId.GET_AUTORESPONDER_CONTENT, pkey);
     if (content.length() == 0) {
       return null;
     }
@@ -285,27 +304,27 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
   }
 
   public InboxAddress getAutoresponderFrom() throws IOException, SQLException {
-    if (autoresponder_from == -1) {
+    if (autoresponderFrom == -1) {
       return null;
     }
     // Might be filtered
-    return table.getConnector().getEmail().getInboxAddress().get(autoresponder_from);
+    return table.getConnector().getEmail().getInboxAddress().get(autoresponderFrom);
   }
 
   public String getAutoresponderSubject() {
-    return autoresponder_subject;
+    return autoresponderSubject;
   }
 
   public String getAutoresponderPath() {
-    return autoresponder_path;
+    return autoresponderPath;
   }
 
   public boolean isAutoresponderEnabled() {
-    return is_autoresponder_enabled;
+    return isAutoresponderEnabled;
   }
 
   public String getCronTable() throws IOException, SQLException {
-    return table.getConnector().requestStringQuery(true, AoservProtocol.CommandID.GET_CRON_TABLE, pkey);
+    return table.getConnector().requestStringQuery(true, AoservProtocol.CommandId.GET_CRON_TABLE, pkey);
   }
 
   /**
@@ -333,12 +352,12 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
   @Override
   public DisableLog getDisableLog() throws SQLException, IOException {
-    if (disable_log == -1) {
+    if (disableLog == -1) {
       return null;
     }
-    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disable_log);
+    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disableLog);
     if (obj == null) {
-      throw new SQLException("Unable to find DisableLog: " + disable_log);
+      throw new SQLException("Unable to find DisableLog: " + disableLog);
     }
     return obj;
   }
@@ -358,9 +377,9 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
   public InboxAttributes getInboxAttributes() throws IOException, SQLException {
     return table.getConnector().requestResult(
         true,
-        AoservProtocol.CommandID.GET_INBOX_ATTRIBUTES,
-        // Java 9: new AOServConnector.ResultRequest<>
-        new AOServConnector.ResultRequest<InboxAttributes>() {
+        AoservProtocol.CommandId.GET_INBOX_ATTRIBUTES,
+        // Java 9: new AoservConnector.ResultRequest<>
+        new AoservConnector.ResultRequest<InboxAttributes>() {
 
           private InboxAttributes result;
 
@@ -400,8 +419,8 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
     if (sizes.length > 0) {
       table.getConnector().requestUpdate(
           true,
-          AoservProtocol.CommandID.GET_IMAP_FOLDER_SIZES,
-          new AOServConnector.UpdateRequest() {
+          AoservProtocol.CommandId.GET_IMAP_FOLDER_SIZES,
+          new AoservConnector.UpdateRequest() {
             @Override
             public void writeRequest(StreamableOutput out) throws IOException {
               out.writeCompressedInt(pkey);
@@ -455,7 +474,7 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
   }
 
   public String getPredisablePassword() {
-    return predisable_password;
+    return predisablePassword;
   }
 
   @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
@@ -464,7 +483,7 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
   }
 
   public boolean useInbox() {
-    return use_inbox;
+    return useInbox;
   }
 
   /**
@@ -472,7 +491,7 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
    * to not auto-delete.
    */
   public int getTrashEmailRetention() {
-    return trash_email_retention;
+    return trashEmailRetention;
   }
 
   /**
@@ -480,19 +499,19 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
    * to not auto-delete.
    */
   public int getJunkEmailRetention() {
-    return junk_email_retention;
+    return junkEmailRetention;
   }
 
   public SpamAssassinMode getEmailSpamAssassinIntegrationMode() throws SQLException, IOException {
-    SpamAssassinMode esaim = table.getConnector().getEmail().getSpamAssassinMode().get(sa_integration_mode);
+    SpamAssassinMode esaim = table.getConnector().getEmail().getSpamAssassinMode().get(saIntegrationMode);
     if (esaim == null) {
-      throw new SQLException("Unable to find EmailSpamAssassinIntegrationMode: " + sa_integration_mode);
+      throw new SQLException("Unable to find EmailSpamAssassinIntegrationMode: " + saIntegrationMode);
     }
     return esaim;
   }
 
   public float getSpamAssassinRequiredScore() {
-    return sa_required_score;
+    return saRequiredScore;
   }
 
   /**
@@ -500,7 +519,7 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
    * feature is disabled.
    */
   public int getSpamAssassinDiscardScore() {
-    return sa_discard_score;
+    return saDiscardScore;
   }
 
   /**
@@ -512,7 +531,7 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
   }
 
   /**
-   * Gets the primary <code>LinuxServerGroup</code> for this <code>LinuxServerAccount</code>
+   * Gets the primary {@link GroupUser} for this {@link UserServer}.
    *
    * @exception  SQLException  if the primary group is not found
    *                           or two or more groups are marked as primary
@@ -523,20 +542,20 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
   }
 
   public int getAoServer_server_id() {
-    return ao_server;
+    return aoServer;
   }
 
   public Server getServer() throws SQLException, IOException {
-    Server ao = table.getConnector().getLinux().getServer().get(ao_server);
+    Server ao = table.getConnector().getLinux().getServer().get(aoServer);
     if (ao == null) {
-      throw new SQLException("Unable to find linux.Server: " + ao_server);
+      throw new SQLException("Unable to find linux.Server: " + aoServer);
     }
     return ao;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.LINUX_SERVER_ACCOUNTS;
+  public Table.TableId getTableId() {
+    return Table.TableId.LINUX_SERVER_ACCOUNTS;
   }
 
   public LinuxId getUid() {
@@ -549,36 +568,36 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
       int pos = 1;
       pkey = result.getInt(pos++);
       username = User.Name.valueOf(result.getString(pos++));
-      ao_server = result.getInt(pos++);
+      aoServer = result.getInt(pos++);
       uid = LinuxId.valueOf(result.getInt(pos++));
       home = PosixPath.valueOf(result.getString(pos++));
-      autoresponder_from = result.getInt(pos++);
+      autoresponderFrom = result.getInt(pos++);
       if (result.wasNull()) {
-        autoresponder_from = -1;
+        autoresponderFrom = -1;
       }
-      autoresponder_subject = result.getString(pos++);
-      autoresponder_path = result.getString(pos++);
-      is_autoresponder_enabled = result.getBoolean(pos++);
-      disable_log = result.getInt(pos++);
+      autoresponderSubject = result.getString(pos++);
+      autoresponderPath = result.getString(pos++);
+      isAutoresponderEnabled = result.getBoolean(pos++);
+      disableLog = result.getInt(pos++);
       if (result.wasNull()) {
-        disable_log = -1;
+        disableLog = -1;
       }
-      predisable_password = result.getString(pos++);
+      predisablePassword = result.getString(pos++);
       created = UnmodifiableTimestamp.valueOf(result.getTimestamp(pos++));
-      use_inbox = result.getBoolean(pos++);
-      trash_email_retention = result.getInt(pos++);
+      useInbox = result.getBoolean(pos++);
+      trashEmailRetention = result.getInt(pos++);
       if (result.wasNull()) {
-        trash_email_retention = -1;
+        trashEmailRetention = -1;
       }
-      junk_email_retention = result.getInt(pos++);
+      junkEmailRetention = result.getInt(pos++);
       if (result.wasNull()) {
-        junk_email_retention = -1;
+        junkEmailRetention = -1;
       }
-      sa_integration_mode = result.getString(pos++);
-      sa_required_score = result.getFloat(pos++);
-      sa_discard_score = result.getInt(pos++);
+      saIntegrationMode = result.getString(pos++);
+      saRequiredScore = result.getFloat(pos++);
+      saDiscardScore = result.getInt(pos++);
       if (result.wasNull()) {
-        sa_discard_score = -1;
+        saDiscardScore = -1;
       }
       sudo = result.getString(pos++);
     } catch (ValidationException e) {
@@ -587,12 +606,12 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
   }
 
   public int isProcmailManual() throws IOException, SQLException {
-    return table.getConnector().requestIntQuery(true, AoservProtocol.CommandID.IS_LINUX_SERVER_ACCOUNT_PROCMAIL_MANUAL, pkey);
+    return table.getConnector().requestIntQuery(true, AoservProtocol.CommandId.IS_LINUX_SERVER_ACCOUNT_PROCMAIL_MANUAL, pkey);
   }
 
   @Override
   public int arePasswordsSet() throws IOException, SQLException {
-    return table.getConnector().requestBooleanQuery(true, AoservProtocol.CommandID.IS_LINUX_SERVER_ACCOUNT_PASSWORD_SET, pkey) ? PasswordProtected.ALL : PasswordProtected.NONE;
+    return table.getConnector().requestBooleanQuery(true, AoservProtocol.CommandId.IS_LINUX_SERVER_ACCOUNT_PASSWORD_SET, pkey) ? PasswordProtected.ALL : PasswordProtected.NONE;
   }
 
   @Override
@@ -600,22 +619,22 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
     try {
       pkey = in.readCompressedInt();
       username = User.Name.valueOf(in.readUTF()).intern();
-      ao_server = in.readCompressedInt();
+      aoServer = in.readCompressedInt();
       uid = LinuxId.valueOf(in.readCompressedInt());
       home = PosixPath.valueOf(in.readUTF());
-      autoresponder_from = in.readCompressedInt();
-      autoresponder_subject = in.readNullUTF();
-      autoresponder_path = in.readNullUTF();
-      is_autoresponder_enabled = in.readBoolean();
-      disable_log = in.readCompressedInt();
-      predisable_password = in.readNullUTF();
+      autoresponderFrom = in.readCompressedInt();
+      autoresponderSubject = in.readNullUTF();
+      autoresponderPath = in.readNullUTF();
+      isAutoresponderEnabled = in.readBoolean();
+      disableLog = in.readCompressedInt();
+      predisablePassword = in.readNullUTF();
       created = SQLStreamables.readUnmodifiableTimestamp(in);
-      use_inbox = in.readBoolean();
-      trash_email_retention = in.readCompressedInt();
-      junk_email_retention = in.readCompressedInt();
-      sa_integration_mode = in.readUTF().intern();
-      sa_required_score = in.readFloat();
-      sa_discard_score = in.readCompressedInt();
+      useInbox = in.readBoolean();
+      trashEmailRetention = in.readCompressedInt();
+      junkEmailRetention = in.readCompressedInt();
+      saIntegrationMode = in.readUTF().intern();
+      saRequiredScore = in.readFloat();
+      saDiscardScore = in.readCompressedInt();
       sudo = in.readNullUTF();
     } catch (ValidationException e) {
       throw new IOException(e);
@@ -680,7 +699,7 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
     }
 
     // No private FTP servers
-    for (PrivateServer pfs : ao.getPrivateFTPServers()) {
+    for (PrivateServer pfs : ao.getPrivateFtpServers()) {
       if (pfs.getLinuxServerAccount_pkey() == pkey) {
         UserServer lsa = pfs.getLinuxServerAccount();
         reasons.add(new CannotRemoveReason<>("Used by private FTP server " + lsa.getHome() + " on " + lsa.getServer().getHostname(), pfs));
@@ -699,25 +718,25 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
   @Override
   public void remove() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.REMOVE,
-        Table.TableID.LINUX_SERVER_ACCOUNTS,
+        AoservProtocol.CommandId.REMOVE,
+        Table.TableId.LINUX_SERVER_ACCOUNTS,
         pkey
     );
   }
 
   public void setCronTable(String cronTable) throws IOException, SQLException {
-    table.getConnector().requestUpdate(true, AoservProtocol.CommandID.SET_CRON_TABLE, pkey, cronTable);
+    table.getConnector().requestUpdate(true, AoservProtocol.CommandId.SET_CRON_TABLE, pkey, cronTable);
   }
 
   @Override
   public void setPassword(String password) throws IOException, SQLException {
-    AOServConnector connector = table.getConnector();
+    AoservConnector connector = table.getConnector();
     if (!connector.isSecure()) {
       throw new IOException("Passwords for linux accounts may only be set when using secure protocols.  Currently using the " + connector.getProtocol() + " protocol, which is not secure.");
     }
-    connector.requestUpdateIL(true, AoservProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_PASSWORD, pkey, password);
+    connector.requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_LINUX_SERVER_ACCOUNT_PASSWORD, pkey, password);
   }
 
   public void setAutoresponder(
@@ -728,8 +747,8 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
   ) throws IOException, SQLException {
     table.getConnector().requestUpdate(
         true,
-        AoservProtocol.CommandID.SET_AUTORESPONDER,
-        new AOServConnector.UpdateRequest() {
+        AoservProtocol.CommandId.SET_AUTORESPONDER,
+        new AoservConnector.UpdateRequest() {
           private IntList invalidateList;
 
           @Override
@@ -751,7 +770,7 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
           public void readResponse(StreamableInput in) throws IOException, SQLException {
             int code = in.readByte();
             if (code == AoservProtocol.DONE) {
-              invalidateList = AOServConnector.readInvalidateList(in);
+              invalidateList = AoservConnector.readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
               throw new IOException("Unexpected response code: " + code);
@@ -767,34 +786,34 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
   }
 
   public void setTrashEmailRetention(int days) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_TRASH_EMAIL_RETENTION, pkey, days);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_LINUX_SERVER_ACCOUNT_TRASH_EMAIL_RETENTION, pkey, days);
   }
 
   public void setJunkEmailRetention(int days) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_JUNK_EMAIL_RETENTION, pkey, days);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_LINUX_SERVER_ACCOUNT_JUNK_EMAIL_RETENTION, pkey, days);
   }
 
   public void setEmailSpamAssassinIntegrationMode(SpamAssassinMode mode) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_EMAIL_SPAMASSASSIN_INTEGRATION_MODE, pkey, mode.getName());
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_LINUX_SERVER_ACCOUNT_EMAIL_SPAMASSASSIN_INTEGRATION_MODE, pkey, mode.getName());
   }
 
-  public void setSpamAssassinRequiredScore(float required_score) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_REQUIRED_SCORE, pkey, required_score);
+  public void setSpamAssassinRequiredScore(float requiredScore) throws IOException, SQLException {
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_REQUIRED_SCORE, pkey, requiredScore);
   }
 
-  public void setSpamAssassinDiscardScore(int discard_score) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_DISCARD_SCORE, pkey, discard_score);
+  public void setSpamAssassinDiscardScore(int discardScore) throws IOException, SQLException {
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_DISCARD_SCORE, pkey, discardScore);
   }
 
   public void setUseInbox(boolean useInbox) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_USE_INBOX, pkey, useInbox);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_LINUX_SERVER_ACCOUNT_USE_INBOX, pkey, useInbox);
   }
 
   public void setPredisablePassword(final String password) throws IOException, SQLException {
     table.getConnector().requestUpdate(
         true,
-        AoservProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_PREDISABLE_PASSWORD,
-        new AOServConnector.UpdateRequest() {
+        AoservProtocol.CommandId.SET_LINUX_SERVER_ACCOUNT_PREDISABLE_PASSWORD,
+        new AoservConnector.UpdateRequest() {
           private IntList invalidateList;
 
           @Override
@@ -807,7 +826,7 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
           public void readResponse(StreamableInput in) throws IOException, SQLException {
             int code = in.readByte();
             if (code == AoservProtocol.DONE) {
-              invalidateList = AOServConnector.readInvalidateList(in);
+              invalidateList = AoservConnector.readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
               throw new IOException("Unexpected response code: " + code);
@@ -831,7 +850,7 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
     out.writeUTF(username.toString());
-    out.writeCompressedInt(ao_server);
+    out.writeCompressedInt(aoServer);
     out.writeCompressedInt(uid.getId());
     out.writeUTF(home.toString());
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30) <= 0) {
@@ -842,28 +861,28 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
       out.writeShort(0);
       out.writeShort(7);
     }
-    out.writeCompressedInt(autoresponder_from);
-    out.writeNullUTF(autoresponder_subject);
-    out.writeNullUTF(autoresponder_path);
-    out.writeBoolean(is_autoresponder_enabled);
-    out.writeCompressedInt(disable_log);
-    out.writeNullUTF(predisable_password);
+    out.writeCompressedInt(autoresponderFrom);
+    out.writeNullUTF(autoresponderSubject);
+    out.writeNullUTF(autoresponderPath);
+    out.writeBoolean(isAutoresponderEnabled);
+    out.writeCompressedInt(disableLog);
+    out.writeNullUTF(predisablePassword);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
       out.writeLong(created.getTime());
     } else {
       SQLStreamables.writeTimestamp(created, out);
     }
-    out.writeBoolean(use_inbox);
-    out.writeCompressedInt(trash_email_retention);
+    out.writeBoolean(useInbox);
+    out.writeCompressedInt(trashEmailRetention);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_120) >= 0) {
-      out.writeCompressedInt(junk_email_retention);
-      out.writeUTF(sa_integration_mode);
+      out.writeCompressedInt(junkEmailRetention);
+      out.writeUTF(saIntegrationMode);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_124) >= 0) {
-      out.writeFloat(sa_required_score);
+      out.writeFloat(saRequiredScore);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_40) >= 0) {
-      out.writeCompressedInt(sa_discard_score);
+      out.writeCompressedInt(saDiscardScore);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_80_1) >= 0) {
       out.writeNullUTF(sudo);
@@ -872,11 +891,11 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
   @Override
   public boolean canSetPassword() throws IOException, SQLException {
-    return disable_log == -1 && getLinuxAccount().canSetPassword();
+    return disableLog == -1 && getLinuxAccount().canSetPassword();
   }
 
   public boolean passwordMatches(String password) throws IOException, SQLException {
-    return table.getConnector().requestBooleanQuery(true, AoservProtocol.CommandID.COMPARE_LINUX_SERVER_ACCOUNT_PASSWORD, pkey, password);
+    return table.getConnector().requestBooleanQuery(true, AoservProtocol.CommandId.COMPARE_LINUX_SERVER_ACCOUNT_PASSWORD, pkey, password);
   }
 
   public int addEmailAddress(Address address) throws IOException, SQLException {

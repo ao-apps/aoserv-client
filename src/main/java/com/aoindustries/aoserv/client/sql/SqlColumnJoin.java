@@ -23,9 +23,9 @@
 
 package com.aoindustries.aoserv.client.sql;
 
-import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.AOServObject;
-import com.aoindustries.aoserv.client.AOServTable;
+import com.aoindustries.aoserv.client.AoservConnector;
+import com.aoindustries.aoserv.client.AoservObject;
+import com.aoindustries.aoserv.client.AoservTable;
 import com.aoindustries.aoserv.client.schema.Column;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.schema.Type;
@@ -38,19 +38,19 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-public final class SQLColumnJoin implements SQLExpression {
+public final class SqlColumnJoin implements SqlExpression {
 
-  private final SQLExpression expression;
+  private final SqlExpression expression;
   private final Column keyColumn;
   private final int keyIndex;
   private final Column valueColumn;
   private final Type type;
-  private final AOServTable<?, ?> table;
+  private final AoservTable<?, ?> table;
   private final int valueIndex;
 
-  public SQLColumnJoin(
-      AOServConnector conn,
-      SQLExpression expression,
+  public SqlColumnJoin(
+      AoservConnector conn,
+      SqlExpression expression,
       Column keyColumn,
       Column valueColumn
   ) throws SQLException, IOException {
@@ -59,7 +59,7 @@ public final class SQLColumnJoin implements SQLExpression {
     this.keyIndex = keyColumn.getIndex();
     this.valueColumn = valueColumn;
     this.type = valueColumn.getType(conn);
-    this.table = keyColumn.getTable(conn).getAOServTable(conn);
+    this.table = keyColumn.getTable(conn).getAoservTable(conn);
     this.valueIndex = valueColumn.getIndex();
   }
 
@@ -74,10 +74,10 @@ public final class SQLColumnJoin implements SQLExpression {
   }
 
   @Override
-  public Object evaluate(AOServConnector conn, AOServObject<?, ?> obj) throws IOException, SQLException {
+  public Object evaluate(AoservConnector conn, AoservObject<?, ?> obj) throws IOException, SQLException {
     Object keyValue = expression.evaluate(conn, obj);
     if (keyValue != null) {
-      AOServObject<?, ?> row = table.getUniqueRow(keyIndex, keyValue);
+      AoservObject<?, ?> row = table.getUniqueRow(keyIndex, keyValue);
       if (row != null) {
         return row.getColumn(valueIndex);
       }
@@ -91,7 +91,7 @@ public final class SQLColumnJoin implements SQLExpression {
   }
 
   @Override
-  public void getReferencedTables(AOServConnector conn, List<Table> tables) throws IOException, SQLException {
+  public void getReferencedTables(AoservConnector conn, List<Table> tables) throws IOException, SQLException {
     expression.getReferencedTables(conn, tables);
     Table t = keyColumn.getTable(conn);
     if (!tables.contains(t)) {

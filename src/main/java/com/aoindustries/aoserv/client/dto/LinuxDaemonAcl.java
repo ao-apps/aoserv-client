@@ -28,7 +28,7 @@ import com.aoapps.net.dto.HostAddress;
 /**
  * @author  AO Industries, Inc.
  */
-public class LinuxDaemonAcl extends AOServObject {
+public class LinuxDaemonAcl extends AoservObject {
 
   private int pkey;
   private int aoServer;

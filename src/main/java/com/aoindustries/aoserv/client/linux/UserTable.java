@@ -28,9 +28,9 @@ import com.aoapps.hodgepodge.io.TerminalWriter;
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.lang.validation.ValidationResult;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.account.Account;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.password.PasswordChecker;
 import com.aoindustries.aoserv.client.password.PasswordProtected;
@@ -50,7 +50,7 @@ import java.util.Objects;
  */
 public final class UserTable extends CachedTableUserNameKey<User> {
 
-  UserTable(AOServConnector connector) {
+  UserTable(AoservConnector connector) {
     super(connector, User.class);
   }
 
@@ -68,27 +68,27 @@ public final class UserTable extends CachedTableUserNameKey<User> {
       final com.aoindustries.aoserv.client.account.User usernameObject,
       final Group.Name primaryGroup,
       final User.Gecos name,
-      final User.Gecos office_location,
-      final User.Gecos office_phone,
-      final User.Gecos home_phone,
+      final User.Gecos officeLocation,
+      final User.Gecos officePhone,
+      final User.Gecos homePhone,
       final String type,
       final PosixPath shell
   ) throws IOException, SQLException {
     connector.requestUpdate(
         true,
-        AoservProtocol.CommandID.ADD,
-        new AOServConnector.UpdateRequest() {
+        AoservProtocol.CommandId.ADD,
+        new AoservConnector.UpdateRequest() {
           private IntList invalidateList;
 
           @Override
           public void writeRequest(StreamableOutput out) throws IOException {
-            out.writeCompressedInt(Table.TableID.LINUX_ACCOUNTS.ordinal());
+            out.writeCompressedInt(Table.TableId.LINUX_ACCOUNTS.ordinal());
             out.writeUTF(usernameObject.getUsername().toString());
             out.writeUTF(primaryGroup.toString());
             out.writeNullUTF(Objects.toString(name, null));
-            out.writeNullUTF(Objects.toString(office_location, null));
-            out.writeNullUTF(Objects.toString(office_phone, null));
-            out.writeNullUTF(Objects.toString(home_phone, null));
+            out.writeNullUTF(Objects.toString(officeLocation, null));
+            out.writeNullUTF(Objects.toString(officePhone, null));
+            out.writeNullUTF(Objects.toString(homePhone, null));
             out.writeUTF(type);
             out.writeUTF(shell.toString());
           }
@@ -97,7 +97,7 @@ public final class UserTable extends CachedTableUserNameKey<User> {
           public void readResponse(StreamableInput in) throws IOException, SQLException {
             int code = in.readByte();
             if (code == AoservProtocol.DONE) {
-              invalidateList = AOServConnector.readInvalidateList(in);
+              invalidateList = AoservConnector.readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
               throw new IOException("Unexpected response code: " + code);
@@ -148,31 +148,31 @@ public final class UserTable extends CachedTableUserNameKey<User> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.LINUX_ACCOUNTS;
+  public Table.TableId getTableId() {
+    return Table.TableId.LINUX_ACCOUNTS;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_LINUX_ACCOUNT)) {
-      if (AOSH.checkParamCount(Command.ADD_LINUX_ACCOUNT, args, 8, err)) {
-        connector.getSimpleAOClient().addLinuxAccount(
-            AOSH.parseLinuxUserName(args[1], "username"),
-            AOSH.parseGroupName(args[2], "primary_group"),
-            args[3].isEmpty() ? null : AOSH.parseGecos(args[3], "full_name"),
-            args[4].isEmpty() ? null : AOSH.parseGecos(args[4], "office_location"),
-            args[5].isEmpty() ? null : AOSH.parseGecos(args[5], "office_phone"),
-            args[6].isEmpty() ? null : AOSH.parseGecos(args[6], "home_phone"),
+      if (Aosh.checkParamCount(Command.ADD_LINUX_ACCOUNT, args, 8, err)) {
+        connector.getSimpleClient().addLinuxAccount(
+            Aosh.parseLinuxUserName(args[1], "username"),
+            Aosh.parseGroupName(args[2], "primary_group"),
+            args[3].isEmpty() ? null : Aosh.parseGecos(args[3], "full_name"),
+            args[4].isEmpty() ? null : Aosh.parseGecos(args[4], "office_location"),
+            args[5].isEmpty() ? null : Aosh.parseGecos(args[5], "office_phone"),
+            args[6].isEmpty() ? null : Aosh.parseGecos(args[6], "home_phone"),
             args[7],
-            AOSH.parseUnixPath(args[8], "shell")
+            Aosh.parseUnixPath(args[8], "shell")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.ARE_LINUX_ACCOUNT_PASSWORDS_SET)) {
-      if (AOSH.checkParamCount(Command.ARE_LINUX_ACCOUNT_PASSWORDS_SET, args, 1, err)) {
-        int result = connector.getSimpleAOClient().areLinuxAccountPasswordsSet(
-            AOSH.parseLinuxUserName(args[1], "username")
+      if (Aosh.checkParamCount(Command.ARE_LINUX_ACCOUNT_PASSWORDS_SET, args, 1, err)) {
+        int result = connector.getSimpleClient().areLinuxAccountPasswordsSet(
+            Aosh.parseLinuxUserName(args[1], "username")
         );
         if (result == PasswordProtected.NONE) {
           out.println("none");
@@ -187,7 +187,7 @@ public final class UserTable extends CachedTableUserNameKey<User> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.CHECK_LINUX_ACCOUNT_NAME)) {
-      if (AOSH.checkParamCount(Command.CHECK_LINUX_ACCOUNT_NAME, args, 1, err)) {
+      if (Aosh.checkParamCount(Command.CHECK_LINUX_ACCOUNT_NAME, args, 1, err)) {
         ValidationResult validationResult = User.Gecos.validate(args[1]);
         out.println(validationResult.isValid());
         out.flush();
@@ -199,9 +199,9 @@ public final class UserTable extends CachedTableUserNameKey<User> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.CHECK_LINUX_ACCOUNT_PASSWORD)) {
-      if (AOSH.checkParamCount(Command.CHECK_LINUX_ACCOUNT_PASSWORD, args, 2, err)) {
-        List<PasswordChecker.Result> results = connector.getSimpleAOClient().checkLinuxAccountPassword(
-            AOSH.parseLinuxUserName(args[1], "username"),
+      if (Aosh.checkParamCount(Command.CHECK_LINUX_ACCOUNT_PASSWORD, args, 2, err)) {
+        List<PasswordChecker.Result> results = connector.getSimpleClient().checkLinuxAccountPassword(
+            Aosh.parseLinuxUserName(args[1], "username"),
             args[2]
         );
         if (PasswordChecker.hasResults(results)) {
@@ -211,10 +211,10 @@ public final class UserTable extends CachedTableUserNameKey<User> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.DISABLE_LINUX_ACCOUNT)) {
-      if (AOSH.checkParamCount(Command.DISABLE_LINUX_ACCOUNT, args, 2, err)) {
+      if (Aosh.checkParamCount(Command.DISABLE_LINUX_ACCOUNT, args, 2, err)) {
         out.println(
-            connector.getSimpleAOClient().disableLinuxAccount(
-                AOSH.parseLinuxUserName(args[1], "username"),
+            connector.getSimpleClient().disableLinuxAccount(
+                Aosh.parseLinuxUserName(args[1], "username"),
                 args[2]
             )
         );
@@ -222,76 +222,76 @@ public final class UserTable extends CachedTableUserNameKey<User> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.ENABLE_LINUX_ACCOUNT)) {
-      if (AOSH.checkParamCount(Command.ENABLE_LINUX_ACCOUNT, args, 1, err)) {
-        connector.getSimpleAOClient().enableLinuxAccount(
-            AOSH.parseLinuxUserName(args[1], "username")
+      if (Aosh.checkParamCount(Command.ENABLE_LINUX_ACCOUNT, args, 1, err)) {
+        connector.getSimpleClient().enableLinuxAccount(
+            Aosh.parseLinuxUserName(args[1], "username")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.GENERATE_PASSWORD)) {
-      if (AOSH.checkParamCount(Command.GENERATE_PASSWORD, args, 0, err)) {
-        out.println(connector.getSimpleAOClient().generatePassword());
+      if (Aosh.checkParamCount(Command.GENERATE_PASSWORD, args, 0, err)) {
+        out.println(connector.getSimpleClient().generatePassword());
         out.flush();
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.REMOVE_LINUX_ACCOUNT)) {
-      if (AOSH.checkParamCount(Command.REMOVE_LINUX_ACCOUNT, args, 1, err)) {
-        connector.getSimpleAOClient().removeLinuxAccount(
-            AOSH.parseLinuxUserName(args[1], "username")
+      if (Aosh.checkParamCount(Command.REMOVE_LINUX_ACCOUNT, args, 1, err)) {
+        connector.getSimpleClient().removeLinuxAccount(
+            Aosh.parseLinuxUserName(args[1], "username")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_LINUX_ACCOUNT_HOME_PHONE)) {
-      if (AOSH.checkParamCount(Command.SET_LINUX_ACCOUNT_HOME_PHONE, args, 2, err)) {
-        connector.getSimpleAOClient().setLinuxAccountHomePhone(
-            AOSH.parseLinuxUserName(args[1], "username"),
-            args[2].isEmpty() ? null : AOSH.parseGecos(args[2], "phone_number")
+      if (Aosh.checkParamCount(Command.SET_LINUX_ACCOUNT_HOME_PHONE, args, 2, err)) {
+        connector.getSimpleClient().setLinuxAccountHomePhone(
+            Aosh.parseLinuxUserName(args[1], "username"),
+            args[2].isEmpty() ? null : Aosh.parseGecos(args[2], "phone_number")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_LINUX_ACCOUNT_NAME)) {
-      if (AOSH.checkParamCount(Command.SET_LINUX_ACCOUNT_NAME, args, 2, err)) {
-        connector.getSimpleAOClient().setLinuxAccountName(
-            AOSH.parseLinuxUserName(args[1], "username"),
-            args[2].isEmpty() ? null : AOSH.parseGecos(args[2], "full_name")
+      if (Aosh.checkParamCount(Command.SET_LINUX_ACCOUNT_NAME, args, 2, err)) {
+        connector.getSimpleClient().setLinuxAccountName(
+            Aosh.parseLinuxUserName(args[1], "username"),
+            args[2].isEmpty() ? null : Aosh.parseGecos(args[2], "full_name")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_LINUX_ACCOUNT_OFFICE_LOCATION)) {
-      if (AOSH.checkParamCount(Command.SET_LINUX_ACCOUNT_OFFICE_LOCATION, args, 2, err)) {
-        connector.getSimpleAOClient().setLinuxAccountOfficeLocation(
-            AOSH.parseLinuxUserName(args[1], "username"),
-            args[2].isEmpty() ? null : AOSH.parseGecos(args[2], "location")
+      if (Aosh.checkParamCount(Command.SET_LINUX_ACCOUNT_OFFICE_LOCATION, args, 2, err)) {
+        connector.getSimpleClient().setLinuxAccountOfficeLocation(
+            Aosh.parseLinuxUserName(args[1], "username"),
+            args[2].isEmpty() ? null : Aosh.parseGecos(args[2], "location")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_LINUX_ACCOUNT_OFFICE_PHONE)) {
-      if (AOSH.checkParamCount(Command.SET_LINUX_ACCOUNT_OFFICE_PHONE, args, 2, err)) {
-        connector.getSimpleAOClient().setLinuxAccountOfficePhone(
-            AOSH.parseLinuxUserName(args[1], "username"),
-            args[2].isEmpty() ? null : AOSH.parseGecos(args[2], "phone_number")
+      if (Aosh.checkParamCount(Command.SET_LINUX_ACCOUNT_OFFICE_PHONE, args, 2, err)) {
+        connector.getSimpleClient().setLinuxAccountOfficePhone(
+            Aosh.parseLinuxUserName(args[1], "username"),
+            args[2].isEmpty() ? null : Aosh.parseGecos(args[2], "phone_number")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_LINUX_ACCOUNT_PASSWORD)) {
-      if (AOSH.checkParamCount(Command.SET_LINUX_ACCOUNT_PASSWORD, args, 2, err)) {
-        connector.getSimpleAOClient().setLinuxAccountPassword(
-            AOSH.parseLinuxUserName(args[1], "username"),
+      if (Aosh.checkParamCount(Command.SET_LINUX_ACCOUNT_PASSWORD, args, 2, err)) {
+        connector.getSimpleClient().setLinuxAccountPassword(
+            Aosh.parseLinuxUserName(args[1], "username"),
             args[2]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_LINUX_ACCOUNT_SHELL)) {
-      if (AOSH.checkParamCount(Command.SET_LINUX_ACCOUNT_SHELL, args, 2, err)) {
-        connector.getSimpleAOClient().setLinuxAccountShell(
-            AOSH.parseLinuxUserName(args[1], "username"),
-            AOSH.parseUnixPath(args[2], "shell")
+      if (Aosh.checkParamCount(Command.SET_LINUX_ACCOUNT_SHELL, args, 2, err)) {
+        connector.getSimpleClient().setLinuxAccountShell(
+            Aosh.parseLinuxUserName(args[1], "username"),
+            Aosh.parseUnixPath(args[2], "shell")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.WAIT_FOR_LINUX_ACCOUNT_REBUILD)) {
-      if (AOSH.checkParamCount(Command.WAIT_FOR_LINUX_ACCOUNT_REBUILD, args, 1, err)) {
-        connector.getSimpleAOClient().waitForLinuxAccountRebuild(args[1]);
+      if (Aosh.checkParamCount(Command.WAIT_FOR_LINUX_ACCOUNT_REBUILD, args, 1, err)) {
+        connector.getSimpleClient().waitForLinuxAccountRebuild(args[1]);
       }
       return true;
     }
@@ -301,8 +301,8 @@ public final class UserTable extends CachedTableUserNameKey<User> {
   void waitForRebuild(Server aoServer) throws IOException, SQLException {
     connector.requestUpdate(
         true,
-        AoservProtocol.CommandID.WAIT_FOR_REBUILD,
-        Table.TableID.LINUX_ACCOUNTS,
+        AoservProtocol.CommandId.WAIT_FOR_REBUILD,
+        Table.TableId.LINUX_ACCOUNTS,
         aoServer.getPkey()
     );
   }

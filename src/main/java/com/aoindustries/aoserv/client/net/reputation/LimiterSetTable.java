@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.net.reputation;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.net.Device;
@@ -40,7 +40,7 @@ import java.util.List;
  */
 public final class LimiterSetTable extends CachedTableIntegerKey<LimiterSet> {
 
-  LimiterSetTable(AOServConnector connector) {
+  LimiterSetTable(AoservConnector connector) {
     super(connector, LimiterSet.class);
   }
 
@@ -68,7 +68,7 @@ public final class LimiterSetTable extends CachedTableIntegerKey<LimiterSet> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.IP_REPUTATION_LIMITER_SETS;
+  public Table.TableId getTableId() {
+    return Table.TableId.IP_REPUTATION_LIMITER_SETS;
   }
 }

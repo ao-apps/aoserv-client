@@ -58,8 +58,7 @@ public final class Architecture extends GlobalObjectStringKey<Architecture> {
       MIPS = "mips",
       PPC = "ppc",
       SPARC = "sparc",
-      X86_64 = "x86_64"
-  ;
+      X86_64 = "x86_64";
 
   public static final String DEFAULT_ARCHITECTURE = I686;
 
@@ -79,9 +78,12 @@ public final class Architecture extends GlobalObjectStringKey<Architecture> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_NAME: return pkey;
-      case 1: return bits;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_NAME:
+        return pkey;
+      case 1:
+        return bits;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -94,8 +96,8 @@ public final class Architecture extends GlobalObjectStringKey<Architecture> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.ARCHITECTURES;
+  public Table.TableId getTableId() {
+    return Table.TableId.ARCHITECTURES;
   }
 
   @Override

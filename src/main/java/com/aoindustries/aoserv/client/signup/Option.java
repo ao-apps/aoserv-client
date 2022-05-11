@@ -39,10 +39,8 @@ import java.sql.SQLException;
  */
 public final class Option extends CachedObjectIntegerKey<Option> {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_REQUEST = 1
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_REQUEST = 1;
   static final String COLUMN_REQUEST_name = "request";
   static final String COLUMN_NAME_name = "name";
 
@@ -64,17 +62,22 @@ public final class Option extends CachedObjectIntegerKey<Option> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_REQUEST: return request;
-      case 2: return name;
-      case 3: return value;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_REQUEST:
+        return request;
+      case 2:
+        return name;
+      case 3:
+        return value;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.SIGNUP_REQUEST_OPTIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.SIGNUP_REQUEST_OPTIONS;
   }
 
   @Override

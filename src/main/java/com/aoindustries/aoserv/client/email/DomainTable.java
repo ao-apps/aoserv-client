@@ -26,10 +26,10 @@ package com.aoindustries.aoserv.client.email;
 import com.aoapps.hodgepodge.io.TerminalWriter;
 import com.aoapps.lang.validation.ValidationResult;
 import com.aoapps.net.DomainName;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.linux.Server;
@@ -48,7 +48,7 @@ import java.util.List;
  */
 public final class DomainTable extends CachedTableIntegerKey<Domain> {
 
-  DomainTable(AOServConnector connector) {
+  DomainTable(AoservConnector connector) {
     super(connector, Domain.class);
   }
 
@@ -64,10 +64,10 @@ public final class DomainTable extends CachedTableIntegerKey<Domain> {
   }
 
   public int addEmailDomain(DomainName domain, Server ao, Package packageObject) throws SQLException, IOException {
-    return connector.requestIntQueryIL(
+    return connector.requestIntQueryInvalidating(
         true,
-        AoservProtocol.CommandID.ADD,
-        Table.TableID.EMAIL_DOMAINS,
+        AoservProtocol.CommandId.ADD,
+        Table.TableId.EMAIL_DOMAINS,
         domain,
         ao.getPkey(),
         packageObject.getName()
@@ -116,27 +116,27 @@ public final class DomainTable extends CachedTableIntegerKey<Domain> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.EMAIL_DOMAINS;
+  public Table.TableId getTableId() {
+    return Table.TableId.EMAIL_DOMAINS;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_EMAIL_DOMAIN)) {
-      if (AOSH.checkParamCount(Command.ADD_EMAIL_DOMAIN, args, 3, err)) {
+      if (Aosh.checkParamCount(Command.ADD_EMAIL_DOMAIN, args, 3, err)) {
         out.println(
-            connector.getSimpleAOClient().addEmailDomain(
-                AOSH.parseDomainName(args[1], "domain"),
+            connector.getSimpleClient().addEmailDomain(
+                Aosh.parseDomainName(args[1], "domain"),
                 args[2],
-                AOSH.parseAccountingCode(args[3], "package")
+                Aosh.parseAccountingCode(args[3], "package")
             )
         );
         out.flush();
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.CHECK_EMAIL_DOMAIN)) {
-      if (AOSH.checkParamCount(Command.CHECK_EMAIL_DOMAIN, args, 1, err)) {
+      if (Aosh.checkParamCount(Command.CHECK_EMAIL_DOMAIN, args, 1, err)) {
         ValidationResult validationResult = DomainName.validate(args[1]);
         out.println(validationResult.isValid());
         out.flush();
@@ -148,11 +148,11 @@ public final class DomainTable extends CachedTableIntegerKey<Domain> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.IS_EMAIL_DOMAIN_AVAILABLE)) {
-      if (AOSH.checkParamCount(Command.IS_EMAIL_DOMAIN_AVAILABLE, args, 2, err)) {
+      if (Aosh.checkParamCount(Command.IS_EMAIL_DOMAIN_AVAILABLE, args, 2, err)) {
         try {
           out.println(
-              connector.getSimpleAOClient().isEmailDomainAvailable(
-                  AOSH.parseDomainName(args[1], "domain"),
+              connector.getSimpleClient().isEmailDomainAvailable(
+                  Aosh.parseDomainName(args[1], "domain"),
                   args[2]
               )
           );
@@ -165,9 +165,9 @@ public final class DomainTable extends CachedTableIntegerKey<Domain> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.REMOVE_EMAIL_DOMAIN)) {
-      if (AOSH.checkParamCount(Command.REMOVE_EMAIL_DOMAIN, args, 2, err)) {
-        connector.getSimpleAOClient().removeEmailDomain(
-            AOSH.parseDomainName(args[1], "domain"),
+      if (Aosh.checkParamCount(Command.REMOVE_EMAIL_DOMAIN, args, 2, err)) {
+        connector.getSimpleClient().removeEmailDomain(
+            Aosh.parseDomainName(args[1], "domain"),
             args[2]
         );
       }
@@ -177,6 +177,6 @@ public final class DomainTable extends CachedTableIntegerKey<Domain> {
   }
 
   public boolean isEmailDomainAvailable(Server aoServer, DomainName domain) throws SQLException, IOException {
-    return connector.requestBooleanQuery(true, AoservProtocol.CommandID.IS_EMAIL_DOMAIN_AVAILABLE, aoServer.getPkey(), domain);
+    return connector.requestBooleanQuery(true, AoservProtocol.CommandId.IS_EMAIL_DOMAIN_AVAILABLE, aoServer.getPkey(), domain);
   }
 }

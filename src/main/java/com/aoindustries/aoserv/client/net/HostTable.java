@@ -29,11 +29,11 @@ import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.lang.validation.ValidationException;
 import com.aoapps.net.DomainName;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.User;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.distribution.OperatingSystemVersion;
@@ -53,7 +53,7 @@ import java.util.List;
  */
 public final class HostTable extends CachedTableIntegerKey<Host> {
 
-  HostTable(AOServConnector connector) {
+  HostTable(AoservConnector connector) {
     super(connector, Host.class);
   }
 
@@ -73,19 +73,19 @@ public final class HostTable extends CachedTableIntegerKey<Host> {
       final ServerFarm farm,
       final Package owner,
       final String description,
-      final int backup_hour,
-      final OperatingSystemVersion os_version,
+      final int backupHour,
+      final OperatingSystemVersion osVersion,
       final User.Name username,
       final String password,
-      final String contact_phone,
-      final String contact_email
+      final String contactPhone,
+      final String contactEmail
   ) throws IOException, SQLException {
     // Create the new profile
     return connector.requestResult(
         true,
-        AoservProtocol.CommandID.ADD_BACKUP_SERVER,
-        // Java 9: new AOServConnector.ResultRequest<>
-        new AOServConnector.ResultRequest<Integer>() {
+        AoservProtocol.CommandId.ADD_BACKUP_SERVER,
+        // Java 9: new AoservConnector.ResultRequest<>
+        new AoservConnector.ResultRequest<Integer>() {
           private int pkey;
           private IntList invalidateList;
 
@@ -95,12 +95,12 @@ public final class HostTable extends CachedTableIntegerKey<Host> {
             out.writeUTF(farm.getName());
             out.writeCompressedInt(owner.getPkey());
             out.writeUTF(description);
-            out.writeCompressedInt(backup_hour);
-            out.writeCompressedInt(os_version.getPkey());
+            out.writeCompressedInt(backupHour);
+            out.writeCompressedInt(osVersion.getPkey());
             out.writeUTF(username.toString());
             out.writeUTF(password);
-            out.writeUTF(contact_phone);
-            out.writeUTF(contact_email);
+            out.writeUTF(contactPhone);
+            out.writeUTF(contactEmail);
           }
 
           @Override
@@ -108,7 +108,7 @@ public final class HostTable extends CachedTableIntegerKey<Host> {
             int code = in.readByte();
             if (code == AoservProtocol.DONE) {
               pkey = in.readCompressedInt();
-              invalidateList = AOServConnector.readInvalidateList(in);
+              invalidateList = AoservConnector.readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
               throw new IOException("Unexpected response code: " + code);
@@ -208,6 +208,8 @@ public final class HostTable extends CachedTableIntegerKey<Host> {
   }
 
   /**
+   * {@inheritDoc}
+   *
    * @see  #get(java.lang.Object)
    */
   @Override
@@ -216,8 +218,8 @@ public final class HostTable extends CachedTableIntegerKey<Host> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.SERVERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.SERVERS;
   }
 
   public Host getHost(Package pk, String name) throws IOException, SQLException {
@@ -238,18 +240,18 @@ public final class HostTable extends CachedTableIntegerKey<Host> {
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_BACKUP_SERVER)) {
-      if (AOSH.checkParamCount(Command.ADD_BACKUP_SERVER, args, 12, err)) {
+      if (Aosh.checkParamCount(Command.ADD_BACKUP_SERVER, args, 12, err)) {
         out.println(
-            connector.getSimpleAOClient().addBackupHost(
+            connector.getSimpleClient().addBackupHost(
                 args[1],
                 args[2],
-                AOSH.parseAccountingCode(args[3], "owner"),
+                Aosh.parseAccountingCode(args[3], "owner"),
                 args[4],
-                AOSH.parseInt(args[5], "backup_hour"),
+                Aosh.parseInt(args[5], "backup_hour"),
                 args[6],
                 args[7],
                 args[8],
-                AOSH.parseUserName(args[9], "username"),
+                Aosh.parseUserName(args[9], "username"),
                 args[10],
                 args[11],
                 args[12]

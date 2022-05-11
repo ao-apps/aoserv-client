@@ -60,8 +60,7 @@ public final class SoftwareCategory extends GlobalObjectStringKey<SoftwareCatego
       PHP = "PHP",
       POSTGRESQL = "PostgreSQL",
       X11 = "X11",
-      XML = "XML"
-  ;
+      XML = "XML";
 
   private String description;
 
@@ -96,8 +95,8 @@ public final class SoftwareCategory extends GlobalObjectStringKey<SoftwareCatego
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.TECHNOLOGY_CLASSES;
+  public Table.TableId getTableId() {
+    return Table.TableId.TECHNOLOGY_CLASSES;
   }
 
   @Override

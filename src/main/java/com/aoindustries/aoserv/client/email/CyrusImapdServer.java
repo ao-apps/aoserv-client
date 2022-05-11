@@ -51,21 +51,19 @@ import java.util.Objects;
  */
 public final class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdServer> {
 
-  static final int
-      COLUMN_AO_SERVER = 0,
-      COLUMN_SIEVE_NET_BIND = 1,
-      COLUMN_CERTIFICATE = 3
-  ;
+  static final int COLUMN_AO_SERVER = 0;
+  static final int COLUMN_SIEVE_NET_BIND = 1;
+  static final int COLUMN_CERTIFICATE = 3;
   static final String COLUMN_AO_SERVER_name = "ao_server";
 
   // Matches aoserv-master-db/aoindustries/email/CyrusImapdServer.TimeUnit-type.sql
   public enum TimeUnit {
     DAYS('d') {
-    @Override
-    float convertToDays(float duration) {
-      return duration;
-    }
-  },
+      @Override
+      float convertToDays(float duration) {
+        return duration;
+      }
+    },
     HOURS('h') {
       @Override
       float convertToDays(float duration) {
@@ -197,24 +195,36 @@ public final class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_AO_SERVER: return pkey;
-      case COLUMN_SIEVE_NET_BIND: return sieveNetBind == -1 ? null : sieveNetBind;
-      case 2: return servername;
-      case COLUMN_CERTIFICATE: return certificate;
-      case 4: return allowPlaintextAuth;
-      case 5: return deleteDuration;
-      case 6: return deleteDurationUnit == null ? null : String.valueOf(deleteDurationUnit.getSuffix());
-      case 7: return expireDuration;
-      case 8: return expireDurationUnit == null ? null : String.valueOf(expireDurationUnit.getSuffix());
-      case 9: return expungeDuration;
-      case 10: return expungeDurationUnit == null ? null : String.valueOf(expungeDurationUnit.getSuffix());
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_AO_SERVER:
+        return pkey;
+      case COLUMN_SIEVE_NET_BIND:
+        return sieveNetBind == -1 ? null : sieveNetBind;
+      case 2:
+        return servername;
+      case COLUMN_CERTIFICATE:
+        return certificate;
+      case 4:
+        return allowPlaintextAuth;
+      case 5:
+        return deleteDuration;
+      case 6:
+        return deleteDurationUnit == null ? null : String.valueOf(deleteDurationUnit.getSuffix());
+      case 7:
+        return expireDuration;
+      case 8:
+        return expireDurationUnit == null ? null : String.valueOf(expireDurationUnit.getSuffix());
+      case 9:
+        return expungeDuration;
+      case 10:
+        return expungeDurationUnit == null ? null : String.valueOf(expungeDurationUnit.getSuffix());
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.CYRUS_IMAPD_SERVERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.CYRUS_IMAPD_SERVERS;
   }
 
   @Override
@@ -310,8 +320,9 @@ public final class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
 
   /**
    * The fully qualified hostname for <code>servername</code>.
-   *
+   * <p>
    * When {@code null}, defaults to {@link Server#getHostname()}.
+   * </p>
    */
   public DomainName getServername() {
     return servername;

@@ -25,9 +25,9 @@ package com.aoindustries.aoserv.client.backup;
 
 import com.aoapps.hodgepodge.io.TerminalWriter;
 import com.aoapps.lang.Strings;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.linux.Server;
@@ -45,7 +45,7 @@ import java.util.List;
  */
 public final class FileReplicationTable extends CachedTableIntegerKey<FileReplication> {
 
-  FileReplicationTable(AOServConnector connector) {
+  FileReplicationTable(AoservConnector connector) {
     super(connector, FileReplication.class);
   }
 
@@ -72,16 +72,16 @@ public final class FileReplicationTable extends CachedTableIntegerKey<FileReplic
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.FAILOVER_FILE_REPLICATIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.FAILOVER_FILE_REPLICATIONS;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.GET_FAILOVER_FILE_REPLICATION_ACTIVITY)) {
-      if (AOSH.checkParamCount(Command.GET_FAILOVER_FILE_REPLICATION_ACTIVITY, args, 3, err)) {
-        FileReplication.Activity activity = connector.getSimpleAOClient().getFailoverFileReplicationActivity(
+      if (Aosh.checkParamCount(Command.GET_FAILOVER_FILE_REPLICATION_ACTIVITY, args, 3, err)) {
+        FileReplication.Activity activity = connector.getSimpleClient().getFailoverFileReplicationActivity(
             args[1],
             args[2],
             args[3]

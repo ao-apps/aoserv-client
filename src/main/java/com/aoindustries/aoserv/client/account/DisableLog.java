@@ -49,8 +49,8 @@ public final class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 
   private UnmodifiableTimestamp time;
   private Account.Name accounting;
-  private User.Name disabled_by;
-  private String disable_reason;
+  private User.Name disabledBy;
+  private String disableReason;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -64,7 +64,7 @@ public final class DisableLog extends CachedObjectIntegerKey<DisableLog> {
   }
 
   /**
-   * Determines if the current <code>AOServConnector</code> can enable
+   * Determines if the current <code>AoservConnector</code> can enable
    * things disabled by this <code>DisableLog</code>.
    */
   public boolean canEnable() throws SQLException, IOException {
@@ -96,10 +96,10 @@ public final class DisableLog extends CachedObjectIntegerKey<DisableLog> {
       return accounting;
     }
     if (i == 3) {
-      return disabled_by;
+      return disabledBy;
     }
     if (i == 4) {
-      return disable_reason;
+      return disableReason;
     }
     throw new IllegalArgumentException("Invalid index: " + i);
   }
@@ -122,21 +122,21 @@ public final class DisableLog extends CachedObjectIntegerKey<DisableLog> {
   }
 
   public User.Name getDisabledByUsername() {
-    return disabled_by;
+    return disabledBy;
   }
 
   public Administrator getDisabledBy() throws IOException, SQLException {
     // May be filtered
-    return table.getConnector().getAccount().getAdministrator().get(disabled_by);
+    return table.getConnector().getAccount().getAdministrator().get(disabledBy);
   }
 
   public String getDisableReason() {
-    return disable_reason;
+    return disableReason;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.DISABLE_LOG;
+  public Table.TableId getTableId() {
+    return Table.TableId.DISABLE_LOG;
   }
 
   @Override
@@ -145,8 +145,8 @@ public final class DisableLog extends CachedObjectIntegerKey<DisableLog> {
       pkey = result.getInt(1);
       time = UnmodifiableTimestamp.valueOf(result.getTimestamp(2));
       accounting = Account.Name.valueOf(result.getString(3));
-      disabled_by = User.Name.valueOf(result.getString(4));
-      disable_reason = result.getString(5);
+      disabledBy = User.Name.valueOf(result.getString(4));
+      disableReason = result.getString(5);
     } catch (ValidationException e) {
       throw new SQLException(e);
     }
@@ -158,8 +158,8 @@ public final class DisableLog extends CachedObjectIntegerKey<DisableLog> {
       pkey = in.readCompressedInt();
       time = SQLStreamables.readUnmodifiableTimestamp(in);
       accounting = Account.Name.valueOf(in.readUTF()).intern();
-      disabled_by = User.Name.valueOf(in.readUTF()).intern();
-      disable_reason = in.readNullUTF();
+      disabledBy = User.Name.valueOf(in.readUTF()).intern();
+      disableReason = in.readNullUTF();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -174,7 +174,7 @@ public final class DisableLog extends CachedObjectIntegerKey<DisableLog> {
       SQLStreamables.writeTimestamp(time, out);
     }
     out.writeUTF(accounting.toString());
-    out.writeUTF(disabled_by.toString());
-    out.writeNullUTF(disable_reason);
+    out.writeUTF(disabledBy.toString());
+    out.writeNullUTF(disableReason);
   }
 }

@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.payment;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTableStringKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.sql.SQLException;
  */
 public final class PaymentTypeTable extends GlobalTableStringKey<PaymentType> {
 
-  PaymentTypeTable(AOServConnector connector) {
+  PaymentTypeTable(AoservConnector connector) {
     super(connector, PaymentType.class);
   }
 
@@ -55,14 +55,14 @@ public final class PaymentTypeTable extends GlobalTableStringKey<PaymentType> {
     return getUniqueRow(PaymentType.COLUMN_NAME, name);
   }
 
-  public PaymentType getCreditCardType(String card_number) throws SQLException, IOException {
+  public PaymentType getCreditCardType(String cardNumber) throws SQLException, IOException {
     // Build the list of numbers
     StringBuilder numbers = new StringBuilder();
 
     // A card number should only contain 0-9, -, or space and needs at least
-    int len = card_number.length();
+    int len = cardNumber.length();
     for (int c = 0; c < len; c++) {
-      char ch = card_number.charAt(c);
+      char ch = cardNumber.charAt(c);
       if (ch >= '0' && ch <= '9') {
         numbers.append(ch);
       } else if (ch != '-' && ch != ' ') {
@@ -105,7 +105,7 @@ public final class PaymentTypeTable extends GlobalTableStringKey<PaymentType> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.PAYMENT_TYPES;
+  public Table.TableId getTableId() {
+    return Table.TableId.PAYMENT_TYPES;
   }
 }

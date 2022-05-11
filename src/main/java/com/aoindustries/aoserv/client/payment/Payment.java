@@ -33,7 +33,7 @@ import com.aoapps.lang.validation.ValidationException;
 import com.aoapps.net.Email;
 import com.aoapps.sql.SQLStreamables;
 import com.aoapps.sql.UnmodifiableTimestamp;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.Administrator;
@@ -55,10 +55,8 @@ import java.util.Objects;
  */
 public final class Payment extends CachedObjectIntegerKey<Payment> {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_PROCESSOR_ID = 1
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_PROCESSOR_ID = 1;
   static final String COLUMN_ACCOUNTING_name = "accounting";
   static final String COLUMN_AUTHORIZATION_TIME_name = "authorization_time";
   static final String COLUMN_PKEY_name = "pkey";
@@ -676,103 +674,194 @@ public final class Payment extends CachedObjectIntegerKey<Payment> {
   @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_PROCESSOR_ID: return processorId;
-      case 2: return accounting;
-      case 3: return groupName;
-      case 4: return testMode;
-      case 5: return duplicateWindow;
-      case 6: return orderNumber;
-      case 7: return amount;
-      case 8: return taxAmount;
-      case 9: return taxExempt;
-      case 10: return shippingAmount;
-      case 11: return dutyAmount;
-      case 12: return shippingFirstName;
-      case 13: return shippingLastName;
-      case 14: return shippingCompanyName;
-      case 15: return shippingStreetAddress1;
-      case 16: return shippingStreetAddress2;
-      case 17: return shippingCity;
-      case 18: return shippingState;
-      case 19: return shippingPostalCode;
-      case 20: return shippingCountryCode;
-      case 21: return emailCustomer;
-      case 22: return merchantEmail;
-      case 23: return invoiceNumber;
-      case 24: return purchaseOrderNumber;
-      case 25: return description;
-      case 26: return creditCardCreatedBy;
-      case 27: return creditCardPrincipalName;
-      case 28: return creditCardAccounting;
-      case 29: return creditCardGroupName;
-      case 30: return creditCardProviderUniqueId;
-      case 31: return creditCardMaskedCardNumber;
-      case 32: return creditCard_expirationMonth == null ? null : creditCard_expirationMonth.shortValue(); // TODO: Add "byte" type back to AOServ?
-      case 33: return creditCard_expirationYear;
-      case 34: return creditCardFirstName;
-      case 35: return creditCardLastName;
-      case 36: return creditCardCompanyName;
-      case 37: return creditCardEmail;
-      case 38: return creditCardPhone;
-      case 39: return creditCardFax;
-      case 40: return creditCardCustomerId;
-      case 41: return creditCardCustomerTaxId;
-      case 42: return creditCardStreetAddress1;
-      case 43: return creditCardStreetAddress2;
-      case 44: return creditCardCity;
-      case 45: return creditCardState;
-      case 46: return creditCardPostalCode;
-      case 47: return creditCardCountryCode;
-      case 48: return creditCardComments;
-      case 49: return authorizationTime;
-      case 50: return authorizationUsername;
-      case 51: return authorizationPrincipalName;
-      case 52: return authorizationCommunicationResult;
-      case 53: return authorizationProviderErrorCode;
-      case 54: return authorizationErrorCode;
-      case 55: return authorizationProviderErrorMessage;
-      case 56: return authorizationProviderUniqueId;
-      case 57: return authorizationResult_providerReplacementMaskedCardNumber;
-      case 58: return authorizationResult_replacementMaskedCardNumber;
-      case 59: return authorizationResult_providerReplacementExpiration;
-      case 60: return authorizationResult_replacementExpirationMonth == null ? null : authorizationResult_replacementExpirationMonth.shortValue(); // TODO: Add "byte" type back to AOServ?
-      case 61: return authorizationResult_replacementExpirationYear;
-      case 62: return authorizationProviderApprovalResult;
-      case 63: return authorizationApprovalResult;
-      case 64: return authorizationProviderDeclineReason;
-      case 65: return authorizationDeclineReason;
-      case 66: return authorizationProviderReviewReason;
-      case 67: return authorizationReviewReason;
-      case 68: return authorizationProviderCvvResult;
-      case 69: return authorizationCvvResult;
-      case 70: return authorizationProviderAvsResult;
-      case 71: return authorizationAvsResult;
-      case 72: return authorizationApprovalCode;
-      case 73: return captureTime;
-      case 74: return captureUsername;
-      case 75: return capturePrincipalName;
-      case 76: return captureCommunicationResult;
-      case 77: return captureProviderErrorCode;
-      case 78: return captureErrorCode;
-      case 79: return captureProviderErrorMessage;
-      case 80: return captureProviderUniqueId;
-      case 81: return voidTime;
-      case 82: return voidUsername;
-      case 83: return voidPrincipalName;
-      case 84: return voidCommunicationResult;
-      case 85: return voidProviderErrorCode;
-      case 86: return voidErrorCode;
-      case 87: return voidProviderErrorMessage;
-      case 88: return voidProviderUniqueId;
-      case 89: return status;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_PROCESSOR_ID:
+        return processorId;
+      case 2:
+        return accounting;
+      case 3:
+        return groupName;
+      case 4:
+        return testMode;
+      case 5:
+        return duplicateWindow;
+      case 6:
+        return orderNumber;
+      case 7:
+        return amount;
+      case 8:
+        return taxAmount;
+      case 9:
+        return taxExempt;
+      case 10:
+        return shippingAmount;
+      case 11:
+        return dutyAmount;
+      case 12:
+        return shippingFirstName;
+      case 13:
+        return shippingLastName;
+      case 14:
+        return shippingCompanyName;
+      case 15:
+        return shippingStreetAddress1;
+      case 16:
+        return shippingStreetAddress2;
+      case 17:
+        return shippingCity;
+      case 18:
+        return shippingState;
+      case 19:
+        return shippingPostalCode;
+      case 20:
+        return shippingCountryCode;
+      case 21:
+        return emailCustomer;
+      case 22:
+        return merchantEmail;
+      case 23:
+        return invoiceNumber;
+      case 24:
+        return purchaseOrderNumber;
+      case 25:
+        return description;
+      case 26:
+        return creditCardCreatedBy;
+      case 27:
+        return creditCardPrincipalName;
+      case 28:
+        return creditCardAccounting;
+      case 29:
+        return creditCardGroupName;
+      case 30:
+        return creditCardProviderUniqueId;
+      case 31:
+        return creditCardMaskedCardNumber;
+      case 32:
+        return creditCard_expirationMonth == null ? null : creditCard_expirationMonth.shortValue(); // TODO: Add "byte" type back to AOServ?
+      case 33:
+        return creditCard_expirationYear;
+      case 34:
+        return creditCardFirstName;
+      case 35:
+        return creditCardLastName;
+      case 36:
+        return creditCardCompanyName;
+      case 37:
+        return creditCardEmail;
+      case 38:
+        return creditCardPhone;
+      case 39:
+        return creditCardFax;
+      case 40:
+        return creditCardCustomerId;
+      case 41:
+        return creditCardCustomerTaxId;
+      case 42:
+        return creditCardStreetAddress1;
+      case 43:
+        return creditCardStreetAddress2;
+      case 44:
+        return creditCardCity;
+      case 45:
+        return creditCardState;
+      case 46:
+        return creditCardPostalCode;
+      case 47:
+        return creditCardCountryCode;
+      case 48:
+        return creditCardComments;
+      case 49:
+        return authorizationTime;
+      case 50:
+        return authorizationUsername;
+      case 51:
+        return authorizationPrincipalName;
+      case 52:
+        return authorizationCommunicationResult;
+      case 53:
+        return authorizationProviderErrorCode;
+      case 54:
+        return authorizationErrorCode;
+      case 55:
+        return authorizationProviderErrorMessage;
+      case 56:
+        return authorizationProviderUniqueId;
+      case 57:
+        return authorizationResult_providerReplacementMaskedCardNumber;
+      case 58:
+        return authorizationResult_replacementMaskedCardNumber;
+      case 59:
+        return authorizationResult_providerReplacementExpiration;
+      case 60:
+        return authorizationResult_replacementExpirationMonth == null ? null : authorizationResult_replacementExpirationMonth.shortValue(); // TODO: Add "byte" type back to AOServ?
+      case 61:
+        return authorizationResult_replacementExpirationYear;
+      case 62:
+        return authorizationProviderApprovalResult;
+      case 63:
+        return authorizationApprovalResult;
+      case 64:
+        return authorizationProviderDeclineReason;
+      case 65:
+        return authorizationDeclineReason;
+      case 66:
+        return authorizationProviderReviewReason;
+      case 67:
+        return authorizationReviewReason;
+      case 68:
+        return authorizationProviderCvvResult;
+      case 69:
+        return authorizationCvvResult;
+      case 70:
+        return authorizationProviderAvsResult;
+      case 71:
+        return authorizationAvsResult;
+      case 72:
+        return authorizationApprovalCode;
+      case 73:
+        return captureTime;
+      case 74:
+        return captureUsername;
+      case 75:
+        return capturePrincipalName;
+      case 76:
+        return captureCommunicationResult;
+      case 77:
+        return captureProviderErrorCode;
+      case 78:
+        return captureErrorCode;
+      case 79:
+        return captureProviderErrorMessage;
+      case 80:
+        return captureProviderUniqueId;
+      case 81:
+        return voidTime;
+      case 82:
+        return voidUsername;
+      case 83:
+        return voidPrincipalName;
+      case 84:
+        return voidCommunicationResult;
+      case 85:
+        return voidProviderErrorCode;
+      case 86:
+        return voidErrorCode;
+      case 87:
+        return voidProviderErrorMessage;
+      case 88:
+        return voidProviderUniqueId;
+      case 89:
+        return status;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.CREDIT_CARD_TRANSACTIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.CREDIT_CARD_TRANSACTIONS;
   }
 
   @Override
@@ -1186,8 +1275,8 @@ public final class Payment extends CachedObjectIntegerKey<Payment> {
 
     table.getConnector().requestUpdate(
         true,
-        AoservProtocol.CommandID.CREDIT_CARD_TRANSACTION_SALE_COMPLETED,
-        new AOServConnector.UpdateRequest() {
+        AoservProtocol.CommandId.CREDIT_CARD_TRANSACTION_SALE_COMPLETED,
+        new AoservConnector.UpdateRequest() {
           private IntList invalidateList;
 
           @Override
@@ -1228,7 +1317,7 @@ public final class Payment extends CachedObjectIntegerKey<Payment> {
           public void readResponse(StreamableInput in) throws IOException, SQLException {
             int code = in.readByte();
             if (code == AoservProtocol.DONE) {
-              invalidateList = AOServConnector.readInvalidateList(in);
+              invalidateList = AoservConnector.readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
               throw new IOException("Unknown response code: " + code);
@@ -1276,8 +1365,8 @@ public final class Payment extends CachedObjectIntegerKey<Payment> {
 
     table.getConnector().requestUpdate(
         true,
-        AoservProtocol.CommandID.CREDIT_CARD_TRANSACTION_AUTHORIZE_COMPLETED,
-        new AOServConnector.UpdateRequest() {
+        AoservProtocol.CommandId.CREDIT_CARD_TRANSACTION_AUTHORIZE_COMPLETED,
+        new AoservConnector.UpdateRequest() {
           private IntList invalidateList;
 
           @Override
@@ -1311,7 +1400,7 @@ public final class Payment extends CachedObjectIntegerKey<Payment> {
           public void readResponse(StreamableInput in) throws IOException, SQLException {
             int code = in.readByte();
             if (code == AoservProtocol.DONE) {
-              invalidateList = AOServConnector.readInvalidateList(in);
+              invalidateList = AoservConnector.readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
               throw new IOException("Unknown response code: " + code);

@@ -26,7 +26,7 @@ package com.aoindustries.aoserv.client.ticket;
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.lang.i18n.Resources;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalObjectStringKey;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -52,22 +52,20 @@ public final class ActionType extends GlobalObjectStringKey<ActionType> {
 
   static final String COLUMN_TYPE_name = "type";
 
-  private boolean visible_admin_only;
+  private boolean visibleAdminOnly;
 
-  public static final String
-      SET_BUSINESS = "set_business",
-      SET_CONTACT_EMAILS = "set_contact_emails",
-      SET_CONTACT_PHONE_NUMBERS = "set_contact_phone_numbers",
-      SET_CLIENT_PRIORITY = "set_client_priority",
-      SET_SUMMARY = "set_summary",
-      ADD_ANNOTATION = "add_annotation",
-      SET_STATUS = "set_status",
-      SET_ADMIN_PRIORITY = "set_admin_priority",
-      ASSIGN = "assign",
-      SET_CATEGORY = "set_category",
-      SET_INTERNAL_NOTES = "set_internal_notes",
-      SET_TYPE = "set_type"
-  ;
+  public static final String SET_BUSINESS = "set_business";
+  public static final String SET_CONTACT_EMAILS = "set_contact_emails";
+  public static final String SET_CONTACT_PHONE_NUMBERS = "set_contact_phone_numbers";
+  public static final String SET_CLIENT_PRIORITY = "set_client_priority";
+  public static final String SET_SUMMARY = "set_summary";
+  public static final String ADD_ANNOTATION = "add_annotation";
+  public static final String SET_STATUS = "set_status";
+  public static final String SET_ADMIN_PRIORITY = "set_admin_priority";
+  public static final String ASSIGN = "assign";
+  public static final String SET_CATEGORY = "set_category";
+  public static final String SET_INTERNAL_NOTES = "set_internal_notes";
+  public static final String SET_TYPE = "set_type";
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -83,15 +81,18 @@ public final class ActionType extends GlobalObjectStringKey<ActionType> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_TYPE: return pkey;
-      case 1: return visible_admin_only;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_TYPE:
+        return pkey;
+      case 1:
+        return visibleAdminOnly;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.TICKET_ACTION_TYPES;
+  public Table.TableId getTableId() {
+    return Table.TableId.TICKET_ACTION_TYPES;
   }
 
   public String getType() {
@@ -101,13 +102,13 @@ public final class ActionType extends GlobalObjectStringKey<ActionType> {
   @Override
   public void init(ResultSet result) throws SQLException {
     pkey = result.getString(1);
-    visible_admin_only = result.getBoolean(2);
+    visibleAdminOnly = result.getBoolean(2);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readUTF().intern();
-    visible_admin_only = in.readBoolean();
+    visibleAdminOnly = in.readBoolean();
   }
 
   @Override
@@ -118,13 +119,13 @@ public final class ActionType extends GlobalObjectStringKey<ActionType> {
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeUTF(pkey);
-    out.writeBoolean(visible_admin_only);
+    out.writeBoolean(visibleAdminOnly);
   }
 
   /**
    * Generates a locale-specific summary.
    */
-  String generateSummary(AOServConnector connector, String oldValue, String newValue) {
+  String generateSummary(AoservConnector connector, String oldValue, String newValue) {
     if (oldValue == null) {
       if (newValue == null) {
         return RESOURCES.getMessage(pkey + ".generatedSummary.null.null");

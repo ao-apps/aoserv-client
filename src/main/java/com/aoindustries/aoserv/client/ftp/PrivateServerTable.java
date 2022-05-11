@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.ftp;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.linux.Server;
@@ -44,7 +44,7 @@ import java.util.List;
  */
 public final class PrivateServerTable extends CachedTableIntegerKey<PrivateServer> {
 
-  PrivateServerTable(AOServConnector connector) {
+  PrivateServerTable(AoservConnector connector) {
     super(connector, PrivateServer.class);
   }
 
@@ -67,15 +67,15 @@ public final class PrivateServerTable extends CachedTableIntegerKey<PrivateServe
     return getUniqueRow(PrivateServer.COLUMN_NET_BIND, pkey);
   }
 
-  public List<PrivateServer> getPrivateFTPServers(Server ao) throws IOException, SQLException {
-    int aoPKey = ao.getPkey();
+  public List<PrivateServer> getPrivateFtpServers(Server ao) throws IOException, SQLException {
+    int aoPkey = ao.getPkey();
 
     List<PrivateServer> cached = getRows();
     int size = cached.size();
     List<PrivateServer> matches = new ArrayList<>(size);
     for (int c = 0; c < size; c++) {
       PrivateServer obj = cached.get(c);
-      if (obj.getNetBind().getServer_pkey() == aoPKey) {
+      if (obj.getNetBind().getServer_pkey() == aoPkey) {
         matches.add(obj);
       }
     }
@@ -83,16 +83,16 @@ public final class PrivateServerTable extends CachedTableIntegerKey<PrivateServe
   }
 
   /*
-  PrivateFTPServer getPrivateFTPServer(Server ao, String path) {
-    int aoPKey=ao.getPkey();
+  PrivateFtpServer getPrivateFtpServer(Server ao, String path) {
+    int aoPkey = ao.getPkey();
 
-    List<PrivateFTPServer> cached=getRows();
-    int size=cached.size();
-    for (int c=0;c<size;c++) {
-      PrivateFTPServer obj=cached.get(c);
+    List<PrivateFtpServer> cached = getRows();
+    int size = cached.size();
+    for (int c = 0; c < size;c++) {
+      PrivateFtpServer obj = cached.get(c);
       if (
-        obj.getRoot().equals(path)
-        && obj.getNetBind().server == aoPKey
+          obj.getRoot().equals(path)
+          && obj.getNetBind().server == aoPkey
       ) {
         return obj;
       }
@@ -101,7 +101,7 @@ public final class PrivateServerTable extends CachedTableIntegerKey<PrivateServe
   }*/
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.PRIVATE_FTP_SERVERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.PRIVATE_FTP_SERVERS;
   }
 }

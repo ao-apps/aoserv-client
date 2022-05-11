@@ -62,16 +62,14 @@ import java.util.List;
  */
 public final class Domain extends CachedObjectIntegerKey<Domain> implements Removable {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_AO_SERVER = 2,
-      COLUMN_PACKAGE = 3
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_AO_SERVER = 2;
+  static final int COLUMN_PACKAGE = 3;
   static final String COLUMN_AO_SERVER_name = "ao_server";
   static final String COLUMN_DOMAIN_name = "domain";
 
   private DomainName domain;
-  private int ao_server;
+  private int aoServer;
   private Account.Name packageName;
 
   /**
@@ -105,11 +103,16 @@ public final class Domain extends CachedObjectIntegerKey<Domain> implements Remo
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case 1: return domain;
-      case COLUMN_AO_SERVER: return ao_server;
-      case COLUMN_PACKAGE: return packageName;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case 1:
+        return domain;
+      case COLUMN_AO_SERVER:
+        return aoServer;
+      case COLUMN_PACKAGE:
+        return packageName;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -138,20 +141,20 @@ public final class Domain extends CachedObjectIntegerKey<Domain> implements Remo
   }
 
   public int getLinuxServer_host_id() {
-    return ao_server;
+    return aoServer;
   }
 
   public Server getLinuxServer() throws SQLException, IOException {
-    Server ao = table.getConnector().getLinux().getServer().get(ao_server);
+    Server ao = table.getConnector().getLinux().getServer().get(aoServer);
     if (ao == null) {
-      throw new SQLException("Unable to find linux.Server: " + ao_server);
+      throw new SQLException("Unable to find linux.Server: " + aoServer);
     }
     return ao;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.EMAIL_DOMAINS;
+  public Table.TableId getTableId() {
+    return Table.TableId.EMAIL_DOMAINS;
   }
 
   @Override
@@ -159,7 +162,7 @@ public final class Domain extends CachedObjectIntegerKey<Domain> implements Remo
     try {
       pkey = result.getInt(1);
       domain = DomainName.valueOf(result.getString(2));
-      ao_server = result.getInt(3);
+      aoServer = result.getInt(3);
       packageName = Account.Name.valueOf(result.getString(4));
     } catch (ValidationException e) {
       throw new SQLException(e);
@@ -171,7 +174,7 @@ public final class Domain extends CachedObjectIntegerKey<Domain> implements Remo
     try {
       pkey = in.readCompressedInt();
       domain = DomainName.valueOf(in.readUTF());
-      ao_server = in.readCompressedInt();
+      aoServer = in.readCompressedInt();
       packageName = Account.Name.valueOf(in.readUTF()).intern();
     } catch (ValidationException e) {
       throw new IOException(e);
@@ -197,10 +200,10 @@ public final class Domain extends CachedObjectIntegerKey<Domain> implements Remo
 
   @Override
   public void remove() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.REMOVE,
-        Table.TableID.EMAIL_DOMAINS,
+        AoservProtocol.CommandId.REMOVE,
+        Table.TableId.EMAIL_DOMAINS,
         pkey
     );
   }
@@ -209,7 +212,7 @@ public final class Domain extends CachedObjectIntegerKey<Domain> implements Remo
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
     out.writeUTF(domain.toString());
-    out.writeCompressedInt(ao_server);
+    out.writeCompressedInt(aoServer);
     out.writeUTF(packageName.toString());
   }
 }

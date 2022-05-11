@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.billing;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTableStringKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.sql.SQLException;
  */
 public final class TransactionTypeTable extends GlobalTableStringKey<TransactionType> {
 
-  TransactionTypeTable(AOServConnector connector) {
+  TransactionTypeTable(AoservConnector connector) {
     super(connector, TransactionType.class);
   }
 
@@ -51,8 +51,8 @@ public final class TransactionTypeTable extends GlobalTableStringKey<Transaction
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.TRANSACTION_TYPES;
+  public Table.TableId getTableId() {
+    return Table.TableId.TRANSACTION_TYPES;
   }
 
   @Override

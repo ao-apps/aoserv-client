@@ -43,14 +43,12 @@ import java.sql.SQLException;
  */
 public final class Header extends CachedObjectIntegerKey<Header> {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_HTTPD_SITE_BIND = 1
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_HTTPD_SITE_BIND = 1;
   static final String COLUMN_HTTPD_SITE_BIND_name = "httpd_site_bind";
   static final String COLUMN_SORT_ORDER_name = "sort_order";
 
-  private int httpd_site_bind;
+  private int httpdSiteBind;
   private short sortOrder;
 
   // Matches aoserv-master-db/aoindustries/aoweb/Header.Type-type.sql
@@ -58,6 +56,7 @@ public final class Header extends CachedObjectIntegerKey<Header> {
     Header,
     RequestHeader
   }
+
   private Type type;
 
   private boolean always;
@@ -82,25 +81,37 @@ public final class Header extends CachedObjectIntegerKey<Header> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_HTTPD_SITE_BIND: return httpd_site_bind;
-      case 2: return sortOrder;
-      case 3: return type.name();
-      case 4: return always;
-      case 5: return action;
-      case 6: return header;
-      case 7: return value;
-      case 8: return replacement;
-      case 9: return when;
-      case 10: return comment;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_HTTPD_SITE_BIND:
+        return httpdSiteBind;
+      case 2:
+        return sortOrder;
+      case 3:
+        return type.name();
+      case 4:
+        return always;
+      case 5:
+        return action;
+      case 6:
+        return header;
+      case 7:
+        return value;
+      case 8:
+        return replacement;
+      case 9:
+        return when;
+      case 10:
+        return comment;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   public VirtualHost getHttpdSiteBind() throws SQLException, IOException {
-    VirtualHost obj = table.getConnector().getWeb().getVirtualHost().get(httpd_site_bind);
+    VirtualHost obj = table.getConnector().getWeb().getVirtualHost().get(httpdSiteBind);
     if (obj == null) {
-      throw new SQLException("Unable to find HttpdSiteBind: " + httpd_site_bind);
+      throw new SQLException("Unable to find HttpdSiteBind: " + httpdSiteBind);
     }
     return obj;
   }
@@ -123,7 +134,7 @@ public final class Header extends CachedObjectIntegerKey<Header> {
   }
 
   /**
-   * One of (with potentially more supported in the future):
+   * Gets the action.  One of (with potentially more supported in the future):
    * <ul>
    * <li>"add"</li>
    * <li>"append"</li>
@@ -153,7 +164,7 @@ public final class Header extends CachedObjectIntegerKey<Header> {
   }
 
   /**
-   * The value as used by any of the following actions:
+   * Gets the value.  As used by any of the following actions:
    * <ul>
    * <li>"add"</li>
    * <li>"append"</li>
@@ -175,8 +186,7 @@ public final class Header extends CachedObjectIntegerKey<Header> {
   }
 
   /**
-   *
-   * The replacement, only used by the following actions:
+   * Gets the replacement.  Only used by the following actions:
    * <ul>
    * <li>"edit"</li>
    * <li>"edit*"</li>
@@ -204,15 +214,15 @@ public final class Header extends CachedObjectIntegerKey<Header> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.HTTPD_SITE_BIND_HEADERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.HTTPD_SITE_BIND_HEADERS;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     int pos = 1;
     pkey            = result.getInt(pos++);
-    httpd_site_bind = result.getInt(pos++);
+    httpdSiteBind = result.getInt(pos++);
     sortOrder       = result.getShort(pos++);
     type            = Type.valueOf(result.getString(pos++));
     always          = result.getBoolean(pos++);
@@ -227,7 +237,7 @@ public final class Header extends CachedObjectIntegerKey<Header> {
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey            = in.readCompressedInt();
-    httpd_site_bind = in.readCompressedInt();
+    httpdSiteBind = in.readCompressedInt();
     sortOrder       = in.readShort();
     type            = in.readEnum(Type.class);
     always          = in.readBoolean();
@@ -262,6 +272,8 @@ public final class Header extends CachedObjectIntegerKey<Header> {
   }
 
   /**
+   * {@inheritDoc}
+   *
    * @see #getApacheDirective(java.lang.String)
    * @see ApacheEscape#DEFAULT_DOLLAR_VARIABLE
    */
@@ -273,7 +285,7 @@ public final class Header extends CachedObjectIntegerKey<Header> {
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeCompressedInt(httpd_site_bind);
+    out.writeCompressedInt(httpdSiteBind);
     out.writeShort(sortOrder);
     out.writeEnum(type);
     out.writeBoolean(always);

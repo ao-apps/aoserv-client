@@ -50,10 +50,8 @@ import java.sql.SQLException;
  */
 public final class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_ACCOUNTING = 1
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_ACCOUNTING = 1;
   static final String COLUMN_ACCOUNTING_name = "accounting";
   static final String COLUMN_ID_name = "id";
 
@@ -207,10 +205,14 @@ public final class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_ACCOUNTING: return accounting;
-      case 2: return id;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_ACCOUNTING:
+        return accounting;
+      case 2:
+        return id;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -222,8 +224,8 @@ public final class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.ENCRYPTION_KEYS;
+  public Table.TableId getTableId() {
+    return Table.TableId.ENCRYPTION_KEYS;
   }
 
   @Override

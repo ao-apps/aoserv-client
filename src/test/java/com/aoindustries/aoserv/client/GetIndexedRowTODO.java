@@ -36,15 +36,16 @@ import junit.framework.TestSuite;
 
 /**
  * Tests the aoserv-client object indexing algorithms for accuracy.
- *
+ * <p>
  * TODO: This test does not run without a master setup.
+ * </p>
  *
  * @author  AO Industries, Inc.
  */
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class GetIndexedRowTODO extends TestCase {
 
-  private List<AOServConnector> conns;
+  private List<AoservConnector> conns;
 
   public GetIndexedRowTODO(String testName) {
     super(testName);
@@ -52,7 +53,7 @@ public class GetIndexedRowTODO extends TestCase {
 
   @Override
   protected void setUp() throws Exception {
-    conns = AOServConnectorTODO.getTestConnectors();
+    conns = AoservConnectorTODO.getTestConnectors();
   }
 
   @Override
@@ -67,35 +68,35 @@ public class GetIndexedRowTODO extends TestCase {
   }
 
   /**
-   * Test the size() method of each AOServTable.
+   * Test the size() method of each AoservTable.
    */
   @SuppressWarnings({"unchecked", "rawtypes"})
   public void testGetIndexedRows() throws Exception {
     System.out.println("Testing all indexed rows:");
     System.out.println("+ means supported");
     System.out.println("- means unsupported");
-    for (AOServConnector conn : conns) {
+    for (AoservConnector conn : conns) {
       User.Name username = conn.getCurrentAdministrator().getKey();
       System.out.println("    " + username);
-      int numTables = Table.TableID.values().length;
+      int numTables = Table.TableId.values().length;
       for (int c = 0; c < numTables; c++) {
         // Excluded for testing speed
         if (
-            c == Table.TableID.DISTRO_FILES.ordinal()
-                || c == Table.TableID.TRANSACTIONS.ordinal()
-                || c == Table.TableID.WhoisHistory.ordinal() // TODO: Just exclude output/error columns?
+            c == Table.TableId.DISTRO_FILES.ordinal()
+                || c == Table.TableId.TRANSACTIONS.ordinal()
+                || c == Table.TableId.WhoisHistory.ordinal() // TODO: Just exclude output/error columns?
         ) {
           continue;
         }
-        AOServTable table = conn.getTable(c);
+        AoservTable table = conn.getTable(c);
         String tableName = table.getTableName();
         System.out.print("        " + tableName + ": ");
-        List<AOServObject> rows = table.getRows();
+        List<AoservObject> rows = table.getRows();
         if (rows.isEmpty()) {
           System.out.println("Empty table, cannot test");
         } else {
           List<Column> columns = table.getTableSchema().getSchemaColumns(conn);
-          Map<Object, List<AOServObject>> expectedLists = new HashMap<>();
+          Map<Object, List<AoservObject>> expectedLists = new HashMap<>();
           for (Column column : columns) {
             boolean supported = true;
             String columnName = column.getName();
@@ -103,11 +104,11 @@ public class GetIndexedRowTODO extends TestCase {
               int colIndex = column.getIndex();
               // Build our list of the expected objects by iterating through the entire list
               expectedLists.clear();
-              for (AOServObject row : rows) {
+              for (AoservObject row : rows) {
                 Object value = row.getColumn(colIndex);
                 // null values are not indexed
                 if (value != null) {
-                  List<AOServObject> list = expectedLists.get(value);
+                  List<AoservObject> list = expectedLists.get(value);
                   if (list == null) {
                     expectedLists.put(value, list = new ArrayList<>());
                   }
@@ -116,8 +117,8 @@ public class GetIndexedRowTODO extends TestCase {
               }
               // Compare to the lists using the index routines
               for (Object value : expectedLists.keySet()) {
-                List<AOServObject> expectedList = expectedLists.get(value);
-                List<AOServObject> indexedRows = table.getIndexedRows(colIndex, value);
+                List<AoservObject> expectedList = expectedLists.get(value);
+                List<AoservObject> indexedRows = table.getIndexedRows(colIndex, value);
                 assertEquals(tableName + "." + columnName + "=" + value + ": Mismatch in list size: ", expectedList.size(), indexedRows.size());
                 if (!expectedList.containsAll(indexedRows)) {
                   fail(tableName + "." + columnName + "=" + value + ": expectedList does not contain all the rows of indexedRows");

@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.pki;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -38,7 +38,7 @@ import java.util.List;
  */
 public final class EncryptionKeyTable extends CachedTableIntegerKey<EncryptionKey> {
 
-  EncryptionKeyTable(AOServConnector connector) {
+  EncryptionKeyTable(AoservConnector connector) {
     super(connector, EncryptionKey.class);
   }
 
@@ -63,7 +63,7 @@ public final class EncryptionKeyTable extends CachedTableIntegerKey<EncryptionKe
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.ENCRYPTION_KEYS;
+  public Table.TableId getTableId() {
+    return Table.TableId.ENCRYPTION_KEYS;
   }
 }

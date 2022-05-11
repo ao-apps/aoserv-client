@@ -75,8 +75,8 @@ public final class Bank extends CachedObjectStringKey<Bank> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.BANKS;
+  public Table.TableId getTableId() {
+    return Table.TableId.BANKS;
   }
 
   @Override

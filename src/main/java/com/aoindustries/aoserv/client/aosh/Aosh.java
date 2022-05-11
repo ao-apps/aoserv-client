@@ -34,9 +34,9 @@ import com.aoapps.net.HostAddress;
 import com.aoapps.net.InetAddress;
 import com.aoapps.net.Port;
 import com.aoapps.sql.SQLUtility;
-import com.aoindustries.aoserv.client.AOServClientConfiguration;
-import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.AOServTable;
+import com.aoindustries.aoserv.client.AoservClientConfiguration;
+import com.aoindustries.aoserv.client.AoservConnector;
+import com.aoindustries.aoserv.client.AoservTable;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.linux.Group;
@@ -66,26 +66,26 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * <code>AOSH</code> is a command interpreter and scripting language
+ * <code>Aosh</code> is a command interpreter and scripting language
  * based on the Bourne shell.  It may be used to control the
  * <code>AOServ Client</code> utilities.
  *
  * @author  AO Industries, Inc.
  */
-public final class AOSH extends ShellInterpreter {
+public final class Aosh extends ShellInterpreter {
 
-  private static final Logger logger = Logger.getLogger(AOSH.class.getName());
+  private static final Logger logger = Logger.getLogger(Aosh.class.getName());
 
   private static final Reader nullInput = new CharArrayReader(new char[0]);
 
-  private final AOServConnector connector;
+  private final AoservConnector connector;
 
-  public AOSH(AOServConnector connector, Reader in, TerminalWriter out, TerminalWriter err) {
+  public Aosh(AoservConnector connector, Reader in, TerminalWriter out, TerminalWriter err) {
     super(in, out, err);
     this.connector = connector;
   }
 
-  public AOSH(AOServConnector connector, Reader in, TerminalWriter out, TerminalWriter err, String ... args) {
+  public Aosh(AoservConnector connector, Reader in, TerminalWriter out, TerminalWriter err, String ... args) {
     super(in, out, err, args);
     this.connector = connector;
   }
@@ -135,11 +135,11 @@ public final class AOSH extends ShellInterpreter {
     out.flush();
   }
 
-  public static String executeCommand(AOServConnector connector, String[] args) throws IOException, SQLException {
+  public static String executeCommand(AoservConnector connector, String[] args) throws IOException, SQLException {
     StringWriter buff = new StringWriter();
     TerminalWriter out = new TerminalWriter(buff);
     out.setEnabled(false);
-    AOSH sh = new AOSH(connector, nullInput, out, out);
+    Aosh sh = new Aosh(connector, nullInput, out, out);
     sh.handleCommand(args);
     out.flush();
     return buff.toString();
@@ -156,7 +156,7 @@ public final class AOSH extends ShellInterpreter {
   }
 
   /** Avoid repeated array copies. */
-  private static final int numTables = Table.TableID.values().length;
+  private static final int numTables = Table.TableId.values().length;
 
   /**
    * Processes one command and returns.
@@ -212,17 +212,17 @@ public final class AOSH extends ShellInterpreter {
             }
           }
           if (aoshCommand != null) {
-            AOServTable<?, ?> table = aoshCommand.getTable(connector).getAOServTable(connector);
+            AoservTable<?, ?> table = aoshCommand.getTable(connector).getAoservTable(connector);
             done = table.handleCommand(args, in, out, err, isInteractive());
             if (!done) {
-              throw new RuntimeException("AOSHCommand found, but command not processed.  command='" + command + "', table='" + table.getTableName() + '\'');
+              throw new RuntimeException("Command found, but command not processed.  command='" + command + "', table='" + table.getTableName() + '\'');
             }
           }
           /*
           for (int c=0;c<numTables;c++) {
-            AOServTable table=connector.getTable(c);
+            AoservTable table = connector.getTable(c);
             if (table.handleCommand(args, in, out, err, isInteractive())) {
-              done=true;
+              done = true;
               break;
             }
           }*/
@@ -241,15 +241,15 @@ public final class AOSH extends ShellInterpreter {
       String tableName = args[1];
       TableTable schemaTableTable = connector.getSchema().getTable();
       // Find the table ID
-      int tableID = -1;
+      int tableId = -1;
       for (int d = 0; d < numTables; d++) {
         if (schemaTableTable.get(d).getName().equalsIgnoreCase(tableName)) {
-          tableID = d;
+          tableId = d;
           break;
         }
       }
-      if (tableID >= 0) {
-        connector.getSimpleAOClient().invalidate(tableID, args.length > 2 ? args[2] : null);
+      if (tableId >= 0) {
+        connector.getSimpleClient().invalidate(tableId, args.length > 2 ? args[2] : null);
       } else {
         err.print("aosh: " + Command.INVALIDATE + ": unable to find table: ");
         err.println(tableName);
@@ -265,8 +265,8 @@ public final class AOSH extends ShellInterpreter {
     try {
       User.Name username = getConfigUsername(System.in, err);
       String password = getConfigPassword(System.in, err);
-      AOServConnector connector = AOServConnector.getConnector(username, password);
-      AOSH aosh = new AOSH(connector, new BufferedReader(new InputStreamReader(System.in)), out, err, args);
+      AoservConnector connector = AoservConnector.getConnector(username, password);
+      Aosh aosh = new Aosh(connector, new BufferedReader(new InputStreamReader(System.in)), out, err, args);
       aosh.run();
       if (aosh.isInteractive()) {
         out.println();
@@ -281,7 +281,7 @@ public final class AOSH extends ShellInterpreter {
   }
 
   public static User.Name getConfigUsername(InputStream in, TerminalWriter err) throws ConfigurationException, IOException {
-    User.Name username = AOServClientConfiguration.getUsername();
+    User.Name username = AoservClientConfiguration.getUsername();
     if (username == null) {
       try {
         // Prompt for the username
@@ -306,7 +306,7 @@ public final class AOSH extends ShellInterpreter {
   }
 
   public static String getConfigPassword(InputStream in, TerminalWriter err) throws ConfigurationException, IOException {
-    String password = AOServClientConfiguration.getPassword();
+    String password = AoservClientConfiguration.getPassword();
     if (password == null || password.isEmpty()) {
       // Prompt for the password
       String prompt = "Password: ";
@@ -328,8 +328,8 @@ public final class AOSH extends ShellInterpreter {
   }
 
   @Override
-  protected AOSH newShellInterpreter(Reader in, TerminalWriter out, TerminalWriter err, String[] args) {
-    return new AOSH(connector, in, out, err, args);
+  protected Aosh newShellInterpreter(Reader in, TerminalWriter out, TerminalWriter err, String[] args) {
+    return new Aosh(connector, in, out, err, args);
   }
 
   public static Account.Name parseAccountingCode(String s, String field) {
@@ -525,7 +525,7 @@ public final class AOSH extends ShellInterpreter {
     }
   }
 
-  public static com.aoindustries.aoserv.client.mysql.Database.Name parseMySQLDatabaseName(String s, String field) {
+  public static com.aoindustries.aoserv.client.mysql.Database.Name parseMysqlDatabaseName(String s, String field) {
     try {
       return com.aoindustries.aoserv.client.mysql.Database.Name.valueOf(s);
     } catch (ValidationException err) {
@@ -533,7 +533,7 @@ public final class AOSH extends ShellInterpreter {
     }
   }
 
-  public static com.aoindustries.aoserv.client.mysql.Server.Name parseMySQLServerName(String s, String field) {
+  public static com.aoindustries.aoserv.client.mysql.Server.Name parseMysqlServerName(String s, String field) {
     try {
       return com.aoindustries.aoserv.client.mysql.Server.Name.valueOf(s);
     } catch (ValidationException err) {
@@ -541,7 +541,7 @@ public final class AOSH extends ShellInterpreter {
     }
   }
 
-  public static com.aoindustries.aoserv.client.mysql.User.Name parseMySQLUserName(String s, String field) {
+  public static com.aoindustries.aoserv.client.mysql.User.Name parseMysqlUserName(String s, String field) {
     try {
       return com.aoindustries.aoserv.client.mysql.User.Name.valueOf(s);
     } catch (ValidationException err) {
@@ -614,7 +614,7 @@ public final class AOSH extends ShellInterpreter {
 
   private void ping(String[] args) throws IOException, SQLException {
     if (checkParamCount(Command.PING, args, 0, err)) {
-      out.print(connector.getSimpleAOClient().ping());
+      out.print(connector.getSimpleClient().ping());
       out.println(" ms");
       out.flush();
     }
@@ -706,7 +706,7 @@ public final class AOSH extends ShellInterpreter {
         }
         newArgs[pos++] = "--";
         System.arraycopy(args, 2, newArgs, pos, argCount - 2);
-        new AOSH(
+        new Aosh(
             connector.switchUsers(User.Name.valueOf(args[1])
             ),
             in,

@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.postgresql;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTableIntegerKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -37,7 +37,7 @@ import java.util.List;
  */
 public final class EncodingTable extends GlobalTableIntegerKey<Encoding> {
 
-  EncodingTable(AOServConnector connector) {
+  EncodingTable(AoservConnector connector) {
     super(connector, Encoding.class);
   }
 
@@ -76,7 +76,7 @@ public final class EncodingTable extends GlobalTableIntegerKey<Encoding> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.POSTGRES_ENCODINGS;
+  public Table.TableId getTableId() {
+    return Table.TableId.POSTGRES_ENCODINGS;
   }
 }

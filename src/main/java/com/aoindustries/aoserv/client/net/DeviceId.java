@@ -33,7 +33,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * An <code>NetDeviceID</code> is a simple wrapper for the
+ * A <code>DeviceId</code> is a simple wrapper for the
  * different names of network devices used in Linux servers.
  *
  * @see  Device
@@ -45,22 +45,20 @@ public final class DeviceId extends GlobalObjectStringKey<DeviceId> implements C
   static final int COLUMN_NAME = 0;
   static final String COLUMN_NAME_name = "name";
 
-  public static final String
-      BMC = "bmc",
-      BOND0 = "bond0",
-      BOND1 = "bond1",
-      BOND2 = "bond2",
-      LO = "lo",
-      ETH0 = "eth0",
-      ETH1 = "eth1",
-      ETH2 = "eth2",
-      ETH3 = "eth3",
-      ETH4 = "eth4",
-      ETH5 = "eth5",
-      ETH6 = "eth6"
-  ;
+  public static final String BMC = "bmc";
+  public static final String BOND0 = "bond0";
+  public static final String BOND1 = "bond1";
+  public static final String BOND2 = "bond2";
+  public static final String LO = "lo";
+  public static final String ETH0 = "eth0";
+  public static final String ETH1 = "eth1";
+  public static final String ETH2 = "eth2";
+  public static final String ETH3 = "eth3";
+  public static final String ETH4 = "eth4";
+  public static final String ETH5 = "eth5";
+  public static final String ETH6 = "eth6";
 
-  private boolean is_loopback;
+  private boolean isLoopback;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -79,7 +77,7 @@ public final class DeviceId extends GlobalObjectStringKey<DeviceId> implements C
       return pkey;
     }
     if (i == 1) {
-      return is_loopback;
+      return isLoopback;
     }
     throw new IllegalArgumentException("Invalid index: " + i);
   }
@@ -89,30 +87,30 @@ public final class DeviceId extends GlobalObjectStringKey<DeviceId> implements C
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.NET_DEVICE_IDS;
+  public Table.TableId getTableId() {
+    return Table.TableId.NET_DEVICE_IDS;
   }
 
   @Override
   public void init(ResultSet results) throws SQLException {
     pkey = results.getString(1);
-    is_loopback = results.getBoolean(2);
+    isLoopback = results.getBoolean(2);
   }
 
   public boolean isLoopback() {
-    return is_loopback;
+    return isLoopback;
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readUTF().intern();
-    is_loopback = in.readBoolean();
+    isLoopback = in.readBoolean();
   }
 
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeUTF(pkey);
-    out.writeBoolean(is_loopback);
+    out.writeBoolean(isLoopback);
   }
 
   @Override

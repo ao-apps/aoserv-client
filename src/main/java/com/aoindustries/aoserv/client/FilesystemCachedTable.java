@@ -30,9 +30,9 @@ import com.aoapps.hodgepodge.sort.FastQSort;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Column;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.sql.SQLColumnValue;
-import com.aoindustries.aoserv.client.sql.SQLComparator;
-import com.aoindustries.aoserv.client.sql.SQLExpression;
+import com.aoindustries.aoserv.client.sql.SqlColumnValue;
+import com.aoindustries.aoserv.client.sql.SqlComparator;
+import com.aoindustries.aoserv.client.sql.SqlExpression;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -48,15 +48,17 @@ import java.util.List;
  * invalidated, the data is reloaded upon next use.
  * <p>
  * The file format is a simple fixed record length format.
- *
+ * </p>
+ * <p>
  * TODO: It is possible to use the same column sorting technique
- * to implement the getIndexedRows method from AOServTable.
+ * to implement the getIndexedRows method from AoservTable.
+ * </p>
  *
  * @author  AO Industries, Inc.
  */
 // TODO: Is this worth maintaining?
 // TODO: Build on persistent collections instead?
-public abstract class FilesystemCachedTable<K, V extends FilesystemCachedObject<K, V>> extends AOServTable<K, V> implements FileListObjectFactory<V> {
+public abstract class FilesystemCachedTable<K, V extends FilesystemCachedObject<K, V>> extends AoservTable<K, V> implements FileListObjectFactory<V> {
 
   /**
    * The last time that the data was loaded, or
@@ -83,7 +85,7 @@ public abstract class FilesystemCachedTable<K, V extends FilesystemCachedObject<
    */
   private List<V> unmodifiableTableList;
 
-  protected FilesystemCachedTable(AOServConnector connector, Class<V> clazz) {
+  protected FilesystemCachedTable(AoservConnector connector, Class<V> clazz) {
     super(connector, clazz);
   }
 
@@ -128,7 +130,7 @@ public abstract class FilesystemCachedTable<K, V extends FilesystemCachedObject<
           getRecordLength(),
           this
       );
-      getObjects(true, newTableList, AoservProtocol.CommandID.GET_TABLE, getTableID());
+      getObjects(true, newTableList, AoservProtocol.CommandId.GET_TABLE, getTableId());
       tableList = newTableList;
       unmodifiableTableList = Collections.unmodifiableList(tableList);
       lastLoaded = currentTime;
@@ -191,18 +193,18 @@ public abstract class FilesystemCachedTable<K, V extends FilesystemCachedObject<
     }
     Table schemaTable = getTableSchema();
     Column schemaColumn = schemaTable.getSchemaColumn(connector, col);
-    SQLComparator<V> vComparator = new SQLComparator<>(
+    SqlComparator<V> sortComparator = new SqlComparator<>(
         connector,
-        new SQLExpression[]{
-            new SQLColumnValue(connector, schemaColumn)
+        new SqlExpression[]{
+            new SqlColumnValue(connector, schemaColumn)
         },
         new boolean[]{ASCENDING}
     );
 
-    SQLComparator<Object> oComparator = new SQLComparator<>(
+    SqlComparator<Object> searchComparator = new SqlComparator<>(
         connector,
-        new SQLExpression[]{
-            new SQLColumnValue(connector, schemaColumn)
+        new SqlExpression[]{
+            new SqlColumnValue(connector, schemaColumn)
         },
         new boolean[]{ASCENDING}
     );
@@ -227,11 +229,11 @@ public abstract class FilesystemCachedTable<K, V extends FilesystemCachedObject<
             tableList.getObjectFactory()
         );
         sortedFileList.addAll(tableList);
-        getSortAlgorithm().sort(sortedFileList, vComparator);
+        getSortAlgorithm().sort(sortedFileList, sortComparator);
         unmodifiableSortedList = Collections.unmodifiableList(sortedFileList);
         columnLists.set(col, unmodifiableSortedList);
       }
-      int index = Collections.binarySearch(unmodifiableSortedList, value, oComparator);
+      int index = Collections.binarySearch(unmodifiableSortedList, value, searchComparator);
       // TODO: Assertion to ensure unique, reading the record before and after to make sure has a different value?
       return index < 0 ? null : unmodifiableSortedList.get(index);
     }
@@ -244,8 +246,7 @@ public abstract class FilesystemCachedTable<K, V extends FilesystemCachedObject<
     return
         columnLists != null
             && columnLists.size() > uniqueColumn
-            && columnLists.get(uniqueColumn) != null
-    ;
+            && columnLists.get(uniqueColumn) != null;
   }
 
   @Override

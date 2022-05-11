@@ -25,7 +25,7 @@ package com.aoindustries.aoserv.client.distribution;
 
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalObjectStringKey;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -49,11 +49,11 @@ public final class Software extends GlobalObjectStringKey<Software> {
 
   public static final String PHP = "php";
 
-  private String image_filename;
-  private int image_width;
-  private int image_height;
-  private String image_alt;
-  private String home_page_url;
+  private String imageFilename;
+  private int imageWidth;
+  private int imageHeight;
+  private String imageAlt;
+  private String homePageUrl;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -72,41 +72,41 @@ public final class Software extends GlobalObjectStringKey<Software> {
       return pkey;
     }
     if (i == 1) {
-      return image_filename;
+      return imageFilename;
     }
     if (i == 2) {
-      return image_width == -1 ? null : image_width;
+      return imageWidth == -1 ? null : imageWidth;
     }
     if (i == 3) {
-      return image_height == -1 ? null : image_height;
+      return imageHeight == -1 ? null : imageHeight;
     }
     if (i == 4) {
-      return image_alt;
+      return imageAlt;
     }
     if (i == 5) {
-      return home_page_url;
+      return homePageUrl;
     }
     throw new IllegalArgumentException("Invalid index: " + i);
   }
 
-  public String getHomePageURL() {
-    return home_page_url;
+  public String getHomePageUrl() {
+    return homePageUrl;
   }
 
   public String getImageAlt() {
-    return image_alt;
+    return imageAlt;
   }
 
   public String getImageFilename() {
-    return image_filename;
+    return imageFilename;
   }
 
   public int getImageHeight() {
-    return image_height;
+    return imageHeight;
   }
 
   public int getImageWidth() {
-    return image_width;
+    return imageWidth;
   }
 
   public String getName() {
@@ -114,51 +114,51 @@ public final class Software extends GlobalObjectStringKey<Software> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.TECHNOLOGY_NAMES;
+  public Table.TableId getTableId() {
+    return Table.TableId.TECHNOLOGY_NAMES;
   }
 
-  public List<SoftwareCategorization> getTechnologies(AOServConnector connector) throws IOException, SQLException {
+  public List<SoftwareCategorization> getTechnologies(AoservConnector connector) throws IOException, SQLException {
     return connector.getDistribution().getSoftwareCategorization().getTechnologies(this);
   }
 
-  public SoftwareVersion getTechnologyVersion(AOServConnector connector, String version, OperatingSystemVersion osv) throws IOException, SQLException {
+  public SoftwareVersion getTechnologyVersion(AoservConnector connector, String version, OperatingSystemVersion osv) throws IOException, SQLException {
     return connector.getDistribution().getSoftwareVersion().getTechnologyVersion(this, version, osv);
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     pkey = result.getString(1);
-    image_filename = result.getString(2);
-    image_width = result.getInt(3);
+    imageFilename = result.getString(2);
+    imageWidth = result.getInt(3);
     if (result.wasNull()) {
-      image_width = -1;
+      imageWidth = -1;
     }
-    image_height = result.getInt(4);
+    imageHeight = result.getInt(4);
     if (result.wasNull()) {
-      image_height = -1;
+      imageHeight = -1;
     }
-    image_alt = result.getString(5);
-    home_page_url = result.getString(6);
+    imageAlt = result.getString(5);
+    homePageUrl = result.getString(6);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readUTF().intern();
-    image_filename = in.readNullUTF();
-    image_width = in.readCompressedInt();
-    image_height = in.readCompressedInt();
-    image_alt = in.readNullUTF();
-    home_page_url = in.readNullUTF();
+    imageFilename = in.readNullUTF();
+    imageWidth = in.readCompressedInt();
+    imageHeight = in.readCompressedInt();
+    imageAlt = in.readNullUTF();
+    homePageUrl = in.readNullUTF();
   }
 
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeUTF(pkey);
-    out.writeNullUTF(image_filename);
-    out.writeCompressedInt(image_width);
-    out.writeCompressedInt(image_height);
-    out.writeNullUTF(image_alt);
-    out.writeNullUTF(home_page_url);
+    out.writeNullUTF(imageFilename);
+    out.writeCompressedInt(imageWidth);
+    out.writeCompressedInt(imageHeight);
+    out.writeNullUTF(imageAlt);
+    out.writeNullUTF(homePageUrl);
   }
 }

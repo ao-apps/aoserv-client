@@ -34,10 +34,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * An <code>HttpdJBossSite</code> indicates that an <code>HttpdSite</code>
+ * An <code>HttpdJbossSite</code> indicates that an <code>HttpdSite</code>
  * uses JBoss as its servlet engine.  The servlet engine may be
  * configured in several ways, only what is common to every type of
- * JBoss installation is stored in <code>HttpdJBossSite</code>.
+ * JBoss installation is stored in <code>HttpdJbossSite</code>.
  *
  * @see  com.aoindustries.aoserv.client.web.Site
  *
@@ -98,10 +98,10 @@ public final class Site extends CachedObjectIntegerKey<Site> {
     throw new IllegalArgumentException("Invalid index: " + i);
   }
 
-  public Version getHttpdJBossVersion() throws SQLException, IOException {
+  public Version getHttpdJbossVersion() throws SQLException, IOException {
     Version obj = table.getConnector().getWeb_jboss().getVersion().get(version);
     if (obj == null) {
-      throw new SQLException("Unable to find HttpdJBossVersion: " + version);
+      throw new SQLException("Unable to find HttpdJbossVersion: " + version);
     }
     return obj;
   }
@@ -163,8 +163,8 @@ public final class Site extends CachedObjectIntegerKey<Site> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.HTTPD_JBOSS_SITES;
+  public Table.TableId getTableId() {
+    return Table.TableId.HTTPD_JBOSS_SITES;
   }
 
   public int getWebserverBind_id() {

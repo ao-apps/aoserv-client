@@ -44,10 +44,8 @@ public final class Language extends GlobalObjectStringKey<Language> {
   static final int COLUMN_CODE = 0;
   static final String COLUMN_CODE_name = "code";
 
-  public static final String
-      EN = "en",
-      JA = "ja"
-  ;
+  public static final String EN = "en";
+  public static final String JA = "ja";
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -63,8 +61,10 @@ public final class Language extends GlobalObjectStringKey<Language> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_CODE: return pkey;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_CODE:
+        return pkey;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -78,8 +78,8 @@ public final class Language extends GlobalObjectStringKey<Language> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.LANGUAGES;
+  public Table.TableId getTableId() {
+    return Table.TableId.LANGUAGES;
   }
 
   @Override

@@ -28,10 +28,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * Flags an <code>AOServObject</code>s as being able to be removed
+ * Flags an <code>AoservObject</code>s as being able to be removed
  * with a call to the <code>remove()</code> method.
  *
- * @see  AOServObject
+ * @see  AoservObject
  *
  * @author  AO Industries, Inc.
  */

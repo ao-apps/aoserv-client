@@ -62,27 +62,23 @@ import java.util.List;
  */
 public final class AccountHost extends CachedObjectIntegerKey<AccountHost> implements Removable {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_ACCOUNTING = 1,
-      COLUMN_SERVER = 2
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_ACCOUNTING = 1;
+  static final int COLUMN_SERVER = 2;
   static final String COLUMN_ACCOUNTING_name = "accounting";
   static final String COLUMN_SERVER_name = "server";
 
   private Account.Name accounting;
   private int server;
-  private boolean is_default;
-  private boolean
-      can_control_apache,
-      can_control_cron,
-      can_control_mysql,
-      can_control_postgresql,
-      can_control_xfs,
-      can_control_xvfb,
-      can_vnc_console,
-      can_control_virtual_server
-  ;
+  private boolean isDefault;
+  private boolean canControlApache;
+  private boolean canControlCron;
+  private boolean canControlMysql;
+  private boolean canControlPostgresql;
+  private boolean canControlXfs;
+  private boolean canControlXvfb;
+  private boolean canVncConsole;
+  private boolean canControlVirtualServer;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -96,35 +92,35 @@ public final class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
   }
 
   public boolean canControlApache() {
-    return can_control_apache;
+    return canControlApache;
   }
 
   public boolean canControlCron() {
-    return can_control_cron;
+    return canControlCron;
   }
 
-  public boolean canControlMySQL() {
-    return can_control_mysql;
+  public boolean canControlMysql() {
+    return canControlMysql;
   }
 
-  public boolean canControlPostgreSQL() {
-    return can_control_postgresql;
+  public boolean canControlPostgresql() {
+    return canControlPostgresql;
   }
 
   public boolean canControlXfs() {
-    return can_control_xfs;
+    return canControlXfs;
   }
 
   public boolean canControlXvfb() {
-    return can_control_xvfb;
+    return canControlXvfb;
   }
 
   public boolean canVncConsole() {
-    return can_vnc_console;
+    return canVncConsole;
   }
 
   public boolean canControlVirtualServer() {
-    return can_control_virtual_server;
+    return canControlVirtualServer;
   }
 
   public Account.Name getAccount_name() {
@@ -142,19 +138,32 @@ public final class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_ACCOUNTING: return accounting;
-      case COLUMN_SERVER: return server;
-      case 3: return is_default;
-      case 4: return can_control_apache;
-      case 5: return can_control_cron;
-      case 6: return can_control_mysql;
-      case 7: return can_control_postgresql;
-      case 8: return can_control_xfs;
-      case 9: return can_control_xvfb;
-      case 10: return can_vnc_console;
-      case 11: return can_control_virtual_server;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_ACCOUNTING:
+        return accounting;
+      case COLUMN_SERVER:
+        return server;
+      case 3:
+        return isDefault;
+      case 4:
+        return canControlApache;
+      case 5:
+        return canControlCron;
+      case 6:
+        return canControlMysql;
+      case 7:
+        return canControlPostgresql;
+      case 8:
+        return canControlXfs;
+      case 9:
+        return canControlXvfb;
+      case 10:
+        return canVncConsole;
+      case 11:
+        return canControlVirtualServer;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -171,8 +180,8 @@ public final class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.BUSINESS_SERVERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.BUSINESS_SERVERS;
   }
 
   @Override
@@ -181,22 +190,22 @@ public final class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
       pkey = result.getInt(1);
       accounting = Account.Name.valueOf(result.getString(2));
       server = result.getInt(3);
-      is_default = result.getBoolean(4);
-      can_control_apache = result.getBoolean(5);
-      can_control_cron = result.getBoolean(6);
-      can_control_mysql = result.getBoolean(7);
-      can_control_postgresql = result.getBoolean(8);
-      can_control_xfs = result.getBoolean(9);
-      can_control_xvfb = result.getBoolean(10);
-      can_vnc_console = result.getBoolean(11);
-      can_control_virtual_server = result.getBoolean(12);
+      isDefault = result.getBoolean(4);
+      canControlApache = result.getBoolean(5);
+      canControlCron = result.getBoolean(6);
+      canControlMysql = result.getBoolean(7);
+      canControlPostgresql = result.getBoolean(8);
+      canControlXfs = result.getBoolean(9);
+      canControlXvfb = result.getBoolean(10);
+      canVncConsole = result.getBoolean(11);
+      canControlVirtualServer = result.getBoolean(12);
     } catch (ValidationException e) {
       throw new SQLException(e);
     }
   }
 
   public boolean isDefault() {
-    return is_default;
+    return isDefault;
   }
 
   @Override
@@ -205,15 +214,15 @@ public final class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
       pkey = in.readCompressedInt();
       accounting = Account.Name.valueOf(in.readUTF()).intern();
       server = in.readCompressedInt();
-      is_default = in.readBoolean();
-      can_control_apache = in.readBoolean();
-      can_control_cron = in.readBoolean();
-      can_control_mysql = in.readBoolean();
-      can_control_postgresql = in.readBoolean();
-      can_control_xfs = in.readBoolean();
-      can_control_xvfb = in.readBoolean();
-      can_vnc_console = in.readBoolean();
-      can_control_virtual_server = in.readBoolean();
+      isDefault = in.readBoolean();
+      canControlApache = in.readBoolean();
+      canControlCron = in.readBoolean();
+      canControlMysql = in.readBoolean();
+      canControlPostgresql = in.readBoolean();
+      canControlXfs = in.readBoolean();
+      canControlXvfb = in.readBoolean();
+      canVncConsole = in.readBoolean();
+      canControlVirtualServer = in.readBoolean();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -227,7 +236,7 @@ public final class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
 
     // Do not remove the default unless it is the only one left
     if (
-        is_default
+        isDefault
             && bu.getAccountHosts().size() > 1
     ) {
       reasons.add(new CannotRemoveReason<>("Not allowed to remove access to the default host while access to other hosts remains", bu));
@@ -267,7 +276,7 @@ public final class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
           }
 
           // ip_addresses
-          for (IpAddress ia : pk.getIPAddresses()) {
+          for (IpAddress ia : pk.getIpAddresses()) {
             Device nd = ia.getDevice();
             if (
                 nd != null
@@ -303,10 +312,10 @@ public final class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
               }
 
               // mysql_server_users
-              com.aoindustries.aoserv.client.mysql.User mu = un.getMySQLUser();
+              com.aoindustries.aoserv.client.mysql.User mu = un.getMysqlUser();
               if (mu != null) {
-                for (com.aoindustries.aoserv.client.mysql.Server ms : ao.getMySQLServers()) {
-                  com.aoindustries.aoserv.client.mysql.UserServer msu = mu.getMySQLServerUser(ms);
+                for (com.aoindustries.aoserv.client.mysql.Server ms : ao.getMysqlServers()) {
+                  com.aoindustries.aoserv.client.mysql.UserServer msu = mu.getMysqlServerUser(ms);
                   if (msu != null) {
                     reasons.add(new CannotRemoveReason<>("Used by MySQL user " + un.getUsername() + " on " + ms.getName() + " on " + ao.getHostname(), msu));
                   }
@@ -334,8 +343,8 @@ public final class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
             }
 
             // mysql_databases
-            for (Database md : pk.getMySQLDatabases()) {
-              com.aoindustries.aoserv.client.mysql.Server ms = md.getMySQLServer();
+            for (Database md : pk.getMysqlDatabases()) {
+              com.aoindustries.aoserv.client.mysql.Server ms = md.getMysqlServer();
               if (ms.getLinuxServer().equals(ao)) {
                 reasons.add(new CannotRemoveReason<>("Used by MySQL database " + md.getName() + " on " + ms.getName() + " on " + ao.getHostname(), md));
               }
@@ -371,11 +380,11 @@ public final class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
 
   @Override
   public void remove() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.REMOVE, Table.TableID.BUSINESS_SERVERS, pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.REMOVE, Table.TableId.BUSINESS_SERVERS, pkey);
   }
 
   public void setAsDefault() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_DEFAULT_BUSINESS_SERVER, pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_DEFAULT_BUSINESS_SERVER, pkey);
   }
 
   @Override
@@ -383,26 +392,26 @@ public final class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
     out.writeCompressedInt(pkey);
     out.writeUTF(accounting.toString());
     out.writeCompressedInt(server);
-    out.writeBoolean(is_default);
+    out.writeBoolean(isDefault);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30) <= 0) {
       // can_configure_backup
       out.writeBoolean(false);
     }
-    out.writeBoolean(can_control_apache);
-    out.writeBoolean(can_control_cron);
+    out.writeBoolean(canControlApache);
+    out.writeBoolean(canControlCron);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30) <= 0) {
       // can_control_interbase
       out.writeBoolean(false);
     }
-    out.writeBoolean(can_control_mysql);
-    out.writeBoolean(can_control_postgresql);
-    out.writeBoolean(can_control_xfs);
-    out.writeBoolean(can_control_xvfb);
+    out.writeBoolean(canControlMysql);
+    out.writeBoolean(canControlPostgresql);
+    out.writeBoolean(canControlXfs);
+    out.writeBoolean(canControlXvfb);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_51) >= 0) {
-      out.writeBoolean(can_vnc_console);
+      out.writeBoolean(canVncConsole);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_64) >= 0) {
-      out.writeBoolean(can_control_virtual_server);
+      out.writeBoolean(canControlVirtualServer);
     }
   }
 }

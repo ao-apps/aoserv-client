@@ -24,9 +24,9 @@
 package com.aoindustries.aoserv.client.web;
 
 import com.aoapps.hodgepodge.io.TerminalWriter;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.linux.PosixPath;
 import com.aoindustries.aoserv.client.linux.Server;
@@ -44,7 +44,7 @@ import java.util.List;
  */
 public final class LocationTable extends CachedTableIntegerKey<Location> {
 
-  LocationTable(AOServConnector connector) {
+  LocationTable(AoservConnector connector) {
     super(connector, Location.class);
   }
 
@@ -69,10 +69,10 @@ public final class LocationTable extends CachedTableIntegerKey<Location> {
       String require,
       String handler
   ) throws IOException, SQLException {
-    return connector.requestIntQueryIL(
+    return connector.requestIntQueryInvalidating(
         true,
-        AoservProtocol.CommandID.ADD,
-        Table.TableID.HTTPD_SITE_AUTHENTICATED_LOCATIONS,
+        AoservProtocol.CommandId.ADD,
+        Table.TableId.HTTPD_SITE_AUTHENTICATED_LOCATIONS,
         hs.getPkey(),
         path,
         isRegularExpression,
@@ -94,24 +94,24 @@ public final class LocationTable extends CachedTableIntegerKey<Location> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.HTTPD_SITE_AUTHENTICATED_LOCATIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.HTTPD_SITE_AUTHENTICATED_LOCATIONS;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_HTTPD_SITE_AUTHENTICATED_LOCATION)) {
-      if (AOSH.checkParamCount(Command.ADD_HTTPD_SITE_AUTHENTICATED_LOCATION, args, 9, err)) {
+      if (Aosh.checkParamCount(Command.ADD_HTTPD_SITE_AUTHENTICATED_LOCATION, args, 9, err)) {
         out.println(
-            connector.getSimpleAOClient().addHttpdSiteAuthenticatedLocation(
+            connector.getSimpleClient().addHttpdSiteAuthenticatedLocation(
                 args[1],
                 args[2],
                 args[3],
-                AOSH.parseBoolean(args[4], "is_regular_expression"),
+                Aosh.parseBoolean(args[4], "is_regular_expression"),
                 args[5],
-                args[6].isEmpty() ? null : AOSH.parseUnixPath(args[6], "auth_group_file"),
-                args[7].isEmpty() ? null : AOSH.parseUnixPath(args[7], "auth_user_file"),
+                args[6].isEmpty() ? null : Aosh.parseUnixPath(args[6], "auth_group_file"),
+                args[7].isEmpty() ? null : Aosh.parseUnixPath(args[7], "auth_user_file"),
                 args[8],
                 args[9].isEmpty() ? null : args[9]
             )
@@ -120,15 +120,15 @@ public final class LocationTable extends CachedTableIntegerKey<Location> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_HTTPD_SITE_AUTHENTICATED_LOCATION_ATTRIBUTES)) {
-      if (AOSH.checkParamCount(Command.SET_HTTPD_SITE_AUTHENTICATED_LOCATION_ATTRIBUTES, args, 9, err)) {
-        connector.getSimpleAOClient().setHttpdSiteAuthenticatedLocationAttributes(
+      if (Aosh.checkParamCount(Command.SET_HTTPD_SITE_AUTHENTICATED_LOCATION_ATTRIBUTES, args, 9, err)) {
+        connector.getSimpleClient().setHttpdSiteAuthenticatedLocationAttributes(
             args[1],
             args[2],
             args[3],
-            AOSH.parseBoolean(args[4], "is_regular_expression"),
+            Aosh.parseBoolean(args[4], "is_regular_expression"),
             args[5],
-            args[6].isEmpty() ? null : AOSH.parseUnixPath(args[6], "auth_group_file"),
-            args[7].isEmpty() ? null : AOSH.parseUnixPath(args[7], "auth_user_file"),
+            args[6].isEmpty() ? null : Aosh.parseUnixPath(args[6], "auth_group_file"),
+            args[7].isEmpty() ? null : Aosh.parseUnixPath(args[7], "auth_user_file"),
             args[8],
             args[9].isEmpty() ? null : args[9]
         );

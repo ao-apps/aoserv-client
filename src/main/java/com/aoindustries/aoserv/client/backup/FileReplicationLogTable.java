@@ -23,8 +23,8 @@
 
 package com.aoindustries.aoserv.client.backup;
 
-import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.AOServTable;
+import com.aoindustries.aoserv.client.AoservConnector;
+import com.aoindustries.aoserv.client.AoservTable;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.net.Host;
@@ -40,18 +40,22 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-public final class FileReplicationLogTable extends AOServTable<Integer, FileReplicationLog> {
+public final class FileReplicationLogTable extends AoservTable<Integer, FileReplicationLog> {
 
-  FileReplicationLogTable(AOServConnector connector) {
+  FileReplicationLogTable(AoservConnector connector) {
     super(connector, FileReplicationLog.class);
   }
 
   private static final OrderBy[] defaultOrderBy = {
       new OrderBy(FileReplicationLog.COLUMN_END_TIME_name, DESCENDING),
-      new OrderBy(FileReplicationLog.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_SERVER_name + '.' + Host.COLUMN_PACKAGE_name + '.' + Package.COLUMN_NAME_name, ASCENDING),
-      new OrderBy(FileReplicationLog.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_SERVER_name + '.' + Host.COLUMN_NAME_name, ASCENDING),
-      new OrderBy(FileReplicationLog.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_BACKUP_PARTITION_name + '.' + BackupPartition.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
-      new OrderBy(FileReplicationLog.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_BACKUP_PARTITION_name + '.' + BackupPartition.COLUMN_PATH_name, ASCENDING)
+      new OrderBy(FileReplicationLog.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_SERVER_name
+          + '.' + Host.COLUMN_PACKAGE_name + '.' + Package.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(FileReplicationLog.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_SERVER_name
+          + '.' + Host.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(FileReplicationLog.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_BACKUP_PARTITION_name
+          + '.' + BackupPartition.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
+      new OrderBy(FileReplicationLog.COLUMN_REPLICATION_name + '.' + FileReplication.COLUMN_BACKUP_PARTITION_name
+          + '.' + BackupPartition.COLUMN_PATH_name, ASCENDING)
   };
 
   @Override
@@ -69,10 +73,10 @@ public final class FileReplicationLogTable extends AOServTable<Integer, FileRepl
       long bytes,
       boolean isSuccessful
   ) throws IOException, SQLException {
-    return connector.requestIntQueryIL(
+    return connector.requestIntQueryInvalidating(
         true,
-        AoservProtocol.CommandID.ADD,
-        Table.TableID.FAILOVER_FILE_LOG,
+        AoservProtocol.CommandId.ADD,
+        Table.TableId.FAILOVER_FILE_LOG,
         replication.getPkey(),
         startTime,
         endTime,
@@ -84,6 +88,8 @@ public final class FileReplicationLogTable extends AOServTable<Integer, FileRepl
   }
 
   /**
+   * {@inheritDoc}
+   *
    * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
    */
   @Deprecated
@@ -99,25 +105,25 @@ public final class FileReplicationLogTable extends AOServTable<Integer, FileRepl
    * @see  #get(java.lang.Object)
    */
   public FileReplicationLog get(int pkey) throws IOException, SQLException {
-    return getObject(true, AoservProtocol.CommandID.GET_OBJECT, Table.TableID.FAILOVER_FILE_LOG, pkey);
+    return getObject(true, AoservProtocol.CommandId.GET_OBJECT, Table.TableId.FAILOVER_FILE_LOG, pkey);
   }
 
   @Override
   public List<FileReplicationLog> getRowsCopy() throws IOException, SQLException {
     List<FileReplicationLog> list = new ArrayList<>();
-    getObjects(true, list, AoservProtocol.CommandID.GET_TABLE, Table.TableID.FAILOVER_FILE_LOG);
+    getObjects(true, list, AoservProtocol.CommandId.GET_TABLE, Table.TableId.FAILOVER_FILE_LOG);
     return list;
   }
 
   List<FileReplicationLog> getFailoverFileLogs(FileReplication replication, int maxRows) throws IOException, SQLException {
     List<FileReplicationLog> list = new ArrayList<>();
-    getObjectsNoProgress(true, list, AoservProtocol.CommandID.GET_FAILOVER_FILE_LOGS_FOR_REPLICATION, replication.getPkey(), maxRows);
+    getObjectsNoProgress(true, list, AoservProtocol.CommandId.GET_FAILOVER_FILE_LOGS_FOR_REPLICATION, replication.getPkey(), maxRows);
     return list;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.FAILOVER_FILE_LOG;
+  public Table.TableId getTableId() {
+    return Table.TableId.FAILOVER_FILE_LOG;
   }
 
   @Override

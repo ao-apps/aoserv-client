@@ -28,7 +28,7 @@ import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.lang.i18n.Money;
 import com.aoapps.net.Email;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.Administrator;
@@ -47,7 +47,7 @@ import java.util.Objects;
  */
 public final class PaymentTable extends CachedTableIntegerKey<Payment> {
 
-  PaymentTable(AOServConnector connector) {
+  PaymentTable(AoservConnector connector) {
     super(connector, Payment.class);
   }
 
@@ -131,15 +131,15 @@ public final class PaymentTable extends CachedTableIntegerKey<Payment> {
     }
     return connector.requestResult(
         true,
-        AoservProtocol.CommandID.ADD,
-        // Java 9: new AOServConnector.ResultRequest<>
-        new AOServConnector.ResultRequest<Integer>() {
+        AoservProtocol.CommandId.ADD,
+        // Java 9: new AoservConnector.ResultRequest<>
+        new AoservConnector.ResultRequest<Integer>() {
           private int pkey;
           private IntList invalidateList;
 
           @Override
           public void writeRequest(StreamableOutput out) throws IOException {
-            out.writeCompressedInt(Table.TableID.CREDIT_CARD_TRANSACTIONS.ordinal());
+            out.writeCompressedInt(Table.TableId.CREDIT_CARD_TRANSACTIONS.ordinal());
             out.writeUTF(processor.getProviderId());
             out.writeUTF(account.getName().toString());
             out.writeNullUTF(groupName);
@@ -217,7 +217,7 @@ public final class PaymentTable extends CachedTableIntegerKey<Payment> {
             int code = in.readByte();
             if (code == AoservProtocol.DONE) {
               pkey = in.readCompressedInt();
-              invalidateList = AOServConnector.readInvalidateList(in);
+              invalidateList = AoservConnector.readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
               throw new IOException("Unknown response code: " + code);
@@ -239,8 +239,8 @@ public final class PaymentTable extends CachedTableIntegerKey<Payment> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.CREDIT_CARD_TRANSACTIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.CREDIT_CARD_TRANSACTIONS;
   }
 
   public Payment getLastCreditCardTransaction(Account bu) throws IOException, SQLException {

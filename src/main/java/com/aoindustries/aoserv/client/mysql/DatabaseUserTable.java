@@ -27,9 +27,9 @@ import com.aoapps.collections.IntList;
 import com.aoapps.hodgepodge.io.TerminalWriter;
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -46,13 +46,14 @@ import java.util.List;
  */
 public final class DatabaseUserTable extends CachedTableIntegerKey<DatabaseUser> {
 
-  DatabaseUserTable(AOServConnector connector) {
+  DatabaseUserTable(AoservConnector connector) {
     super(connector, DatabaseUser.class);
   }
 
   private static final OrderBy[] defaultOrderBy = {
       new OrderBy(DatabaseUser.COLUMN_MYSQL_DATABASE_name + '.' + Database.COLUMN_NAME_name, ASCENDING),
-      new OrderBy(DatabaseUser.COLUMN_MYSQL_DATABASE_name + '.' + Database.COLUMN_MYSQL_SERVER_name + '.' + Server.COLUMN_AO_SERVER_name + '.' + com.aoindustries.aoserv.client.linux.Server.COLUMN_HOSTNAME_name, ASCENDING),
+      new OrderBy(DatabaseUser.COLUMN_MYSQL_DATABASE_name + '.' + Database.COLUMN_MYSQL_SERVER_name + '.' + Server.COLUMN_AO_SERVER_name
+          + '.' + com.aoindustries.aoserv.client.linux.Server.COLUMN_HOSTNAME_name, ASCENDING),
       new OrderBy(DatabaseUser.COLUMN_MYSQL_DATABASE_name + '.' + Database.COLUMN_MYSQL_SERVER_name + '.' + Server.COLUMN_NAME_name, ASCENDING),
       new OrderBy(DatabaseUser.COLUMN_MYSQL_SERVER_USER_name + '.' + UserServer.COLUMN_USERNAME_name, ASCENDING)
   };
@@ -63,7 +64,7 @@ public final class DatabaseUserTable extends CachedTableIntegerKey<DatabaseUser>
     return defaultOrderBy;
   }
 
-  public int addMySQLDBUser(
+  public int addMysqlDbUser(
       final Database md,
       final UserServer msu,
       final boolean canSelect,
@@ -93,15 +94,15 @@ public final class DatabaseUserTable extends CachedTableIntegerKey<DatabaseUser>
     }
     return connector.requestResult(
         true,
-        AoservProtocol.CommandID.ADD,
-        // Java 9: new AOServConnector.ResultRequest<>
-        new AOServConnector.ResultRequest<Integer>() {
+        AoservProtocol.CommandId.ADD,
+        // Java 9: new AoservConnector.ResultRequest<>
+        new AoservConnector.ResultRequest<Integer>() {
           private int pkey;
           private IntList invalidateList;
 
           @Override
           public void writeRequest(StreamableOutput out) throws IOException {
-            out.writeCompressedInt(Table.TableID.MYSQL_DB_USERS.ordinal());
+            out.writeCompressedInt(Table.TableId.MYSQL_DB_USERS.ordinal());
             out.writeCompressedInt(md.getPkey());
             out.writeCompressedInt(msu.getPkey());
             out.writeBoolean(canSelect);
@@ -129,7 +130,7 @@ public final class DatabaseUserTable extends CachedTableIntegerKey<DatabaseUser>
             int code = in.readByte();
             if (code == AoservProtocol.DONE) {
               pkey = in.readCompressedInt();
-              invalidateList = AOServConnector.readInvalidateList(in);
+              invalidateList = AoservConnector.readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
               throw new IOException("Unexpected response code: " + code);
@@ -150,109 +151,109 @@ public final class DatabaseUserTable extends CachedTableIntegerKey<DatabaseUser>
     return getUniqueRow(DatabaseUser.COLUMN_PKEY, pkey);
   }
 
-  DatabaseUser getMySQLDBUser(Database db, UserServer msu) throws IOException, SQLException {
-    int msuPKey = msu.getPkey();
+  DatabaseUser getMysqlDbUser(Database db, UserServer msu) throws IOException, SQLException {
+    int msuPkey = msu.getPkey();
 
     // Use index first on database
-    List<DatabaseUser> cached = getMySQLDBUsers(db);
+    List<DatabaseUser> cached = getMysqlDbUsers(db);
     int size = cached.size();
     for (int c = 0; c < size; c++) {
       DatabaseUser mdu = cached.get(c);
-      if (mdu.getMySQLServerUser_id() == msuPKey) {
+      if (mdu.getMysqlServerUser_id() == msuPkey) {
         return mdu;
       }
     }
     return null;
   }
 
-  List<DatabaseUser> getMySQLDBUsers(Server ms) throws IOException, SQLException {
-    int msPKey = ms.getBind_id();
+  List<DatabaseUser> getMysqlDbUsers(Server ms) throws IOException, SQLException {
+    int msPkey = ms.getBind_id();
 
     List<DatabaseUser> cached = getRows();
     int size = cached.size();
     List<DatabaseUser> matches = new ArrayList<>(size);
     for (int c = 0; c < size; c++) {
       DatabaseUser mdu = cached.get(c);
-      Database md = mdu.getMySQLDatabase();
+      Database md = mdu.getMysqlDatabase();
       // The database might be null if filtered or recently removed
-      if (md != null && md.getMySQLServer_id() == msPKey) {
+      if (md != null && md.getMysqlServer_id() == msPkey) {
         matches.add(mdu);
       }
     }
     return matches;
   }
 
-  List<DatabaseUser> getMySQLDBUsers(UserServer msu) throws IOException, SQLException {
+  List<DatabaseUser> getMysqlDbUsers(UserServer msu) throws IOException, SQLException {
     return getIndexedRows(DatabaseUser.COLUMN_MYSQL_SERVER_USER, msu.getPkey());
   }
 
-  List<DatabaseUser> getMySQLDBUsers(Database md) throws IOException, SQLException {
+  List<DatabaseUser> getMysqlDbUsers(Database md) throws IOException, SQLException {
     return getIndexedRows(DatabaseUser.COLUMN_MYSQL_DATABASE, md.getPkey());
   }
 
-  List<UserServer> getMySQLServerUsers(Database md) throws IOException, SQLException {
+  List<UserServer> getMysqlServerUsers(Database md) throws IOException, SQLException {
     // Use index first
-    List<DatabaseUser> cached = getMySQLDBUsers(md);
+    List<DatabaseUser> cached = getMysqlDbUsers(md);
     int len = cached.size();
     List<UserServer> array = new ArrayList<>(len);
     for (int c = 0; c < len; c++) {
-      array.add(cached.get(c).getMySQLServerUser());
+      array.add(cached.get(c).getMysqlServerUser());
     }
     return array;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.MYSQL_DB_USERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.MYSQL_DB_USERS;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_MYSQL_DB_USER)) {
-      if (AOSH.checkParamCount(Command.ADD_MYSQL_DB_USER, args, 22, err)) {
+      if (Aosh.checkParamCount(Command.ADD_MYSQL_DB_USER, args, 22, err)) {
         out.println(
-            connector.getSimpleAOClient().addMySQLDBUser(
-                AOSH.parseMySQLDatabaseName(args[1], "database_name"),
-                AOSH.parseMySQLServerName(args[2], "mysql_server"),
+            connector.getSimpleClient().addMysqlDbUser(
+                Aosh.parseMysqlDatabaseName(args[1], "database_name"),
+                Aosh.parseMysqlServerName(args[2], "mysql_server"),
                 args[3],
-                AOSH.parseMySQLUserName(args[4], "username"),
-                AOSH.parseBoolean(args[5], "can_select"),
-                AOSH.parseBoolean(args[6], "can_insert"),
-                AOSH.parseBoolean(args[7], "can_update"),
-                AOSH.parseBoolean(args[8], "can_delete"),
-                AOSH.parseBoolean(args[9], "can_create"),
-                AOSH.parseBoolean(args[10], "can_drop"),
-                AOSH.parseBoolean(args[11], "can_reference"),
-                AOSH.parseBoolean(args[12], "can_index"),
-                AOSH.parseBoolean(args[13], "can_alter"),
-                AOSH.parseBoolean(args[14], "can_create_temp_table"),
-                AOSH.parseBoolean(args[15], "can_lock_tables"),
-                AOSH.parseBoolean(args[16], "can_create_view"),
-                AOSH.parseBoolean(args[17], "can_show_view"),
-                AOSH.parseBoolean(args[18], "can_create_routine"),
-                AOSH.parseBoolean(args[19], "can_alter_routine"),
-                AOSH.parseBoolean(args[20], "can_execute"),
-                AOSH.parseBoolean(args[21], "can_event"),
-                AOSH.parseBoolean(args[22], "can_trigger")
+                Aosh.parseMysqlUserName(args[4], "username"),
+                Aosh.parseBoolean(args[5], "can_select"),
+                Aosh.parseBoolean(args[6], "can_insert"),
+                Aosh.parseBoolean(args[7], "can_update"),
+                Aosh.parseBoolean(args[8], "can_delete"),
+                Aosh.parseBoolean(args[9], "can_create"),
+                Aosh.parseBoolean(args[10], "can_drop"),
+                Aosh.parseBoolean(args[11], "can_reference"),
+                Aosh.parseBoolean(args[12], "can_index"),
+                Aosh.parseBoolean(args[13], "can_alter"),
+                Aosh.parseBoolean(args[14], "can_create_temp_table"),
+                Aosh.parseBoolean(args[15], "can_lock_tables"),
+                Aosh.parseBoolean(args[16], "can_create_view"),
+                Aosh.parseBoolean(args[17], "can_show_view"),
+                Aosh.parseBoolean(args[18], "can_create_routine"),
+                Aosh.parseBoolean(args[19], "can_alter_routine"),
+                Aosh.parseBoolean(args[20], "can_execute"),
+                Aosh.parseBoolean(args[21], "can_event"),
+                Aosh.parseBoolean(args[22], "can_trigger")
             )
         );
         out.flush();
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.REMOVE_MYSQL_DB_USER)) {
-      if (AOSH.checkParamCount(Command.REMOVE_MYSQL_DB_USER, args, 4, err)) {
-        connector.getSimpleAOClient().removeMySQLDBUser(
-            AOSH.parseMySQLDatabaseName(args[1], "database_name"),
-            AOSH.parseMySQLServerName(args[2], "mysql_server"),
+      if (Aosh.checkParamCount(Command.REMOVE_MYSQL_DB_USER, args, 4, err)) {
+        connector.getSimpleClient().removeMysqlDbUser(
+            Aosh.parseMysqlDatabaseName(args[1], "database_name"),
+            Aosh.parseMysqlServerName(args[2], "mysql_server"),
             args[3],
-            AOSH.parseMySQLUserName(args[4], "username")
+            Aosh.parseMysqlUserName(args[4], "username")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.WAIT_FOR_MYSQL_DB_USER_REBUILD)) {
-      if (AOSH.checkParamCount(Command.WAIT_FOR_MYSQL_DB_USER_REBUILD, args, 1, err)) {
-        connector.getSimpleAOClient().waitForMySQLDBUserRebuild(args[1]);
+      if (Aosh.checkParamCount(Command.WAIT_FOR_MYSQL_DB_USER_REBUILD, args, 1, err)) {
+        connector.getSimpleClient().waitForMysqlDbUserRebuild(args[1]);
       }
       return true;
     }
@@ -262,8 +263,8 @@ public final class DatabaseUserTable extends CachedTableIntegerKey<DatabaseUser>
   public void waitForRebuild(com.aoindustries.aoserv.client.linux.Server aoServer) throws IOException, SQLException {
     connector.requestUpdate(
         true,
-        AoservProtocol.CommandID.WAIT_FOR_REBUILD,
-        Table.TableID.MYSQL_DB_USERS,
+        AoservProtocol.CommandId.WAIT_FOR_REBUILD,
+        Table.TableId.MYSQL_DB_USERS,
         aoServer.getPkey()
     );
   }

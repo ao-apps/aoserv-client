@@ -235,25 +235,21 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
     }
   }
 
-  public static final byte
-      NEXT = 0,
-      DONE = 1,
-      IO_EXCEPTION = 2,
-      SQL_EXCEPTION = 3
-  ;
+  public static final byte NEXT = 0;
+  public static final byte DONE = 1;
+  public static final byte IO_EXCEPTION = 2;
+  public static final byte SQL_EXCEPTION = 3;
 
-  public static final int
-      FALSE = 0,
-      TRUE = 1,
-      SERVER_DOWN = 2
-  ;
+  public static final int FALSE = 0;
+  public static final int TRUE = 1;
+  public static final int SERVER_DOWN = 2;
 
   /**
    * Since the ordinals are used in the protocol (for compatibility with older implementations), values
    * must be added to the end of this enum.  Values may not be removed (since this would change the
    * ordinals).
    */
-  public enum CommandID {
+  public enum CommandId {
     ADD,
     GET_OBJECT,
     GET_TABLE,
@@ -654,11 +650,16 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_VERSION: return pkey;
-      case 1: return getCreated();
-      case 2: return comments;
-      case 3: return getLastUsed();
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_VERSION:
+        return pkey;
+      case 1:
+        return getCreated();
+      case 2:
+        return comments;
+      case 3:
+        return getLastUsed();
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -683,8 +684,8 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.AOSERV_PROTOCOLS;
+  public Table.TableId getTableId() {
+    return Table.TableId.AOSERV_PROTOCOLS;
   }
 
   @Override

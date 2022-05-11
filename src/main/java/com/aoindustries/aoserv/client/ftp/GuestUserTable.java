@@ -24,8 +24,8 @@
 package com.aoindustries.aoserv.client.ftp;
 
 import com.aoapps.hodgepodge.io.TerminalWriter;
-import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.AoservConnector;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.linux.CachedTableUserNameKey;
 import com.aoindustries.aoserv.client.linux.Server;
@@ -45,7 +45,7 @@ import java.util.List;
  */
 public final class GuestUserTable extends CachedTableUserNameKey<GuestUser> {
 
-  GuestUserTable(AOServConnector connector) {
+  GuestUserTable(AoservConnector connector) {
     super(connector, GuestUser.class);
   }
 
@@ -59,16 +59,16 @@ public final class GuestUserTable extends CachedTableUserNameKey<GuestUser> {
     return defaultOrderBy;
   }
 
-  public void addFTPGuestUser(User.Name username) throws IOException, SQLException {
-    connector.requestUpdateIL(
+  public void addFtpGuestUser(User.Name username) throws IOException, SQLException {
+    connector.requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.ADD,
-        Table.TableID.FTP_GUEST_USERS,
+        AoservProtocol.CommandId.ADD,
+        Table.TableId.FTP_GUEST_USERS,
         username
     );
   }
 
-  public List<GuestUser> getFTPGuestUsers(Server aoServer) throws IOException, SQLException {
+  public List<GuestUser> getFtpGuestUsers(Server aoServer) throws IOException, SQLException {
     List<GuestUser> cached = getRows();
     int size = cached.size();
     List<GuestUser> matches = new ArrayList<>(size);
@@ -87,24 +87,24 @@ public final class GuestUserTable extends CachedTableUserNameKey<GuestUser> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.FTP_GUEST_USERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.FTP_GUEST_USERS;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_FTP_GUEST_USER)) {
-      if (AOSH.checkParamCount(Command.ADD_FTP_GUEST_USER, args, 1, err)) {
-        connector.getSimpleAOClient().addFTPGuestUser(
-            AOSH.parseLinuxUserName(args[1], "username")
+      if (Aosh.checkParamCount(Command.ADD_FTP_GUEST_USER, args, 1, err)) {
+        connector.getSimpleClient().addFtpGuestUser(
+            Aosh.parseLinuxUserName(args[1], "username")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.REMOVE_FTP_GUEST_USER)) {
-      if (AOSH.checkParamCount(Command.REMOVE_FTP_GUEST_USER, args, 1, err)) {
-        connector.getSimpleAOClient().removeFTPGuestUser(
-            AOSH.parseLinuxUserName(args[1], "username")
+      if (Aosh.checkParamCount(Command.REMOVE_FTP_GUEST_USER, args, 1, err)) {
+        connector.getSimpleClient().removeFtpGuestUser(
+            Aosh.parseLinuxUserName(args[1], "username")
         );
       }
       return true;

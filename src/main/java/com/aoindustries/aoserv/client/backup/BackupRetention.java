@@ -62,8 +62,7 @@ public final class BackupRetention extends GlobalObject<Short, BackupRetention> 
   public boolean equals(Object obj) {
     return
         (obj instanceof BackupRetention)
-            && ((BackupRetention) obj).days == days
-    ;
+            && ((BackupRetention) obj).days == days;
   }
 
   @Override
@@ -91,8 +90,8 @@ public final class BackupRetention extends GlobalObject<Short, BackupRetention> 
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.BACKUP_RETENTIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.BACKUP_RETENTIONS;
   }
 
   @Override

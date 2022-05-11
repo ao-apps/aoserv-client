@@ -44,11 +44,11 @@ import java.util.concurrent.atomic.AtomicLong;
  * A <code>SocketConnection</code> is a single, persistent, plaintext
  * connection to the server.
  *
- * @see  TCPConnector
+ * @see  TcpConnector
  *
  * @author  AO Industries, Inc.
  */
-public final class SocketConnection extends AOServConnection {
+public final class SocketConnection extends AoservConnection {
 
   /**
    * Keeps a flag of the connection status.
@@ -70,9 +70,9 @@ public final class SocketConnection extends AOServConnection {
    */
   private final StreamableInput in;
 
-  /**
-   * The first command sequence for this connection.
-   */
+  ///**
+  // * The first command sequence for this connection.
+  // */
   //private final long startSeq;
 
   /**
@@ -81,7 +81,7 @@ public final class SocketConnection extends AOServConnection {
   private final AtomicLong seq;
 
   @SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
-  SocketConnection(TCPConnector connector) throws InterruptedIOException, IOException {
+  SocketConnection(TcpConnector connector) throws InterruptedIOException, IOException {
     super(connector);
     socket = connector.getSocket();
     try {
@@ -142,7 +142,7 @@ public final class SocketConnection extends AOServConnection {
   Throwable abort(Throwable t0) {
     if (!isClosed.getAndSet(true)) {
       try {
-        out.writeCompressedInt(AoservProtocol.CommandID.QUIT.ordinal());
+        out.writeCompressedInt(AoservProtocol.CommandId.QUIT.ordinal());
         out.flush();
       } catch (Throwable t) {
         t0 = Throwables.addSuppressed(t0, t);
@@ -159,10 +159,10 @@ public final class SocketConnection extends AOServConnection {
   private long currentSeq;
 
   @Override
-  StreamableOutput getRequestOut(AoservProtocol.CommandID commID) throws IOException {
+  StreamableOutput getRequestOut(AoservProtocol.CommandId commandId) throws IOException {
     currentSeq = seq.getAndIncrement();
     out.writeLong(currentSeq);
-    out.writeCompressedInt(commID.ordinal());
+    out.writeCompressedInt(commandId.ordinal());
     return out;
   }
 

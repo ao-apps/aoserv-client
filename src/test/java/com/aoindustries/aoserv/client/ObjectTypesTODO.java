@@ -35,16 +35,17 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * Tests all of the types returned by AOServTable.getColumn(int) to make sure they match the types in the schema_columns table.
- *
+ * Tests all of the types returned by AoservTable.getColumn(int) to make sure they match the types in the schema_columns table.
+ * <p>
  * TODO: This test does not run without a master setup.
+ * </p>
  *
  * @author  AO Industries, Inc.
  */
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class ObjectTypesTODO extends TestCase {
 
-  private List<AOServConnector> conns;
+  private List<AoservConnector> conns;
 
   public ObjectTypesTODO(String testName) {
     super(testName);
@@ -52,7 +53,7 @@ public class ObjectTypesTODO extends TestCase {
 
   @Override
   protected void setUp() throws Exception {
-    conns = AOServConnectorTODO.getTestConnectors();
+    conns = AoservConnectorTODO.getTestConnectors();
   }
 
   @Override
@@ -67,7 +68,7 @@ public class ObjectTypesTODO extends TestCase {
   }
 
   /**
-   * Test the type of all the objects in each AOServTable.
+   * Test the type of all the objects in each AoservTable.
    */
   public void testTableObjectTypes() throws Exception {
     System.out.println("Testing all object types returned by getColumn(int index)");
@@ -75,22 +76,22 @@ public class ObjectTypesTODO extends TestCase {
     System.out.println("E = Empty Table, Tests Not Performed");
     System.out.println("N = All Null, Tests Not Performed");
     System.out.println("U = Unsupported Operation");
-    int numTables = Table.TableID.values().length;
-    for (AOServConnector conn : conns) {
+    int numTables = Table.TableId.values().length;
+    for (AoservConnector conn : conns) {
       User.Name connUsername = conn.getCurrentAdministrator().getKey();
       System.out.println("    " + connUsername);
       for (int c = 0; c < numTables; c++) {
         // Excluded for testing speed
         if (
-            c == Table.TableID.DISTRO_FILES.ordinal()
-                || c == Table.TableID.WhoisHistory.ordinal() // TODO: Just exclude output/error columns?
+            c == Table.TableId.DISTRO_FILES.ordinal()
+                || c == Table.TableId.WhoisHistory.ordinal() // TODO: Just exclude output/error columns?
         ) {
           continue;
         }
-        AOServTable<?, ?> table = conn.getTable(c);
+        AoservTable<?, ?> table = conn.getTable(c);
         String tableName = table.getTableName();
         System.out.print("        " + tableName + ": ");
-        List<? extends AOServObject<?, ?>> rows = table.getRows();
+        List<? extends AoservObject<?, ?>> rows = table.getRows();
         if (rows.isEmpty()) {
           System.out.println('E');
         } else {
@@ -100,7 +101,7 @@ public class ObjectTypesTODO extends TestCase {
             Type type = column.getType(conn);
             int typeNum = type.getId();
             char tested = 'N';
-            for (AOServObject<?, ?> row : rows) {
+            for (AoservObject<?, ?> row : rows) {
               // Cast to proper type if not null
               Object value = row.getColumn(column.getIndex());
               if (value != null) {

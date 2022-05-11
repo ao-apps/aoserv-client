@@ -74,17 +74,28 @@ public final class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_VIRTUAL_SERVER : return virtualServer;
-      case COLUMN_DEVICE : return device;
-      case 3 : return minimumDiskSpeed == -1 ? null : minimumDiskSpeed;
-      case 4 : return minimumDiskSpeedTarget == -1 ? null : minimumDiskSpeedTarget;
-      case 5 : return extents;
-      case 6 : return weight;
-      case 7 : return weightTarget;
-      case 8 : return verifyDayOfWeek;
-      case 9 : return verifyHourOfDay;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_VIRTUAL_SERVER:
+        return virtualServer;
+      case COLUMN_DEVICE:
+        return device;
+      case 3:
+        return minimumDiskSpeed == -1 ? null : minimumDiskSpeed;
+      case 4:
+        return minimumDiskSpeedTarget == -1 ? null : minimumDiskSpeedTarget;
+      case 5:
+        return extents;
+      case 6:
+        return weight;
+      case 7:
+        return weightTarget;
+      case 8:
+        return verifyDayOfWeek;
+      case 9:
+        return verifyHourOfDay;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -162,8 +173,8 @@ public final class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.VIRTUAL_DISKS;
+  public Table.TableId getTableId() {
+    return Table.TableId.VIRTUAL_DISKS;
   }
 
   @Override
@@ -250,14 +261,15 @@ public final class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
 
   /**
    * Begins a verification of the redundancy of the virtual disk.
-   *
+   * <p>
    * User must have control_virtual_server permissions on this server.
+   * </p>
    *
    * @see  AccountHost#canControlVirtualServer()
    *
    * @return  The time the verification began, which may be in the past if a verification was already in progress
    */
   public long verify() throws SQLException, IOException {
-    return table.getConnector().requestLongQuery(true, AoservProtocol.CommandID.VERIFY_VIRTUAL_DISK, this.getPkey());
+    return table.getConnector().requestLongQuery(true, AoservProtocol.CommandId.VERIFY_VIRTUAL_DISK, this.getPkey());
   }
 }

@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.master;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.net.Host;
@@ -38,7 +38,7 @@ import java.sql.SQLException;
  */
 public final class UserHostTable extends CachedTableIntegerKey<UserHost> {
 
-  UserHostTable(AOServConnector connector) {
+  UserHostTable(AoservConnector connector) {
     super(connector, UserHost.class);
   }
 
@@ -60,7 +60,7 @@ public final class UserHostTable extends CachedTableIntegerKey<UserHost> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.MASTER_SERVERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.MASTER_SERVERS;
   }
 }

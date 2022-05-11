@@ -25,9 +25,9 @@ package com.aoindustries.aoserv.client.web;
 
 import com.aoapps.hodgepodge.io.TerminalWriter;
 import com.aoapps.net.DomainName;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.net.Bind;
@@ -48,17 +48,21 @@ import java.util.List;
  */
 public final class VirtualHostNameTable extends CachedTableIntegerKey<VirtualHostName> {
 
-  VirtualHostNameTable(AOServConnector connector) {
+  VirtualHostNameTable(AoservConnector connector) {
     super(connector, VirtualHostName.class);
   }
 
   private static final OrderBy[] defaultOrderBy = {
       new OrderBy(VirtualHostName.COLUMN_HOSTNAME_name, ASCENDING),
       new OrderBy(VirtualHostName.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_SITE_name + '.' + Site.COLUMN_NAME_name, ASCENDING),
-      new OrderBy(VirtualHostName.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_SITE_name + '.' + Site.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
-      new OrderBy(VirtualHostName.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_IP_ADDRESS_name + '.' + IpAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
-      new OrderBy(VirtualHostName.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_IP_ADDRESS_name + '.' + IpAddress.COLUMN_DEVICE_name + '.' + Device.COLUMN_DEVICE_ID_name, ASCENDING),
-      new OrderBy(VirtualHostName.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_PORT_name, ASCENDING),
+      new OrderBy(VirtualHostName.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_SITE_name + '.' + Site.COLUMN_AO_SERVER_name
+          + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
+      new OrderBy(VirtualHostName.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name
+          + '.' + Bind.COLUMN_IP_ADDRESS_name + '.' + IpAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
+      new OrderBy(VirtualHostName.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name
+          + '.' + Bind.COLUMN_IP_ADDRESS_name + '.' + IpAddress.COLUMN_DEVICE_name + '.' + Device.COLUMN_DEVICE_ID_name, ASCENDING),
+      new OrderBy(VirtualHostName.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name
+          + '.' + Bind.COLUMN_PORT_name, ASCENDING),
       new OrderBy(VirtualHostName.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_NAME_name, ASCENDING)
   };
 
@@ -68,11 +72,11 @@ public final class VirtualHostNameTable extends CachedTableIntegerKey<VirtualHos
     return defaultOrderBy;
   }
 
-  int addHttpdSiteURL(VirtualHost hsb, DomainName hostname) throws IOException, SQLException {
-    return connector.requestIntQueryIL(
+  int addVirtualHostName(VirtualHost hsb, DomainName hostname) throws IOException, SQLException {
+    return connector.requestIntQueryInvalidating(
         true,
-        AoservProtocol.CommandID.ADD,
-        Table.TableID.HTTPD_SITE_URLS,
+        AoservProtocol.CommandId.ADD,
+        Table.TableId.HTTPD_SITE_URLS,
         hsb.getPkey(),
         hostname
     );
@@ -83,13 +87,13 @@ public final class VirtualHostNameTable extends CachedTableIntegerKey<VirtualHos
     return getUniqueRow(VirtualHostName.COLUMN_PKEY, pkey);
   }
 
-  List<VirtualHostName> getHttpdSiteURLs(VirtualHost bind) throws IOException, SQLException {
+  List<VirtualHostName> getVirtualHostNames(VirtualHost bind) throws IOException, SQLException {
     return getIndexedRows(VirtualHostName.COLUMN_HTTPD_SITE_BIND, bind.getPkey());
   }
 
-  VirtualHostName getPrimaryHttpdSiteURL(VirtualHost bind) throws SQLException, IOException {
+  VirtualHostName getPrimaryVirtualHostName(VirtualHost bind) throws SQLException, IOException {
     // Use the index first
-    List<VirtualHostName> cached = getHttpdSiteURLs(bind);
+    List<VirtualHostName> cached = getVirtualHostNames(bind);
     int size = cached.size();
     for (int c = 0; c < size; c++) {
       VirtualHostName hsu = cached.get(c);
@@ -100,9 +104,9 @@ public final class VirtualHostNameTable extends CachedTableIntegerKey<VirtualHos
     throw new SQLException("Unable to find primary HttpdSiteURL for HttpdSiteBind with pkey=" + bind.getPkey());
   }
 
-  List<VirtualHostName> getAltHttpdSiteURLs(VirtualHost bind) throws IOException, SQLException {
+  List<VirtualHostName> getAltVirtualHostNames(VirtualHost bind) throws IOException, SQLException {
     // Use the index first
-    List<VirtualHostName> cached = getHttpdSiteURLs(bind);
+    List<VirtualHostName> cached = getVirtualHostNames(bind);
     int size = cached.size();
     List<VirtualHostName> matches = new ArrayList<>(size - 1);
     for (int c = 0; c < size; c++) {
@@ -115,32 +119,32 @@ public final class VirtualHostNameTable extends CachedTableIntegerKey<VirtualHos
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.HTTPD_SITE_URLS;
+  public Table.TableId getTableId() {
+    return Table.TableId.HTTPD_SITE_URLS;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_HTTPD_SITE_URL)) {
-      if (AOSH.checkParamCount(Command.ADD_HTTPD_SITE_URL, args, 2, err)) {
+      if (Aosh.checkParamCount(Command.ADD_HTTPD_SITE_URL, args, 2, err)) {
         out.println(
-            connector.getSimpleAOClient().addHttpdSiteURL(
-                AOSH.parseInt(args[1], "httpd_site_bind_pkey"),
-                AOSH.parseDomainName(args[2], "hostname")
+            connector.getSimpleClient().addVirtualHostName(
+                Aosh.parseInt(args[1], "httpd_site_bind_pkey"),
+                Aosh.parseDomainName(args[2], "hostname")
             )
         );
         out.flush();
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.REMOVE_HTTPD_SITE_URL)) {
-      if (AOSH.checkParamCount(Command.REMOVE_HTTPD_SITE_URL, args, 1, err)) {
-        connector.getSimpleAOClient().removeHttpdSiteURL(AOSH.parseInt(args[1], "pkey"));
+      if (Aosh.checkParamCount(Command.REMOVE_HTTPD_SITE_URL, args, 1, err)) {
+        connector.getSimpleClient().removeVirtualHostName(Aosh.parseInt(args[1], "pkey"));
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_PRIMARY_HTTPD_SITE_URL)) {
-      if (AOSH.checkParamCount(Command.SET_PRIMARY_HTTPD_SITE_URL, args, 1, err)) {
-        connector.getSimpleAOClient().setPrimaryHttpdSiteURL(AOSH.parseInt(args[1], "pkey"));
+      if (Aosh.checkParamCount(Command.SET_PRIMARY_HTTPD_SITE_URL, args, 1, err)) {
+        connector.getSimpleClient().setPrimaryVirtualHostName(Aosh.parseInt(args[1], "pkey"));
       }
       return true;
     } else {

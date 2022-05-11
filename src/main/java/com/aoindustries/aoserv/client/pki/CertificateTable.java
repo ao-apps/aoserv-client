@@ -25,9 +25,9 @@ package com.aoindustries.aoserv.client.pki;
 
 import com.aoapps.hodgepodge.io.TerminalWriter;
 import com.aoapps.sql.SQLUtility;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.linux.Server;
@@ -43,7 +43,7 @@ import java.util.List;
  */
 public final class CertificateTable extends CachedTableIntegerKey<Certificate> {
 
-  CertificateTable(AOServConnector connector) {
+  CertificateTable(AoservConnector connector) {
     super(connector, Certificate.class);
   }
 
@@ -72,19 +72,19 @@ public final class CertificateTable extends CachedTableIntegerKey<Certificate> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.SSL_CERTIFICATES;
+  public Table.TableId getTableId() {
+    return Table.TableId.SSL_CERTIFICATES;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.PKI_CERTIFICATE_CHECK)) {
-      if (AOSH.checkParamCount(Command.PKI_CERTIFICATE_CHECK, args, 3, err)) {
-        List<Certificate.Check> results = connector.getSimpleAOClient().checkSslCertificate(
+      if (Aosh.checkParamCount(Command.PKI_CERTIFICATE_CHECK, args, 3, err)) {
+        List<Certificate.Check> results = connector.getSimpleClient().checkSslCertificate(
             args[1],
             args[2],
-            AOSH.parseBoolean(args[3], "allowCached")
+            Aosh.parseBoolean(args[3], "allowCached")
         );
         int size = results.size();
         List<Object[]> rows = new ArrayList<>(size);

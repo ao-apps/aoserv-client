@@ -25,7 +25,7 @@ package com.aoindustries.aoserv.client.postgresql;
 
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalObjectIntegerKey;
 import com.aoindustries.aoserv.client.distribution.SoftwareVersion;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
@@ -55,23 +55,21 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
 
   public static final String TECHNOLOGY_NAME = "postgresql";
 
-  public static final String
-      VERSION_7_1 = "7.1",
-      VERSION_7_2 = "7.2",
-      VERSION_7_3 = "7.3",
-      VERSION_8_0 = "8.0",
-      VERSION_8_1 = "8.1",
-      VERSION_8_3 = "8.3",
-      VERSION_9_2 = "9.2",
-      VERSION_9_4 = "9.4",
-      VERSION_9_5 = "9.5",
-      VERSION_9_6 = "9.6",
-      VERSION_10 = "10",
-      VERSION_11 = "11",
-      VERSION_12 = "12",
-      VERSION_13 = "13",
-      VERSION_14 = "14"
-  ;
+  public static final String VERSION_7_1 = "7.1";
+  public static final String VERSION_7_2 = "7.2";
+  public static final String VERSION_7_3 = "7.3";
+  public static final String VERSION_8_0 = "8.0";
+  public static final String VERSION_8_1 = "8.1";
+  public static final String VERSION_8_3 = "8.3";
+  public static final String VERSION_9_2 = "9.2";
+  public static final String VERSION_9_4 = "9.4";
+  public static final String VERSION_9_5 = "9.5";
+  public static final String VERSION_9_6 = "9.6";
+  public static final String VERSION_10 = "10";
+  public static final String VERSION_11 = "11";
+  public static final String VERSION_12 = "12";
+  public static final String VERSION_13 = "13";
+  public static final String VERSION_14 = "14";
 
   /**
    * Gets the versions of PostgreSQL in order of
@@ -116,8 +114,7 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
             || version.startsWith(VERSION_13 + '.')
             || version.startsWith(VERSION_13 + 'R')
             || version.startsWith(VERSION_14 + '.')
-            || version.startsWith(VERSION_14 + 'R')
-    ;
+            || version.startsWith(VERSION_14 + 'R');
   }
 
   /**
@@ -134,10 +131,14 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_VERSION: return pkey;
-      case 1: return minorVersion;
-      case 2: return postgisVersion == -1 ? null : postgisVersion;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_VERSION:
+        return pkey;
+      case 1:
+        return minorVersion;
+      case 2:
+        return postgisVersion == -1 ? null : postgisVersion;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -148,7 +149,7 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
   /**
    * Gets the PostGIS version of {@code null} if not supported by this PostgreSQL version....
    */
-  public SoftwareVersion getPostgisVersion(AOServConnector connector) throws SQLException, IOException {
+  public SoftwareVersion getPostgisVersion(AoservConnector connector) throws SQLException, IOException {
     if (postgisVersion == -1) {
       return null;
     }
@@ -166,19 +167,19 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.POSTGRES_VERSIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.POSTGRES_VERSIONS;
   }
 
-  public List<Encoding> getPostgresEncodings(AOServConnector connector) throws IOException, SQLException {
+  public List<Encoding> getPostgresEncodings(AoservConnector connector) throws IOException, SQLException {
     return connector.getPostgresql().getEncoding().getPostgresEncodings(this);
   }
 
-  public Encoding getPostgresEncoding(AOServConnector connector, String encoding) throws IOException, SQLException {
+  public Encoding getPostgresEncoding(AoservConnector connector, String encoding) throws IOException, SQLException {
     return connector.getPostgresql().getEncoding().getPostgresEncoding(this, encoding);
   }
 
-  public SoftwareVersion getTechnologyVersion(AOServConnector connector) throws SQLException, IOException {
+  public SoftwareVersion getTechnologyVersion(AoservConnector connector) throws SQLException, IOException {
     SoftwareVersion obj = connector.getDistribution().getSoftwareVersion().get(pkey);
     if (obj == null) {
       throw new SQLException("Unable to find TechnologyVersion: " + pkey);
@@ -189,7 +190,7 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
   /**
    * @see  #isScramSha256(java.lang.String)
    */
-  public boolean isScramSha256(AOServConnector connector) throws SQLException, IOException {
+  public boolean isScramSha256(AoservConnector connector) throws SQLException, IOException {
     return isScramSha256(getTechnologyVersion(connector).getVersion());
   }
 

@@ -28,7 +28,7 @@ import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.net.Email;
 import com.aoapps.net.InetAddress;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.billing.PackageDefinition;
@@ -48,7 +48,7 @@ import java.util.Map;
  */
 public final class RequestTable extends CachedTableIntegerKey<Request> {
 
-  RequestTable(AOServConnector connector) {
+  RequestTable(AoservConnector connector) {
     super(connector, Request.class);
   }
 
@@ -69,8 +69,8 @@ public final class RequestTable extends CachedTableIntegerKey<Request> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.SIGNUP_REQUESTS;
+  public Table.TableId getTableId() {
+    return Table.TableId.SIGNUP_REQUESTS;
   }
 
   /**
@@ -79,101 +79,101 @@ public final class RequestTable extends CachedTableIntegerKey<Request> {
    */
   public int addSignupRequest(
       final Brand brand,
-      final InetAddress ip_address,
-      final PackageDefinition package_definition,
-      final String business_name,
-      final String business_phone,
-      final String business_fax,
-      final String business_address1,
-      final String business_address2,
-      final String business_city,
-      final String business_state,
-      final CountryCode business_country,
-      final String business_zip,
-      final String ba_name,
-      final String ba_title,
-      final String ba_work_phone,
-      final String ba_cell_phone,
-      final String ba_home_phone,
-      final String ba_fax,
-      final Email ba_email,
-      final String ba_address1,
-      final String ba_address2,
-      final String ba_city,
-      final String ba_state,
-      final CountryCode ba_country,
-      final String ba_zip,
-      final User.Name ba_username,
-      final String billing_contact,
-      final Email billing_email,
-      final boolean billing_use_monthly,
-      final boolean billing_pay_one_year,
+      final InetAddress ipAddress,
+      final PackageDefinition packageDefinition,
+      final String businessName,
+      final String businessPhone,
+      final String businessFax,
+      final String businessAddress1,
+      final String businessAddress2,
+      final String businessCity,
+      final String businessState,
+      final CountryCode businessCountry,
+      final String businessZip,
+      final String baName,
+      final String baTitle,
+      final String baWorkPhone,
+      final String baCellPhone,
+      final String baHomePhone,
+      final String baFax,
+      final Email baEmail,
+      final String baAddress1,
+      final String baAddress2,
+      final String baCity,
+      final String baState,
+      final CountryCode baCountry,
+      final String baZip,
+      final User.Name baUsername,
+      final String billingContact,
+      final Email billingEmail,
+      final boolean billingUseMonthly,
+      final boolean billingPayOneYear,
       // Encrypted values
-      String ba_password,
-      String billing_cardholder_name,
-      String billing_card_number,
-      String billing_expiration_month,
-      String billing_expiration_year,
-      String billing_street_address,
-      String billing_city,
-      String billing_state,
-      String billing_zip,
+      String baPassword,
+      String billingCardholderName,
+      String billingCardNumber,
+      String billingExpirationMonth,
+      String billingExpirationYear,
+      String billingStreetAddress,
+      String billingCity,
+      String billingState,
+      String billingZip,
       // options
       final Map<String, String> options
   ) throws IOException, SQLException {
     // Validate the encrypted parameters
-    if (ba_password == null) {
+    if (baPassword == null) {
       throw new NullPointerException("ba_password is null");
     }
-    if (ba_password.indexOf('\n') != -1) {
+    if (baPassword.indexOf('\n') != -1) {
       throw new IllegalArgumentException("ba_password may not contain '\n'");
     }
-    if (billing_cardholder_name == null) {
+    if (billingCardholderName == null) {
       throw new NullPointerException("billing_cardholder_name is null");
     }
-    if (billing_cardholder_name.indexOf('\n') != -1) {
+    if (billingCardholderName.indexOf('\n') != -1) {
       throw new IllegalArgumentException("billing_cardholder_name may not contain '\n'");
     }
-    if (billing_card_number == null) {
+    if (billingCardNumber == null) {
       throw new NullPointerException("billing_card_number is null");
     }
-    if (billing_card_number.indexOf('\n') != -1) {
+    if (billingCardNumber.indexOf('\n') != -1) {
       throw new IllegalArgumentException("billing_card_number may not contain '\n'");
     }
-    if (billing_expiration_month == null) {
+    if (billingExpirationMonth == null) {
       throw new NullPointerException("billing_expiration_month is null");
     }
-    if (billing_expiration_month.indexOf('\n') != -1) {
+    if (billingExpirationMonth.indexOf('\n') != -1) {
       throw new IllegalArgumentException("billing_expiration_month may not contain '\n'");
     }
-    if (billing_expiration_year == null) {
+    if (billingExpirationYear == null) {
       throw new NullPointerException("billing_expiration_year is null");
     }
-    if (billing_expiration_year.indexOf('\n') != -1) {
+    if (billingExpirationYear.indexOf('\n') != -1) {
       throw new IllegalArgumentException("billing_expiration_year may not contain '\n'");
     }
-    if (billing_street_address == null) {
+    if (billingStreetAddress == null) {
       throw new NullPointerException("billing_street_address is null");
     }
-    if (billing_street_address.indexOf('\n') != -1) {
+    if (billingStreetAddress.indexOf('\n') != -1) {
       throw new IllegalArgumentException("billing_street_address may not contain '\n'");
     }
-    if (billing_city == null) {
+    if (billingCity == null) {
       throw new NullPointerException("billing_city is null");
     }
-    if (billing_city.indexOf('\n') != -1) {
+    if (billingCity.indexOf('\n') != -1) {
       throw new IllegalArgumentException("billing_city may not contain '\n'");
     }
-    if (billing_state == null) {
+    if (billingState == null) {
       throw new NullPointerException("billing_state is null");
     }
-    if (billing_state.indexOf('\n') != -1) {
+    if (billingState.indexOf('\n') != -1) {
       throw new IllegalArgumentException("billing_state may not contain '\n'");
     }
-    if (billing_zip == null) {
+    if (billingZip == null) {
       throw new NullPointerException("billing_zip is null");
     }
-    if (billing_zip.indexOf('\n') != -1) {
+    if (billingZip.indexOf('\n') != -1) {
       throw new IllegalArgumentException("billing_zip may not contain '\n'");
     }
 
@@ -183,102 +183,101 @@ public final class RequestTable extends CachedTableIntegerKey<Request> {
 
     // Encrypt the message
     String plaintext =
-        ba_password + "\n"
-            + billing_cardholder_name + "\n"
-            + billing_card_number + "\n"
-            + billing_expiration_month + "\n"
-            + billing_expiration_year + "\n"
-            + billing_street_address + "\n"
-            + billing_city + "\n"
-            + billing_state + "\n"
-            + billing_zip + "\n"
-    ;
+        baPassword + "\n"
+            + billingCardholderName + "\n"
+            + billingCardNumber + "\n"
+            + billingExpirationMonth + "\n"
+            + billingExpirationYear + "\n"
+            + billingStreetAddress + "\n"
+            + billingCity + "\n"
+            + billingState + "\n"
+            + billingZip + "\n";
     final String ciphertext = from.encrypt(recipient, plaintext);
 
     // Send the request to the master server
     return connector.requestResult(
         true,
-        AoservProtocol.CommandID.ADD,
-        // Java 9: new AOServConnector.ResultRequest<>
-        new AOServConnector.ResultRequest<Integer>() {
+        AoservProtocol.CommandId.ADD,
+        // Java 9: new AoservConnector.ResultRequest<>
+        new AoservConnector.ResultRequest<Integer>() {
           private int pkey;
           private IntList invalidateList;
 
           @Override
           public void writeRequest(StreamableOutput out) throws IOException {
-            out.writeCompressedInt(Table.TableID.SIGNUP_REQUESTS.ordinal());
+            out.writeCompressedInt(Table.TableId.SIGNUP_REQUESTS.ordinal());
             out.writeUTF(brand.getAccount_name().toString());
-            out.writeUTF(ip_address.toString());
-            out.writeCompressedInt(package_definition.getPkey());
-            out.writeUTF(business_name);
-            out.writeUTF(business_phone);
-            out.writeBoolean(business_fax != null);
-            if (business_fax != null) {
-              out.writeUTF(business_fax);
+            out.writeUTF(ipAddress.toString());
+            out.writeCompressedInt(packageDefinition.getPkey());
+            out.writeUTF(businessName);
+            out.writeUTF(businessPhone);
+            out.writeBoolean(businessFax != null);
+            if (businessFax != null) {
+              out.writeUTF(businessFax);
             }
-            out.writeUTF(business_address1);
-            out.writeBoolean(business_address2 != null);
-            if (business_address2 != null) {
-              out.writeUTF(business_address2);
+            out.writeUTF(businessAddress1);
+            out.writeBoolean(businessAddress2 != null);
+            if (businessAddress2 != null) {
+              out.writeUTF(businessAddress2);
             }
-            out.writeUTF(business_city);
-            out.writeBoolean(business_state != null);
-            if (business_state != null) {
-              out.writeUTF(business_state);
+            out.writeUTF(businessCity);
+            out.writeBoolean(businessState != null);
+            if (businessState != null) {
+              out.writeUTF(businessState);
             }
-            out.writeUTF(business_country.getCode());
-            out.writeBoolean(business_zip != null);
-            if (business_zip != null) {
-              out.writeUTF(business_zip);
+            out.writeUTF(businessCountry.getCode());
+            out.writeBoolean(businessZip != null);
+            if (businessZip != null) {
+              out.writeUTF(businessZip);
             }
-            out.writeUTF(ba_name);
-            out.writeBoolean(ba_title != null);
-            if (ba_title != null) {
-              out.writeUTF(ba_title);
+            out.writeUTF(baName);
+            out.writeBoolean(baTitle != null);
+            if (baTitle != null) {
+              out.writeUTF(baTitle);
             }
-            out.writeUTF(ba_work_phone);
-            out.writeBoolean(ba_cell_phone != null);
-            if (ba_cell_phone != null) {
-              out.writeUTF(ba_cell_phone);
+            out.writeUTF(baWorkPhone);
+            out.writeBoolean(baCellPhone != null);
+            if (baCellPhone != null) {
+              out.writeUTF(baCellPhone);
             }
-            out.writeBoolean(ba_home_phone != null);
-            if (ba_home_phone != null) {
-              out.writeUTF(ba_home_phone);
+            out.writeBoolean(baHomePhone != null);
+            if (baHomePhone != null) {
+              out.writeUTF(baHomePhone);
             }
-            out.writeBoolean(ba_fax != null);
-            if (ba_fax != null) {
-              out.writeUTF(ba_fax);
+            out.writeBoolean(baFax != null);
+            if (baFax != null) {
+              out.writeUTF(baFax);
             }
-            out.writeUTF(ba_email.toString());
-            out.writeBoolean(ba_address1 != null);
-            if (ba_address1 != null) {
-              out.writeUTF(ba_address1);
+            out.writeUTF(baEmail.toString());
+            out.writeBoolean(baAddress1 != null);
+            if (baAddress1 != null) {
+              out.writeUTF(baAddress1);
             }
-            out.writeBoolean(ba_address2 != null);
-            if (ba_address2 != null) {
-              out.writeUTF(ba_address2);
+            out.writeBoolean(baAddress2 != null);
+            if (baAddress2 != null) {
+              out.writeUTF(baAddress2);
             }
-            out.writeBoolean(ba_city != null);
-            if (ba_city != null) {
-              out.writeUTF(ba_city);
+            out.writeBoolean(baCity != null);
+            if (baCity != null) {
+              out.writeUTF(baCity);
             }
-            out.writeBoolean(ba_state != null);
-            if (ba_state != null) {
-              out.writeUTF(ba_state);
+            out.writeBoolean(baState != null);
+            if (baState != null) {
+              out.writeUTF(baState);
             }
-            out.writeBoolean(ba_country != null);
-            if (ba_country != null) {
-              out.writeUTF(ba_country.getCode());
+            out.writeBoolean(baCountry != null);
+            if (baCountry != null) {
+              out.writeUTF(baCountry.getCode());
             }
-            out.writeBoolean(ba_zip != null);
-            if (ba_zip != null) {
-              out.writeUTF(ba_zip);
+            out.writeBoolean(baZip != null);
+            if (baZip != null) {
+              out.writeUTF(baZip);
             }
-            out.writeUTF(ba_username.toString());
-            out.writeUTF(billing_contact);
-            out.writeUTF(billing_email.toString());
-            out.writeBoolean(billing_use_monthly);
-            out.writeBoolean(billing_pay_one_year);
+            out.writeUTF(baUsername.toString());
+            out.writeUTF(billingContact);
+            out.writeUTF(billingEmail.toString());
+            out.writeBoolean(billingUseMonthly);
+            out.writeBoolean(billingPayOneYear);
             // Encrypted values
             out.writeCompressedInt(from.getPkey());
             out.writeCompressedInt(recipient.getPkey());
@@ -306,7 +305,7 @@ public final class RequestTable extends CachedTableIntegerKey<Request> {
             int code = in.readByte();
             if (code == AoservProtocol.DONE) {
               pkey = in.readCompressedInt();
-              invalidateList = AOServConnector.readInvalidateList(in);
+              invalidateList = AoservConnector.readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
               throw new IOException("Unexpected response code: " + code);

@@ -43,16 +43,14 @@ import java.util.List;
  */
 public final class FileReplicationSetting extends CachedObjectIntegerKey<FileReplicationSetting> implements Removable {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_REPLICATION = 1
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_REPLICATION = 1;
   static final String COLUMN_REPLICATION_name = "replication";
   static final String COLUMN_PATH_name = "path";
 
   private int replication;
   private String path;
-  private boolean backup_enabled;
+  private boolean backupEnabled;
   private boolean required;
 
   /**
@@ -74,12 +72,18 @@ public final class FileReplicationSetting extends CachedObjectIntegerKey<FileRep
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_REPLICATION: return replication;
-      case 2: return path;
-      case 3: return backup_enabled;
-      case 4: return required;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_REPLICATION:
+        return replication;
+      case 2:
+        return path;
+      case 3:
+        return backupEnabled;
+      case 4:
+        return required;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -96,7 +100,7 @@ public final class FileReplicationSetting extends CachedObjectIntegerKey<FileRep
   }
 
   public boolean getBackupEnabled() {
-    return backup_enabled;
+    return backupEnabled;
   }
 
   /**
@@ -109,8 +113,8 @@ public final class FileReplicationSetting extends CachedObjectIntegerKey<FileRep
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.FILE_BACKUP_SETTINGS;
+  public Table.TableId getTableId() {
+    return Table.TableId.FILE_BACKUP_SETTINGS;
   }
 
   @Override
@@ -118,7 +122,7 @@ public final class FileReplicationSetting extends CachedObjectIntegerKey<FileRep
     pkey = result.getInt(1);
     replication = result.getInt(2);
     path = result.getString(3);
-    backup_enabled = result.getBoolean(4);
+    backupEnabled = result.getBoolean(4);
     required = result.getBoolean(5);
   }
 
@@ -127,16 +131,16 @@ public final class FileReplicationSetting extends CachedObjectIntegerKey<FileRep
     pkey = in.readCompressedInt();
     replication = in.readCompressedInt();
     path = in.readUTF();
-    backup_enabled = in.readBoolean();
+    backupEnabled = in.readBoolean();
     required = in.readBoolean();
   }
 
   @Override
   public void remove() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.REMOVE,
-        Table.TableID.FILE_BACKUP_SETTINGS,
+        AoservProtocol.CommandId.REMOVE,
+        Table.TableId.FILE_BACKUP_SETTINGS,
         pkey
     );
   }
@@ -146,9 +150,9 @@ public final class FileReplicationSetting extends CachedObjectIntegerKey<FileRep
       boolean backupEnabled,
       boolean required
   ) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.SET_FILE_BACKUP_SETTINGS,
+        AoservProtocol.CommandId.SET_FILE_BACKUP_SETTINGS,
         pkey,
         path,
         backupEnabled,
@@ -166,12 +170,12 @@ public final class FileReplicationSetting extends CachedObjectIntegerKey<FileRep
     }
     out.writeUTF(path);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_31) >= 0) {
-      out.writeBoolean(backup_enabled);
+      out.writeBoolean(backupEnabled);
     } else {
       out.writeCompressedInt(308); // package (hard-coded AOINDUSTRIES)
-      out.writeShort(backup_enabled ? 1 : 0); // backup_level
+      out.writeShort(backupEnabled ? 1 : 0); // backup_level
       out.writeShort(7); // backup_retention
-      out.writeBoolean(backup_enabled); // recurse
+      out.writeBoolean(backupEnabled); // recurse
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_62) >= 0) {
       out.writeBoolean(required);

@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.backup;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTable;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.sql.SQLException;
  */
 public final class BackupRetentionTable extends GlobalTable<Short, BackupRetention> {
 
-  BackupRetentionTable(AOServConnector connector) {
+  BackupRetentionTable(AoservConnector connector) {
     super(connector, BackupRetention.class);
   }
 
@@ -51,6 +51,8 @@ public final class BackupRetentionTable extends GlobalTable<Short, BackupRetenti
   }
 
   /**
+   * {@inheritDoc}
+   *
    * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
    */
   @Deprecated
@@ -70,7 +72,7 @@ public final class BackupRetentionTable extends GlobalTable<Short, BackupRetenti
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.BACKUP_RETENTIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.BACKUP_RETENTIONS;
   }
 }

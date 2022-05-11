@@ -29,9 +29,9 @@ import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.lang.validation.ValidationException;
 import com.aoapps.net.Email;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -48,7 +48,7 @@ import java.util.Set;
  */
 public final class ProfileTable extends CachedTableIntegerKey<Profile> {
 
-  ProfileTable(AOServConnector connector) {
+  ProfileTable(AoservConnector connector) {
     super(connector, Profile.class);
   }
 
@@ -102,15 +102,15 @@ public final class ProfileTable extends CachedTableIntegerKey<Profile> {
     // Create the new profile
     return connector.requestResult(
         true,
-        AoservProtocol.CommandID.ADD,
-        // Java 9: new AOServConnector.ResultRequest<>
-        new AOServConnector.ResultRequest<Integer>() {
+        AoservProtocol.CommandId.ADD,
+        // Java 9: new AoservConnector.ResultRequest<>
+        new AoservConnector.ResultRequest<Integer>() {
           private int pkey;
           private IntList invalidateList;
 
           @Override
           public void writeRequest(StreamableOutput out) throws IOException {
-            out.writeCompressedInt(Table.TableID.BUSINESS_PROFILES.ordinal());
+            out.writeCompressedInt(Table.TableId.BUSINESS_PROFILES.ordinal());
             out.writeUTF(business.getName().toString());
             out.writeUTF(name);
             out.writeBoolean(isPrivate);
@@ -154,7 +154,7 @@ public final class ProfileTable extends CachedTableIntegerKey<Profile> {
             int code = in.readByte();
             if (code == AoservProtocol.DONE) {
               pkey = in.readCompressedInt();
-              invalidateList = AOServConnector.readInvalidateList(in);
+              invalidateList = AoservConnector.readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
               throw new IOException("Unexpected response code: " + code);
@@ -198,21 +198,21 @@ public final class ProfileTable extends CachedTableIntegerKey<Profile> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.BUSINESS_PROFILES;
+  public Table.TableId getTableId() {
+    return Table.TableId.BUSINESS_PROFILES;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_BUSINESS_PROFILE)) {
-      if (AOSH.checkParamCount(Command.ADD_BUSINESS_PROFILE, args, 18, err)) {
+      if (Aosh.checkParamCount(Command.ADD_BUSINESS_PROFILE, args, 18, err)) {
         try {
           out.println(
-              connector.getSimpleAOClient().addProfile(
-                  AOSH.parseAccountingCode(args[1], "business"),
+              connector.getSimpleClient().addProfile(
+                  Aosh.parseAccountingCode(args[1], "business"),
                   args[2],
-                  AOSH.parseBoolean(args[3], "is_secure"),
+                  Aosh.parseBoolean(args[3], "is_secure"),
                   args[4],
                   args[5],
                   args[6],
@@ -221,7 +221,7 @@ public final class ProfileTable extends CachedTableIntegerKey<Profile> {
                   args[9],
                   args[10],
                   args[11],
-                  AOSH.parseBoolean(args[12], "send_invoice"),
+                  Aosh.parseBoolean(args[12], "send_invoice"),
                   args[13],
                   Profile.splitEmails(args[14]),
                   args[15],

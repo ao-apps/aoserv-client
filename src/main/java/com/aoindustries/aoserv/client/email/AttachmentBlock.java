@@ -47,14 +47,12 @@ import java.util.List;
  */
 public final class AttachmentBlock extends CachedObjectIntegerKey<AttachmentBlock> implements Removable {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_LINUX_SERVER_ACCOUNT = 1
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_LINUX_SERVER_ACCOUNT = 1;
   static final String COLUMN_LINUX_SERVER_ACCOUNT_name = "linux_server_account";
   static final String COLUMN_EXTENSION_name = "extension";
 
-  private int linux_server_account;
+  private int linuxServerAccount;
   private String extension;
 
   /**
@@ -71,17 +69,21 @@ public final class AttachmentBlock extends CachedObjectIntegerKey<AttachmentBloc
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_LINUX_SERVER_ACCOUNT: return linux_server_account;
-      case 2: return extension;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_LINUX_SERVER_ACCOUNT:
+        return linuxServerAccount;
+      case 2:
+        return extension;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   public UserServer getLinuxServerAccount() throws SQLException, IOException {
-    UserServer lsa = table.getConnector().getLinux().getUserServer().get(linux_server_account);
+    UserServer lsa = table.getConnector().getLinux().getUserServer().get(linuxServerAccount);
     if (lsa == null) {
-      throw new SQLException("Unable to find LinuxServerAccount: " + linux_server_account);
+      throw new SQLException("Unable to find LinuxServerAccount: " + linuxServerAccount);
     }
     return lsa;
   }
@@ -95,21 +97,21 @@ public final class AttachmentBlock extends CachedObjectIntegerKey<AttachmentBloc
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.EMAIL_ATTACHMENT_BLOCKS;
+  public Table.TableId getTableId() {
+    return Table.TableId.EMAIL_ATTACHMENT_BLOCKS;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     pkey = result.getInt(1);
-    linux_server_account = result.getInt(2);
+    linuxServerAccount = result.getInt(2);
     extension = result.getString(3);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readCompressedInt();
-    linux_server_account = in.readCompressedInt();
+    linuxServerAccount = in.readCompressedInt();
     extension = in.readUTF().intern();
   }
 
@@ -120,10 +122,10 @@ public final class AttachmentBlock extends CachedObjectIntegerKey<AttachmentBloc
 
   @Override
   public void remove() throws SQLException, IOException {
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.REMOVE,
-        Table.TableID.EMAIL_ATTACHMENT_BLOCKS,
+        AoservProtocol.CommandId.REMOVE,
+        Table.TableId.EMAIL_ATTACHMENT_BLOCKS,
         pkey
     );
   }
@@ -136,7 +138,7 @@ public final class AttachmentBlock extends CachedObjectIntegerKey<AttachmentBloc
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeCompressedInt(linux_server_account);
+    out.writeCompressedInt(linuxServerAccount);
     out.writeUTF(extension);
   }
 }

@@ -48,7 +48,7 @@ import com.aoindustries.aoserv.client.linux.User.Gecos;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.schema.Type;
-import com.aoindustries.aoserv.client.sql.SQLExpression;
+import com.aoindustries.aoserv.client.sql.SqlExpression;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.sql.ResultSet;
@@ -60,16 +60,16 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * An <code>AOServObject</code> is the lowest level object
- * for all data in the system.  Each <code>AOServObject</code>
- * belongs to a <code>AOServTable</code>, and each table
- * contains <code>AOServObject</code>s.
+ * An <code>AoservObject</code> is the lowest level object
+ * for all data in the system.  Each <code>AoservObject</code>
+ * belongs to a <code>AoservTable</code>, and each table
+ * contains <code>AoservObject</code>s.
  *
  * @author  AO Industries, Inc.
  *
- * @see  AOServTable
+ * @see  AoservTable
  */
-public abstract class AOServObject<K, T extends AOServObject<K, T>> implements Row, AOServStreamable {
+public abstract class AoservObject<K, T extends AoservObject<K, T>> implements Row, AoservStreamable {
 
   /**
    * Enables the use of {@link SQLData}.  This currently requires our forked PostgreSQL JDBC driver to
@@ -97,7 +97,7 @@ public abstract class AOServObject<K, T extends AOServObject<K, T>> implements R
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated // Java 9: (forRemoval = true)
-  protected AOServObject() {
+  protected AoservObject() {
     // Do nothing
   }
 
@@ -147,10 +147,15 @@ public abstract class AOServObject<K, T extends AOServObject<K, T>> implements R
 
   // TODO: Remove in AOServ 2
   @SuppressWarnings("BroadCatchBlock")
-  public final int compareTo(AOServConnector conn, AOServObject<?, ?> other, SQLExpression[] sortExpressions, boolean[] sortOrders) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
+  public final int compareTo(
+      AoservConnector conn,
+      AoservObject<?, ?> other,
+      SqlExpression[] sortExpressions,
+      boolean[] sortOrders
+  ) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
     int len = sortExpressions.length;
     for (int c = 0; c < len; c++) {
-      SQLExpression expr = sortExpressions[c];
+      SqlExpression expr = sortExpressions[c];
       Type type = expr.getType();
       Object value1 = null;
       boolean value1Set = false;
@@ -207,10 +212,15 @@ public abstract class AOServObject<K, T extends AOServObject<K, T>> implements R
   }
 
   // TODO: Remove in AOServ 2
-  public final int compareTo(AOServConnector conn, Comparable<?> value, SQLExpression[] sortExpressions, boolean[] sortOrders) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
+  public final int compareTo(
+      AoservConnector conn,
+      Comparable<?> value,
+      SqlExpression[] sortExpressions,
+      boolean[] sortOrders
+  ) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
     int len = sortExpressions.length;
     for (int c = 0; c < len; c++) {
-      SQLExpression expr = sortExpressions[c];
+      SqlExpression expr = sortExpressions[c];
       Type type = expr.getType();
       int diff = type.compareTo(
           expr.evaluate(conn, this),
@@ -224,18 +234,23 @@ public abstract class AOServObject<K, T extends AOServObject<K, T>> implements R
   }
 
   // TODO: Remove in AOServ 2
-  public final int compareTo(AOServConnector conn, Object[] OA, SQLExpression[] sortExpressions, boolean[] sortOrders) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
+  public final int compareTo(
+      AoservConnector conn,
+      Object[] objects,
+      SqlExpression[] sortExpressions,
+      boolean[] sortOrders
+  ) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
     int len = sortExpressions.length;
-    if (len != OA.length) {
-      throw new IllegalArgumentException("Array length mismatch when comparing AOServObject to Object[]: sortExpressions.length=" + len + ", OA.length=" + OA.length);
+    if (len != objects.length) {
+      throw new IllegalArgumentException("Array length mismatch when comparing AoservObject to Object[]: sortExpressions.length=" + len + ", objects.length=" + objects.length);
     }
 
     for (int c = 0; c < len; c++) {
-      SQLExpression expr = sortExpressions[c];
+      SqlExpression expr = sortExpressions[c];
       Type type = expr.getType();
       int diff = type.compareTo(
           expr.evaluate(conn, this),
-          OA[c]
+          objects[c]
       );
       if (diff != 0) {
         return sortOrders[c] ? diff : -diff;
@@ -274,17 +289,16 @@ public abstract class AOServObject<K, T extends AOServObject<K, T>> implements R
     return DomainLabel.valueOf(domainLabel.getLabel());
   }
 
-  /**
-   * null-safe conversion from java.util.Date to java.sql.Date, will cast when possible.
-   */
-  /*
-  protected static java.sql.Date getDate(Date date) {
-    if (date == null) {
-  return null;
-    if (date instanceof java.sql.Date) {
-  return (java.sql.Date)date;
-    return new java.sql.Date(date.getTime());
-  }*/
+  ///**
+  // * null-safe conversion from java.util.Date to java.sql.Date, will cast when possible.
+  // */
+  //protected static java.sql.Date getDate(Date date) {
+  //  if (date == null) {
+  //return null;
+  //  if (date instanceof java.sql.Date) {
+  //return (java.sql.Date)date;
+  //  return new java.sql.Date(date.getTime());
+  //}
 
   /**
    * null-safe domain labels conversion.
@@ -379,7 +393,7 @@ public abstract class AOServObject<K, T extends AOServObject<K, T>> implements R
   /**
    * null-safe Linux id conversion.
    */
-  protected static com.aoindustries.aoserv.client.linux.LinuxId getLinuxID(com.aoindustries.aoserv.client.dto.LinuxId lid) throws ValidationException {
+  protected static com.aoindustries.aoserv.client.linux.LinuxId getLinuxId(com.aoindustries.aoserv.client.dto.LinuxId lid) throws ValidationException {
     if (lid == null) {
       return null;
     }
@@ -410,7 +424,7 @@ public abstract class AOServObject<K, T extends AOServObject<K, T>> implements R
   /**
    * null-safe MySQL database name conversion.
    */
-  protected static com.aoindustries.aoserv.client.mysql.Database.Name getMySQLDatabaseName(com.aoindustries.aoserv.client.dto.MySQLDatabaseName databaseName) throws ValidationException {
+  protected static com.aoindustries.aoserv.client.mysql.Database.Name getMysqlDatabaseName(com.aoindustries.aoserv.client.dto.MysqlDatabaseName databaseName) throws ValidationException {
     if (databaseName == null) {
       return null;
     }
@@ -420,7 +434,7 @@ public abstract class AOServObject<K, T extends AOServObject<K, T>> implements R
   /**
    * null-safe MySQL server name conversion.
    */
-  protected static com.aoindustries.aoserv.client.mysql.Server.Name getMySQLServerName(com.aoindustries.aoserv.client.dto.MySQLServerName serverName) throws ValidationException {
+  protected static com.aoindustries.aoserv.client.mysql.Server.Name getMysqlServerName(com.aoindustries.aoserv.client.dto.MysqlServerName serverName) throws ValidationException {
     if (serverName == null) {
       return null;
     }
@@ -431,7 +445,7 @@ public abstract class AOServObject<K, T extends AOServObject<K, T>> implements R
    * null-safe MySQL user name conversion.
    */
   // TODO: Move this, and others to schemas?
-  protected static com.aoindustries.aoserv.client.mysql.User.Name getMysqlUserName(com.aoindustries.aoserv.client.dto.MySQLUserName mysqlUserId) throws ValidationException {
+  protected static com.aoindustries.aoserv.client.mysql.User.Name getMysqlUserName(com.aoindustries.aoserv.client.dto.MysqlUserName mysqlUserId) throws ValidationException {
     if (mysqlUserId == null) {
       return null;
     }
@@ -540,7 +554,7 @@ public abstract class AOServObject<K, T extends AOServObject<K, T>> implements R
     Class<?> class2 = obj.getClass();
     if (class1 == class2) {
       K pkey1 = getKey();
-      Object pkey2 = ((AOServObject) obj).getKey();
+      Object pkey2 = ((AoservObject) obj).getKey();
       if (pkey1 == null || pkey2 == null) {
         throw new NullPointerException("No primary key available.");
       }
@@ -563,7 +577,7 @@ public abstract class AOServObject<K, T extends AOServObject<K, T>> implements R
 
   protected abstract Object getColumnImpl(int i) throws IOException, SQLException;
 
-  public final List<Object> getColumns(AOServConnector connector) throws IOException, SQLException {
+  public final List<Object> getColumns(AoservConnector connector) throws IOException, SQLException {
     int len = getTableSchema(connector).getSchemaColumns(connector).size();
     List<Object> buff = new ArrayList<>(len);
     for (int c = 0; c < len; c++) {
@@ -572,7 +586,7 @@ public abstract class AOServObject<K, T extends AOServObject<K, T>> implements R
     return buff;
   }
 
-  public final int getColumns(AOServConnector connector, List<Object> buff) throws IOException, SQLException {
+  public final int getColumns(AoservConnector connector, List<Object> buff) throws IOException, SQLException {
     int len = getTableSchema(connector).getSchemaColumns(connector).size();
     for (int c = 0; c < len; c++) {
       buff.add(getColumn(c));
@@ -582,10 +596,10 @@ public abstract class AOServObject<K, T extends AOServObject<K, T>> implements R
 
   public abstract K getKey();
 
-  public abstract Table.TableID getTableID();
+  public abstract Table.TableId getTableId();
 
-  public final Table getTableSchema(AOServConnector connector) throws IOException, SQLException {
-    return connector.getSchema().getTable().get(getTableID());
+  public final Table getTableSchema(AoservConnector connector) throws IOException, SQLException {
+    return connector.getSchema().getTable().get(getTableId());
   }
 
   /**
@@ -613,6 +627,8 @@ public abstract class AOServObject<K, T extends AOServObject<K, T>> implements R
   public abstract void init(ResultSet results) throws SQLException;
 
   /**
+   * {@inheritDoc}
+   *
    * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
    *
    * @see  #read(StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
@@ -664,6 +680,8 @@ public abstract class AOServObject<K, T extends AOServObject<K, T>> implements R
   }
 
   /**
+   * {@inheritDoc}
+   *
    * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
    *
    * @see  #write(StreamableOutput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)

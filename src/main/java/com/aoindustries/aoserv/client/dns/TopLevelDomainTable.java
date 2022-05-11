@@ -24,7 +24,7 @@
 package com.aoindustries.aoserv.client.dns;
 
 import com.aoapps.net.DomainName;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTableDomainNameKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -37,7 +37,7 @@ import java.sql.SQLException;
  */
 public final class TopLevelDomainTable extends GlobalTableDomainNameKey<TopLevelDomain> {
 
-  TopLevelDomainTable(AOServConnector connector) {
+  TopLevelDomainTable(AoservConnector connector) {
     super(connector, TopLevelDomain.class);
   }
 
@@ -57,7 +57,7 @@ public final class TopLevelDomainTable extends GlobalTableDomainNameKey<TopLevel
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.DNS_TLDS;
+  public Table.TableId getTableId() {
+    return Table.TableId.DNS_TLDS;
   }
 }

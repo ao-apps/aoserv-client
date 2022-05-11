@@ -25,7 +25,7 @@ package com.aoindustries.aoserv.client.backup;
 
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.monitoring.AlertLevel;
 import com.aoindustries.aoserv.client.mysql.Server;
@@ -43,23 +43,21 @@ import java.sql.SQLException;
  */
 public final class MysqlReplication extends CachedObjectIntegerKey<MysqlReplication> {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_AO_SERVER = 1,
-      COLUMN_REPLICATION = 2,
-      COLUMN_MYSQL_SERVER = 3
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_AO_SERVER = 1;
+  static final int COLUMN_REPLICATION = 2;
+  static final int COLUMN_MYSQL_SERVER = 3;
   static final String COLUMN_AO_SERVER_name = "ao_server";
   static final String COLUMN_REPLICATION_name = "replication";
   static final String COLUMN_MYSQL_SERVER_name = "mysql_server";
 
-  private int ao_server;
+  private int aoServer;
   private int replication;
-  private int mysql_server;
-  private int monitoring_seconds_behind_low;
-  private int monitoring_seconds_behind_medium;
-  private int monitoring_seconds_behind_high;
-  private int monitoring_seconds_behind_critical;
+  private int mysqlServer;
+  private int monitoringSecondsBehindLow;
+  private int monitoringSecondsBehindMedium;
+  private int monitoringSecondsBehindHigh;
+  private int monitoringSecondsBehindCritical;
   private AlertLevel maxAlertLevel;
 
   /**
@@ -76,26 +74,36 @@ public final class MysqlReplication extends CachedObjectIntegerKey<MysqlReplicat
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY : return pkey;
-      case COLUMN_AO_SERVER : return ao_server == -1 ? null : ao_server;
-      case COLUMN_REPLICATION : return replication == -1 ? null : replication;
-      case COLUMN_MYSQL_SERVER : return mysql_server;
-      case 4 : return monitoring_seconds_behind_low == -1 ? null : monitoring_seconds_behind_low;
-      case 5 : return monitoring_seconds_behind_medium == -1 ? null : monitoring_seconds_behind_medium;
-      case 6 : return monitoring_seconds_behind_high == -1 ? null : monitoring_seconds_behind_high;
-      case 7 : return monitoring_seconds_behind_critical == -1 ? null : monitoring_seconds_behind_critical;
-      case 8 : return maxAlertLevel.name();
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_AO_SERVER:
+        return aoServer == -1 ? null : aoServer;
+      case COLUMN_REPLICATION:
+        return replication == -1 ? null : replication;
+      case COLUMN_MYSQL_SERVER:
+        return mysqlServer;
+      case 4:
+        return monitoringSecondsBehindLow == -1 ? null : monitoringSecondsBehindLow;
+      case 5:
+        return monitoringSecondsBehindMedium == -1 ? null : monitoringSecondsBehindMedium;
+      case 6:
+        return monitoringSecondsBehindHigh == -1 ? null : monitoringSecondsBehindHigh;
+      case 7:
+        return monitoringSecondsBehindCritical == -1 ? null : monitoringSecondsBehindCritical;
+      case 8:
+        return maxAlertLevel.name();
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   public com.aoindustries.aoserv.client.linux.Server getLinuxServer() throws SQLException, IOException {
-    if (ao_server == -1) {
+    if (aoServer == -1) {
       return null;
     }
-    com.aoindustries.aoserv.client.linux.Server ao = table.getConnector().getLinux().getServer().get(ao_server);
+    com.aoindustries.aoserv.client.linux.Server ao = table.getConnector().getLinux().getServer().get(aoServer);
     if (ao == null) {
-      throw new SQLException("Unable to find linux.Server: " + ao_server);
+      throw new SQLException("Unable to find linux.Server: " + aoServer);
     }
     return ao;
   }
@@ -111,28 +119,28 @@ public final class MysqlReplication extends CachedObjectIntegerKey<MysqlReplicat
     return ffr;
   }
 
-  public Server getMySQLServer() throws IOException, SQLException {
-    Server ms = table.getConnector().getMysql().getServer().get(mysql_server);
+  public Server getMysqlServer() throws IOException, SQLException {
+    Server ms = table.getConnector().getMysql().getServer().get(mysqlServer);
     if (ms == null) {
-      throw new SQLException("Unable to find MySQLServer: " + mysql_server);
+      throw new SQLException("Unable to find MysqlServer: " + mysqlServer);
     }
     return ms;
   }
 
   public int getMonitoringSecondsBehindLow() {
-    return monitoring_seconds_behind_low;
+    return monitoringSecondsBehindLow;
   }
 
   public int getMonitoringSecondsBehindMedium() {
-    return monitoring_seconds_behind_medium;
+    return monitoringSecondsBehindMedium;
   }
 
   public int getMonitoringSecondsBehindHigh() {
-    return monitoring_seconds_behind_high;
+    return monitoringSecondsBehindHigh;
   }
 
   public int getMonitoringSecondsBehindCritical() {
-    return monitoring_seconds_behind_critical;
+    return monitoringSecondsBehindCritical;
   }
 
   /**
@@ -142,7 +150,7 @@ public final class MysqlReplication extends CachedObjectIntegerKey<MysqlReplicat
    */
   public boolean isMonitoringEnabled() throws SQLException, IOException {
     com.aoindustries.aoserv.client.linux.Server linuxServer =
-        (ao_server != -1)
+        (aoServer != -1)
             ? getLinuxServer()
             : getFailoverFileReplication().getBackupPartition().getLinuxServer();
     return linuxServer.getHost().isMonitoringEnabled();
@@ -153,38 +161,38 @@ public final class MysqlReplication extends CachedObjectIntegerKey<MysqlReplicat
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.FAILOVER_MYSQL_REPLICATIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.FAILOVER_MYSQL_REPLICATIONS;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     int pos = 1;
     pkey = result.getInt(pos++);
-    ao_server = result.getInt(pos++);
+    aoServer = result.getInt(pos++);
     if (result.wasNull()) {
-      ao_server = -1;
+      aoServer = -1;
     }
     replication = result.getInt(pos++);
     if (result.wasNull()) {
       replication = -1;
     }
-    mysql_server = result.getInt(pos++);
-    monitoring_seconds_behind_low = result.getInt(pos++);
+    mysqlServer = result.getInt(pos++);
+    monitoringSecondsBehindLow = result.getInt(pos++);
     if (result.wasNull()) {
-      monitoring_seconds_behind_low = -1;
+      monitoringSecondsBehindLow = -1;
     }
-    monitoring_seconds_behind_medium = result.getInt(pos++);
+    monitoringSecondsBehindMedium = result.getInt(pos++);
     if (result.wasNull()) {
-      monitoring_seconds_behind_medium = -1;
+      monitoringSecondsBehindMedium = -1;
     }
-    monitoring_seconds_behind_high = result.getInt(pos++);
+    monitoringSecondsBehindHigh = result.getInt(pos++);
     if (result.wasNull()) {
-      monitoring_seconds_behind_high = -1;
+      monitoringSecondsBehindHigh = -1;
     }
-    monitoring_seconds_behind_critical = result.getInt(pos++);
+    monitoringSecondsBehindCritical = result.getInt(pos++);
     if (result.wasNull()) {
-      monitoring_seconds_behind_critical = -1;
+      monitoringSecondsBehindCritical = -1;
     }
     maxAlertLevel = AlertLevel.valueOf(result.getString(pos++));
   }
@@ -192,22 +200,22 @@ public final class MysqlReplication extends CachedObjectIntegerKey<MysqlReplicat
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readCompressedInt();
-    ao_server = in.readCompressedInt();
+    aoServer = in.readCompressedInt();
     replication = in.readCompressedInt();
-    mysql_server = in.readCompressedInt();
-    monitoring_seconds_behind_low = in.readCompressedInt();
-    monitoring_seconds_behind_medium = in.readCompressedInt();
-    monitoring_seconds_behind_high = in.readCompressedInt();
-    monitoring_seconds_behind_critical = in.readCompressedInt();
+    mysqlServer = in.readCompressedInt();
+    monitoringSecondsBehindLow = in.readCompressedInt();
+    monitoringSecondsBehindMedium = in.readCompressedInt();
+    monitoringSecondsBehindHigh = in.readCompressedInt();
+    monitoringSecondsBehindCritical = in.readCompressedInt();
     maxAlertLevel = AlertLevel.valueOf(in.readCompressedUTF());
   }
 
   @Override
   public String toStringImpl() throws IOException, SQLException {
-    if (ao_server != -1) {
-      return getMySQLServer().toStringImpl() + "->" + getLinuxServer().toStringImpl();
+    if (aoServer != -1) {
+      return getMysqlServer().toStringImpl() + "->" + getLinuxServer().toStringImpl();
     } else {
-      return getMySQLServer().toStringImpl() + "->" + getFailoverFileReplication().toStringImpl();
+      return getMysqlServer().toStringImpl() + "->" + getFailoverFileReplication().toStringImpl();
     }
   }
 
@@ -215,15 +223,15 @@ public final class MysqlReplication extends CachedObjectIntegerKey<MysqlReplicat
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_59) >= 0) {
-      out.writeCompressedInt(ao_server);
+      out.writeCompressedInt(aoServer);
     }
     out.writeCompressedInt(replication);
-    out.writeCompressedInt(mysql_server);
+    out.writeCompressedInt(mysqlServer);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_56) >= 0) {
-      out.writeCompressedInt(monitoring_seconds_behind_low);
-      out.writeCompressedInt(monitoring_seconds_behind_medium);
-      out.writeCompressedInt(monitoring_seconds_behind_high);
-      out.writeCompressedInt(monitoring_seconds_behind_critical);
+      out.writeCompressedInt(monitoringSecondsBehindLow);
+      out.writeCompressedInt(monitoringSecondsBehindMedium);
+      out.writeCompressedInt(monitoringSecondsBehindHigh);
+      out.writeCompressedInt(monitoringSecondsBehindCritical);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_74) >= 0) {
       out.writeCompressedUTF(maxAlertLevel.name());
@@ -232,14 +240,14 @@ public final class MysqlReplication extends CachedObjectIntegerKey<MysqlReplicat
 
   public static final class SlaveStatus {
 
-    private final String slaveIOState;
+    private final String slaveIoState;
     private final String masterLogFile;
     private final String readMasterLogPos;
     private final String relayLogFile;
     private final String relayLogPos;
     private final String relayMasterLogFile;
-    private final String slaveIORunning;
-    private final String slaveSQLRunning;
+    private final String slaveIoRunning;
+    private final String slaveSqlRunning;
     private final String lastErrno;
     private final String lastError;
     private final String skipCounter;
@@ -248,14 +256,14 @@ public final class MysqlReplication extends CachedObjectIntegerKey<MysqlReplicat
     private final String secondsBehindMaster;
 
     public SlaveStatus(
-        String slaveIOState,
+        String slaveIoState,
         String masterLogFile,
         String readMasterLogPos,
         String relayLogFile,
         String relayLogPos,
         String relayMasterLogFile,
-        String slaveIORunning,
-        String slaveSQLRunning,
+        String slaveIoRunning,
+        String slaveSqlRunning,
         String lastErrno,
         String lastError,
         String skipCounter,
@@ -263,14 +271,14 @@ public final class MysqlReplication extends CachedObjectIntegerKey<MysqlReplicat
         String relayLogSpace,
         String secondsBehindMaster
     ) {
-      this.slaveIOState = slaveIOState;
+      this.slaveIoState = slaveIoState;
       this.masterLogFile = masterLogFile;
       this.readMasterLogPos = readMasterLogPos;
       this.relayLogFile = relayLogFile;
       this.relayLogPos = relayLogPos;
       this.relayMasterLogFile = relayMasterLogFile;
-      this.slaveIORunning = slaveIORunning;
-      this.slaveSQLRunning = slaveSQLRunning;
+      this.slaveIoRunning = slaveIoRunning;
+      this.slaveSqlRunning = slaveSqlRunning;
       this.lastErrno = lastErrno;
       this.lastError = lastError;
       this.skipCounter = skipCounter;
@@ -279,8 +287,8 @@ public final class MysqlReplication extends CachedObjectIntegerKey<MysqlReplicat
       this.secondsBehindMaster = secondsBehindMaster;
     }
 
-    public String getSlaveIOState() {
-      return slaveIOState;
+    public String getSlaveIoState() {
+      return slaveIoState;
     }
 
     public String getMasterLogFile() {
@@ -303,12 +311,12 @@ public final class MysqlReplication extends CachedObjectIntegerKey<MysqlReplicat
       return relayMasterLogFile;
     }
 
-    public String getSlaveIORunning() {
-      return slaveIORunning;
+    public String getSlaveIoRunning() {
+      return slaveIoRunning;
     }
 
-    public String getSlaveSQLRunning() {
-      return slaveSQLRunning;
+    public String getSlaveSqlRunning() {
+      return slaveSqlRunning;
     }
 
     public String getLastErrno() {
@@ -343,9 +351,9 @@ public final class MysqlReplication extends CachedObjectIntegerKey<MysqlReplicat
   public SlaveStatus getSlaveStatus() throws IOException, SQLException {
     return table.getConnector().requestResult(
         true,
-        AoservProtocol.CommandID.GET_MYSQL_SLAVE_STATUS,
-        // Java 9: new AOServConnector.ResultRequest<>
-        new AOServConnector.ResultRequest<SlaveStatus>() {
+        AoservProtocol.CommandId.GET_MYSQL_SLAVE_STATUS,
+        // Java 9: new AoservConnector.ResultRequest<>
+        new AoservConnector.ResultRequest<SlaveStatus>() {
           private SlaveStatus result;
 
           @Override

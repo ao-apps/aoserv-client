@@ -52,8 +52,7 @@ public final class Priority extends GlobalObjectStringKey<Priority> implements C
       LOW = "0-Low",
       NORMAL = "1-Normal",
       HIGH = "2-High",
-      URGENT = "3-Urgent"
-  ;
+      URGENT = "3-Urgent";
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -79,8 +78,8 @@ public final class Priority extends GlobalObjectStringKey<Priority> implements C
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.TICKET_PRIORITIES;
+  public Table.TableId getTableId() {
+    return Table.TableId.TICKET_PRIORITIES;
   }
 
   @Override

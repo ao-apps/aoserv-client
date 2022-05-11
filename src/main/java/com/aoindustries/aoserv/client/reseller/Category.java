@@ -45,11 +45,9 @@ public final class Category extends CachedObjectIntegerKey<Category> {
 
   private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, Category.class);
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_PARENT = 1,
-      COLUMN_NAME = 2
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_PARENT = 1;
+  static final int COLUMN_NAME = 2;
   static final String COLUMN_PKEY_name = "pkey";
   static final String COLUMN_PARENT_name = "parent";
   static final String COLUMN_NAME_name = "name";
@@ -76,10 +74,14 @@ public final class Category extends CachedObjectIntegerKey<Category> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_PARENT: return parent == -1 ? null : parent;
-      case COLUMN_NAME: return name;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_PARENT:
+        return parent == -1 ? null : parent;
+      case COLUMN_NAME:
+        return name;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -106,8 +108,8 @@ public final class Category extends CachedObjectIntegerKey<Category> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.TICKET_CATEGORIES;
+  public Table.TableId getTableId() {
+    return Table.TableId.TICKET_CATEGORIES;
   }
 
   @Override

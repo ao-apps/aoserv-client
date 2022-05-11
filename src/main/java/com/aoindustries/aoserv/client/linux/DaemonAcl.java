@@ -46,10 +46,8 @@ import java.sql.SQLException;
 public final class DaemonAcl extends CachedObjectIntegerKey<DaemonAcl>
     implements DtoFactory<com.aoindustries.aoserv.client.dto.LinuxDaemonAcl> {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_AO_SERVER = 1
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_AO_SERVER = 1;
   static final String COLUMN_AO_SERVER_name = "ao_server";
   static final String COLUMN_HOST_name = "host";
 
@@ -70,10 +68,14 @@ public final class DaemonAcl extends CachedObjectIntegerKey<DaemonAcl>
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_AO_SERVER: return aoServer;
-      case 2: return host;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_AO_SERVER:
+        return aoServer;
+      case 2:
+        return host;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -90,8 +92,8 @@ public final class DaemonAcl extends CachedObjectIntegerKey<DaemonAcl>
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.AO_SERVER_DAEMON_HOSTS;
+  public Table.TableId getTableId() {
+    return Table.TableId.AO_SERVER_DAEMON_HOSTS;
   }
 
   @Override

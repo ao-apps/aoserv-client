@@ -43,10 +43,10 @@ public final class SmtpSmartHost extends CachedObjectIntegerKey<SmtpSmartHost> {
   static final int COLUMN_NET_BIND = 0;
   static final String COLUMN_NET_BIND_name = "net_bind";
 
-  private int total_out_burst;
-  private float total_out_rate;
-  private int default_domain_out_burst;
-  private float default_domain_out_rate;
+  private int totalOutBurst;
+  private float totalOutRate;
+  private int defaultDomainOutBurst;
+  private float defaultDomainOutRate;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -62,12 +62,18 @@ public final class SmtpSmartHost extends CachedObjectIntegerKey<SmtpSmartHost> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_NET_BIND: return pkey;
-      case 1: return total_out_burst == -1 ? null : total_out_burst;
-      case 2: return Float.isNaN(total_out_rate) ? null : total_out_rate;
-      case 3: return default_domain_out_burst == -1 ? null : default_domain_out_burst;
-      case 4: return Float.isNaN(default_domain_out_rate) ? null : default_domain_out_rate;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_NET_BIND:
+        return pkey;
+      case 1:
+        return totalOutBurst == -1 ? null : totalOutBurst;
+      case 2:
+        return Float.isNaN(totalOutRate) ? null : totalOutRate;
+      case 3:
+        return defaultDomainOutBurst == -1 ? null : defaultDomainOutBurst;
+      case 4:
+        return Float.isNaN(defaultDomainOutRate) ? null : defaultDomainOutRate;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -84,7 +90,7 @@ public final class SmtpSmartHost extends CachedObjectIntegerKey<SmtpSmartHost> {
    * A value of <code>-1</code> indicates unlimited.
    */
   public int getTotalEmailOutBurst() {
-    return total_out_burst;
+    return totalOutBurst;
   }
 
   /**
@@ -92,7 +98,7 @@ public final class SmtpSmartHost extends CachedObjectIntegerKey<SmtpSmartHost> {
    * A value of <code>Float.NaN</code> indicates unlimited.
    */
   public float getTotalEmailOutRate() {
-    return total_out_rate;
+    return totalOutRate;
   }
 
   /**
@@ -100,7 +106,7 @@ public final class SmtpSmartHost extends CachedObjectIntegerKey<SmtpSmartHost> {
    * A value of <code>-1</code> indicates unlimited.
    */
   public int getDefaultDomainOutBurst() {
-    return default_domain_out_burst;
+    return defaultDomainOutBurst;
   }
 
   /**
@@ -108,51 +114,51 @@ public final class SmtpSmartHost extends CachedObjectIntegerKey<SmtpSmartHost> {
    * A value of <code>Float.NaN</code> indicates unlimited.
    */
   public float getDefaultDomainOutRate() {
-    return default_domain_out_rate;
+    return defaultDomainOutRate;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.EMAIL_SMTP_SMART_HOSTS;
+  public Table.TableId getTableId() {
+    return Table.TableId.EMAIL_SMTP_SMART_HOSTS;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     int pos = 1;
     pkey = result.getInt(pos++);
-    total_out_burst = result.getInt(pos++);
+    totalOutBurst = result.getInt(pos++);
     if (result.wasNull()) {
-      total_out_burst = -1;
+      totalOutBurst = -1;
     }
-    total_out_rate = result.getFloat(pos++);
+    totalOutRate = result.getFloat(pos++);
     if (result.wasNull()) {
-      total_out_rate = Float.NaN;
+      totalOutRate = Float.NaN;
     }
-    default_domain_out_burst = result.getInt(pos++);
+    defaultDomainOutBurst = result.getInt(pos++);
     if (result.wasNull()) {
-      default_domain_out_burst = -1;
+      defaultDomainOutBurst = -1;
     }
-    default_domain_out_rate = result.getFloat(pos++);
+    defaultDomainOutRate = result.getFloat(pos++);
     if (result.wasNull()) {
-      default_domain_out_rate = Float.NaN;
+      defaultDomainOutRate = Float.NaN;
     }
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readCompressedInt();
-    total_out_burst = in.readCompressedInt();
-    total_out_rate = in.readFloat();
-    default_domain_out_burst = in.readCompressedInt();
-    default_domain_out_rate = in.readFloat();
+    totalOutBurst = in.readCompressedInt();
+    totalOutRate = in.readFloat();
+    defaultDomainOutBurst = in.readCompressedInt();
+    defaultDomainOutRate = in.readFloat();
   }
 
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeCompressedInt(total_out_burst);
-    out.writeFloat(total_out_rate);
-    out.writeCompressedInt(default_domain_out_burst);
-    out.writeFloat(default_domain_out_rate);
+    out.writeCompressedInt(totalOutBurst);
+    out.writeFloat(totalOutRate);
+    out.writeCompressedInt(defaultDomainOutBurst);
+    out.writeFloat(defaultDomainOutRate);
   }
 }

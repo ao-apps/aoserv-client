@@ -23,8 +23,8 @@
 
 package com.aoindustries.aoserv.client.backup;
 
-import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.AOServTable;
+import com.aoindustries.aoserv.client.AoservConnector;
+import com.aoindustries.aoserv.client.AoservTable;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.net.Host;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
@@ -39,9 +39,9 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-public final class BackupReportTable extends AOServTable<Integer, BackupReport> {
+public final class BackupReportTable extends AoservTable<Integer, BackupReport> {
 
-  BackupReportTable(AOServConnector connector) {
+  BackupReportTable(AoservConnector connector) {
     super(connector, BackupReport.class);
   }
 
@@ -59,6 +59,8 @@ public final class BackupReportTable extends AOServTable<Integer, BackupReport> 
   }
 
   /**
+   * {@inheritDoc}
+   *
    * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
    */
   @Deprecated
@@ -74,7 +76,7 @@ public final class BackupReportTable extends AOServTable<Integer, BackupReport> 
    * @see  #get(java.lang.Object)
    */
   public BackupReport get(int pkey) throws IOException, SQLException {
-    return getObject(true, AoservProtocol.CommandID.GET_OBJECT, Table.TableID.BACKUP_REPORTS, pkey);
+    return getObject(true, AoservProtocol.CommandId.GET_OBJECT, Table.TableId.BACKUP_REPORTS, pkey);
   }
 
   public List<BackupReport> getBackupReports(Package pk) throws IOException, SQLException {
@@ -92,13 +94,13 @@ public final class BackupReportTable extends AOServTable<Integer, BackupReport> 
   }
 
   public List<BackupReport> getBackupReports(Host host) throws IOException, SQLException {
-    int hots_id = host.getPkey();
+    int host_id = host.getPkey();
     List<BackupReport> cached = getRows();
     int size = cached.size();
     List<BackupReport> matches = new ArrayList<>(size);
     for (int c = 0; c < size; c++) {
       BackupReport br = cached.get(c);
-      if (br.getHost_id() == hots_id) {
+      if (br.getHost_id() == host_id) {
         matches.add(br);
       }
     }
@@ -108,13 +110,13 @@ public final class BackupReportTable extends AOServTable<Integer, BackupReport> 
   @Override
   public List<BackupReport> getRowsCopy() throws IOException, SQLException {
     List<BackupReport> list = new ArrayList<>();
-    getObjects(true, list, AoservProtocol.CommandID.GET_TABLE, Table.TableID.BACKUP_REPORTS);
+    getObjects(true, list, AoservProtocol.CommandId.GET_TABLE, Table.TableId.BACKUP_REPORTS);
     return list;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.BACKUP_REPORTS;
+  public Table.TableId getTableId() {
+    return Table.TableId.BACKUP_REPORTS;
   }
 
   @Override

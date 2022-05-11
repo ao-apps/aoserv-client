@@ -36,9 +36,9 @@ import java.io.IOException;
  * @author  AO Industries, Inc.
  */
 // TODO: Is this worth maintaining?
-public abstract class FilesystemCachedObject<K, T extends FilesystemCachedObject<K, T>> extends AOServObject<K, T> implements SingleTableObject<K, T>, FileListObject {
+public abstract class FilesystemCachedObject<K, T extends FilesystemCachedObject<K, T>> extends AoservObject<K, T> implements SingleTableObject<K, T>, FileListObject {
 
-  protected AOServTable<K, T> table;
+  protected AoservTable<K, T> table;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -62,12 +62,12 @@ public abstract class FilesystemCachedObject<K, T extends FilesystemCachedObject
    */
 
   @Override
-  public final AOServTable<K, T> getTable() {
+  public final AoservTable<K, T> getTable() {
     return table;
   }
 
   @Override
-  public final void setTable(AOServTable<K, T> table) {
+  public final void setTable(AoservTable<K, T> table) {
     if (this.table != null) {
       throw new IllegalStateException("table already set");
     }

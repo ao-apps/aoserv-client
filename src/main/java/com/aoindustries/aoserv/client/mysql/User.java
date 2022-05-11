@@ -49,7 +49,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * A <code>MySQLUser</code> stores the details of a MySQL account
+ * A <code>MysqlUser</code> stores the details of a MySQL account
  * that are common to all servers.
  *
  * @see  UserServer
@@ -76,8 +76,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
    * @author  AO Industries, Inc.
    */
   public static final class Name extends com.aoindustries.aoserv.client.linux.User.Name implements
-      FastExternalizable
-  {
+      FastExternalizable {
 
     /**
      * The maximum length of a MySQL username.
@@ -182,8 +181,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
     }
 
     @Override
-    public com.aoindustries.aoserv.client.dto.MySQLUserName getDto() {
-      return new com.aoindustries.aoserv.client.dto.MySQLUserName(name);
+    public com.aoindustries.aoserv.client.dto.MysqlUserName getDto() {
+      return new com.aoindustries.aoserv.client.dto.MysqlUserName(name);
     }
 
     // <editor-fold defaultstate="collapsed" desc="FastExternalizable">
@@ -217,18 +216,14 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
   @Deprecated
   public static final int MAX_USERNAME_LENGTH = Name.MYSQL_NAME_MAX_LENGTH;
 
-  /**
-   * The username of the MySQL special users.
-   */
-  public static final Name
-      /** The username of the MySQL super user. */
-      ROOT,
-      /** The username of the MySQL <code>mysql.session</code> user added in MySQL 5.7. */
-      MYSQL_SESSION,
-      /** The username of the MySQL <code>mysql.sys</code> user added in MySQL 5.7. */
-      MYSQL_SYS,
-      /** Monitoring */
-      MYSQLMON;
+  /** The username of the MySQL super user. */
+  public static final Name ROOT;
+  /** The username of the MySQL <code>mysql.session</code> user added in MySQL 5.7. */
+  public static final Name MYSQL_SESSION;
+  /** The username of the MySQL <code>mysql.sys</code> user added in MySQL 5.7. */
+  public static final Name MYSQL_SYS;
+  /** The default username for MySQL monitoring. */
+  public static final Name MYSQLMON;
 
   static {
     try {
@@ -268,38 +263,36 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
 
   public static final String NO_PASSWORD_DB_VALUE = "*";
 
-  private boolean
-      select_priv,
-      insert_priv,
-      update_priv,
-      delete_priv,
-      create_priv,
-      drop_priv,
-      reload_priv,
-      shutdown_priv,
-      process_priv,
-      file_priv,
-      grant_priv,
-      references_priv,
-      index_priv,
-      alter_priv,
-      show_db_priv,
-      super_priv,
-      create_tmp_table_priv,
-      lock_tables_priv,
-      execute_priv,
-      repl_slave_priv,
-      repl_client_priv,
-      create_view_priv,
-      show_view_priv,
-      create_routine_priv,
-      alter_routine_priv,
-      create_user_priv,
-      event_priv,
-      trigger_priv
-  ;
+  private boolean selectPriv;
+  private boolean insertPriv;
+  private boolean updatePriv;
+  private boolean deletePriv;
+  private boolean createPriv;
+  private boolean dropPriv;
+  private boolean reloadPriv;
+  private boolean shutdownPriv;
+  private boolean processPriv;
+  private boolean filePriv;
+  private boolean grantPriv;
+  private boolean referencesPriv;
+  private boolean indexPriv;
+  private boolean alterPriv;
+  private boolean showDbPriv;
+  private boolean superPriv;
+  private boolean createTmpTablePriv;
+  private boolean lockTablesPriv;
+  private boolean executePriv;
+  private boolean replSlavePriv;
+  private boolean replClientPriv;
+  private boolean createViewPriv;
+  private boolean showViewPriv;
+  private boolean createRoutinePriv;
+  private boolean alterRoutinePriv;
+  private boolean createUserPriv;
+  private boolean eventPriv;
+  private boolean triggerPriv;
 
-  private int disable_log;
+  private int disableLog;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -312,8 +305,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
     // Do nothing
   }
 
-  public int addMySQLServerUser(Server mysqlServer, String host) throws IOException, SQLException {
-    return table.getConnector().getMysql().getUserServer().addMySQLServerUser(pkey, mysqlServer, host);
+  public int addMysqlServerUser(Server mysqlServer, String host) throws IOException, SQLException {
+    return table.getConnector().getMysql().getUserServer().addMysqlServerUser(pkey, mysqlServer, host);
   }
 
   @Override
@@ -321,75 +314,75 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
     if (isSpecial()) {
       throw new SQLException("Refusing to check if passwords set on special MySQL user: " + this);
     }
-    return com.aoindustries.aoserv.client.account.User.groupPasswordsSet(getMySQLServerUsers());
+    return com.aoindustries.aoserv.client.account.User.groupPasswordsSet(getMysqlServerUsers());
   }
 
   public boolean canAlter() {
-    return alter_priv;
+    return alterPriv;
   }
 
-  public boolean canShowDB() {
-    return show_db_priv;
+  public boolean canShowDb() {
+    return showDbPriv;
   }
 
   public boolean isSuper() {
-    return super_priv;
+    return superPriv;
   }
 
   public boolean canCreateTempTable() {
-    return create_tmp_table_priv;
+    return createTmpTablePriv;
   }
 
   public boolean canLockTables() {
-    return lock_tables_priv;
+    return lockTablesPriv;
   }
 
   public boolean canExecute() {
-    return execute_priv;
+    return executePriv;
   }
 
   public boolean isReplicationSlave() {
-    return repl_slave_priv;
+    return replSlavePriv;
   }
 
   public boolean isReplicationClient() {
-    return repl_client_priv;
+    return replClientPriv;
   }
 
   public boolean canCreateView() {
-    return create_view_priv;
+    return createViewPriv;
   }
 
   public boolean canShowView() {
-    return show_view_priv;
+    return showViewPriv;
   }
 
   public boolean canCreateRoutine() {
-    return create_routine_priv;
+    return createRoutinePriv;
   }
 
   public boolean canAlterRoutine() {
-    return alter_routine_priv;
+    return alterRoutinePriv;
   }
 
   public boolean canCreateUser() {
-    return create_user_priv;
+    return createUserPriv;
   }
 
   public boolean canEvent() {
-    return event_priv;
+    return eventPriv;
   }
 
   public boolean canTrigger() {
-    return trigger_priv;
+    return triggerPriv;
   }
 
   public boolean canCreate() {
-    return create_priv;
+    return createPriv;
   }
 
   public boolean canDelete() {
-    return delete_priv;
+    return deletePriv;
   }
 
   @Override
@@ -397,7 +390,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
     if (isDisabled() || isSpecial()) {
       return false;
     }
-    for (UserServer msu : getMySQLServerUsers()) {
+    for (UserServer msu : getMysqlServerUsers()) {
       if (!msu.isDisabled()) {
         return false;
       }
@@ -406,7 +399,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
   }
 
   public boolean canDrop() {
-    return drop_priv;
+    return dropPriv;
   }
 
   @Override
@@ -423,43 +416,43 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
   }
 
   public boolean canFile() {
-    return file_priv;
+    return filePriv;
   }
 
   public boolean canGrant() {
-    return grant_priv;
+    return grantPriv;
   }
 
   public boolean canIndex() {
-    return index_priv;
+    return indexPriv;
   }
 
   public boolean canInsert() {
-    return insert_priv;
+    return insertPriv;
   }
 
   public boolean canProcess() {
-    return process_priv;
+    return processPriv;
   }
 
   public boolean canReference() {
-    return references_priv;
+    return referencesPriv;
   }
 
   public boolean canReload() {
-    return reload_priv;
+    return reloadPriv;
   }
 
   public boolean canSelect() {
-    return select_priv;
+    return selectPriv;
   }
 
   public boolean canShutdown() {
-    return shutdown_priv;
+    return shutdownPriv;
   }
 
   public boolean canUpdate() {
-    return update_priv;
+    return updatePriv;
   }
 
   @Override
@@ -484,7 +477,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
     if (isSpecial()) {
       throw new SQLException("Refusing to disable special MySQL user: " + this);
     }
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.DISABLE, Table.TableID.MYSQL_USERS, dl.getPkey(), pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.DISABLE, Table.TableId.MYSQL_USERS, dl.getPkey(), pkey);
   }
 
   @Override
@@ -492,78 +485,109 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
     if (isSpecial()) {
       throw new SQLException("Refusing to enable special MySQL user: " + this);
     }
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.ENABLE, Table.TableID.MYSQL_USERS, pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.ENABLE, Table.TableId.MYSQL_USERS, pkey);
   }
 
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_USERNAME: return pkey;
-      case 1: return select_priv;
-      case 2: return insert_priv;
-      case 3: return update_priv;
-      case 4: return delete_priv;
-      case 5: return create_priv;
-      case 6: return drop_priv;
-      case 7: return reload_priv;
-      case 8: return shutdown_priv;
-      case 9: return process_priv;
-      case 10: return file_priv;
-      case 11: return grant_priv;
-      case 12: return references_priv;
-      case 13: return index_priv;
-      case 14: return alter_priv;
-      case 15: return show_db_priv;
-      case 16: return super_priv;
-      case 17: return create_tmp_table_priv;
-      case 18: return lock_tables_priv;
-      case 19: return execute_priv;
-      case 20: return repl_slave_priv;
-      case 21: return repl_client_priv;
-      case 22: return create_view_priv;
-      case 23: return show_view_priv;
-      case 24: return create_routine_priv;
-      case 25: return alter_routine_priv;
-      case 26: return create_user_priv;
-      case 27: return event_priv;
-      case 28: return trigger_priv;
-      case 29: return getDisableLog_id();
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_USERNAME:
+        return pkey;
+      case 1:
+        return selectPriv;
+      case 2:
+        return insertPriv;
+      case 3:
+        return updatePriv;
+      case 4:
+        return deletePriv;
+      case 5:
+        return createPriv;
+      case 6:
+        return dropPriv;
+      case 7:
+        return reloadPriv;
+      case 8:
+        return shutdownPriv;
+      case 9:
+        return processPriv;
+      case 10:
+        return filePriv;
+      case 11:
+        return grantPriv;
+      case 12:
+        return referencesPriv;
+      case 13:
+        return indexPriv;
+      case 14:
+        return alterPriv;
+      case 15:
+        return showDbPriv;
+      case 16:
+        return superPriv;
+      case 17:
+        return createTmpTablePriv;
+      case 18:
+        return lockTablesPriv;
+      case 19:
+        return executePriv;
+      case 20:
+        return replSlavePriv;
+      case 21:
+        return replClientPriv;
+      case 22:
+        return createViewPriv;
+      case 23:
+        return showViewPriv;
+      case 24:
+        return createRoutinePriv;
+      case 25:
+        return alterRoutinePriv;
+      case 26:
+        return createUserPriv;
+      case 27:
+        return eventPriv;
+      case 28:
+        return triggerPriv;
+      case 29:
+        return getDisableLog_id();
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   @Override
   public boolean isDisabled() {
-    return disable_log != -1;
+    return disableLog != -1;
   }
 
   public Integer getDisableLog_id() {
-    return disable_log == -1 ? null : disable_log;
+    return disableLog == -1 ? null : disableLog;
   }
 
   @Override
   public DisableLog getDisableLog() throws SQLException, IOException {
-    if (disable_log == -1) {
+    if (disableLog == -1) {
       return null;
     }
-    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disable_log);
+    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disableLog);
     if (obj == null) {
-      throw new SQLException("Unable to find DisableLog: " + disable_log);
+      throw new SQLException("Unable to find DisableLog: " + disableLog);
     }
     return obj;
   }
 
-  public UserServer getMySQLServerUser(Server mysqlServer) throws IOException, SQLException {
-    return table.getConnector().getMysql().getUserServer().getMySQLServerUser(pkey, mysqlServer);
+  public UserServer getMysqlServerUser(Server mysqlServer) throws IOException, SQLException {
+    return table.getConnector().getMysql().getUserServer().getMysqlServerUser(pkey, mysqlServer);
   }
 
-  public List<UserServer> getMySQLServerUsers() throws IOException, SQLException {
-    return table.getConnector().getMysql().getUserServer().getMySQLServerUsers(this);
+  public List<UserServer> getMysqlServerUsers() throws IOException, SQLException {
+    return table.getConnector().getMysql().getUserServer().getMysqlServerUsers(this);
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.MYSQL_USERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.MYSQL_USERS;
   }
 
   public Name getUsername_id() {
@@ -586,37 +610,37 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
   public void init(ResultSet result) throws SQLException {
     try {
       pkey = Name.valueOf(result.getString(1));
-      select_priv = result.getBoolean(2);
-      insert_priv = result.getBoolean(3);
-      update_priv = result.getBoolean(4);
-      delete_priv = result.getBoolean(5);
-      create_priv = result.getBoolean(6);
-      drop_priv = result.getBoolean(7);
-      reload_priv = result.getBoolean(8);
-      shutdown_priv = result.getBoolean(9);
-      process_priv = result.getBoolean(10);
-      file_priv = result.getBoolean(11);
-      grant_priv = result.getBoolean(12);
-      references_priv = result.getBoolean(13);
-      index_priv = result.getBoolean(14);
-      alter_priv = result.getBoolean(15);
-      show_db_priv = result.getBoolean(16);
-      super_priv = result.getBoolean(17);
-      create_tmp_table_priv = result.getBoolean(18);
-      lock_tables_priv = result.getBoolean(19);
-      execute_priv = result.getBoolean(20);
-      repl_slave_priv = result.getBoolean(21);
-      repl_client_priv = result.getBoolean(22);
-      create_view_priv = result.getBoolean(23);
-      show_view_priv = result.getBoolean(24);
-      create_routine_priv = result.getBoolean(25);
-      alter_routine_priv = result.getBoolean(26);
-      create_user_priv = result.getBoolean(27);
-      event_priv = result.getBoolean(28);
-      trigger_priv = result.getBoolean(29);
-      disable_log = result.getInt(30);
+      selectPriv = result.getBoolean(2);
+      insertPriv = result.getBoolean(3);
+      updatePriv = result.getBoolean(4);
+      deletePriv = result.getBoolean(5);
+      createPriv = result.getBoolean(6);
+      dropPriv = result.getBoolean(7);
+      reloadPriv = result.getBoolean(8);
+      shutdownPriv = result.getBoolean(9);
+      processPriv = result.getBoolean(10);
+      filePriv = result.getBoolean(11);
+      grantPriv = result.getBoolean(12);
+      referencesPriv = result.getBoolean(13);
+      indexPriv = result.getBoolean(14);
+      alterPriv = result.getBoolean(15);
+      showDbPriv = result.getBoolean(16);
+      superPriv = result.getBoolean(17);
+      createTmpTablePriv = result.getBoolean(18);
+      lockTablesPriv = result.getBoolean(19);
+      executePriv = result.getBoolean(20);
+      replSlavePriv = result.getBoolean(21);
+      replClientPriv = result.getBoolean(22);
+      createViewPriv = result.getBoolean(23);
+      showViewPriv = result.getBoolean(24);
+      createRoutinePriv = result.getBoolean(25);
+      alterRoutinePriv = result.getBoolean(26);
+      createUserPriv = result.getBoolean(27);
+      eventPriv = result.getBoolean(28);
+      triggerPriv = result.getBoolean(29);
+      disableLog = result.getInt(30);
       if (result.wasNull()) {
-        disable_log = -1;
+        disableLog = -1;
       }
     } catch (ValidationException e) {
       throw new SQLException(e);
@@ -627,35 +651,35 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
       pkey = Name.valueOf(in.readUTF()).intern();
-      select_priv = in.readBoolean();
-      insert_priv = in.readBoolean();
-      update_priv = in.readBoolean();
-      delete_priv = in.readBoolean();
-      create_priv = in.readBoolean();
-      drop_priv = in.readBoolean();
-      reload_priv = in.readBoolean();
-      shutdown_priv = in.readBoolean();
-      process_priv = in.readBoolean();
-      file_priv = in.readBoolean();
-      grant_priv = in.readBoolean();
-      references_priv = in.readBoolean();
-      index_priv = in.readBoolean();
-      alter_priv = in.readBoolean();
-      show_db_priv = in.readBoolean();
-      super_priv = in.readBoolean();
-      create_tmp_table_priv = in.readBoolean();
-      lock_tables_priv = in.readBoolean();
-      execute_priv = in.readBoolean();
-      repl_slave_priv = in.readBoolean();
-      repl_client_priv = in.readBoolean();
-      create_view_priv = in.readBoolean();
-      show_view_priv = in.readBoolean();
-      create_routine_priv = in.readBoolean();
-      alter_routine_priv = in.readBoolean();
-      create_user_priv = in.readBoolean();
-      event_priv = in.readBoolean();
-      trigger_priv = in.readBoolean();
-      disable_log = in.readCompressedInt();
+      selectPriv = in.readBoolean();
+      insertPriv = in.readBoolean();
+      updatePriv = in.readBoolean();
+      deletePriv = in.readBoolean();
+      createPriv = in.readBoolean();
+      dropPriv = in.readBoolean();
+      reloadPriv = in.readBoolean();
+      shutdownPriv = in.readBoolean();
+      processPriv = in.readBoolean();
+      filePriv = in.readBoolean();
+      grantPriv = in.readBoolean();
+      referencesPriv = in.readBoolean();
+      indexPriv = in.readBoolean();
+      alterPriv = in.readBoolean();
+      showDbPriv = in.readBoolean();
+      superPriv = in.readBoolean();
+      createTmpTablePriv = in.readBoolean();
+      lockTablesPriv = in.readBoolean();
+      executePriv = in.readBoolean();
+      replSlavePriv = in.readBoolean();
+      replClientPriv = in.readBoolean();
+      createViewPriv = in.readBoolean();
+      showViewPriv = in.readBoolean();
+      createRoutinePriv = in.readBoolean();
+      alterRoutinePriv = in.readBoolean();
+      createUserPriv = in.readBoolean();
+      eventPriv = in.readBoolean();
+      triggerPriv = in.readBoolean();
+      disableLog = in.readCompressedInt();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -680,17 +704,17 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
     if (isSpecial()) {
       throw new SQLException("Refusing to remove special MySQL user: " + this);
     }
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.REMOVE,
-        Table.TableID.MYSQL_USERS,
+        AoservProtocol.CommandId.REMOVE,
+        Table.TableId.MYSQL_USERS,
         pkey
     );
   }
 
   @Override
   public void setPassword(String password) throws IOException, SQLException {
-    for (UserServer user : getMySQLServerUsers()) {
+    for (UserServer user : getMysqlServerUsers()) {
       user.setPassword(password);
     }
   }
@@ -698,41 +722,41 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeUTF(pkey.toString());
-    out.writeBoolean(select_priv);
-    out.writeBoolean(insert_priv);
-    out.writeBoolean(update_priv);
-    out.writeBoolean(delete_priv);
-    out.writeBoolean(create_priv);
-    out.writeBoolean(drop_priv);
-    out.writeBoolean(reload_priv);
-    out.writeBoolean(shutdown_priv);
-    out.writeBoolean(process_priv);
-    out.writeBoolean(file_priv);
-    out.writeBoolean(grant_priv);
-    out.writeBoolean(references_priv);
-    out.writeBoolean(index_priv);
-    out.writeBoolean(alter_priv);
+    out.writeBoolean(selectPriv);
+    out.writeBoolean(insertPriv);
+    out.writeBoolean(updatePriv);
+    out.writeBoolean(deletePriv);
+    out.writeBoolean(createPriv);
+    out.writeBoolean(dropPriv);
+    out.writeBoolean(reloadPriv);
+    out.writeBoolean(shutdownPriv);
+    out.writeBoolean(processPriv);
+    out.writeBoolean(filePriv);
+    out.writeBoolean(grantPriv);
+    out.writeBoolean(referencesPriv);
+    out.writeBoolean(indexPriv);
+    out.writeBoolean(alterPriv);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_111) >= 0) {
-      out.writeBoolean(show_db_priv);
-      out.writeBoolean(super_priv);
-      out.writeBoolean(create_tmp_table_priv);
-      out.writeBoolean(lock_tables_priv);
-      out.writeBoolean(execute_priv);
-      out.writeBoolean(repl_slave_priv);
-      out.writeBoolean(repl_client_priv);
+      out.writeBoolean(showDbPriv);
+      out.writeBoolean(superPriv);
+      out.writeBoolean(createTmpTablePriv);
+      out.writeBoolean(lockTablesPriv);
+      out.writeBoolean(executePriv);
+      out.writeBoolean(replSlavePriv);
+      out.writeBoolean(replClientPriv);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_4) >= 0) {
-      out.writeBoolean(create_view_priv);
-      out.writeBoolean(show_view_priv);
-      out.writeBoolean(create_routine_priv);
-      out.writeBoolean(alter_routine_priv);
-      out.writeBoolean(create_user_priv);
+      out.writeBoolean(createViewPriv);
+      out.writeBoolean(showViewPriv);
+      out.writeBoolean(createRoutinePriv);
+      out.writeBoolean(alterRoutinePriv);
+      out.writeBoolean(createUserPriv);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_54) >= 0) {
-      out.writeBoolean(event_priv);
-      out.writeBoolean(trigger_priv);
+      out.writeBoolean(eventPriv);
+      out.writeBoolean(triggerPriv);
     }
-    out.writeCompressedInt(disable_log);
+    out.writeCompressedInt(disableLog);
   }
 
   @Override

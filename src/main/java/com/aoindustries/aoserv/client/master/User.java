@@ -51,16 +51,14 @@ public final class User extends CachedObjectUserNameKey<User> {
   static final int COLUMN_USERNAME = 0;
   static final String COLUMN_USERNAME_name = "username";
 
-  private boolean
-      is_active,
-      can_access_accounting,
-      can_access_bank_account,
-      can_invalidate_tables,
-      can_access_admin_web,
-      is_dns_admin,
-      is_router,
-      is_cluster_admin
-  ;
+  private boolean isActive;
+  private boolean canAccessAccounting;
+  private boolean canAccessBankAccount;
+  private boolean canInvalidateTables;
+  private boolean canAccessAdminWeb;
+  private boolean isDnsAdmin;
+  private boolean isRouter;
+  private boolean isClusterAdmin;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -74,22 +72,22 @@ public final class User extends CachedObjectUserNameKey<User> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.MASTER_USERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.MASTER_USERS;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     try {
       pkey                   = com.aoindustries.aoserv.client.account.User.Name.valueOf(result.getString(1));
-      is_active              = result.getBoolean(2);
-      can_access_accounting  = result.getBoolean(3);
-      can_access_bank_account = result.getBoolean(4);
-      can_invalidate_tables  = result.getBoolean(5);
-      can_access_admin_web   = result.getBoolean(6);
-      is_dns_admin           = result.getBoolean(7);
-      is_router              = result.getBoolean(8);
-      is_cluster_admin       = result.getBoolean(9);
+      isActive              = result.getBoolean(2);
+      canAccessAccounting  = result.getBoolean(3);
+      canAccessBankAccount = result.getBoolean(4);
+      canInvalidateTables  = result.getBoolean(5);
+      canAccessAdminWeb   = result.getBoolean(6);
+      isDnsAdmin           = result.getBoolean(7);
+      isRouter              = result.getBoolean(8);
+      isClusterAdmin       = result.getBoolean(9);
     } catch (ValidationException e) {
       throw new SQLException(e);
     }
@@ -98,23 +96,23 @@ public final class User extends CachedObjectUserNameKey<User> {
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeUTF(pkey.toString());
-    out.writeBoolean(is_active);
-    out.writeBoolean(can_access_accounting);
-    out.writeBoolean(can_access_bank_account);
-    out.writeBoolean(can_invalidate_tables);
-    out.writeBoolean(can_access_admin_web);
+    out.writeBoolean(isActive);
+    out.writeBoolean(canAccessAccounting);
+    out.writeBoolean(canAccessBankAccount);
+    out.writeBoolean(canInvalidateTables);
+    out.writeBoolean(canAccessAdminWeb);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43) <= 0) {
       out.writeBoolean(false);
     } // is_ticket_admin
-    out.writeBoolean(is_dns_admin);
+    out.writeBoolean(isDnsAdmin);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_118) < 0) {
       out.writeBoolean(false);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_65) >= 0) {
-      out.writeBoolean(is_router);
+      out.writeBoolean(isRouter);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_73) >= 0) {
-      out.writeBoolean(is_cluster_admin);
+      out.writeBoolean(isClusterAdmin);
     }
   }
 
@@ -122,14 +120,14 @@ public final class User extends CachedObjectUserNameKey<User> {
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
       pkey                    = com.aoindustries.aoserv.client.account.User.Name.valueOf(in.readUTF()).intern();
-      is_active               = in.readBoolean();
-      can_access_accounting   = in.readBoolean();
-      can_access_bank_account = in.readBoolean();
-      can_invalidate_tables   = in.readBoolean();
-      can_access_admin_web    = in.readBoolean();
-      is_dns_admin            = in.readBoolean();
-      is_router               = in.readBoolean();
-      is_cluster_admin        = in.readBoolean();
+      isActive               = in.readBoolean();
+      canAccessAccounting   = in.readBoolean();
+      canAccessBankAccount = in.readBoolean();
+      canInvalidateTables   = in.readBoolean();
+      canAccessAdminWeb    = in.readBoolean();
+      isDnsAdmin            = in.readBoolean();
+      isRouter               = in.readBoolean();
+      isClusterAdmin        = in.readBoolean();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -138,16 +136,26 @@ public final class User extends CachedObjectUserNameKey<User> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_USERNAME: return pkey;
-      case 1: return is_active;
-      case 2: return can_access_accounting;
-      case 3: return can_access_bank_account;
-      case 4: return can_invalidate_tables;
-      case 5: return can_access_admin_web;
-      case 6: return is_dns_admin;
-      case 7: return is_router;
-      case 8: return is_cluster_admin;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_USERNAME:
+        return pkey;
+      case 1:
+        return isActive;
+      case 2:
+        return canAccessAccounting;
+      case 3:
+        return canAccessBankAccount;
+      case 4:
+        return canInvalidateTables;
+      case 5:
+        return canAccessAdminWeb;
+      case 6:
+        return isDnsAdmin;
+      case 7:
+        return isRouter;
+      case 8:
+        return isClusterAdmin;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -160,34 +168,34 @@ public final class User extends CachedObjectUserNameKey<User> {
   }
 
   public boolean isActive() {
-    return is_active;
+    return isActive;
   }
 
   public boolean canAccessAccounting() {
-    return can_access_accounting;
+    return canAccessAccounting;
   }
 
   public boolean canAccessBankAccount() {
-    return can_access_bank_account;
+    return canAccessBankAccount;
   }
 
   public boolean canInvalidateTables() {
-    return can_invalidate_tables;
+    return canInvalidateTables;
   }
 
   public boolean isWebAdmin() {
-    return can_access_admin_web;
+    return canAccessAdminWeb;
   }
 
-  public boolean isDNSAdmin() {
-    return is_dns_admin;
+  public boolean isDnsAdmin() {
+    return isDnsAdmin;
   }
 
   public boolean isRouter() {
-    return is_router;
+    return isRouter;
   }
 
   public boolean isClusterAdmin() {
-    return is_cluster_admin;
+    return isClusterAdmin;
   }
 }

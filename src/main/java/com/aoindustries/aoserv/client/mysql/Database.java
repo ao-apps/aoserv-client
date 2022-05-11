@@ -37,7 +37,7 @@ import com.aoapps.lang.validation.ValidationResult;
 import com.aoapps.net.InetAddress;
 import com.aoapps.net.Port;
 import com.aoapps.net.URIEncoder;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Dumpable;
@@ -78,7 +78,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * A <code>MySQLDatabase</code> corresponds to a unique MySQL table
+ * A <code>Database</code> corresponds to a unique MySQL table
  * space on one server.  The database name must be unique per server
  * and, to aid in account portability, will typically be unique
  * across the entire system.
@@ -105,9 +105,8 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
   public static final class Name implements
       Comparable<Name>,
       Serializable,
-      DtoFactory<com.aoindustries.aoserv.client.dto.MySQLDatabaseName>,
-      Internable<Name>
-  {
+      DtoFactory<com.aoindustries.aoserv.client.dto.MysqlDatabaseName>,
+      Internable<Name> {
 
     private static final long serialVersionUID = 1495532864586195961L;
 
@@ -206,8 +205,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
     public boolean equals(Object obj) {
       return
           (obj instanceof Name)
-              && name.equals(((Name) obj).name)
-      ;
+              && name.equals(((Name) obj).name);
     }
 
     @Override
@@ -246,45 +244,40 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
     }
 
     @Override
-    public com.aoindustries.aoserv.client.dto.MySQLDatabaseName getDto() {
-      return new com.aoindustries.aoserv.client.dto.MySQLDatabaseName(name);
+    public com.aoindustries.aoserv.client.dto.MysqlDatabaseName getDto() {
+      return new com.aoindustries.aoserv.client.dto.MysqlDatabaseName(name);
     }
   }
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_MYSQL_SERVER = 2,
-      COLUMN_PACKAGE = 3
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_MYSQL_SERVER = 2;
+  static final int COLUMN_PACKAGE = 3;
   static final String COLUMN_NAME_name = "name";
   static final String COLUMN_MYSQL_SERVER_name = "mysql_server";
 
   /**
-   * The classname of the JDBC driver used for the <code>MySQLDatabase</code>.
+   * The classname of the JDBC driver used for the <code>Database</code>.
    */
   public static final String
       CENTOS_JDBC_DRIVER = "com.mysql.jdbc.Driver",
-      CENTOS_7_JDBC_DRIVER = "com.mysql.cj.jdbc.Driver"
-  ;
+      CENTOS_7_JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
 
   /**
    * The URL for MySQL JDBC documentation.
    */
   public static final String
       CENTOS_JDBC_DOCUMENTATION_URL = "https://dev.mysql.com/doc/connector-j/5.1/en/",
-      CENTOS_7_JDBC_DOCUMENTATION_URL = "https://dev.mysql.com/doc/connector-j/8.0/en/"
-  ;
+      CENTOS_7_JDBC_DOCUMENTATION_URL = "https://dev.mysql.com/doc/connector-j/8.0/en/";
 
+  /** The root database for a MySQL installation. */
+  public static final Name MYSQL;
+  /** MySQL. */
   public static final Name
-      /** The root database for a MySQL installation. */
-      MYSQL,
-      /** MySQL */
       INFORMATION_SCHEMA,
       PERFORMANCE_SCHEMA,
-      SYS,
-      /** Monitoring */
-      MYSQLMON
-  ;
+      SYS;
+  /** Monitoring. */
+  public static final Name MYSQLMON;
 
   static {
     try {
@@ -317,7 +310,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
   }
 
   private Name name;
-  private int mysql_server;
+  private int mysqlServer;
   private Account.Name packageName;
   private AlertLevel maxCheckTableAlertLevel;
 
@@ -333,10 +326,10 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
   }
 
   /**
-   * @deprecated  Please call {@link DatabaseUserTable#addMySQLDBUser(com.aoindustries.aoserv.client.mysql.Database, com.aoindustries.aoserv.client.mysql.UserServer, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean)} directly
+   * @deprecated  Please call {@link DatabaseUserTable#addMysqlDbUser(com.aoindustries.aoserv.client.mysql.Database, com.aoindustries.aoserv.client.mysql.UserServer, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean)} directly
    */
   @Deprecated
-  public int addMySQLServerUser(
+  public int addMysqlServerUser(
       UserServer msu,
       boolean canSelect,
       boolean canInsert,
@@ -357,7 +350,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
       boolean canEvent,
       boolean canTrigger
   ) throws IOException, SQLException {
-    return table.getConnector().getMysql().getDatabaseUser().addMySQLDBUser(
+    return table.getConnector().getMysql().getDatabaseUser().addMysqlDbUser(
         this,
         msu,
         canSelect,
@@ -382,6 +375,8 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
   }
 
   /**
+   * {@inheritDoc}
+   *
    * @see  #dump(java.io.Writer)
    */
   @Override
@@ -400,8 +395,8 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
   public void dump(final Writer out) throws IOException, SQLException {
     table.getConnector().requestUpdate(
         false,
-        AoservProtocol.CommandID.DUMP_MYSQL_DATABASE,
-        new AOServConnector.UpdateRequest() {
+        AoservProtocol.CommandId.DUMP_MYSQL_DATABASE,
+        new AoservConnector.UpdateRequest() {
           @Override
           public void writeRequest(StreamableOutput masterOut) throws IOException {
             masterOut.writeCompressedInt(pkey);
@@ -416,8 +411,8 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
             }
             long bytesRead;
             try (
-            ByteCountInputStream byteCountIn = new ByteCountInputStream(new NestedInputStream(masterIn));
-            Reader nestedIn = new InputStreamReader(byteCountIn, DUMP_ENCODING)
+                ByteCountInputStream byteCountIn = new ByteCountInputStream(new NestedInputStream(masterIn));
+                Reader nestedIn = new InputStreamReader(byteCountIn, DUMP_ENCODING)
                 ) {
               IoUtils.copy(nestedIn, out);
               bytesRead = byteCountIn.getCount();
@@ -447,8 +442,8 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
   ) throws IOException, SQLException {
     table.getConnector().requestUpdate(
         false,
-        AoservProtocol.CommandID.DUMP_MYSQL_DATABASE,
-        new AOServConnector.UpdateRequest() {
+        AoservProtocol.CommandId.DUMP_MYSQL_DATABASE,
+        new AoservConnector.UpdateRequest() {
           @Override
           public void writeRequest(StreamableOutput masterOut) throws IOException {
             masterOut.writeCompressedInt(pkey);
@@ -487,30 +482,37 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case 1: return name;
-      case COLUMN_MYSQL_SERVER: return mysql_server;
-      case COLUMN_PACKAGE: return packageName;
-      case 4 : return maxCheckTableAlertLevel.name();
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case 1:
+        return name;
+      case COLUMN_MYSQL_SERVER:
+        return mysqlServer;
+      case COLUMN_PACKAGE:
+        return packageName;
+      case 4:
+        return maxCheckTableAlertLevel.name();
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   @Override
   public String getJdbcDriver() throws SQLException, IOException {
-    int osv = getMySQLServer().getLinuxServer().getHost().getOperatingSystemVersion_id();
+    int osv = getMysqlServer().getLinuxServer().getHost().getOperatingSystemVersion_id();
     switch (osv) {
       case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64:
         return CENTOS_JDBC_DRIVER;
       case OperatingSystemVersion.CENTOS_7_X86_64:
         return CENTOS_7_JDBC_DRIVER;
-      default : throw new SQLException("Unsupported OperatingSystemVersion: " + osv);
+      default:
+        throw new SQLException("Unsupported OperatingSystemVersion: " + osv);
     }
   }
 
   @Override
   public String getJdbcUrl(boolean ipOnly) throws SQLException, IOException {
-    Server ms = getMySQLServer();
+    Server ms = getMysqlServer();
     com.aoindustries.aoserv.client.linux.Server ao = ms.getLinuxServer();
     StringBuilder jdbcUrl = new StringBuilder();
     jdbcUrl.append("jdbc:mysql://");
@@ -519,7 +521,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
     InetAddress ia = ip.getInetAddress();
     if (ipOnly) {
       if (ia.isUnspecified()) {
-        jdbcUrl.append(ao.getHost().getNetDevice(ao.getDaemonDeviceId().getName()).getPrimaryIPAddress().getInetAddress().toBracketedString());
+        jdbcUrl.append(ao.getHost().getNetDevice(ao.getDaemonDeviceId().getName()).getPrimaryIpAddress().getInetAddress().toBracketedString());
       } else {
         jdbcUrl.append(ia.toBracketedString());
       }
@@ -546,26 +548,27 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
 
   @Override
   public String getJdbcDocumentationUrl() throws SQLException, IOException {
-    int osv = getMySQLServer().getLinuxServer().getHost().getOperatingSystemVersion_id();
+    int osv = getMysqlServer().getLinuxServer().getHost().getOperatingSystemVersion_id();
     switch (osv) {
-      case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64 :
+      case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64:
         return CENTOS_JDBC_DOCUMENTATION_URL;
-      case OperatingSystemVersion.CENTOS_7_X86_64 :
+      case OperatingSystemVersion.CENTOS_7_X86_64:
         return CENTOS_7_JDBC_DOCUMENTATION_URL;
-      default : throw new SQLException("Unsupported OperatingSystemVersion: " + osv);
+      default:
+        throw new SQLException("Unsupported OperatingSystemVersion: " + osv);
     }
   }
 
-  public DatabaseUser getMySQLDBUser(UserServer msu) throws IOException, SQLException {
-    return table.getConnector().getMysql().getDatabaseUser().getMySQLDBUser(this, msu);
+  public DatabaseUser getMysqlDbUser(UserServer msu) throws IOException, SQLException {
+    return table.getConnector().getMysql().getDatabaseUser().getMysqlDbUser(this, msu);
   }
 
-  public List<DatabaseUser> getMySQLDBUsers() throws IOException, SQLException {
-    return table.getConnector().getMysql().getDatabaseUser().getMySQLDBUsers(this);
+  public List<DatabaseUser> getMysqlDbUsers() throws IOException, SQLException {
+    return table.getConnector().getMysql().getDatabaseUser().getMysqlDbUsers(this);
   }
 
-  public List<UserServer> getMySQLServerUsers() throws IOException, SQLException {
-    return table.getConnector().getMysql().getDatabaseUser().getMySQLServerUsers(this);
+  public List<UserServer> getMysqlServerUsers() throws IOException, SQLException {
+    return table.getConnector().getMysql().getDatabaseUser().getMysqlServerUsers(this);
   }
 
   public Name getName() {
@@ -588,14 +591,14 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
     return obj;
   }
 
-  public int getMySQLServer_id() {
-    return mysql_server;
+  public int getMysqlServer_id() {
+    return mysqlServer;
   }
 
-  public Server getMySQLServer() throws SQLException, IOException {
-    Server obj = table.getConnector().getMysql().getServer().get(mysql_server);
+  public Server getMysqlServer() throws SQLException, IOException {
+    Server obj = table.getConnector().getMysql().getServer().get(mysqlServer);
     if (obj == null) {
-      throw new SQLException("Unable to find MySQLServer: " + mysql_server);
+      throw new SQLException("Unable to find MysqlServer: " + mysqlServer);
     }
     return obj;
   }
@@ -605,8 +608,8 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.MYSQL_DATABASES;
+  public Table.TableId getTableId() {
+    return Table.TableId.MYSQL_DATABASES;
   }
 
   @Override
@@ -614,7 +617,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
     try {
       pkey = result.getInt(1);
       name = Name.valueOf(result.getString(2));
-      mysql_server = result.getInt(3);
+      mysqlServer = result.getInt(3);
       packageName = Account.Name.valueOf(result.getString(4));
       maxCheckTableAlertLevel = AlertLevel.valueOf(result.getString(5));
     } catch (ValidationException e) {
@@ -627,7 +630,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
     try {
       pkey = in.readCompressedInt();
       name = Name.valueOf(in.readUTF());
-      mysql_server = in.readCompressedInt();
+      mysqlServer = in.readCompressedInt();
       packageName = Account.Name.valueOf(in.readUTF()).intern();
       maxCheckTableAlertLevel = AlertLevel.valueOf(in.readCompressedUTF());
     } catch (ValidationException e) {
@@ -639,7 +642,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
   public List<CannotRemoveReason<Database>> getCannotRemoveReasons() throws SQLException, IOException {
     List<CannotRemoveReason<Database>> reasons = new ArrayList<>();
     if (isSpecial()) {
-      Server ms = getMySQLServer();
+      Server ms = getMysqlServer();
       reasons.add(
           new CannotRemoveReason<>(
               "Not allowed to drop a special MySQL database: "
@@ -660,10 +663,10 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
     if (isSpecial()) {
       throw new SQLException("Refusing to remove special MySQL database: " + this);
     }
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.REMOVE,
-        Table.TableID.MYSQL_DATABASES,
+        AoservProtocol.CommandId.REMOVE,
+        Table.TableId.MYSQL_DATABASES,
         pkey
     );
   }
@@ -680,7 +683,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_4) < 0) {
       out.writeCompressedInt(-1);
     } else {
-      out.writeCompressedInt(mysql_server);
+      out.writeCompressedInt(mysqlServer);
     }
     out.writeUTF(packageName.toString());
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30) <= 0) {
@@ -702,7 +705,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
   }
 
   // TODO: Pull-out into outer class "Table", with TableName inside it was "Name"
-  // TODO: Also make a full-on AOServTable?
+  // TODO: Also make a full-on AoservTable?
   public static class TableStatus {
 
     // TODO: How to handle unknown versions over protocols by time?  An "UNKNOWN" that new are converted to, with a "sinceVersion" and "lastVersion" settings?
@@ -724,7 +727,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
       utf8mb4_unicode_520_ci
     }
 
-    private final Table_Name name;
+    private final TableName name;
     private final Engine engine;
     private final Integer version;
     private final RowFormat rowFormat;
@@ -744,7 +747,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
     private final String comment;
 
     public TableStatus(
-        Table_Name name,
+        TableName name,
         Engine engine,
         Integer version,
         RowFormat rowFormat,
@@ -786,7 +789,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
     /**
      * @return the name
      */
-    public Table_Name getName() {
+    public TableName getName() {
       return name;
     }
 
@@ -923,8 +926,8 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
   public List<TableStatus> getTableStatus(final MysqlReplication mysqlSlave) throws IOException, SQLException {
     return table.getConnector().requestResult(
         true,
-        AoservProtocol.CommandID.GET_MYSQL_TABLE_STATUS,
-        new AOServConnector.ResultRequest<List<TableStatus>>() {
+        AoservProtocol.CommandId.GET_MYSQL_TABLE_STATUS,
+        new AoservConnector.ResultRequest<List<TableStatus>>() {
           private List<TableStatus> result;
 
           @Override
@@ -943,7 +946,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
                 try {
                   tableStatuses.add(
                       new TableStatus(
-                          Table_Name.valueOf(in.readUTF()), // name
+                          TableName.valueOf(in.readUTF()), // name
                           in.readNullEnum(Engine.class), // engine
                           in.readNullInteger(), // version
                           in.readNullEnum(TableStatus.RowFormat.class), // rowFormat
@@ -994,13 +997,13 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
       Error
     }
 
-    private final Table_Name table;
+    private final TableName table;
     private final long duration;
     private final MsgType msgType;
     private final String msgText;
 
     public CheckTableResult(
-        Table_Name table,
+        TableName table,
         long duration,
         MsgType msgType,
         String msgText
@@ -1014,7 +1017,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
     /**
      * @return the table
      */
-    public Table_Name getTable() {
+    public TableName getTable() {
       return table;
     }
 
@@ -1043,21 +1046,21 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
   /**
    * Gets the table status on the master server.
    */
-  public List<CheckTableResult> checkTables(final Collection<Table_Name> tableNames) throws IOException, SQLException {
+  public List<CheckTableResult> checkTables(final Collection<TableName> tableNames) throws IOException, SQLException {
     return checkTables(null, tableNames);
   }
 
   /**
    * Gets the table status on the master server or provided slave server.
    */
-  public List<CheckTableResult> checkTables(final MysqlReplication mysqlSlave, final Collection<Table_Name> tableNames) throws IOException, SQLException {
+  public List<CheckTableResult> checkTables(final MysqlReplication mysqlSlave, final Collection<TableName> tableNames) throws IOException, SQLException {
     if (tableNames.isEmpty()) {
       return Collections.emptyList();
     }
     return table.getConnector().requestResult(
         true,
-        AoservProtocol.CommandID.CHECK_MYSQL_TABLES,
-        new AOServConnector.ResultRequest<List<CheckTableResult>>() {
+        AoservProtocol.CommandId.CHECK_MYSQL_TABLES,
+        new AoservConnector.ResultRequest<List<CheckTableResult>>() {
           private List<CheckTableResult> result;
 
           @Override
@@ -1067,7 +1070,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
             int size = tableNames.size();
             out.writeCompressedInt(size);
             int count = 0;
-            Iterator<Table_Name> iter = tableNames.iterator();
+            Iterator<TableName> iter = tableNames.iterator();
             while (count < size && iter.hasNext()) {
               out.writeUTF(iter.next().toString());
               count++;
@@ -1087,7 +1090,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
                 try {
                   checkTableResults.add(
                       new CheckTableResult(
-                          Table_Name.valueOf(in.readUTF()), // table
+                          TableName.valueOf(in.readUTF()), // table
                           in.readLong(), // duration
                           in.readNullEnum(CheckTableResult.MsgType.class), // msgType
                           in.readNullUTF() // msgText

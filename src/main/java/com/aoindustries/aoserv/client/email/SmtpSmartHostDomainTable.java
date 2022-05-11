@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.email;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.net.Bind;
@@ -41,16 +41,20 @@ import java.sql.SQLException;
  */
 public final class SmtpSmartHostDomainTable extends CachedTableIntegerKey<SmtpSmartHostDomain> {
 
-  SmtpSmartHostDomainTable(AOServConnector connector) {
+  SmtpSmartHostDomainTable(AoservConnector connector) {
     super(connector, SmtpSmartHostDomain.class);
   }
 
   private static final OrderBy[] defaultOrderBy = {
       new OrderBy(SmtpSmartHostDomain.COLUMN_DOMAIN_name, ASCENDING),
-      new OrderBy(SmtpSmartHostDomain.COLUMN_SMART_HOST_name + '.' + SmtpSmartHost.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_SERVER_name + '.' + Host.COLUMN_PACKAGE_name + '.' + Package.COLUMN_NAME_name, ASCENDING),
-      new OrderBy(SmtpSmartHostDomain.COLUMN_SMART_HOST_name + '.' + SmtpSmartHost.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_SERVER_name + '.' + Host.COLUMN_NAME_name, ASCENDING),
-      new OrderBy(SmtpSmartHostDomain.COLUMN_SMART_HOST_name + '.' + SmtpSmartHost.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_IP_ADDRESS_name + '.' + IpAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
-      new OrderBy(SmtpSmartHostDomain.COLUMN_SMART_HOST_name + '.' + SmtpSmartHost.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_IP_ADDRESS_name + '.' + IpAddress.COLUMN_DEVICE_name + '.' + Device.COLUMN_DEVICE_ID_name, ASCENDING),
+      new OrderBy(SmtpSmartHostDomain.COLUMN_SMART_HOST_name + '.' + SmtpSmartHost.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_SERVER_name
+          + '.' + Host.COLUMN_PACKAGE_name + '.' + Package.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(SmtpSmartHostDomain.COLUMN_SMART_HOST_name + '.' + SmtpSmartHost.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_SERVER_name
+          + '.' + Host.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(SmtpSmartHostDomain.COLUMN_SMART_HOST_name + '.' + SmtpSmartHost.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_IP_ADDRESS_name
+          + '.' + IpAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
+      new OrderBy(SmtpSmartHostDomain.COLUMN_SMART_HOST_name + '.' + SmtpSmartHost.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_IP_ADDRESS_name
+          + '.' + IpAddress.COLUMN_DEVICE_name + '.' + Device.COLUMN_DEVICE_ID_name, ASCENDING),
       new OrderBy(SmtpSmartHostDomain.COLUMN_SMART_HOST_name + '.' + SmtpSmartHost.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_PORT_name, ASCENDING)
   };
 
@@ -66,7 +70,7 @@ public final class SmtpSmartHostDomainTable extends CachedTableIntegerKey<SmtpSm
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.EMAIL_SMTP_SMART_HOST_DOMAINS;
+  public Table.TableId getTableId() {
+    return Table.TableId.EMAIL_SMTP_SMART_HOST_DOMAINS;
   }
 }

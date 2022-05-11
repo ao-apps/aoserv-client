@@ -81,8 +81,8 @@ public final class UsState extends GlobalObjectStringKey<UsState> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.US_STATES;
+  public Table.TableId getTableId() {
+    return Table.TableId.US_STATES;
   }
 
   @Override

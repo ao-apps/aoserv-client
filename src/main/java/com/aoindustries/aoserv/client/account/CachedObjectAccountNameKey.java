@@ -26,7 +26,7 @@ package com.aoindustries.aoserv.client.account;
 import com.aoindustries.aoserv.client.CachedObject;
 
 /**
- * An object that is cached and uses an int as its primary key,
+ * An object that is cached and uses an int as its primary key.
  *
  * @author  AO Industries, Inc.
  */
@@ -50,8 +50,7 @@ public abstract class CachedObjectAccountNameKey<V extends CachedObjectAccountNa
     return
         obj != null
             && obj.getClass() == getClass()
-            && ((CachedObjectAccountNameKey<?>) obj).pkey.equals(pkey)
-    ;
+            && ((CachedObjectAccountNameKey<?>) obj).pkey.equals(pkey);
   }
 
   @Override

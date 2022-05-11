@@ -33,7 +33,7 @@ package com.aoindustries.aoserv.client;
  * once to count rows then once to return them.
  * </p>
  *
- * @see  AOServTable#addProgressListener
+ * @see  AoservTable#addProgressListener
  *
  * @author  AO Industries, Inc.
  */
@@ -54,5 +54,5 @@ public interface ProgressListener {
    * start back at zero again.
    * </p>
    */
-  void onProgressChanged(AOServTable<?, ?> table, int position, int scale);
+  void onProgressChanged(AoservTable<?, ?> table, int position, int scale);
 }

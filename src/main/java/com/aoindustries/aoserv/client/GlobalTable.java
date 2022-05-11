@@ -44,9 +44,9 @@ import java.util.Map;
  *
  * @author  AO Industries, Inc.
  */
-public abstract class GlobalTable<K, V extends GlobalObject<K, V>> extends AOServTable<K, V> {
+public abstract class GlobalTable<K, V extends GlobalObject<K, V>> extends AoservTable<K, V> {
 
-  private static final int numTables = Table.TableID.values().length;
+  private static final int numTables = Table.TableId.values().length;
 
   /**
    * Each table has its own lock because we were getting deadlocks with one lock on GlobalTable.class.
@@ -54,6 +54,7 @@ public abstract class GlobalTable<K, V extends GlobalObject<K, V>> extends AOSer
   private static class Lock {
     // Empty lock class to help heap profile
   }
+
   private static final Lock[] locks = new Lock[numTables];
 
   static {
@@ -92,8 +93,8 @@ public abstract class GlobalTable<K, V extends GlobalObject<K, V>> extends AOSer
    * The internal indexes are stored in a <code>HashMap</code>
    * based on the server and then the table ID, and then the
    * column number.  Each element of the <code>HashMap</code> is
-   * a <code>ArrayList</code> or <code>AOServObject[]</code>.
-   * All of the List<GlobalObject> stored here are unmodifiable.
+   * a <code>ArrayList</code> or <code>AoservObject[]</code>.
+   * All of the {@code List<GlobalObject>} stored here are unmodifiable.
    */
   private static final List<List<Map<Object, List<GlobalObject<?, ?>>>>> indexHashes = new ArrayList<>(numTables);
 
@@ -107,7 +108,7 @@ public abstract class GlobalTable<K, V extends GlobalObject<K, V>> extends AOSer
 
   /**
    * The internal objects are stored in this list.  Each of the contained
-   * List<GlobalObject> is unmodifiable.
+   * {@code List<GlobalObject>} is unmodifiable.
    */
   private static final List<List<GlobalObject<?, ?>>> tableObjs = new ArrayList<>(numTables);
 
@@ -117,7 +118,7 @@ public abstract class GlobalTable<K, V extends GlobalObject<K, V>> extends AOSer
     }
   }
 
-  protected GlobalTable(AOServConnector connector, Class<V> clazz) {
+  protected GlobalTable(AoservConnector connector, Class<V> clazz) {
     super(connector, clazz);
   }
 
@@ -127,7 +128,7 @@ public abstract class GlobalTable<K, V extends GlobalObject<K, V>> extends AOSer
    */
   @SuppressWarnings("NestedSynchronizedStatement")
   public final int getGlobalRowCount() {
-    int ordinal = getTableID().ordinal();
+    int ordinal = getTableId().ordinal();
     List<GlobalObject<?, ?>> objs;
     synchronized (locks[ordinal]) {
       synchronized (tableObjs) {
@@ -142,8 +143,8 @@ public abstract class GlobalTable<K, V extends GlobalObject<K, V>> extends AOSer
 
   @Override
   public final List<V> getIndexedRows(int col, Object value) throws IOException, SQLException {
-    Table.TableID tableID = getTableID();
-    int ordinal = tableID.ordinal();
+    Table.TableId tableId = getTableId();
+    int ordinal = tableId.ordinal();
     synchronized (locks[ordinal]) {
       validateCache();
 
@@ -151,7 +152,7 @@ public abstract class GlobalTable<K, V extends GlobalObject<K, V>> extends AOSer
       if (tableLoadeds == null) {
         indexLoadeds[ordinal] = tableLoadeds = new BitSet(col + 1);
       }
-      boolean isHashed = tableLoadeds.get(col);
+      final boolean isHashed = tableLoadeds.get(col);
 
       List<Map<Object, List<GlobalObject<?, ?>>>> tableValues;
       synchronized (indexHashes) {
@@ -171,13 +172,13 @@ public abstract class GlobalTable<K, V extends GlobalObject<K, V>> extends AOSer
       if (!isHashed) {
         // Build the modifiable lists in a temporary Map
         Map<Object, List<GlobalObject<?, ?>>> modifiableIndexes = new HashMap<>();
-        for (GlobalObject<K, V> O : getRows()) {
-          Object cvalue = O.getColumn(col);
+        for (GlobalObject<K, V> row : getRows()) {
+          Object cvalue = row.getColumn(col);
           List<GlobalObject<?, ?>> list = modifiableIndexes.get(cvalue);
           if (list == null) {
             modifiableIndexes.put(cvalue, list = new ArrayList<>());
           }
-          list.add(O);
+          list.add(row);
         }
         // Wrap each of the newly-created indexes to be unmodifiable
         colIndexes.clear();
@@ -204,8 +205,8 @@ public abstract class GlobalTable<K, V extends GlobalObject<K, V>> extends AOSer
     if (value == null) {
       return null;
     }
-    Table.TableID tableID = getTableID();
-    int ordinal = tableID.ordinal();
+    Table.TableId tableId = getTableId();
+    int ordinal = tableId.ordinal();
     synchronized (locks[ordinal]) {
       validateCache();
 
@@ -213,7 +214,7 @@ public abstract class GlobalTable<K, V extends GlobalObject<K, V>> extends AOSer
       if (tableLoadeds == null) {
         hashLoadeds[ordinal] = tableLoadeds = new BitSet(col + 1);
       }
-      boolean isHashed = tableLoadeds.get(col);
+      final boolean isHashed = tableLoadeds.get(col);
 
       List<V> table = getRows();
       int size = table.size();
@@ -249,7 +250,7 @@ public abstract class GlobalTable<K, V extends GlobalObject<K, V>> extends AOSer
             V old = colValues.put(cvalue, row);
             if (old != null) {
               throw new SQLException(
-                  "Duplicate pkey entry for table " + getTableID() + " (" + getTableName() + "), column #"
+                  "Duplicate pkey entry for table " + getTableId() + " (" + getTableName() + "), column #"
                       + col + ": " + cvalue
               );
             }
@@ -265,8 +266,8 @@ public abstract class GlobalTable<K, V extends GlobalObject<K, V>> extends AOSer
 
   @Override
   public List<V> getRows() throws IOException, SQLException {
-    Table.TableID tableID = getTableID();
-    int ordinal = tableID.ordinal();
+    Table.TableId tableId = getTableId();
+    int ordinal = tableId.ordinal();
     // We synchronize here to make sure tableObjs is not cleared between validateCache and get, but only on a per-table ID basis
     synchronized (locks[ordinal]) {
       validateCache();
@@ -287,7 +288,7 @@ public abstract class GlobalTable<K, V extends GlobalObject<K, V>> extends AOSer
    * Determines if the contents are currently hashed in a hashmap.
    */
   boolean isHashed(int column) {
-    int ordinal = getTableID().ordinal();
+    int ordinal = getTableId().ordinal();
     synchronized (locks[ordinal]) {
       BitSet table = hashLoadeds[ordinal];
       return table != null && table.get(column);
@@ -298,7 +299,7 @@ public abstract class GlobalTable<K, V extends GlobalObject<K, V>> extends AOSer
    * Determines if the contents are currently indexed.
    */
   boolean isIndexed(int column) {
-    int ordinal = getTableID().ordinal();
+    int ordinal = getTableId().ordinal();
     synchronized (locks[ordinal]) {
       BitSet table = indexLoadeds[ordinal];
       return table != null && table.get(column);
@@ -307,8 +308,8 @@ public abstract class GlobalTable<K, V extends GlobalObject<K, V>> extends AOSer
 
   @Override
   public final boolean isLoaded() {
-    Table.TableID tableID = getTableID();
-    int ordinal = tableID.ordinal();
+    Table.TableId tableId = getTableId();
+    int ordinal = tableId.ordinal();
     synchronized (locks[ordinal]) {
       return lastLoadeds[ordinal] != -1;
     }
@@ -317,8 +318,8 @@ public abstract class GlobalTable<K, V extends GlobalObject<K, V>> extends AOSer
   @Override
   public void clearCache() {
     super.clearCache();
-    Table.TableID tableID = getTableID();
-    int ordinal = tableID.ordinal();
+    Table.TableId tableId = getTableId();
+    int ordinal = tableId.ordinal();
     synchronized (locks[ordinal]) {
       lastLoadeds[ordinal] = -1;
     }
@@ -329,13 +330,13 @@ public abstract class GlobalTable<K, V extends GlobalObject<K, V>> extends AOSer
    */
   @SuppressWarnings({"unchecked"})
   private void validateCache() throws IOException, SQLException {
-    Table.TableID tableID = getTableID();
-    int ordinal = tableID.ordinal();
+    Table.TableId tableId = getTableId();
+    int ordinal = tableId.ordinal();
     synchronized (locks[ordinal]) {
       long currentTime = System.currentTimeMillis();
       long lastLoaded = lastLoadeds[ordinal];
       if (lastLoaded == -1) {
-        List<GlobalObject<?, ?>> list = (List) getObjects(true, AoservProtocol.CommandID.GET_TABLE, ordinal);
+        List<GlobalObject<?, ?>> list = (List) getObjects(true, AoservProtocol.CommandId.GET_TABLE, ordinal);
         synchronized (tableObjs) {
           tableObjs.set(ordinal, Collections.unmodifiableList(list));
         }

@@ -29,7 +29,7 @@ package com.aoindustries.aoserv.client;
  * loading process.  This is useful so that tasks may be completed during the
  * transfer, which may yield more efficient and interactive environment.
  *
- * @see  AOServTable#addTableLoadListener
+ * @see  AoservTable#addTableLoadListener
  *
  * @author  AO Industries, Inc.
  */
@@ -37,15 +37,15 @@ package com.aoindustries.aoserv.client;
 public interface TableLoadListener {
 
   /**
-   * Whenever an {@link AOServTable} is starting to be loaded, this is called
+   * Whenever an {@link AoservTable} is starting to be loaded, this is called
    * with the parameter that was provided in the
-   * {@link AOServTable#addTableLoadListener(com.aoindustries.aoserv.client.TableLoadListener, java.lang.Object)}
+   * {@link AoservTable#addTableLoadListener(com.aoindustries.aoserv.client.TableLoadListener, java.lang.Object)}
    * call.
    * <p>
    * The object returned is stored and will be the parameter provided in the next call.
    * </p>
    */
-  Object onTableLoadStarted(AOServTable<?, ?> table, Object param);
+  Object onTableLoadStarted(AoservTable<?, ?> table, Object param);
 
   /**
    * Called once the number of rows that will be loaded is known or known to be unknown.
@@ -56,7 +56,7 @@ public interface TableLoadListener {
    * </p>
    * <p>
    * When a table load auto-retries on failure, this may be called more than once
-   * for a given {@link #onTableLoadStarted(com.aoindustries.aoserv.client.AOServTable, java.lang.Object)}.
+   * for a given {@link #onTableLoadStarted(com.aoindustries.aoserv.client.AoservTable, java.lang.Object)}.
    * Each time, it indicates that the load is starting over.
    * </p>
    * <p>
@@ -65,7 +65,7 @@ public interface TableLoadListener {
    *
    * @see  ProgressListener
    */
-  Object onTableLoadRowCount(AOServTable<?, ?> table, Object param, Long rowCount);
+  Object onTableLoadRowCount(AoservTable<?, ?> table, Object param, Long rowCount);
 
   /**
    * Called as each row is loaded.
@@ -75,7 +75,7 @@ public interface TableLoadListener {
    *
    * @param  rowNumber  The row number loaded, started at zero.
    */
-  Object onTableRowLoaded(AOServTable<?, ?> table, Object param, long rowNumber, AOServObject<?, ?> object);
+  Object onTableRowLoaded(AoservTable<?, ?> table, Object param, long rowNumber, AoservObject<?, ?> object);
 
   /**
    * Called when the table load has failed.
@@ -83,7 +83,7 @@ public interface TableLoadListener {
    * The object returned is stored and will be the parameter provided in the next call.
    * </p>
    */
-  Object onTableLoadFailed(AOServTable<?, ?> table, Object param, Throwable cause);
+  Object onTableLoadFailed(AoservTable<?, ?> table, Object param, Throwable cause);
 
   /**
    * Called when the table is completely loaded.
@@ -91,5 +91,5 @@ public interface TableLoadListener {
    * The object returned is stored and will be the parameter provided in the next call.
    * </p>
    */
-  Object onTableLoadCompleted(AOServTable<?, ?> table, Object param);
+  Object onTableLoadCompleted(AoservTable<?, ?> table, Object param);
 }

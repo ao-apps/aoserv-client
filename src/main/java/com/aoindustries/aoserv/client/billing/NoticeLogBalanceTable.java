@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.billing;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -37,7 +37,7 @@ import java.util.List;
  */
 public final class NoticeLogBalanceTable extends CachedTableIntegerKey<NoticeLogBalance> {
 
-  NoticeLogBalanceTable(AOServConnector connector) {
+  NoticeLogBalanceTable(AoservConnector connector) {
     super(connector, NoticeLogBalance.class);
   }
 
@@ -59,8 +59,8 @@ public final class NoticeLogBalanceTable extends CachedTableIntegerKey<NoticeLog
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.NoticeLogBalance;
+  public Table.TableId getTableId() {
+    return Table.TableId.NoticeLogBalance;
   }
 
   List<NoticeLogBalance> getNoticeLogBalances(NoticeLog noticeLog) throws IOException, SQLException {

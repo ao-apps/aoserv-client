@@ -45,10 +45,8 @@ import java.util.List;
  */
 public final class JkMount extends CachedObjectIntegerKey<JkMount> implements Removable {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_HTTPD_TOMCAT_SITE = 1
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_HTTPD_TOMCAT_SITE = 1;
   static final String COLUMN_HTTPD_TOMCAT_SITE_name = "httpd_tomcat_site";
   static final String COLUMN_PATH_name = "path";
   static final String COLUMN_MOUNT_name = "mount";
@@ -67,11 +65,10 @@ public final class JkMount extends CachedObjectIntegerKey<JkMount> implements Re
             && path.indexOf('\\') == -1
             && path.indexOf('\n') == -1
             && path.indexOf('\r') == -1
-            && path.indexOf('\0') == -1
-    ;
+            && path.indexOf('\0') == -1;
   }
 
-  private int httpd_tomcat_site;
+  private int httpdTomcatSite;
   private String path;
   private boolean mount;
 
@@ -94,18 +91,23 @@ public final class JkMount extends CachedObjectIntegerKey<JkMount> implements Re
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_HTTPD_TOMCAT_SITE: return httpd_tomcat_site;
-      case 2: return path;
-      case 3: return mount;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_HTTPD_TOMCAT_SITE:
+        return httpdTomcatSite;
+      case 2:
+        return path;
+      case 3:
+        return mount;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   public Site getHttpdTomcatSite() throws SQLException, IOException {
-    Site obj = table.getConnector().getWeb_tomcat().getSite().get(httpd_tomcat_site);
+    Site obj = table.getConnector().getWeb_tomcat().getSite().get(httpdTomcatSite);
     if (obj == null) {
-      throw new SQLException("Unable to find HttpdTomcatSite: " + httpd_tomcat_site);
+      throw new SQLException("Unable to find HttpdTomcatSite: " + httpdTomcatSite);
     }
     return obj;
   }
@@ -123,14 +125,14 @@ public final class JkMount extends CachedObjectIntegerKey<JkMount> implements Re
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.HTTPD_TOMCAT_SITE_JK_MOUNTS;
+  public Table.TableId getTableId() {
+    return Table.TableId.HTTPD_TOMCAT_SITE_JK_MOUNTS;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     pkey = result.getInt(1);
-    httpd_tomcat_site = result.getInt(2);
+    httpdTomcatSite = result.getInt(2);
     path = result.getString(3);
     mount = result.getBoolean(4);
     if (!isValidPath(path)) {
@@ -141,7 +143,7 @@ public final class JkMount extends CachedObjectIntegerKey<JkMount> implements Re
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readCompressedInt();
-    httpd_tomcat_site = in.readCompressedInt();
+    httpdTomcatSite = in.readCompressedInt();
     path = in.readUTF();
     mount = in.readBoolean();
     if (!isValidPath(path)) {
@@ -156,13 +158,13 @@ public final class JkMount extends CachedObjectIntegerKey<JkMount> implements Re
 
   @Override
   public void remove() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.REMOVE, Table.TableID.HTTPD_TOMCAT_SITE_JK_MOUNTS, pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.REMOVE, Table.TableId.HTTPD_TOMCAT_SITE_JK_MOUNTS, pkey);
   }
 
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeCompressedInt(httpd_tomcat_site);
+    out.writeCompressedInt(httpdTomcatSite);
     out.writeUTF(path);
     out.writeBoolean(mount);
   }

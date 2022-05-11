@@ -26,7 +26,7 @@ package com.aoindustries.aoserv.client.account;
 import com.aoapps.collections.IntList;
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -40,7 +40,7 @@ import java.sql.SQLException;
  */
 public final class DisableLogTable extends CachedTableIntegerKey<DisableLog> {
 
-  DisableLogTable(AOServConnector connector) {
+  DisableLogTable(AoservConnector connector) {
     super(connector, DisableLog.class);
   }
 
@@ -62,15 +62,15 @@ public final class DisableLogTable extends CachedTableIntegerKey<DisableLog> {
   ) throws IOException, SQLException {
     return connector.requestResult(
         true,
-        AoservProtocol.CommandID.ADD,
-        // Java 9: new AOServConnector.ResultRequest<>
-        new AOServConnector.ResultRequest<Integer>() {
+        AoservProtocol.CommandId.ADD,
+        // Java 9: new AoservConnector.ResultRequest<>
+        new AoservConnector.ResultRequest<Integer>() {
           private IntList invalidateList;
           private int result;
 
           @Override
           public void writeRequest(StreamableOutput out) throws IOException {
-            out.writeCompressedInt(Table.TableID.DISABLE_LOG.ordinal());
+            out.writeCompressedInt(Table.TableId.DISABLE_LOG.ordinal());
             out.writeUTF(bu.getName().toString());
             out.writeBoolean(disableReason != null);
             if (disableReason != null) {
@@ -83,7 +83,7 @@ public final class DisableLogTable extends CachedTableIntegerKey<DisableLog> {
             int code = in.readByte();
             if (code == AoservProtocol.DONE) {
               result = in.readCompressedInt();
-              invalidateList = AOServConnector.readInvalidateList(in);
+              invalidateList = AoservConnector.readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
               throw new IOException("Unexpected response code: " + code);
@@ -105,7 +105,7 @@ public final class DisableLogTable extends CachedTableIntegerKey<DisableLog> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.DISABLE_LOG;
+  public Table.TableId getTableId() {
+    return Table.TableId.DISABLE_LOG;
   }
 }

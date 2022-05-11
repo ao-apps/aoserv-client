@@ -29,7 +29,7 @@ import com.aoapps.lang.util.BufferManager;
 import com.aoapps.lang.validation.ValidationException;
 import com.aoapps.net.Email;
 import com.aoapps.net.Port;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Disablable;
@@ -67,6 +67,7 @@ import java.util.List;
  * all site types.  The site will always reference one, and only one, other
  * type of entry, indicating the type of site and providing the rest of the
  * information about the site.
+ * </p>
  *
  * @see  VirtualHost
  * @see  HttpdBind
@@ -78,11 +79,9 @@ import java.util.List;
  */
 public final class Site extends CachedObjectIntegerKey<Site> implements Disablable, Removable {
 
-  static final int
-      COLUMN_ID = 0,
-      COLUMN_AO_SERVER = 1,
-      COLUMN_PACKAGE = 4
-  ;
+  static final int COLUMN_ID = 0;
+  static final int COLUMN_AO_SERVER = 1;
+  static final int COLUMN_PACKAGE = 4;
   public static final String COLUMN_NAME_name = "name";
   public static final String COLUMN_AO_SERVER_name = "ao_server";
 
@@ -93,14 +92,14 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
    */
   public static final String DISABLED = "disabled";
 
-  private int ao_server;
+  private int aoServer;
   private String name;
-  private boolean list_first;
+  private boolean listFirst;
   private Account.Name packageName;
   private User.Name linuxAccount;
   private Group.Name linuxGroup;
   private Email serverAdmin;
-  private int disable_log;
+  private int disableLog;
   private boolean isManual;
   private String awstatsSkipFiles;
   private int phpVersion;
@@ -129,29 +128,52 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_ID: return pkey;
-      case COLUMN_AO_SERVER: return ao_server;
-      case 2: return name;
-      case 3: return list_first;
-      case COLUMN_PACKAGE: return packageName;
-      case 5: return linuxAccount;
-      case 6: return linuxGroup;
-      case 7: return serverAdmin;
-      case 8: return disable_log == -1 ? null : disable_log;
-      case 9: return isManual;
-      case 10: return awstatsSkipFiles;
-      case 11: return phpVersion == -1 ? null : phpVersion;
-      case 12: return enableCgi;
-      case 13: return enableSsi;
-      case 14: return enableHtaccess;
-      case 15: return enableIndexes;
-      case 16: return enableFollowSymlinks;
-      case 17: return enableAnonymousFtp;
-      case 18: return blockTraceTrack;
-      case 19: return blockScm;
-      case 20: return blockCoreDumps;
-      case 21: return blockEditorBackups;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_ID:
+        return pkey;
+      case COLUMN_AO_SERVER:
+        return aoServer;
+      case 2:
+        return name;
+      case 3:
+        return listFirst;
+      case COLUMN_PACKAGE:
+        return packageName;
+      case 5:
+        return linuxAccount;
+      case 6:
+        return linuxGroup;
+      case 7:
+        return serverAdmin;
+      case 8:
+        return disableLog == -1 ? null : disableLog;
+      case 9:
+        return isManual;
+      case 10:
+        return awstatsSkipFiles;
+      case 11:
+        return phpVersion == -1 ? null : phpVersion;
+      case 12:
+        return enableCgi;
+      case 13:
+        return enableSsi;
+      case 14:
+        return enableHtaccess;
+      case 15:
+        return enableIndexes;
+      case 16:
+        return enableFollowSymlinks;
+      case 17:
+        return enableAnonymousFtp;
+      case 18:
+        return blockTraceTrack;
+      case 19:
+        return blockScm;
+      case 20:
+        return blockCoreDumps;
+      case 21:
+        return blockEditorBackups;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -160,13 +182,13 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
   }
 
   public int getAoServer_server_pkey() {
-    return ao_server;
+    return aoServer;
   }
 
   public Server getLinuxServer() throws SQLException, IOException {
-    Server obj = table.getConnector().getLinux().getServer().get(ao_server);
+    Server obj = table.getConnector().getLinux().getServer().get(aoServer);
     if (obj == null) {
-      throw new SQLException("Unable to find linux.Server: " + ao_server);
+      throw new SQLException("Unable to find linux.Server: " + aoServer);
     }
     return obj;
   }
@@ -176,7 +198,7 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
   }
 
   public boolean getListFirst() {
-    return list_first;
+    return listFirst;
   }
 
   public Account.Name getPackage_name() {
@@ -204,7 +226,7 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
 
     UserServer lsa = obj.getLinuxServerAccount(getLinuxServer());
     if (lsa == null) {
-      throw new SQLException("Unable to find LinuxServerAccount: " + linuxAccount + " on " + ao_server);
+      throw new SQLException("Unable to find LinuxServerAccount: " + linuxAccount + " on " + aoServer);
     }
     return lsa;
   }
@@ -220,7 +242,7 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
     }
     GroupServer lsg = obj.getLinuxServerGroup(getLinuxServer());
     if (lsg == null) {
-      throw new SQLException("Unable to find LinuxServerGroup: " + linuxGroup + " on " + ao_server);
+      throw new SQLException("Unable to find LinuxServerGroup: " + linuxGroup + " on " + aoServer);
     }
     return lsg;
   }
@@ -230,17 +252,17 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
   }
 
   public Integer getDisableLog_pkey() {
-    return disable_log == -1 ? null : disable_log;
+    return disableLog == -1 ? null : disableLog;
   }
 
   @Override
   public DisableLog getDisableLog() throws SQLException, IOException {
-    if (disable_log == -1) {
+    if (disableLog == -1) {
       return null;
     }
-    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disable_log);
+    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disableLog);
     if (obj == null) {
-      throw new SQLException("Unable to find DisableLog: " + disable_log);
+      throw new SQLException("Unable to find DisableLog: " + disableLog);
     }
     return obj;
   }
@@ -346,16 +368,16 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
     try {
       int pos = 1;
       pkey = result.getInt(pos++);
-      ao_server = result.getInt(pos++);
+      aoServer = result.getInt(pos++);
       name = result.getString(pos++);
-      list_first = result.getBoolean(pos++);
+      listFirst = result.getBoolean(pos++);
       packageName = Account.Name.valueOf(result.getString(pos++));
       linuxAccount = User.Name.valueOf(result.getString(pos++));
       linuxGroup = Group.Name.valueOf(result.getString(pos++));
       serverAdmin = Email.valueOf(result.getString(pos++));
-      disable_log = result.getInt(pos++);
+      disableLog = result.getInt(pos++);
       if (result.wasNull()) {
-        disable_log = -1;
+        disableLog = -1;
       }
       isManual = result.getBoolean(pos++);
       awstatsSkipFiles = result.getString(pos++);
@@ -382,14 +404,14 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
       pkey = in.readCompressedInt();
-      ao_server = in.readCompressedInt();
+      aoServer = in.readCompressedInt();
       name = in.readUTF();
-      list_first = in.readBoolean();
+      listFirst = in.readBoolean();
       packageName = Account.Name.valueOf(in.readUTF()).intern();
       linuxAccount = User.Name.valueOf(in.readUTF()).intern();
       linuxGroup = Group.Name.valueOf(in.readUTF()).intern();
       serverAdmin = Email.valueOf(in.readUTF());
-      disable_log = in.readCompressedInt();
+      disableLog = in.readCompressedInt();
       isManual = in.readBoolean();
       awstatsSkipFiles = in.readNullUTF();
       phpVersion = in.readCompressedInt();
@@ -411,9 +433,9 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeCompressedInt(ao_server);
+    out.writeCompressedInt(aoServer);
     out.writeUTF(name);
-    out.writeBoolean(list_first);
+    out.writeBoolean(listFirst);
     out.writeUTF(packageName.toString());
     out.writeUTF(linuxAccount.toString());
     out.writeUTF(linuxGroup.toString());
@@ -431,7 +453,7 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
       out.writeShort(0);
       out.writeShort(7);
     }
-    out.writeCompressedInt(disable_log);
+    out.writeCompressedInt(disableLog);
     out.writeBoolean(isManual);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_129) >= 0) {
       out.writeNullUTF(awstatsSkipFiles);
@@ -480,7 +502,7 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
 
   @Override
   public boolean canDisable() throws IOException, SQLException {
-    if (disable_log != -1) {
+    if (disableLog != -1) {
       return false;
     }
     for (VirtualHost hsb : getHttpdSiteBinds()) {
@@ -500,8 +522,7 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
       return
           dl.canEnable()
               && !getPackage().isDisabled()
-              && !getLinuxServerAccount().isDisabled()
-      ;
+              && !getLinuxServerAccount().isDisabled();
     }
   }
 
@@ -512,12 +533,12 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
 
   @Override
   public void disable(DisableLog dl) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.DISABLE, Table.TableID.HTTPD_SITES, dl.getPkey(), pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.DISABLE, Table.TableId.HTTPD_SITES, dl.getPkey(), pkey);
   }
 
   @Override
   public void enable() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.ENABLE, Table.TableID.HTTPD_SITES, pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.ENABLE, Table.TableId.HTTPD_SITES, pkey);
   }
 
   /**
@@ -536,7 +557,7 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
 
   @Override
   public boolean isDisabled() {
-    return disable_log != -1;
+    return disableLog != -1;
   }
 
   public List<Location> getHttpdSiteAuthenticatedLocations() throws IOException, SQLException {
@@ -559,7 +580,7 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
     return table.getConnector().getWeb_tomcat().getSite().get(pkey);
   }
 
-  public VirtualHostName getPrimaryHttpdSiteURL() throws SQLException, IOException {
+  public VirtualHostName getPrimaryVirtualHostName() throws SQLException, IOException {
     List<VirtualHost> binds = getHttpdSiteBinds();
     if (binds.isEmpty()) {
       return null;
@@ -576,7 +597,7 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
             AppProtocol.HTTPS.equals(nb.getAppProtocol().getProtocol())
                 && nb.getPort().equals(httpsPort)
         ) {
-          return bind.getPrimaryHttpdSiteURL();
+          return bind.getPrimaryVirtualHostName();
         }
       }
     }
@@ -588,7 +609,7 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
             AppProtocol.HTTP.equals(nb.getAppProtocol().getProtocol())
                 && nb.getPort().equals(httpPort)
         ) {
-          return bind.getPrimaryHttpdSiteURL();
+          return bind.getPrimaryVirtualHostName();
         }
       }
     }
@@ -597,7 +618,7 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
       if (bind.getName() == null) {
         Bind nb = bind.getHttpdBind().getNetBind();
         if (AppProtocol.HTTPS.equals(nb.getAppProtocol().getProtocol())) {
-          return bind.getPrimaryHttpdSiteURL();
+          return bind.getPrimaryVirtualHostName();
         }
       }
     }
@@ -606,7 +627,7 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
       if (bind.getName() == null) {
         Bind nb = bind.getHttpdBind().getNetBind();
         if (AppProtocol.HTTP.equals(nb.getAppProtocol().getProtocol())) {
-          return bind.getPrimaryHttpdSiteURL();
+          return bind.getPrimaryVirtualHostName();
         }
       }
     }
@@ -617,7 +638,7 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
           AppProtocol.HTTPS.equals(nb.getAppProtocol().getProtocol())
               && nb.getPort().equals(httpsPort)
       ) {
-        return bind.getPrimaryHttpdSiteURL();
+        return bind.getPrimaryVirtualHostName();
       }
     }
     // Find first HTTP on default port, if any
@@ -627,34 +648,34 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
           AppProtocol.HTTP.equals(nb.getAppProtocol().getProtocol())
               && nb.getPort().equals(httpPort)
       ) {
-        return bind.getPrimaryHttpdSiteURL();
+        return bind.getPrimaryVirtualHostName();
       }
     }
     // Find first HTTPS on any port, if any
     for (VirtualHost bind : binds) {
       Bind nb = bind.getHttpdBind().getNetBind();
       if (AppProtocol.HTTPS.equals(nb.getAppProtocol().getProtocol())) {
-        return bind.getPrimaryHttpdSiteURL();
+        return bind.getPrimaryVirtualHostName();
       }
     }
     // Find first HTTP on any port, if any
     for (VirtualHost bind : binds) {
       Bind nb = bind.getHttpdBind().getNetBind();
       if (AppProtocol.HTTP.equals(nb.getAppProtocol().getProtocol())) {
-        return bind.getPrimaryHttpdSiteURL();
+        return bind.getPrimaryVirtualHostName();
       }
     }
     // Take first without any regard for protocols and ports
-    return binds.get(0).getPrimaryHttpdSiteURL();
+    return binds.get(0).getPrimaryVirtualHostName();
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.HTTPD_SITES;
+  public Table.TableId getTableId() {
+    return Table.TableId.HTTPD_SITES;
   }
 
   //public void initializePasswdFile(String username, String password) {
-  //    table.getConnector().requestUpdate(AOServProtocol.INITIALIZE_HTTPD_SITE_PASSWD_FILE, pkey, username, UnixCrypt.crypt(username, password));
+  //    table.getConnector().requestUpdate(AoservProtocol.INITIALIZE_HTTPD_SITE_PASSWD_FILE, pkey, username, UnixCrypt.crypt(username, password));
   //}
 
   /**
@@ -719,59 +740,59 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
 
   @Override
   public void remove() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.REMOVE, Table.TableID.HTTPD_SITES, pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.REMOVE, Table.TableId.HTTPD_SITES, pkey);
   }
 
   public void setIsManual(boolean isManual) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_HTTPD_SITE_IS_MANUAL, pkey, isManual);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_HTTPD_SITE_IS_MANUAL, pkey, isManual);
   }
 
   public void setServerAdmin(Email address) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_HTTPD_SITE_SERVER_ADMIN, pkey, address);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_HTTPD_SITE_SERVER_ADMIN, pkey, address);
   }
 
   public void setPhpVersion(SoftwareVersion phpVersion) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_HTTPD_SITE_PHP_VERSION, pkey, phpVersion == null ? -1 : phpVersion.getPkey());
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_HTTPD_SITE_PHP_VERSION, pkey, phpVersion == null ? -1 : phpVersion.getPkey());
   }
 
   public void setEnableCgi(boolean enableCgi) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_HTTPD_SITE_ENABLE_CGI, pkey, enableCgi);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_HTTPD_SITE_ENABLE_CGI, pkey, enableCgi);
   }
 
   public void setEnableSsi(boolean enableSsi) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_HTTPD_SITE_ENABLE_SSI, pkey, enableSsi);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_HTTPD_SITE_ENABLE_SSI, pkey, enableSsi);
   }
 
   public void setEnableHtaccess(boolean enableHtaccess) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_HTTPD_SITE_ENABLE_HTACCESS, pkey, enableHtaccess);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_HTTPD_SITE_ENABLE_HTACCESS, pkey, enableHtaccess);
   }
 
   public void setEnableIndexes(boolean enableIndexes) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_HTTPD_SITE_ENABLE_INDEXES, pkey, enableIndexes);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_HTTPD_SITE_ENABLE_INDEXES, pkey, enableIndexes);
   }
 
   public void setEnableFollowSymlinks(boolean enableFollowSymlinks) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_HTTPD_SITE_ENABLE_FOLLOW_SYMLINKS, pkey, enableFollowSymlinks);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_HTTPD_SITE_ENABLE_FOLLOW_SYMLINKS, pkey, enableFollowSymlinks);
   }
 
   public void setEnableAnonymousFtp(boolean enableAnonymousFtp) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_HTTPD_SITE_ENABLE_ANONYMOUS_FTP, pkey, enableAnonymousFtp);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_HTTPD_SITE_ENABLE_ANONYMOUS_FTP, pkey, enableAnonymousFtp);
   }
 
   public void setBlockTraceTrack(boolean blockTraceTrack) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_HTTPD_SITE_BLOCK_TRACE_TRACK, pkey, blockTraceTrack);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_HTTPD_SITE_BLOCK_TRACE_TRACK, pkey, blockTraceTrack);
   }
 
   public void setBlockScm(boolean blockScm) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_HTTPD_SITE_BLOCK_SCM, pkey, blockScm);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_HTTPD_SITE_BLOCK_SCM, pkey, blockScm);
   }
 
   public void setBlockCoreDumps(boolean blockCoreDumps) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_HTTPD_SITE_BLOCK_CORE_DUMPS, pkey, blockCoreDumps);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_HTTPD_SITE_BLOCK_CORE_DUMPS, pkey, blockCoreDumps);
   }
 
   public void setBlockEditorBackups(boolean blockEditorBackups) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_HTTPD_SITE_BLOCK_EDITOR_BACKUPS, pkey, blockEditorBackups);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_HTTPD_SITE_BLOCK_EDITOR_BACKUPS, pkey, blockEditorBackups);
   }
 
   @Override
@@ -779,11 +800,11 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
     return name + " on " + getLinuxServer().getHostname();
   }
 
-  public void getAWStatsFile(final String path, final String queryString, final OutputStream out) throws IOException, SQLException {
+  public void getAwstatsFile(final String path, final String queryString, final OutputStream out) throws IOException, SQLException {
     table.getConnector().requestUpdate(
         false,
-        AoservProtocol.CommandID.GET_AWSTATS_FILE,
-        new AOServConnector.UpdateRequest() {
+        AoservProtocol.CommandId.GET_AWSTATS_FILE,
+        new AoservConnector.UpdateRequest() {
           @Override
           public void writeRequest(StreamableOutput masterOut) throws IOException {
             masterOut.writeCompressedInt(pkey);

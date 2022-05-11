@@ -24,9 +24,9 @@
 package com.aoindustries.aoserv.client.email;
 
 import com.aoapps.hodgepodge.io.TerminalWriter;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -43,7 +43,7 @@ import java.util.List;
  */
 public final class BlackholeAddressTable extends CachedTableIntegerKey<BlackholeAddress> {
 
-  BlackholeAddressTable(AOServConnector connector) {
+  BlackholeAddressTable(AoservConnector connector) {
     super(connector, BlackholeAddress.class);
   }
 
@@ -65,13 +65,13 @@ public final class BlackholeAddressTable extends CachedTableIntegerKey<Blackhole
   }
 
   public List<BlackholeAddress> getBlackholeEmailAddresses(Server ao) throws IOException, SQLException {
-    int aoPKey = ao.getPkey();
+    int aoPkey = ao.getPkey();
     List<BlackholeAddress> cached = getRows();
     int len = cached.size();
     List<BlackholeAddress> matches = new ArrayList<>(len);
     for (int c = 0; c < len; c++) {
       BlackholeAddress blackhole = cached.get(c);
-      if (blackhole.getEmailAddress().getDomain().getLinuxServer_host_id() == aoPKey) {
+      if (blackhole.getEmailAddress().getDomain().getLinuxServer_host_id() == aoPkey) {
         matches.add(blackhole);
       }
     }
@@ -79,15 +79,15 @@ public final class BlackholeAddressTable extends CachedTableIntegerKey<Blackhole
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.BLACKHOLE_EMAIL_ADDRESSES;
+  public Table.TableId getTableId() {
+    return Table.TableId.BLACKHOLE_EMAIL_ADDRESSES;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.REMOVE_BLACKHOLE_EMAIL_ADDRESS)) {
-      if (AOSH.checkParamCount(Command.REMOVE_BLACKHOLE_EMAIL_ADDRESS, args, 2, err)) {
+      if (Aosh.checkParamCount(Command.REMOVE_BLACKHOLE_EMAIL_ADDRESS, args, 2, err)) {
         String addr = args[1];
         int pos = addr.indexOf('@');
         if (pos == -1) {
@@ -95,9 +95,9 @@ public final class BlackholeAddressTable extends CachedTableIntegerKey<Blackhole
           err.println(addr);
           err.flush();
         } else {
-          connector.getSimpleAOClient().removeBlackholeEmailAddress(
+          connector.getSimpleClient().removeBlackholeEmailAddress(
               addr.substring(0, pos),
-              AOSH.parseDomainName(addr.substring(pos + 1), "address"),
+              Aosh.parseDomainName(addr.substring(pos + 1), "address"),
               args[2]
           );
         }

@@ -42,10 +42,8 @@ import java.sql.SQLException;
  */
 public final class AdministratorPermission extends CachedObjectIntegerKey<AdministratorPermission> {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_USERNAME = 1
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_USERNAME = 1;
   static final String COLUMN_USERNAME_name = "username";
   static final String COLUMN_PERMISSION_name = "permission";
 
@@ -66,10 +64,14 @@ public final class AdministratorPermission extends CachedObjectIntegerKey<Admini
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_USERNAME: return username;
-      case 2: return permission;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_USERNAME:
+        return username;
+      case 2:
+        return permission;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -85,21 +87,21 @@ public final class AdministratorPermission extends CachedObjectIntegerKey<Admini
     return obj;
   }
 
-  public String getAOServPermission_name() {
+  public String getAoservPermission_name() {
     return permission;
   }
 
-  public Permission getAOServPermission() throws SQLException, IOException {
+  public Permission getAoservPermission() throws SQLException, IOException {
     Permission ap = table.getConnector().getMaster().getPermission().get(permission);
     if (ap == null) {
-      throw new SQLException("Unable to find AOServPermission: " + permission);
+      throw new SQLException("Unable to find AoservPermission: " + permission);
     }
     return ap;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.BUSINESS_ADMINISTRATOR_PERMISSIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.BUSINESS_ADMINISTRATOR_PERMISSIONS;
   }
 
   @Override

@@ -37,14 +37,15 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * Tests various aspects of the AOServConnector class.
- *
+ * Tests various aspects of the AoservConnector class.
+ * <p>
  * TODO: This test does not run without a master setup.
+ * </p>
  *
  * @author  AO Industries, Inc.
  */
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
-public class AOServConnectorTODO extends TestCase {
+public class AoservConnectorTODO extends TestCase {
 
   public static final User.Name REGULAR_USER_USERNAME;
 
@@ -63,21 +64,21 @@ public class AOServConnectorTODO extends TestCase {
    * filter modes.  Regular user (testuser), unrestricted master (aoweb_app), and a single server
    * (mandriva20060_svr).
    */
-  static List<AOServConnector> getTestConnectors() throws ConfigurationException {
+  static List<AoservConnector> getTestConnectors() throws ConfigurationException {
     try {
-      List<AOServConnector> conns = new ArrayList<>();
-      conns.add(AOServConnector.getConnector(User.Name.valueOf("aoweb_app"), "changeme"));
-      conns.add(AOServConnector.getConnector(REGULAR_USER_USERNAME, REGULAR_USER_PASSWORD));
-      conns.add(AOServConnector.getConnector(User.Name.valueOf("mandriva20060_svr"), "Ogrol3Veve5"));
+      List<AoservConnector> conns = new ArrayList<>();
+      conns.add(AoservConnector.getConnector(User.Name.valueOf("aoweb_app"), "changeme"));
+      conns.add(AoservConnector.getConnector(REGULAR_USER_USERNAME, REGULAR_USER_PASSWORD));
+      conns.add(AoservConnector.getConnector(User.Name.valueOf("mandriva20060_svr"), "Ogrol3Veve5"));
       return conns;
     } catch (ValidationException e) {
       throw new ConfigurationException(e);
     }
   }
 
-  private List<AOServConnector> conns;
+  private List<AoservConnector> conns;
 
-  public AOServConnectorTODO(String testName) {
+  public AoservConnectorTODO(String testName) {
     super(testName);
   }
 
@@ -92,17 +93,17 @@ public class AOServConnectorTODO extends TestCase {
   }
 
   public static Test suite() {
-    TestSuite suite = new TestSuite(AOServConnectorTODO.class);
+    TestSuite suite = new TestSuite(AoservConnectorTODO.class);
 
     return suite;
   }
 
   /**
-   * Test of clearCaches method, of class com.aoindustries.aoserv.client.AOServConnector.
+   * Test of clearCaches method, of class com.aoindustries.aoserv.client.AoservConnector.
    */
   public void testClearCaches() throws Exception {
     System.out.println("Testing clearCaches");
-    for (AOServConnector conn : conns) {
+    for (AoservConnector conn : conns) {
       User.Name username = conn.getCurrentAdministrator().getKey();
       System.out.println("    " + username);
       for (int c = 0; c < 1000; c++) {
@@ -112,11 +113,11 @@ public class AOServConnectorTODO extends TestCase {
   }
 
   /**
-   * Test of executeCommand method, of class com.aoindustries.aoserv.client.AOServConnector.
+   * Test of executeCommand method, of class com.aoindustries.aoserv.client.AoservConnector.
    */
   public void testExecuteCommand() throws Exception {
     System.out.println("Testing executeCommand");
-    for (AOServConnector conn : conns) {
+    for (AoservConnector conn : conns) {
       User.Name username = conn.getCurrentAdministrator().getKey();
       System.out.println("    " + username);
       assertEquals(username + "\n", conn.executeCommand(new String[]{"whoami"}));
@@ -124,15 +125,15 @@ public class AOServConnectorTODO extends TestCase {
   }
 
   /**
-   * Test of getConnectorId method, of class com.aoindustries.aoserv.client.AOServConnector.
+   * Test of getConnectorId method, of class com.aoindustries.aoserv.client.AoservConnector.
    */
   public void testGetConnectorId() throws Exception {
     System.out.println("Testing getConnectorId");
-    for (AOServConnector conn : conns) {
+    for (AoservConnector conn : conns) {
       User.Name username = conn.getCurrentAdministrator().getKey();
       System.out.println("    " + username);
       Identifier connectorId = conn.getConnectorId();
-      for (AOServConnector conn2 : conns) {
+      for (AoservConnector conn2 : conns) {
         Identifier connectorId2 = conn2.getConnectorId();
         if (conn == conn2) {
           // Must have same connector ID
@@ -146,11 +147,11 @@ public class AOServConnectorTODO extends TestCase {
   }
 
   /**
-   * Test of getHostname method, of class com.aoindustries.aoserv.client.AOServConnector.
+   * Test of getHostname method, of class com.aoindustries.aoserv.client.AoservConnector.
    */
   public void testGetHostname() throws Exception {
     System.out.println("Testing getHostname");
-    for (AOServConnector conn : conns) {
+    for (AoservConnector conn : conns) {
       User.Name username = conn.getCurrentAdministrator().getKey();
       System.out.println("    " + username);
       assertEquals("192.168.1.129", conn.getHostname());
@@ -158,11 +159,11 @@ public class AOServConnectorTODO extends TestCase {
   }
 
   /**
-   * Test of getPort method, of class com.aoindustries.aoserv.client.AOServConnector.
+   * Test of getPort method, of class com.aoindustries.aoserv.client.AoservConnector.
    */
   public void testGetPort() throws Exception {
     System.out.println("Testing getPort");
-    for (AOServConnector conn : conns) {
+    for (AoservConnector conn : conns) {
       User.Name username = conn.getCurrentAdministrator().getKey();
       System.out.println("    " + username);
       assertEquals(4582, conn.getPort());
@@ -170,43 +171,43 @@ public class AOServConnectorTODO extends TestCase {
   }
 
   /**
-   * Test of getProtocol method, of class com.aoindustries.aoserv.client.AOServConnector.
+   * Test of getProtocol method, of class com.aoindustries.aoserv.client.AoservConnector.
    */
   public void testGetProtocol() throws Exception {
     System.out.println("Testing getProtocol");
-    for (AOServConnector conn : conns) {
+    for (AoservConnector conn : conns) {
       User.Name username = conn.getCurrentAdministrator().getKey();
       System.out.println("    " + username);
-      assertEquals(TCPConnector.TCP_PROTOCOL, conn.getProtocol());
+      assertEquals(TcpConnector.TCP_PROTOCOL, conn.getProtocol());
     }
   }
 
   private void doTestRandom(Random random) throws Exception {
-    for (AOServConnector conn : conns) {
+    for (AoservConnector conn : conns) {
       User.Name username = conn.getCurrentAdministrator().getKey();
       System.out.println("    " + username);
-      final int NUM_BYTES = 1000000;
-      final int CHECKPOINTS = 100000;
-      final int MAX_DEVIATION_PERCENT = 10;
-      final int MINIMUM = NUM_BYTES / 256 * (100 - MAX_DEVIATION_PERCENT) / 100;
-      final int MAXIMUM = NUM_BYTES / 256 * (100 + MAX_DEVIATION_PERCENT) / 100;
+      final int numBytes = 1000000;
+      final int checkpoints = 100000;
+      final int maxDeviationPercent = 10;
+      final int minimum = numBytes / 256 * (100 - maxDeviationPercent) / 100;
+      final int maximum = numBytes / 256 * (100 + maxDeviationPercent) / 100;
       assertNotNull(random);
       int[] counts = new int[256];
       byte[] byteArray = new byte[1];
-      for (int c = 0; c < NUM_BYTES; ) {
+      for (int c = 0; c < numBytes; ) {
         random.nextBytes(byteArray);
         byte randByte = byteArray[0];
         counts[((int) randByte) & 255]++;
         c++;
-        if ((c % CHECKPOINTS) == 0) {
-          System.out.println("        Completed " + c + " of " + NUM_BYTES);
+        if ((c % checkpoints) == 0) {
+          System.out.println("        Completed " + c + " of " + numBytes);
         }
       }
-      System.out.print("        Analyzing distribution for more than " + MAX_DEVIATION_PERCENT + "% devation: ");
+      System.out.print("        Analyzing distribution for more than " + maxDeviationPercent + "% devation: ");
       for (int c = 0; c < 256; c++) {
         int count = counts[c];
-        if (count < MINIMUM || count > MAXIMUM) {
-          fail("Random distribution deviation greater than " + MAX_DEVIATION_PERCENT + "% for value " + c + ".  Acceptable range " + MINIMUM + " to " + MAXIMUM + ", got " + count);
+        if (count < minimum || count > maximum) {
+          fail("Random distribution deviation greater than " + maxDeviationPercent + "% for value " + c + ".  Acceptable range " + minimum + " to " + maximum + ", got " + count);
         }
       }
       System.out.println("        OK");
@@ -214,27 +215,27 @@ public class AOServConnectorTODO extends TestCase {
   }
 
   /**
-   * Test of getSecureRandom method, of class com.aoindustries.aoserv.client.AOServConnector.
+   * Test of getSecureRandom method, of class com.aoindustries.aoserv.client.AoservConnector.
    */
   public void testGetSecureRandom() throws Exception {
     System.out.println("Testing getSecureRandom");
-    doTestRandom(AOServConnector.getSecureRandom());
+    doTestRandom(AoservConnector.getSecureRandom());
   }
 
   /**
-   * Test of getFastRandom method, of class com.aoindustries.aoserv.client.AOServConnector.
+   * Test of getFastRandom method, of class com.aoindustries.aoserv.client.AoservConnector.
    */
   public void testGetFastRandom() throws Exception {
     System.out.println("Testing getFastRandom");
-    doTestRandom(AOServConnector.getFastRandom());
+    doTestRandom(AoservConnector.getFastRandom());
   }
 
   /**
-   * Test of isSecure method, of class com.aoindustries.aoserv.client.AOServConnector.
+   * Test of isSecure method, of class com.aoindustries.aoserv.client.AoservConnector.
    */
   public void testIsSecure() throws Exception {
     System.out.println("Testing isSecure");
-    for (AOServConnector conn : conns) {
+    for (AoservConnector conn : conns) {
       User.Name username = conn.getCurrentAdministrator().getKey();
       System.out.println("    " + username);
       assertTrue(conn.isSecure());
@@ -242,11 +243,11 @@ public class AOServConnectorTODO extends TestCase {
   }
 
   /**
-   * Test of ping method, of class com.aoindustries.aoserv.client.AOServConnector.
+   * Test of ping method, of class com.aoindustries.aoserv.client.AoservConnector.
    */
   public void testPing() throws Exception {
     System.out.print("Testing ping: ");
-    for (AOServConnector conn : conns) {
+    for (AoservConnector conn : conns) {
       User.Name username = conn.getCurrentAdministrator().getKey();
       System.out.println("    " + username);
       int totalTime = 0;
@@ -263,16 +264,16 @@ public class AOServConnectorTODO extends TestCase {
   }
 
   /**
-   * Test of getConnection method, of class com.aoindustries.aoserv.client.AOServConnector.
+   * Test of getConnection method, of class com.aoindustries.aoserv.client.AoservConnector.
    */
   @SuppressWarnings("try")
   public void testGetConnection() throws Exception {
     System.out.println("Testing getConnection and close");
-    for (AOServConnector conn : conns) {
+    for (AoservConnector conn : conns) {
       User.Name username = conn.getCurrentAdministrator().getKey();
       System.out.println("    " + username);
       for (int c = 0; c < 1000; c++) {
-        try (AOServConnection connection = conn.getConnection(1)) {
+        try (AoservConnection connection = conn.getConnection(1)) {
           // Do nothing
         }
       }
@@ -285,25 +286,25 @@ public class AOServConnectorTODO extends TestCase {
   @SuppressWarnings("rawtypes")
   public void testGetTable() throws Exception {
     System.out.println("Testing getTable and getTables");
-    for (AOServConnector conn : conns) {
+    for (AoservConnector conn : conns) {
       User.Name username = conn.getCurrentAdministrator().getKey();
       System.out.println("    " + username);
-      int numTables = Table.TableID.values().length;
-      AOServTable[] tables = new AOServTable[numTables];
+      int numTables = Table.TableId.values().length;
+      AoservTable[] tables = new AoservTable[numTables];
       for (int c = 0; c < numTables; c++) {
-        AOServTable table = tables[c] = conn.getTable(c);
+        AoservTable table = tables[c] = conn.getTable(c);
         // Make sure index matches table ID
         // AOServClient version 1.30 had a bug where two tables were swapped
         if (
             AoservProtocol.Version.CURRENT_VERSION == AoservProtocol.Version.VERSION_1_30
                 && (
-                c == Table.TableID.AOSERV_PERMISSIONS.ordinal()
-                    || c == Table.TableID.AOSERV_PROTOCOLS.ordinal()
+                c == Table.TableId.AOSERV_PERMISSIONS.ordinal()
+                    || c == Table.TableId.AOSERV_PROTOCOLS.ordinal()
             )
         ) {
-          System.out.println("        Skipping version 1.30 bug where aoserv_protocols and aoserv_permissions were swapped in AOServConnector table array");
+          System.out.println("        Skipping version 1.30 bug where aoserv_protocols and aoserv_permissions were swapped in AoservConnector table array");
         } else {
-          assertEquals("AOServConnector.tables[" + c + "] and AOServTable(" + table.getClass().getName() + ").getTableID()=" + table.getTableID(), table.getTableID().ordinal(), c);
+          assertEquals("AoservConnector.tables[" + c + "] and AoservTable(" + table.getClass().getName() + ").getTableId()=" + table.getTableId(), table.getTableId().ordinal(), c);
         }
         if (c > 0) {
           // Make sure not a duplicate
@@ -312,7 +313,7 @@ public class AOServConnectorTODO extends TestCase {
           }
         }
       }
-      List<? extends AOServTable<?, ?>> allTables = conn.getTables();
+      List<? extends AoservTable<?, ?>> allTables = conn.getTables();
       assertEquals(tables.length, allTables.size());
       for (int c = 0; c < numTables; c++) {
         assertSame(tables[c], allTables.get(c));

@@ -26,7 +26,7 @@ package com.aoindustries.aoserv.client.linux;
 import com.aoindustries.aoserv.client.GlobalObject;
 
 /**
- * An object that is cached and uses a {@link PosixPath} as its primary key,
+ * An object that is cached and uses a {@link PosixPath} as its primary key.
  *
  * @author  AO Industries, Inc.
  */
@@ -50,8 +50,7 @@ public abstract class GlobalObjectPosixPathKey<T extends GlobalObjectPosixPathKe
     return
         obj != null
             && obj.getClass() == getClass()
-            && ((GlobalObjectPosixPathKey) obj).pkey.equals(pkey)
-    ;
+            && ((GlobalObjectPosixPathKey) obj).pkey.equals(pkey);
   }
 
   @Override

@@ -27,7 +27,7 @@ import com.aoapps.hodgepodge.io.TerminalWriter;
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.lang.util.InternUtils;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalObjectStringKey;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -36,10 +36,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Information about every command in the {@link AOSH} is
+ * Information about every command in the {@link Aosh} is
  * available through the use of {@link Command}.
  *
- * @see AOSH
+ * @see Aosh
  *
  * @author  AO Industries, Inc.
  */
@@ -49,9 +49,9 @@ public final class Command extends GlobalObjectStringKey<Command> {
   static final String COLUMN_COMMAND_name = "command";
 
   /**
-   * All of the commands for the <code>AOSH</code>.
+   * All of the commands for the <code>Aosh</code>.
    *
-   * @see  AOSH
+   * @see  Aosh
    */
   public static final String
       ADD_BACKUP_SERVER = "add_backup_server",
@@ -401,8 +401,7 @@ public final class Command extends GlobalObjectStringKey<Command> {
       WAIT_FOR_POSTGRES_DATABASE_REBUILD = "wait_for_postgres_database_rebuild",
       WAIT_FOR_POSTGRES_SERVER_REBUILD = "wait_for_postgres_server_rebuild",
       WAIT_FOR_POSTGRES_USER_REBUILD = "wait_for_postgres_user_rebuild",
-      WHOAMI = "whoami"
-  ;
+      WHOAMI = "whoami";
 
   private String sinceVersion;
   private String lastVersion;
@@ -424,13 +423,20 @@ public final class Command extends GlobalObjectStringKey<Command> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_COMMAND: return pkey;
-      case 1: return sinceVersion;
-      case 2: return lastVersion;
-      case 3: return table;
-      case 4: return description;
-      case 5: return syntax;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_COMMAND:
+        return pkey;
+      case 1:
+        return sinceVersion;
+      case 2:
+        return lastVersion;
+      case 3:
+        return table;
+      case 4:
+        return description;
+      case 5:
+        return syntax;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -442,10 +448,10 @@ public final class Command extends GlobalObjectStringKey<Command> {
     return sinceVersion;
   }
 
-  public AoservProtocol getSinceVersion(AOServConnector connector) throws SQLException, IOException {
+  public AoservProtocol getSinceVersion(AoservConnector connector) throws SQLException, IOException {
     AoservProtocol obj = connector.getSchema().getAoservProtocol().get(sinceVersion);
     if (obj == null) {
-      throw new SQLException("Unable to find AOServProtocol: " + sinceVersion);
+      throw new SQLException("Unable to find AoservProtocol: " + sinceVersion);
     }
     return obj;
   }
@@ -454,13 +460,13 @@ public final class Command extends GlobalObjectStringKey<Command> {
     return lastVersion;
   }
 
-  public AoservProtocol getLastVersion(AOServConnector connector) throws SQLException, IOException {
+  public AoservProtocol getLastVersion(AoservConnector connector) throws SQLException, IOException {
     if (lastVersion == null) {
       return null;
     }
     AoservProtocol obj = connector.getSchema().getAoservProtocol().get(lastVersion);
     if (obj == null) {
-      throw new SQLException("Unable to find AOServProtocol: " + lastVersion);
+      throw new SQLException("Unable to find AoservProtocol: " + lastVersion);
     }
     return obj;
   }
@@ -469,7 +475,7 @@ public final class Command extends GlobalObjectStringKey<Command> {
     return table;
   }
 
-  public Table getTable(AOServConnector connector) throws SQLException, IOException {
+  public Table getTable(AoservConnector connector) throws SQLException, IOException {
     if (table == null) {
       return null;
     }
@@ -489,8 +495,8 @@ public final class Command extends GlobalObjectStringKey<Command> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.AOSH_COMMANDS;
+  public Table.TableId getTableId() {
+    return Table.TableId.AOSH_COMMANDS;
   }
 
   @Override
@@ -537,35 +543,35 @@ public final class Command extends GlobalObjectStringKey<Command> {
   }
 
   public void printCommandHelp(TerminalWriter out) throws IOException {
-    final String INDENT = "       ";
+    final String indent = "       ";
     out.println();
     out.boldOn();
     out.println("NAME");
     out.attributesOff();
-    out.print(INDENT);
+    out.print(indent);
     out.print(pkey);
     out.print(" - ");
-    printNoHTML(out, description);
+    printNoHtml(out, description);
     out.println();
     out.println();
     out.boldOn();
     out.println("SYNOPSIS");
     out.attributesOff();
-    out.print(INDENT);
+    out.print(indent);
     out.print(pkey);
     if (!syntax.isEmpty()) {
       out.print(' ');
-      printNoHTML(out, syntax, INDENT.length() + pkey.length() + 1);
+      printNoHtml(out, syntax, indent.length() + pkey.length() + 1);
     }
     out.println();
     out.println();
   }
 
-  public static void printNoHTML(TerminalWriter out, String s) {
-    printNoHTML(out, s, 0);
+  public static void printNoHtml(TerminalWriter out, String s) {
+    printNoHtml(out, s, 0);
   }
 
-  public static void printNoHTML(TerminalWriter out, String s, int newlineIndent) {
+  public static void printNoHtml(TerminalWriter out, String s, int newlineIndent) {
     if (s == null) {
       out.print("null");
     } else {

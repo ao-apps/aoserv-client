@@ -24,7 +24,7 @@
 package com.aoindustries.aoserv.client;
 
 /**
- * An object that is cached and uses an int as its primary key,
+ * An object that is cached and uses an int as its primary key.
  *
  * @author  AO Industries, Inc.
  */
@@ -48,8 +48,7 @@ public abstract class CachedObjectStringKey<V extends CachedObjectStringKey<V>> 
     return
         obj != null
             && obj.getClass() == getClass()
-            && ((CachedObjectStringKey) obj).pkey.equals(pkey)
-    ;
+            && ((CachedObjectStringKey) obj).pkey.equals(pkey);
   }
 
   @Override

@@ -32,7 +32,7 @@ import com.aoapps.lang.validation.ValidationException;
 import com.aoapps.net.HostAddress;
 import com.aoapps.net.InetAddress;
 import com.aoapps.net.Port;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.linux.LinuxId;
 import com.aoindustries.aoserv.client.linux.Server;
@@ -58,14 +58,14 @@ public final class FileReplication extends CachedObjectIntegerKey<FileReplicatio
   static final String COLUMN_BACKUP_PARTITION_name = "backup_partition";
 
   private int server;
-  private int backup_partition;
-  private Long max_bit_rate;
-  private boolean use_compression;
+  private int backupPartition;
+  private Long maxBitRate;
+  private boolean useCompression;
   private short retention;
-  private HostAddress connect_address;
-  private InetAddress connect_from;
+  private HostAddress connectAddress;
+  private InetAddress connectFrom;
   private boolean enabled;
-  private LinuxId quota_gid;
+  private LinuxId quotaGid;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -84,11 +84,11 @@ public final class FileReplication extends CachedObjectIntegerKey<FileReplicatio
 
   @Override
   public Long getBitRate() {
-    return max_bit_rate;
+    return maxBitRate;
   }
 
   public void setBitRate(Long bitRate) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_FAILOVER_FILE_REPLICATION_BIT_RATE, pkey, bitRate == null ? -1 : bitRate);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_FAILOVER_FILE_REPLICATION_BIT_RATE, pkey, bitRate == null ? -1 : bitRate);
   }
 
   @Override
@@ -99,17 +99,28 @@ public final class FileReplication extends CachedObjectIntegerKey<FileReplicatio
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_SERVER: return server;
-      case 2: return backup_partition;
-      case 3: return max_bit_rate;
-      case 4: return use_compression;
-      case 5: return retention;
-      case 6: return connect_address;
-      case 7: return connect_from;
-      case 8: return enabled;
-      case 9: return quota_gid;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_SERVER:
+        return server;
+      case 2:
+        return backupPartition;
+      case 3:
+        return maxBitRate;
+      case 4:
+        return useCompression;
+      case 5:
+        return retention;
+      case 6:
+        return connectAddress;
+      case 7:
+        return connectFrom;
+      case 8:
+        return enabled;
+      case 9:
+        return quotaGid;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -129,7 +140,7 @@ public final class FileReplication extends CachedObjectIntegerKey<FileReplicatio
    * May be filtered.
    */
   public BackupPartition getBackupPartition() throws SQLException, IOException {
-    return table.getConnector().getBackup().getBackupPartition().get(backup_partition);
+    return table.getConnector().getBackup().getBackupPartition().get(backupPartition);
   }
 
   /**
@@ -141,12 +152,12 @@ public final class FileReplication extends CachedObjectIntegerKey<FileReplicatio
     return table.getConnector().getBackup().getFileReplicationLog().getFailoverFileLogs(this, maxRows);
   }
 
-  public List<MysqlReplication> getFailoverMySQLReplications() throws IOException, SQLException {
-    return table.getConnector().getBackup().getMysqlReplication().getFailoverMySQLReplications(this);
+  public List<MysqlReplication> getFailoverMysqlReplications() throws IOException, SQLException {
+    return table.getConnector().getBackup().getMysqlReplication().getFailoverMysqlReplications(this);
   }
 
   public boolean getUseCompression() {
-    return use_compression;
+    return useCompression;
   }
 
   public BackupRetention getRetention() throws SQLException, IOException {
@@ -162,7 +173,7 @@ public final class FileReplication extends CachedObjectIntegerKey<FileReplicatio
    * a replication to be specifically sent through a gigabit connection or alternate route.
    */
   public HostAddress getConnectAddress() {
-    return connect_address;
+    return connectAddress;
   }
 
   /**
@@ -170,7 +181,7 @@ public final class FileReplication extends CachedObjectIntegerKey<FileReplicatio
    * allows a replication to be specifically sent through a gigabit connection or alternate route.
    */
   public InetAddress getConnectFrom() {
-    return connect_from;
+    return connectFrom;
   }
 
   /**
@@ -188,13 +199,13 @@ public final class FileReplication extends CachedObjectIntegerKey<FileReplicatio
    * partition by group ID.  This may only be set (and must be set) when stored on a
    * backup_partition with quota_enabled.
    */
-  public LinuxId getQuotaGID() {
-    return quota_gid;
+  public LinuxId getQuotaGid() {
+    return quotaGid;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.FAILOVER_FILE_REPLICATIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.FAILOVER_FILE_REPLICATIONS;
   }
 
   @Override
@@ -203,18 +214,18 @@ public final class FileReplication extends CachedObjectIntegerKey<FileReplicatio
       int pos = 1;
       pkey = result.getInt(pos++);
       server = result.getInt(pos++);
-      backup_partition = result.getInt(pos++);
+      backupPartition = result.getInt(pos++);
       long maxBitRateLong = result.getLong(pos++);
-      max_bit_rate = result.wasNull() ? null : maxBitRateLong;
-      use_compression = result.getBoolean(pos++);
+      maxBitRate = result.wasNull() ? null : maxBitRateLong;
+      useCompression = result.getBoolean(pos++);
       retention = result.getShort(pos++);
-      connect_address = HostAddress.valueOf(result.getString(pos++));
-      connect_from = InetAddress.valueOf(result.getString(pos++));
+      connectAddress = HostAddress.valueOf(result.getString(pos++));
+      connectFrom = InetAddress.valueOf(result.getString(pos++));
       enabled = result.getBoolean(pos++);
-      {
-        int i = result.getInt(pos++);
-        quota_gid = result.wasNull() ? null : LinuxId.valueOf(i);
-      }
+        {
+          int i = result.getInt(pos++);
+          quotaGid = result.wasNull() ? null : LinuxId.valueOf(i);
+        }
     } catch (ValidationException e) {
       throw new SQLException(e);
     }
@@ -225,18 +236,18 @@ public final class FileReplication extends CachedObjectIntegerKey<FileReplicatio
     try {
       pkey = in.readCompressedInt();
       server = in.readCompressedInt();
-      backup_partition = in.readCompressedInt();
+      backupPartition = in.readCompressedInt();
       long maxBitRateLong = in.readLong();
-      max_bit_rate = maxBitRateLong == -1 ? null : maxBitRateLong;
-      use_compression = in.readBoolean();
+      maxBitRate = maxBitRateLong == -1 ? null : maxBitRateLong;
+      useCompression = in.readBoolean();
       retention = in.readShort();
-      connect_address = InternUtils.intern(HostAddress.valueOf(in.readNullUTF()));
-      connect_from = InternUtils.intern(InetAddress.valueOf(in.readNullUTF()));
+      connectAddress = InternUtils.intern(HostAddress.valueOf(in.readNullUTF()));
+      connectFrom = InternUtils.intern(InetAddress.valueOf(in.readNullUTF()));
       enabled = in.readBoolean();
-      {
-        int i = in.readCompressedInt();
-        quota_gid = (i == -1) ? null : LinuxId.valueOf(i);
-      }
+        {
+          int i = in.readCompressedInt();
+          quotaGid = (i == -1) ? null : LinuxId.valueOf(i);
+        }
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -256,40 +267,40 @@ public final class FileReplication extends CachedObjectIntegerKey<FileReplicatio
       out.writeCompressedInt(149);
     } // to_server (hard-coded xen2.mob.aoindustries.com)
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_31) >= 0) {
-      out.writeCompressedInt(backup_partition);
+      out.writeCompressedInt(backupPartition);
     }
     if (
         protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_105) >= 0
             && protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_61) <= 0
     ) {
       int maxBitRateInt;
-      if (max_bit_rate == null) {
+      if (maxBitRate == null) {
         maxBitRateInt = -1;
-      } else if (max_bit_rate > Integer.MAX_VALUE) {
+      } else if (maxBitRate > Integer.MAX_VALUE) {
         maxBitRateInt = Integer.MAX_VALUE;
-      } else if (max_bit_rate < 0) {
-        throw new IOException("Illegal bit rate: " + max_bit_rate);
+      } else if (maxBitRate < 0) {
+        throw new IOException("Illegal bit rate: " + maxBitRate);
       } else {
-        maxBitRateInt = max_bit_rate.intValue();
+        maxBitRateInt = maxBitRate.intValue();
       }
       out.writeInt(maxBitRateInt);
     } else if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_62) >= 0) {
-      out.writeLong((max_bit_rate == null) ? -1 : max_bit_rate);
+      out.writeLong((maxBitRate == null) ? -1 : maxBitRate);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30) <= 0) {
       out.writeLong(-1);
     } // last_start_time
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_9) >= 0) {
-      out.writeBoolean(use_compression);
+      out.writeBoolean(useCompression);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_13) >= 0) {
       out.writeShort(retention);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_14) >= 0) {
-      out.writeNullUTF(Objects.toString(connect_address, null));
+      out.writeNullUTF(Objects.toString(connectAddress, null));
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_22) >= 0) {
-      out.writeNullUTF(Objects.toString(connect_from, null));
+      out.writeNullUTF(Objects.toString(connectFrom, null));
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_15) >= 0) {
       out.writeBoolean(enabled);
@@ -302,7 +313,7 @@ public final class FileReplication extends CachedObjectIntegerKey<FileReplicatio
       out.writeBoolean(false); // chunk_always
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_31) >= 0) {
-      out.writeCompressedInt(quota_gid == null ? -1 : quota_gid.getId());
+      out.writeCompressedInt(quotaGid == null ? -1 : quotaGid.getId());
     }
   }
 
@@ -329,9 +340,9 @@ public final class FileReplication extends CachedObjectIntegerKey<FileReplicatio
   public Server.DaemonAccess requestReplicationDaemonAccess() throws IOException, SQLException {
     return table.getConnector().requestResult(
         true,
-        AoservProtocol.CommandID.REQUEST_REPLICATION_DAEMON_ACCESS,
-        // Java 9: new AOServConnector.ResultRequest<>
-        new AOServConnector.ResultRequest<Server.DaemonAccess>() {
+        AoservProtocol.CommandId.REQUEST_REPLICATION_DAEMON_ACCESS,
+        // Java 9: new AoservConnector.ResultRequest<>
+        new AoservConnector.ResultRequest<Server.DaemonAccess>() {
           private Server.DaemonAccess daemonAccess;
 
           @Override
@@ -397,9 +408,9 @@ public final class FileReplication extends CachedObjectIntegerKey<FileReplicatio
   public Activity getActivity() throws IOException, SQLException {
     return table.getConnector().requestResult(
         true,
-        AoservProtocol.CommandID.GET_FAILOVER_FILE_REPLICATION_ACTIVITY,
-        // Java 9: new AOServConnector.ResultRequest<>
-        new AOServConnector.ResultRequest<Activity>() {
+        AoservProtocol.CommandId.GET_FAILOVER_FILE_REPLICATION_ACTIVITY,
+        // Java 9: new AoservConnector.ResultRequest<>
+        new AoservConnector.ResultRequest<Activity>() {
           private Activity activity;
 
           @Override

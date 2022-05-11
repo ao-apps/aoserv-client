@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.email;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTableStringKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.sql.SQLException;
  */
 public final class MajordomoVersionTable extends GlobalTableStringKey<MajordomoVersion> {
 
-  MajordomoVersionTable(AOServConnector connector) {
+  MajordomoVersionTable(AoservConnector connector) {
     super(connector, MajordomoVersion.class);
   }
 
@@ -56,7 +56,7 @@ public final class MajordomoVersionTable extends GlobalTableStringKey<MajordomoV
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.MAJORDOMO_VERSIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.MAJORDOMO_VERSIONS;
   }
 }

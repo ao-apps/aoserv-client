@@ -29,7 +29,7 @@ import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.lang.validation.ValidationException;
 import com.aoapps.sql.SQLStreamables;
 import com.aoapps.sql.UnmodifiableTimestamp;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
@@ -50,11 +50,9 @@ import java.util.List;
  */
 public final class Set extends CachedObjectIntegerKey<Set> {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_ACCOUNTING = 1,
-      COLUMN_IDENTIFIER = 2
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_ACCOUNTING = 1;
+  static final int COLUMN_IDENTIFIER = 2;
   static final String COLUMN_IDENTIFIER_name = "identifier";
 
   private Account.Name accounting;
@@ -83,8 +81,8 @@ public final class Set extends CachedObjectIntegerKey<Set> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.IP_REPUTATION_SETS;
+  public Table.TableId getTableId() {
+    return Table.TableId.IP_REPUTATION_SETS;
   }
 
   @Override
@@ -168,21 +166,36 @@ public final class Set extends CachedObjectIntegerKey<Set> {
   @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_ACCOUNTING: return accounting;
-      case COLUMN_IDENTIFIER: return identifier;
-      case 3: return allowSubaccountUse;
-      case 4: return maxHosts;
-      case 5: return maxUncertainReputation;
-      case 6: return maxDefiniteReputation;
-      case 7: return networkPrefix;
-      case 8: return maxNetworkReputation;
-      case 9: return hostDecayInterval;
-      case 10: return lastHostDecay;
-      case 11: return networkDecayInterval;
-      case 12: return lastNetworkDecay;
-      case 13: return lastReputationAdded;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_ACCOUNTING:
+        return accounting;
+      case COLUMN_IDENTIFIER:
+        return identifier;
+      case 3:
+        return allowSubaccountUse;
+      case 4:
+        return maxHosts;
+      case 5:
+        return maxUncertainReputation;
+      case 6:
+        return maxDefiniteReputation;
+      case 7:
+        return networkPrefix;
+      case 8:
+        return maxNetworkReputation;
+      case 9:
+        return hostDecayInterval;
+      case 10:
+        return lastHostDecay;
+      case 11:
+        return networkDecayInterval;
+      case 12:
+        return lastNetworkDecay;
+      case 13:
+        return lastReputationAdded;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -296,11 +309,11 @@ public final class Set extends CachedObjectIntegerKey<Set> {
   // Note: toChar must never be 'N', since that would conflict with 'N' used for "Network".
   public enum ConfidenceType {
     UNCERTAIN {
-    @Override
-    public char toChar() {
-      return 'U';
-    }
-  },
+      @Override
+      public char toChar() {
+        return 'U';
+      }
+    },
     DEFINITE {
       @Override
       public char toChar() {
@@ -312,20 +325,23 @@ public final class Set extends CachedObjectIntegerKey<Set> {
 
     public static ConfidenceType fromChar(char ch) {
       switch (ch) {
-        case 'U': return UNCERTAIN;
-        case 'D': return DEFINITE;
-        default : throw new IllegalArgumentException("Unexpected ConfidenceType character: " + ch);
+        case 'U':
+          return UNCERTAIN;
+        case 'D':
+          return DEFINITE;
+        default:
+          throw new IllegalArgumentException("Unexpected ConfidenceType character: " + ch);
       }
     }
   }
 
   public enum ReputationType {
     GOOD {
-    @Override
-    public char toChar() {
-      return 'G';
-    }
-  },
+      @Override
+      public char toChar() {
+        return 'G';
+      }
+    },
     BAD {
       @Override
       public char toChar() {
@@ -337,9 +353,12 @@ public final class Set extends CachedObjectIntegerKey<Set> {
 
     public static ReputationType fromChar(char ch) {
       switch (ch) {
-        case 'G': return GOOD;
-        case 'B': return BAD;
-        default : throw new IllegalArgumentException("Unexpected ReputationType character: " + ch);
+        case 'G':
+          return GOOD;
+        case 'B':
+          return BAD;
+        default:
+          throw new IllegalArgumentException("Unexpected ReputationType character: " + ch);
       }
     }
   }
@@ -392,8 +411,8 @@ public final class Set extends CachedObjectIntegerKey<Set> {
     if (size > 0) {
       table.getConnector().requestUpdate(
           true,
-          AoservProtocol.CommandID.ADD_IP_REPUTATION,
-          new AOServConnector.UpdateRequest() {
+          AoservProtocol.CommandId.ADD_IP_REPUTATION,
+          new AoservConnector.UpdateRequest() {
             private IntList invalidateList;
 
             @Override
@@ -417,7 +436,7 @@ public final class Set extends CachedObjectIntegerKey<Set> {
             public void readResponse(StreamableInput in) throws IOException, SQLException {
               int code = in.readByte();
               if (code == AoservProtocol.DONE) {
-                invalidateList = AOServConnector.readInvalidateList(in);
+                invalidateList = AoservConnector.readInvalidateList(in);
               } else {
                 AoservProtocol.checkResult(code, in);
                 throw new IOException("Unexpected response code: " + code);

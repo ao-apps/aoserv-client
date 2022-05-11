@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.email;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTableStringKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.sql.SQLException;
  */
 public final class SmtpRelayTypeTable extends GlobalTableStringKey<SmtpRelayType> {
 
-  SmtpRelayTypeTable(AOServConnector connector) {
+  SmtpRelayTypeTable(AoservConnector connector) {
     super(connector, SmtpRelayType.class);
   }
 
@@ -56,7 +56,7 @@ public final class SmtpRelayTypeTable extends GlobalTableStringKey<SmtpRelayType
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.EMAIL_SMTP_RELAY_TYPES;
+  public Table.TableId getTableId() {
+    return Table.TableId.EMAIL_SMTP_RELAY_TYPES;
   }
 }

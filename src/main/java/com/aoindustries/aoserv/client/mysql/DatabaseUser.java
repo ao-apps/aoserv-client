@@ -37,8 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A <code>MySQLDBUser</code> grants a <code>MySQLServerUser</code>
- * access to a <code>MySQLDatabase</code>.  The database and
+ * A <code>MysqlDbUser</code> grants a <code>MysqlServerUser</code>
+ * access to a <code>MysqlDatabase</code>.  The database and
  * user must be on the same server.
  *
  * @see  Database
@@ -48,38 +48,34 @@ import java.util.List;
  */
 public final class DatabaseUser extends CachedObjectIntegerKey<DatabaseUser> implements Removable {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_MYSQL_DATABASE = 1,
-      COLUMN_MYSQL_SERVER_USER = 2
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_MYSQL_DATABASE = 1;
+  static final int COLUMN_MYSQL_SERVER_USER = 2;
   static final String COLUMN_MYSQL_DATABASE_name = "mysql_database";
   static final String COLUMN_MYSQL_SERVER_USER_name = "mysql_server_user";
 
-  private int mysql_database;
-  private int mysql_server_user;
+  private int mysqlDatabase;
+  private int mysqlServerUser;
 
-  private boolean
-      select_priv,
-      insert_priv,
-      update_priv,
-      delete_priv,
-      create_priv,
-      drop_priv,
-      grant_priv,
-      references_priv,
-      index_priv,
-      alter_priv,
-      create_tmp_table_priv,
-      lock_tables_priv,
-      create_view_priv,
-      show_view_priv,
-      create_routine_priv,
-      alter_routine_priv,
-      execute_priv,
-      event_priv,
-      trigger_priv
-  ;
+  private boolean selectPriv;
+  private boolean insertPriv;
+  private boolean updatePriv;
+  private boolean deletePriv;
+  private boolean createPriv;
+  private boolean dropPriv;
+  private boolean grantPriv;
+  private boolean referencesPriv;
+  private boolean indexPriv;
+  private boolean alterPriv;
+  private boolean createTmpTablePriv;
+  private boolean lockTablesPriv;
+  private boolean createViewPriv;
+  private boolean showViewPriv;
+  private boolean createRoutinePriv;
+  private boolean alterRoutinePriv;
+  private boolean executePriv;
+  private boolean eventPriv;
+  private boolean triggerPriv;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -93,191 +89,214 @@ public final class DatabaseUser extends CachedObjectIntegerKey<DatabaseUser> imp
   }
 
   public boolean canAlter() {
-    return alter_priv;
+    return alterPriv;
   }
 
   public boolean canCreateTempTable() {
-    return create_tmp_table_priv;
+    return createTmpTablePriv;
   }
 
   public boolean canLockTables() {
-    return lock_tables_priv;
+    return lockTablesPriv;
   }
 
   public boolean canCreate() {
-    return create_priv;
+    return createPriv;
   }
 
   public boolean canDelete() {
-    return delete_priv;
+    return deletePriv;
   }
 
   public boolean canDrop() {
-    return drop_priv;
+    return dropPriv;
   }
 
   public boolean canGrant() {
-    return grant_priv;
+    return grantPriv;
   }
 
   public boolean canIndex() {
-    return index_priv;
+    return indexPriv;
   }
 
   public boolean canInsert() {
-    return insert_priv;
+    return insertPriv;
   }
 
   public boolean canReference() {
-    return references_priv;
+    return referencesPriv;
   }
 
   public boolean canSelect() {
-    return select_priv;
+    return selectPriv;
   }
 
   public boolean canUpdate() {
-    return update_priv;
+    return updatePriv;
   }
 
   public boolean canCreateView() {
-    return create_view_priv;
+    return createViewPriv;
   }
 
   public boolean canShowView() {
-    return show_view_priv;
+    return showViewPriv;
   }
 
   public boolean canCreateRoutine() {
-    return create_routine_priv;
+    return createRoutinePriv;
   }
 
   public boolean canAlterRoutine() {
-    return alter_routine_priv;
+    return alterRoutinePriv;
   }
 
   public boolean canExecute() {
-    return execute_priv;
+    return executePriv;
   }
 
   public boolean canEvent() {
-    return event_priv;
+    return eventPriv;
   }
 
   public boolean canTrigger() {
-    return trigger_priv;
+    return triggerPriv;
   }
 
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_MYSQL_DATABASE: return mysql_database;
-      case COLUMN_MYSQL_SERVER_USER: return mysql_server_user;
-      case 3: return select_priv;
-      case 4: return insert_priv;
-      case 5: return update_priv;
-      case 6: return delete_priv;
-      case 7: return create_priv;
-      case 8: return drop_priv;
-      case 9: return grant_priv;
-      case 10: return references_priv;
-      case 11: return index_priv;
-      case 12: return alter_priv;
-      case 13: return create_tmp_table_priv;
-      case 14: return lock_tables_priv;
-      case 15: return create_view_priv;
-      case 16: return show_view_priv;
-      case 17: return create_routine_priv;
-      case 18: return alter_routine_priv;
-      case 19: return execute_priv;
-      case 20: return event_priv;
-      case 21: return trigger_priv;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_MYSQL_DATABASE:
+        return mysqlDatabase;
+      case COLUMN_MYSQL_SERVER_USER:
+        return mysqlServerUser;
+      case 3:
+        return selectPriv;
+      case 4:
+        return insertPriv;
+      case 5:
+        return updatePriv;
+      case 6:
+        return deletePriv;
+      case 7:
+        return createPriv;
+      case 8:
+        return dropPriv;
+      case 9:
+        return grantPriv;
+      case 10:
+        return referencesPriv;
+      case 11:
+        return indexPriv;
+      case 12:
+        return alterPriv;
+      case 13:
+        return createTmpTablePriv;
+      case 14:
+        return lockTablesPriv;
+      case 15:
+        return createViewPriv;
+      case 16:
+        return showViewPriv;
+      case 17:
+        return createRoutinePriv;
+      case 18:
+        return alterRoutinePriv;
+      case 19:
+        return executePriv;
+      case 20:
+        return eventPriv;
+      case 21:
+        return triggerPriv;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
-  public Database getMySQLDatabase() throws IOException, SQLException {
+  public Database getMysqlDatabase() throws IOException, SQLException {
     // May be null due to filtering or a recently removed table
-    return table.getConnector().getMysql().getDatabase().get(mysql_database);
+    return table.getConnector().getMysql().getDatabase().get(mysqlDatabase);
   }
 
-  public int getMySQLServerUser_id() {
-    return mysql_server_user;
+  public int getMysqlServerUser_id() {
+    return mysqlServerUser;
   }
 
-  public UserServer getMySQLServerUser() throws IOException, SQLException {
+  public UserServer getMysqlServerUser() throws IOException, SQLException {
     // May be null due to filtering or a recently removed row
-    return table.getConnector().getMysql().getUserServer().get(mysql_server_user);
+    return table.getConnector().getMysql().getUserServer().get(mysqlServerUser);
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.MYSQL_DB_USERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.MYSQL_DB_USERS;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     pkey = result.getInt(1);
-    mysql_database = result.getInt(2);
-    mysql_server_user = result.getInt(3);
-    select_priv = result.getBoolean(4);
-    insert_priv = result.getBoolean(5);
-    update_priv = result.getBoolean(6);
-    delete_priv = result.getBoolean(7);
-    create_priv = result.getBoolean(8);
-    drop_priv = result.getBoolean(9);
-    grant_priv = result.getBoolean(10);
-    references_priv = result.getBoolean(11);
-    index_priv = result.getBoolean(12);
-    alter_priv = result.getBoolean(13);
-    create_tmp_table_priv = result.getBoolean(14);
-    lock_tables_priv = result.getBoolean(15);
-    create_view_priv = result.getBoolean(16);
-    show_view_priv = result.getBoolean(17);
-    create_routine_priv = result.getBoolean(18);
-    alter_routine_priv = result.getBoolean(19);
-    execute_priv = result.getBoolean(20);
-    event_priv = result.getBoolean(21);
-    trigger_priv = result.getBoolean(22);
+    mysqlDatabase = result.getInt(2);
+    mysqlServerUser = result.getInt(3);
+    selectPriv = result.getBoolean(4);
+    insertPriv = result.getBoolean(5);
+    updatePriv = result.getBoolean(6);
+    deletePriv = result.getBoolean(7);
+    createPriv = result.getBoolean(8);
+    dropPriv = result.getBoolean(9);
+    grantPriv = result.getBoolean(10);
+    referencesPriv = result.getBoolean(11);
+    indexPriv = result.getBoolean(12);
+    alterPriv = result.getBoolean(13);
+    createTmpTablePriv = result.getBoolean(14);
+    lockTablesPriv = result.getBoolean(15);
+    createViewPriv = result.getBoolean(16);
+    showViewPriv = result.getBoolean(17);
+    createRoutinePriv = result.getBoolean(18);
+    alterRoutinePriv = result.getBoolean(19);
+    executePriv = result.getBoolean(20);
+    eventPriv = result.getBoolean(21);
+    triggerPriv = result.getBoolean(22);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readCompressedInt();
-    mysql_database = in.readCompressedInt();
-    mysql_server_user = in.readCompressedInt();
-    select_priv = in.readBoolean();
-    insert_priv = in.readBoolean();
-    update_priv = in.readBoolean();
-    delete_priv = in.readBoolean();
-    create_priv = in.readBoolean();
-    drop_priv = in.readBoolean();
-    grant_priv = in.readBoolean();
-    references_priv = in.readBoolean();
-    index_priv = in.readBoolean();
-    alter_priv = in.readBoolean();
-    create_tmp_table_priv = in.readBoolean();
-    lock_tables_priv = in.readBoolean();
-    create_view_priv = in.readBoolean();
-    show_view_priv = in.readBoolean();
-    create_routine_priv = in.readBoolean();
-    alter_routine_priv = in.readBoolean();
-    execute_priv = in.readBoolean();
-    event_priv = in.readBoolean();
-    trigger_priv = in.readBoolean();
+    mysqlDatabase = in.readCompressedInt();
+    mysqlServerUser = in.readCompressedInt();
+    selectPriv = in.readBoolean();
+    insertPriv = in.readBoolean();
+    updatePriv = in.readBoolean();
+    deletePriv = in.readBoolean();
+    createPriv = in.readBoolean();
+    dropPriv = in.readBoolean();
+    grantPriv = in.readBoolean();
+    referencesPriv = in.readBoolean();
+    indexPriv = in.readBoolean();
+    alterPriv = in.readBoolean();
+    createTmpTablePriv = in.readBoolean();
+    lockTablesPriv = in.readBoolean();
+    createViewPriv = in.readBoolean();
+    showViewPriv = in.readBoolean();
+    createRoutinePriv = in.readBoolean();
+    alterRoutinePriv = in.readBoolean();
+    executePriv = in.readBoolean();
+    eventPriv = in.readBoolean();
+    triggerPriv = in.readBoolean();
   }
 
   @Override
   public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws IOException, SQLException {
     List<CannotRemoveReason<?>> reasons = new ArrayList<>();
-    UserServer msu = getMySQLServerUser();
+    UserServer msu = getMysqlServerUser();
     if (msu.isSpecial()) {
-      Server ms = msu.getMySQLServer();
+      Server ms = msu.getMysqlServer();
       reasons.add(
           new CannotRemoveReason<>(
               "Not allowed to revoke access from a special MySQL user: "
-                  + msu.getMySQLUser_username()
+                  + msu.getMysqlUser_username()
                   + " on "
                   + ms.getName()
                   + " on "
@@ -286,9 +305,9 @@ public final class DatabaseUser extends CachedObjectIntegerKey<DatabaseUser> imp
           )
       );
     }
-    Database md = getMySQLDatabase();
+    Database md = getMysqlDatabase();
     if (md.isSpecial()) {
-      Server ms = md.getMySQLServer();
+      Server ms = md.getMysqlServer();
       reasons.add(
           new CannotRemoveReason<>(
               "Not allowed to revoke access to a special MySQL database: "
@@ -306,21 +325,21 @@ public final class DatabaseUser extends CachedObjectIntegerKey<DatabaseUser> imp
 
   @Override
   public void remove() throws IOException, SQLException {
-    UserServer msu = getMySQLServerUser();
+    UserServer msu = getMysqlServerUser();
     if (msu.isSpecial()) {
-      Server ms = msu.getMySQLServer();
+      Server ms = msu.getMysqlServer();
       throw new SQLException(
           "Refusing to revoke access from a special MySQL user: "
-              + msu.getMySQLUser_username()
+              + msu.getMysqlUser_username()
               + " on "
               + ms.getName()
               + " on "
               + ms.getLinuxServer().getHostname()
       );
     }
-    Database md = getMySQLDatabase();
+    Database md = getMysqlDatabase();
     if (md.isSpecial()) {
-      Server ms = md.getMySQLServer();
+      Server ms = md.getMysqlServer();
       throw new SQLException(
           "Refusing to revoke access to a special MySQL database: "
               + md.getName()
@@ -330,10 +349,10 @@ public final class DatabaseUser extends CachedObjectIntegerKey<DatabaseUser> imp
               + ms.getLinuxServer().getHostname()
       );
     }
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.REMOVE,
-        Table.TableID.MYSQL_DB_USERS,
+        AoservProtocol.CommandId.REMOVE,
+        Table.TableId.MYSQL_DB_USERS,
         pkey
     );
   }
@@ -341,32 +360,32 @@ public final class DatabaseUser extends CachedObjectIntegerKey<DatabaseUser> imp
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeCompressedInt(mysql_database);
-    out.writeCompressedInt(mysql_server_user);
-    out.writeBoolean(select_priv);
-    out.writeBoolean(insert_priv);
-    out.writeBoolean(update_priv);
-    out.writeBoolean(delete_priv);
-    out.writeBoolean(create_priv);
-    out.writeBoolean(drop_priv);
-    out.writeBoolean(grant_priv);
-    out.writeBoolean(references_priv);
-    out.writeBoolean(index_priv);
-    out.writeBoolean(alter_priv);
+    out.writeCompressedInt(mysqlDatabase);
+    out.writeCompressedInt(mysqlServerUser);
+    out.writeBoolean(selectPriv);
+    out.writeBoolean(insertPriv);
+    out.writeBoolean(updatePriv);
+    out.writeBoolean(deletePriv);
+    out.writeBoolean(createPriv);
+    out.writeBoolean(dropPriv);
+    out.writeBoolean(grantPriv);
+    out.writeBoolean(referencesPriv);
+    out.writeBoolean(indexPriv);
+    out.writeBoolean(alterPriv);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_111) >= 0) {
-      out.writeBoolean(create_tmp_table_priv);
-      out.writeBoolean(lock_tables_priv);
+      out.writeBoolean(createTmpTablePriv);
+      out.writeBoolean(lockTablesPriv);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_4) >= 0) {
-      out.writeBoolean(create_view_priv);
-      out.writeBoolean(show_view_priv);
-      out.writeBoolean(create_routine_priv);
-      out.writeBoolean(alter_routine_priv);
-      out.writeBoolean(execute_priv);
+      out.writeBoolean(createViewPriv);
+      out.writeBoolean(showViewPriv);
+      out.writeBoolean(createRoutinePriv);
+      out.writeBoolean(alterRoutinePriv);
+      out.writeBoolean(executePriv);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_54) >= 0) {
-      out.writeBoolean(event_priv);
-      out.writeBoolean(trigger_priv);
+      out.writeBoolean(eventPriv);
+      out.writeBoolean(triggerPriv);
     }
   }
 }

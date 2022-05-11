@@ -47,7 +47,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * Each <code>IPAddress</code> represents a unique IPv4 address.  Two of the IP
+ * Each <code>IpAddress</code> represents a unique IPv4 address.  Two of the IP
  * addresses exist on every server, <code>WILDCARD_IP</code> and <code>LOOPBACK_IP</code>.
  * Every other IP address is assigned to a specific <code>Server</code>.  IP
  * addresses may be assigned to a specific <code>Package</code> and may have
@@ -62,24 +62,20 @@ import java.util.concurrent.ConcurrentMap;
  */
 public final class IpAddress extends CachedObjectIntegerKey<IpAddress> {
 
-  static final int
-      COLUMN_ID = 0,
-      COLUMN_DEVICE = 2,
-      COLUMN_PACKAGE = 5
-  ;
+  static final int COLUMN_ID = 0;
+  static final int COLUMN_DEVICE = 2;
+  static final int COLUMN_PACKAGE = 5;
   public static final String COLUMN_IP_ADDRESS_name = "inetAddress";
   public static final String COLUMN_DEVICE_name = "device";
 
-  public static final String
-      LOOPBACK_IP = "127.0.0.1",
-      WILDCARD_IP = "0.0.0.0"
-  ;
+  public static final String LOOPBACK_IP = "127.0.0.1";
+  public static final String WILDCARD_IP = "0.0.0.0";
 
   // TODO: Should have an upper bound to this cache to avoid memory leak
-  private static final ConcurrentMap<String, Integer> intForIPAddressCache = new ConcurrentHashMap<>();
+  private static final ConcurrentMap<String, Integer> intForIpAddressCache = new ConcurrentHashMap<>();
 
-  public static Integer getIntForIPAddress(String ipAddress) throws IllegalArgumentException {
-    Integer result = intForIPAddressCache.get(ipAddress);
+  public static Integer getIntForIpAddress(String ipAddress) throws IllegalArgumentException {
+    Integer result = intForIpAddressCache.get(ipAddress);
     if (result == null) {
       // There must be four octets with . between
       List<String> octets = Strings.split(ipAddress, '.');
@@ -110,9 +106,8 @@ public final class IpAddress extends CachedObjectIntegerKey<IpAddress> {
           (Integer.parseInt(octets.get(0)) << 24)
               | (Integer.parseInt(octets.get(1)) << 16)
               | (Integer.parseInt(octets.get(2)) << 8)
-              | (Integer.parseInt(octets.get(3)) & 255)
-      ;
-      Integer existing = intForIPAddressCache.putIfAbsent(ipAddress, result);
+              | (Integer.parseInt(octets.get(3)) & 255);
+      Integer existing = intForIpAddressCache.putIfAbsent(ipAddress, result);
       if (existing != null) {
         result = existing;
       }
@@ -120,7 +115,7 @@ public final class IpAddress extends CachedObjectIntegerKey<IpAddress> {
     return result;
   }
 
-  public static String getIPAddressForInt(int i) {
+  public static String getIpAddressForInt(int i) {
     return
         new StringBuilder(15)
             .append((i >>> 24) & 255)
@@ -130,8 +125,7 @@ public final class IpAddress extends CachedObjectIntegerKey<IpAddress> {
             .append((i >>> 8) & 255)
             .append('.')
             .append(i & 255)
-            .toString()
-    ;
+            .toString();
   }
 
   //private static final ConcurrentMap<String, String> getReverseDnsQueryCache = new ConcurrentHashMap<>();
@@ -142,7 +136,7 @@ public final class IpAddress extends CachedObjectIntegerKey<IpAddress> {
   /*public static String getReverseDnsQuery(String ip) {
     String arpa = getReverseDnsQueryCache.get(ip);
     if (arpa == null) {
-      int bits = getIntForIPAddress(ip);
+      int bits = getIntForIpAddress(ip);
       arpa =
         new StringBuilder(29)
         .append(bits&255)
@@ -153,8 +147,7 @@ public final class IpAddress extends CachedObjectIntegerKey<IpAddress> {
         .append('.')
         .append((bits>>>24)&255)
         .append(".in-addr.arpa.")
-        .toString()
-      ;
+        .toString();
       String existingArpa = getReverseDnsQueryCache.putIfAbsent(ip, arpa);
       if (existingArpa != null) {
         arpa = existingArpa;
@@ -195,19 +188,32 @@ public final class IpAddress extends CachedObjectIntegerKey<IpAddress> {
   @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_ID: return pkey;
-      case 1: return inetAddress;
-      case COLUMN_DEVICE: return device == -1 ? null : device;
-      case 3: return isAlias;
-      case 4: return hostname;
-      case COLUMN_PACKAGE: return package_id;
-      case 6: return created;
-      case 7: return isAvailable;
-      case 8: return isOverflow;
-      case 9: return isDhcp;
-      case 10: return externalInetAddress;
-      case 11: return netmask;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_ID:
+        return pkey;
+      case 1:
+        return inetAddress;
+      case COLUMN_DEVICE:
+        return device == -1 ? null : device;
+      case 3:
+        return isAlias;
+      case 4:
+        return hostname;
+      case COLUMN_PACKAGE:
+        return package_id;
+      case 6:
+        return created;
+      case 7:
+        return isAvailable;
+      case 8:
+        return isOverflow;
+      case 9:
+        return isDhcp;
+      case 10:
+        return externalInetAddress;
+      case 11:
+        return netmask;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -252,7 +258,7 @@ public final class IpAddress extends CachedObjectIntegerKey<IpAddress> {
   }
 
   /**
-   * Determines when this <code>IPAddress</code> was created.  The created time
+   * Determines when this <code>IpAddress</code> was created.  The created time
    * is reset when the address is allocated to a different <code>Package</code>,
    * which allows the automated accounting to start the billing on the correct
    * day of the month.
@@ -291,8 +297,8 @@ public final class IpAddress extends CachedObjectIntegerKey<IpAddress> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.IP_ADDRESSES;
+  public Table.TableId getTableId() {
+    return Table.TableId.IP_ADDRESSES;
   }
 
   @Override
@@ -410,14 +416,14 @@ public final class IpAddress extends CachedObjectIntegerKey<IpAddress> {
   }
 
   public void moveTo(Host server) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.MOVE_IP_ADDRESS, inetAddress.toString(), server.getPkey());
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.MOVE_IP_ADDRESS, inetAddress.toString(), server.getPkey());
   }
 
   /**
-   * Sets the hostname for this <code>IPAddress</code>.
+   * Sets the hostname for this <code>IpAddress</code>.
    */
   public void setHostname(DomainName hostname) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_IP_ADDRESS_HOSTNAME, pkey, hostname);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_IP_ADDRESS_HOSTNAME, pkey, hostname);
   }
 
   /**
@@ -426,14 +432,14 @@ public final class IpAddress extends CachedObjectIntegerKey<IpAddress> {
    */
   public void setPackage(Package pk) throws IOException, SQLException {
     if (isUsed()) {
-      throw new SQLException("Unable to set Package, IPAddress in use: #" + pkey);
+      throw new SQLException("Unable to set Package, IpAddress in use: #" + pkey);
     }
 
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_IP_ADDRESS_PACKAGE, pkey, pk.getName());
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_IP_ADDRESS_PACKAGE, pkey, pk.getName());
   }
 
-  public void setDHCPAddress(InetAddress ipAddress) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_IP_ADDRESS_DHCP_ADDRESS, pkey, ipAddress);
+  public void setDhcpAddress(InetAddress ipAddress) throws IOException, SQLException {
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_IP_ADDRESS_DHCP_ADDRESS, pkey, ipAddress);
   }
 
   public IpAddressMonitoring getMonitoring() throws IOException, SQLException {

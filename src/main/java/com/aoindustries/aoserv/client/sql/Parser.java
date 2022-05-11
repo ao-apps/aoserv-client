@@ -23,8 +23,8 @@
 
 package com.aoindustries.aoserv.client.sql;
 
-import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.AOServTable;
+import com.aoindustries.aoserv.client.AoservConnector;
+import com.aoindustries.aoserv.client.AoservTable;
 import com.aoindustries.aoserv.client.schema.Column;
 import com.aoindustries.aoserv.client.schema.ForeignKey;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -133,7 +133,7 @@ public final class Parser {
   /**
    * Unquotes a string, removing " characters, except "" being the escape for a " within a quoted section.
    */
-  // TODO: Have AOSH only support ' quotes in command line parsing?  This would help with "" quoting for table/columns not being swallowed by bash-style double quotes
+  // TODO: Have Aosh only support ' quotes in command line parsing?  This would help with "" quoting for table/columns not being swallowed by bash-style double quotes
   //       This should not hurt since we don't support any variable substitution inside double quotes anyway
 
   // TODO: Unit tests
@@ -210,8 +210,8 @@ public final class Parser {
   }
 
   // TODO: Unit tests
-  public static SQLExpression parseSQLExpression(AOServTable<?, ?> table, String expr) throws SQLException, IOException {
-    AOServConnector connector = table.getConnector();
+  public static SqlExpression parseSqlExpression(AoservTable<?, ?> table, String expr) throws SQLException, IOException {
+    AoservConnector connector = table.getConnector();
     int joinPos = indexOfNotQuoted(expr, '.');
     if (joinPos == -1) {
       joinPos = expr.length();
@@ -228,14 +228,15 @@ public final class Parser {
       throw new IllegalArgumentException("Unable to find column: " + quote(tableSchema.getName()) + '.' + quote(columnName));
     }
 
-    SQLExpression sql = new SQLColumnValue(connector, lastColumn);
+    SqlExpression sql = new SqlColumnValue(connector, lastColumn);
     expr = expr.substring(columnNameEnd);
 
     while (!expr.isEmpty()) {
       if (expr.charAt(0) == '.') {
         List<ForeignKey> keys = lastColumn.getReferences(connector);
         if (keys.size() != 1) {
-          throw new IllegalArgumentException("Column " + quote(lastColumn.getTable(connector).getName()) + '.' + quote(lastColumn.getName()) + " should reference precisely one column, references " + keys.size());
+          throw new IllegalArgumentException("Column " + quote(lastColumn.getTable(connector).getName()) + '.'
+              + quote(lastColumn.getName()) + " should reference precisely one column, references " + keys.size());
         }
 
         joinPos = indexOfNotQuoted(expr, '.', 1);
@@ -255,7 +256,7 @@ public final class Parser {
           throw new IllegalArgumentException("Unable to find column: " + quote(valueTable.getName()) + '.' + quote(columnName) + " referenced from " + quote(tableSchema.getName()));
         }
 
-        sql = new SQLColumnJoin(connector, sql, keyColumn, valueColumn);
+        sql = new SqlColumnJoin(connector, sql, keyColumn, valueColumn);
         expr = expr.substring(joinNameEnd);
 
         lastColumn = valueColumn;
@@ -275,7 +276,7 @@ public final class Parser {
           throw new IllegalArgumentException("Unable to find SchemaType: " + quote(typeName));
         }
 
-        sql = new SQLCast(sql, type);
+        sql = new SqlCast(sql, type);
         expr = expr.substring(typeNameEnd);
       } else {
         throw new IllegalArgumentException("Unable to parse: " + expr);

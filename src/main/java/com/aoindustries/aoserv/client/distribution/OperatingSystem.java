@@ -25,7 +25,7 @@ package com.aoindustries.aoserv.client.distribution;
 
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalObjectStringKey;
 import com.aoindustries.aoserv.client.net.Host;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
@@ -46,11 +46,9 @@ public final class OperatingSystem extends GlobalObjectStringKey<OperatingSystem
   static final int COLUMN_NAME = 0;
   static final String COLUMN_NAME_name = "name";
 
-  public static final String
-      CENTOS = "centos",
-      DEBIAN = "debian",
-      WINDOWS = "windows"
-  ;
+  public static final String CENTOS = "centos";
+  public static final String DEBIAN = "debian";
+  public static final String WINDOWS = "windows";
 
   /**
    * @deprecated  What is this used for?
@@ -61,7 +59,7 @@ public final class OperatingSystem extends GlobalObjectStringKey<OperatingSystem
   public static final String DEFAULT_OPERATING_SYSTEM = CENTOS;
 
   private String display;
-  private boolean is_unix;
+  private boolean isUnix;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -77,10 +75,14 @@ public final class OperatingSystem extends GlobalObjectStringKey<OperatingSystem
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_NAME: return pkey;
-      case 1: return display;
-      case 2: return is_unix;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_NAME:
+        return pkey;
+      case 1:
+        return display;
+      case 2:
+        return isUnix;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -93,30 +95,30 @@ public final class OperatingSystem extends GlobalObjectStringKey<OperatingSystem
   }
 
   public boolean isUnix() {
-    return is_unix;
+    return isUnix;
   }
 
-  public OperatingSystemVersion getOperatingSystemVersion(AOServConnector conn, String version, Architecture architecture) throws IOException, SQLException {
+  public OperatingSystemVersion getOperatingSystemVersion(AoservConnector conn, String version, Architecture architecture) throws IOException, SQLException {
     return conn.getDistribution().getOperatingSystemVersion().getOperatingSystemVersion(this, version, architecture);
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.OPERATING_SYSTEMS;
+  public Table.TableId getTableId() {
+    return Table.TableId.OPERATING_SYSTEMS;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     pkey = result.getString(1);
     display = result.getString(2);
-    is_unix = result.getBoolean(3);
+    isUnix = result.getBoolean(3);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readUTF().intern();
     display = in.readUTF();
-    is_unix = in.readBoolean();
+    isUnix = in.readBoolean();
   }
 
   @Override
@@ -128,6 +130,6 @@ public final class OperatingSystem extends GlobalObjectStringKey<OperatingSystem
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeUTF(pkey);
     out.writeUTF(display);
-    out.writeBoolean(is_unix);
+    out.writeBoolean(isUnix);
   }
 }

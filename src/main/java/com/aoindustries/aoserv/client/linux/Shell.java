@@ -46,21 +46,19 @@ public final class Shell extends GlobalObjectPosixPathKey<Shell> {
   static final int COLUMN_PATH = 0;
   static final String COLUMN_PATH_name = "path";
 
-  public static final PosixPath
-      BASH,
-      FALSE,
-      KSH,
-      SH,
-      SYNC,
-      TCSH,
-      HALT,
-      NOLOGIN,
-      SHUTDOWN,
-      FTPONLY,
-      FTPPASSWD,
-      GIT_SHELL,
-      PASSWD
-  ;
+  public static final PosixPath BASH;
+  public static final PosixPath FALSE;
+  public static final PosixPath KSH;
+  public static final PosixPath SH;
+  public static final PosixPath SYNC;
+  public static final PosixPath TCSH;
+  public static final PosixPath HALT;
+  public static final PosixPath NOLOGIN;
+  public static final PosixPath SHUTDOWN;
+  public static final PosixPath FTPONLY;
+  public static final PosixPath FTPPASSWD;
+  public static final PosixPath GIT_SHELL;
+  public static final PosixPath PASSWD;
 
   static {
     try {
@@ -82,8 +80,8 @@ public final class Shell extends GlobalObjectPosixPathKey<Shell> {
     }
   }
 
-  private boolean is_login;
-  private boolean is_system;
+  private boolean isLogin;
+  private boolean isSystem;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -102,10 +100,10 @@ public final class Shell extends GlobalObjectPosixPathKey<Shell> {
       return pkey;
     }
     if (i == 1) {
-      return is_login;
+      return isLogin;
     }
     if (i == 2) {
-      return is_system;
+      return isSystem;
     }
     throw new IllegalArgumentException("Invalid index: " + i);
   }
@@ -115,35 +113,35 @@ public final class Shell extends GlobalObjectPosixPathKey<Shell> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.SHELLS;
+  public Table.TableId getTableId() {
+    return Table.TableId.SHELLS;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     try {
       pkey = PosixPath.valueOf(result.getString(1));
-      is_login = result.getBoolean(2);
-      is_system = result.getBoolean(3);
+      isLogin = result.getBoolean(2);
+      isSystem = result.getBoolean(3);
     } catch (ValidationException e) {
       throw new SQLException(e);
     }
   }
 
   public boolean isLogin() {
-    return is_login;
+    return isLogin;
   }
 
   public boolean isSystem() {
-    return is_system;
+    return isSystem;
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
       pkey = PosixPath.valueOf(in.readUTF()).intern();
-      is_login = in.readBoolean();
-      is_system = in.readBoolean();
+      isLogin = in.readBoolean();
+      isSystem = in.readBoolean();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -152,7 +150,7 @@ public final class Shell extends GlobalObjectPosixPathKey<Shell> {
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeUTF(pkey.toString());
-    out.writeBoolean(is_login);
-    out.writeBoolean(is_system);
+    out.writeBoolean(isLogin);
+    out.writeBoolean(isSystem);
   }
 }

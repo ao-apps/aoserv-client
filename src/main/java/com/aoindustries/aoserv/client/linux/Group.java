@@ -81,8 +81,7 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
       Comparable<Name>,
       Serializable,
       DtoFactory<com.aoindustries.aoserv.client.dto.LinuxGroupName>,
-      Internable<Name>
-  {
+      Internable<Name> {
 
     private static final long serialVersionUID = 5758732021942097608L;
 
@@ -122,20 +121,36 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
           return new InvalidResult(RESOURCES, "Name.validate.noCapital");
         }
         switch (ch) {
-          case ',' : return new InvalidResult(RESOURCES, "Name.validate.comma");
-          case ':' : return new InvalidResult(RESOURCES, "Name.validate.colon");
-          case '(' : return new InvalidResult(RESOURCES, "Name.validate.leftParen");
-          case ')' : return new InvalidResult(RESOURCES, "Name.validate.rightParen");
-          case '[' : return new InvalidResult(RESOURCES, "Name.validate.leftSquare");
-          case ']' : return new InvalidResult(RESOURCES, "Name.validate.rightSquare");
-          case '\'' : return new InvalidResult(RESOURCES, "Name.validate.apostrophe");
-          case '"' : return new InvalidResult(RESOURCES, "Name.validate.quote");
-          case '|' : return new InvalidResult(RESOURCES, "Name.validate.verticalBar");
-          case '&' : return new InvalidResult(RESOURCES, "Name.validate.ampersand");
-          case ';' : return new InvalidResult(RESOURCES, "Name.validate.semicolon");
-          case '\\' : return new InvalidResult(RESOURCES, "Name.validate.backslash");
-          case '/' : return new InvalidResult(RESOURCES, "Name.validate.slash");
-          case '@' : return new InvalidResult(RESOURCES, "Name.validate.at");
+          case ',':
+            return new InvalidResult(RESOURCES, "Name.validate.comma");
+          case ':':
+            return new InvalidResult(RESOURCES, "Name.validate.colon");
+          case '(':
+            return new InvalidResult(RESOURCES, "Name.validate.leftParen");
+          case ')':
+            return new InvalidResult(RESOURCES, "Name.validate.rightParen");
+          case '[':
+            return new InvalidResult(RESOURCES, "Name.validate.leftSquare");
+          case ']':
+            return new InvalidResult(RESOURCES, "Name.validate.rightSquare");
+          case '\'':
+            return new InvalidResult(RESOURCES, "Name.validate.apostrophe");
+          case '"':
+            return new InvalidResult(RESOURCES, "Name.validate.quote");
+          case '|':
+            return new InvalidResult(RESOURCES, "Name.validate.verticalBar");
+          case '&':
+            return new InvalidResult(RESOURCES, "Name.validate.ampersand");
+          case ';':
+            return new InvalidResult(RESOURCES, "Name.validate.semicolon");
+          case '\\':
+            return new InvalidResult(RESOURCES, "Name.validate.backslash");
+          case '/':
+            return new InvalidResult(RESOURCES, "Name.validate.slash");
+          case '@':
+            return new InvalidResult(RESOURCES, "Name.validate.at");
+          default:
+            // fall-through to continue loop
         }
       }
       return ValidResult.getInstance();
@@ -198,8 +213,7 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
     public boolean equals(Object obj) {
       return
           (obj instanceof Name)
-              && name.equals(((Name) obj).name)
-      ;
+              && name.equals(((Name) obj).name);
     }
 
     @Override
@@ -243,10 +257,8 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
     }
   }
 
-  static final int
-      COLUMN_NAME = 0,
-      COLUMN_PACKAGE = 1
-  ;
+  static final int COLUMN_NAME = 0;
+  static final int COLUMN_PACKAGE = 1;
   static final String COLUMN_NAME_name = "name";
 
   /**
@@ -454,10 +466,14 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_NAME: return pkey;
-      case COLUMN_PACKAGE: return packageName;
-      case 2: return type;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_NAME:
+        return pkey;
+      case COLUMN_PACKAGE:
+        return packageName;
+      case 2:
+        return type;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -491,8 +507,8 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.LINUX_GROUPS;
+  public Table.TableId getTableId() {
+    return Table.TableId.LINUX_GROUPS;
   }
 
   @Override
@@ -538,10 +554,10 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
 
   @Override
   public void remove() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.REMOVE,
-        Table.TableID.LINUX_GROUPS,
+        AoservProtocol.CommandId.REMOVE,
+        Table.TableId.LINUX_GROUPS,
         pkey
     );
   }

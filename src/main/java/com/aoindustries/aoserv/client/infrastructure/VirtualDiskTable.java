@@ -25,9 +25,9 @@ package com.aoindustries.aoserv.client.infrastructure;
 
 import com.aoapps.hodgepodge.io.TerminalWriter;
 import com.aoapps.sql.SQLUtility;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.net.Host;
@@ -44,7 +44,7 @@ import java.util.List;
  */
 public final class VirtualDiskTable extends CachedTableIntegerKey<VirtualDisk> {
 
-  VirtualDiskTable(AOServConnector connector) {
+  VirtualDiskTable(AoservConnector connector) {
     super(connector, VirtualDisk.class);
   }
 
@@ -66,8 +66,8 @@ public final class VirtualDiskTable extends CachedTableIntegerKey<VirtualDisk> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.VIRTUAL_DISKS;
+  public Table.TableId getTableId() {
+    return Table.TableId.VIRTUAL_DISKS;
   }
 
   List<VirtualDisk> getVirtualDisks(VirtualServer vs) throws IOException, SQLException {
@@ -79,8 +79,8 @@ public final class VirtualDiskTable extends CachedTableIntegerKey<VirtualDisk> {
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.VERIFY_VIRTUAL_DISK)) {
-      if (AOSH.checkParamCount(Command.VERIFY_VIRTUAL_DISK, args, 2, err)) {
-        long lastVerified = connector.getSimpleAOClient().verifyVirtualDisk(args[1], args[2]);
+      if (Aosh.checkParamCount(Command.VERIFY_VIRTUAL_DISK, args, 2, err)) {
+        long lastVerified = connector.getSimpleClient().verifyVirtualDisk(args[1], args[2]);
         if (isInteractive) {
           out.println(SQLUtility.formatDateTime(lastVerified));
         } else {

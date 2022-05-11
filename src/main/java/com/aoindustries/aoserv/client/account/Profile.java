@@ -52,10 +52,8 @@ import java.util.Set;
  */
 public final class Profile extends CachedObjectIntegerKey<Profile> {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_ACCOUNTING = 1
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_ACCOUNTING = 1;
   static final String COLUMN_ACCOUNTING_name = "accounting";
   static final String COLUMN_PRIORITY_name = "priority";
 
@@ -65,7 +63,12 @@ public final class Profile extends CachedObjectIntegerKey<Profile> {
   private String name;
 
   private boolean isPrivate;
-  private String phone, fax, address1, address2, city, state;
+  private String phone;
+  private String fax;
+  private String address1;
+  private String address2;
+  private String city;
+  private String state;
   private String country;
   private String zip;
 
@@ -74,7 +77,7 @@ public final class Profile extends CachedObjectIntegerKey<Profile> {
   private UnmodifiableTimestamp created;
 
   /**
-   * The set of possible units
+   * The set of possible units.
    */
   // Matches aoserv-master-db/aoindustries/account/Profile.EmailFormat-type.sql
   public enum EmailFormat {
@@ -153,30 +156,52 @@ public final class Profile extends CachedObjectIntegerKey<Profile> {
   @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_ACCOUNTING: return accounting;
-      case 2: return priority;
-      case 3: return name;
-      case 4: return isPrivate;
-      case 5: return phone;
-      case 6: return fax;
-      case 7: return address1;
-      case 8: return address2;
-      case 9: return city;
-      case 10: return state;
-      case 11: return country;
-      case 12: return zip;
-      case 13: return sendInvoice;
-      case 14: return created;
-      case 15: return billingContact;
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_ACCOUNTING:
+        return accounting;
+      case 2:
+        return priority;
+      case 3:
+        return name;
+      case 4:
+        return isPrivate;
+      case 5:
+        return phone;
+      case 6:
+        return fax;
+      case 7:
+        return address1;
+      case 8:
+        return address2;
+      case 9:
+        return city;
+      case 10:
+        return state;
+      case 11:
+        return country;
+      case 12:
+        return zip;
+      case 13:
+        return sendInvoice;
+      case 14:
+        return created;
+      case 15:
+        return billingContact;
       // TODO: Support array types
-      case 16: return Strings.join(billingEmail, ", ");
-      case 17: return billingEmailFormat;
-      case 18: return technicalContact;
+      case 16:
+        return Strings.join(billingEmail, ", ");
+      case 17:
+        return billingEmailFormat;
+      case 18:
+        return technicalContact;
       // TODO: Support array types
-      case 19: return Strings.join(technicalEmail, ", ");
-      case 20: return technicalEmailFormat;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case 19:
+        return Strings.join(technicalEmail, ", ");
+      case 20:
+        return technicalEmailFormat;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -218,8 +243,8 @@ public final class Profile extends CachedObjectIntegerKey<Profile> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.BUSINESS_PROFILES;
+  public Table.TableId getTableId() {
+    return Table.TableId.BUSINESS_PROFILES;
   }
 
   public String getTechnicalContact() {
@@ -235,7 +260,7 @@ public final class Profile extends CachedObjectIntegerKey<Profile> {
     return technicalEmailFormat;
   }
 
-  public String getZIP() {
+  public String getZip() {
     return zip;
   }
 
@@ -294,20 +319,20 @@ public final class Profile extends CachedObjectIntegerKey<Profile> {
       created = UnmodifiableTimestamp.valueOf(result.getTimestamp(pos++));
       billingContact = result.getString(pos++);
       // TODO: Array in PostgreSQL
-      String billing_email = result.getString(pos++);
+      String billingEmailArray = result.getString(pos++);
       try {
-        billingEmail = splitEmails(billing_email);
+        billingEmail = splitEmails(billingEmailArray);
       } catch (ValidationException e) {
-        throw new SQLException("billing_email = " + billing_email, e);
+        throw new SQLException("billing_email = " + billingEmailArray, e);
       }
       billingEmailFormat = EmailFormat.valueOf(result.getString(pos++));
       technicalContact = result.getString(pos++);
       // TODO: Array in PostgreSQL
-      String technical_email = result.getString(pos++);
+      String technicalEmailArray = result.getString(pos++);
       try {
-        technicalEmail = splitEmails(technical_email);
+        technicalEmail = splitEmails(technicalEmailArray);
       } catch (ValidationException e) {
-        throw new SQLException("technical_email = " + technical_email, e);
+        throw new SQLException("technical_email = " + technicalEmailArray, e);
       }
       technicalEmailFormat = EmailFormat.valueOf(result.getString(pos++));
       Set<Email> billingEmailNew = getEmailSet(result.getArray("billingEmail{}"));
@@ -359,24 +384,24 @@ public final class Profile extends CachedObjectIntegerKey<Profile> {
       sendInvoice = in.readBoolean();
       created = SQLStreamables.readUnmodifiableTimestamp(in);
       billingContact = in.readUTF();
-      {
-        int size = in.readCompressedInt();
-        Set<Email> emails = AoCollections.newLinkedHashSet(size);
-        for (int i = 0; i < size; i++) {
-          emails.add(Email.valueOf(in.readUTF()));
+        {
+          int size = in.readCompressedInt();
+          Set<Email> emails = AoCollections.newLinkedHashSet(size);
+          for (int i = 0; i < size; i++) {
+            emails.add(Email.valueOf(in.readUTF()));
+          }
+          billingEmail = AoCollections.optimalUnmodifiableSet(emails);
         }
-        billingEmail = AoCollections.optimalUnmodifiableSet(emails);
-      }
       billingEmailFormat = in.readEnum(EmailFormat.class);
       technicalContact = in.readUTF();
-      {
-        int size = in.readCompressedInt();
-        Set<Email> emails = AoCollections.newLinkedHashSet(size);
-        for (int i = 0; i < size; i++) {
-          emails.add(Email.valueOf(in.readUTF()));
+        {
+          int size = in.readCompressedInt();
+          Set<Email> emails = AoCollections.newLinkedHashSet(size);
+          for (int i = 0; i < size; i++) {
+            emails.add(Email.valueOf(in.readUTF()));
+          }
+          technicalEmail = AoCollections.optimalUnmodifiableSet(emails);
         }
-        technicalEmail = AoCollections.optimalUnmodifiableSet(emails);
-      }
       technicalEmailFormat = in.readEnum(EmailFormat.class);
     } catch (ValidationException e) {
       throw new IOException(e);

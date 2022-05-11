@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.schema;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTableStringKey;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 public final class AoservProtocolTable extends GlobalTableStringKey<AoservProtocol> {
 
-  AoservProtocolTable(AOServConnector connector) {
+  AoservProtocolTable(AoservConnector connector) {
     super(connector, AoservProtocol.class);
   }
 
@@ -55,7 +55,7 @@ public final class AoservProtocolTable extends GlobalTableStringKey<AoservProtoc
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.AOSERV_PROTOCOLS;
+  public Table.TableId getTableId() {
+    return Table.TableId.AOSERV_PROTOCOLS;
   }
 }

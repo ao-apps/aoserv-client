@@ -39,17 +39,13 @@ import java.sql.SQLException;
  */
 public final class LimiterClass extends CachedObjectIntegerKey<LimiterClass> {
 
-  static final int
-      COLUMN_PKEY    = 0,
-      COLUMN_LIMITER = 1
-  ;
-  static final String
-      COLUMN_LIMITER_name = "limiter",
-      COLUMN_CLASS_name = "class"
-  ;
+  static final int COLUMN_PKEY    = 0;
+  static final int COLUMN_LIMITER = 1;
+  static final String COLUMN_LIMITER_name = "limiter";
+  static final String COLUMN_CLASS_name = "class";
 
   /**
-   * The set of possible units
+   * The set of possible units.
    */
   // Matches aoserv-master-db/aoindustries/net/reputation/LimiterClass.TimeUnit-type.sql
   public enum TimeUnit {
@@ -88,8 +84,8 @@ public final class LimiterClass extends CachedObjectIntegerKey<LimiterClass> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.IP_REPUTATION_LIMITER_LIMITS;
+  public Table.TableId getTableId() {
+    return Table.TableId.IP_REPUTATION_LIMITER_LIMITS;
   }
 
   @Override
@@ -118,21 +114,21 @@ public final class LimiterClass extends CachedObjectIntegerKey<LimiterClass> {
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
     out.writeCompressedInt(limiter);
-    out.writeUTF          (clazz.name());
-    out.writeShort        (synPerIpBurst);
-    out.writeShort        (synPerIpRate);
-    out.writeUTF          (synPerIpUnit.name());
-    out.writeShort        (synPerIpSize);
-    out.writeShort        (synBurst);
-    out.writeShort        (synRate);
-    out.writeUTF          (synUnit.name());
-    out.writeInt          (packetPerIpBurst);
-    out.writeInt          (packetPerIpRate);
-    out.writeUTF          (packetPerIpUnit.name());
-    out.writeInt          (packetPerIpSize);
-    out.writeInt          (packetBurst);
-    out.writeInt          (packetRate);
-    out.writeUTF          (packetUnit.name());
+    out.writeUTF(clazz.name());
+    out.writeShort(synPerIpBurst);
+    out.writeShort(synPerIpRate);
+    out.writeUTF(synPerIpUnit.name());
+    out.writeShort(synPerIpSize);
+    out.writeShort(synBurst);
+    out.writeShort(synRate);
+    out.writeUTF(synUnit.name());
+    out.writeInt(packetPerIpBurst);
+    out.writeInt(packetPerIpRate);
+    out.writeUTF(packetPerIpUnit.name());
+    out.writeInt(packetPerIpSize);
+    out.writeInt(packetBurst);
+    out.writeInt(packetRate);
+    out.writeUTF(packetUnit.name());
   }
 
   @Override
@@ -159,24 +155,42 @@ public final class LimiterClass extends CachedObjectIntegerKey<LimiterClass> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY     : return pkey;
-      case COLUMN_LIMITER  : return limiter;
-      case 2               : return clazz.name();
-      case 3               : return synPerIpBurst;
-      case 4               : return synPerIpRate;
-      case 5               : return synPerIpUnit.name();
-      case 6               : return synPerIpSize;
-      case 7               : return synBurst;
-      case 8               : return synRate;
-      case 9               : return synUnit.name();
-      case 10              : return packetPerIpBurst;
-      case 11              : return packetPerIpRate;
-      case 12              : return packetPerIpUnit.name();
-      case 13              : return packetPerIpSize;
-      case 14              : return packetBurst;
-      case 15              : return packetRate;
-      case 16              : return packetUnit.name();
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_LIMITER:
+        return limiter;
+      case 2:
+        return clazz.name();
+      case 3:
+        return synPerIpBurst;
+      case 4:
+        return synPerIpRate;
+      case 5:
+        return synPerIpUnit.name();
+      case 6:
+        return synPerIpSize;
+      case 7:
+        return synBurst;
+      case 8:
+        return synRate;
+      case 9:
+        return synUnit.name();
+      case 10:
+        return packetPerIpBurst;
+      case 11:
+        return packetPerIpRate;
+      case 12:
+        return packetPerIpUnit.name();
+      case 13:
+        return packetPerIpSize;
+      case 14:
+        return packetBurst;
+      case 15:
+        return packetRate;
+      case 16:
+        return packetUnit.name();
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 

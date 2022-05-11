@@ -27,7 +27,7 @@ import com.aoapps.collections.IntList;
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.lang.validation.ValidationException;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Removable;
@@ -50,10 +50,8 @@ import java.util.Objects;
  */
 public final class Context extends CachedObjectIntegerKey<Context> implements Removable {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_TOMCAT_SITE = 1
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_TOMCAT_SITE = 1;
   static final String COLUMN_TOMCAT_SITE_name = "tomcat_site";
   static final String COLUMN_PATH_name = "path";
 
@@ -73,25 +71,25 @@ public final class Context extends CachedObjectIntegerKey<Context> implements Re
   public static final boolean DEFAULT_SERVER_XML_CONFIGURED = true;
 
   /**
-   * The ROOT webapp details
+   * The ROOT webapp details.
    */
   public static final String ROOT_PATH = "";
   public static final String ROOT_DOC_BASE = "ROOT";
 
-  private int tomcat_site;
-  private String class_name;
+  private int tomcatSite;
+  private String className;
   private boolean cookies;
-  private boolean cross_context;
-  private PosixPath doc_base;
+  private boolean crossContext;
+  private PosixPath docBase;
   private boolean override;
   private String path;
   private boolean privileged;
   private boolean reloadable;
-  private boolean use_naming;
-  private String wrapper_class;
+  private boolean useNaming;
+  private String wrapperClass;
   private int debug;
-  private PosixPath work_dir;
-  private boolean server_xml_configured;
+  private PosixPath workDir;
+  private boolean serverXmlConfigured;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -145,39 +143,55 @@ public final class Context extends CachedObjectIntegerKey<Context> implements Re
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_TOMCAT_SITE: return tomcat_site;
-      case 2: return class_name;
-      case 3: return cookies;
-      case 4: return cross_context;
-      case 5: return doc_base;
-      case 6: return override;
-      case 7: return path;
-      case 8: return privileged;
-      case 9: return reloadable;
-      case 10: return use_naming;
-      case 11: return wrapper_class;
-      case 12: return debug;
-      case 13: return work_dir;
-      case 14: return server_xml_configured;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_TOMCAT_SITE:
+        return tomcatSite;
+      case 2:
+        return className;
+      case 3:
+        return cookies;
+      case 4:
+        return crossContext;
+      case 5:
+        return docBase;
+      case 6:
+        return override;
+      case 7:
+        return path;
+      case 8:
+        return privileged;
+      case 9:
+        return reloadable;
+      case 10:
+        return useNaming;
+      case 11:
+        return wrapperClass;
+      case 12:
+        return debug;
+      case 13:
+        return workDir;
+      case 14:
+        return serverXmlConfigured;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   public int getHttpdTomcatSite_httpdSite_id() {
-    return tomcat_site;
+    return tomcatSite;
   }
 
   public Site getHttpdTomcatSite() throws SQLException, IOException {
-    Site obj = table.getConnector().getWeb_tomcat().getSite().get(tomcat_site);
+    Site obj = table.getConnector().getWeb_tomcat().getSite().get(tomcatSite);
     if (obj == null) {
-      throw new SQLException("Unable to find HttpdTomcatSite: " + tomcat_site);
+      throw new SQLException("Unable to find HttpdTomcatSite: " + tomcatSite);
     }
     return obj;
   }
 
   public String getClassName() {
-    return class_name;
+    return className;
   }
 
   public boolean useCookies() {
@@ -185,11 +199,11 @@ public final class Context extends CachedObjectIntegerKey<Context> implements Re
   }
 
   public boolean allowCrossContext() {
-    return cross_context;
+    return crossContext;
   }
 
   public PosixPath getDocBase() {
-    return doc_base;
+    return docBase;
   }
 
   public boolean allowOverride() {
@@ -209,11 +223,11 @@ public final class Context extends CachedObjectIntegerKey<Context> implements Re
   }
 
   public boolean useNaming() {
-    return use_naming;
+    return useNaming;
   }
 
   public String getWrapperClass() {
-    return wrapper_class;
+    return wrapperClass;
   }
 
   public int getDebugLevel() {
@@ -221,16 +235,16 @@ public final class Context extends CachedObjectIntegerKey<Context> implements Re
   }
 
   public PosixPath getWorkDir() {
-    return work_dir;
+    return workDir;
   }
 
   public boolean isServerXmlConfigured() {
-    return server_xml_configured;
+    return serverXmlConfigured;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.HTTPD_TOMCAT_CONTEXTS;
+  public Table.TableId getTableId() {
+    return Table.TableId.HTTPD_TOMCAT_CONTEXTS;
   }
 
   public List<ContextDataSource> getHttpdTomcatDataSources() throws IOException, SQLException {
@@ -253,20 +267,20 @@ public final class Context extends CachedObjectIntegerKey<Context> implements Re
   public void init(ResultSet result) throws SQLException {
     try {
       pkey = result.getInt(1);
-      tomcat_site = result.getInt(2);
-      class_name = result.getString(3);
+      tomcatSite = result.getInt(2);
+      className = result.getString(3);
       cookies = result.getBoolean(4);
-      cross_context = result.getBoolean(5);
-      doc_base = PosixPath.valueOf(result.getString(6));
+      crossContext = result.getBoolean(5);
+      docBase = PosixPath.valueOf(result.getString(6));
       override = result.getBoolean(7);
       path = result.getString(8);
       privileged = result.getBoolean(9);
       reloadable = result.getBoolean(10);
-      use_naming = result.getBoolean(11);
-      wrapper_class = result.getString(12);
+      useNaming = result.getBoolean(11);
+      wrapperClass = result.getString(12);
       debug = result.getInt(13);
-      work_dir = PosixPath.valueOf(result.getString(14));
-      server_xml_configured = result.getBoolean(15);
+      workDir = PosixPath.valueOf(result.getString(14));
+      serverXmlConfigured = result.getBoolean(15);
     } catch (ValidationException e) {
       throw new SQLException(e);
     }
@@ -284,8 +298,7 @@ public final class Context extends CachedObjectIntegerKey<Context> implements Re
         docBaseStr.indexOf('"') == -1
             && docBaseStr.indexOf('\\') == -1
             && docBaseStr.indexOf('\n') == -1
-            && docBaseStr.indexOf('\r') == -1
-    ;
+            && docBaseStr.indexOf('\r') == -1;
   }
 
   public static boolean isValidPath(String path) {
@@ -309,20 +322,20 @@ public final class Context extends CachedObjectIntegerKey<Context> implements Re
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
       pkey = in.readCompressedInt();
-      tomcat_site = in.readCompressedInt();
-      class_name = in.readNullUTF();
+      tomcatSite = in.readCompressedInt();
+      className = in.readNullUTF();
       cookies = in.readBoolean();
-      cross_context = in.readBoolean();
-      doc_base = PosixPath.valueOf(in.readUTF());
+      crossContext = in.readBoolean();
+      docBase = PosixPath.valueOf(in.readUTF());
       override = in.readBoolean();
       path = in.readUTF();
       privileged = in.readBoolean();
       reloadable = in.readBoolean();
-      use_naming = in.readBoolean();
-      wrapper_class = in.readNullUTF();
+      useNaming = in.readBoolean();
+      wrapperClass = in.readNullUTF();
       debug = in.readCompressedInt();
-      work_dir = PosixPath.valueOf(in.readNullUTF());
-      server_xml_configured = in.readBoolean();
+      workDir = PosixPath.valueOf(in.readNullUTF());
+      serverXmlConfigured = in.readBoolean();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -345,8 +358,8 @@ public final class Context extends CachedObjectIntegerKey<Context> implements Re
   ) throws IOException, SQLException {
     table.getConnector().requestUpdate(
         true,
-        AoservProtocol.CommandID.SET_HTTPD_TOMCAT_CONTEXT_ATTRIBUTES,
-        new AOServConnector.UpdateRequest() {
+        AoservProtocol.CommandId.SET_HTTPD_TOMCAT_CONTEXT_ATTRIBUTES,
+        new AoservConnector.UpdateRequest() {
           private IntList invalidateList;
 
           @Override
@@ -371,7 +384,7 @@ public final class Context extends CachedObjectIntegerKey<Context> implements Re
           public void readResponse(StreamableInput in) throws IOException, SQLException {
             int code = in.readByte();
             if (code == AoservProtocol.DONE) {
-              invalidateList = AOServConnector.readInvalidateList(in);
+              invalidateList = AoservConnector.readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
               throw new IOException("Unexpected response code: " + code);
@@ -388,27 +401,27 @@ public final class Context extends CachedObjectIntegerKey<Context> implements Re
 
   @Override
   public void remove() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.REMOVE, Table.TableID.HTTPD_TOMCAT_CONTEXTS, pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.REMOVE, Table.TableId.HTTPD_TOMCAT_CONTEXTS, pkey);
   }
 
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeCompressedInt(tomcat_site);
-    out.writeNullUTF(class_name);
+    out.writeCompressedInt(tomcatSite);
+    out.writeNullUTF(className);
     out.writeBoolean(cookies);
-    out.writeBoolean(cross_context);
-    out.writeUTF(doc_base.toString());
+    out.writeBoolean(crossContext);
+    out.writeUTF(docBase.toString());
     out.writeBoolean(override);
     out.writeUTF(path);
     out.writeBoolean(privileged);
     out.writeBoolean(reloadable);
-    out.writeBoolean(use_naming);
-    out.writeNullUTF(wrapper_class);
+    out.writeBoolean(useNaming);
+    out.writeNullUTF(wrapperClass);
     out.writeCompressedInt(debug);
-    out.writeNullUTF(Objects.toString(work_dir, null));
+    out.writeNullUTF(Objects.toString(workDir, null));
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_3) >= 0) {
-      out.writeBoolean(server_xml_configured);
+      out.writeBoolean(serverXmlConfigured);
     }
   }
 }

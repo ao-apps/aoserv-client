@@ -62,18 +62,15 @@ public final class RecordType extends GlobalObjectStringKey<RecordType> {
       NS    = "NS",
       PTR   = "PTR",
       SRV   = "SRV",
-      TXT   = "TXT"
-  ;
+      TXT   = "TXT";
 
   private String description;
-  private boolean
-      has_priority,
-      has_weight,
-      has_port,
-      has_flag,
-      has_tag,
-      param_ip
-  ;
+  private boolean hasPriority;
+  private boolean hasWeight;
+  private boolean hasPort;
+  private boolean hasFlag;
+  private boolean hasTag;
+  private boolean paramIp;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -153,15 +150,24 @@ public final class RecordType extends GlobalObjectStringKey<RecordType> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_TYPE : return pkey;
-      case 1 : return description;
-      case 2 : return has_priority;
-      case 3 : return has_weight;
-      case 4 : return has_port;
-      case 5 : return has_flag;
-      case 6 : return has_tag;
-      case 7 : return param_ip;
-      default : throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_TYPE:
+        return pkey;
+      case 1:
+        return description;
+      case 2:
+        return hasPriority;
+      case 3:
+        return hasWeight;
+      case 4:
+        return hasPort;
+      case 5:
+        return hasFlag;
+      case 6:
+        return hasTag;
+      case 7:
+        return paramIp;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -170,8 +176,8 @@ public final class RecordType extends GlobalObjectStringKey<RecordType> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.DNS_TYPES;
+  public Table.TableId getTableId() {
+    return Table.TableId.DNS_TYPES;
   }
 
   public String getType() {
@@ -182,48 +188,48 @@ public final class RecordType extends GlobalObjectStringKey<RecordType> {
   public void init(ResultSet result) throws SQLException {
     pkey         = result.getString("type");
     description  = result.getString("description");
-    has_priority = result.getBoolean("has_priority");
-    has_weight   = result.getBoolean("has_weight");
-    has_port     = result.getBoolean("has_port");
-    has_flag     = result.getBoolean("has_flag");
-    has_tag      = result.getBoolean("has_tag");
-    param_ip     = result.getBoolean("param_ip");
+    hasPriority = result.getBoolean("has_priority");
+    hasWeight   = result.getBoolean("has_weight");
+    hasPort     = result.getBoolean("has_port");
+    hasFlag     = result.getBoolean("has_flag");
+    hasTag      = result.getBoolean("has_tag");
+    paramIp     = result.getBoolean("param_ip");
   }
 
   public boolean hasPriority() {
-    return has_priority;
+    return hasPriority;
   }
 
   public boolean hasWeight() {
-    return has_weight;
+    return hasWeight;
   }
 
   public boolean hasPort() {
-    return has_port;
+    return hasPort;
   }
 
   public boolean hasFlag() {
-    return has_flag;
+    return hasFlag;
   }
 
   public boolean hasTag() {
-    return has_tag;
+    return hasTag;
   }
 
-  public boolean isParamIP() {
-    return param_ip;
+  public boolean isParamIp() {
+    return paramIp;
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey         = in.readUTF().intern();
     description  = in.readUTF();
-    has_priority = in.readBoolean();
-    has_weight   = in.readBoolean();
-    has_port     = in.readBoolean();
-    has_flag     = in.readBoolean();
-    has_tag      = in.readBoolean();
-    param_ip     = in.readBoolean();
+    hasPriority = in.readBoolean();
+    hasWeight   = in.readBoolean();
+    hasPort     = in.readBoolean();
+    hasFlag     = in.readBoolean();
+    hasTag      = in.readBoolean();
+    paramIp     = in.readBoolean();
   }
 
   @Override
@@ -235,15 +241,15 @@ public final class RecordType extends GlobalObjectStringKey<RecordType> {
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeUTF(pkey);
     out.writeUTF(description);
-    out.writeBoolean(has_priority);
+    out.writeBoolean(hasPriority);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_72) >= 0) {
-      out.writeBoolean(has_weight);
-      out.writeBoolean(has_port);
+      out.writeBoolean(hasWeight);
+      out.writeBoolean(hasPort);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_86_0) >= 0) {
-      out.writeBoolean(has_flag);
-      out.writeBoolean(has_tag);
+      out.writeBoolean(hasFlag);
+      out.writeBoolean(hasTag);
     }
-    out.writeBoolean(param_ip);
+    out.writeBoolean(paramIp);
   }
 }

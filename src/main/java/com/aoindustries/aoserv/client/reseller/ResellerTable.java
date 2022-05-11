@@ -26,7 +26,7 @@ package com.aoindustries.aoserv.client.reseller;
 import com.aoapps.hodgepodge.tree.Node;
 import com.aoapps.hodgepodge.tree.Tree;
 import com.aoapps.hodgepodge.tree.TreeCopy;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.CachedTableAccountNameKey;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -43,7 +43,7 @@ import java.util.List;
  */
 public final class ResellerTable extends CachedTableAccountNameKey<Reseller> {
 
-  ResellerTable(AOServConnector connector) {
+  ResellerTable(AoservConnector connector) {
     super(connector, Reseller.class);
   }
 
@@ -73,8 +73,8 @@ public final class ResellerTable extends CachedTableAccountNameKey<Reseller> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.RESELLERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.RESELLERS;
   }
 
   /**

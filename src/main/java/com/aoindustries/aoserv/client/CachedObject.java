@@ -30,9 +30,9 @@ package com.aoindustries.aoserv.client;
  *
  * @author  AO Industries, Inc.
  */
-public abstract class CachedObject<K, T extends CachedObject<K, T>> extends AOServObject<K, T> implements SingleTableObject<K, T> {
+public abstract class CachedObject<K, T extends CachedObject<K, T>> extends AoservObject<K, T> implements SingleTableObject<K, T> {
 
-  protected AOServTable<K, T> table;
+  protected AoservTable<K, T> table;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -46,12 +46,12 @@ public abstract class CachedObject<K, T extends CachedObject<K, T>> extends AOSe
   }
 
   @Override
-  public final AOServTable<K, T> getTable() {
+  public final AoservTable<K, T> getTable() {
     return table;
   }
 
   @Override
-  public final void setTable(AOServTable<K, T> table) {
+  public final void setTable(AoservTable<K, T> table) {
     if (this.table != null) {
       throw new IllegalStateException("table already set");
     }

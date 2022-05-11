@@ -26,7 +26,7 @@ package com.aoindustries.aoserv.client.web.tomcat;
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.lang.validation.ValidationException;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalObjectIntegerKey;
 import com.aoindustries.aoserv.client.distribution.SoftwareVersion;
 import com.aoindustries.aoserv.client.linux.PosixPath;
@@ -54,23 +54,21 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
 
   static final String COLUMN_VERSION_name = "version";
 
-  private PosixPath install_dir;
-  private boolean requires_mod_jk;
+  private PosixPath installDir;
+  private boolean requiresModJk;
 
   public static final String TECHNOLOGY_NAME = "jakarta-tomcat";
 
-  public static final String
-      VERSION_3_1 = "3.1",
-      VERSION_3_2_4 = "3.2.4",
-      VERSION_4_1_PREFIX = "4.1.",
-      VERSION_5_5_PREFIX = "5.5.",
-      VERSION_6_0_PREFIX = "6.0.",
-      VERSION_7_0_PREFIX = "7.0.",
-      VERSION_8_0_PREFIX = "8.0.",
-      VERSION_8_5_PREFIX = "8.5.",
-      VERSION_9_0_PREFIX = "9.0.",
-      VERSION_10_0_PREFIX = "10.0."
-  ;
+  public static final String VERSION_3_1 = "3.1";
+  public static final String VERSION_3_2_4 = "3.2.4";
+  public static final String VERSION_4_1_PREFIX = "4.1.";
+  public static final String VERSION_5_5_PREFIX = "5.5.";
+  public static final String VERSION_6_0_PREFIX = "6.0.";
+  public static final String VERSION_7_0_PREFIX = "7.0.";
+  public static final String VERSION_8_0_PREFIX = "8.0.";
+  public static final String VERSION_8_5_PREFIX = "8.5.";
+  public static final String VERSION_9_0_PREFIX = "9.0.";
+  public static final String VERSION_10_0_PREFIX = "10.0.";
 
   /**
    * In-place upgrades are supported from Tomcat 4.1 and newer.
@@ -110,23 +108,27 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_VERSION: return pkey;
-      case 1: return install_dir;
-      case 2: return requires_mod_jk;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_VERSION:
+        return pkey;
+      case 1:
+        return installDir;
+      case 2:
+        return requiresModJk;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   public PosixPath getInstallDirectory() {
-    return install_dir;
+    return installDir;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.HTTPD_TOMCAT_VERSIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.HTTPD_TOMCAT_VERSIONS;
   }
 
-  public SoftwareVersion getTechnologyVersion(AOServConnector connector) throws SQLException, IOException {
+  public SoftwareVersion getTechnologyVersion(AoservConnector connector) throws SQLException, IOException {
     SoftwareVersion obj = connector.getDistribution().getSoftwareVersion().get(pkey);
     if (obj == null) {
       throw new SQLException("Unable to find TechnologyVersion: " + pkey);
@@ -138,8 +140,8 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
   public void init(ResultSet result) throws SQLException {
     try {
       pkey = result.getInt(1);
-      install_dir = PosixPath.valueOf(result.getString(2));
-      requires_mod_jk = result.getBoolean(3);
+      installDir = PosixPath.valueOf(result.getString(2));
+      requiresModJk = result.getBoolean(3);
     } catch (ValidationException e) {
       throw new SQLException(e);
     }
@@ -149,62 +151,62 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
    * @deprecated  Please check all uses of this, because it also returns <code>true</code> for Tomcat 5, which doesn't seem
    *              to match the method name very well.
    *
-   * @see  #isTomcat4_1_X(AOServConnector)
-   * @see  #isTomcat5_5_X(AOServConnector)
-   * @see  #isTomcat6_0_X(AOServConnector)
+   * @see  #isTomcat4_1_X(AoservConnector)
+   * @see  #isTomcat5_5_X(AoservConnector)
+   * @see  #isTomcat6_0_X(AoservConnector)
    */
   @Deprecated
-  public boolean isTomcat4(AOServConnector connector) throws SQLException, IOException {
+  public boolean isTomcat4(AoservConnector connector) throws SQLException, IOException {
     String version = getTechnologyVersion(connector).getVersion();
     return version.startsWith("4.") || version.startsWith("5.");
   }
 
-  public boolean isTomcat3_1(AOServConnector connector) throws SQLException, IOException {
+  public boolean isTomcat3_1(AoservConnector connector) throws SQLException, IOException {
     String version = getTechnologyVersion(connector).getVersion();
     return version.equals(VERSION_3_1);
   }
 
-  public boolean isTomcat3_2_4(AOServConnector connector) throws SQLException, IOException {
+  public boolean isTomcat3_2_4(AoservConnector connector) throws SQLException, IOException {
     String version = getTechnologyVersion(connector).getVersion();
     return version.equals(VERSION_3_2_4);
   }
 
-  public boolean isTomcat4_1_X(AOServConnector connector) throws SQLException, IOException {
+  public boolean isTomcat4_1_X(AoservConnector connector) throws SQLException, IOException {
     String version = getTechnologyVersion(connector).getVersion();
     return version.startsWith(VERSION_4_1_PREFIX);
   }
 
-  public boolean isTomcat5_5_X(AOServConnector connector) throws SQLException, IOException {
+  public boolean isTomcat5_5_X(AoservConnector connector) throws SQLException, IOException {
     String version = getTechnologyVersion(connector).getVersion();
     return version.startsWith(VERSION_5_5_PREFIX);
   }
 
-  public boolean isTomcat6_0_X(AOServConnector connector) throws SQLException, IOException {
+  public boolean isTomcat6_0_X(AoservConnector connector) throws SQLException, IOException {
     String version = getTechnologyVersion(connector).getVersion();
     return version.startsWith(VERSION_6_0_PREFIX);
   }
 
-  public boolean isTomcat7_0_X(AOServConnector connector) throws SQLException, IOException {
+  public boolean isTomcat7_0_X(AoservConnector connector) throws SQLException, IOException {
     String version = getTechnologyVersion(connector).getVersion();
     return version.startsWith(VERSION_7_0_PREFIX);
   }
 
-  public boolean isTomcat8_0_X(AOServConnector connector) throws SQLException, IOException {
+  public boolean isTomcat8_0_X(AoservConnector connector) throws SQLException, IOException {
     String version = getTechnologyVersion(connector).getVersion();
     return version.startsWith(VERSION_8_0_PREFIX);
   }
 
-  public boolean isTomcat8_5_X(AOServConnector connector) throws SQLException, IOException {
+  public boolean isTomcat8_5_X(AoservConnector connector) throws SQLException, IOException {
     String version = getTechnologyVersion(connector).getVersion();
     return version.startsWith(VERSION_8_5_PREFIX);
   }
 
-  public boolean isTomcat9_0_X(AOServConnector connector) throws SQLException, IOException {
+  public boolean isTomcat9_0_X(AoservConnector connector) throws SQLException, IOException {
     String version = getTechnologyVersion(connector).getVersion();
     return version.startsWith(VERSION_9_0_PREFIX);
   }
 
-  public boolean isTomcat10_0_X(AOServConnector connector) throws SQLException, IOException {
+  public boolean isTomcat10_0_X(AoservConnector connector) throws SQLException, IOException {
     String version = getTechnologyVersion(connector).getVersion();
     return version.startsWith(VERSION_10_0_PREFIX);
   }
@@ -213,21 +215,21 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
       pkey = in.readCompressedInt();
-      install_dir = PosixPath.valueOf(in.readUTF());
-      requires_mod_jk = in.readBoolean();
+      installDir = PosixPath.valueOf(in.readUTF());
+      requiresModJk = in.readBoolean();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
   }
 
-  public boolean requiresModJK() {
-    return requires_mod_jk;
+  public boolean requiresModjK() {
+    return requiresModJk;
   }
 
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeUTF(install_dir.toString());
-    out.writeBoolean(requires_mod_jk);
+    out.writeUTF(installDir.toString());
+    out.writeBoolean(requiresModJk);
   }
 }

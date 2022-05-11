@@ -24,9 +24,9 @@
 package com.aoindustries.aoserv.client.web;
 
 import com.aoapps.hodgepodge.io.TerminalWriter;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.linux.Server;
@@ -43,7 +43,7 @@ import java.util.List;
  */
 public final class HttpdServerTable extends CachedTableIntegerKey<HttpdServer> {
 
-  HttpdServerTable(AOServConnector connector) {
+  HttpdServerTable(AoservConnector connector) {
     super(connector, HttpdServer.class);
   }
 
@@ -72,18 +72,18 @@ public final class HttpdServerTable extends CachedTableIntegerKey<HttpdServer> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.HTTPD_SERVERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.HTTPD_SERVERS;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.GET_HTTPD_SERVER_CONCURRENCY)) {
-      if (AOSH.checkParamCount(Command.GET_HTTPD_SERVER_CONCURRENCY, args, 2, err)) {
+      if (Aosh.checkParamCount(Command.GET_HTTPD_SERVER_CONCURRENCY, args, 2, err)) {
         out.write(
             Integer.toString(
-                connector.getSimpleAOClient().getHttpdServerConcurrency(
+                connector.getSimpleClient().getHttpdServerConcurrency(
                     args[1],
                     args[2].isEmpty() ? null : args[2]
                 )

@@ -46,7 +46,7 @@ public final class AttachmentType extends GlobalObjectStringKey<AttachmentType> 
   static final String COLUMN_EXTENSION_name = "extension";
 
   private String description;
-  private boolean is_default_block;
+  private boolean isDefaultBlock;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -62,10 +62,14 @@ public final class AttachmentType extends GlobalObjectStringKey<AttachmentType> 
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_EXTENSION: return pkey;
-      case 1: return description;
-      case 2: return is_default_block;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_EXTENSION:
+        return pkey;
+      case 1:
+        return description;
+      case 2:
+        return isDefaultBlock;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -78,32 +82,32 @@ public final class AttachmentType extends GlobalObjectStringKey<AttachmentType> 
   }
 
   public boolean isDefaultBlock() {
-    return is_default_block;
+    return isDefaultBlock;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.EMAIL_ATTACHMENT_TYPES;
+  public Table.TableId getTableId() {
+    return Table.TableId.EMAIL_ATTACHMENT_TYPES;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     pkey = result.getString(1);
     description = result.getString(2);
-    is_default_block = result.getBoolean(3);
+    isDefaultBlock = result.getBoolean(3);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readUTF().intern();
     description = in.readUTF();
-    is_default_block = in.readBoolean();
+    isDefaultBlock = in.readBoolean();
   }
 
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeUTF(pkey);
     out.writeUTF(description);
-    out.writeBoolean(is_default_block);
+    out.writeBoolean(isDefaultBlock);
   }
 }

@@ -24,7 +24,7 @@
 package com.aoindustries.aoserv.client.schema;
 
 import com.aoapps.collections.AoCollections;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTableIntegerKey;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -41,7 +41,7 @@ import java.util.Map;
 public final class ColumnTable extends GlobalTableIntegerKey<Column> {
 
   /** Avoid repeated copies. */
-  private static final int numTables = Table.TableID.values().length;
+  private static final int numTables = Table.TableId.values().length;
   /**
    * The columns for tables are cached for faster lookups.
    */
@@ -64,7 +64,7 @@ public final class ColumnTable extends GlobalTableIntegerKey<Column> {
     }
   }
 
-  ColumnTable(AOServConnector connector) {
+  ColumnTable(AoservConnector connector) {
     super(connector, Column.class);
   }
 
@@ -80,14 +80,14 @@ public final class ColumnTable extends GlobalTableIntegerKey<Column> {
   }
 
   Column getSchemaColumn(Table table, String columnName) throws IOException, SQLException {
-    int tableID = table.getId();
+    int tableId = table.getId();
     synchronized (nameToColumns) {
-      Map<String, Column> map = nameToColumns.get(tableID);
+      Map<String, Column> map = nameToColumns.get(tableId);
       if (map == null || map.isEmpty()) {
         List<Column> cols = getSchemaColumns(table);
         int len = cols.size();
         if (map == null) {
-          nameToColumns.set(tableID, map = AoCollections.newHashMap(len));
+          nameToColumns.set(tableId, map = AoCollections.newHashMap(len));
         }
         for (int c = 0; c < len; c++) {
           Column col = cols.get(c);
@@ -103,9 +103,9 @@ public final class ColumnTable extends GlobalTableIntegerKey<Column> {
   }
 
   List<Column> getSchemaColumns(Table table) throws IOException, SQLException {
-    int tableID = table.getId();
+    int tableId = table.getId();
     synchronized (tableColumns) {
-      List<Column> cols = tableColumns.get(tableID);
+      List<Column> cols = tableColumns.get(tableId);
       if (cols != null) {
         return cols;
       }
@@ -121,14 +121,14 @@ public final class ColumnTable extends GlobalTableIntegerKey<Column> {
         }
       }
       matches = Collections.unmodifiableList(matches);
-      tableColumns.set(tableID, matches);
+      tableColumns.set(tableId, matches);
       return matches;
     }
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.SCHEMA_COLUMNS;
+  public Table.TableId getTableId() {
+    return Table.TableId.SCHEMA_COLUMNS;
   }
 
   @Override

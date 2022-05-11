@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.schema;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTableIntegerKey;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -44,7 +44,7 @@ public final class ForeignKeyTable extends GlobalTableIntegerKey<ForeignKey> {
   private static final Map<Integer, List<ForeignKey>> referencesHash = new HashMap<>();
   private static final Map<Integer, List<ForeignKey>> referencedByHash = new HashMap<>();
 
-  ForeignKeyTable(AOServConnector connector) {
+  ForeignKeyTable(AoservConnector connector) {
     super(connector, ForeignKey.class);
   }
 
@@ -106,20 +106,20 @@ public final class ForeignKeyTable extends GlobalTableIntegerKey<ForeignKey> {
       int size = cached.size();
       for (int c = 0; c < size; c++) {
         ForeignKey key = cached.get(c);
-        Integer keyColumnPKey = key.getColumn_id();
-        Integer foreignColumnPKey = key.getForeignColumn_id();
+        Integer keyColumnPkey = key.getColumn_id();
+        Integer foreignColumnPkey = key.getForeignColumn_id();
 
         // Referenced By
-        List<ForeignKey> referencedBy = referencedByHash.get(keyColumnPKey);
+        List<ForeignKey> referencedBy = referencedByHash.get(keyColumnPkey);
         if (referencedBy == null) {
-          referencedByHash.put(keyColumnPKey, referencedBy = new ArrayList<>());
+          referencedByHash.put(keyColumnPkey, referencedBy = new ArrayList<>());
         }
         referencedBy.add(key);
 
         // References
-        List<ForeignKey> references = referencesHash.get(foreignColumnPKey);
+        List<ForeignKey> references = referencesHash.get(foreignColumnPkey);
         if (references == null) {
-          referencesHash.put(foreignColumnPKey, references = new ArrayList<>());
+          referencesHash.put(foreignColumnPkey, references = new ArrayList<>());
         }
         references.add(key);
       }
@@ -151,7 +151,7 @@ public final class ForeignKeyTable extends GlobalTableIntegerKey<ForeignKey> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.SCHEMA_FOREIGN_KEYS;
+  public Table.TableId getTableId() {
+    return Table.TableId.SCHEMA_FOREIGN_KEYS;
   }
 }

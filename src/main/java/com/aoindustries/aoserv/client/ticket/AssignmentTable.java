@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.ticket;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.account.Administrator;
 import com.aoindustries.aoserv.client.reseller.Reseller;
@@ -40,7 +40,7 @@ import java.util.List;
  */
 public final class AssignmentTable extends CachedTableIntegerKey<Assignment> {
 
-  AssignmentTable(AOServConnector connector) {
+  AssignmentTable(AoservConnector connector) {
     super(connector, Assignment.class);
   }
 
@@ -61,7 +61,7 @@ public final class AssignmentTable extends CachedTableIntegerKey<Assignment> {
   }
 
   List<Assignment> getTicketAssignments(Ticket ticket) throws IOException, SQLException {
-    return getIndexedRows(Assignment.COLUMN_TICKET, ticket.getTicketID());
+    return getIndexedRows(Assignment.COLUMN_TICKET, ticket.getTicketId());
   }
 
   public List<Assignment> getTicketAssignments(Reseller reseller) throws IOException, SQLException {
@@ -73,7 +73,7 @@ public final class AssignmentTable extends CachedTableIntegerKey<Assignment> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.TICKET_ASSIGNMENTS;
+  public Table.TableId getTableId() {
+    return Table.TableId.TICKET_ASSIGNMENTS;
   }
 }

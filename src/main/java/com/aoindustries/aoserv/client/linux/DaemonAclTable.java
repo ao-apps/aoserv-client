@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.linux;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -37,7 +37,7 @@ import java.util.List;
  */
 public final class DaemonAclTable extends CachedTableIntegerKey<DaemonAcl> {
 
-  DaemonAclTable(AOServConnector connector) {
+  DaemonAclTable(AoservConnector connector) {
     super(connector, DaemonAcl.class);
   }
 
@@ -57,12 +57,12 @@ public final class DaemonAclTable extends CachedTableIntegerKey<DaemonAcl> {
     return getUniqueRow(DaemonAcl.COLUMN_PKEY, pkey);
   }
 
-  List<DaemonAcl> getAOServerDaemonHosts(Server aoServer) throws IOException, SQLException {
+  List<DaemonAcl> getAoserverDaemonHosts(Server aoServer) throws IOException, SQLException {
     return getIndexedRows(DaemonAcl.COLUMN_AO_SERVER, aoServer.getPkey());
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.AO_SERVER_DAEMON_HOSTS;
+  public Table.TableId getTableId() {
+    return Table.TableId.AO_SERVER_DAEMON_HOSTS;
   }
 }

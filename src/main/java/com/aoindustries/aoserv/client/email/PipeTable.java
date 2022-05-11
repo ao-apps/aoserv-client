@@ -24,9 +24,9 @@
 package com.aoindustries.aoserv.client.email;
 
 import com.aoapps.hodgepodge.io.TerminalWriter;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.linux.Server;
@@ -44,7 +44,7 @@ import java.util.List;
  */
 public final class PipeTable extends CachedTableIntegerKey<Pipe> {
 
-  PipeTable(AOServConnector connector) {
+  PipeTable(AoservConnector connector) {
     super(connector, Pipe.class);
   }
 
@@ -60,10 +60,10 @@ public final class PipeTable extends CachedTableIntegerKey<Pipe> {
   }
 
   public int addEmailPipe(Server ao, String command, Package packageObject) throws IOException, SQLException {
-    int pkey = connector.requestIntQueryIL(
+    int pkey = connector.requestIntQueryInvalidating(
         true,
-        AoservProtocol.CommandID.ADD,
-        Table.TableID.EMAIL_PIPES,
+        AoservProtocol.CommandId.ADD,
+        Table.TableId.EMAIL_PIPES,
         ao.getPkey(),
         command,
         packageObject.getName()
@@ -85,30 +85,30 @@ public final class PipeTable extends CachedTableIntegerKey<Pipe> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.EMAIL_PIPES;
+  public Table.TableId getTableId() {
+    return Table.TableId.EMAIL_PIPES;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_EMAIL_PIPE)) {
-      if (AOSH.checkParamCount(Command.ADD_EMAIL_PIPE, args, 3, err)) {
+      if (Aosh.checkParamCount(Command.ADD_EMAIL_PIPE, args, 3, err)) {
         out.println(
-            connector.getSimpleAOClient().addEmailPipe(
+            connector.getSimpleClient().addEmailPipe(
                 args[1],
                 args[2],
-                AOSH.parseAccountingCode(args[3], "package")
+                Aosh.parseAccountingCode(args[3], "package")
             )
         );
         out.flush();
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.DISABLE_EMAIL_PIPE)) {
-      if (AOSH.checkParamCount(Command.DISABLE_EMAIL_PIPE, args, 2, err)) {
+      if (Aosh.checkParamCount(Command.DISABLE_EMAIL_PIPE, args, 2, err)) {
         out.println(
-            connector.getSimpleAOClient().disableEmailPipe(
-                AOSH.parseInt(args[1], "pkey"),
+            connector.getSimpleClient().disableEmailPipe(
+                Aosh.parseInt(args[1], "pkey"),
                 args[2]
             )
         );
@@ -116,14 +116,14 @@ public final class PipeTable extends CachedTableIntegerKey<Pipe> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.ENABLE_EMAIL_PIPE)) {
-      if (AOSH.checkParamCount(Command.ENABLE_EMAIL_PIPE, args, 1, err)) {
-        connector.getSimpleAOClient().enableEmailPipe(AOSH.parseInt(args[1], "pkey"));
+      if (Aosh.checkParamCount(Command.ENABLE_EMAIL_PIPE, args, 1, err)) {
+        connector.getSimpleClient().enableEmailPipe(Aosh.parseInt(args[1], "pkey"));
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.REMOVE_EMAIL_PIPE)) {
-      if (AOSH.checkParamCount(Command.REMOVE_EMAIL_PIPE, args, 1, err)) {
-        connector.getSimpleAOClient().removeEmailPipe(
-            AOSH.parseInt(args[1], "pkey")
+      if (Aosh.checkParamCount(Command.REMOVE_EMAIL_PIPE, args, 1, err)) {
+        connector.getSimpleClient().removeEmailPipe(
+            Aosh.parseInt(args[1], "pkey")
         );
       }
       return true;

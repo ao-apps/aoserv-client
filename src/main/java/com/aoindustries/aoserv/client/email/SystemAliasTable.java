@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.email;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -38,7 +38,7 @@ import java.util.List;
  */
 public final class SystemAliasTable extends CachedTableIntegerKey<SystemAlias> {
 
-  SystemAliasTable(AOServConnector connector) {
+  SystemAliasTable(AoservConnector connector) {
     super(connector, SystemAlias.class);
   }
 
@@ -63,7 +63,7 @@ public final class SystemAliasTable extends CachedTableIntegerKey<SystemAlias> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.SYSTEM_EMAIL_ALIASES;
+  public Table.TableId getTableId() {
+    return Table.TableId.SYSTEM_EMAIL_ALIASES;
   }
 }

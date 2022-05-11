@@ -53,10 +53,8 @@ import java.util.ArrayList;
  */
 public final class Address extends CachedObjectIntegerKey<Address> implements Removable {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_DOMAIN = 2
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_DOMAIN = 2;
   static final String COLUMN_DOMAIN_name = "domain";
   static final String COLUMN_ADDRESS_name = "address";
 
@@ -89,10 +87,14 @@ public final class Address extends CachedObjectIntegerKey<Address> implements Re
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case 1: return address;
-      case COLUMN_DOMAIN: return domain;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case 1:
+        return address;
+      case COLUMN_DOMAIN:
+        return domain;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -161,8 +163,8 @@ public final class Address extends CachedObjectIntegerKey<Address> implements Re
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.EMAIL_ADDRESSES;
+  public Table.TableId getTableId() {
+    return Table.TableId.EMAIL_ADDRESSES;
   }
 
   @Override
@@ -179,8 +181,7 @@ public final class Address extends CachedObjectIntegerKey<Address> implements Re
             || !getEmailForwardings().isEmpty()
             || !getEmailListAddresses().isEmpty()
             || !getEmailPipeAddresses().isEmpty()
-            || !getLinuxAccAddresses().isEmpty()
-    ;
+            || !getLinuxAccAddresses().isEmpty();
   }
 
   @Override
@@ -250,10 +251,10 @@ public final class Address extends CachedObjectIntegerKey<Address> implements Re
    */
   @Override
   public void remove() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.REMOVE,
-        Table.TableID.EMAIL_ADDRESSES,
+        AoservProtocol.CommandId.REMOVE,
+        Table.TableId.EMAIL_ADDRESSES,
         pkey
     );
   }

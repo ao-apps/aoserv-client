@@ -26,23 +26,9 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class MySQLDatabaseName {
+public abstract class AoservObject {
 
-  private String name;
-
-  public MySQLDatabaseName() {
+  protected AoservObject() {
     // Do nothing
-  }
-
-  public MySQLDatabaseName(String name) {
-    this.name = name;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
   }
 }

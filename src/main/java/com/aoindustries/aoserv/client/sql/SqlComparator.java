@@ -24,8 +24,8 @@
 package com.aoindustries.aoserv.client.sql;
 
 import com.aoapps.lang.exception.WrappedException;
-import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.AOServObject;
+import com.aoindustries.aoserv.client.AoservConnector;
+import com.aoindustries.aoserv.client.AoservObject;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Comparator;
@@ -35,15 +35,15 @@ import java.util.Comparator;
  *
  * @author  AO Industries, Inc.
  */
-public final class SQLComparator<T> implements Comparator<T> {
+public final class SqlComparator<T> implements Comparator<T> {
 
-  private final AOServConnector connector;
-  private final SQLExpression[] exprs;
+  private final AoservConnector connector;
+  private final SqlExpression[] exprs;
   private final boolean[] sortOrders;
 
-  public SQLComparator(
-      AOServConnector connector,
-      SQLExpression[] exprs,
+  public SqlComparator(
+      AoservConnector connector,
+      SqlExpression[] exprs,
       boolean[] sortOrders
   ) {
     this.connector = connector;
@@ -54,23 +54,23 @@ public final class SQLComparator<T> implements Comparator<T> {
   @Override
   public int compare(T o1, T o2) {
     try {
-      if (o1 instanceof AOServObject) {
-        AOServObject<?, ?> ao1 = (AOServObject) o1;
-        if (o2 instanceof AOServObject) {
-          AOServObject<?, ?> ao2 = (AOServObject) o2;
+      if (o1 instanceof AoservObject) {
+        AoservObject<?, ?> ao1 = (AoservObject) o1;
+        if (o2 instanceof AoservObject) {
+          AoservObject<?, ?> ao2 = (AoservObject) o2;
           return ao1.compareTo(connector, ao2, exprs, sortOrders);
         } else if (o2 instanceof Object[]) {
           return ao1.compareTo(connector, (Object[]) o2, exprs, sortOrders);
         } else if (o2 instanceof Comparable) {
           return ao1.compareTo(connector, (Comparable) o2, exprs, sortOrders);
         } else {
-          throw new IllegalArgumentException("O2 must be either AOServObject, Object[], or Comparable");
+          throw new IllegalArgumentException("O2 must be either AoservObject, Object[], or Comparable");
         }
       } else if (o1 instanceof Object[]) {
         @SuppressWarnings({"unchecked"})
         T[] oa1 = (T[]) o1;
-        if (o2 instanceof AOServObject) {
-          AOServObject<?, ?> ao2 = (AOServObject) o2;
+        if (o2 instanceof AoservObject) {
+          AoservObject<?, ?> ao2 = (AoservObject) o2;
           return -ao2.compareTo(connector, oa1, exprs, sortOrders);
         } else if (o2 instanceof Object[]) {
           @SuppressWarnings({"unchecked"})
@@ -79,23 +79,23 @@ public final class SQLComparator<T> implements Comparator<T> {
         } else if (o2 instanceof Comparable) {
           throw new IllegalArgumentException("Comparing of Object[] and Comparable not supported.");
         } else {
-          throw new IllegalArgumentException("O2 must be either AOServObject, Object[], or Comparable");
+          throw new IllegalArgumentException("O2 must be either AoservObject, Object[], or Comparable");
         }
       } else if (o1 instanceof Comparable) {
         @SuppressWarnings({"unchecked"})
         Comparable<Object> c1 = (Comparable) o1;
-        if (o2 instanceof AOServObject) {
-          AOServObject<?, ?> ao2 = (AOServObject) o2;
+        if (o2 instanceof AoservObject) {
+          AoservObject<?, ?> ao2 = (AoservObject) o2;
           return -ao2.compareTo(connector, c1, exprs, sortOrders);
         } else if (o2 instanceof Object[]) {
           throw new IllegalArgumentException("Comparing of Comparable and Object[] not supported.");
         } else if (o2 instanceof Comparable) {
           return c1.compareTo(o2);
         } else {
-          throw new IllegalArgumentException("O2 must be either AOServObject or Comparable");
+          throw new IllegalArgumentException("O2 must be either AoservObject or Comparable");
         }
       } else {
-        throw new IllegalArgumentException("O1 must be either AOServObject or Comparable");
+        throw new IllegalArgumentException("O1 must be either AoservObject or Comparable");
       }
     } catch (IOException | SQLException err) {
       throw new WrappedException(err);

@@ -45,14 +45,12 @@ import java.util.List;
  */
 public final class ContextDataSource extends CachedObjectIntegerKey<ContextDataSource> implements Removable {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_TOMCAT_CONTEXT = 1
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_TOMCAT_CONTEXT = 1;
   static final String COLUMN_TOMCAT_CONTEXT_name = "tomcat_context";
   static final String COLUMN_NAME_name = "name";
 
-  private int tomcat_context;
+  private int tomcatContext;
   private String name;
   private String driverClassName;
   private String url;
@@ -82,25 +80,37 @@ public final class ContextDataSource extends CachedObjectIntegerKey<ContextDataS
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_TOMCAT_CONTEXT: return tomcat_context;
-      case 2: return name;
-      case 3: return driverClassName;
-      case 4: return url;
-      case 5: return username;
-      case 6: return password;
-      case 7: return maxActive;
-      case 8: return maxIdle;
-      case 9: return maxWait;
-      case 10: return validationQuery;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_TOMCAT_CONTEXT:
+        return tomcatContext;
+      case 2:
+        return name;
+      case 3:
+        return driverClassName;
+      case 4:
+        return url;
+      case 5:
+        return username;
+      case 6:
+        return password;
+      case 7:
+        return maxActive;
+      case 8:
+        return maxIdle;
+      case 9:
+        return maxWait;
+      case 10:
+        return validationQuery;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   public Context getHttpdTomcatContext() throws SQLException, IOException {
-    Context obj = table.getConnector().getWeb_tomcat().getContext().get(tomcat_context);
+    Context obj = table.getConnector().getWeb_tomcat().getContext().get(tomcatContext);
     if (obj == null) {
-      throw new SQLException("Unable to find HttpdTomcatContext: " + tomcat_context);
+      throw new SQLException("Unable to find HttpdTomcatContext: " + tomcatContext);
     }
     return obj;
   }
@@ -142,14 +152,14 @@ public final class ContextDataSource extends CachedObjectIntegerKey<ContextDataS
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.HTTPD_TOMCAT_DATA_SOURCES;
+  public Table.TableId getTableId() {
+    return Table.TableId.HTTPD_TOMCAT_DATA_SOURCES;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     pkey = result.getInt(1);
-    tomcat_context = result.getInt(2);
+    tomcatContext = result.getInt(2);
     name = result.getString(3);
     driverClassName = result.getString(4);
     url = result.getString(5);
@@ -164,7 +174,7 @@ public final class ContextDataSource extends CachedObjectIntegerKey<ContextDataS
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readCompressedInt();
-    tomcat_context = in.readCompressedInt();
+    tomcatContext = in.readCompressedInt();
     name = in.readUTF();
     driverClassName = in.readUTF();
     url = in.readUTF();
@@ -178,7 +188,7 @@ public final class ContextDataSource extends CachedObjectIntegerKey<ContextDataS
 
   @Override
   public void remove() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.REMOVE, Table.TableID.HTTPD_TOMCAT_DATA_SOURCES, pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.REMOVE, Table.TableId.HTTPD_TOMCAT_DATA_SOURCES, pkey);
   }
 
   public void update(
@@ -192,9 +202,9 @@ public final class ContextDataSource extends CachedObjectIntegerKey<ContextDataS
       int maxWait,
       String validationQuery
   ) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.UPDATE_HTTPD_TOMCAT_DATA_SOURCE,
+        AoservProtocol.CommandId.UPDATE_HTTPD_TOMCAT_DATA_SOURCE,
         pkey,
         name,
         driverClassName,
@@ -211,7 +221,7 @@ public final class ContextDataSource extends CachedObjectIntegerKey<ContextDataS
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeCompressedInt(tomcat_context);
+    out.writeCompressedInt(tomcatContext);
     out.writeUTF(name);
     out.writeUTF(driverClassName);
     out.writeUTF(url);

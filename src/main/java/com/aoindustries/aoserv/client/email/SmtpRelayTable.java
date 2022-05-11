@@ -28,10 +28,10 @@ import com.aoapps.hodgepodge.io.TerminalWriter;
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.net.HostAddress;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.linux.Server;
@@ -50,7 +50,7 @@ import java.util.List;
  */
 public final class SmtpRelayTable extends CachedTableIntegerKey<SmtpRelay> {
 
-  SmtpRelayTable(AOServConnector connector) {
+  SmtpRelayTable(AoservConnector connector) {
     super(connector, SmtpRelay.class);
   }
 
@@ -69,15 +69,15 @@ public final class SmtpRelayTable extends CachedTableIntegerKey<SmtpRelay> {
   public int addEmailSmtpRelay(final Package pack, final Server aoServer, final HostAddress host, final SmtpRelayType type, final long duration) throws IOException, SQLException {
     return connector.requestResult(
         true,
-        AoservProtocol.CommandID.ADD,
-        // Java 9: new AOServConnector.ResultRequest<>
-        new AOServConnector.ResultRequest<Integer>() {
+        AoservProtocol.CommandId.ADD,
+        // Java 9: new AoservConnector.ResultRequest<>
+        new AoservConnector.ResultRequest<Integer>() {
           private int pkey;
           private IntList invalidateList;
 
           @Override
           public void writeRequest(StreamableOutput out) throws IOException {
-            out.writeCompressedInt(Table.TableID.EMAIL_SMTP_RELAYS.ordinal());
+            out.writeCompressedInt(Table.TableId.EMAIL_SMTP_RELAYS.ordinal());
             out.writeUTF(pack.getName().toString());
             out.writeCompressedInt(aoServer == null ? -1 : aoServer.getPkey());
             out.writeUTF(host.toString());
@@ -90,7 +90,7 @@ public final class SmtpRelayTable extends CachedTableIntegerKey<SmtpRelay> {
             int code = in.readByte();
             if (code == AoservProtocol.DONE) {
               pkey = in.readCompressedInt();
-              invalidateList = AOServConnector.readInvalidateList(in);
+              invalidateList = AoservConnector.readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
               throw new IOException("Unexpected response code: " + code);
@@ -113,7 +113,7 @@ public final class SmtpRelayTable extends CachedTableIntegerKey<SmtpRelay> {
 
   public SmtpRelay getEmailSmtpRelay(Package pk, Server ao, HostAddress host) throws IOException, SQLException {
     Account.Name packageName = pk.getName();
-    int aoPKey = ao.getPkey();
+    int aoPkey = ao.getPkey();
 
     List<SmtpRelay> cached = getRows();
     int len = cached.size();
@@ -124,7 +124,7 @@ public final class SmtpRelayTable extends CachedTableIntegerKey<SmtpRelay> {
           packageName.equals(relay.getPackage_name())
               && (
               (hostId = relay.getLinuxServer_host_id()) == null
-                  || hostId == aoPKey
+                  || hostId == aoPkey
           )
               && host.equals(relay.getHost())
       ) {
@@ -139,7 +139,7 @@ public final class SmtpRelayTable extends CachedTableIntegerKey<SmtpRelay> {
   }
 
   public List<SmtpRelay> getEmailSmtpRelays(Server ao) throws IOException, SQLException {
-    int aoPKey = ao.getPkey();
+    int aoPkey = ao.getPkey();
 
     List<SmtpRelay> cached = getRows();
     int len = cached.size();
@@ -149,7 +149,7 @@ public final class SmtpRelayTable extends CachedTableIntegerKey<SmtpRelay> {
       Integer hostId;
       if (
           (hostId = relay.getLinuxServer_host_id()) == null
-              || hostId == aoPKey
+              || hostId == aoPkey
       ) {
         matches.add(relay);
       }
@@ -158,33 +158,33 @@ public final class SmtpRelayTable extends CachedTableIntegerKey<SmtpRelay> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.EMAIL_SMTP_RELAYS;
+  public Table.TableId getTableId() {
+    return Table.TableId.EMAIL_SMTP_RELAYS;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_EMAIL_SMTP_RELAY)) {
-      if (AOSH.checkParamCount(Command.ADD_EMAIL_SMTP_RELAY, args, 5, err)) {
+      if (Aosh.checkParamCount(Command.ADD_EMAIL_SMTP_RELAY, args, 5, err)) {
         String s = args[5].trim();
         out.println(
-            connector.getSimpleAOClient().addEmailSmtpRelay(
-                AOSH.parseAccountingCode(args[1], "package"),
+            connector.getSimpleClient().addEmailSmtpRelay(
+                Aosh.parseAccountingCode(args[1], "package"),
                 args[2],
-                AOSH.parseHostAddress(args[3], "host"),
+                Aosh.parseHostAddress(args[3], "host"),
                 args[4],
-                s.length() == 0 ? -1 : AOSH.parseLong(s, "duration")
+                s.length() == 0 ? -1 : Aosh.parseLong(s, "duration")
             )
         );
         out.flush();
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.DISABLE_EMAIL_SMTP_RELAY)) {
-      if (AOSH.checkParamCount(Command.DISABLE_EMAIL_SMTP_RELAY, args, 2, err)) {
+      if (Aosh.checkParamCount(Command.DISABLE_EMAIL_SMTP_RELAY, args, 2, err)) {
         out.println(
-            connector.getSimpleAOClient().disableEmailSmtpRelay(
-                AOSH.parseInt(args[1], "pkey"),
+            connector.getSimpleClient().disableEmailSmtpRelay(
+                Aosh.parseInt(args[1], "pkey"),
                 args[2]
             )
         );
@@ -192,21 +192,21 @@ public final class SmtpRelayTable extends CachedTableIntegerKey<SmtpRelay> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.ENABLE_EMAIL_SMTP_RELAY)) {
-      if (AOSH.checkParamCount(Command.ENABLE_EMAIL_SMTP_RELAY, args, 1, err)) {
-        connector.getSimpleAOClient().enableEmailSmtpRelay(AOSH.parseInt(args[1], "pkey"));
+      if (Aosh.checkParamCount(Command.ENABLE_EMAIL_SMTP_RELAY, args, 1, err)) {
+        connector.getSimpleClient().enableEmailSmtpRelay(Aosh.parseInt(args[1], "pkey"));
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.REFRESH_EMAIL_SMTP_RELAY)) {
-      if (AOSH.checkParamCount(Command.REFRESH_EMAIL_SMTP_RELAY, args, 1, err)) {
-        connector.getSimpleAOClient().refreshEmailSmtpRelay(
-            AOSH.parseInt(args[1], "pkey"),
-            args[2].trim().length() == 0 ? -1 : AOSH.parseLong(args[2], "min_duration")
+      if (Aosh.checkParamCount(Command.REFRESH_EMAIL_SMTP_RELAY, args, 1, err)) {
+        connector.getSimpleClient().refreshEmailSmtpRelay(
+            Aosh.parseInt(args[1], "pkey"),
+            args[2].trim().length() == 0 ? -1 : Aosh.parseLong(args[2], "min_duration")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.REMOVE_EMAIL_SMTP_RELAY)) {
-      if (AOSH.checkParamCount(Command.REMOVE_EMAIL_SMTP_RELAY, args, 1, err)) {
-        connector.getSimpleAOClient().removeEmailSmtpRelay(AOSH.parseInt(args[1], "pkey"));
+      if (Aosh.checkParamCount(Command.REMOVE_EMAIL_SMTP_RELAY, args, 1, err)) {
+        connector.getSimpleClient().removeEmailSmtpRelay(Aosh.parseInt(args[1], "pkey"));
       }
       return true;
     }

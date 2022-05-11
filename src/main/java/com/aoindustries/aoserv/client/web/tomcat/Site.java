@@ -25,7 +25,7 @@ package com.aoindustries.aoserv.client.web.tomcat;
 
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.linux.PosixPath;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
@@ -54,7 +54,7 @@ public final class Site extends CachedObjectIntegerKey<Site> {
   private int version;
   private boolean blockWebinf;
 
-  private boolean use_apache; // Only used for protocol compatibility on the server side
+  private boolean useApache; // Only used for protocol compatibility on the server side
 
   /**
    * The minimum amount of time in milliseconds between Java VM starts.
@@ -165,7 +165,7 @@ public final class Site extends CachedObjectIntegerKey<Site> {
     throw new IllegalArgumentException("Invalid index: " + i);
   }
 
-  public com.aoindustries.aoserv.client.web.jboss.Site getHttpdJBossSite() throws SQLException, IOException {
+  public com.aoindustries.aoserv.client.web.jboss.Site getHttpdJbossSite() throws SQLException, IOException {
     return table.getConnector().getWeb_jboss().getSite().get(pkey);
   }
 
@@ -226,8 +226,8 @@ public final class Site extends CachedObjectIntegerKey<Site> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.HTTPD_TOMCAT_SITES;
+  public Table.TableId getTableId() {
+    return Table.TableId.HTTPD_TOMCAT_SITES;
   }
 
   @Override
@@ -235,7 +235,7 @@ public final class Site extends CachedObjectIntegerKey<Site> {
     pkey = result.getInt(1);
     version = result.getInt(2);
     blockWebinf = result.getBoolean(3);
-    use_apache = result.getBoolean(4);
+    useApache = result.getBoolean(4);
   }
 
   @Override
@@ -245,12 +245,12 @@ public final class Site extends CachedObjectIntegerKey<Site> {
     blockWebinf = in.readBoolean();
   }
 
-  public String startJVM() throws IOException, SQLException {
+  public String startJvm() throws IOException, SQLException {
     return table.getConnector().requestResult(
         false,
-        AoservProtocol.CommandID.START_JVM,
-        // Java 9: new AOServConnector.ResultRequest<>
-        new AOServConnector.ResultRequest<String>() {
+        AoservProtocol.CommandId.START_JVM,
+        // Java 9: new AoservConnector.ResultRequest<>
+        new AoservConnector.ResultRequest<String>() {
           private String result;
           @Override
           public void writeRequest(StreamableOutput out) throws IOException {
@@ -276,12 +276,12 @@ public final class Site extends CachedObjectIntegerKey<Site> {
     );
   }
 
-  public String stopJVM() throws IOException, SQLException {
+  public String stopJvm() throws IOException, SQLException {
     return table.getConnector().requestResult(
         false,
-        AoservProtocol.CommandID.STOP_JVM,
-        // Java 9: new AOServConnector.ResultRequest<>
-        new AOServConnector.ResultRequest<String>() {
+        AoservProtocol.CommandId.STOP_JVM,
+        // Java 9: new AoservConnector.ResultRequest<>
+        new AoservConnector.ResultRequest<String>() {
           private String result;
           @Override
           public void writeRequest(StreamableOutput out) throws IOException {
@@ -324,7 +324,7 @@ public final class Site extends CachedObjectIntegerKey<Site> {
   }
 
   public void setBlockWebinf(boolean blockWebinf) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_HTTPD_TOMCAT_SITE_BLOCK_WEBINF, pkey, blockWebinf);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_HTTPD_TOMCAT_SITE_BLOCK_WEBINF, pkey, blockWebinf);
   }
 
   @Override
@@ -334,7 +334,7 @@ public final class Site extends CachedObjectIntegerKey<Site> {
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_6) >= 0) {
       out.writeBoolean(blockWebinf);
     } else  {
-      out.writeBoolean(use_apache);
+      out.writeBoolean(useApache);
     }
   }
 }

@@ -26,10 +26,10 @@ package com.aoindustries.aoserv.client.linux;
 import com.aoapps.hodgepodge.io.TerminalWriter;
 import com.aoapps.net.DomainName;
 import com.aoapps.sql.SQLUtility;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.account.DisableLog;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.email.Address;
 import com.aoindustries.aoserv.client.email.Domain;
@@ -54,7 +54,7 @@ import javax.security.auth.login.LoginException;
  */
 public final class UserServerTable extends CachedTableIntegerKey<UserServer> {
 
-  UserServerTable(AOServConnector connector) {
+  UserServerTable(AoservConnector connector) {
     super(connector, UserServer.class);
   }
 
@@ -70,10 +70,10 @@ public final class UserServerTable extends CachedTableIntegerKey<UserServer> {
   }
 
   int addLinuxServerAccount(User linuxAccount, Server aoServer, PosixPath home) throws IOException, SQLException {
-    int pkey = connector.requestIntQueryIL(
+    int pkey = connector.requestIntQueryInvalidating(
         true,
-        AoservProtocol.CommandID.ADD,
-        Table.TableID.LINUX_SERVER_ACCOUNTS,
+        AoservProtocol.CommandId.ADD,
+        Table.TableId.LINUX_SERVER_ACCOUNTS,
         linuxAccount.getUsername_id(),
         aoServer.getPkey(),
         home
@@ -93,9 +93,9 @@ public final class UserServerTable extends CachedTableIntegerKey<UserServer> {
       PosixPath home,
       PosixPath shell
   ) throws IOException, SQLException {
-    return connector.requestIntQueryIL(
+    return connector.requestIntQueryInvalidating(
         true,
-        AoservProtocol.CommandID.ADD_SYSTEM_USER,
+        AoservProtocol.CommandId.ADD_SYSTEM_USER,
         aoServer.getPkey(),
         username,
         uid,
@@ -200,8 +200,8 @@ public final class UserServerTable extends CachedTableIntegerKey<UserServer> {
    */
   public UserServer getLinuxServerAccountFromUsernamePassword(User.Name username, String password, boolean emailOnly) throws LoginException, IOException, SQLException {
     List<UserServer> list = getRows();
-    UserServer badPasswordLSA = null;
-    UserServer disabledLSA = null;
+    UserServer badPasswordLsa = null;
+    UserServer disabledLsa = null;
     int len = list.size();
     for (int c = 0; c < len; c++) {
       UserServer account = list.get(c);
@@ -210,26 +210,32 @@ public final class UserServerTable extends CachedTableIntegerKey<UserServer> {
               && (!emailOnly || account.getLinuxAccount().getType().isEmail())
       ) {
         if (account.isDisabled()) {
-          if (disabledLSA == null) {
-            disabledLSA = account;
+          if (disabledLsa == null) {
+            disabledLsa = account;
           }
         } else if (account.passwordMatches(password)) {
           return account;
-        } else if (badPasswordLSA == null) {
-          badPasswordLSA = account;
+        } else if (badPasswordLsa == null) {
+          badPasswordLsa = account;
         }
       }
     }
-    if (badPasswordLSA != null) {
-      throw new FailedLoginException("The password does not match the password for the \"" + badPasswordLSA.getLinuxAccount().getUsername().getUsername() + "\" account on the \"" + badPasswordLSA.getServer().getHostname() + "\" server.");
+    if (badPasswordLsa != null) {
+      throw new FailedLoginException("The password does not match the password for the \""
+          + badPasswordLsa.getLinuxAccount().getUsername().getUsername() + "\" account on the \""
+          + badPasswordLsa.getServer().getHostname() + "\" server.");
     }
-    if (disabledLSA != null) {
-      DisableLog dl = disabledLSA.getDisableLog();
+    if (disabledLsa != null) {
+      DisableLog dl = disabledLsa.getDisableLog();
       String reason = dl == null ? null : dl.getDisableReason();
       if (reason == null) {
-        throw new AccountLockedException("The \"" + disabledLSA.getLinuxAccount().getUsername().getUsername() + "\" account on the \"" + disabledLSA.getServer().getHostname() + "\" server has been disabled for an unspecified reason.");
+        throw new AccountLockedException("The \"" + disabledLsa.getLinuxAccount().getUsername().getUsername()
+            + "\" account on the \"" + disabledLsa.getServer().getHostname()
+            + "\" server has been disabled for an unspecified reason.");
       } else {
-        throw new AccountLockedException("The \"" + disabledLSA.getLinuxAccount().getUsername().getUsername() + "\" account on the \"" + disabledLSA.getServer().getHostname() + "\" server has been disabled for the following reason: " + reason);
+        throw new AccountLockedException("The \"" + disabledLsa.getLinuxAccount().getUsername().getUsername()
+            + "\" account on the \"" + disabledLsa.getServer().getHostname()
+            + "\" server has been disabled for the following reason: " + reason);
       }
     }
     return null;
@@ -244,8 +250,8 @@ public final class UserServerTable extends CachedTableIntegerKey<UserServer> {
    * @exception  LoginException  if a possible account match is found but the account is disabled or has a different password
    */
   public UserServer getLinuxServerAccountFromEmailAddress(String address, DomainName domain, String password) throws LoginException, IOException, SQLException {
-    UserServer badPasswordLSA = null;
-    UserServer disabledLSA = null;
+    UserServer badPasswordLsa = null;
+    UserServer disabledLsa = null;
 
     List<Domain> domains = connector.getEmail().getDomain().getRows();
     int domainsLen = domains.size();
@@ -260,29 +266,37 @@ public final class UserServerTable extends CachedTableIntegerKey<UserServer> {
           for (int d = 0; d < lsasLen; d++) {
             UserServer lsa = lsas.get(d);
             if (lsa.isDisabled()) {
-              if (disabledLSA == null) {
-                disabledLSA = lsa;
+              if (disabledLsa == null) {
+                disabledLsa = lsa;
               }
             } else if (lsa.passwordMatches(password)) {
               return lsa;
-            } else if (badPasswordLSA == null) {
-              badPasswordLSA = lsa;
+            } else if (badPasswordLsa == null) {
+              badPasswordLsa = lsa;
             }
           }
         }
       }
     }
 
-    if (badPasswordLSA != null) {
-      throw new FailedLoginException("The \"" + address + "@" + domain + "\" address resolves to the \"" + badPasswordLSA.getLinuxAccount().getUsername().getUsername() + "\" account on the \"" + badPasswordLSA.getServer().getHostname() + "\" server, but the password does not match.");
+    if (badPasswordLsa != null) {
+      throw new FailedLoginException("The \"" + address + "@" + domain + "\" address resolves to the \""
+          + badPasswordLsa.getLinuxAccount().getUsername().getUsername() + "\" account on the \""
+          + badPasswordLsa.getServer().getHostname() + "\" server, but the password does not match.");
     }
-    if (disabledLSA != null) {
-      DisableLog dl = disabledLSA.getDisableLog();
+    if (disabledLsa != null) {
+      DisableLog dl = disabledLsa.getDisableLog();
       String reason = dl == null ? null : dl.getDisableReason();
       if (reason == null) {
-        throw new AccountLockedException("The \"" + address + "@" + domain + "\" address resolves to the \"" + disabledLSA.getLinuxAccount().getUsername().getUsername() + "\" account on the \"" + disabledLSA.getServer().getHostname() + "\" server, but the account has been disabled for an unspecified reason.");
+        throw new AccountLockedException("The \"" + address + "@" + domain + "\" address resolves to the \""
+            + disabledLsa.getLinuxAccount().getUsername().getUsername() + "\" account on the \""
+            + disabledLsa.getServer().getHostname()
+            + "\" server, but the account has been disabled for an unspecified reason.");
       } else {
-        throw new AccountLockedException("The \"" + address + "@" + domain + "\" address resolves to the \"" + disabledLSA.getLinuxAccount().getUsername().getUsername() + "\" account on the \"" + disabledLSA.getServer().getHostname() + "\" server, but the account has been disabled for the following reason: " + reason);
+        throw new AccountLockedException("The \"" + address + "@" + domain + "\" address resolves to the \""
+            + disabledLsa.getLinuxAccount().getUsername().getUsername() + "\" account on the \""
+            + disabledLsa.getServer().getHostname()
+            + "\" server, but the account has been disabled for the following reason: " + reason);
       }
     }
     return null;
@@ -300,15 +314,15 @@ public final class UserServerTable extends CachedTableIntegerKey<UserServer> {
         int len = list.size();
         for (int c = 0; c < len; c++) {
           UserServer lsa = list.get(c);
-          LinuxId lsaUID = lsa.getUid();
+          LinuxId lsaUid = lsa.getUid();
           // Only hash the root user for uid of 0
-          if (lsaUID.getId() != UserServer.ROOT_UID || lsa.getLinuxAccount_username_id().equals(User.ROOT)) {
+          if (lsaUid.getId() != UserServer.ROOT_UID || lsa.getLinuxAccount_username_id().equals(User.ROOT)) {
             Integer aoI = lsa.getServer().getPkey();
             Map<LinuxId, UserServer> serverHash = uidHash.get(aoI);
             if (serverHash == null) {
               uidHash.put(aoI, serverHash = new HashMap<>());
             }
-            LinuxId i = lsaUID;
+            LinuxId i = lsaUid;
             if (!serverHash.containsKey(i)) {
               serverHash.put(i, lsa);
             }
@@ -346,8 +360,8 @@ public final class UserServerTable extends CachedTableIntegerKey<UserServer> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.LINUX_SERVER_ACCOUNTS;
+  public Table.TableId getTableId() {
+    return Table.TableId.LINUX_SERVER_ACCOUNTS;
   }
 
   @Override
@@ -355,21 +369,21 @@ public final class UserServerTable extends CachedTableIntegerKey<UserServer> {
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_LINUX_SERVER_ACCOUNT)) {
-      if (AOSH.checkParamCount(Command.ADD_LINUX_SERVER_ACCOUNT, args, 3, err)) {
+      if (Aosh.checkParamCount(Command.ADD_LINUX_SERVER_ACCOUNT, args, 3, err)) {
         out.println(
-            connector.getSimpleAOClient().addLinuxServerAccount(
-                AOSH.parseLinuxUserName(args[1], "username"),
+            connector.getSimpleClient().addLinuxServerAccount(
+                Aosh.parseLinuxUserName(args[1], "username"),
                 args[2],
-                args[3].isEmpty() ? null : AOSH.parseUnixPath(args[3], "home_directory")
+                args[3].isEmpty() ? null : Aosh.parseUnixPath(args[3], "home_directory")
             )
         );
         out.flush();
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.COMPARE_LINUX_SERVER_ACCOUNT_PASSWORD)) {
-      if (AOSH.checkParamCount(Command.COMPARE_LINUX_SERVER_ACCOUNT_PASSWORD, args, 3, err)) {
-        boolean result = connector.getSimpleAOClient().compareLinuxServerAccountPassword(
-            AOSH.parseLinuxUserName(args[1], "username"),
+      if (Aosh.checkParamCount(Command.COMPARE_LINUX_SERVER_ACCOUNT_PASSWORD, args, 3, err)) {
+        boolean result = connector.getSimpleClient().compareLinuxServerAccountPassword(
+            Aosh.parseLinuxUserName(args[1], "username"),
             args[2],
             args[3]
         );
@@ -378,9 +392,9 @@ public final class UserServerTable extends CachedTableIntegerKey<UserServer> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.COPY_HOME_DIRECTORY)) {
-      if (AOSH.checkParamCount(Command.COPY_HOME_DIRECTORY, args, 3, err)) {
-        long byteCount = connector.getSimpleAOClient().copyHomeDirectory(
-            AOSH.parseLinuxUserName(args[1], "username"),
+      if (Aosh.checkParamCount(Command.COPY_HOME_DIRECTORY, args, 3, err)) {
+        long byteCount = connector.getSimpleClient().copyHomeDirectory(
+            Aosh.parseLinuxUserName(args[1], "username"),
             args[2],
             args[3]
         );
@@ -394,20 +408,20 @@ public final class UserServerTable extends CachedTableIntegerKey<UserServer> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.COPY_LINUX_SERVER_ACCOUNT_PASSWORD)) {
-      if (AOSH.checkParamCount(Command.COPY_LINUX_SERVER_ACCOUNT_PASSWORD, args, 4, err)) {
-        connector.getSimpleAOClient().copyLinuxServerAccountPassword(
-            AOSH.parseLinuxUserName(args[1], "from_username"),
+      if (Aosh.checkParamCount(Command.COPY_LINUX_SERVER_ACCOUNT_PASSWORD, args, 4, err)) {
+        connector.getSimpleClient().copyLinuxServerAccountPassword(
+            Aosh.parseLinuxUserName(args[1], "from_username"),
             args[2],
-            AOSH.parseLinuxUserName(args[3], "to_username"),
+            Aosh.parseLinuxUserName(args[3], "to_username"),
             args[4]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.DISABLE_LINUX_SERVER_ACCOUNT)) {
-      if (AOSH.checkParamCount(Command.DISABLE_LINUX_SERVER_ACCOUNT, args, 3, err)) {
+      if (Aosh.checkParamCount(Command.DISABLE_LINUX_SERVER_ACCOUNT, args, 3, err)) {
         out.println(
-            connector.getSimpleAOClient().disableLinuxServerAccount(
-                AOSH.parseLinuxUserName(args[1], "username"),
+            connector.getSimpleClient().disableLinuxServerAccount(
+                Aosh.parseLinuxUserName(args[1], "username"),
                 args[2],
                 args[3]
             )
@@ -416,18 +430,18 @@ public final class UserServerTable extends CachedTableIntegerKey<UserServer> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.ENABLE_LINUX_SERVER_ACCOUNT)) {
-      if (AOSH.checkParamCount(Command.ENABLE_LINUX_SERVER_ACCOUNT, args, 2, err)) {
-        connector.getSimpleAOClient().enableLinuxServerAccount(
-            AOSH.parseLinuxUserName(args[1], "username"),
+      if (Aosh.checkParamCount(Command.ENABLE_LINUX_SERVER_ACCOUNT, args, 2, err)) {
+        connector.getSimpleClient().enableLinuxServerAccount(
+            Aosh.parseLinuxUserName(args[1], "username"),
             args[2]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.GET_CRON_TABLE)) {
-      if (AOSH.checkParamCount(Command.GET_CRON_TABLE, args, 2, err)) {
+      if (Aosh.checkParamCount(Command.GET_CRON_TABLE, args, 2, err)) {
         out.print(
-            connector.getSimpleAOClient().getCronTable(
-                AOSH.parseLinuxUserName(args[1], "username"),
+            connector.getSimpleClient().getCronTable(
+                Aosh.parseLinuxUserName(args[1], "username"),
                 args[2]
             )
         );
@@ -435,11 +449,11 @@ public final class UserServerTable extends CachedTableIntegerKey<UserServer> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.GET_IMAP_FOLDER_SIZES)) {
-      if (AOSH.checkMinParamCount(Command.GET_IMAP_FOLDER_SIZES, args, 3, err)) {
+      if (Aosh.checkMinParamCount(Command.GET_IMAP_FOLDER_SIZES, args, 3, err)) {
         String[] folderNames = new String[args.length - 3];
         System.arraycopy(args, 3, folderNames, 0, folderNames.length);
-        long[] sizes = connector.getSimpleAOClient().getImapFolderSizes(
-            AOSH.parseLinuxUserName(args[1], "username"),
+        long[] sizes = connector.getSimpleClient().getImapFolderSizes(
+            Aosh.parseLinuxUserName(args[1], "username"),
             args[2],
             folderNames
         );
@@ -453,9 +467,9 @@ public final class UserServerTable extends CachedTableIntegerKey<UserServer> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.GET_INBOX_ATTRIBUTES)) {
-      if (AOSH.checkParamCount(Command.GET_INBOX_ATTRIBUTES, args, 2, err)) {
-        InboxAttributes attr = connector.getSimpleAOClient().getInboxAttributes(
-            AOSH.parseLinuxUserName(args[1], "username"),
+      if (Aosh.checkParamCount(Command.GET_INBOX_ATTRIBUTES, args, 2, err)) {
+        InboxAttributes attr = connector.getSimpleClient().getInboxAttributes(
+            Aosh.parseLinuxUserName(args[1], "username"),
             args[2]
         );
         out.print("System Time..: ");
@@ -477,10 +491,10 @@ public final class UserServerTable extends CachedTableIntegerKey<UserServer> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.IS_LINUX_SERVER_ACCOUNT_PASSWORD_SET)) {
-      if (AOSH.checkParamCount(Command.IS_LINUX_SERVER_ACCOUNT_PASSWORD_SET, args, 2, err)) {
+      if (Aosh.checkParamCount(Command.IS_LINUX_SERVER_ACCOUNT_PASSWORD_SET, args, 2, err)) {
         out.println(
-            connector.getSimpleAOClient().isLinuxServerAccountPasswordSet(
-                AOSH.parseLinuxUserName(args[1], "username"),
+            connector.getSimpleClient().isLinuxServerAccountPasswordSet(
+                Aosh.parseLinuxUserName(args[1], "username"),
                 args[2]
             )
         );
@@ -488,10 +502,10 @@ public final class UserServerTable extends CachedTableIntegerKey<UserServer> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.IS_LINUX_SERVER_ACCOUNT_PROCMAIL_MANUAL)) {
-      if (AOSH.checkParamCount(Command.IS_LINUX_SERVER_ACCOUNT_PROCMAIL_MANUAL, args, 2, err)) {
+      if (Aosh.checkParamCount(Command.IS_LINUX_SERVER_ACCOUNT_PROCMAIL_MANUAL, args, 2, err)) {
         out.println(
-            connector.getSimpleAOClient().isLinuxServerAccountProcmailManual(
-                AOSH.parseLinuxUserName(args[1], "username"),
+            connector.getSimpleClient().isLinuxServerAccountProcmailManual(
+                Aosh.parseLinuxUserName(args[1], "username"),
                 args[2]
             )
         );
@@ -499,86 +513,86 @@ public final class UserServerTable extends CachedTableIntegerKey<UserServer> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.REMOVE_LINUX_SERVER_ACCOUNT)) {
-      if (AOSH.checkParamCount(Command.REMOVE_LINUX_SERVER_ACCOUNT, args, 2, err)) {
-        connector.getSimpleAOClient().removeLinuxServerAccount(
-            AOSH.parseLinuxUserName(args[1], "username"),
+      if (Aosh.checkParamCount(Command.REMOVE_LINUX_SERVER_ACCOUNT, args, 2, err)) {
+        connector.getSimpleClient().removeLinuxServerAccount(
+            Aosh.parseLinuxUserName(args[1], "username"),
             args[2]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_AUTORESPONDER)) {
-      if (AOSH.checkParamCount(Command.SET_AUTORESPONDER, args, 7, err)) {
-        connector.getSimpleAOClient().setAutoresponder(
-            AOSH.parseLinuxUserName(args[1], "username"),
+      if (Aosh.checkParamCount(Command.SET_AUTORESPONDER, args, 7, err)) {
+        connector.getSimpleClient().setAutoresponder(
+            Aosh.parseLinuxUserName(args[1], "username"),
             args[2],
             args[3],
-            args[4].length() == 0 ? null : AOSH.parseDomainName(args[4], "from_domain"),
+            args[4].length() == 0 ? null : Aosh.parseDomainName(args[4], "from_domain"),
             args[5],
             args[6],
-            AOSH.parseBoolean(args[7], "enabled")
+            Aosh.parseBoolean(args[7], "enabled")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_CRON_TABLE)) {
-      if (AOSH.checkParamCount(Command.SET_CRON_TABLE, args, 3, err)) {
-        connector.getSimpleAOClient().setCronTable(
-            AOSH.parseLinuxUserName(args[1], "username"),
+      if (Aosh.checkParamCount(Command.SET_CRON_TABLE, args, 3, err)) {
+        connector.getSimpleClient().setCronTable(
+            Aosh.parseLinuxUserName(args[1], "username"),
             args[2],
             args[3]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_LINUX_SERVER_ACCOUNT_JUNK_EMAIL_RETENTION)) {
-      if (AOSH.checkParamCount(Command.SET_LINUX_SERVER_ACCOUNT_JUNK_EMAIL_RETENTION, args, 3, err)) {
-        connector.getSimpleAOClient().setLinuxServerAccountJunkEmailRetention(
-            AOSH.parseLinuxUserName(args[1], "username"),
+      if (Aosh.checkParamCount(Command.SET_LINUX_SERVER_ACCOUNT_JUNK_EMAIL_RETENTION, args, 3, err)) {
+        connector.getSimpleClient().setLinuxServerAccountJunkEmailRetention(
+            Aosh.parseLinuxUserName(args[1], "username"),
             args[2],
-            args[3] == null || args[3].length() == 0 ? -1 : AOSH.parseInt(args[3], "junk_email_retention")
+            args[3] == null || args[3].length() == 0 ? -1 : Aosh.parseInt(args[3], "junk_email_retention")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_LINUX_SERVER_ACCOUNT_PASSWORD)) {
-      if (AOSH.checkParamCount(Command.SET_LINUX_SERVER_ACCOUNT_PASSWORD, args, 3, err)) {
-        connector.getSimpleAOClient().setLinuxServerAccountPassword(
-            AOSH.parseLinuxUserName(args[1], "username"),
+      if (Aosh.checkParamCount(Command.SET_LINUX_SERVER_ACCOUNT_PASSWORD, args, 3, err)) {
+        connector.getSimpleClient().setLinuxServerAccountPassword(
+            Aosh.parseLinuxUserName(args[1], "username"),
             args[2],
             args[3]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_INTEGRATION_MODE)) {
-      if (AOSH.checkParamCount(Command.SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_INTEGRATION_MODE, args, 3, err)) {
-        connector.getSimpleAOClient().setLinuxServerAccountSpamAssassinIntegrationMode(
-            AOSH.parseLinuxUserName(args[1], "username"),
+      if (Aosh.checkParamCount(Command.SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_INTEGRATION_MODE, args, 3, err)) {
+        connector.getSimpleClient().setLinuxServerAccountSpamAssassinIntegrationMode(
+            Aosh.parseLinuxUserName(args[1], "username"),
             args[2],
             args[3]
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_REQUIRED_SCORE)) {
-      if (AOSH.checkParamCount(Command.SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_REQUIRED_SCORE, args, 3, err)) {
-        connector.getSimpleAOClient().setLinuxServerAccountSpamAssassinRequiredScore(
-            AOSH.parseLinuxUserName(args[1], "username"),
+      if (Aosh.checkParamCount(Command.SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_REQUIRED_SCORE, args, 3, err)) {
+        connector.getSimpleClient().setLinuxServerAccountSpamAssassinRequiredScore(
+            Aosh.parseLinuxUserName(args[1], "username"),
             args[2],
-            AOSH.parseFloat(args[3], "required_score")
+            Aosh.parseFloat(args[3], "required_score")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_LINUX_SERVER_ACCOUNT_TRASH_EMAIL_RETENTION)) {
-      if (AOSH.checkParamCount(Command.SET_LINUX_SERVER_ACCOUNT_TRASH_EMAIL_RETENTION, args, 3, err)) {
-        connector.getSimpleAOClient().setLinuxServerAccountTrashEmailRetention(
-            AOSH.parseLinuxUserName(args[1], "username"),
+      if (Aosh.checkParamCount(Command.SET_LINUX_SERVER_ACCOUNT_TRASH_EMAIL_RETENTION, args, 3, err)) {
+        connector.getSimpleClient().setLinuxServerAccountTrashEmailRetention(
+            Aosh.parseLinuxUserName(args[1], "username"),
             args[2],
-            args[3] == null || args[3].length() == 0 ? -1 : AOSH.parseInt(args[3], "trash_email_retention")
+            args[3] == null || args[3].length() == 0 ? -1 : Aosh.parseInt(args[3], "trash_email_retention")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_LINUX_SERVER_ACCOUNT_USE_INBOX)) {
-      if (AOSH.checkParamCount(Command.SET_LINUX_SERVER_ACCOUNT_USE_INBOX, args, 3, err)) {
-        connector.getSimpleAOClient().setLinuxServerAccountUseInbox(
-            AOSH.parseLinuxUserName(args[1], "username"),
+      if (Aosh.checkParamCount(Command.SET_LINUX_SERVER_ACCOUNT_USE_INBOX, args, 3, err)) {
+        connector.getSimpleClient().setLinuxServerAccountUseInbox(
+            Aosh.parseLinuxUserName(args[1], "username"),
             args[2],
-            AOSH.parseBoolean(args[3], "use_inbox")
+            Aosh.parseBoolean(args[3], "use_inbox")
         );
       }
       return true;

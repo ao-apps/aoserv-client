@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.infrastructure;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.net.Host;
@@ -38,7 +38,7 @@ import java.sql.SQLException;
  */
 public final class PhysicalServerTable extends CachedTableIntegerKey<PhysicalServer> {
 
-  PhysicalServerTable(AOServConnector connector) {
+  PhysicalServerTable(AoservConnector connector) {
     super(connector, PhysicalServer.class);
   }
 
@@ -59,7 +59,7 @@ public final class PhysicalServerTable extends CachedTableIntegerKey<PhysicalSer
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.PHYSICAL_SERVERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.PHYSICAL_SERVERS;
   }
 }

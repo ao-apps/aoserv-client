@@ -25,7 +25,7 @@ package com.aoindustries.aoserv.client.postgresql;
 
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalObjectIntegerKey;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -44,10 +44,8 @@ import java.sql.SQLException;
  */
 public final class Encoding extends GlobalObjectIntegerKey<Encoding> {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_POSTGRES_VERSION = 2
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_POSTGRES_VERSION = 2;
   static final String COLUMN_ENCODING_name = "encoding";
   static final String COLUMN_POSTGRES_VERSION_name = "postgres_version";
   static final String COLUMN_PKEY_name = "pkey";
@@ -101,8 +99,7 @@ public final class Encoding extends GlobalObjectIntegerKey<Encoding> {
       WIN1255 = "WIN1255",              //                          9.4   9.5   9.6   10   11   12   13   14
       WIN1256 = "WIN1256",              //              7.3   8.0   9.4   9.5   9.6   10   11   12   13   14
       WIN1257 = "WIN1257",              //                          9.4   9.5   9.6   10   11   12   13   14
-      WIN1258 = "WIN1258"               //                          9.4   9.5   9.6   10   11   12   13   14
-  ;
+      WIN1258 = "WIN1258";              //                          9.4   9.5   9.6   10   11   12   13   14
 
   /**
    * Gets the default PostgreSQL encoding for the given database version.
@@ -121,7 +118,7 @@ public final class Encoding extends GlobalObjectIntegerKey<Encoding> {
   }
 
   private String encoding;
-  private int postgres_version;
+  private int postgresVersion;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -137,10 +134,14 @@ public final class Encoding extends GlobalObjectIntegerKey<Encoding> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case 1: return encoding;
-      case COLUMN_POSTGRES_VERSION: return postgres_version;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case 1:
+        return encoding;
+      case COLUMN_POSTGRES_VERSION:
+        return postgresVersion;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -148,37 +149,37 @@ public final class Encoding extends GlobalObjectIntegerKey<Encoding> {
     return encoding;
   }
 
-  public Version getPostgresVersion(AOServConnector connector) throws SQLException, IOException {
-    Version pv = connector.getPostgresql().getVersion().get(postgres_version);
+  public Version getPostgresVersion(AoservConnector connector) throws SQLException, IOException {
+    Version pv = connector.getPostgresql().getVersion().get(postgresVersion);
     if (pv == null) {
-      throw new SQLException("Unable to find PostgresVersion: " + postgres_version);
+      throw new SQLException("Unable to find PostgresVersion: " + postgresVersion);
     }
     return pv;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.POSTGRES_ENCODINGS;
+  public Table.TableId getTableId() {
+    return Table.TableId.POSTGRES_ENCODINGS;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     pkey = result.getInt(1);
     encoding = result.getString(2);
-    postgres_version = result.getInt(3);
+    postgresVersion = result.getInt(3);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readCompressedInt();
     encoding = in.readUTF().intern();
-    postgres_version = in.readCompressedInt();
+    postgresVersion = in.readCompressedInt();
   }
 
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
     out.writeUTF(encoding);
-    out.writeCompressedInt(postgres_version);
+    out.writeCompressedInt(postgresVersion);
   }
 }

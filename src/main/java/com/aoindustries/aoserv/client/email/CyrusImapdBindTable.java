@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.email;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.net.Bind;
@@ -43,7 +43,7 @@ import java.util.List;
  */
 public final class CyrusImapdBindTable extends CachedTableIntegerKey<CyrusImapdBind> {
 
-  CyrusImapdBindTable(AOServConnector connector) {
+  CyrusImapdBindTable(AoservConnector connector) {
     super(connector, CyrusImapdBind.class);
   }
 
@@ -75,7 +75,7 @@ public final class CyrusImapdBindTable extends CachedTableIntegerKey<CyrusImapdB
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.CYRUS_IMAPD_BINDS;
+  public Table.TableId getTableId() {
+    return Table.TableId.CYRUS_IMAPD_BINDS;
   }
 }

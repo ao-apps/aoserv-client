@@ -37,15 +37,16 @@ import junit.framework.TestSuite;
 
 /**
  * Tests the accuracy of the system on all columns flagged as unique.
- *
+ * <p>
  * TODO: This test does not run without a master setup.
+ * </p>
  *
  * @author  AO Industries, Inc.
  */
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class GetUniqueRowTODO extends TestCase {
 
-  private List<AOServConnector> conns;
+  private List<AoservConnector> conns;
 
   public GetUniqueRowTODO(String testName) {
     super(testName);
@@ -53,7 +54,7 @@ public class GetUniqueRowTODO extends TestCase {
 
   @Override
   protected void setUp() throws Exception {
-    conns = AOServConnectorTODO.getTestConnectors();
+    conns = AoservConnectorTODO.getTestConnectors();
   }
 
   @Override
@@ -68,26 +69,26 @@ public class GetUniqueRowTODO extends TestCase {
   }
 
   /**
-   * Test the size() method of each AOServTable.
+   * Test the size() method of each AoservTable.
    */
   @SuppressWarnings({"unchecked", "rawtypes"})
   public void testGetUniqueRows() throws Exception {
     System.out.println("Testing all unique rows:");
-    for (AOServConnector conn : conns) {
+    for (AoservConnector conn : conns) {
       User.Name username = conn.getCurrentAdministrator().getKey();
       System.out.println("    " + username);
-      Map<Object, AOServObject> uniqueMap = new HashMap<>();
-      int numTables = Table.TableID.values().length;
+      Map<Object, AoservObject> uniqueMap = new HashMap<>();
+      int numTables = Table.TableId.values().length;
       for (int c = 0; c < numTables; c++) {
         // Excluded for testing speed
         if (
-            c == Table.TableID.DISTRO_FILES.ordinal()
+            c == Table.TableId.DISTRO_FILES.ordinal()
         ) {
           continue;
         }
-        AOServTable table = conn.getTable(c);
+        AoservTable table = conn.getTable(c);
         System.out.print("        " + table.getTableName() + ": ");
-        List<AOServObject> rows = new ArrayList<>();
+        List<AoservObject> rows = new ArrayList<>();
         rows.addAll(table.getRows());
         System.out.println(rows.size() + " rows");
         System.out.println("            Shuffling rows");
@@ -97,7 +98,7 @@ public class GetUniqueRowTODO extends TestCase {
           uniqueMap.clear();
           if (column.isUnique()) {
             int index = column.getIndex();
-            for (AOServObject row : rows) {
+            for (AoservObject row : rows) {
               Object uniqueValue = row.getColumn(index);
               // Multiple rows may have null values even when the column is otherwise unique
               if (uniqueValue != null) {
@@ -107,7 +108,7 @@ public class GetUniqueRowTODO extends TestCase {
                 }
                 uniqueMap.put(uniqueValue, row);
                 // Check that the object returned from the get unique row call matches the row that provides the unique value
-                AOServObject fromUniqueCall = table.getUniqueRow(index, uniqueValue);
+                AoservObject fromUniqueCall = table.getUniqueRow(index, uniqueValue);
                 assertEquals("Table=" + table.getTableName() + ", Column=" + column.getName(), row, fromUniqueCall);
               } else {
                 // Make sure is nullable

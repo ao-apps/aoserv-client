@@ -29,7 +29,7 @@ import com.aoapps.lang.util.InternUtils;
 import com.aoapps.lang.validation.ValidationException;
 import com.aoapps.net.HostAddress;
 import com.aoapps.net.Port;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.distribution.Architecture;
 import com.aoindustries.aoserv.client.linux.Server;
@@ -67,8 +67,8 @@ public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
   private short processorWeightTarget;
   private boolean primaryPhysicalServerLocked;
   private boolean secondaryPhysicalServerLocked;
-  private boolean requires_hvm;
-  private String vnc_password;
+  private boolean requiresHvm;
+  private String vncPassword;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -84,24 +84,42 @@ public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_SERVER: return pkey;
-      case 1 : return primaryRam;
-      case 2 : return primaryRamTarget;
-      case 3 : return secondaryRam == -1 ? null : secondaryRam;
-      case 4 : return secondaryRamTarget == -1 ? null : secondaryRamTarget;
-      case 5 : return minimumProcessorType;
-      case 6 : return minimumProcessorArchitecture;
-      case 7 : return minimumProcessorSpeed == -1 ? null : minimumProcessorSpeed;
-      case 8 : return minimumProcessorSpeedTarget == -1 ? null : minimumProcessorSpeedTarget;
-      case 9 : return processorCores;
-      case 10 : return processorCoresTarget;
-      case 11 : return processorWeight;
-      case 12 : return processorWeightTarget;
-      case 13 : return primaryPhysicalServerLocked;
-      case 14 : return secondaryPhysicalServerLocked;
-      case 15 : return requires_hvm;
-      case 16 : return vnc_password;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_SERVER:
+        return pkey;
+      case 1:
+        return primaryRam;
+      case 2:
+        return primaryRamTarget;
+      case 3:
+        return secondaryRam == -1 ? null : secondaryRam;
+      case 4:
+        return secondaryRamTarget == -1 ? null : secondaryRamTarget;
+      case 5:
+        return minimumProcessorType;
+      case 6:
+        return minimumProcessorArchitecture;
+      case 7:
+        return minimumProcessorSpeed == -1 ? null : minimumProcessorSpeed;
+      case 8:
+        return minimumProcessorSpeedTarget == -1 ? null : minimumProcessorSpeedTarget;
+      case 9:
+        return processorCores;
+      case 10:
+        return processorCoresTarget;
+      case 11:
+        return processorWeight;
+      case 12:
+        return processorWeightTarget;
+      case 13:
+        return primaryPhysicalServerLocked;
+      case 14:
+        return secondaryPhysicalServerLocked;
+      case 15:
+        return requiresHvm;
+      case 16:
+        return vncPassword;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -215,7 +233,7 @@ public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
    * Gets if this virtual requires full hardware virtualization support.
    */
   public boolean getRequiresHvm() {
-    return requires_hvm;
+    return requiresHvm;
   }
 
   /**
@@ -224,12 +242,12 @@ public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
    * behind the scenes to resolve the actual IP and port for VNC proxying.
    */
   public String getVncPassword() {
-    return vnc_password;
+    return vncPassword;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.VIRTUAL_SERVERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.VIRTUAL_SERVERS;
   }
 
   @Override
@@ -262,8 +280,8 @@ public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
     processorWeightTarget = result.getShort(pos++);
     primaryPhysicalServerLocked = result.getBoolean(pos++);
     secondaryPhysicalServerLocked = result.getBoolean(pos++);
-    requires_hvm = result.getBoolean(pos++);
-    vnc_password = result.getString(pos++);
+    requiresHvm = result.getBoolean(pos++);
+    vncPassword = result.getString(pos++);
   }
 
   @Override
@@ -283,8 +301,8 @@ public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
     processorWeightTarget = in.readShort();
     primaryPhysicalServerLocked = in.readBoolean();
     secondaryPhysicalServerLocked = in.readBoolean();
-    requires_hvm = in.readBoolean();
-    vnc_password = in.readNullUTF();
+    requiresHvm = in.readBoolean();
+    vncPassword = in.readNullUTF();
   }
 
   @Override
@@ -338,10 +356,10 @@ public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
     }
     out.writeBoolean(secondaryPhysicalServerLocked);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_37) >= 0) {
-      out.writeBoolean(requires_hvm);
+      out.writeBoolean(requiresHvm);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_51) >= 0) {
-      out.writeNullUTF(vnc_password);
+      out.writeNullUTF(vncPassword);
     }
   }
 
@@ -350,9 +368,10 @@ public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
   }
 
   /**
-   * Gets the virtual disk for this virtual server and the provided device
-   * name.
+   * Gets the virtual disk for this virtual server and the provided device name.
+   *
    * @param device should be <code>xvd[a-z]</code>
+   *
    * @return the disk or {@code null} if not found
    */
   public VirtualDisk getVirtualDisk(String device) throws IOException, SQLException {
@@ -367,14 +386,16 @@ public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
   public Server.DaemonAccess requestVncConsoleAccess() throws IOException, SQLException {
     return table.getConnector().requestResult(
         true,
-        AoservProtocol.CommandID.REQUEST_VNC_CONSOLE_DAEMON_ACCESS,
-        // Java 9: new AOServConnector.ResultRequest<>
-        new AOServConnector.ResultRequest<Server.DaemonAccess>() {
+        AoservProtocol.CommandId.REQUEST_VNC_CONSOLE_DAEMON_ACCESS,
+        // Java 9: new AoservConnector.ResultRequest<>
+        new AoservConnector.ResultRequest<Server.DaemonAccess>() {
           private Server.DaemonAccess daemonAccess;
+
           @Override
           public void writeRequest(StreamableOutput out) throws IOException {
             out.writeCompressedInt(pkey);
           }
+
           @Override
           public void readResponse(StreamableInput in) throws IOException, SQLException {
             int code = in.readByte();
@@ -397,6 +418,7 @@ public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
               throw new IOException("Unexpected response code: " + code);
             }
           }
+
           @Override
           public Server.DaemonAccess afterRelease() {
             return daemonAccess;
@@ -415,7 +437,7 @@ public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
    *                          exception message.
    */
   public String create() throws IOException, SQLException {
-    return table.getConnector().requestStringQuery(false, AoservProtocol.CommandID.CREATE_VIRTUAL_SERVER, pkey);
+    return table.getConnector().requestStringQuery(false, AoservProtocol.CommandId.CREATE_VIRTUAL_SERVER, pkey);
   }
 
   /**
@@ -428,7 +450,7 @@ public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
    *                          exception message.
    */
   public String reboot() throws IOException, SQLException {
-    return table.getConnector().requestStringQuery(false, AoservProtocol.CommandID.REBOOT_VIRTUAL_SERVER, pkey);
+    return table.getConnector().requestStringQuery(false, AoservProtocol.CommandId.REBOOT_VIRTUAL_SERVER, pkey);
   }
 
   /**
@@ -441,7 +463,7 @@ public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
    *                          exception message.
    */
   public String shutdown() throws IOException, SQLException {
-    return table.getConnector().requestStringQuery(false, AoservProtocol.CommandID.SHUTDOWN_VIRTUAL_SERVER, pkey);
+    return table.getConnector().requestStringQuery(false, AoservProtocol.CommandId.SHUTDOWN_VIRTUAL_SERVER, pkey);
   }
 
   /**
@@ -454,7 +476,7 @@ public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
    *                          exception message.
    */
   public String destroy() throws IOException, SQLException {
-    return table.getConnector().requestStringQuery(false, AoservProtocol.CommandID.DESTROY_VIRTUAL_SERVER, pkey);
+    return table.getConnector().requestStringQuery(false, AoservProtocol.CommandId.DESTROY_VIRTUAL_SERVER, pkey);
   }
 
   /**
@@ -467,7 +489,7 @@ public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
    *                          exception message.
    */
   public String pause() throws IOException, SQLException {
-    return table.getConnector().requestStringQuery(false, AoservProtocol.CommandID.PAUSE_VIRTUAL_SERVER, pkey);
+    return table.getConnector().requestStringQuery(false, AoservProtocol.CommandId.PAUSE_VIRTUAL_SERVER, pkey);
   }
 
   /**
@@ -480,7 +502,7 @@ public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
    *                          exception message.
    */
   public String unpause() throws IOException, SQLException {
-    return table.getConnector().requestStringQuery(false, AoservProtocol.CommandID.UNPAUSE_VIRTUAL_SERVER, pkey);
+    return table.getConnector().requestStringQuery(false, AoservProtocol.CommandId.UNPAUSE_VIRTUAL_SERVER, pkey);
   }
 
   /**
@@ -495,8 +517,7 @@ public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
       SHUTDOWN = 8,
       CRASHED = 16,
       DYING = 32,
-      DESTROYED = 64
-  ;
+      DESTROYED = 64;
 
   /**
    * Gets a human readable, but constant and not translated, comma-separated list of current status flags.
@@ -559,7 +580,7 @@ public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
    *                          exception message.
    */
   public int getStatus() throws IOException, SQLException {
-    return table.getConnector().requestIntQuery(true, AoservProtocol.CommandID.GET_VIRTUAL_SERVER_STATUS, pkey);
+    return table.getConnector().requestIntQuery(true, AoservProtocol.CommandId.GET_VIRTUAL_SERVER_STATUS, pkey);
   }
 
   /**
@@ -569,7 +590,7 @@ public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
     return table.getConnector().getInfrastructure().getPhysicalServer().get(
         table.getConnector().requestIntQuery(
             true,
-            AoservProtocol.CommandID.GET_PRIMARY_PHYSICAL_SERVER,
+            AoservProtocol.CommandId.GET_PRIMARY_PHYSICAL_SERVER,
             pkey
         )
     );
@@ -582,7 +603,7 @@ public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
     return table.getConnector().getInfrastructure().getPhysicalServer().get(
         table.getConnector().requestIntQuery(
             true,
-            AoservProtocol.CommandID.GET_SECONDARY_PHYSICAL_SERVER,
+            AoservProtocol.CommandId.GET_SECONDARY_PHYSICAL_SERVER,
             pkey
         )
     );

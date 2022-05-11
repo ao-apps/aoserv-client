@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.signup;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.sql.SQLException;
  */
 public final class OptionTable extends CachedTableIntegerKey<Option> {
 
-  OptionTable(AOServConnector connector) {
+  OptionTable(AoservConnector connector) {
     super(connector, Option.class);
   }
 
@@ -58,7 +58,7 @@ public final class OptionTable extends CachedTableIntegerKey<Option> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.SIGNUP_REQUEST_OPTIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.SIGNUP_REQUEST_OPTIONS;
   }
 }

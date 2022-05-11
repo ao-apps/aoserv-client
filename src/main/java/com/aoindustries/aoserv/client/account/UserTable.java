@@ -25,8 +25,8 @@ package com.aoindustries.aoserv.client.account;
 
 import com.aoapps.hodgepodge.io.TerminalWriter;
 import com.aoapps.lang.validation.ValidationResult;
-import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.AoservConnector;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.password.PasswordChecker;
@@ -45,7 +45,7 @@ import java.util.List;
  */
 public final class UserTable extends CachedTableUserNameKey<User> {
 
-  UserTable(AOServConnector connector) {
+  UserTable(AoservConnector connector) {
     super(connector, User.class);
   }
 
@@ -60,10 +60,10 @@ public final class UserTable extends CachedTableUserNameKey<User> {
   }
 
   public void addUsername(Package packageObject, User.Name username) throws IOException, SQLException {
-    connector.requestUpdateIL(
+    connector.requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.ADD,
-        Table.TableID.USERNAMES,
+        AoservProtocol.CommandId.ADD,
+        Table.TableId.USERNAMES,
         packageObject.getName(),
         username
     );
@@ -75,8 +75,8 @@ public final class UserTable extends CachedTableUserNameKey<User> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.USERNAMES;
+  public Table.TableId getTableId() {
+    return Table.TableId.USERNAMES;
   }
 
   public List<User> getUsernames(Package pack) throws IOException, SQLException {
@@ -87,17 +87,17 @@ public final class UserTable extends CachedTableUserNameKey<User> {
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_USERNAME)) {
-      if (AOSH.checkParamCount(Command.ADD_USERNAME, args, 2, err)) {
-        connector.getSimpleAOClient().addUsername(
-            AOSH.parseAccountingCode(args[1], "package"),
-            AOSH.parseUserName(args[2], "username")
+      if (Aosh.checkParamCount(Command.ADD_USERNAME, args, 2, err)) {
+        connector.getSimpleClient().addUsername(
+            Aosh.parseAccountingCode(args[1], "package"),
+            Aosh.parseUserName(args[2], "username")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.ARE_USERNAME_PASSWORDS_SET)) {
-      if (AOSH.checkParamCount(Command.ARE_USERNAME_PASSWORDS_SET, args, 1, err)) {
-        int result = connector.getSimpleAOClient().areUsernamePasswordsSet(
-            AOSH.parseUserName(args[1], "username")
+      if (Aosh.checkParamCount(Command.ARE_USERNAME_PASSWORDS_SET, args, 1, err)) {
+        int result = connector.getSimpleClient().areUsernamePasswordsSet(
+            Aosh.parseUserName(args[1], "username")
         );
         if (result == PasswordProtected.NONE) {
           out.println("none");
@@ -112,7 +112,7 @@ public final class UserTable extends CachedTableUserNameKey<User> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.CHECK_USERNAME)) {
-      if (AOSH.checkParamCount(Command.CHECK_USERNAME, args, 1, err)) {
+      if (Aosh.checkParamCount(Command.CHECK_USERNAME, args, 1, err)) {
         ValidationResult validationResult = User.Name.validate(args[1]);
         out.println(validationResult.isValid());
         out.flush();
@@ -124,9 +124,9 @@ public final class UserTable extends CachedTableUserNameKey<User> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.CHECK_USERNAME_PASSWORD)) {
-      if (AOSH.checkParamCount(Command.CHECK_USERNAME_PASSWORD, args, 2, err)) {
-        List<PasswordChecker.Result> results = connector.getSimpleAOClient().checkUsernamePassword(
-            AOSH.parseUserName(args[1], "username"),
+      if (Aosh.checkParamCount(Command.CHECK_USERNAME_PASSWORD, args, 2, err)) {
+        List<PasswordChecker.Result> results = connector.getSimpleClient().checkUsernamePassword(
+            Aosh.parseUserName(args[1], "username"),
             args[2]
         );
         if (PasswordChecker.hasResults(results)) {
@@ -136,10 +136,10 @@ public final class UserTable extends CachedTableUserNameKey<User> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.DISABLE_USERNAME)) {
-      if (AOSH.checkParamCount(Command.DISABLE_USERNAME, args, 2, err)) {
+      if (Aosh.checkParamCount(Command.DISABLE_USERNAME, args, 2, err)) {
         out.println(
-            connector.getSimpleAOClient().disableUsername(
-                AOSH.parseUserName(args[1], "username"),
+            connector.getSimpleClient().disableUsername(
+                Aosh.parseUserName(args[1], "username"),
                 args[2]
             )
         );
@@ -147,18 +147,18 @@ public final class UserTable extends CachedTableUserNameKey<User> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.ENABLE_USERNAME)) {
-      if (AOSH.checkParamCount(Command.ENABLE_USERNAME, args, 1, err)) {
-        connector.getSimpleAOClient().enableUsername(
-            AOSH.parseUserName(args[1], "username")
+      if (Aosh.checkParamCount(Command.ENABLE_USERNAME, args, 1, err)) {
+        connector.getSimpleClient().enableUsername(
+            Aosh.parseUserName(args[1], "username")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.IS_USERNAME_AVAILABLE)) {
-      if (AOSH.checkParamCount(Command.IS_USERNAME_AVAILABLE, args, 1, err)) {
+      if (Aosh.checkParamCount(Command.IS_USERNAME_AVAILABLE, args, 1, err)) {
         try {
           out.println(
-              connector.getSimpleAOClient().isUsernameAvailable(
-                  AOSH.parseUserName(args[1], "username")
+              connector.getSimpleClient().isUsernameAvailable(
+                  Aosh.parseUserName(args[1], "username")
               )
           );
           out.flush();
@@ -170,16 +170,16 @@ public final class UserTable extends CachedTableUserNameKey<User> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.REMOVE_USERNAME)) {
-      if (AOSH.checkParamCount(Command.REMOVE_USERNAME, args, 1, err)) {
-        connector.getSimpleAOClient().removeUsername(
-            AOSH.parseUserName(args[1], "username")
+      if (Aosh.checkParamCount(Command.REMOVE_USERNAME, args, 1, err)) {
+        connector.getSimpleClient().removeUsername(
+            Aosh.parseUserName(args[1], "username")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_USERNAME_PASSWORD)) {
-      if (AOSH.checkParamCount(Command.SET_USERNAME_PASSWORD, args, 2, err)) {
-        connector.getSimpleAOClient().setUsernamePassword(
-            AOSH.parseUserName(args[1], "username"),
+      if (Aosh.checkParamCount(Command.SET_USERNAME_PASSWORD, args, 2, err)) {
+        connector.getSimpleClient().setUsernamePassword(
+            Aosh.parseUserName(args[1], "username"),
             args[2]
         );
       }
@@ -189,6 +189,6 @@ public final class UserTable extends CachedTableUserNameKey<User> {
   }
 
   public boolean isUsernameAvailable(User.Name username) throws SQLException, IOException {
-    return connector.requestBooleanQuery(true, AoservProtocol.CommandID.IS_USERNAME_AVAILABLE, username);
+    return connector.requestBooleanQuery(true, AoservProtocol.CommandId.IS_USERNAME_AVAILABLE, username);
   }
 }

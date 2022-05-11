@@ -30,8 +30,8 @@ import com.aoapps.lang.validation.ValidationException;
 import com.aoapps.sql.SQLStreamables;
 import com.aoapps.sql.SQLUtility;
 import com.aoapps.sql.UnmodifiableTimestamp;
-import com.aoindustries.aoserv.client.AOServObject;
-import com.aoindustries.aoserv.client.AOServTable;
+import com.aoindustries.aoserv.client.AoservObject;
+import com.aoindustries.aoserv.client.AoservTable;
 import com.aoindustries.aoserv.client.SingleTableObject;
 import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.payment.Processor;
@@ -46,25 +46,22 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-public final class BankTransaction extends AOServObject<Integer, BankTransaction> implements SingleTableObject<Integer, BankTransaction> {
+public final class BankTransaction extends AoservObject<Integer, BankTransaction> implements SingleTableObject<Integer, BankTransaction> {
 
   static final int COLUMN_ID = 0;
   static final String COLUMN_ID_name = "id";
   static final String COLUMN_TIME_name = "time";
 
-  private AOServTable<Integer, BankTransaction> table;
+  private AoservTable<Integer, BankTransaction> table;
   private int id;
   private UnmodifiableTimestamp time;
-  private String
-      account,
-      processor;
+  private String account;
+  private String processor;
   private User.Name administrator;
-  private String
-      type,
-      expenseCategory,
-      description,
-      checkNo
-  ;
+  private String type;
+  private String expenseCategory;
+  private String description;
+  private String checkNo;
   private int amount;
   private boolean confirmed;
 
@@ -83,8 +80,7 @@ public final class BankTransaction extends AOServObject<Integer, BankTransaction
   public boolean equals(Object obj) {
     return
         (obj instanceof BankTransaction)
-            && ((BankTransaction) obj).id == id
-    ;
+            && ((BankTransaction) obj).id == id;
   }
 
   public com.aoindustries.aoserv.client.master.User getAdministrator() throws SQLException, IOException {
@@ -123,18 +119,30 @@ public final class BankTransaction extends AOServObject<Integer, BankTransaction
   @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_ID: return id;
-      case 1: return time;
-      case 2: return account;
-      case 3: return processor;
-      case 4: return administrator;
-      case 5: return type;
-      case 6: return expenseCategory;
-      case 7: return description;
-      case 8: return checkNo;
-      case 9: return amount;
-      case 10: return confirmed;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_ID:
+        return id;
+      case 1:
+        return time;
+      case 2:
+        return account;
+      case 3:
+        return processor;
+      case 4:
+        return administrator;
+      case 5:
+        return type;
+      case 6:
+        return expenseCategory;
+      case 7:
+        return description;
+      case 8:
+        return checkNo;
+      case 9:
+        return amount;
+      case 10:
+        return confirmed;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -170,13 +178,13 @@ public final class BankTransaction extends AOServObject<Integer, BankTransaction
   }
 
   @Override
-  public AOServTable<Integer, BankTransaction> getTable() {
+  public AoservTable<Integer, BankTransaction> getTable() {
     return table;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.BANK_TRANSACTIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.BANK_TRANSACTIONS;
   }
 
   public int getId() {
@@ -237,7 +245,7 @@ public final class BankTransaction extends AOServObject<Integer, BankTransaction
   }
 
   @Override
-  public void setTable(AOServTable<Integer, BankTransaction> table) {
+  public void setTable(AoservTable<Integer, BankTransaction> table) {
     if (this.table != null) {
       throw new IllegalStateException("table already set");
     }

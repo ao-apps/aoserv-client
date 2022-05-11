@@ -42,10 +42,8 @@ public final class BankTransactionType extends CachedObjectStringKey<BankTransac
   static final int COLUMN_NAME = 0;
   static final String COLUMN_DISPLAY_name = "display";
 
-  private String
-      display,
-      description
-  ;
+  private String display;
+  private String description;
 
   private boolean isNegative;
 
@@ -63,11 +61,16 @@ public final class BankTransactionType extends CachedObjectStringKey<BankTransac
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_NAME: return pkey;
-      case 1: return display;
-      case 2: return description;
-      case 3: return isNegative;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_NAME:
+        return pkey;
+      case 1:
+        return display;
+      case 2:
+        return description;
+      case 3:
+        return isNegative;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -84,8 +87,8 @@ public final class BankTransactionType extends CachedObjectStringKey<BankTransac
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.BANK_TRANSACTION_TYPES;
+  public Table.TableId getTableId() {
+    return Table.TableId.BANK_TRANSACTION_TYPES;
   }
 
   @Override

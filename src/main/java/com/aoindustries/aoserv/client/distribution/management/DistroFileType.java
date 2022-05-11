@@ -52,8 +52,7 @@ public final class DistroFileType extends GlobalObjectStringKey<DistroFileType> 
       NO_RECURSE = "no_recurse",
       PRELINK = "prelink",
       SYSTEM = "system",
-      USER = "user"
-  ;
+      USER = "user";
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -86,8 +85,8 @@ public final class DistroFileType extends GlobalObjectStringKey<DistroFileType> 
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.DISTRO_FILE_TYPES;
+  public Table.TableId getTableId() {
+    return Table.TableId.DISTRO_FILE_TYPES;
   }
 
   @Override

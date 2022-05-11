@@ -29,10 +29,10 @@ import com.aoapps.hodgepodge.io.TerminalWriter;
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.net.Port;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
@@ -52,7 +52,7 @@ import java.util.Set;
  */
 public final class BindTable extends CachedTableIntegerKey<Bind> {
 
-  BindTable(AOServConnector connector) {
+  BindTable(AoservConnector connector) {
     super(connector, Bind.class);
   }
 
@@ -81,15 +81,15 @@ public final class BindTable extends CachedTableIntegerKey<Bind> {
   ) throws IOException, SQLException {
     return connector.requestResult(
         true,
-        AoservProtocol.CommandID.ADD,
-        // Java 9: new AOServConnector.ResultRequest<>
-        new AOServConnector.ResultRequest<Integer>() {
+        AoservProtocol.CommandId.ADD,
+        // Java 9: new AoservConnector.ResultRequest<>
+        new AoservConnector.ResultRequest<Integer>() {
           private int pkey;
           private IntList invalidateList;
 
           @Override
           public void writeRequest(StreamableOutput out) throws IOException {
-            out.writeCompressedInt(Table.TableID.NET_BINDS.ordinal());
+            out.writeCompressedInt(Table.TableId.NET_BINDS.ordinal());
             out.writeCompressedInt(se.getPkey());
             out.writeUTF(pk.getName().toString());
             out.writeCompressedInt(ia.getId());
@@ -114,7 +114,7 @@ public final class BindTable extends CachedTableIntegerKey<Bind> {
             int code = in.readByte();
             if (code == AoservProtocol.DONE) {
               pkey = in.readCompressedInt();
-              invalidateList = AOServConnector.readInvalidateList(in);
+              invalidateList = AoservConnector.readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
               throw new IOException("Unexpected response code: " + code);
@@ -182,7 +182,7 @@ public final class BindTable extends CachedTableIntegerKey<Bind> {
       IpAddress ip,
       Port port
   ) throws IOException, SQLException {
-    int sePKey = se.getPkey();
+    int sePkey = se.getPkey();
 
     // Use the index first
     List<Bind> cached = getNetBinds(ip);
@@ -190,7 +190,7 @@ public final class BindTable extends CachedTableIntegerKey<Bind> {
     for (int c = 0; c < size; c++) {
       Bind nb = cached.get(c);
       if (
-          nb.getServer_pkey() == sePKey
+          nb.getServer_pkey() == sePkey
               && nb.getPort() == port
       ) {
         return nb;
@@ -216,35 +216,35 @@ public final class BindTable extends CachedTableIntegerKey<Bind> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.NET_BINDS;
+  public Table.TableId getTableId() {
+    return Table.TableId.NET_BINDS;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_NET_BIND)) {
-      if (AOSH.checkMinParamCount(Command.ADD_NET_BIND, args, 8, err)) {
+      if (Aosh.checkMinParamCount(Command.ADD_NET_BIND, args, 8, err)) {
         final int varargStart = 9;
         Set<FirewallZone.Name> firewalldZones = AoCollections.newLinkedHashSet(args.length - varargStart);
         for (int i = varargStart; i < args.length; i++) {
-          FirewallZone.Name name = AOSH.parseFirewalldZoneName(args[i], "firewalld_zone[" + (i - varargStart) + "]");
+          FirewallZone.Name name = Aosh.parseFirewalldZoneName(args[i], "firewalld_zone[" + (i - varargStart) + "]");
           if (!firewalldZones.add(name)) {
             throw new IllegalArgumentException("Duplicate firewalld zone name: " + name);
           }
         }
         out.println(
-            connector.getSimpleAOClient().addNetBind(
+            connector.getSimpleClient().addNetBind(
                 args[1],
-                AOSH.parseAccountingCode(args[2], "package"),
-                AOSH.parseInetAddress(args[3], "ip_address"),
+                Aosh.parseAccountingCode(args[2], "package"),
+                Aosh.parseInetAddress(args[3], "ip_address"),
                 args[4],
-                AOSH.parsePort(
+                Aosh.parsePort(
                     args[5], "port",
                     args[6], "net_protocol"
                 ),
                 args[7],
-                AOSH.parseBoolean(args[8], "monitoring_enabled"),
+                Aosh.parseBoolean(args[8], "monitoring_enabled"),
                 firewalldZones
             )
         );
@@ -252,33 +252,33 @@ public final class BindTable extends CachedTableIntegerKey<Bind> {
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.REMOVE_NET_BIND)) {
-      if (AOSH.checkParamCount(Command.REMOVE_NET_BIND, args, 1, err)) {
-        connector.getSimpleAOClient().removeNetBind(
-            AOSH.parseInt(args[1], "pkey")
+      if (Aosh.checkParamCount(Command.REMOVE_NET_BIND, args, 1, err)) {
+        connector.getSimpleClient().removeNetBind(
+            Aosh.parseInt(args[1], "pkey")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_NET_BIND_FIREWALLD_ZONES)) {
-      if (AOSH.checkMinParamCount(Command.SET_NET_BIND_FIREWALLD_ZONES, args, 1, err)) {
+      if (Aosh.checkMinParamCount(Command.SET_NET_BIND_FIREWALLD_ZONES, args, 1, err)) {
         final int varargStart = 2;
         Set<FirewallZone.Name> firewalldZones = AoCollections.newLinkedHashSet(args.length - varargStart);
         for (int i = varargStart; i < args.length; i++) {
-          FirewallZone.Name name = AOSH.parseFirewalldZoneName(args[i], "firewalld_zone[" + (i - varargStart) + "]");
+          FirewallZone.Name name = Aosh.parseFirewalldZoneName(args[i], "firewalld_zone[" + (i - varargStart) + "]");
           if (!firewalldZones.add(name)) {
             throw new IllegalArgumentException("Duplicate firewalld zone name: " + name);
           }
         }
-        connector.getSimpleAOClient().setNetBindFirewalldZones(
-            AOSH.parseInt(args[1], "pkey"),
+        connector.getSimpleClient().setNetBindFirewalldZones(
+            Aosh.parseInt(args[1], "pkey"),
             firewalldZones
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_NET_BIND_MONITORING_ENABLED)) {
-      if (AOSH.checkParamCount(Command.SET_NET_BIND_MONITORING_ENABLED, args, 2, err)) {
-        connector.getSimpleAOClient().setNetBindMonitoringEnabled(
-            AOSH.parseInt(args[1], "pkey"),
-            AOSH.parseBoolean(args[2], "enabled")
+      if (Aosh.checkParamCount(Command.SET_NET_BIND_MONITORING_ENABLED, args, 2, err)) {
+        connector.getSimpleClient().setNetBindMonitoringEnabled(
+            Aosh.parseInt(args[1], "pkey"),
+            Aosh.parseBoolean(args[2], "enabled")
         );
       }
       return true;

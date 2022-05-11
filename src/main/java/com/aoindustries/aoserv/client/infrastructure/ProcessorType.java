@@ -60,15 +60,18 @@ public final class ProcessorType extends GlobalObjectStringKey<ProcessorType> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_TYPE: return pkey;
-      case COLUMN_SORT_ORDER : return sortOrder;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_TYPE:
+        return pkey;
+      case COLUMN_SORT_ORDER:
+        return sortOrder;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.PROCESSOR_TYPES;
+  public Table.TableId getTableId() {
+    return Table.TableId.PROCESSOR_TYPES;
   }
 
   public String getType() {

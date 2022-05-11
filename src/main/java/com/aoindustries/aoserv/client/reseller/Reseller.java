@@ -50,7 +50,7 @@ public final class Reseller extends CachedObjectAccountNameKey<Reseller> {
   static final int COLUMN_ACCOUNTING = 0;
   static final String COLUMN_ACCOUNTING_name = "accounting";
 
-  private boolean ticket_auto_escalate;
+  private boolean ticketAutoEscalate;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -66,9 +66,12 @@ public final class Reseller extends CachedObjectAccountNameKey<Reseller> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_ACCOUNTING : return pkey;
-      case 1: return ticket_auto_escalate;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_ACCOUNTING:
+        return pkey;
+      case 1:
+        return ticketAutoEscalate;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -85,12 +88,12 @@ public final class Reseller extends CachedObjectAccountNameKey<Reseller> {
   }
 
   public boolean getTicketAutoEscalate() {
-    return ticket_auto_escalate;
+    return ticketAutoEscalate;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.RESELLERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.RESELLERS;
   }
 
   @Override
@@ -98,7 +101,7 @@ public final class Reseller extends CachedObjectAccountNameKey<Reseller> {
     try {
       int pos = 1;
       pkey = Account.Name.valueOf(result.getString(pos++));
-      ticket_auto_escalate = result.getBoolean(pos++);
+      ticketAutoEscalate = result.getBoolean(pos++);
     } catch (ValidationException e) {
       throw new SQLException(e);
     }
@@ -108,7 +111,7 @@ public final class Reseller extends CachedObjectAccountNameKey<Reseller> {
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
       pkey = Account.Name.valueOf(in.readUTF()).intern();
-      ticket_auto_escalate = in.readBoolean();
+      ticketAutoEscalate = in.readBoolean();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -117,7 +120,7 @@ public final class Reseller extends CachedObjectAccountNameKey<Reseller> {
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeUTF(pkey.toUpperCase());
-    out.writeBoolean(ticket_auto_escalate);
+    out.writeBoolean(ticketAutoEscalate);
   }
 
   public List<Assignment> getTicketAssignments() throws IOException, SQLException {

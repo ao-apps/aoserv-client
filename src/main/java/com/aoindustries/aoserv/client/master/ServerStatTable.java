@@ -23,8 +23,8 @@
 
 package com.aoindustries.aoserv.client.master;
 
-import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.AOServTable;
+import com.aoindustries.aoserv.client.AoservConnector;
+import com.aoindustries.aoserv.client.AoservTable;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -37,9 +37,9 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-public final class ServerStatTable extends AOServTable<String, ServerStat> {
+public final class ServerStatTable extends AoservTable<String, ServerStat> {
 
-  ServerStatTable(AOServConnector connector) {
+  ServerStatTable(AoservConnector connector) {
     super(connector, ServerStat.class);
   }
 
@@ -49,6 +49,8 @@ public final class ServerStatTable extends AOServTable<String, ServerStat> {
   }
 
   /**
+   * {@inheritDoc}
+   *
    * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
    */
   @Deprecated
@@ -71,13 +73,13 @@ public final class ServerStatTable extends AOServTable<String, ServerStat> {
   @Override
   public List<ServerStat> getRowsCopy() throws IOException, SQLException {
     List<ServerStat> list = new ArrayList<>();
-    getObjects(true, list, AoservProtocol.CommandID.GET_TABLE, Table.TableID.MASTER_SERVER_STATS);
+    getObjects(true, list, AoservProtocol.CommandId.GET_TABLE, Table.TableId.MASTER_SERVER_STATS);
     return list;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.MASTER_SERVER_STATS;
+  public Table.TableId getTableId() {
+    return Table.TableId.MASTER_SERVER_STATS;
   }
 
   @Override

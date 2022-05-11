@@ -33,7 +33,7 @@ import java.sql.SQLException;
  */
 public abstract class CachedTableStringKey<V extends CachedObjectStringKey<V>> extends CachedTable<String, V> {
 
-  protected CachedTableStringKey(AOServConnector connector, Class<V> clazz) {
+  protected CachedTableStringKey(AoservConnector connector, Class<V> clazz) {
     super(connector, clazz);
   }
 

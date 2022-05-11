@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.ticket;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTableStringKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.sql.SQLException;
  */
 public final class TicketTypeTable extends GlobalTableStringKey<TicketType> {
 
-  TicketTypeTable(AOServConnector connector) {
+  TicketTypeTable(AoservConnector connector) {
     super(connector, TicketType.class);
   }
 
@@ -56,7 +56,7 @@ public final class TicketTypeTable extends GlobalTableStringKey<TicketType> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.TICKET_TYPES;
+  public Table.TableId getTableId() {
+    return Table.TableId.TICKET_TYPES;
   }
 }

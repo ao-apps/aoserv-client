@@ -33,7 +33,7 @@ import java.util.NoSuchElementException;
  *
  * @author  AO Industries, Inc.
  */
-final class KeySet<K, V extends AOServObject<K, V>> extends AbstractSet<K> {
+final class KeySet<K, V extends AoservObject<K, V>> extends AbstractSet<K> {
 
   private final List<V> objs;
 

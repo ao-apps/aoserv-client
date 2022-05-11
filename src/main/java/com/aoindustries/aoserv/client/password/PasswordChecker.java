@@ -50,7 +50,7 @@ public final class PasswordChecker {
   private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, PasswordChecker.class);
 
   /**
-   * The different ways months may be represented in the English
+   * The different ways months may be represented in the English.
    */
   private static final String[] months = {
       "jan", "january",
@@ -190,13 +190,13 @@ public final class PasswordChecker {
        * Generate the backwards version of the password
        */
       String backwards;
-      {
-        char[] backwards_ca = new char[passwordLen];
-        for (int c = 0; c < passwordLen; c++) {
-          backwards_ca[c] = password.charAt(passwordLen - c - 1);
+        {
+          char[] backwardsChars = new char[passwordLen];
+          for (int c = 0; c < passwordLen; c++) {
+            backwardsChars[c] = password.charAt(passwordLen - c - 1);
+          }
+          backwards = new String(backwardsChars);
         }
-        backwards = new String(backwards_ca);
-      }
 
       /*
        * Must not be the same as your username
@@ -237,13 +237,13 @@ public final class PasswordChecker {
            */
           byte[] words = getDictionary();
 
-          int max_allowed_dict_len = strength == PasswordStrength.STRICT ? 3 : (passwordLen / 2);
+          int maxAllowedDictLen = strength == PasswordStrength.STRICT ? 3 : (passwordLen / 2);
 
           // Search through each dictionary word
           int wordslen = words.length;
           int pos = 0;
           String longest = "";
-          boolean longest_forwards = true;
+          boolean longestForwards = true;
           while (pos < wordslen) {
             // Find the beginning of the next word
             while (pos < wordslen && words[pos] <= ' ') {
@@ -258,16 +258,16 @@ public final class PasswordChecker {
 
             // Get the word
             int wordlen = pos - startpos;
-            if (wordlen > max_allowed_dict_len) {
+            if (wordlen > maxAllowedDictLen) {
               if (indexOfIgnoreCase(password, words, startpos, wordlen) != -1) {
-                if (longest_forwards ? (wordlen > longest.length()) : (wordlen >= longest.length())) {
+                if (longestForwards ? (wordlen > longest.length()) : (wordlen >= longest.length())) {
                   longest = new String(words, startpos, wordlen);
-                  longest_forwards = true;
+                  longestForwards = true;
                 }
               } else if (indexOfIgnoreCase(backwards, words, startpos, wordlen) != -1) {
                 if (wordlen > longest.length()) {
                   longest = new String(words, startpos, wordlen);
-                  longest_forwards = false;
+                  longestForwards = false;
                 }
               }
             }
@@ -306,8 +306,8 @@ public final class PasswordChecker {
   private static synchronized byte[] getDictionary() throws IOException {
     if (cachedWords == null) {
       try (
-        InputStream in = new CorrectedGZIPInputStream(PasswordChecker.class.getResourceAsStream("linux.words.gz"));
-        ByteArrayOutputStream bout = new ByteArrayOutputStream()
+          InputStream in = new CorrectedGZIPInputStream(PasswordChecker.class.getResourceAsStream("linux.words.gz"));
+          ByteArrayOutputStream bout = new ByteArrayOutputStream()
           ) {
         IoUtils.copy(in, bout);
         cachedWords = bout.toByteArray();

@@ -33,7 +33,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-public final class CannotRemoveReason<T extends AOServObject<?, ? extends T>> {
+public final class CannotRemoveReason<T extends AoservObject<?, ? extends T>> {
 
   private final String reason;
   private final List<T> dependentObjects;

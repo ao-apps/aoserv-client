@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.web;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.net.Bind;
@@ -42,7 +42,7 @@ import java.util.List;
  */
 public final class HttpdBindTable extends CachedTableIntegerKey<HttpdBind> {
 
-  HttpdBindTable(AOServConnector connector) {
+  HttpdBindTable(AoservConnector connector) {
     super(connector, HttpdBind.class);
   }
 
@@ -70,7 +70,7 @@ public final class HttpdBindTable extends CachedTableIntegerKey<HttpdBind> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.HTTPD_BINDS;
+  public Table.TableId getTableId() {
+    return Table.TableId.HTTPD_BINDS;
   }
 }

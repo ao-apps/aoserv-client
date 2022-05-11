@@ -54,10 +54,8 @@ import java.util.List;
  */
 public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implements Removable, Disablable {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_PACKAGE = 1
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_PACKAGE = 1;
   static final String COLUMN_AO_SERVER_name = "ao_server";
   static final String COLUMN_HOST_name = "host";
   static final String COLUMN_PACKAGE_name = "package";
@@ -68,14 +66,14 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
   public static final int HISTORY_DAYS = 92;
 
   private Account.Name packageName;
-  private int ao_server;
+  private int aoServer;
   private HostAddress host;
   private String type;
   private UnmodifiableTimestamp created;
-  private UnmodifiableTimestamp last_refreshed;
-  private int refresh_count;
+  private UnmodifiableTimestamp lastRefreshed;
+  private int refreshCount;
   private UnmodifiableTimestamp expiration;
-  private int disable_log;
+  private int disableLog;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -94,7 +92,7 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 
   @Override
   public boolean canDisable() {
-    return disable_log == -1;
+    return disableLog == -1;
   }
 
   @Override
@@ -109,29 +107,40 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 
   @Override
   public void disable(DisableLog dl) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.DISABLE, Table.TableID.EMAIL_SMTP_RELAYS, dl.getPkey(), pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.DISABLE, Table.TableId.EMAIL_SMTP_RELAYS, dl.getPkey(), pkey);
   }
 
   @Override
   public void enable() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.ENABLE, Table.TableID.EMAIL_SMTP_RELAYS, pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.ENABLE, Table.TableId.EMAIL_SMTP_RELAYS, pkey);
   }
 
   @Override
   @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_PACKAGE: return packageName;
-      case 2: return ao_server == -1 ? null : ao_server;
-      case 3: return host;
-      case 4: return type;
-      case 5: return created;
-      case 6: return last_refreshed;
-      case 7: return refresh_count;
-      case 8: return expiration;
-      case 9: return disable_log == -1 ? null : disable_log;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_PACKAGE:
+        return packageName;
+      case 2:
+        return aoServer == -1 ? null : aoServer;
+      case 3:
+        return host;
+      case 4:
+        return type;
+      case 5:
+        return created;
+      case 6:
+        return lastRefreshed;
+      case 7:
+        return refreshCount;
+      case 8:
+        return expiration;
+      case 9:
+        return disableLog == -1 ? null : disableLog;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -142,17 +151,17 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 
   @Override
   public boolean isDisabled() {
-    return disable_log != -1;
+    return disableLog != -1;
   }
 
   @Override
   public DisableLog getDisableLog() throws IOException, SQLException {
-    if (disable_log == -1) {
+    if (disableLog == -1) {
       return null;
     }
-    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disable_log);
+    DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disableLog);
     if (obj == null) {
-      throw new SQLException("Unable to find DisableLog: " + disable_log);
+      throw new SQLException("Unable to find DisableLog: " + disableLog);
     }
     return obj;
   }
@@ -176,7 +185,7 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 
   @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
   public UnmodifiableTimestamp getLastRefreshed() {
-    return last_refreshed;
+    return lastRefreshed;
   }
 
   public Account.Name getPackage_name() {
@@ -189,20 +198,20 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
   }
 
   public int getRefreshCount() {
-    return refresh_count;
+    return refreshCount;
   }
 
   public Integer getLinuxServer_host_id() {
-    return (ao_server == -1) ? null : ao_server;
+    return (aoServer == -1) ? null : aoServer;
   }
 
   public Server getLinuxServer() throws SQLException, IOException {
-    if (ao_server == -1) {
+    if (aoServer == -1) {
       return null;
     }
-    Server ao = table.getConnector().getLinux().getServer().get(ao_server);
+    Server ao = table.getConnector().getLinux().getServer().get(aoServer);
     if (ao == null) {
-      throw new SQLException("Unable to find linux.Server: " + ao_server);
+      throw new SQLException("Unable to find linux.Server: " + aoServer);
     }
     return ao;
   }
@@ -212,8 +221,8 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.EMAIL_SMTP_RELAYS;
+  public Table.TableId getTableId() {
+    return Table.TableId.EMAIL_SMTP_RELAYS;
   }
 
   @Override
@@ -221,19 +230,19 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
     try {
       pkey = result.getInt(1);
       packageName = Account.Name.valueOf(result.getString(2));
-      ao_server = result.getInt(3);
+      aoServer = result.getInt(3);
       if (result.wasNull()) {
-        ao_server = -1;
+        aoServer = -1;
       }
       host = HostAddress.valueOf(result.getString(4));
       type = result.getString(5);
       created = UnmodifiableTimestamp.valueOf(result.getTimestamp(6));
-      last_refreshed = UnmodifiableTimestamp.valueOf(result.getTimestamp(7));
-      refresh_count = result.getInt(8);
+      lastRefreshed = UnmodifiableTimestamp.valueOf(result.getTimestamp(7));
+      refreshCount = result.getInt(8);
       expiration = UnmodifiableTimestamp.valueOf(result.getTimestamp(9));
-      disable_log = result.getInt(10);
+      disableLog = result.getInt(10);
       if (result.wasNull()) {
-        disable_log = -1;
+        disableLog = -1;
       }
     } catch (ValidationException e) {
       throw new SQLException(e);
@@ -245,23 +254,23 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
     try {
       pkey = in.readCompressedInt();
       packageName = Account.Name.valueOf(in.readUTF()).intern();
-      ao_server = in.readCompressedInt();
+      aoServer = in.readCompressedInt();
       host = HostAddress.valueOf(in.readUTF());
       type = in.readUTF().intern();
       created = SQLStreamables.readUnmodifiableTimestamp(in);
-      last_refreshed = SQLStreamables.readUnmodifiableTimestamp(in);
-      refresh_count = in.readCompressedInt();
+      lastRefreshed = SQLStreamables.readUnmodifiableTimestamp(in);
+      refreshCount = in.readCompressedInt();
       expiration = SQLStreamables.readNullUnmodifiableTimestamp(in);
-      disable_log = in.readCompressedInt();
+      disableLog = in.readCompressedInt();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
   }
 
   public void refresh(long minDuration) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.REFRESH_EMAIL_SMTP_RELAY,
+        AoservProtocol.CommandId.REFRESH_EMAIL_SMTP_RELAY,
         pkey,
         minDuration
     );
@@ -274,10 +283,10 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 
   @Override
   public void remove() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.REMOVE,
-        Table.TableID.EMAIL_SMTP_RELAYS,
+        AoservProtocol.CommandId.REMOVE,
+        Table.TableId.EMAIL_SMTP_RELAYS,
         pkey
     );
   }
@@ -291,7 +300,7 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
     out.writeUTF(packageName.toString());
-    out.writeCompressedInt(ao_server);
+    out.writeCompressedInt(aoServer);
     out.writeUTF(host.toString());
     out.writeUTF(type);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
@@ -300,16 +309,16 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
       SQLStreamables.writeTimestamp(created, out);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
-      out.writeLong(last_refreshed.getTime());
+      out.writeLong(lastRefreshed.getTime());
     } else {
-      SQLStreamables.writeTimestamp(last_refreshed, out);
+      SQLStreamables.writeTimestamp(lastRefreshed, out);
     }
-    out.writeCompressedInt(refresh_count);
+    out.writeCompressedInt(refreshCount);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
       out.writeLong(expiration == null ? -1 : expiration.getTime());
     } else {
       SQLStreamables.writeNullTimestamp(expiration, out);
     }
-    out.writeCompressedInt(disable_log);
+    out.writeCompressedInt(disableLog);
   }
 }

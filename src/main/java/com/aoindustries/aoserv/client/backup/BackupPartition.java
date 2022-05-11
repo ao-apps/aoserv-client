@@ -42,17 +42,15 @@ import java.sql.SQLException;
  */
 public final class BackupPartition extends CachedObjectIntegerKey<BackupPartition> {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_AO_SERVER = 1
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_AO_SERVER = 1;
   static final String COLUMN_AO_SERVER_name = "ao_server";
   static final String COLUMN_PATH_name = "path";
 
-  private int ao_server;
+  private int aoServer;
   private PosixPath path;
   private boolean enabled;
-  private boolean quota_enabled;
+  private boolean quotaEnabled;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -68,27 +66,33 @@ public final class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_AO_SERVER: return ao_server;
-      case 2: return path;
-      case 3: return enabled;
-      case 4: return quota_enabled;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_AO_SERVER:
+        return aoServer;
+      case 2:
+        return path;
+      case 3:
+        return enabled;
+      case 4:
+        return quotaEnabled;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   public long getDiskTotalSize() throws IOException, SQLException {
-    return table.getConnector().requestLongQuery(true, AoservProtocol.CommandID.GET_BACKUP_PARTITION_DISK_TOTAL_SIZE, pkey);
+    return table.getConnector().requestLongQuery(true, AoservProtocol.CommandId.GET_BACKUP_PARTITION_DISK_TOTAL_SIZE, pkey);
   }
 
   public long getDiskUsedSize() throws IOException, SQLException {
-    return table.getConnector().requestLongQuery(true, AoservProtocol.CommandID.GET_BACKUP_PARTITION_DISK_USED_SIZE, pkey);
+    return table.getConnector().requestLongQuery(true, AoservProtocol.CommandId.GET_BACKUP_PARTITION_DISK_USED_SIZE, pkey);
   }
 
   public Server getLinuxServer() throws SQLException, IOException {
-    Server ao = table.getConnector().getLinux().getServer().get(ao_server);
+    Server ao = table.getConnector().getLinux().getServer().get(aoServer);
     if (ao == null) {
-      throw new SQLException("Unable to find linux.Server: " + ao_server);
+      throw new SQLException("Unable to find linux.Server: " + aoServer);
     }
     return ao;
   }
@@ -98,8 +102,8 @@ public final class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.BACKUP_PARTITIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.BACKUP_PARTITIONS;
   }
 
   @Override
@@ -111,10 +115,10 @@ public final class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
   public void init(ResultSet result) throws SQLException {
     try {
       pkey = result.getInt(1);
-      ao_server = result.getInt(2);
+      aoServer = result.getInt(2);
       path = PosixPath.valueOf(result.getString(3));
       enabled = result.getBoolean(4);
-      quota_enabled = result.getBoolean(5);
+      quotaEnabled = result.getBoolean(5);
     } catch (ValidationException e) {
       throw new SQLException(e);
     }
@@ -133,17 +137,17 @@ public final class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
    * @return the enabled flag
    */
   public boolean isQuotaEnabled() {
-    return quota_enabled;
+    return quotaEnabled;
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
       pkey = in.readCompressedInt();
-      ao_server = in.readCompressedInt();
+      aoServer = in.readCompressedInt();
       path = PosixPath.valueOf(in.readUTF()).intern();
       enabled = in.readBoolean();
-      quota_enabled = in.readBoolean();
+      quotaEnabled = in.readBoolean();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -152,7 +156,7 @@ public final class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeCompressedInt(ao_server);
+    out.writeCompressedInt(aoServer);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30) <= 0) {
       out.writeUTF(path.toString());
     }
@@ -169,7 +173,7 @@ public final class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
       out.writeCompressedInt(1); // fill_order
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_31) >= 0) {
-      out.writeBoolean(quota_enabled);
+      out.writeBoolean(quotaEnabled);
     }
   }
 }

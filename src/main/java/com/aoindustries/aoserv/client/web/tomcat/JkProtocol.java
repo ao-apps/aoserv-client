@@ -25,7 +25,7 @@ package com.aoindustries.aoserv.client.web.tomcat;
 
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalObjectStringKey;
 import com.aoindustries.aoserv.client.net.AppProtocol;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
@@ -38,7 +38,7 @@ import java.sql.SQLException;
  * Apache's <code>mod_jk</code> supports multiple versions of the
  * Apache JServ Protocol.  Both Apache and Tomcat must be using
  * the same protocol for communication.  The protocol is represented
- * by an <code>HttpdJKProtocol</code>.
+ * by an <code>HttpdJkProtocol</code>.
  *
  * @see  Worker
  * @see  AppProtocol
@@ -50,10 +50,8 @@ public final class JkProtocol extends GlobalObjectStringKey<JkProtocol> {
   static final int COLUMN_PROTOCOL = 0;
   static final String COLUMN_PROTOCOL_name = "protocol";
 
-  public static final String
-      AJP12 = "ajp12",
-      AJP13 = "ajp13"
-  ;
+  public static final String AJP12 = "ajp12";
+  public static final String AJP13 = "ajp13";
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -74,7 +72,7 @@ public final class JkProtocol extends GlobalObjectStringKey<JkProtocol> {
     throw new IllegalArgumentException("Invalid index: " + i);
   }
 
-  public AppProtocol getProtocol(AOServConnector connector) throws SQLException, IOException {
+  public AppProtocol getProtocol(AoservConnector connector) throws SQLException, IOException {
     AppProtocol protocol = connector.getNet().getAppProtocol().get(pkey);
     if (protocol == null) {
       throw new SQLException("Unable to find Protocol: " + pkey);
@@ -83,8 +81,8 @@ public final class JkProtocol extends GlobalObjectStringKey<JkProtocol> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.HTTPD_JK_PROTOCOLS;
+  public Table.TableId getTableId() {
+    return Table.TableId.HTTPD_JK_PROTOCOLS;
   }
 
   @Override

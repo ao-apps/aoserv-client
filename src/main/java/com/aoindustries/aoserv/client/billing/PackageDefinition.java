@@ -30,7 +30,7 @@ import com.aoapps.lang.i18n.Money;
 import com.aoapps.lang.math.SafeMath;
 import com.aoapps.lang.util.InternUtils;
 import com.aoapps.lang.validation.ValidationException;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Removable;
@@ -64,9 +64,9 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
   private String display;
   private String description;
   private Money setupFee;
-  private String setup_fee_transaction_type;
+  private String setupFeeTransactionType;
   private Money monthlyRate;
-  private String monthly_rate_transaction_type;
+  private String monthlyRateTransactionType;
   private boolean active;
   private boolean approved;
 
@@ -84,20 +84,34 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case 1: return accounting;
-      case 2: return category;
-      case 3: return name;
-      case 4: return version;
-      case 5: return display;
-      case 6: return description;
-      case 7: return setupFee;
-      case 8: return setup_fee_transaction_type;
-      case 9: return monthlyRate;
-      case 10: return monthly_rate_transaction_type;
-      case 11: return active;
-      case 12: return approved;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case 1:
+        return accounting;
+      case 2:
+        return category;
+      case 3:
+        return name;
+      case 4:
+        return version;
+      case 5:
+        return display;
+      case 6:
+        return description;
+      case 7:
+        return setupFee;
+      case 8:
+        return setupFeeTransactionType;
+      case 9:
+        return monthlyRate;
+      case 10:
+        return monthlyRateTransactionType;
+      case 11:
+        return active;
+      case 12:
+        return approved;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -145,8 +159,8 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
   public void setLimits(final PackageDefinitionLimit[] limits) throws IOException, SQLException {
     table.getConnector().requestUpdate(
         true,
-        AoservProtocol.CommandID.SET_PACKAGE_DEFINITION_LIMITS,
-        new AOServConnector.UpdateRequest() {
+        AoservProtocol.CommandId.SET_PACKAGE_DEFINITION_LIMITS,
+        new AoservConnector.UpdateRequest() {
           private IntList invalidateList;
 
           @Override
@@ -166,7 +180,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
           public void readResponse(StreamableInput in) throws IOException, SQLException {
             int code = in.readByte();
             if (code == AoservProtocol.DONE) {
-              invalidateList = AOServConnector.readInvalidateList(in);
+              invalidateList = AoservConnector.readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
               throw new IOException("Unknown response code: " + code);
@@ -205,12 +219,12 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
   }
 
   public TransactionType getSetupFeeTransactionType() throws SQLException, IOException {
-    if (setup_fee_transaction_type == null) {
+    if (setupFeeTransactionType == null) {
       return null;
     }
-    TransactionType tt = table.getConnector().getBilling().getTransactionType().get(setup_fee_transaction_type);
+    TransactionType tt = table.getConnector().getBilling().getTransactionType().get(setupFeeTransactionType);
     if (tt == null) {
-      throw new SQLException("Unable to find TransactionType: " + setup_fee_transaction_type);
+      throw new SQLException("Unable to find TransactionType: " + setupFeeTransactionType);
     }
     return tt;
   }
@@ -223,12 +237,12 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
   }
 
   public TransactionType getMonthlyRateTransactionType() throws SQLException, IOException {
-    if (monthly_rate_transaction_type == null) {
+    if (monthlyRateTransactionType == null) {
       return null;
     }
-    TransactionType tt = table.getConnector().getBilling().getTransactionType().get(monthly_rate_transaction_type);
+    TransactionType tt = table.getConnector().getBilling().getTransactionType().get(monthlyRateTransactionType);
     if (tt == null) {
-      throw new SQLException("Unable to find TransactionType: " + monthly_rate_transaction_type);
+      throw new SQLException("Unable to find TransactionType: " + monthlyRateTransactionType);
     }
     return tt;
   }
@@ -238,11 +252,11 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
   }
 
   public int copy() throws IOException, SQLException {
-    return table.getConnector().requestIntQueryIL(true, AoservProtocol.CommandID.COPY_PACKAGE_DEFINITION, pkey);
+    return table.getConnector().requestIntQueryInvalidating(true, AoservProtocol.CommandId.COPY_PACKAGE_DEFINITION, pkey);
   }
 
   public void setActive(boolean active) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_PACKAGE_DEFINITION_ACTIVE, pkey, active);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_PACKAGE_DEFINITION_ACTIVE, pkey, active);
   }
 
   public boolean isApproved() {
@@ -250,8 +264,8 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.PACKAGE_DEFINITIONS;
+  public Table.TableId getTableId() {
+    return Table.TableId.PACKAGE_DEFINITIONS;
   }
 
   @Override
@@ -265,9 +279,9 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
       display = result.getString("display");
       description = result.getString("description");
       setupFee = MoneyUtil.getMoney(result, "setupFee.currency", "setupFee.value");
-      setup_fee_transaction_type = result.getString("setup_fee_transaction_type");
+      setupFeeTransactionType = result.getString("setup_fee_transaction_type");
       monthlyRate = MoneyUtil.getMoney(result, "monthlyRate.currency", "monthlyRate.value");
-      monthly_rate_transaction_type = result.getString("monthly_rate_transaction_type");
+      monthlyRateTransactionType = result.getString("monthly_rate_transaction_type");
       active = result.getBoolean("active");
       approved = result.getBoolean("approved");
     } catch (ValidationException e) {
@@ -286,9 +300,9 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
       display = in.readUTF();
       description = in.readUTF();
       setupFee = MoneyUtil.readNullMoney(in);
-      setup_fee_transaction_type = InternUtils.intern(in.readNullUTF());
+      setupFeeTransactionType = InternUtils.intern(in.readNullUTF());
       monthlyRate = MoneyUtil.readNullMoney(in);
-      monthly_rate_transaction_type = InternUtils.intern(in.readNullUTF());
+      monthlyRateTransactionType = InternUtils.intern(in.readNullUTF());
       active = in.readBoolean();
       approved = in.readBoolean();
     } catch (ValidationException e) {
@@ -319,7 +333,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
     } else {
       MoneyUtil.writeNullMoney(setupFee, out);
     }
-    out.writeNullUTF(setup_fee_transaction_type);
+    out.writeNullUTF(setupFeeTransactionType);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
       if (monthlyRate != null && monthlyRate.getCurrency() == Currency.USD && monthlyRate.getScale() == 2) {
         out.writeCompressedInt(SafeMath.castInt(monthlyRate.getUnscaledValue()));
@@ -329,7 +343,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
     } else {
       MoneyUtil.writeNullMoney(monthlyRate, out);
     }
-    out.writeNullUTF(monthly_rate_transaction_type);
+    out.writeNullUTF(monthlyRateTransactionType);
     out.writeBoolean(active);
     out.writeBoolean(approved);
   }
@@ -346,10 +360,10 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 
   @Override
   public void remove() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.REMOVE,
-        Table.TableID.PACKAGE_DEFINITIONS,
+        AoservProtocol.CommandId.REMOVE,
+        Table.TableId.PACKAGE_DEFINITIONS,
         pkey
     );
   }
@@ -368,8 +382,8 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
   ) throws IOException, SQLException {
     table.getConnector().requestUpdate(
         true,
-        AoservProtocol.CommandID.UPDATE_PACKAGE_DEFINITION,
-        new AOServConnector.UpdateRequest() {
+        AoservProtocol.CommandId.UPDATE_PACKAGE_DEFINITION,
+        new AoservConnector.UpdateRequest() {
           private IntList invalidateList;
 
           @Override
@@ -394,7 +408,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
           public void readResponse(StreamableInput in) throws IOException, SQLException {
             int code = in.readByte();
             if (code == AoservProtocol.DONE) {
-              invalidateList = AOServConnector.readInvalidateList(in);
+              invalidateList = AoservConnector.readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
               throw new IOException("Unknown response code: " + code);

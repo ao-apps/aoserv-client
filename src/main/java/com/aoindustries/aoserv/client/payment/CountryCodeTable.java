@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.payment;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTableStringKey;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.Profile;
@@ -45,7 +45,7 @@ import java.util.Set;
  */
 public final class CountryCodeTable extends GlobalTableStringKey<CountryCode> {
 
-  CountryCodeTable(AOServConnector connector) {
+  CountryCodeTable(AoservConnector connector) {
     super(connector, CountryCode.class);
   }
 
@@ -127,7 +127,7 @@ public final class CountryCodeTable extends GlobalTableStringKey<CountryCode> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.COUNTRY_CODES;
+  public Table.TableId getTableId() {
+    return Table.TableId.COUNTRY_CODES;
   }
 }

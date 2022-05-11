@@ -41,10 +41,8 @@ import java.util.List;
  */
 public final class Limiter extends CachedObjectIntegerKey<Limiter> {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_NET_DEVICE = 1
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_NET_DEVICE = 1;
 
   static final String COLUMN_NET_DEVICE_name = "net_device";
   static final String COLUMN_IDENTIFIER_name = "identifier";
@@ -65,8 +63,8 @@ public final class Limiter extends CachedObjectIntegerKey<Limiter> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.IP_REPUTATION_LIMITERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.IP_REPUTATION_LIMITERS;
   }
 
   @Override
@@ -82,8 +80,8 @@ public final class Limiter extends CachedObjectIntegerKey<Limiter> {
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
     out.writeCompressedInt(netDevice);
-    out.writeUTF          (identifier);
-    out.writeNullUTF      (description);
+    out.writeUTF(identifier);
+    out.writeNullUTF(description);
   }
 
   @Override
@@ -97,11 +95,16 @@ public final class Limiter extends CachedObjectIntegerKey<Limiter> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY :       return pkey;
-      case COLUMN_NET_DEVICE : return netDevice;
-      case 2 :                 return identifier;
-      case 3 :                 return description;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_NET_DEVICE:
+        return netDevice;
+      case 2:
+        return identifier;
+      case 3:
+        return description;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 

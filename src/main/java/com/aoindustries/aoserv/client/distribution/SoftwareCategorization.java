@@ -25,7 +25,7 @@ package com.aoindustries.aoserv.client.distribution;
 
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalObjectIntegerKey;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -78,11 +78,11 @@ public final class SoftwareCategorization extends GlobalObjectIntegerKey<Softwar
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.TECHNOLOGIES;
+  public Table.TableId getTableId() {
+    return Table.TableId.TECHNOLOGIES;
   }
 
-  public SoftwareCategory getTechnologyClass(AOServConnector connector) throws SQLException, IOException {
+  public SoftwareCategory getTechnologyClass(AoservConnector connector) throws SQLException, IOException {
     SoftwareCategory technologyClass = connector.getDistribution().getSoftwareCategory().get(clazz);
     if (technologyClass == null) {
       throw new SQLException("Unable to find TechnologyClass: " + clazz);
@@ -90,7 +90,7 @@ public final class SoftwareCategorization extends GlobalObjectIntegerKey<Softwar
     return technologyClass;
   }
 
-  public Software getTechnologyName(AOServConnector connector) throws SQLException, IOException {
+  public Software getTechnologyName(AoservConnector connector) throws SQLException, IOException {
     Software technologyName = connector.getDistribution().getSoftware().get(name);
     if (technologyName == null) {
       throw new SQLException("Unable to find TechnologyName: " + name);

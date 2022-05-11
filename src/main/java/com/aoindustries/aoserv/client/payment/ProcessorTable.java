@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.payment;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableStringKey;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -38,7 +38,7 @@ import java.util.List;
  */
 public final class ProcessorTable extends CachedTableStringKey<Processor> {
 
-  ProcessorTable(AOServConnector connector) {
+  ProcessorTable(AoservConnector connector) {
     super(connector, Processor.class);
   }
 
@@ -63,7 +63,7 @@ public final class ProcessorTable extends CachedTableStringKey<Processor> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.CREDIT_CARD_PROCESSORS;
+  public Table.TableId getTableId() {
+    return Table.TableId.CREDIT_CARD_PROCESSORS;
   }
 }

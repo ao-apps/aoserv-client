@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.pki;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -39,7 +39,7 @@ import java.util.List;
  */
 public final class CertificateNameTable extends CachedTableIntegerKey<CertificateName> {
 
-  CertificateNameTable(AOServConnector connector) {
+  CertificateNameTable(AoservConnector connector) {
     super(connector, CertificateName.class);
   }
 
@@ -91,7 +91,7 @@ public final class CertificateNameTable extends CachedTableIntegerKey<Certificat
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.SSL_CERTIFICATE_NAMES;
+  public Table.TableId getTableId() {
+    return Table.TableId.SSL_CERTIFICATE_NAMES;
   }
 }

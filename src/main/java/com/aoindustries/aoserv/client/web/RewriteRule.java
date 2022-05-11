@@ -43,10 +43,8 @@ import java.util.Locale;
  */
 public final class RewriteRule extends CachedObjectIntegerKey<RewriteRule> {
 
-  static final int
-      COLUMN_id = 0,
-      COLUMN_virtualHost = 1
-  ;
+  static final int COLUMN_id = 0;
+  static final int COLUMN_virtualHost = 1;
   static final String COLUMN_virtualHost_name = "virtualHost";
   static final String COLUMN_sortOrder_name = "sortOrder";
 
@@ -71,14 +69,22 @@ public final class RewriteRule extends CachedObjectIntegerKey<RewriteRule> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_id: return pkey;
-      case COLUMN_virtualHost: return virtualHost;
-      case 2: return sortOrder;
-      case 3: return pattern;
-      case 4: return substitution;
-      case 5: return flags;
-      case 6: return comment;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_id:
+        return pkey;
+      case COLUMN_virtualHost:
+        return virtualHost;
+      case 2:
+        return sortOrder;
+      case 3:
+        return pattern;
+      case 4:
+        return substitution;
+      case 5:
+        return flags;
+      case 6:
+        return comment;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -132,15 +138,15 @@ public final class RewriteRule extends CachedObjectIntegerKey<RewriteRule> {
     if (flags == null) {
       return false;
     }
-    String flagsUC = flags.toUpperCase(Locale.ROOT);
-    String flagUC = flag.toUpperCase(Locale.ROOT);
+    String flagsUpper = flags.toUpperCase(Locale.ROOT);
+    String flagUpper = flag.toUpperCase(Locale.ROOT);
     return
-        flagsUC.equals(flagUC)                   // flag
-            || flagsUC.startsWith(flagUC + ',')      // flag,...
-            || flagsUC.startsWith(flagUC + '=')      // flag=...
-            || flagsUC.endsWith(',' + flagUC)        // ...,flag
-            || flagsUC.contains(',' + flagUC + ',')  // ...,flag,...
-            || flagsUC.contains(',' + flagUC + '='); // ...,flag=...
+        flagsUpper.equals(flagUpper)                   // flag
+            || flagsUpper.startsWith(flagUpper + ',')      // flag,...
+            || flagsUpper.startsWith(flagUpper + '=')      // flag=...
+            || flagsUpper.endsWith(',' + flagUpper)        // ...,flag
+            || flagsUpper.contains(',' + flagUpper + ',')  // ...,flag,...
+            || flagsUpper.contains(',' + flagUpper + '='); // ...,flag=...
   }
 
   /**
@@ -169,8 +175,8 @@ public final class RewriteRule extends CachedObjectIntegerKey<RewriteRule> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.RewriteRule;
+  public Table.TableId getTableId() {
+    return Table.TableId.RewriteRule;
   }
 
   @Override
@@ -213,6 +219,8 @@ public final class RewriteRule extends CachedObjectIntegerKey<RewriteRule> {
   }
 
   /**
+   * {@inheritDoc}
+   *
    * @see #getApacheDirective(java.lang.String)
    * @see ApacheEscape#DEFAULT_DOLLAR_VARIABLE
    */

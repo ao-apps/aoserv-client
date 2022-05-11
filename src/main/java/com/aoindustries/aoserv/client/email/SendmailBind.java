@@ -46,13 +46,11 @@ import java.sql.SQLException;
  */
 public final class SendmailBind extends CachedObjectIntegerKey<SendmailBind> {
 
-  static final int
-      COLUMN_NET_BIND = 0,
-      COLUMN_SENDMAIL_SERVER = 1
-  ;
+  static final int COLUMN_NET_BIND = 0;
+  static final int COLUMN_SENDMAIL_SERVER = 1;
   static final String COLUMN_NET_BIND_name = "net_bind";
 
-  private int sendmail_server;
+  private int sendmailServer;
   private String name;
 
   /**
@@ -76,36 +74,40 @@ public final class SendmailBind extends CachedObjectIntegerKey<SendmailBind> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_NET_BIND: return pkey;
-      case COLUMN_SENDMAIL_SERVER: return sendmail_server;
-      case 2: return name;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_NET_BIND:
+        return pkey;
+      case COLUMN_SENDMAIL_SERVER:
+        return sendmailServer;
+      case 2:
+        return name;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.SENDMAIL_BINDS;
+  public Table.TableId getTableId() {
+    return Table.TableId.SENDMAIL_BINDS;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     pkey = result.getInt(1);
-    sendmail_server = result.getInt(2);
+    sendmailServer = result.getInt(2);
     name = result.getString(3);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readCompressedInt();
-    sendmail_server = in.readCompressedInt();
+    sendmailServer = in.readCompressedInt();
     name = in.readNullUTF();
   }
 
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeCompressedInt(sendmail_server);
+    out.writeCompressedInt(sendmailServer);
     out.writeNullUTF(name);
   }
 
@@ -118,9 +120,9 @@ public final class SendmailBind extends CachedObjectIntegerKey<SendmailBind> {
   }
 
   public SendmailServer getSendmailServer() throws SQLException, IOException {
-    SendmailServer obj = table.getConnector().getEmail().getSendmailServer().get(sendmail_server);
+    SendmailServer obj = table.getConnector().getEmail().getSendmailServer().get(sendmailServer);
     if (obj == null) {
-      throw new SQLException("Unable to find SendmailServer: " + sendmail_server);
+      throw new SQLException("Unable to find SendmailServer: " + sendmailServer);
     }
     return obj;
   }

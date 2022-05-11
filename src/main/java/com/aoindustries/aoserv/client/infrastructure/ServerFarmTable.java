@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.infrastructure;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableStringKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.sql.SQLException;
  */
 public final class ServerFarmTable extends CachedTableStringKey<ServerFarm> {
 
-  ServerFarmTable(AOServConnector connector) {
+  ServerFarmTable(AoservConnector connector) {
     super(connector, ServerFarm.class);
   }
 
@@ -56,7 +56,7 @@ public final class ServerFarmTable extends CachedTableStringKey<ServerFarm> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.SERVER_FARMS;
+  public Table.TableId getTableId() {
+    return Table.TableId.SERVER_FARMS;
   }
 }

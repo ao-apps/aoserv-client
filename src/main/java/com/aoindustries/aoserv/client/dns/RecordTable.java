@@ -24,9 +24,9 @@
 package com.aoindustries.aoserv.client.dns;
 
 import com.aoapps.hodgepodge.io.TerminalWriter;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -43,7 +43,7 @@ import java.util.List;
  */
 public final class RecordTable extends CachedTableIntegerKey<Record> {
 
-  RecordTable(AOServConnector connector) {
+  RecordTable(AoservConnector connector) {
     super(connector, Record.class);
   }
 
@@ -63,7 +63,7 @@ public final class RecordTable extends CachedTableIntegerKey<Record> {
     return defaultOrderBy;
   }
 
-  int addDNSRecord(
+  int addDnsRecord(
       Zone zone,
       String domain,
       RecordType type,
@@ -78,10 +78,10 @@ public final class RecordTable extends CachedTableIntegerKey<Record> {
     if (!Record.isValidFlag(flag)) {
       throw new IllegalArgumentException("Invalid flag: " + flag);
     }
-    return connector.requestIntQueryIL(
+    return connector.requestIntQueryInvalidating(
         true,
-        AoservProtocol.CommandID.ADD,
-        Table.TableID.DNS_RECORDS,
+        AoservProtocol.CommandId.ADD,
+        Table.TableId.DNS_RECORDS,
         zone.getZone(),
         domain,
         type.getType(),
@@ -100,15 +100,15 @@ public final class RecordTable extends CachedTableIntegerKey<Record> {
     return getUniqueRow(Record.COLUMN_ID, id);
   }
 
-  List<Record> getDNSRecords(Zone dnsZone) throws IOException, SQLException {
+  List<Record> getRecords(Zone dnsZone) throws IOException, SQLException {
     return getIndexedRows(Record.COLUMN_ZONE, dnsZone.getZone());
   }
 
-  List<Record> getDNSRecords(Zone dnsZone, String domain, RecordType dnsType) throws IOException, SQLException {
+  List<Record> getRecords(Zone dnsZone, String domain, RecordType dnsType) throws IOException, SQLException {
     String type = dnsType.getType();
 
     // Use the index first
-    List<Record> cached = getDNSRecords(dnsZone);
+    List<Record> cached = getRecords(dnsZone);
     int size = cached.size();
     List<Record> matches = new ArrayList<>(size);
     for (int c = 0; c < size; c++) {
@@ -124,15 +124,15 @@ public final class RecordTable extends CachedTableIntegerKey<Record> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.DNS_RECORDS;
+  public Table.TableId getTableId() {
+    return Table.TableId.DNS_RECORDS;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_DNS_RECORD)) {
-      if (AOSH.checkMinParamCount(Command.ADD_DNS_RECORD, args, 3, err)) {
+      if (Aosh.checkMinParamCount(Command.ADD_DNS_RECORD, args, 3, err)) {
         String zone   = args[1];
         String domain = args[2];
         String type   = args[3];
@@ -160,7 +160,7 @@ public final class RecordTable extends CachedTableIntegerKey<Record> {
           flag        = Record.NO_FLAG;
           tag         = null;
           destination = args[4];
-          ttl         = args.length <= 5 || args[5].isEmpty() ? Record.NO_TTL : AOSH.parseInt(args[5], "ttl");
+          ttl         = args.length <= 5 || args[5].isEmpty() ? Record.NO_TTL : Aosh.parseInt(args[5], "ttl");
         } else if (
             RecordType.CAA.equals(type)
                 && (args.length == 7 || args.length == 8)
@@ -168,46 +168,46 @@ public final class RecordTable extends CachedTableIntegerKey<Record> {
           priority = Record.NO_PRIORITY;
           weight = Record.NO_WEIGHT;
           port = Record.NO_PORT;
-          flag        = AOSH.parseShort(args[4], "flag");
+          flag        = Aosh.parseShort(args[4], "flag");
           tag         = args[5];
           destination = args[6];
-          ttl         = args.length <= 7 || args[7].isEmpty() ? Record.NO_TTL : AOSH.parseInt(args[7], "ttl");
+          ttl         = args.length <= 7 || args[7].isEmpty() ? Record.NO_TTL : Aosh.parseInt(args[7], "ttl");
         } else if (
             RecordType.MX.equals(type)
                 && (args.length == 6 || args.length == 7)
         ) {
-          priority    = AOSH.parseInt(args[4], "priority");
+          priority    = Aosh.parseInt(args[4], "priority");
           weight      = Record.NO_WEIGHT;
           port        = Record.NO_PORT;
           flag        = Record.NO_FLAG;
           tag         = null;
           destination = args[5];
-          ttl         = args.length <= 6 || args[6].isEmpty() ? Record.NO_TTL : AOSH.parseInt(args[6], "ttl");
+          ttl         = args.length <= 6 || args[6].isEmpty() ? Record.NO_TTL : Aosh.parseInt(args[6], "ttl");
         } else if (
             RecordType.SRV.equals(type)
                 && (args.length == 8 || args.length == 9)
         ) {
-          priority    = AOSH.parseInt(args[4], "priority");
-          weight      = AOSH.parseInt(args[5], "weight");
-          port        = AOSH.parseInt(args[6], "port");
+          priority    = Aosh.parseInt(args[4], "priority");
+          weight      = Aosh.parseInt(args[5], "weight");
+          port        = Aosh.parseInt(args[6], "port");
           flag        = Record.NO_FLAG;
           tag         = null;
           destination = args[7];
-          ttl         = args.length <= 8 || args[8].isEmpty() ? Record.NO_TTL : AOSH.parseInt(args[8], "ttl");
-        } else if (args.length == 10 || AOSH.checkParamCount(Command.ADD_DNS_RECORD, args, 10, err)) {
+          ttl         = args.length <= 8 || args[8].isEmpty() ? Record.NO_TTL : Aosh.parseInt(args[8], "ttl");
+        } else if (args.length == 10 || Aosh.checkParamCount(Command.ADD_DNS_RECORD, args, 10, err)) {
           // Arbitrary type, all fields
-          priority    = args[4].isEmpty() ? Record.NO_PRIORITY : AOSH.parseInt(args[4], "priority");
-          weight      = args[5].isEmpty() ? Record.NO_WEIGHT   : AOSH.parseInt(args[5], "weight");
-          port        = args[6].isEmpty() ? Record.NO_PORT     : AOSH.parseInt(args[6], "port");
-          flag        = args[7].isEmpty() ? Record.NO_FLAG     : AOSH.parseShort(args[7], "flag");
+          priority    = args[4].isEmpty() ? Record.NO_PRIORITY : Aosh.parseInt(args[4], "priority");
+          weight      = args[5].isEmpty() ? Record.NO_WEIGHT   : Aosh.parseInt(args[5], "weight");
+          port        = args[6].isEmpty() ? Record.NO_PORT     : Aosh.parseInt(args[6], "port");
+          flag        = args[7].isEmpty() ? Record.NO_FLAG     : Aosh.parseShort(args[7], "flag");
           tag         = args[8].isEmpty() ? null               : args[8];
           destination = args[9];
-          ttl         = args.length <= 10 || args[10].isEmpty() ? Record.NO_TTL : AOSH.parseInt(args[10], "ttl");
+          ttl         = args.length <= 10 || args[10].isEmpty() ? Record.NO_TTL : Aosh.parseInt(args[10], "ttl");
         } else {
           return true;
         }
         out.println(
-            connector.getSimpleAOClient().addDNSRecord(
+            connector.getSimpleClient().addDnsRecord(
                 zone,
                 domain,
                 type,
@@ -225,12 +225,12 @@ public final class RecordTable extends CachedTableIntegerKey<Record> {
       return true;
     } else if (command.equalsIgnoreCase(Command.REMOVE_DNS_RECORD)) {
       if (args.length == 2) {
-        connector.getSimpleAOClient().removeDNSRecord(
-            AOSH.parseInt(args[1], "pkey")
+        connector.getSimpleClient().removeDnsRecord(
+            Aosh.parseInt(args[1], "pkey")
         );
         return true;
       } else if (args.length == 6) {
-        connector.getSimpleAOClient().removeDNSRecord(
+        connector.getSimpleClient().removeDnsRecord(
             args[1],
             args[2],
             args[3],

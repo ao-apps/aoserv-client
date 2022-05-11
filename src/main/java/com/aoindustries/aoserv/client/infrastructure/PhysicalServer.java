@@ -53,7 +53,7 @@ public final class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
   private int processorSpeed;
   private int processorCores;
   private float maxPower;
-  private Boolean supports_hvm;
+  private Boolean supportsHvm;
 
   // Matches aoserv-master-db/aoindustries/infrastructure/PhysicalServer.UpsType-type.sql
   public enum UpsType {
@@ -89,17 +89,28 @@ public final class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_SERVER: return pkey;
-      case 1: return rack == -1 ? null : rack;
-      case 2: return rackUnits == -1 ? null : rackUnits;
-      case 3: return ram == -1 ? null : ram;
-      case 4: return processorType;
-      case 5: return processorSpeed == -1 ? null : processorSpeed;
-      case 6: return processorCores == -1 ? null : processorCores;
-      case 7: return Float.isNaN(maxPower) ? null : maxPower;
-      case 8: return supports_hvm;
-      case 9: return upsType.name();
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_SERVER:
+        return pkey;
+      case 1:
+        return rack == -1 ? null : rack;
+      case 2:
+        return rackUnits == -1 ? null : rackUnits;
+      case 3:
+        return ram == -1 ? null : ram;
+      case 4:
+        return processorType;
+      case 5:
+        return processorSpeed == -1 ? null : processorSpeed;
+      case 6:
+        return processorCores == -1 ? null : processorCores;
+      case 7:
+        return Float.isNaN(maxPower) ? null : maxPower;
+      case 8:
+        return supportsHvm;
+      case 9:
+        return upsType.name();
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -180,7 +191,7 @@ public final class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
    * Gets if this supports HVM or {@code null} if not applicable.
    */
   public Boolean getSupportsHvm() {
-    return supports_hvm;
+    return supportsHvm;
   }
 
   /**
@@ -191,8 +202,8 @@ public final class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.PHYSICAL_SERVERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.PHYSICAL_SERVERS;
   }
 
   @Override
@@ -224,9 +235,9 @@ public final class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
     if (result.wasNull()) {
       maxPower = Float.NaN;
     }
-    supports_hvm = result.getBoolean(pos++);
+    supportsHvm = result.getBoolean(pos++);
     if (result.wasNull()) {
-      supports_hvm = null;
+      supportsHvm = null;
     }
     upsType = UpsType.valueOf(result.getString(pos++));
   }
@@ -241,7 +252,7 @@ public final class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
     processorSpeed = in.readCompressedInt();
     processorCores = in.readCompressedInt();
     maxPower = in.readFloat();
-    supports_hvm = in.readBoolean() ? in.readBoolean() : null;
+    supportsHvm = in.readBoolean() ? in.readBoolean() : null;
     upsType = UpsType.valueOf(in.readUTF());
   }
 
@@ -261,9 +272,9 @@ public final class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
     out.writeCompressedInt(processorCores);
     out.writeFloat(maxPower);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_37) >= 0) {
-      out.writeBoolean(supports_hvm != null);
-      if (supports_hvm != null) {
-        out.writeBoolean(supports_hvm);
+      out.writeBoolean(supportsHvm != null);
+      if (supportsHvm != null) {
+        out.writeBoolean(supportsHvm);
       }
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_63) >= 0) {

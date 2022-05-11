@@ -29,9 +29,9 @@ import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.net.DomainName;
 import com.aoapps.net.Email;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.Aosh;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.linux.Group;
@@ -52,13 +52,15 @@ import java.sql.SQLException;
  */
 public final class PrivateTomcatSiteTable extends CachedTableIntegerKey<PrivateTomcatSite> {
 
-  PrivateTomcatSiteTable(AOServConnector connector) {
+  PrivateTomcatSiteTable(AoservConnector connector) {
     super(connector, PrivateTomcatSite.class);
   }
 
   private static final OrderBy[] defaultOrderBy = {
-      new OrderBy(PrivateTomcatSite.COLUMN_TOMCAT_SITE_name + '.' + Site.COLUMN_HTTPD_SITE_name + '.' + com.aoindustries.aoserv.client.web.Site.COLUMN_NAME_name, ASCENDING),
-      new OrderBy(PrivateTomcatSite.COLUMN_TOMCAT_SITE_name + '.' + Site.COLUMN_HTTPD_SITE_name + '.' + com.aoindustries.aoserv.client.web.Site.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING)
+      new OrderBy(PrivateTomcatSite.COLUMN_TOMCAT_SITE_name + '.' + Site.COLUMN_HTTPD_SITE_name
+          + '.' + com.aoindustries.aoserv.client.web.Site.COLUMN_NAME_name, ASCENDING),
+      new OrderBy(PrivateTomcatSite.COLUMN_TOMCAT_SITE_name + '.' + Site.COLUMN_HTTPD_SITE_name
+          + '.' + com.aoindustries.aoserv.client.web.Site.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING)
   };
 
   @Override
@@ -82,15 +84,15 @@ public final class PrivateTomcatSiteTable extends CachedTableIntegerKey<PrivateT
   ) throws IOException, SQLException {
     return connector.requestResult(
         true,
-        AoservProtocol.CommandID.ADD,
-        // Java 9: new AOServConnector.ResultRequest<>
-        new AOServConnector.ResultRequest<Integer>() {
+        AoservProtocol.CommandId.ADD,
+        // Java 9: new AoservConnector.ResultRequest<>
+        new AoservConnector.ResultRequest<Integer>() {
           private int pkey;
           private IntList invalidateList;
 
           @Override
           public void writeRequest(StreamableOutput out) throws IOException {
-            out.writeCompressedInt(Table.TableID.HTTPD_TOMCAT_STD_SITES.ordinal());
+            out.writeCompressedInt(Table.TableId.HTTPD_TOMCAT_STD_SITES.ordinal());
             out.writeCompressedInt(aoServer.getPkey());
             out.writeUTF(siteName);
             out.writeUTF(packageObj.getName().toString());
@@ -112,7 +114,7 @@ public final class PrivateTomcatSiteTable extends CachedTableIntegerKey<PrivateT
             int code = in.readByte();
             if (code == AoservProtocol.DONE) {
               pkey = in.readCompressedInt();
-              invalidateList = AOServConnector.readInvalidateList(in);
+              invalidateList = AoservConnector.readInvalidateList(in);
             } else {
               AoservProtocol.checkResult(code, in);
               throw new IOException("Unknown response code: " + code);
@@ -138,32 +140,32 @@ public final class PrivateTomcatSiteTable extends CachedTableIntegerKey<PrivateT
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.HTTPD_TOMCAT_STD_SITES;
+  public Table.TableId getTableId() {
+    return Table.TableId.HTTPD_TOMCAT_STD_SITES;
   }
 
   @Override
   public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_HTTPD_TOMCAT_STD_SITE)) {
-      if (AOSH.checkMinParamCount(Command.ADD_HTTPD_TOMCAT_STD_SITE, args, 11, err)) {
+      if (Aosh.checkMinParamCount(Command.ADD_HTTPD_TOMCAT_STD_SITE, args, 11, err)) {
         // Create an array of all the alternate hostnames
         DomainName[] altHostnames = new DomainName[args.length - 12];
         for (int i = 12; i < args.length; i++) {
-          altHostnames[i - 12] = AOSH.parseDomainName(args[i], "alternate_http_hostname");
+          altHostnames[i - 12] = Aosh.parseDomainName(args[i], "alternate_http_hostname");
         }
         out.println(
-            connector.getSimpleAOClient().addHttpdTomcatStdSite(
+            connector.getSimpleClient().addHttpdTomcatStdSite(
                 args[1],
                 args[2],
-                AOSH.parseAccountingCode(args[3], "package"),
-                AOSH.parseLinuxUserName(args[4], "username"),
-                AOSH.parseGroupName(args[5], "group"),
-                AOSH.parseEmail(args[6], "server_admin_email"),
-                AOSH.parseBoolean(args[7], "use_apache"),
-                args[8].length() == 0 ? null : AOSH.parseInetAddress(args[8], "ip_address"),
+                Aosh.parseAccountingCode(args[3], "package"),
+                Aosh.parseLinuxUserName(args[4], "username"),
+                Aosh.parseGroupName(args[5], "group"),
+                Aosh.parseEmail(args[6], "server_admin_email"),
+                Aosh.parseBoolean(args[7], "use_apache"),
+                args[8].length() == 0 ? null : Aosh.parseInetAddress(args[8], "ip_address"),
                 args[9],
-                AOSH.parseDomainName(args[11], "primary_http_hostname"),
+                Aosh.parseDomainName(args[11], "primary_http_hostname"),
                 altHostnames,
                 args[10]
             )
@@ -172,44 +174,44 @@ public final class PrivateTomcatSiteTable extends CachedTableIntegerKey<PrivateT
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_HTTPD_TOMCAT_STD_SITE_MAX_POST_SIZE)) {
-      if (AOSH.checkParamCount(Command.SET_HTTPD_TOMCAT_STD_SITE_MAX_POST_SIZE, args, 3, err)) {
-        connector.getSimpleAOClient().setHttpdTomcatStdSiteMaxPostSize(
+      if (Aosh.checkParamCount(Command.SET_HTTPD_TOMCAT_STD_SITE_MAX_POST_SIZE, args, 3, err)) {
+        connector.getSimpleClient().setHttpdTomcatStdSiteMaxPostSize(
             args[1],
             args[2],
-            args[3].isEmpty() ? -1 : AOSH.parseInt(args[3], "max_post_size")
+            args[3].isEmpty() ? -1 : Aosh.parseInt(args[3], "max_post_size")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_HTTPD_TOMCAT_STD_SITE_UNPACK_WARS)) {
-      if (AOSH.checkParamCount(Command.SET_HTTPD_TOMCAT_STD_SITE_UNPACK_WARS, args, 3, err)) {
-        connector.getSimpleAOClient().setHttpdTomcatStdSiteUnpackWARs(
+      if (Aosh.checkParamCount(Command.SET_HTTPD_TOMCAT_STD_SITE_UNPACK_WARS, args, 3, err)) {
+        connector.getSimpleClient().setHttpdTomcatStdSiteUnpackWars(
             args[1],
             args[2],
-            AOSH.parseBoolean(args[3], "unpack_wars")
+            Aosh.parseBoolean(args[3], "unpack_wars")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_HTTPD_TOMCAT_STD_SITE_AUTO_DEPLOY)) {
-      if (AOSH.checkParamCount(Command.SET_HTTPD_TOMCAT_STD_SITE_AUTO_DEPLOY, args, 3, err)) {
-        connector.getSimpleAOClient().setHttpdTomcatStdSiteAutoDeploy(
+      if (Aosh.checkParamCount(Command.SET_HTTPD_TOMCAT_STD_SITE_AUTO_DEPLOY, args, 3, err)) {
+        connector.getSimpleClient().setHttpdTomcatStdSiteAutoDeploy(
             args[1],
             args[2],
-            AOSH.parseBoolean(args[3], "auto_deploy")
+            Aosh.parseBoolean(args[3], "auto_deploy")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.web_tomcat_PrivateTomcatSite_tomcatAuthentication_set)) {
-      if (AOSH.checkParamCount(Command.web_tomcat_PrivateTomcatSite_tomcatAuthentication_set, args, 3, err)) {
-        connector.getSimpleAOClient().setHttpdTomcatStdSiteTomcatAuthentication(
+      if (Aosh.checkParamCount(Command.web_tomcat_PrivateTomcatSite_tomcatAuthentication_set, args, 3, err)) {
+        connector.getSimpleClient().setHttpdTomcatStdSiteTomcatAuthentication(
             args[1],
             args[2],
-            AOSH.parseBoolean(args[3], "tomcatAuthentication")
+            Aosh.parseBoolean(args[3], "tomcatAuthentication")
         );
       }
       return true;
     } else if (command.equalsIgnoreCase(Command.SET_HTTPD_TOMCAT_STD_SITE_VERSION)) {
-      if (AOSH.checkParamCount(Command.SET_HTTPD_TOMCAT_STD_SITE_VERSION, args, 3, err)) {
-        connector.getSimpleAOClient().setHttpdTomcatStdSiteVersion(
+      if (Aosh.checkParamCount(Command.SET_HTTPD_TOMCAT_STD_SITE_VERSION, args, 3, err)) {
+        connector.getSimpleClient().setHttpdTomcatStdSiteVersion(
             args[1],
             args[2],
             args[3]

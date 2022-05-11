@@ -53,19 +53,17 @@ import java.util.List;
  */
 public final class InboxAddress extends CachedObjectIntegerKey<InboxAddress> implements Removable {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_EMAIL_ADDRESS = 1,
-      COLUMN_LINUX_SERVER_ACCOUNT = 2
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_EMAIL_ADDRESS = 1;
+  static final int COLUMN_LINUX_SERVER_ACCOUNT = 2;
   static final String COLUMN_EMAIL_ADDRESS_name = "email_address";
   static final String COLUMN_LINUX_SERVER_ACCOUNT_name = "linux_server_account";
 
-  private int email_address;
-  private int linux_server_account;
+  private int emailAddress;
+  private int linuxServerAccount;
 
   // Protocol conversion <= 1.30:
-  private User.Name linux_account;
+  private User.Name linuxAccount;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -84,41 +82,41 @@ public final class InboxAddress extends CachedObjectIntegerKey<InboxAddress> imp
       return pkey;
     }
     if (i == COLUMN_EMAIL_ADDRESS) {
-      return email_address;
+      return emailAddress;
     }
     if (i == COLUMN_LINUX_SERVER_ACCOUNT) {
-      return linux_server_account;
+      return linuxServerAccount;
     }
     throw new IllegalArgumentException("Invalid index: " + i);
   }
 
   public int getEmailAddress_id() {
-    return email_address;
+    return emailAddress;
   }
 
   public Address getEmailAddress() throws SQLException, IOException {
-    Address emailAddressObject = table.getConnector().getEmail().getAddress().get(email_address);
+    Address emailAddressObject = table.getConnector().getEmail().getAddress().get(emailAddress);
     if (emailAddressObject == null) {
-      throw new SQLException("Unable to find EmailAddress: " + email_address);
+      throw new SQLException("Unable to find EmailAddress: " + emailAddress);
     }
     return emailAddressObject;
   }
 
   public int getLinuxServerAccount_id() {
-    return linux_server_account;
+    return linuxServerAccount;
   }
 
   public UserServer getLinuxServerAccount() throws SQLException, IOException {
-    UserServer lsa = table.getConnector().getLinux().getUserServer().get(linux_server_account);
+    UserServer lsa = table.getConnector().getLinux().getUserServer().get(linuxServerAccount);
     if (lsa == null) {
-      throw new SQLException("Unable to find LinuxServerAccount: " + linux_server_account);
+      throw new SQLException("Unable to find LinuxServerAccount: " + linuxServerAccount);
     }
     return lsa;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.LINUX_ACC_ADDRESSES;
+  public Table.TableId getTableId() {
+    return Table.TableId.LINUX_ACC_ADDRESSES;
   }
 
   @Override
@@ -126,9 +124,9 @@ public final class InboxAddress extends CachedObjectIntegerKey<InboxAddress> imp
     try {
       int pos = 1;
       pkey = result.getInt(pos++);
-      email_address = result.getInt(pos++);
-      linux_server_account = result.getInt(pos++);
-      linux_account = User.Name.valueOf(result.getString(pos++));
+      emailAddress = result.getInt(pos++);
+      linuxServerAccount = result.getInt(pos++);
+      linuxAccount = User.Name.valueOf(result.getString(pos++));
     } catch (ValidationException e) {
       throw new SQLException(e);
     }
@@ -137,8 +135,8 @@ public final class InboxAddress extends CachedObjectIntegerKey<InboxAddress> imp
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readCompressedInt();
-    email_address = in.readCompressedInt();
-    linux_server_account = in.readCompressedInt();
+    emailAddress = in.readCompressedInt();
+    linuxServerAccount = in.readCompressedInt();
   }
 
   @Override
@@ -148,10 +146,10 @@ public final class InboxAddress extends CachedObjectIntegerKey<InboxAddress> imp
 
   @Override
   public void remove() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.REMOVE,
-        Table.TableID.LINUX_ACC_ADDRESSES,
+        AoservProtocol.CommandId.REMOVE,
+        Table.TableId.LINUX_ACC_ADDRESSES,
         pkey
     );
   }
@@ -164,11 +162,11 @@ public final class InboxAddress extends CachedObjectIntegerKey<InboxAddress> imp
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeCompressedInt(email_address);
+    out.writeCompressedInt(emailAddress);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30) <= 0) {
-      out.writeUTF(linux_account.toString());
+      out.writeUTF(linuxAccount.toString());
     } else {
-      out.writeCompressedInt(linux_server_account);
+      out.writeCompressedInt(linuxServerAccount);
     }
   }
 }

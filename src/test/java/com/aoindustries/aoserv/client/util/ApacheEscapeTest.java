@@ -25,7 +25,9 @@ package com.aoindustries.aoserv.client.util;
 
 import static com.aoindustries.aoserv.client.util.ApacheEscape.DEFAULT_DOLLAR_VARIABLE;
 import static com.aoindustries.aoserv.client.util.ApacheEscape.escape;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import org.junit.Test;
 
 /**

@@ -28,17 +28,17 @@ import java.io.PrintWriter;
 import java.sql.SQLException;
 
 /**
- * Flags an <code>AOServObject</code>s as being able to dump its contents into
- * a <code>Writer</code>.
+ * Flags an {@link AoservObject} as being able to dump its contents into
+ * a {@link PrintWriter}.
  *
- * @see  AOServObject
+ * @see  AoservObject
  *
  * @author  AO Industries, Inc.
  */
 public interface Dumpable {
 
   /**
-   * Dumps the contents of this object into a <code>Writer</code>
+   * Dumps the contents of this object into a {@link PrintWriter}.
    */
   void dump(PrintWriter out) throws IOException, SQLException;
 }

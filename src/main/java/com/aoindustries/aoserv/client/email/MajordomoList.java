@@ -42,10 +42,8 @@ import java.sql.SQLException;
  */
 public final class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
 
-  static final int
-      COLUMN_EMAIL_LIST = 0,
-      COLUMN_MAJORDOMO_SERVER = 1
-  ;
+  static final int COLUMN_EMAIL_LIST = 0;
+  static final int COLUMN_MAJORDOMO_SERVER = 1;
   static final String COLUMN_NAME_name = "name";
   static final String COLUMN_MAJORDOMO_SERVER_name = "majordomo_server";
 
@@ -54,14 +52,14 @@ public final class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
    */
   public static final int MAX_NAME_LENGTH = 64;
 
-  private int majordomo_server;
+  private int majordomoServer;
   private String name;
-  private int listname_pipe_add;
-  private int listname_list_add;
-  private int owner_listname_add;
-  private int listname_owner_add;
-  private int listname_approval_add;
-  private int listname_request_pipe_add;
+  private int listnamePipeAdd;
+  private int listnameListAdd;
+  private int ownerListnameAdd;
+  private int listnameOwnerAdd;
+  private int listnameApprovalAdd;
+  private int listnameRequestPipeAdd;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -77,16 +75,26 @@ public final class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_EMAIL_LIST: return pkey;
-      case COLUMN_MAJORDOMO_SERVER: return majordomo_server;
-      case 2: return name;
-      case 3: return listname_pipe_add;
-      case 4: return listname_list_add;
-      case 5: return owner_listname_add;
-      case 6: return listname_owner_add;
-      case 7: return listname_approval_add;
-      case 8: return listname_request_pipe_add;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_EMAIL_LIST:
+        return pkey;
+      case COLUMN_MAJORDOMO_SERVER:
+        return majordomoServer;
+      case 2:
+        return name;
+      case 3:
+        return listnamePipeAdd;
+      case 4:
+        return listnameListAdd;
+      case 5:
+        return ownerListnameAdd;
+      case 6:
+        return listnameOwnerAdd;
+      case 7:
+        return listnameApprovalAdd;
+      case 8:
+        return listnameRequestPipeAdd;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -108,8 +116,7 @@ public final class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
             + "FOR QUESTIONS:\n"
             + "If you ever need to get in contact with the owner of the list,\n"
             + "(if you have trouble unsubscribing, or have questions about the\n"
-            + "list itself) send email to owner-" + listName + '@' + domain + ".\n"
-    ;
+            + "list itself) send email to owner-" + listName + '@' + domain + ".\n";
   }
 
   public String getDefaultInfoFile() throws SQLException, IOException {
@@ -136,8 +143,7 @@ public final class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
             + "FOR QUESTIONS:\n"
             + "If you ever need to get in contact with the owner of the list,\n"
             + "(if you have trouble unsubscribing, or have questions about the\n"
-            + "list itself) send email to owner-" + listName + '@' + domain + ".\n"
-    ;
+            + "list itself) send email to owner-" + listName + '@' + domain + ".\n";
   }
 
   public String getDefaultIntroFile() throws SQLException, IOException {
@@ -156,60 +162,60 @@ public final class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
    * Gets the info file for the list.
    */
   public String getInfoFile() throws IOException, SQLException {
-    return table.getConnector().requestStringQuery(true, AoservProtocol.CommandID.GET_MAJORDOMO_INFO_FILE, pkey);
+    return table.getConnector().requestStringQuery(true, AoservProtocol.CommandId.GET_MAJORDOMO_INFO_FILE, pkey);
   }
 
   /**
    * Gets the intro file for the list.
    */
   public String getIntroFile() throws IOException, SQLException {
-    return table.getConnector().requestStringQuery(true, AoservProtocol.CommandID.GET_MAJORDOMO_INTRO_FILE, pkey);
+    return table.getConnector().requestStringQuery(true, AoservProtocol.CommandId.GET_MAJORDOMO_INTRO_FILE, pkey);
   }
 
   public PipeAddress getListPipeAddress() throws SQLException, IOException {
-    PipeAddress pipeAddress = table.getConnector().getEmail().getPipeAddress().get(listname_pipe_add);
+    PipeAddress pipeAddress = table.getConnector().getEmail().getPipeAddress().get(listnamePipeAdd);
     if (pipeAddress == null) {
-      throw new SQLException("Unable to find EmailPipeAddress: " + listname_pipe_add);
+      throw new SQLException("Unable to find EmailPipeAddress: " + listnamePipeAdd);
     }
     return pipeAddress;
   }
 
   public int getListApprovalAddress_id() {
-    return listname_approval_add;
+    return listnameApprovalAdd;
   }
 
   public Address getListApprovalAddress() throws SQLException, IOException {
-    Address address = table.getConnector().getEmail().getAddress().get(listname_approval_add);
+    Address address = table.getConnector().getEmail().getAddress().get(listnameApprovalAdd);
     if (address == null) {
-      throw new SQLException("Unable to find EmailAddress: " + listname_approval_add);
+      throw new SQLException("Unable to find EmailAddress: " + listnameApprovalAdd);
     }
     return address;
   }
 
   public ListAddress getListListAddress() throws SQLException, IOException {
-    ListAddress listAddress = table.getConnector().getEmail().getListAddress().get(listname_list_add);
+    ListAddress listAddress = table.getConnector().getEmail().getListAddress().get(listnameListAdd);
     if (listAddress == null) {
-      throw new SQLException("Unable to find EmailListAddress: " + listname_list_add);
+      throw new SQLException("Unable to find EmailListAddress: " + listnameListAdd);
     }
     return listAddress;
   }
 
   public int getListOwnerAddress_id() {
-    return listname_owner_add;
+    return listnameOwnerAdd;
   }
 
   public Address getListOwnerAddress() throws SQLException, IOException {
-    Address address = table.getConnector().getEmail().getAddress().get(listname_owner_add);
+    Address address = table.getConnector().getEmail().getAddress().get(listnameOwnerAdd);
     if (address == null) {
-      throw new SQLException("Unable to find EmailAddress: " + listname_owner_add);
+      throw new SQLException("Unable to find EmailAddress: " + listnameOwnerAdd);
     }
     return address;
   }
 
   public PipeAddress getListRequestPipeAddress() throws SQLException, IOException {
-    PipeAddress pipeAddress = table.getConnector().getEmail().getPipeAddress().get(listname_request_pipe_add);
+    PipeAddress pipeAddress = table.getConnector().getEmail().getPipeAddress().get(listnameRequestPipeAdd);
     if (pipeAddress == null) {
-      throw new SQLException("Unable to find EmailPipeAddress: " + listname_request_pipe_add);
+      throw new SQLException("Unable to find EmailPipeAddress: " + listnameRequestPipeAdd);
     }
     return pipeAddress;
   }
@@ -219,51 +225,52 @@ public final class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
   }
 
   public int getOwnerListAddress_id() {
-    return owner_listname_add;
+    return ownerListnameAdd;
   }
 
   public Address getOwnerListAddress() throws SQLException, IOException {
-    Address address = table.getConnector().getEmail().getAddress().get(owner_listname_add);
+    Address address = table.getConnector().getEmail().getAddress().get(ownerListnameAdd);
     if (address == null) {
-      throw new SQLException("Unable to find EmailAddress: " + owner_listname_add);
+      throw new SQLException("Unable to find EmailAddress: " + ownerListnameAdd);
     }
     return address;
   }
 
   public int getMajordomoServer_domain_id() {
-    return majordomo_server;
+    return majordomoServer;
   }
 
   public MajordomoServer getMajordomoServer() throws SQLException, IOException {
-    MajordomoServer obj = table.getConnector().getEmail().getMajordomoServer().get(majordomo_server);
+    MajordomoServer obj = table.getConnector().getEmail().getMajordomoServer().get(majordomoServer);
     if (obj == null) {
-      throw new SQLException("Unable to find MajordomoServer: " + majordomo_server);
+      throw new SQLException("Unable to find MajordomoServer: " + majordomoServer);
     }
     return obj;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.MAJORDOMO_LISTS;
+  public Table.TableId getTableId() {
+    return Table.TableId.MAJORDOMO_LISTS;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     pkey = result.getInt(1);
-    majordomo_server = result.getInt(2);
+    majordomoServer = result.getInt(2);
     name = result.getString(3);
-    listname_pipe_add = result.getInt(4);
-    listname_list_add = result.getInt(5);
-    owner_listname_add = result.getInt(6);
-    listname_owner_add = result.getInt(7);
-    listname_approval_add = result.getInt(8);
-    listname_request_pipe_add = result.getInt(9);
+    listnamePipeAdd = result.getInt(4);
+    listnameListAdd = result.getInt(5);
+    ownerListnameAdd = result.getInt(6);
+    listnameOwnerAdd = result.getInt(7);
+    listnameApprovalAdd = result.getInt(8);
+    listnameRequestPipeAdd = result.getInt(9);
   }
 
   /**
    * Checks the validity of a list name.
-   *
-   * // TODO: Self-validating type
+   * <p>
+   * TODO: Self-validating type
+   * </p>
    */
   public static boolean isValidListName(String name) {
     int len = name.length();
@@ -286,22 +293,22 @@ public final class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readCompressedInt();
-    majordomo_server = in.readCompressedInt();
+    majordomoServer = in.readCompressedInt();
     name = in.readUTF();
-    listname_pipe_add = in.readCompressedInt();
-    listname_list_add = in.readCompressedInt();
-    owner_listname_add = in.readCompressedInt();
-    listname_owner_add = in.readCompressedInt();
-    listname_approval_add = in.readCompressedInt();
-    listname_request_pipe_add = in.readCompressedInt();
+    listnamePipeAdd = in.readCompressedInt();
+    listnameListAdd = in.readCompressedInt();
+    ownerListnameAdd = in.readCompressedInt();
+    listnameOwnerAdd = in.readCompressedInt();
+    listnameApprovalAdd = in.readCompressedInt();
+    listnameRequestPipeAdd = in.readCompressedInt();
   }
 
   public void setInfoFile(String file) throws IOException, SQLException {
-    table.getConnector().requestUpdate(true, AoservProtocol.CommandID.SET_MAJORDOMO_INFO_FILE, pkey, file);
+    table.getConnector().requestUpdate(true, AoservProtocol.CommandId.SET_MAJORDOMO_INFO_FILE, pkey, file);
   }
 
   public void setIntroFile(String file) throws IOException, SQLException {
-    table.getConnector().requestUpdate(true, AoservProtocol.CommandID.SET_MAJORDOMO_INTRO_FILE, pkey, file);
+    table.getConnector().requestUpdate(true, AoservProtocol.CommandId.SET_MAJORDOMO_INTRO_FILE, pkey, file);
   }
 
   @Override
@@ -312,13 +319,13 @@ public final class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeCompressedInt(majordomo_server);
+    out.writeCompressedInt(majordomoServer);
     out.writeUTF(name);
-    out.writeCompressedInt(listname_pipe_add);
-    out.writeCompressedInt(listname_list_add);
-    out.writeCompressedInt(owner_listname_add);
-    out.writeCompressedInt(listname_owner_add);
-    out.writeCompressedInt(listname_approval_add);
-    out.writeCompressedInt(listname_request_pipe_add);
+    out.writeCompressedInt(listnamePipeAdd);
+    out.writeCompressedInt(listnameListAdd);
+    out.writeCompressedInt(ownerListnameAdd);
+    out.writeCompressedInt(listnameOwnerAdd);
+    out.writeCompressedInt(listnameApprovalAdd);
+    out.writeCompressedInt(listnameRequestPipeAdd);
   }
 }

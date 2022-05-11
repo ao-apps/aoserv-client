@@ -32,10 +32,10 @@ import java.sql.SQLException;
 import java.util.logging.Logger;
 
 /**
- * Connections made by <code>TCPConnector</code> or any
+ * Connections made by <code>TcpConnector</code> or any
  * of its derivatives are pooled and reused.
  *
- * @see  TCPConnector
+ * @see  TcpConnector
  *
  * @author  AO Industries, Inc.
  */
@@ -44,13 +44,13 @@ final class SocketConnectionPool extends AOPool<SocketConnection, IOException, I
   public static final int DELAY_TIME = 3 * 60 * 1000;
   public static final int MAX_IDLE_TIME = 15 * 60 * 1000;
 
-  private final TCPConnector connector;
+  private final TcpConnector connector;
 
-  SocketConnectionPool(TCPConnector connector, Logger logger) {
+  SocketConnectionPool(TcpConnector connector, Logger logger) {
     super(
         DELAY_TIME,
         MAX_IDLE_TIME,
-        // TODO: EncodeURLComponent this and AOServConnector?
+        // TODO: EncodeURLComponent this and AoservConnector?
         SocketConnectionPool.class.getName() + "?hostname=" + connector.hostname + "&port=" + connector.port + "&connectAs=" + connector.connectAs + "&authenticateAs=" + connector.authenticateAs,
         connector.poolSize,
         connector.maxConnectionAge,
@@ -86,7 +86,7 @@ final class SocketConnectionPool extends AOPool<SocketConnection, IOException, I
   /**
    * Avoid repeated copies.
    */
-  private static final int numTables = Table.TableID.values().length;
+  private static final int numTables = Table.TableId.values().length;
 
   @Override
   @SuppressWarnings("deprecation")
@@ -99,7 +99,7 @@ final class SocketConnectionPool extends AOPool<SocketConnection, IOException, I
       int totalHashed = 0;
       int totalIndexed = 0;
       int totalRows = 0;
-      for (AOServTable<?, ?> table : connector.getTables()) {
+      for (AoservTable<?, ?> table : connector.getTables()) {
         totalLoaded++;
         if (table instanceof CachedTable<?, ?>) {
           totalCaches++;

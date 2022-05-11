@@ -45,14 +45,12 @@ import java.util.List;
  */
 public final class ContextParameter extends CachedObjectIntegerKey<ContextParameter> implements Removable {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_TOMCAT_CONTEXT = 1
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_TOMCAT_CONTEXT = 1;
   static final String COLUMN_TOMCAT_CONTEXT_name = "tomcat_context";
   static final String COLUMN_NAME_name = "name";
 
-  private int tomcat_context;
+  private int tomcatContext;
   private String name;
   private String value;
   private boolean override;
@@ -77,20 +75,27 @@ public final class ContextParameter extends CachedObjectIntegerKey<ContextParame
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_TOMCAT_CONTEXT: return tomcat_context;
-      case 2: return name;
-      case 3: return value;
-      case 4: return override;
-      case 5: return description;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_TOMCAT_CONTEXT:
+        return tomcatContext;
+      case 2:
+        return name;
+      case 3:
+        return value;
+      case 4:
+        return override;
+      case 5:
+        return description;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   public Context getHttpdTomcatContext() throws SQLException, IOException {
-    Context obj = table.getConnector().getWeb_tomcat().getContext().get(tomcat_context);
+    Context obj = table.getConnector().getWeb_tomcat().getContext().get(tomcatContext);
     if (obj == null) {
-      throw new SQLException("Unable to find HttpdTomcatContext: " + tomcat_context);
+      throw new SQLException("Unable to find HttpdTomcatContext: " + tomcatContext);
     }
     return obj;
   }
@@ -112,14 +117,14 @@ public final class ContextParameter extends CachedObjectIntegerKey<ContextParame
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.HTTPD_TOMCAT_PARAMETERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.HTTPD_TOMCAT_PARAMETERS;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     pkey = result.getInt(1);
-    tomcat_context = result.getInt(2);
+    tomcatContext = result.getInt(2);
     name = result.getString(3);
     value = result.getString(4);
     override = result.getBoolean(5);
@@ -129,7 +134,7 @@ public final class ContextParameter extends CachedObjectIntegerKey<ContextParame
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readCompressedInt();
-    tomcat_context = in.readCompressedInt();
+    tomcatContext = in.readCompressedInt();
     name = in.readUTF();
     value = in.readUTF();
     override = in.readBoolean();
@@ -138,7 +143,7 @@ public final class ContextParameter extends CachedObjectIntegerKey<ContextParame
 
   @Override
   public void remove() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.REMOVE, Table.TableID.HTTPD_TOMCAT_PARAMETERS, pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.REMOVE, Table.TableId.HTTPD_TOMCAT_PARAMETERS, pkey);
   }
 
   public void update(
@@ -147,9 +152,9 @@ public final class ContextParameter extends CachedObjectIntegerKey<ContextParame
       boolean override,
       String description
   ) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.UPDATE_HTTPD_TOMCAT_PARAMETER,
+        AoservProtocol.CommandId.UPDATE_HTTPD_TOMCAT_PARAMETER,
         pkey,
         name,
         value,
@@ -161,7 +166,7 @@ public final class ContextParameter extends CachedObjectIntegerKey<ContextParame
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeCompressedInt(tomcat_context);
+    out.writeCompressedInt(tomcatContext);
     out.writeUTF(name);
     out.writeUTF(value);
     out.writeBoolean(override);

@@ -34,7 +34,7 @@ import java.io.IOException;
  *
  * @author  AO Industries, Inc.
  */
-public interface AOServStreamable extends Streamable, AOServReadable, AOServWritable {
+public interface AoservStreamable extends Streamable, AoservReadable, AoservWritable {
 
   /**
    *
@@ -46,7 +46,7 @@ public interface AOServStreamable extends Streamable, AOServReadable, AOServWrit
   @Override
   void read(StreamableInput in, String protocolVersion) throws IOException;
 
-  // Java 1.8: default method (or inherit from AOServReadable)
+  // Java 1.8: default method (or inherit from AoservReadable)
   // read(in, com.aoindustries.aoserv.client.schema.AoservProtocol.Version.getVersion(version));
 
   @Override
@@ -62,7 +62,7 @@ public interface AOServStreamable extends Streamable, AOServReadable, AOServWrit
   @Override
   void write(StreamableOutput out, String protocolVersion) throws IOException;
 
-  // Java 1.8: default method (or inherit from AOServWritable)
+  // Java 1.8: default method (or inherit from AoservWritable)
   // write(out, com.aoindustries.aoserv.client.schema.AoservProtocol.Version.getVersion(version));
 
   @Override

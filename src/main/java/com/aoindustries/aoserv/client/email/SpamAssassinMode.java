@@ -46,16 +46,14 @@ public final class SpamAssassinMode extends GlobalObjectStringKey<SpamAssassinMo
   static final int COLUMN_NAME = 0;
   static final String COLUMN_SORT_ORDER_name = "sort_order";
 
-  public static final String
-      NONE = "none",
-      POP3 = "pop3",
-      IMAP = "imap"
-  ;
+  public static final String NONE = "none";
+  public static final String POP3 = "pop3";
+  public static final String IMAP = "imap";
 
   public static final String DEFAULT_SPAMASSASSIN_INTEGRATION_MODE = NONE;
 
   private String display;
-  private int sort_order;
+  private int sortOrder;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -71,10 +69,14 @@ public final class SpamAssassinMode extends GlobalObjectStringKey<SpamAssassinMo
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_NAME: return pkey;
-      case 1: return display;
-      case 2: return sort_order;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_NAME:
+        return pkey;
+      case 1:
+        return display;
+      case 2:
+        return sortOrder;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -87,32 +89,32 @@ public final class SpamAssassinMode extends GlobalObjectStringKey<SpamAssassinMo
   }
 
   public int getSortOrder() {
-    return sort_order;
+    return sortOrder;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.EMAIL_SPAMASSASSIN_INTEGRATION_MODES;
+  public Table.TableId getTableId() {
+    return Table.TableId.EMAIL_SPAMASSASSIN_INTEGRATION_MODES;
   }
 
   @Override
   public void init(ResultSet results) throws SQLException {
     pkey = results.getString(1);
     display = results.getString(2);
-    sort_order = results.getInt(3);
+    sortOrder = results.getInt(3);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readUTF().intern();
     display = in.readUTF();
-    sort_order = in.readCompressedInt();
+    sortOrder = in.readCompressedInt();
   }
 
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeUTF(pkey);
     out.writeUTF(display);
-    out.writeCompressedInt(sort_order);
+    out.writeCompressedInt(sortOrder);
   }
 }

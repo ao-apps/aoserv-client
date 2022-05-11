@@ -52,10 +52,8 @@ import java.util.Set;
  */
 public final class Host extends CachedObjectIntegerKey<Host> implements Comparable<Host> {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_PACKAGE = 4
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_PACKAGE = 4;
   public static final String COLUMN_PACKAGE_name = "package";
   public static final String COLUMN_NAME_name = "name";
 
@@ -67,10 +65,10 @@ public final class Host extends CachedObjectIntegerKey<Host> implements Comparab
 
   private String farm;
   private String description;
-  private int operating_system_version;
+  private int operatingSystemVersion;
   private int packageId;
   private String name;
-  private boolean monitoring_enabled;
+  private boolean monitoringEnabled;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -88,9 +86,9 @@ public final class Host extends CachedObjectIntegerKey<Host> implements Comparab
       Account.Name accounting,
       String contractVersion,
       Account parent,
-      boolean can_add_backup_servers,
-      boolean can_add_businesses,
-      boolean can_see_prices,
+      boolean canAddBackupServers,
+      boolean canAddBusinesses,
+      boolean canSeePrices,
       boolean billParent
   ) throws IOException, SQLException {
     table.getConnector().getAccount().getAccount().addAccount(
@@ -98,9 +96,9 @@ public final class Host extends CachedObjectIntegerKey<Host> implements Comparab
         contractVersion,
         this,
         parent.getName(),
-        can_add_backup_servers,
-        can_add_businesses,
-        can_see_prices,
+        canAddBackupServers,
+        canAddBusinesses,
+        canSeePrices,
         billParent
     );
   }
@@ -143,28 +141,36 @@ public final class Host extends CachedObjectIntegerKey<Host> implements Comparab
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case 1: return farm;
-      case 2: return description;
-      case 3: return operating_system_version == -1 ? null : operating_system_version;
-      case COLUMN_PACKAGE: return packageId;
-      case 5: return name;
-      case 6: return monitoring_enabled;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case 1:
+        return farm;
+      case 2:
+        return description;
+      case 3:
+        return operatingSystemVersion == -1 ? null : operatingSystemVersion;
+      case COLUMN_PACKAGE:
+        return packageId;
+      case 5:
+        return name;
+      case 6:
+        return monitoringEnabled;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   public int getOperatingSystemVersion_id() {
-    return operating_system_version;
+    return operatingSystemVersion;
   }
 
   public OperatingSystemVersion getOperatingSystemVersion() throws SQLException, IOException {
-    if (operating_system_version == -1) {
+    if (operatingSystemVersion == -1) {
       return null;
     }
-    OperatingSystemVersion osv = table.getConnector().getDistribution().getOperatingSystemVersion().get(operating_system_version);
+    OperatingSystemVersion osv = table.getConnector().getDistribution().getOperatingSystemVersion().get(operatingSystemVersion);
     if (osv == null) {
-      throw new SQLException("Unable to find OperatingSystemVersion: " + operating_system_version);
+      throw new SQLException("Unable to find OperatingSystemVersion: " + operatingSystemVersion);
     }
     return osv;
   }
@@ -192,7 +198,7 @@ public final class Host extends CachedObjectIntegerKey<Host> implements Comparab
   }
 
   public boolean isMonitoringEnabled() {
-    return monitoring_enabled;
+    return monitoringEnabled;
   }
 
   public ServerFarm getServerFarm() throws SQLException, IOException {
@@ -208,8 +214,8 @@ public final class Host extends CachedObjectIntegerKey<Host> implements Comparab
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.SERVERS;
+  public Table.TableId getTableId() {
+    return Table.TableId.SERVERS;
   }
 
   @Override
@@ -217,13 +223,13 @@ public final class Host extends CachedObjectIntegerKey<Host> implements Comparab
     pkey = result.getInt(1);
     farm = result.getString(2);
     description = result.getString(3);
-    operating_system_version = result.getInt(4);
+    operatingSystemVersion = result.getInt(4);
     if (result.wasNull()) {
-      operating_system_version = -1;
+      operatingSystemVersion = -1;
     }
     packageId = result.getInt(5);
     name = result.getString(6);
-    monitoring_enabled = result.getBoolean(7);
+    monitoringEnabled = result.getBoolean(7);
   }
 
   @Override
@@ -231,10 +237,10 @@ public final class Host extends CachedObjectIntegerKey<Host> implements Comparab
     pkey = in.readCompressedInt();
     farm = in.readUTF().intern();
     description = in.readUTF();
-    operating_system_version = in.readCompressedInt();
+    operatingSystemVersion = in.readCompressedInt();
     packageId = in.readCompressedInt();
     name = in.readUTF();
-    monitoring_enabled = in.readBoolean();
+    monitoringEnabled = in.readBoolean();
   }
 
   @Override
@@ -270,9 +276,9 @@ public final class Host extends CachedObjectIntegerKey<Host> implements Comparab
       out.writeLong(-1); // last_backup_time
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30) <= 0) {
-      out.writeCompressedInt(operating_system_version == -1 ? OperatingSystemVersion.CENTOS_7_X86_64 : operating_system_version);
+      out.writeCompressedInt(operatingSystemVersion == -1 ? OperatingSystemVersion.CENTOS_7_X86_64 : operatingSystemVersion);
     } else {
-      out.writeCompressedInt(operating_system_version);
+      out.writeCompressedInt(operatingSystemVersion);
     }
     if (
         protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_108) >= 0
@@ -292,7 +298,7 @@ public final class Host extends CachedObjectIntegerKey<Host> implements Comparab
       out.writeUTF(name);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_32) >= 0) {
-      out.writeBoolean(monitoring_enabled);
+      out.writeBoolean(monitoringEnabled);
     }
   }
 
@@ -323,20 +329,20 @@ public final class Host extends CachedObjectIntegerKey<Host> implements Comparab
     return table.getConnector().getNet().getBind().getNetBinds(this, protocol);
   }
 
-  public Device getNetDevice(String deviceID) throws IOException, SQLException {
-    return table.getConnector().getNet().getDevice().getNetDevice(this, deviceID);
+  public Device getNetDevice(String deviceId) throws IOException, SQLException {
+    return table.getConnector().getNet().getDevice().getNetDevice(this, deviceId);
   }
 
   public List<Device> getNetDevices() throws IOException, SQLException {
     return table.getConnector().getNet().getDevice().getNetDevices(this);
   }
 
-  public List<IpAddress> getIPAddresses() throws IOException, SQLException {
-    return table.getConnector().getNet().getIpAddress().getIPAddresses(this);
+  public List<IpAddress> getIpAddresses() throws IOException, SQLException {
+    return table.getConnector().getNet().getIpAddress().getIpAddresses(this);
   }
 
-  public IpAddress getAvailableIPAddress() throws SQLException, IOException {
-    for (IpAddress ip : getIPAddresses()) {
+  public IpAddress getAvailableIpAddress() throws SQLException, IOException {
+    for (IpAddress ip : getIpAddresses()) {
       if (
           ip.isAvailable()
               && ip.isAlias()

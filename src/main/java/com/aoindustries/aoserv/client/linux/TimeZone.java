@@ -56,8 +56,10 @@ public final class TimeZone extends GlobalObjectStringKey<TimeZone> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_NAME: return pkey;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_NAME:
+        return pkey;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -69,8 +71,8 @@ public final class TimeZone extends GlobalObjectStringKey<TimeZone> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.TIME_ZONES;
+  public Table.TableId getTableId() {
+    return Table.TableId.TIME_ZONES;
   }
 
   @Override
@@ -92,8 +94,9 @@ public final class TimeZone extends GlobalObjectStringKey<TimeZone> {
 
   /**
    * Gets the Java TimeZone for this TimeZone.
-   *
+   * <p>
    * Not synchronized because double initialization is acceptable.
+   * </p>
    */
   public java.util.TimeZone getTimeZone() {
     if (timeZone == null) {

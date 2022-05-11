@@ -26,15 +26,15 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class MySQLTableName {
+public class MysqlServerName {
 
   private String name;
 
-  public MySQLTableName() {
+  public MysqlServerName() {
     // Do nothing
   }
 
-  public MySQLTableName(String name) {
+  public MysqlServerName(String name) {
     this.name = name;
   }
 

@@ -27,8 +27,8 @@ import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.sql.SQLStreamables;
 import com.aoapps.sql.UnmodifiableTimestamp;
-import com.aoindustries.aoserv.client.AOServObject;
-import com.aoindustries.aoserv.client.AOServTable;
+import com.aoindustries.aoserv.client.AoservObject;
+import com.aoindustries.aoserv.client.AoservTable;
 import com.aoindustries.aoserv.client.SingleTableObject;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -45,18 +45,16 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-public final class SpamMessage extends AOServObject<Integer, SpamMessage> implements SingleTableObject<Integer, SpamMessage> {
+public final class SpamMessage extends AoservObject<Integer, SpamMessage> implements SingleTableObject<Integer, SpamMessage> {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_EMAIL_RELAY = 1
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_EMAIL_RELAY = 1;
   static final String COLUMN_PKEY_name = "pkey";
 
-  private AOServTable<Integer, SpamMessage> table;
+  private AoservTable<Integer, SpamMessage> table;
 
   private int pkey;
-  private int email_relay;
+  private int emailRelay;
   private UnmodifiableTimestamp time;
   private String message;
 
@@ -75,8 +73,7 @@ public final class SpamMessage extends AOServObject<Integer, SpamMessage> implem
   public boolean equals(Object obj) {
     return
         (obj instanceof SpamMessage)
-            && ((SpamMessage) obj).getPkey() == pkey
-    ;
+            && ((SpamMessage) obj).getPkey() == pkey;
   }
 
   public int getPkey() {
@@ -84,9 +81,9 @@ public final class SpamMessage extends AOServObject<Integer, SpamMessage> implem
   }
 
   public SmtpRelay getEmailSmtpRelay() throws SQLException, IOException {
-    SmtpRelay er = table.getConnector().getEmail().getSmtpRelay().get(email_relay);
+    SmtpRelay er = table.getConnector().getEmail().getSmtpRelay().get(emailRelay);
     if (er == null) {
-      throw new SQLException("Unable to find EmailSmtpRelay: " + email_relay);
+      throw new SQLException("Unable to find EmailSmtpRelay: " + emailRelay);
     }
     return er;
   }
@@ -104,11 +101,16 @@ public final class SpamMessage extends AOServObject<Integer, SpamMessage> implem
   @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case 1: return email_relay;
-      case 2: return time;
-      case 3: return message;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case 1:
+        return emailRelay;
+      case 2:
+        return time;
+      case 3:
+        return message;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -118,13 +120,13 @@ public final class SpamMessage extends AOServObject<Integer, SpamMessage> implem
   }
 
   @Override
-  public AOServTable<Integer, SpamMessage> getTable() {
+  public AoservTable<Integer, SpamMessage> getTable() {
     return table;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.SPAM_EMAIL_MESSAGES;
+  public Table.TableId getTableId() {
+    return Table.TableId.SPAM_EMAIL_MESSAGES;
   }
 
   @Override
@@ -135,7 +137,7 @@ public final class SpamMessage extends AOServObject<Integer, SpamMessage> implem
   @Override
   public void init(ResultSet result) throws SQLException {
     pkey = result.getInt(1);
-    email_relay = result.getInt(2);
+    emailRelay = result.getInt(2);
     time = UnmodifiableTimestamp.valueOf(result.getTimestamp(3));
     message = result.getString(4);
   }
@@ -143,13 +145,13 @@ public final class SpamMessage extends AOServObject<Integer, SpamMessage> implem
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readCompressedInt();
-    email_relay = in.readCompressedInt();
+    emailRelay = in.readCompressedInt();
     time = SQLStreamables.readUnmodifiableTimestamp(in);
     message = in.readUTF();
   }
 
   @Override
-  public void setTable(AOServTable<Integer, SpamMessage> table) {
+  public void setTable(AoservTable<Integer, SpamMessage> table) {
     if (this.table != null) {
       throw new IllegalStateException("table already set");
     }
@@ -159,7 +161,7 @@ public final class SpamMessage extends AOServObject<Integer, SpamMessage> implem
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeCompressedInt(email_relay);
+    out.writeCompressedInt(emailRelay);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
       out.writeLong(time.getTime());
     } else {

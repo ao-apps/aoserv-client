@@ -58,10 +58,8 @@ import java.util.List;
  */
 public final class Zone extends CachedObjectStringKey<Zone> implements Removable, Dumpable {
 
-  static final int
-      COLUMN_ZONE = 0,
-      COLUMN_PACKAGE = 2
-  ;
+  static final int COLUMN_ZONE = 0;
+  static final int COLUMN_PACKAGE = 2;
   static final String COLUMN_ZONE_name = "zone";
 
   public static final int DEFAULT_TTL = 3600;
@@ -118,7 +116,7 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
     // Do nothing
   }
 
-  public int addDNSRecord(
+  public int addDnsRecord(
       String domain,
       RecordType type,
       int priority,
@@ -129,7 +127,7 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
       String destination,
       int ttl
   ) throws IOException, SQLException {
-    return table.getConnector().getDns().getRecord().addDNSRecord(this, domain, type, priority, weight, port, flag, tag, destination, ttl);
+    return table.getConnector().getDns().getRecord().addDnsRecord(this, domain, type, priority, weight, port, flag, tag, destination, ttl);
   }
 
   @Override
@@ -137,7 +135,7 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
     printZoneFile(out);
   }
 
-  public RecordType[] getAllowedDNSTypes() throws IOException, SQLException {
+  public RecordType[] getAllowedTypes() throws IOException, SQLException {
     RecordTypeTable tt = table.getConnector().getDns().getRecordType();
     if (isArpa()) {
       RecordType[] types = {
@@ -160,11 +158,11 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
     }
   }
 
-  public static String getArpaZoneForIPAddress(InetAddress ip, String netmask) throws IllegalArgumentException {
+  public static String getArpaZoneForIpAddress(InetAddress ip, String netmask) throws IllegalArgumentException {
     @SuppressWarnings("deprecation")
     com.aoapps.net.AddressFamily addressFamily = ip.getAddressFamily();
     switch (addressFamily) {
-      case INET : {
+      case INET: {
         String ipStr = ip.toString();
         if ("255.255.255.0".equals(netmask)) {
           int pos = ipStr.indexOf('.');
@@ -188,9 +186,9 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
           throw new IllegalArgumentException("Unsupported netmask: " + netmask);
         }
       }
-      case INET6 :
+      case INET6:
         throw new IllegalArgumentException("IPv6 not yet implemented: " + ip);
-      default :
+      default:
         throw new AssertionError("Unexpected address family: " + addressFamily);
     }
   }
@@ -198,13 +196,20 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_ZONE: return pkey;
-      case 1: return file;
-      case COLUMN_PACKAGE: return packageName;
-      case 3: return hostmaster;
-      case 4: return serial;
-      case 5: return ttl;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_ZONE:
+        return pkey;
+      case 1:
+        return file;
+      case COLUMN_PACKAGE:
+        return packageName;
+      case 3:
+        return hostmaster;
+      case 4:
+        return serial;
+      case 5:
+        return ttl;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -217,12 +222,12 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
             + 01;
   }
 
-  public List<Record> getDNSRecords() throws IOException, SQLException {
-    return table.getConnector().getDns().getRecord().getDNSRecords(this);
+  public List<Record> getRecords() throws IOException, SQLException {
+    return table.getConnector().getDns().getRecord().getRecords(this);
   }
 
-  public List<Record> getDNSRecords(String domain, RecordType type) throws IOException, SQLException {
-    return table.getConnector().getDns().getRecord().getDNSRecords(this, domain, type);
+  public List<Record> getRecords(String domain, RecordType type) throws IOException, SQLException {
+    return table.getConnector().getDns().getRecord().getRecords(this, domain, type);
   }
 
   public String getFile() {
@@ -245,13 +250,13 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
     return serial;
   }
 
-  public int getTTL() {
+  public int getTtl() {
     return ttl;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.DNS_ZONES;
+  public Table.TableId getTableId() {
+    return Table.TableId.DNS_ZONES;
   }
 
   public String getZone() {
@@ -389,7 +394,7 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
 
   public void printZoneFile(PrintWriter out) throws SQLException, IOException {
     StringBuilder line = new StringBuilder(); // Buffers each line to ensure not too long
-    List<Record> records = getDNSRecords();
+    final List<Record> records = getRecords();
     line.append("$TTL    ").append(ttl);
     printLine(line, out);
     if (!isArpa()) {
@@ -398,16 +403,16 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
     }
     line.append("@                       ").append(ttl).append(" IN   SOA     ");
     // Find the first nameserver
-    Record firstNS = null;
+    Record firstNameserver = null;
     for (Record rec : records) {
       if (rec.getType().getType().equals(RecordType.NS)) {
-        firstNS = rec;
+        firstNameserver = rec;
         break;
       }
     }
-    // TODO: First NS should be from brands
+    // TODO: First Nameserver should be from brands
     // TODO: Default hostmaster should be from brands, and made nullable where value from brands is taken
-    line.append(firstNS == null ? "ns1.aoindustries.com." : firstNS.getDestination());
+    line.append(firstNameserver == null ? "ns1.aoindustries.com." : firstNameserver.getDestination());
     line.append("   ").append(hostmaster).append(" (");
     printLine(line, out);
     line.append("                                ").append(serial).append(" ; serial");
@@ -422,7 +427,7 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
     printLine(line, out);
     line.append("                                )");
     printLine(line, out);
-    if (firstNS == null) {
+    if (firstNameserver == null) {
       // Add the default nameservers because named will refuse to start without them
       line.append("; No name servers configured, using the defaults");
       printLine(line, out);
@@ -498,11 +503,11 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
 
   @Override
   public void remove() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.REMOVE, Table.TableID.DNS_ZONES, pkey);
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.REMOVE, Table.TableId.DNS_ZONES, pkey);
   }
 
-  public void setTTL(int ttl) throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_DNS_ZONE_TTL, pkey, ttl);
+  public void setTtl(int ttl) throws IOException, SQLException {
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_DNS_ZONE_TTL, pkey, ttl);
     this.ttl = ttl;
   }
 

@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.linux;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTableStringKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.sql.SQLException;
  */
 public final class UserTypeTable extends GlobalTableStringKey<UserType> {
 
-  UserTypeTable(AOServConnector connector) {
+  UserTypeTable(AoservConnector connector) {
     super(connector, UserType.class);
   }
 
@@ -56,7 +56,7 @@ public final class UserTypeTable extends GlobalTableStringKey<UserType> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.LINUX_ACCOUNT_TYPES;
+  public Table.TableId getTableId() {
+    return Table.TableId.LINUX_ACCOUNT_TYPES;
   }
 }

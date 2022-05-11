@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.pki;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -38,7 +38,7 @@ import java.util.List;
  */
 public final class CertificateOtherUseTable extends CachedTableIntegerKey<CertificateOtherUse> {
 
-  CertificateOtherUseTable(AOServConnector connector) {
+  CertificateOtherUseTable(AoservConnector connector) {
     super(connector, CertificateOtherUse.class);
   }
 
@@ -64,7 +64,7 @@ public final class CertificateOtherUseTable extends CachedTableIntegerKey<Certif
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.SSL_CERTIFICATE_OTHER_USES;
+  public Table.TableId getTableId() {
+    return Table.TableId.SSL_CERTIFICATE_OTHER_USES;
   }
 }

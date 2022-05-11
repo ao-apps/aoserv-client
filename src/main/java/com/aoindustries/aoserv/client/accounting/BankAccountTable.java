@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.accounting;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableStringKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.sql.SQLException;
  */
 public final class BankAccountTable extends CachedTableStringKey<BankAccount> {
 
-  BankAccountTable(AOServConnector connector) {
+  BankAccountTable(AoservConnector connector) {
     super(connector, BankAccount.class);
   }
 
@@ -56,7 +56,7 @@ public final class BankAccountTable extends CachedTableStringKey<BankAccount> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.BANK_ACCOUNTS;
+  public Table.TableId getTableId() {
+    return Table.TableId.BANK_ACCOUNTS;
   }
 }

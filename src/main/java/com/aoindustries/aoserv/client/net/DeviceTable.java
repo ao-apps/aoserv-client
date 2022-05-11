@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.net;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -38,7 +38,7 @@ import java.util.List;
  */
 public final class DeviceTable extends CachedTableIntegerKey<Device> {
 
-  DeviceTable(AOServConnector connector) {
+  DeviceTable(AoservConnector connector) {
     super(connector, Device.class);
   }
 
@@ -63,13 +63,13 @@ public final class DeviceTable extends CachedTableIntegerKey<Device> {
     return getIndexedRows(Device.COLUMN_SERVER, se.getPkey());
   }
 
-  Device getNetDevice(Host se, String deviceID) throws IOException, SQLException {
+  Device getNetDevice(Host se, String deviceId) throws IOException, SQLException {
     // Use the index first
     List<Device> cached = getNetDevices(se);
     int size = cached.size();
     for (int c = 0; c < size; c++) {
       Device dev = cached.get(c);
-      if (dev.getDeviceId_name().equals(deviceID)) {
+      if (dev.getDeviceId_name().equals(deviceId)) {
         return dev;
       }
     }
@@ -77,7 +77,7 @@ public final class DeviceTable extends CachedTableIntegerKey<Device> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.NET_DEVICES;
+  public Table.TableId getTableId() {
+    return Table.TableId.NET_DEVICES;
   }
 }

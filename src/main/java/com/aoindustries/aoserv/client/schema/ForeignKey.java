@@ -26,7 +26,7 @@ package com.aoindustries.aoserv.client.schema;
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.lang.util.InternUtils;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalObjectIntegerKey;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -34,8 +34,8 @@ import java.sql.SQLException;
 
 /**
  * A <code>SchemaForeignKey</code> represents when a column in one
- * <code>AOServTable</code> references a column in another
- * <code>AOServTable</code>.
+ * <code>AoservTable</code> references a column in another
+ * <code>AoservTable</code>.
  *
  * @see  Column
  *
@@ -65,12 +65,18 @@ public final class ForeignKey extends GlobalObjectIntegerKey<ForeignKey> {
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_ID: return pkey;
-      case 1: return column;
-      case 2: return foreignColumn;
-      case 3: return sinceVersion;
-      case 4: return lastVersion;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_ID:
+        return pkey;
+      case 1:
+        return column;
+      case 2:
+        return foreignColumn;
+      case 3:
+        return sinceVersion;
+      case 4:
+        return lastVersion;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
@@ -78,7 +84,7 @@ public final class ForeignKey extends GlobalObjectIntegerKey<ForeignKey> {
     return column;
   }
 
-  public Column getColumn(AOServConnector connector) throws SQLException, IOException {
+  public Column getColumn(AoservConnector connector) throws SQLException, IOException {
     Column obj = connector.getSchema().getColumn().get(column);
     if (obj == null) {
       throw new SQLException("Unable to find SchemaColumn: " + column);
@@ -90,7 +96,7 @@ public final class ForeignKey extends GlobalObjectIntegerKey<ForeignKey> {
     return foreignColumn;
   }
 
-  public Column getForeignColumn(AOServConnector connector) throws SQLException, IOException {
+  public Column getForeignColumn(AoservConnector connector) throws SQLException, IOException {
     Column obj = connector.getSchema().getColumn().get(foreignColumn);
     if (obj == null) {
       throw new SQLException("Unable to find SchemaColumn: " + foreignColumn);
@@ -102,10 +108,10 @@ public final class ForeignKey extends GlobalObjectIntegerKey<ForeignKey> {
     return sinceVersion;
   }
 
-  public AoservProtocol getSinceVersion(AOServConnector connector) throws SQLException, IOException {
+  public AoservProtocol getSinceVersion(AoservConnector connector) throws SQLException, IOException {
     AoservProtocol obj = connector.getSchema().getAoservProtocol().get(sinceVersion);
     if (obj == null) {
-      throw new SQLException("Unable to find AOServProtocol: " + sinceVersion);
+      throw new SQLException("Unable to find AoservProtocol: " + sinceVersion);
     }
     return obj;
   }
@@ -114,20 +120,20 @@ public final class ForeignKey extends GlobalObjectIntegerKey<ForeignKey> {
     return lastVersion;
   }
 
-  public AoservProtocol getLastVersion(AOServConnector connector) throws SQLException, IOException {
+  public AoservProtocol getLastVersion(AoservConnector connector) throws SQLException, IOException {
     if (lastVersion == null) {
       return null;
     }
     AoservProtocol obj = connector.getSchema().getAoservProtocol().get(lastVersion);
     if (obj == null) {
-      throw new SQLException("Unable to find AOServProtocol: " + lastVersion);
+      throw new SQLException("Unable to find AoservProtocol: " + lastVersion);
     }
     return obj;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.SCHEMA_FOREIGN_KEYS;
+  public Table.TableId getTableId() {
+    return Table.TableId.SCHEMA_FOREIGN_KEYS;
   }
 
   @Override

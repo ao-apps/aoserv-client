@@ -49,14 +49,12 @@ import java.util.List;
  */
 public final class Forwarding extends CachedObjectIntegerKey<Forwarding> implements Removable {
 
-  static final int
-      COLUMN_PKEY = 0,
-      COLUMN_EMAIL_ADDRESS = 1
-  ;
+  static final int COLUMN_PKEY = 0;
+  static final int COLUMN_EMAIL_ADDRESS = 1;
   static final String COLUMN_EMAIL_ADDRESS_name = "email_address";
   static final String COLUMN_DESTINATION_name = "destination";
 
-  private int email_address;
+  private int emailAddress;
   private Email destination;
 
   /**
@@ -73,41 +71,45 @@ public final class Forwarding extends CachedObjectIntegerKey<Forwarding> impleme
   @Override
   protected Object getColumnImpl(int i) {
     switch (i) {
-      case COLUMN_PKEY: return pkey;
-      case COLUMN_EMAIL_ADDRESS: return email_address;
-      case 2: return destination;
-      default: throw new IllegalArgumentException("Invalid index: " + i);
+      case COLUMN_PKEY:
+        return pkey;
+      case COLUMN_EMAIL_ADDRESS:
+        return emailAddress;
+      case 2:
+        return destination;
+      default:
+        throw new IllegalArgumentException("Invalid index: " + i);
     }
   }
 
   /**
-   * Gets the <code>destination</code>
+   * Gets the <code>destination</code>.
    */
   public Email getDestination() {
     return destination;
   }
 
   /**
-   * Gets the <code>email_address</code>
+   * Gets the <code>email_address</code>.
    */
   public Address getEmailAddress() throws SQLException, IOException {
-    Address emailAddressObject = table.getConnector().getEmail().getAddress().get(email_address);
+    Address emailAddressObject = table.getConnector().getEmail().getAddress().get(emailAddress);
     if (emailAddressObject == null) {
-      throw new SQLException("Unable to find EmailAddress: " + email_address);
+      throw new SQLException("Unable to find EmailAddress: " + emailAddress);
     }
     return emailAddressObject;
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.EMAIL_FORWARDING;
+  public Table.TableId getTableId() {
+    return Table.TableId.EMAIL_FORWARDING;
   }
 
   @Override
   public void init(ResultSet result) throws SQLException {
     try {
       pkey = result.getInt(1);
-      email_address = result.getInt(2);
+      emailAddress = result.getInt(2);
       destination = Email.valueOf(result.getString(3));
     } catch (ValidationException e) {
       throw new SQLException(e);
@@ -118,7 +120,7 @@ public final class Forwarding extends CachedObjectIntegerKey<Forwarding> impleme
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
       pkey = in.readCompressedInt();
-      email_address = in.readCompressedInt();
+      emailAddress = in.readCompressedInt();
       destination = Email.valueOf(in.readUTF());
     } catch (ValidationException e) {
       throw new IOException(e);
@@ -132,10 +134,10 @@ public final class Forwarding extends CachedObjectIntegerKey<Forwarding> impleme
 
   @Override
   public void remove() throws IOException, SQLException {
-    table.getConnector().requestUpdateIL(
+    table.getConnector().requestUpdateInvalidating(
         true,
-        AoservProtocol.CommandID.REMOVE,
-        Table.TableID.EMAIL_FORWARDING,
+        AoservProtocol.CommandId.REMOVE,
+        Table.TableId.EMAIL_FORWARDING,
         pkey
     );
   }
@@ -148,7 +150,7 @@ public final class Forwarding extends CachedObjectIntegerKey<Forwarding> impleme
   @Override
   public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
     out.writeCompressedInt(pkey);
-    out.writeCompressedInt(email_address);
+    out.writeCompressedInt(emailAddress);
     out.writeUTF(destination.toString());
   }
 }

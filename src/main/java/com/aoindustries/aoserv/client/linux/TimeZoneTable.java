@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.linux;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalTableStringKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -38,7 +38,7 @@ import java.sql.SQLException;
  */
 public final class TimeZoneTable extends GlobalTableStringKey<TimeZone> {
 
-  TimeZoneTable(AOServConnector connector) {
+  TimeZoneTable(AoservConnector connector) {
     super(connector, TimeZone.class);
   }
 
@@ -53,8 +53,8 @@ public final class TimeZoneTable extends GlobalTableStringKey<TimeZone> {
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.TIME_ZONES;
+  public Table.TableId getTableId() {
+    return Table.TableId.TIME_ZONES;
   }
 
   @Override

@@ -23,7 +23,7 @@
 
 package com.aoindustries.aoserv.client.billing;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -37,7 +37,7 @@ import java.util.List;
  */
 public final class PackageDefinitionLimitTable extends CachedTableIntegerKey<PackageDefinitionLimit> {
 
-  PackageDefinitionLimitTable(AOServConnector connector) {
+  PackageDefinitionLimitTable(AoservConnector connector) {
     super(connector, PackageDefinitionLimit.class);
   }
 
@@ -83,7 +83,7 @@ public final class PackageDefinitionLimitTable extends CachedTableIntegerKey<Pac
   }
 
   @Override
-  public Table.TableID getTableID() {
-    return Table.TableID.PACKAGE_DEFINITION_LIMITS;
+  public Table.TableId getTableId() {
+    return Table.TableId.PACKAGE_DEFINITION_LIMITS;
   }
 }
