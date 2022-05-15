@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
     shortTitle="Changelog"
     tocLevels="1"
     datePublished="2016-10-29T21:07:28-05:00"
-    dateModified="2022-05-04T04:08:06-05:00"
+    dateModified="2022-05-15T18:19:08-05:00"
   >
     <c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
       <changelog:release
@@ -77,50 +77,60 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
           <li>Look into jOOQ: https://www.jooq.org/</li>
         </ul>
         -->
-        <ul>
-          <li>
-            Added transaction types "discount" and "support" for new
-            <ao:a href="https://www.aoapps.com/">AOApps Premium Support</ao:a>.
-          </li>
-          <li>
-            Monthly charges now order by <code>id</code> before <code>type</code> and <code>created</code>.
-            This is so fine-grained line items appear in matching order for new
-            <ao:a href="https://www.aoapps.com/">AOApps</ao:a> branding
-          </li>
-          <li>
-            Monthly charges now use <code>package_definitions.display</code> as their description, instead
-            of the previous default based on <code>package_definitions.monthly_rate_transaction_type</code>.
-            This provides more meaningful billing line items, instead of just "Virtual Dedicated Server"
-            repeated.
-          </li>
-          <li>No longer count IP addresses that are loopback, wildcard, or unique-local.</li>
-          <li>Performed <ao:a href="https://checkstyle.org/">Checkstyle</ao:a> clean-up:
-            <ol>
-              <li>Renamed <code>AOServClientConfiguration</code> to <code>AoservClientConfiguration</code>.</li>
-              <li>Renamed <code>AOServConnection</code> to <code>AoservConnection</code>.</li>
-              <li>Renamed <code>AOServConnector</code> to <code>AoservConnector</code>.</li>
-              <li>Renamed <code>AOServObject</code> to <code>AoservObject</code>.</li>
-              <li>Renamed <code>AoservProtocol.CommandID</code> to <code>AoservProtocol.CommandId</code>.</li>
-              <li>Renamed <code>AOServReadable</code> to <code>AoservReadable</code>.</li>
-              <li>Renamed <code>AOServStreamable</code> to <code>AoservStreamable</code>.</li>
-              <li>Renamed <code>AOServTable</code> to <code>AoservTable</code>.</li>
-              <li>Renamed <code>AOServWritable</code> to <code>AoservWritable</code>.</li>
-              <li>Renamed <code>AOSH</code> to <code>Aosh</code>.</li>
-              <li>Renamed <code>SQLComparator</code> to <code>SqlComparator</code>.</li>
-              <li>Renamed <code>SQLExpression</code> to <code>SqlExpression</code>.</li>
-              <li>Renamed <code>SSLCast</code> to <code>SqlCast</code>.</li>
-              <li>Renamed <code>SQLColumnJoin</code> to <code>SqlColumnJoin</code>.</li>
-              <li>Renamed <code>SQLColumnValue</code> to <code>SqlColumnValue</code>.</li>
-              <li>Renamed <code>SSLConnector</code> to <code>SslConnector</code>.</li>
-              <li>Renamed <code>SimpleAOClient</code> to <code>SimpleAoservClient</code>.</li>
-              <li>Renamed <code>Table.TableID</code> to <code>Table.TableId</code>.</li>
-              <li>Renamed <code>Table_Name</code> to <code>TableName</code>.</li>
-              <li>Renamed <code>TCPConnector</code> to <code>TcpConnector</code>.</li>
-            </ol>
-          </li>
-        </ul>
       </changelog:release>
     </c:if>
+
+    <changelog:release
+      projectName="@{documented.name}"
+      version="1.90.0"
+      datePublished="2022-05-15T18:19:08-05:00"
+      groupId="@{project.groupId}"
+      artifactId="@{documented.artifactId}"
+      scmUrl="@{project.scm.url}"
+    >
+      <ul>
+        <li>
+          Added transaction types "discount" and "support" for new
+          <ao:a href="https://www.aoapps.com/">AOApps Premium Support</ao:a>.
+        </li>
+        <li>
+          Monthly charges now order by <code>id</code> before <code>type</code> and <code>created</code>.
+          This is so fine-grained line items appear in matching order for new
+          <ao:a href="https://www.aoapps.com/">AOApps</ao:a> branding
+        </li>
+        <li>
+          Monthly charges now use <code>package_definitions.display</code> as their description, instead
+          of the previous default based on <code>package_definitions.monthly_rate_transaction_type</code>.
+          This provides more meaningful billing line items, instead of just "Virtual Dedicated Server"
+          repeated.
+        </li>
+        <li>No longer count IP addresses that are loopback, wildcard, or unique-local.</li>
+        <li>Performed <ao:a href="https://checkstyle.org/">Checkstyle</ao:a> clean-up:
+          <ol>
+            <li>Renamed <code>AOServClientConfiguration</code> to <code>AoservClientConfiguration</code>.</li>
+            <li>Renamed <code>AOServConnection</code> to <code>AoservConnection</code>.</li>
+            <li>Renamed <code>AOServConnector</code> to <code>AoservConnector</code>.</li>
+            <li>Renamed <code>AOServObject</code> to <code>AoservObject</code>.</li>
+            <li>Renamed <code>AoservProtocol.CommandID</code> to <code>AoservProtocol.CommandId</code>.</li>
+            <li>Renamed <code>AOServReadable</code> to <code>AoservReadable</code>.</li>
+            <li>Renamed <code>AOServStreamable</code> to <code>AoservStreamable</code>.</li>
+            <li>Renamed <code>AOServTable</code> to <code>AoservTable</code>.</li>
+            <li>Renamed <code>AOServWritable</code> to <code>AoservWritable</code>.</li>
+            <li>Renamed <code>AOSH</code> to <code>Aosh</code>.</li>
+            <li>Renamed <code>SQLComparator</code> to <code>SqlComparator</code>.</li>
+            <li>Renamed <code>SQLExpression</code> to <code>SqlExpression</code>.</li>
+            <li>Renamed <code>SSLCast</code> to <code>SqlCast</code>.</li>
+            <li>Renamed <code>SQLColumnJoin</code> to <code>SqlColumnJoin</code>.</li>
+            <li>Renamed <code>SQLColumnValue</code> to <code>SqlColumnValue</code>.</li>
+            <li>Renamed <code>SSLConnector</code> to <code>SslConnector</code>.</li>
+            <li>Renamed <code>SimpleAOClient</code> to <code>SimpleAoservClient</code>.</li>
+            <li>Renamed <code>Table.TableID</code> to <code>Table.TableId</code>.</li>
+            <li>Renamed <code>Table_Name</code> to <code>TableName</code>.</li>
+            <li>Renamed <code>TCPConnector</code> to <code>TcpConnector</code>.</li>
+          </ol>
+        </li>
+      </ul>
+    </changelog:release>
 
     <changelog:release
       projectName="@{documented.name}"
