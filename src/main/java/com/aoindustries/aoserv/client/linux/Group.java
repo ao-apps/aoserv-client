@@ -276,7 +276,6 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
       BIN,
       BIRD,
       CDROM,
-      CENTOS, // Amazon EC2 cloud-init
       CGRED,
       CHRONY,
       CLAMSCAN,
@@ -292,7 +291,6 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
       FTPONLY,
       GAMES,
       INPUT,
-      JENKINS,
       KMEM,
       LOCK,
       LP,
@@ -317,7 +315,6 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
       SASLAUTH,
       SCREEN,
       SMMSP,
-      SONARQUBE,
       SSH_KEYS,
       SSHD,
       SYS,
@@ -335,16 +332,28 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
       VIDEO,
       VIRUSGROUP,
       WHEEL,
-      // AOServ Master:
+      // AOServ Master
       AOSERV_MASTER,
-      // AOServ Schema:
+      // AOServ Schema
       ACCOUNTING,
       BILLING,
       DISTRIBUTION,
       INFRASTRUCTURE,
       MANAGEMENT,
       MONITORING,
-      RESELLER;
+      RESELLER,
+      // Amazon EC2 cloud-init
+      CENTOS,
+      // Jenkins
+      JENKINS,
+      // OProfile
+      OPROFILE,
+      // SonarQube
+      SONARQUBE,
+      // SystemTap
+      STAPUSR,
+      STAPSYS,
+      STAPDEV;
 
   /**
    * @deprecated  Group httpd no longer used.
@@ -365,7 +374,6 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
       BIN = Name.valueOf("bin");
       BIRD = Name.valueOf("bird");
       CDROM = Name.valueOf("cdrom");
-      CENTOS = Name.valueOf("centos");
       CGRED = Name.valueOf("cgred");
       CHRONY = Name.valueOf("chrony");
       CLAMSCAN = Name.valueOf("clamscan");
@@ -381,7 +389,6 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
       FTPONLY = Name.valueOf("ftponly");
       GAMES = Name.valueOf("games");
       INPUT = Name.valueOf("input");
-      JENKINS = Name.valueOf("jenkins");
       KMEM = Name.valueOf("kmem");
       LOCK = Name.valueOf("lock");
       LP = Name.valueOf("lp");
@@ -406,7 +413,6 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
       SASLAUTH = Name.valueOf("saslauth");
       SCREEN = Name.valueOf("screen");
       SMMSP = Name.valueOf("smmsp");
-      SONARQUBE = Name.valueOf("sonarqube");
       SSH_KEYS = Name.valueOf("ssh_keys");
       SSHD = Name.valueOf("sshd");
       SYS = Name.valueOf("sys");
@@ -424,11 +430,9 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
       VIDEO = Name.valueOf("video");
       VIRUSGROUP = Name.valueOf("virusgroup");
       WHEEL = Name.valueOf("wheel");
-      // Unused ones
-      HTTPD = Name.valueOf("httpd");
-      // AOServ Master:
+      // AOServ Master
       AOSERV_MASTER = Name.valueOf("aoserv-master");
-      // AOServ Schema:
+      // AOServ Schema
       ACCOUNTING = Name.valueOf("accounting");
       BILLING = Name.valueOf("billing");
       DISTRIBUTION = Name.valueOf("distribution");
@@ -436,6 +440,20 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
       MANAGEMENT = Name.valueOf("management");
       MONITORING = Name.valueOf("monitoring");
       RESELLER = Name.valueOf("reseller");
+      // Amazon EC2 cloud-init
+      CENTOS = Name.valueOf("centos");
+      // Jenkins
+      JENKINS = Name.valueOf("jenkins");
+      // OProfile
+      OPROFILE = Name.valueOf("oprofile");
+      // SonarQube
+      SONARQUBE = Name.valueOf("sonarqube");
+      // SystemTap
+      STAPUSR = Name.valueOf("stapusr");
+      STAPSYS = Name.valueOf("stapsys");
+      STAPDEV = Name.valueOf("stapdev");
+      // Group httpd no longer used.
+      HTTPD = Name.valueOf("httpd");
     } catch (ValidationException e) {
       throw new AssertionError("These hard-coded values are valid", e);
     }

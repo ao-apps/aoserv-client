@@ -453,7 +453,6 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       AWSTATS,
       BIN,
       BIRD,
-      CENTOS, // Amazon EC2 cloud-init
       CHRONY,
       CLAMSCAN,
       CLAMUPDATE,
@@ -467,7 +466,6 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       GAMES,
       HALT,
       INTERBASE,
-      JENKINS,
       LP,
       MAIL,
       MAILNULL,
@@ -487,7 +485,6 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       SASLAUTH,
       SHUTDOWN,
       SMMSP,
-      SONARQUBE,
       SSHD,
       SYNC,
       SYSTEMD_BUS_PROXY,
@@ -495,16 +492,24 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       TCPDUMP,
       TSS,
       UNBOUND,
-      // AOServ Master:
+      // AOServ Master
       AOSERV_MASTER,
-      // AOServ Schema:
+      // AOServ Schema
       ACCOUNTING,
       BILLING,
       DISTRIBUTION,
       INFRASTRUCTURE,
       MANAGEMENT,
       MONITORING,
-      RESELLER;
+      RESELLER,
+      // Amazon EC2 cloud-init
+      CENTOS,
+      // Jenkins
+      JENKINS,
+      // OProfile
+      OPROFILE,
+      // SonarQube
+      SONARQUBE;
 
   /**
    * @deprecated  User httpd no longer used.
@@ -523,7 +528,6 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       AWSTATS = Name.valueOf("awstats");
       BIN = Name.valueOf("bin");
       BIRD = Name.valueOf("bird");
-      CENTOS = Name.valueOf("centos");
       CHRONY = Name.valueOf("chrony");
       CLAMSCAN = Name.valueOf("clamscan");
       CLAMUPDATE = Name.valueOf("clamupdate");
@@ -537,7 +541,6 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       GAMES = Name.valueOf("games");
       HALT = Name.valueOf("halt");
       INTERBASE = Name.valueOf("interbase");
-      JENKINS = Name.valueOf("jenkins");
       LP = Name.valueOf("lp");
       MAIL = Name.valueOf("mail");
       MAILNULL = Name.valueOf("mailnull");
@@ -557,7 +560,6 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       SASLAUTH = Name.valueOf("saslauth");
       SHUTDOWN = Name.valueOf("shutdown");
       SMMSP = Name.valueOf("smmsp");
-      SONARQUBE = Name.valueOf("sonarqube");
       SSHD = Name.valueOf("sshd");
       SYNC = Name.valueOf("sync");
       SYSTEMD_BUS_PROXY = Name.valueOf("systemd-bus-proxy");
@@ -565,11 +567,9 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       TCPDUMP = Name.valueOf("tcpdump");
       TSS = Name.valueOf("tss");
       UNBOUND = Name.valueOf("unbound");
-      // Now unused
-      HTTPD = Name.valueOf("httpd");
-      // AOServ Master:
+      // AOServ Master
       AOSERV_MASTER = Name.valueOf("aoserv-master");
-      // AOServ Schema:
+      // AOServ Schema
       ACCOUNTING = Name.valueOf("accounting");
       BILLING = Name.valueOf("billing");
       DISTRIBUTION = Name.valueOf("distribution");
@@ -577,6 +577,16 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       MANAGEMENT = Name.valueOf("management");
       MONITORING = Name.valueOf("monitoring");
       RESELLER = Name.valueOf("reseller");
+      // Amazon EC2 cloud-init
+      CENTOS = Name.valueOf("centos");
+      // Jenkins
+      JENKINS = Name.valueOf("jenkins");
+      // OProfile
+      OPROFILE = Name.valueOf("oprofile");
+      // SonarQube
+      SONARQUBE = Name.valueOf("sonarqube");
+      // User httpd no longer used.
+      HTTPD = Name.valueOf("httpd");
     } catch (ValidationException e) {
       throw new AssertionError("These hard-coded values are valid", e);
     }
