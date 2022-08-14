@@ -380,7 +380,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
         <groupId>org.hamcrest</groupId><artifactId>hamcrest-core</artifactId><version>2.2</version>
       </dependency>
       <dependency>
-        <groupId>com.google.protobuf</groupId><artifactId>protobuf-java</artifactId><version>3.21.4</version>
+        <groupId>com.google.protobuf</groupId><artifactId>protobuf-java</artifactId><version>3.21.5</version>
       </dependency>
       <!-- BOM -->
       <dependency>
