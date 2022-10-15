@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
     shortTitle="Changelog"
     tocLevels="1"
     datePublished="2016-10-29T21:07:28-05:00"
-    dateModified="2022-07-12T02:40:26-05:00"
+    dateModified="2022-10-14T23:14:37-05:00"
   >
     <c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
       <changelog:release
@@ -77,6 +77,9 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
           <li>Look into jOOQ: https://www.jooq.org/</li>
         </ul>
         -->
+        <ul>
+          <li>Updated dependencies.</li>
+        </ul>
       </changelog:release>
     </c:if>
 

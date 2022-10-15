@@ -29,7 +29,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
     <relativePath>../../oss/parent/pom.xml</relativePath>
   </parent>
 
-  <groupId>com.aoindustries</groupId><artifactId>aoserv-client</artifactId><version>1.91.5-POST-SNAPSHOT</version>
+  <groupId>com.aoindustries</groupId><artifactId>aoserv-client</artifactId><version>1.91.6-SNAPSHOT</version>
   <packaging>bundle</packaging>
 
   <properties>
@@ -54,6 +54,8 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
     <sonar.projectKey>com.aoapps.platform:aoapps-client<!-- TODO: ${project.groupId}:${project.artifactId} --></sonar.projectKey>
     <sonar.organization>ao-apps</sonar.organization>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+    <!-- Dependencies -->
+    <mysql-connector-j.version>8.0.31</mysql-connector-j.version>
   </properties>
 
   <name>AOServ Client</name>
@@ -267,7 +269,11 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
                       <includes>element-list, package-list</includes>
                       <outputDirectory>${project.build.directory}/offlineLinks/junit/junit</outputDirectory>
                     </artifactItem>
-                    <!-- No apidocs: <groupId>mysql</groupId><artifactId>mysql-connector-java</artifactId><classifier>javadoc</classifier> -->
+                    <artifactItem>
+                      <groupId>com.mysql</groupId><artifactId>mysql-connector-j</artifactId><classifier>javadoc</classifier>
+                      <includes>element-list, package-list</includes>
+                      <outputDirectory>${project.build.directory}/offlineLinks/com.mysql/mysql-connector-j</outputDirectory>
+                    </artifactItem>
                   </artifactItems>
                 </configuration>
               </execution>
@@ -311,7 +317,10 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
                   <url>https://junit.org/junit4/javadoc/latest/</url>
                   <location>${project.build.directory}/offlineLinks/junit/junit</location>
                 </offlineLink>
-                <!-- No apidocs: <groupId>mysql</groupId><artifactId>mysql-connector-java</artifactId><classifier>javadoc</classifier> -->
+                <offlineLink>
+                  <url>https://javadoc.io/doc/com.mysql/mysql-connector-j/${mysql-connector-j.version}/</url>
+                  <location>${project.build.directory}/offlineLinks/com.mysql/mysql-connector-j</location>
+                </offlineLink>
               </offlineLinks>
             </configuration>
           </plugin>
@@ -369,7 +378,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
         <groupId>junit</groupId><artifactId>junit</artifactId><version>4.13.2</version>
       </dependency>
       <dependency>
-        <groupId>mysql</groupId><artifactId>mysql-connector-java</artifactId><version>8.0.31</version>
+        <groupId>com.mysql</groupId><artifactId>mysql-connector-j</artifactId><version>8.0.31</version>
       </dependency>
       <!-- Test Transitive -->
       <dependency>
@@ -427,7 +436,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>mysql</groupId><artifactId>mysql-connector-java</artifactId>
+      <groupId>com.mysql</groupId><artifactId>mysql-connector-j</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
