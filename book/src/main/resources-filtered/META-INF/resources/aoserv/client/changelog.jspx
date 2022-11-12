@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
     shortTitle="Changelog"
     tocLevels="1"
     datePublished="2016-10-29T21:07:28-05:00"
-    dateModified="2022-10-20T08:44:12-05:00"
+    dateModified="2022-11-11T19:31:05-06:00"
   >
     <c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
       <changelog:release
@@ -77,6 +77,9 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
           <li>Look into jOOQ: https://www.jooq.org/</li>
         </ul>
         -->
+        <ul>
+          <li>Added support for <ao:a href="https://www.postgresql.org/docs/15/index.html">PostgreSQL 15</ao:a>.</li>
+        </ul>
       </changelog:release>
     </c:if>
 

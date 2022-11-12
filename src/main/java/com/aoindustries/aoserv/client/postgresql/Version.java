@@ -70,6 +70,7 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
   public static final String VERSION_12 = "12";
   public static final String VERSION_13 = "13";
   public static final String VERSION_14 = "14";
+  public static final String VERSION_15 = "15";
 
   /**
    * Gets the versions of PostgreSQL in order of
@@ -81,6 +82,7 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
    */
   public static String[] getPreferredMinorVersions() {
     return new String[]{
+        VERSION_15,
         VERSION_14,
         VERSION_13,
         VERSION_12,
@@ -114,7 +116,9 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
             || version.startsWith(VERSION_13 + '.')
             || version.startsWith(VERSION_13 + 'R')
             || version.startsWith(VERSION_14 + '.')
-            || version.startsWith(VERSION_14 + 'R');
+            || version.startsWith(VERSION_14 + 'R')
+            || version.startsWith(VERSION_15 + '.')
+            || version.startsWith(VERSION_15 + 'R');
   }
 
   /**

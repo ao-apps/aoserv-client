@@ -224,6 +224,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
       PG_READ_ALL_DATA,
       PG_WRITE_ALL_DATA,
       PG_DATABASE_OWNER,
+      // Predefined roles, PostgreSQL 15+ - https://www.postgresql.org/docs/15/predefined-roles.html
+      PG_CHECKPOINT,
       // Monitoring
       POSTGRESMON,
       // AO Admin
@@ -250,6 +252,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
       PG_READ_ALL_DATA = Name.valueOf("pg_read_all_data");
       PG_WRITE_ALL_DATA = Name.valueOf("pg_write_all_data");
       PG_DATABASE_OWNER = Name.valueOf("pg_database_owner");
+      // Predefined roles, PostgreSQL 15+ - https://www.postgresql.org/docs/15/predefined-roles.html
+      PG_CHECKPOINT = Name.valueOf("pg_checkpoint");
       // Monitoring
       POSTGRESMON = Name.valueOf("postgresmon");
       // AO Admin
@@ -283,6 +287,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
             || username.equals(PG_READ_ALL_DATA)
             || username.equals(PG_WRITE_ALL_DATA)
             || username.equals(PG_DATABASE_OWNER)
+            // Predefined roles, PostgreSQL 15+ - https://www.postgresql.org/docs/15/predefined-roles.html
+            || username.equals(PG_CHECKPOINT)
             // Monitoring
             || username.equals(POSTGRESMON)
             // AO Admin
