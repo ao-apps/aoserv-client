@@ -49,7 +49,7 @@ public final class SharedTomcatSite extends CachedObjectIntegerKey<SharedTomcatS
 
   private int httpdSharedTomcat;
 
-  public static final String DEFAULT_TOMCAT_VERSION_PREFIX = Version.VERSION_10_0_PREFIX;
+  public static final String DEFAULT_TOMCAT_VERSION_PREFIX = Version.VERSION_10_1_PREFIX;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.

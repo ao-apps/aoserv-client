@@ -59,7 +59,7 @@ public final class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomca
    */
   public static final int DEFAULT_MAX_POST_SIZE = 16 * 1024 * 1024; // 16 MiB
 
-  public static final String DEFAULT_TOMCAT_VERSION_PREFIX = Version.VERSION_10_0_PREFIX;
+  public static final String DEFAULT_TOMCAT_VERSION_PREFIX = Version.VERSION_10_1_PREFIX;
 
   private int tomcat4ShutdownPort;
   private String tomcat4ShutdownKey;

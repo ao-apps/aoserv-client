@@ -69,6 +69,7 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
   public static final String VERSION_8_5_PREFIX = "8.5.";
   public static final String VERSION_9_0_PREFIX = "9.0.";
   public static final String VERSION_10_0_PREFIX = "10.0.";
+  public static final String VERSION_10_1_PREFIX = "10.1.";
 
   /**
    * In-place upgrades are supported from Tomcat 4.1 and newer.
@@ -209,6 +210,11 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
   public boolean isTomcat10_0_X(AoservConnector connector) throws SQLException, IOException {
     String version = getTechnologyVersion(connector).getVersion();
     return version.startsWith(VERSION_10_0_PREFIX);
+  }
+
+  public boolean isTomcat10_1_X(AoservConnector connector) throws SQLException, IOException {
+    String version = getTechnologyVersion(connector).getVersion();
+    return version.startsWith(VERSION_10_1_PREFIX);
   }
 
   @Override
