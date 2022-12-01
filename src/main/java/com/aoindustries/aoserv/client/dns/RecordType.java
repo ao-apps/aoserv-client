@@ -89,7 +89,6 @@ public final class RecordType extends GlobalObjectStringKey<RecordType> {
 
   @SuppressWarnings("deprecation")
   public static void checkDestination(String type, String tag, String destination) throws IllegalArgumentException {
-    String origDest = destination;
     if (destination.isEmpty()) {
       throw new IllegalArgumentException("Destination may not by empty");
     }
@@ -160,7 +159,7 @@ public final class RecordType extends GlobalObjectStringKey<RecordType> {
           !ZoneTable.isValidHostnamePart(validateMe)
               && !DomainName.validate(validateMe).isValid()
       ) {
-        throw new IllegalArgumentException("Invalid destination " + validateType + ": " + origDest);
+        throw new IllegalArgumentException("Invalid destination " + validateType + ": " + destination);
       }
     }
   }
