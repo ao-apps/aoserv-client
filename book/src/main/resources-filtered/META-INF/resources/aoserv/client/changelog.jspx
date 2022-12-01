@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
     shortTitle="Changelog"
     tocLevels="1"
     datePublished="2016-10-29T21:07:28-05:00"
-    dateModified="2022-11-25T10:50:43-06:00"
+    dateModified="2022-12-01T09:32:50-06:00"
   >
     <c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
       <changelog:release
@@ -77,6 +77,9 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
           <li>Look into jOOQ: https://www.jooq.org/</li>
         </ul>
         -->
+        <ul>
+          <li>Added underscore to set of allowed characters in DNS CNAME entries.</li>
+        </ul>
       </changelog:release>
     </c:if>
 

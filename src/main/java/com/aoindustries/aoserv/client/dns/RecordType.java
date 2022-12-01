@@ -134,15 +134,33 @@ public final class RecordType extends GlobalObjectStringKey<RecordType> {
       // Pretty much anything goes?
       // TODO: What are the rules for what is allowed in TXT?  Where do we enforce this currently?
     } else {
+      String validateMe;
+      String validateType;
+      if (type.equals(CNAME)) {
+        // Per RFC 2181, section 11:
+        // "any binary string whatever can be used as the label of any resource record"
+        // "any binary string can serve as the value of any record that includes a domain name as some or all of its value"
+        // https://www.rfc-editor.org/rfc/rfc2181#section-11
+        //
+        // We're going to only add additional characters are required for CNAME.
+
+        // Underscores may be used in DNS despite not being valid hostname (as defined in RFC 1123, section 2.1):
+        // https://www.rfc-editor.org/rfc/rfc1123#page-13
+        validateMe = destination.replace('_', 'a');
+        validateType = "CNAME";
+      } else {
+        validateMe = destination;
+        validateType = "hostname";
+      }
       // May end with a single .
-      if (destination.charAt(destination.length() - 1) == '.') {
-        destination = destination.substring(0, destination.length() - 1);
+      if (validateMe.charAt(validateMe.length() - 1) == '.') {
+        validateMe = validateMe.substring(0, validateMe.length() - 1);
       }
       if (
-          !ZoneTable.isValidHostnamePart(destination)
-              && !DomainName.validate(destination).isValid()
+          !ZoneTable.isValidHostnamePart(validateMe)
+              && !DomainName.validate(validateMe).isValid()
       ) {
-        throw new IllegalArgumentException("Invalid destination hostname: " + origDest);
+        throw new IllegalArgumentException("Invalid destination " + validateType + ": " + origDest);
       }
     }
   }
