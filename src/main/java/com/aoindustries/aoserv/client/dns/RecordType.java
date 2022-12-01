@@ -141,7 +141,7 @@ public final class RecordType extends GlobalObjectStringKey<RecordType> {
         // "any binary string can serve as the value of any record that includes a domain name as some or all of its value"
         // https://www.rfc-editor.org/rfc/rfc2181#section-11
         //
-        // We're going to only add additional characters are required for CNAME.
+        // We're going to only add additional characters as-needed for CNAME.
 
         // Underscores may be used in DNS despite not being valid hostname (as defined in RFC 1123, section 2.1):
         // https://www.rfc-editor.org/rfc/rfc1123#page-13
