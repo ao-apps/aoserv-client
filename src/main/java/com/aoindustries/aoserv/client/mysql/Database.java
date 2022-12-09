@@ -260,14 +260,16 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
    */
   public static final String
       CENTOS_JDBC_DRIVER = "com.mysql.jdbc.Driver",
-      CENTOS_7_JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
+      CENTOS_7_JDBC_DRIVER = "com.mysql.cj.jdbc.Driver",
+      ROCKY_9_JDBC_DRIVER = CENTOS_7_JDBC_DRIVER;
 
   /**
    * The URL for MySQL JDBC documentation.
    */
   public static final String
       CENTOS_JDBC_DOCUMENTATION_URL = "https://dev.mysql.com/doc/connector-j/5.1/en/",
-      CENTOS_7_JDBC_DOCUMENTATION_URL = "https://dev.mysql.com/doc/connector-j/8.0/en/";
+      CENTOS_7_JDBC_DOCUMENTATION_URL = "https://dev.mysql.com/doc/connector-j/8.0/en/",
+      ROCKY_9_JDBC_DOCUMENTATION_URL = CENTOS_7_JDBC_DOCUMENTATION_URL;
 
   /** The root database for a MySQL installation. */
   public static final Name MYSQL;
@@ -505,6 +507,8 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
         return CENTOS_JDBC_DRIVER;
       case OperatingSystemVersion.CENTOS_7_X86_64:
         return CENTOS_7_JDBC_DRIVER;
+      case OperatingSystemVersion.ROCKY_9_X86_64:
+        return ROCKY_9_JDBC_DRIVER;
       default:
         throw new SQLException("Unsupported OperatingSystemVersion: " + osv);
     }
@@ -554,6 +558,8 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
         return CENTOS_JDBC_DOCUMENTATION_URL;
       case OperatingSystemVersion.CENTOS_7_X86_64:
         return CENTOS_7_JDBC_DOCUMENTATION_URL;
+      case OperatingSystemVersion.ROCKY_9_X86_64:
+        return ROCKY_9_JDBC_DOCUMENTATION_URL;
       default:
         throw new SQLException("Unsupported OperatingSystemVersion: " + osv);
     }

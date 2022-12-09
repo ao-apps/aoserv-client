@@ -376,27 +376,32 @@ public final class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
       String name = hs.getName();
       OperatingSystemVersion osv = hs.getLinuxServer().getHost().getOperatingSystemVersion();
       int osvId = osv.getPkey();
-      if (osvId == OperatingSystemVersion.CENTOS_5_I686_AND_X86_64) {
-        int number = (name == null) ? 1 : Integer.parseInt(name);
-        return
-            "Apache HTTP Server #"
-                + number
-                + " configured in /etc/httpd/conf/httpd"
-                + number
-                + ".conf";
-      } else if (osvId == OperatingSystemVersion.CENTOS_7_X86_64) {
-        if (name == null) {
-          return "Apache HTTP Server configured in /etc/httpd/conf/httpd.conf";
-        } else {
+      switch (osvId) {
+        case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64: {
+          int number = (name == null) ? 1 : Integer.parseInt(name);
           return
-              "Apache HTTP Server ("
-                  + name
-                  + ") configured in /etc/httpd/conf/httpd@"
-                  + hs.getSystemdEscapedName()
+              "Apache HTTP Server #"
+                  + number
+                  + " configured in /etc/httpd/conf/httpd"
+                  + number
                   + ".conf";
         }
-      } else {
-        throw new AssertionError("Unexpected OperatingSystemVersion: " + osv);
+        case OperatingSystemVersion.CENTOS_7_X86_64:
+        case OperatingSystemVersion.ROCKY_9_X86_64: {
+          if (name == null) {
+            return "Apache HTTP Server configured in /etc/httpd/conf/httpd.conf";
+          } else {
+            return
+                "Apache HTTP Server ("
+                    + name
+                    + ") configured in /etc/httpd/conf/httpd@"
+                    + hs.getSystemdEscapedName()
+                    + ".conf";
+          }
+        }
+        default: {
+          throw new AssertionError("Unexpected OperatingSystemVersion: " + osv);
+        }
       }
     }
 

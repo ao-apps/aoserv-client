@@ -48,6 +48,7 @@ public final class OperatingSystem extends GlobalObjectStringKey<OperatingSystem
 
   public static final String CENTOS = "centos";
   public static final String DEBIAN = "debian";
+  public static final String ROCKY = "rocky";
   public static final String WINDOWS = "windows";
 
   /**
@@ -56,7 +57,7 @@ public final class OperatingSystem extends GlobalObjectStringKey<OperatingSystem
    * @see  OperatingSystemVersion#DEFAULT_OPERATING_SYSTEM_VERSION
    */
   @Deprecated
-  public static final String DEFAULT_OPERATING_SYSTEM = CENTOS;
+  public static final String DEFAULT_OPERATING_SYSTEM = ROCKY;
 
   private String display;
   private boolean isUnix;

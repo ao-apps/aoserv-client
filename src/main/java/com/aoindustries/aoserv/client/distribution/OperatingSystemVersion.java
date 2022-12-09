@@ -55,6 +55,7 @@ public final class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
   public static final String VERSION_5_DOM0 = "5.dom0";
   public static final String VERSION_7 = "7";
   public static final String VERSION_7_DOM0 = "7.dom0";
+  public static final String VERSION_9 = "9";
   public static final String VERSION_2006_0 = "2006.0";
   public static final String VERSION_ES_4 = "ES 4";
 
@@ -64,13 +65,14 @@ public final class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
    * @see  OperatingSystem#DEFAULT_OPERATING_SYSTEM
    */
   @Deprecated
-  public static final String DEFAULT_OPERATING_SYSTEM_VERSION = VERSION_7;
+  public static final String DEFAULT_OPERATING_SYSTEM_VERSION = VERSION_9;
 
   public static final int CENTOS_5_DOM0_X86_64 = 63;
   public static final int CENTOS_5_DOM0_I686 = 64;
   public static final int CENTOS_5_I686_AND_X86_64 = 67;
   public static final int CENTOS_7_DOM0_X86_64 = 69;
   public static final int CENTOS_7_X86_64 = 70;
+  public static final int ROCKY_9_X86_64 = 71;
 
   private String operatingSystem;
   private String versionNumber;
@@ -232,6 +234,7 @@ public final class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
       case CENTOS_5_I686_AND_X86_64:
         return WWW;
       case CENTOS_7_X86_64:
+      case ROCKY_9_X86_64:
         return VAR_WWW;
       case CENTOS_5_DOM0_I686:
       case CENTOS_5_DOM0_X86_64:
@@ -271,6 +274,7 @@ public final class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
       case CENTOS_5_I686_AND_X86_64:
         return WWWGROUP;
       case CENTOS_7_X86_64:
+      case ROCKY_9_X86_64:
         return VAR_OPT_APACHE_TOMCAT;
       case CENTOS_5_DOM0_I686:
       case CENTOS_5_DOM0_X86_64:
@@ -310,6 +314,7 @@ public final class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
       case CENTOS_5_I686_AND_X86_64:
         return LOGS;
       case CENTOS_7_X86_64:
+      case ROCKY_9_X86_64:
         return VAR_LOG_HTTPD_SITES;
       case CENTOS_5_DOM0_I686:
       case CENTOS_5_DOM0_X86_64:

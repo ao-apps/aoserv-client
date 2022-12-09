@@ -276,7 +276,7 @@ public final class Host extends CachedObjectIntegerKey<Host> implements Comparab
       out.writeLong(-1); // last_backup_time
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30) <= 0) {
-      out.writeCompressedInt(operatingSystemVersion == -1 ? OperatingSystemVersion.CENTOS_7_X86_64 : operatingSystemVersion);
+      out.writeCompressedInt(operatingSystemVersion == -1 ? OperatingSystemVersion.ROCKY_9_X86_64 : operatingSystemVersion);
     } else {
       out.writeCompressedInt(operatingSystemVersion);
     }

@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
     shortTitle="Changelog"
     tocLevels="1"
     datePublished="2016-10-29T21:07:28-05:00"
-    dateModified="2022-12-01T09:32:50-06:00"
+    dateModified="2022-12-09T12:35:17-06:00"
   >
     <c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
       <changelog:release
@@ -79,6 +79,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
         -->
         <ul>
           <li>Added underscore to set of allowed characters in DNS CNAME entries.</li>
+          <li>Added support for <ao:a href="https://rockylinux.org/news/rocky-linux-9-1-ga-release/">Rocky Linux 9</ao:a>.</li>
         </ul>
       </changelog:release>
     </c:if>

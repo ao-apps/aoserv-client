@@ -230,6 +230,7 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
           throw new AssertionError(invalidPath + " is invalid and should have already thrown " + ValidationException.class.getName());
         }
       case OperatingSystemVersion.CENTOS_7_X86_64:
+      case OperatingSystemVersion.ROCKY_9_X86_64:
         if (name.length() > 1) {
           return PosixPath.valueOf(
               LIST_DIRECTORY
@@ -335,7 +336,8 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
         }
         return true;
       }
-      case OperatingSystemVersion.CENTOS_7_X86_64: {
+      case OperatingSystemVersion.CENTOS_7_X86_64:
+      case OperatingSystemVersion.ROCKY_9_X86_64: {
         int len = pathStr.length();
         if (len < 1 || len > MAX_NAME_LENGTH) {
           return false;
