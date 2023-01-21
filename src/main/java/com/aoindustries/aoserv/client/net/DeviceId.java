@@ -50,12 +50,47 @@ public final class DeviceId extends GlobalObjectStringKey<DeviceId> implements C
   public static final String BOND1 = "bond1";
   public static final String BOND2 = "bond2";
   public static final String LO = "lo";
+
+  /**
+   * @deprecated  Device IDs are now generated to match hardware, please do not use hard-coded values.
+   */
+  @Deprecated
   public static final String ETH0 = "eth0";
+
+  /**
+   * @deprecated  Device IDs are now generated to match hardware, please do not use hard-coded values.
+   */
+  @Deprecated
   public static final String ETH1 = "eth1";
+
+  /**
+   * @deprecated  Device IDs are now generated to match hardware, please do not use hard-coded values.
+   */
+  @Deprecated
   public static final String ETH2 = "eth2";
+
+  /**
+   * @deprecated  Device IDs are now generated to match hardware, please do not use hard-coded values.
+   */
+  @Deprecated
   public static final String ETH3 = "eth3";
+
+  /**
+   * @deprecated  Device IDs are now generated to match hardware, please do not use hard-coded values.
+   */
+  @Deprecated
   public static final String ETH4 = "eth4";
+
+  /**
+   * @deprecated  Device IDs are now generated to match hardware, please do not use hard-coded values.
+   */
+  @Deprecated
   public static final String ETH5 = "eth5";
+
+  /**
+   * @deprecated  Device IDs are now generated to match hardware, please do not use hard-coded values.
+   */
+  @Deprecated
   public static final String ETH6 = "eth6";
 
   private boolean isLoopback;
