@@ -55,7 +55,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
     <sonar.organization>ao-apps</sonar.organization>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <!-- Dependencies -->
-    <mysql-connector-j.version>8.0.31</mysql-connector-j.version>
+    <mysql-connector-j.version>8.0.32</mysql-connector-j.version>
   </properties>
 
   <name>AOServ Client</name>
@@ -378,7 +378,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
         <groupId>junit</groupId><artifactId>junit</artifactId><version>4.13.2</version>
       </dependency>
       <dependency>
-        <groupId>com.mysql</groupId><artifactId>mysql-connector-j</artifactId><version>8.0.31</version>
+        <groupId>com.mysql</groupId><artifactId>mysql-connector-j</artifactId><version>8.0.32</version>
       </dependency>
       <!-- Test Transitive -->
       <dependency>
