@@ -130,9 +130,12 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
         <groupId>org.apache.maven.plugins</groupId><artifactId>maven-dependency-plugin</artifactId>
         <configuration>
           <usedDependencies>
+            <!-- Javadoc-only -->
+            <dependency>com.aoapps:ao-tlds</dependency>
             <!-- Runtime Direct -->
             <dependency>com.aoapps:ao-style</dependency>
-            <dependency>com.aoapps:ao-tlds</dependency><!-- Required for module-info.java -->
+            <!-- Test Direct -->
+            <dependency>com.mysql:mysql-connector-j</dependency>
           </usedDependencies>
         </configuration>
       </plugin>
@@ -422,6 +425,8 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
     </dependency>
     <dependency>
       <groupId>com.aoapps</groupId><artifactId>ao-tlds</artifactId>
+      <!-- Javadoc-only -->
+      <optional>true</optional>
     </dependency>
     <!-- Runtime Direct -->
     <dependency>
