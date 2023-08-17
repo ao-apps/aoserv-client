@@ -30,7 +30,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
   </parent>
 
   <groupId>com.aoindustries</groupId><artifactId>aoserv-client-devel</artifactId><version>1.91.8-POST-SNAPSHOT</version>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
 
   <properties>
     <module.name>com.aoindustries.aoserv.client.devel</module.name>
