@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2004-2013, 2016, 2017, 2018, 2019, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2004-2013, 2016, 2017, 2018, 2019, 2021, 2022, 2023  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -142,7 +142,7 @@ public final class TcpRedirect extends CachedObjectIntegerKey<TcpRedirect> {
 
   @Override
   public String toStringImpl() throws SQLException, IOException {
-    return getNetBind().toStringImpl() + "->" + destinationHost.toBracketedString() + ':' + destinationPort.getPort();
+    return getNetBind().toStringImpl() + "→" + destinationHost.toBracketedString() + ':' + destinationPort.getPort();
   }
 
   @Override

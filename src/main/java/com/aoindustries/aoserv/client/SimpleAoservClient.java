@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -6295,7 +6295,7 @@ public final class SimpleAoservClient {
     Address addr = getEmailAddress(aoServer, domain, address);
     Forwarding ef = addr.getEmailForwarding(destination);
     if (ef == null) {
-      throw new IllegalArgumentException("Unable to find EmailForwarding: " + address + '@' + domain + "->" + destination + " on " + aoServer);
+      throw new IllegalArgumentException("Unable to find EmailForwarding: " + address + '@' + domain + "→" + destination + " on " + aoServer);
     }
     ef.remove();
     if (addr.getCannotRemoveReasons().isEmpty() && !addr.isUsed()) {
@@ -6353,7 +6353,7 @@ public final class SimpleAoservClient {
     com.aoindustries.aoserv.client.email.List el = getEmailList(aoServer, path);
     ListAddress ela = addr.getEmailListAddress(el);
     if (ela == null) {
-      throw new IllegalArgumentException("Unable to find EmailListAddress: " + address + '@' + domain + "->" + path + " on " + aoServer);
+      throw new IllegalArgumentException("Unable to find EmailListAddress: " + address + '@' + domain + "→" + path + " on " + aoServer);
     }
     ela.remove();
     if (addr.getCannotRemoveReasons().isEmpty() && !addr.isUsed()) {
@@ -6422,7 +6422,7 @@ public final class SimpleAoservClient {
     }
     PipeAddress epa = addr.getEmailPipeAddress(ep);
     if (epa == null) {
-      throw new IllegalArgumentException("Unable to find EmailPipeAddress: " + address + "@" + domain + "->" + ep);
+      throw new IllegalArgumentException("Unable to find EmailPipeAddress: " + address + "@" + domain + "→" + ep);
     }
     epa.remove();
     if (addr.getCannotRemoveReasons().isEmpty() && !addr.isUsed()) {
@@ -6611,7 +6611,7 @@ public final class SimpleAoservClient {
     UserServer lsa = getLinuxServerAccount(aoServer, username);
     InboxAddress laa = addr.getLinuxAccAddress(lsa);
     if (laa == null) {
-      throw new IllegalArgumentException("Unable to find LinuxAccAddress: " + address + '@' + domain + "->" + username + " on " + aoServer);
+      throw new IllegalArgumentException("Unable to find LinuxAccAddress: " + address + '@' + domain + "→" + username + " on " + aoServer);
     }
     laa.remove();
     if (addr.getCannotRemoveReasons().isEmpty() && !addr.isUsed()) {

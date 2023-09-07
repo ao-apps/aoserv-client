@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2009, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2003-2009, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -213,9 +213,9 @@ public final class MysqlReplication extends CachedObjectIntegerKey<MysqlReplicat
   @Override
   public String toStringImpl() throws IOException, SQLException {
     if (aoServer != -1) {
-      return getMysqlServer().toStringImpl() + "->" + getLinuxServer().toStringImpl();
+      return getMysqlServer().toStringImpl() + "→" + getLinuxServer().toStringImpl();
     } else {
-      return getMysqlServer().toStringImpl() + "->" + getFailoverFileReplication().toStringImpl();
+      return getMysqlServer().toStringImpl() + "→" + getFailoverFileReplication().toStringImpl();
     }
   }
 
