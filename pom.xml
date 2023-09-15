@@ -128,10 +128,6 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
           <usedDependencies>
             <!-- Javadoc-only -->
             <dependency>com.aoapps:ao-tlds</dependency>
-            <!-- Runtime Direct -->
-            <dependency>com.aoapps:ao-style</dependency>
-            <!-- Test Direct -->
-            <dependency>com.mysql:mysql-connector-j</dependency>
           </usedDependencies>
         </configuration>
       </plugin>
@@ -391,9 +387,9 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
         <!-- When updating versions, review pgp-keys-map.list -->
         <groupId>com.google.protobuf</groupId><artifactId>protobuf-java</artifactId><version>3.24.3</version>
       </dependency>
-      <!-- BOM -->
+      <!-- Imports -->
       <dependency>
-        <groupId>com.aoapps</groupId><artifactId>javaee-web-api-bom</artifactId><version>7.0.1${POST-SNAPSHOT}</version>
+        <groupId>com.aoapps</groupId><artifactId>javaee-web-api-bom</artifactId><version>7.0.1-POST-SNAPSHOT</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -440,6 +436,12 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
     <dependency>
       <groupId>com.mysql</groupId><artifactId>mysql-connector-j</artifactId>
       <scope>test</scope>
+    </dependency>
+    <!-- Imports (Reactor build order only) -->
+    <dependency>
+      <groupId>com.aoapps</groupId><artifactId>javaee-web-api-bom</artifactId><version>7.0.1-POST-SNAPSHOT</version>
+      <type>pom</type>
+      <exclusions><exclusion><artifactId>*</artifactId><groupId>*</groupId></exclusion></exclusions>
     </dependency>
   </dependencies>
 </project>
