@@ -43,7 +43,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
 
     <javadoc.breadcrumbs><![CDATA[<a target="${javadoc.target}" href="https://aoindustries.com/aoserv/">AOServ</a>
 / <a target="${javadoc.target}" href="${project.url}">Client</a>]]></javadoc.breadcrumbs>
-    
+
     <description.html><![CDATA[Java client for the <a target="${javadoc.target}" href="https://aoindustries.com/aoserv/">AOServ Platform</a>.]]></description.html>
     <!-- AOSH default to interactive mode, but allow overriding on command line -->
     <exec.args>-i</exec.args>
