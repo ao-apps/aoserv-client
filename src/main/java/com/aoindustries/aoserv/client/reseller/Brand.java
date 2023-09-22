@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2009-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2009-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -387,6 +387,10 @@ public final class Brand extends CachedObjectAccountNameKey<Brand> {
     return aowebStrutsNoindex;
   }
 
+  /**
+   * Gets the Google Analytics 4 (GA4) Measurement ID or <code>null</code>
+   * if unavailable.
+   */
   public String getAowebStrutsGoogleAnalyticsNewTrackingCode() {
     return aowebStrutsGoogleAnalyticsNewTrackingCode;
   }
