@@ -7465,11 +7465,32 @@ public final class SimpleAoservClient {
   }
 
   /**
+   * Sets the <code>maxParameterCount</code> for a {@link SharedTomcat}.
+   *
+   * @param  name  the name of the JVM
+   * @param  aoServer  the hostname of the {@link Server}
+   * @param  maxParameterCount  the new maxParameterCount setting, in bytes, {@code -1} for none.
+   *
+   * @exception  IOException  if unable to contact the server
+   * @exception  SQLException  if unable to access the database or a data integrity violation occurs
+   * @exception  IllegalArgumentException  if unable to find the {@link Server} or {@link SharedTomcat}
+   *
+   * @see  SharedTomcat#setMaxParameterCount(int)
+   */
+  public void setHttpdSharedTomcatMaxParameterCount(
+      String name,
+      String aoServer,
+      int maxParameterCount
+  ) throws IllegalArgumentException, IOException, SQLException {
+    getHttpdSharedTomcat(aoServer, name).setMaxParameterCount(maxParameterCount);
+  }
+
+  /**
    * Sets the <code>maxPostSize</code> for a {@link SharedTomcat}.
    *
    * @param  name  the name of the JVM
    * @param  aoServer  the hostname of the {@link Server}
-   * @param  maxPostSize  the new maximum POST size, in bytes, {@code -1} for none.
+   * @param  maxPostSize  the new maxPostSize setting, in bytes, {@code -1} for none.
    *
    * @exception  IOException  if unable to contact the server
    * @exception  SQLException  if unable to access the database or a data integrity violation occurs
@@ -7528,11 +7549,32 @@ public final class SimpleAoservClient {
   }
 
   /**
+   * Sets the <code>undeployOldVersions</code> setting for a {@link SharedTomcat}.
+   *
+   * @param  name  the name of the JVM
+   * @param  aoServer  the hostname of the {@link Server}
+   * @param  undeployOldVersions  the new setting
+   *
+   * @exception  IOException  if unable to contact the server
+   * @exception  SQLException  if unable to access the database or a data integrity violation occurs
+   * @exception  IllegalArgumentException  if unable to find the {@link Server} or {@link SharedTomcat}
+   *
+   * @see  SharedTomcat#setUndeployOldVersions(boolean)
+   */
+  public void setHttpdSharedTomcatUndeployOldVersions(
+      String name,
+      String aoServer,
+      boolean undeployOldVersions
+  ) throws IllegalArgumentException, IOException, SQLException {
+    getHttpdSharedTomcat(aoServer, name).setUndeployOldVersions(undeployOldVersions);
+  }
+
+  /**
    * Sets the <code>tomcatAuthentication</code> setting for a {@link SharedTomcat}.
    *
    * @param  name  the name of the JVM
    * @param  aoServer  the hostname of the {@link Server}
-   * @param  autoDeploy  the new setting
+   * @param  tomcatAuthentication  the new setting
    *
    * @exception  IOException  if unable to contact the server
    * @exception  SQLException  if unable to access the database or a data integrity violation occurs
@@ -7543,9 +7585,9 @@ public final class SimpleAoservClient {
   public void setHttpdSharedTomcatTomcatAuthentication(
       String name,
       String aoServer,
-      boolean autoDeploy
+      boolean tomcatAuthentication
   ) throws IllegalArgumentException, IOException, SQLException {
-    getHttpdSharedTomcat(aoServer, name).setTomcatAuthentication(autoDeploy);
+    getHttpdSharedTomcat(aoServer, name).setTomcatAuthentication(tomcatAuthentication);
   }
 
   /**
@@ -7975,11 +8017,41 @@ public final class SimpleAoservClient {
   }
 
   /**
+   * Sets the <code>maxParameterCount</code> for a {@link PrivateTomcatSite}.
+   *
+   * @param  siteName  the name of the site
+   * @param  aoServer  the hostname of the {@link Server}
+   * @param  maxParameterCount  the maxParameterCount setting, in bytes, {@code -1} for none.
+   *
+   * @exception  IOException  if unable to contact the server
+   * @exception  SQLException  if unable to access the database or a data integrity violation occurs
+   * @exception  IllegalArgumentException  if unable to find the {@link Server}, {@link Site}, or {@link PrivateTomcatSite}
+   *
+   * @see  PrivateTomcatSite#setMaxParameterCount(int)
+   */
+  public void setHttpdTomcatStdSiteMaxParameterCount(
+      String siteName,
+      String aoServer,
+      int maxParameterCount
+  ) throws IllegalArgumentException, IOException, SQLException {
+    Site hs = getHttpdSite(aoServer, siteName);
+    com.aoindustries.aoserv.client.web.tomcat.Site hts = hs.getHttpdTomcatSite();
+    if (hts == null) {
+      throw new IllegalArgumentException("Unable to find HttpdTomcatSite: " + siteName + " on " + aoServer);
+    }
+    PrivateTomcatSite htss = hts.getHttpdTomcatStdSite();
+    if (htss == null) {
+      throw new IllegalArgumentException("Unable to find HttpdTomcatStdSite: " + siteName + " on " + aoServer);
+    }
+    htss.setMaxParameterCount(maxParameterCount);
+  }
+
+  /**
    * Sets the <code>maxPostSize</code> for a {@link PrivateTomcatSite}.
    *
    * @param  siteName  the name of the site
    * @param  aoServer  the hostname of the {@link Server}
-   * @param  maxPostSize  the new maximum POST size, in bytes, {@code -1} for none.
+   * @param  maxPostSize  the maxPostSize setting, in bytes, {@code -1} for none.
    *
    * @exception  IOException  if unable to contact the server
    * @exception  SQLException  if unable to access the database or a data integrity violation occurs
@@ -8062,6 +8134,36 @@ public final class SimpleAoservClient {
       throw new IllegalArgumentException("Unable to find HttpdTomcatStdSite: " + siteName + " on " + aoServer);
     }
     htss.setAutoDeploy(autoDeploy);
+  }
+
+  /**
+   * Sets the <code>undeployOldVersions</code> setting for a {@link PrivateTomcatSite}.
+   *
+   * @param  siteName  the name of the site
+   * @param  aoServer  the hostname of the {@link Server}
+   * @param  undeployOldVersions  the new setting
+   *
+   * @exception  IOException  if unable to contact the server
+   * @exception  SQLException  if unable to access the database or a data integrity violation occurs
+   * @exception  IllegalArgumentException  if unable to find the {@link Server}, {@link Site}, or {@link PrivateTomcatSite}
+   *
+   * @see  PrivateTomcatSite#setUndeployOldVersions(boolean)
+   */
+  public void setHttpdTomcatStdSiteUndeployOldVersions(
+      String siteName,
+      String aoServer,
+      boolean undeployOldVersions
+  ) throws IllegalArgumentException, IOException, SQLException {
+    Site hs = getHttpdSite(aoServer, siteName);
+    com.aoindustries.aoserv.client.web.tomcat.Site hts = hs.getHttpdTomcatSite();
+    if (hts == null) {
+      throw new IllegalArgumentException("Unable to find HttpdTomcatSite: " + siteName + " on " + aoServer);
+    }
+    PrivateTomcatSite htss = hts.getHttpdTomcatStdSite();
+    if (htss == null) {
+      throw new IllegalArgumentException("Unable to find HttpdTomcatStdSite: " + siteName + " on " + aoServer);
+    }
+    htss.setUndeployOldVersions(undeployOldVersions);
   }
 
   /**

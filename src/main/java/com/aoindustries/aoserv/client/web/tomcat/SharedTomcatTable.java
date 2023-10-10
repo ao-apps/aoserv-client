@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -255,6 +255,15 @@ public final class SharedTomcatTable extends CachedTableIntegerKey<SharedTomcat>
         );
       }
       return true;
+    } else if (command.equalsIgnoreCase(Command.web_tomcat_SharedTomcat_maxParameterCount_set)) {
+      if (Aosh.checkParamCount(Command.web_tomcat_SharedTomcat_maxParameterCount_set, args, 3, err)) {
+        connector.getSimpleClient().setHttpdSharedTomcatMaxParameterCount(
+            args[1],
+            args[2],
+            args[3].isEmpty() ? -1 : Aosh.parseInt(args[3], "maxParameterCount")
+        );
+      }
+      return true;
     } else if (command.equalsIgnoreCase(Command.SET_HTTPD_SHARED_TOMCAT_UNPACK_WARS)) {
       if (Aosh.checkParamCount(Command.SET_HTTPD_SHARED_TOMCAT_UNPACK_WARS, args, 3, err)) {
         connector.getSimpleClient().setHttpdSharedTomcatIsManual(
@@ -270,6 +279,15 @@ public final class SharedTomcatTable extends CachedTableIntegerKey<SharedTomcat>
             args[1],
             args[2],
             Aosh.parseBoolean(args[3], "auto_deploy")
+        );
+      }
+      return true;
+    } else if (command.equalsIgnoreCase(Command.web_tomcat_SharedTomcat_undeployOldVersions_set)) {
+      if (Aosh.checkParamCount(Command.web_tomcat_SharedTomcat_undeployOldVersions_set, args, 3, err)) {
+        connector.getSimpleClient().setHttpdSharedTomcatUndeployOldVersions(
+            args[1],
+            args[2],
+            Aosh.parseBoolean(args[3], "undeployOldVersions")
         );
       }
       return true;

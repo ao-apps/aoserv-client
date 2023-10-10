@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
     shortTitle="Changelog"
     tocLevels="1"
     datePublished="2016-10-29T21:07:28-05:00"
-    dateModified="2022-12-17T12:31:28-06:00"
+    dateModified="2023-10-10T02:04:41Z"
   >
     <c:set var="latestRelease" value="1.91.8" />
     <c:if test="${
@@ -53,8 +53,8 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
         repository="@{nexusUrl}content/repositories/snapshots/"
         scmUrl="@{project.scm.url}"
       >
-        <!-- TODO:
         <ul>
+          <!-- TODO:
           <li>Added schemas (where some object can exist without schema, such as "int"?)</li>
           <li>Added a type registry based on ServiceLoader</li>
           <li>Added a cast registry based on ServiceLoader</li>
@@ -80,8 +80,27 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
           -->
           <!-- TODO:
           <li>Look into jOOQ: https://www.jooq.org/</li>
+          -->
+          <li>
+            Enabled control over Tomcat <ao:a href="https://tomcat.apache.org/tomcat-9.0-doc/config/host.html#Common_Attributes"><code>maxParameterCount</code></ao:a>:
+            <ol>
+              <li>Added <code>PrivateTomcatSite.getMaxParameterCount()</code></li>
+              <li>Added <code>web.tomcat.PrivateTomcatSite.maxParameterCount.set</code> command.</li>
+              <li>Added <code>SharedTomcat.getMaxParameterCount()</code></li>
+              <li>Added <code>web.tomcat.SharedTomcat.maxParameterCount.set</code> command.</li>
+            </ol>
+          </li>
+          <li>
+            Enabled control over Tomcat <ao:a href="https://tomcat.apache.org/tomcat-9.0-doc/config/host.html#Common_Attributes"><code>undeployOldVersions</code></ao:a>
+            setting in support of parallel deployments:
+            <ol>
+              <li>Added <code>PrivateTomcatSite.getUndeployOldVersions()</code></li>
+              <li>Added <code>web.tomcat.PrivateTomcatSite.undeployOldVersions.set</code> command.</li>
+              <li>Added <code>SharedTomcat.getUndeployOldVersions()</code></li>
+              <li>Added <code>web.tomcat.SharedTomcat.undeployOldVersions.set</code> command.</li>
+            </ol>
+          </li>
         </ul>
-        -->
       </changelog:release>
     </c:if>
 

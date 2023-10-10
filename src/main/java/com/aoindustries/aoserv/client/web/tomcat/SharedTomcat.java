@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -23,7 +23,6 @@
 
 package com.aoindustries.aoserv.client.web.tomcat;
 
-import com.aoapps.collections.IntList;
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.lang.validation.ValidationException;
@@ -67,6 +66,15 @@ public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
   static final String COLUMN_AO_SERVER_name = "ao_server";
 
   /**
+   * The default setting of maxParameterCount on the &lt;Connector /&gt; in server.xml.
+   * This matches the default of {@code 1000} since Tomcat 8.5.88, 9.0.74, 10.1.8.
+   * Previously, the default was {@code 10000}.
+   *
+   * @see  #getMaxParameterCount()
+   */
+  public static final int DEFAULT_MAX_PARAMETER_COUNT = 1000;
+
+  /**
    * The default setting of maxPostSize on the &lt;Connector /&gt; in server.xml.
    * This raises the value from the Tomcat default of 2 MiB to a more real-world
    * value, such as allowing uploads of pictures from modern digital cameras.
@@ -89,9 +97,11 @@ public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
   private int tomcat4ShutdownPort;
   private String tomcat4ShutdownKey;
   private boolean isManual;
+  private int maxParameterCount;
   private int maxPostSize;
   private boolean unpackWars;
   private boolean autoDeploy;
+  private boolean undeployOldVersions;
   private boolean tomcatAuthentication;
 
   /**
@@ -182,12 +192,16 @@ public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
       case 10:
         return isManual;
       case 11:
-        return maxPostSize == -1 ? null : maxPostSize;
+        return maxParameterCount == -1 ? null : maxParameterCount;
       case 12:
-        return unpackWars;
+        return maxPostSize == -1 ? null : maxPostSize;
       case 13:
-        return autoDeploy;
+        return unpackWars;
       case 14:
+        return autoDeploy;
+      case 15:
+        return undeployOldVersions;
+      case 16:
         return tomcatAuthentication;
       default:
         throw new IllegalArgumentException("Invalid index: " + i);
@@ -300,38 +314,6 @@ public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
     return nb;
   }
 
-  @Override
-  public void init(ResultSet result) throws SQLException {
-    int pos = 1;
-    pkey = result.getInt(pos++);
-    name = result.getString(pos++);
-    aoServer = result.getInt(pos++);
-    version = result.getInt(pos++);
-    linuxServerAccount = result.getInt(pos++);
-    linuxServerGroup = result.getInt(pos++);
-    disableLog = result.getInt(pos++);
-    if (result.wasNull()) {
-      disableLog = -1;
-    }
-    tomcat4Worker = result.getInt(pos++);
-    if (result.wasNull()) {
-      tomcat4Worker = -1;
-    }
-    tomcat4ShutdownPort = result.getInt(pos++);
-    if (result.wasNull()) {
-      tomcat4ShutdownPort = -1;
-    }
-    tomcat4ShutdownKey = result.getString(pos++);
-    isManual = result.getBoolean(pos++);
-    maxPostSize = result.getInt(pos++);
-    if (result.wasNull()) {
-      maxPostSize = -1;
-    }
-    unpackWars = result.getBoolean(pos++);
-    autoDeploy = result.getBoolean(pos++);
-    tomcatAuthentication = result.getBoolean(pos++);
-  }
-
   public boolean isManual() {
     return isManual;
   }
@@ -341,7 +323,28 @@ public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
   }
 
   /**
-   * Gets the max post size or {@code -1} of not limited.
+   * Gets the <code>maxParameterCount</code> or {@code -1} if not limited.
+   */
+  public int getMaxParameterCount() {
+    return maxParameterCount;
+  }
+
+  public void setMaxParameterCount(int maxParameterCount) throws IOException, SQLException {
+    table.getConnector().requestUpdate(
+        true,
+        AoservProtocol.CommandId.web_tomcat_SharedTomcat_maxParameterCount_set,
+        new AoservConnector.UpdateRequestInvalidating(table) {
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(pkey);
+            out.writeInt(maxParameterCount);
+          }
+        }
+    );
+  }
+
+  /**
+   * Gets the <code>maxPostSize</code> or {@code -1} if not limited.
    */
   public int getMaxPostSize() {
     return maxPostSize;
@@ -351,29 +354,11 @@ public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
     table.getConnector().requestUpdate(
         true,
         AoservProtocol.CommandId.SET_HTTPD_SHARED_TOMCAT_MAX_POST_SIZE,
-        new AoservConnector.UpdateRequest() {
-          private IntList invalidateList;
-
+        new AoservConnector.UpdateRequestInvalidating(table) {
           @Override
           public void writeRequest(StreamableOutput out) throws IOException {
             out.writeCompressedInt(pkey);
             out.writeInt(maxPostSize);
-          }
-
-          @Override
-          public void readResponse(StreamableInput in) throws IOException, SQLException {
-            int code = in.readByte();
-            if (code == AoservProtocol.DONE) {
-              invalidateList = AoservConnector.readInvalidateList(in);
-            } else {
-              AoservProtocol.checkResult(code, in);
-              throw new IOException("Unexpected response code: " + code);
-            }
-          }
-
-          @Override
-          public void afterRelease() {
-            table.getConnector().tablesUpdated(invalidateList);
           }
         }
     );
@@ -399,6 +384,17 @@ public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
 
   public void setAutoDeploy(boolean autoDeploy) throws IOException, SQLException {
     table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_HTTPD_SHARED_TOMCAT_AUTO_DEPLOY, pkey, autoDeploy);
+  }
+
+  /**
+   * Gets the <code>undeployOldVersions</code> setting for this Tomcat.
+   */
+  public boolean getUndeployOldVersions() {
+    return undeployOldVersions;
+  }
+
+  public void setUndeployOldVersions(boolean undeployOldVersions) throws IOException, SQLException {
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.web_tomcat_SharedTomcat_undeployOldVersions_set, pkey, undeployOldVersions);
   }
 
   /**
@@ -456,6 +452,43 @@ public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
     return true;
   }
 
+  @Override
+  public void init(ResultSet result) throws SQLException {
+    int pos = 1;
+    pkey = result.getInt(pos++);
+    name = result.getString(pos++);
+    aoServer = result.getInt(pos++);
+    version = result.getInt(pos++);
+    linuxServerAccount = result.getInt(pos++);
+    linuxServerGroup = result.getInt(pos++);
+    disableLog = result.getInt(pos++);
+    if (result.wasNull()) {
+      disableLog = -1;
+    }
+    tomcat4Worker = result.getInt(pos++);
+    if (result.wasNull()) {
+      tomcat4Worker = -1;
+    }
+    tomcat4ShutdownPort = result.getInt(pos++);
+    if (result.wasNull()) {
+      tomcat4ShutdownPort = -1;
+    }
+    tomcat4ShutdownKey = result.getString(pos++);
+    isManual = result.getBoolean(pos++);
+    maxParameterCount = result.getInt(pos++);
+    if (result.wasNull()) {
+      maxParameterCount = -1;
+    }
+    maxPostSize = result.getInt(pos++);
+    if (result.wasNull()) {
+      maxPostSize = -1;
+    }
+    unpackWars = result.getBoolean(pos++);
+    autoDeploy = result.getBoolean(pos++);
+    undeployOldVersions = result.getBoolean(pos++);
+    tomcatAuthentication = result.getBoolean(pos++);
+  }
+
   /**
    * readImpl method comment.
    */
@@ -472,9 +505,11 @@ public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
     tomcat4ShutdownPort = in.readCompressedInt();
     tomcat4ShutdownKey = in.readNullUTF();
     isManual = in.readBoolean();
+    maxParameterCount = in.readInt();
     maxPostSize = in.readInt();
     unpackWars = in.readBoolean();
     autoDeploy = in.readBoolean();
+    undeployOldVersions = in.readBoolean();
     tomcatAuthentication = in.readBoolean();
   }
 
@@ -513,10 +548,16 @@ public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
     out.writeCompressedInt(tomcat4ShutdownPort);
     out.writeNullUTF(tomcat4ShutdownKey);
     out.writeBoolean(isManual);
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_92_0) >= 0) {
+      out.writeInt(maxParameterCount);
+    }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_80_1) >= 0) {
       out.writeInt(maxPostSize);
       out.writeBoolean(unpackWars);
       out.writeBoolean(autoDeploy);
+    }
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_92_0) >= 0) {
+      out.writeBoolean(undeployOldVersions);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_2) >= 0) {
       out.writeBoolean(tomcatAuthentication);

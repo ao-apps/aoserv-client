@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -173,6 +173,15 @@ public final class PrivateTomcatSiteTable extends CachedTableIntegerKey<PrivateT
         out.flush();
       }
       return true;
+    } else if (command.equalsIgnoreCase(Command.web_tomcat_PrivateTomcatSite_maxParameterCount_set)) {
+      if (Aosh.checkParamCount(Command.web_tomcat_PrivateTomcatSite_maxParameterCount_set, args, 3, err)) {
+        connector.getSimpleClient().setHttpdTomcatStdSiteMaxParameterCount(
+            args[1],
+            args[2],
+            args[3].isEmpty() ? -1 : Aosh.parseInt(args[3], "maxParameterCount")
+        );
+      }
+      return true;
     } else if (command.equalsIgnoreCase(Command.SET_HTTPD_TOMCAT_STD_SITE_MAX_POST_SIZE)) {
       if (Aosh.checkParamCount(Command.SET_HTTPD_TOMCAT_STD_SITE_MAX_POST_SIZE, args, 3, err)) {
         connector.getSimpleClient().setHttpdTomcatStdSiteMaxPostSize(
@@ -197,6 +206,15 @@ public final class PrivateTomcatSiteTable extends CachedTableIntegerKey<PrivateT
             args[1],
             args[2],
             Aosh.parseBoolean(args[3], "auto_deploy")
+        );
+      }
+      return true;
+    } else if (command.equalsIgnoreCase(Command.web_tomcat_PrivateTomcatSite_undeployOldVersions_set)) {
+      if (Aosh.checkParamCount(Command.web_tomcat_PrivateTomcatSite_undeployOldVersions_set, args, 3, err)) {
+        connector.getSimpleClient().setHttpdTomcatStdSiteUndeployOldVersions(
+            args[1],
+            args[2],
+            Aosh.parseBoolean(args[3], "undeployOldVersions")
         );
       }
       return true;

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -23,7 +23,6 @@
 
 package com.aoindustries.aoserv.client.web.tomcat;
 
-import com.aoapps.collections.IntList;
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoindustries.aoserv.client.AoservConnector;
@@ -51,6 +50,15 @@ public final class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomca
   static final String COLUMN_TOMCAT_SITE_name = "tomcat_site";
 
   /**
+   * The default setting of maxParameterCount on the &lt;Connector /&gt; in server.xml.
+   * This matches the default of {@code 1000} since Tomcat 8.5.88, 9.0.74, 10.1.8.
+   * Previously, the default was {@code 10000}.
+   *
+   * @see  #getMaxParameterCount()
+   */
+  public static final int DEFAULT_MAX_PARAMETER_COUNT = 1000;
+
+  /**
    * The default setting of maxPostSize on the &lt;Connector /&gt; in server.xml.
    * This raises the value from the Tomcat default of 2 MiB to a more real-world
    * value, such as allowing uploads of pictures from modern digital cameras.
@@ -63,9 +71,11 @@ public final class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomca
 
   private int tomcat4ShutdownPort;
   private String tomcat4ShutdownKey;
+  private int maxParameterCount;
   private int maxPostSize;
   private boolean unpackWars;
   private boolean autoDeploy;
+  private boolean undeployOldVersions;
   private boolean tomcatAuthentication;
 
   /**
@@ -89,12 +99,16 @@ public final class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomca
       case 2:
         return tomcat4ShutdownKey;
       case 3:
-        return maxPostSize == -1 ? null : maxPostSize;
+        return maxParameterCount == -1 ? null : maxParameterCount;
       case 4:
-        return unpackWars;
+        return maxPostSize == -1 ? null : maxPostSize;
       case 5:
-        return autoDeploy;
+        return unpackWars;
       case 6:
+        return autoDeploy;
+      case 7:
+        return undeployOldVersions;
+      case 8:
         return tomcatAuthentication;
       default:
         throw new IllegalArgumentException("Invalid index: " + i);
@@ -114,39 +128,42 @@ public final class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomca
   }
 
   /**
-   * Gets the max post size or {@code -1} of not limited.
+   * Gets the <code>maxParameterCount</code> or {@code -1} if not limited.
+   */
+  public int getMaxParameterCount() {
+    return maxParameterCount;
+  }
+
+  public void setMaxParameterCount(int maxParameterCount) throws IOException, SQLException {
+    table.getConnector().requestUpdate(
+        true,
+        AoservProtocol.CommandId.web_tomcat_PrivateTomcatSite_maxParameterCount_set,
+        new AoservConnector.UpdateRequestInvalidating(table) {
+          @Override
+          public void writeRequest(StreamableOutput out) throws IOException {
+            out.writeCompressedInt(pkey);
+            out.writeInt(maxParameterCount);
+          }
+        }
+    );
+  }
+
+  /**
+   * Gets the <code>maxPostSize</code> or {@code -1} if not limited.
    */
   public int getMaxPostSize() {
     return maxPostSize;
   }
 
-  public void setMaxPostSize(final int maxPostSize) throws IOException, SQLException {
+  public void setMaxPostSize(int maxPostSize) throws IOException, SQLException {
     table.getConnector().requestUpdate(
         true,
         AoservProtocol.CommandId.SET_HTTPD_TOMCAT_STD_SITE_MAX_POST_SIZE,
-        new AoservConnector.UpdateRequest() {
-          private IntList invalidateList;
-
+        new AoservConnector.UpdateRequestInvalidating(table) {
           @Override
           public void writeRequest(StreamableOutput out) throws IOException {
             out.writeCompressedInt(pkey);
             out.writeInt(maxPostSize);
-          }
-
-          @Override
-          public void readResponse(StreamableInput in) throws IOException, SQLException {
-            int code = in.readByte();
-            if (code == AoservProtocol.DONE) {
-              invalidateList = AoservConnector.readInvalidateList(in);
-            } else {
-              AoservProtocol.checkResult(code, in);
-              throw new IOException("Unexpected response code: " + code);
-            }
-          }
-
-          @Override
-          public void afterRelease() {
-            table.getConnector().tablesUpdated(invalidateList);
           }
         }
     );
@@ -172,6 +189,17 @@ public final class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomca
 
   public void setAutoDeploy(boolean autoDeploy) throws IOException, SQLException {
     table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_HTTPD_TOMCAT_STD_SITE_AUTO_DEPLOY, pkey, autoDeploy);
+  }
+
+  /**
+   * Gets the <code>undeployOldVersions</code> setting for this Tomcat.
+   */
+  public boolean getUndeployOldVersions() {
+    return undeployOldVersions;
+  }
+
+  public void setUndeployOldVersions(boolean undeployOldVersions) throws IOException, SQLException {
+    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.web_tomcat_PrivateTomcatSite_undeployOldVersions_set, pkey, undeployOldVersions);
   }
 
   /**
@@ -207,19 +235,25 @@ public final class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomca
 
   @Override
   public void init(ResultSet result) throws SQLException {
-    pkey = result.getInt(1);
-    tomcat4ShutdownPort = result.getInt(2);
+    int pos = 1;
+    pkey = result.getInt(pos++);
+    tomcat4ShutdownPort = result.getInt(pos++);
     if (result.wasNull()) {
       tomcat4ShutdownPort = -1;
     }
-    tomcat4ShutdownKey = result.getString(3);
-    maxPostSize = result.getInt(4);
+    tomcat4ShutdownKey = result.getString(pos++);
+    maxParameterCount = result.getInt(pos++);
+    if (result.wasNull()) {
+      maxParameterCount = -1;
+    }
+    maxPostSize = result.getInt(pos++);
     if (result.wasNull()) {
       maxPostSize = -1;
     }
-    unpackWars = result.getBoolean(5);
-    autoDeploy = result.getBoolean(6);
-    tomcatAuthentication = result.getBoolean(7);
+    unpackWars = result.getBoolean(pos++);
+    autoDeploy = result.getBoolean(pos++);
+    undeployOldVersions = result.getBoolean(pos++);
+    tomcatAuthentication = result.getBoolean(pos++);
   }
 
   @Override
@@ -227,9 +261,11 @@ public final class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomca
     pkey = in.readCompressedInt();
     tomcat4ShutdownPort = in.readCompressedInt();
     tomcat4ShutdownKey = in.readNullUTF();
+    maxParameterCount = in.readInt();
     maxPostSize = in.readInt();
     unpackWars = in.readBoolean();
     autoDeploy = in.readBoolean();
+    undeployOldVersions = in.readBoolean();
     tomcatAuthentication = in.readBoolean();
   }
 
@@ -243,10 +279,16 @@ public final class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomca
     out.writeCompressedInt(pkey);
     out.writeCompressedInt(tomcat4ShutdownPort);
     out.writeNullUTF(tomcat4ShutdownKey);
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_92_0) >= 0) {
+      out.writeInt(maxParameterCount);
+    }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_80_1) >= 0) {
       out.writeInt(maxPostSize);
       out.writeBoolean(unpackWars);
       out.writeBoolean(autoDeploy);
+    }
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_92_0) >= 0) {
+      out.writeBoolean(undeployOldVersions);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_2) >= 0) {
       out.writeBoolean(tomcatAuthentication);

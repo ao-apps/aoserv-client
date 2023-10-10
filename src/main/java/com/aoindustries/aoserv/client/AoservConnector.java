@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -1649,6 +1649,55 @@ public abstract class AoservConnector implements SchemaParent {
     }
     assert Thread.currentThread().isInterrupted();
     throw new InterruptedIOException();
+  }
+
+  /**
+   * An update request with a returned invalidation list.
+   */
+  // TODO: Use this for many other commands
+  public abstract static class UpdateRequestInvalidating implements UpdateRequest {
+
+    private final AoservConnector connector;
+    private IntList invalidateList;
+
+    protected UpdateRequestInvalidating(AoservConnector connector) {
+      this.connector = connector;
+    }
+
+    protected UpdateRequestInvalidating(AoservTable<?, ?> table) {
+      this.connector = table.connector;
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Reads the response code.  If code is {@link AoservProtocol#DONE},
+     * {@linkplain AoservConnector#readInvalidateList(com.aoapps.hodgepodge.io.stream.StreamableInput) reads the invalidation list}.
+     * On any other code, {@linkplain AoservProtocol#checkResult(int, com.aoapps.hodgepodge.io.stream.StreamableInput) checks the result}
+     * then falls-back to throwing {@link IOException}.
+     * </p>
+     */
+    @Override
+    public void readResponse(StreamableInput in) throws IOException, SQLException {
+      int code = in.readByte();
+      if (code == AoservProtocol.DONE) {
+        invalidateList = AoservConnector.readInvalidateList(in);
+      } else {
+        AoservProtocol.checkResult(code, in);
+        throw new IOException("Unexpected response code: " + code);
+      }
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Calls {@link AoservConnector#tablesUpdated(com.aoapps.collections.IntList)} with the invalidation list.
+     * </p>
+     */
+    @Override
+    public void afterRelease() {
+      connector.tablesUpdated(invalidateList);
+    }
   }
 
   /**

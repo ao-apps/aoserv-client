@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -312,9 +312,11 @@ public final class Command extends GlobalObjectStringKey<Command> {
       SET_EMAIL_LIST = "set_email_list",
       SET_FILE_BACKUP_SETTING = "set_file_backup_setting",
       SET_HTTPD_SHARED_TOMCAT_IS_MANUAL = "set_httpd_shared_tomcat_is_manual",
+      web_tomcat_SharedTomcat_maxParameterCount_set = "web.tomcat.SharedTomcat.maxParameterCount.set",
       SET_HTTPD_SHARED_TOMCAT_MAX_POST_SIZE = "set_httpd_shared_tomcat_max_post_size",
       SET_HTTPD_SHARED_TOMCAT_UNPACK_WARS = "set_httpd_shared_tomcat_unpack_wars",
       SET_HTTPD_SHARED_TOMCAT_AUTO_DEPLOY = "set_httpd_shared_tomcat_auto_deploy",
+      web_tomcat_SharedTomcat_undeployOldVersions_set = "web.tomcat.SharedTomcat.undeployOldVersions.set",
       web_tomcat_SharedTomcat_tomcatAuthentication_set = "web.tomcat.SharedTomcat.tomcatAuthentication.set",
       SET_HTTPD_SHARED_TOMCAT_VERSION = "set_httpd_shared_tomcat_version",
       SET_HTTPD_SITE_AUTHENTICATED_LOCATION_ATTRIBUTES = "set_httpd_site_authenticated_location_attributes",
@@ -334,9 +336,11 @@ public final class Command extends GlobalObjectStringKey<Command> {
       SET_HTTPD_SITE_BLOCK_CORE_DUMPS = "set_httpd_site_block_core_dumps",
       SET_HTTPD_SITE_BLOCK_EDITOR_BACKUPS = "set_httpd_site_block_editor_backups",
       SET_HTTPD_TOMCAT_CONTEXT_ATTRIBUTES = "set_httpd_tomcat_context_attributes",
+      web_tomcat_PrivateTomcatSite_maxParameterCount_set = "web.tomcat.PrivateTomcatSite.maxParameterCount.set",
       SET_HTTPD_TOMCAT_STD_SITE_MAX_POST_SIZE = "set_httpd_tomcat_std_site_max_post_size",
       SET_HTTPD_TOMCAT_STD_SITE_UNPACK_WARS = "set_httpd_tomcat_std_site_unpack_wars",
       SET_HTTPD_TOMCAT_STD_SITE_AUTO_DEPLOY = "set_httpd_tomcat_std_site_auto_deploy",
+      web_tomcat_PrivateTomcatSite_undeployOldVersions_set = "web.tomcat.PrivateTomcatSite.undeployOldVersions.set",
       web_tomcat_PrivateTomcatSite_tomcatAuthentication_set = "web.tomcat.PrivateTomcatSite.tomcatAuthentication.set",
       SET_HTTPD_TOMCAT_STD_SITE_VERSION = "set_httpd_tomcat_std_site_version",
       SET_HTTPD_TOMCAT_SITE_BLOCK_WEBINF = "set_httpd_tomcat_site_block_webinf",
