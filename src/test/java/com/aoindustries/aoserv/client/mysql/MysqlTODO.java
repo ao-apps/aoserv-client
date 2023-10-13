@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2006-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -374,7 +374,7 @@ public class MysqlTODO extends TestCase {
         Statement stmt = connection.createStatement();
         ResultSet results = stmt.executeQuery("select count(*) from test");
         if (!results.next()) {
-          fail("no row returned");
+          fail("no row returned"); // TODO: NoRowException move to ao-sql
         }
         int count = results.getInt(1);
         assertEquals(1000, count);
