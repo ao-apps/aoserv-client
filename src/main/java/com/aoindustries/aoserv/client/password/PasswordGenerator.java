@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2011, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2001-2011, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -243,8 +243,8 @@ public final class PasswordGenerator {
           }
         }
 
-        int dig1 = secureRandom.nextInt(8) + 2;
-        int dig2 = secureRandom.nextInt(8) + 2;
+        final int dig1 = secureRandom.nextInt(8) + 2;
+        final int dig2 = secureRandom.nextInt(8) + 2;
         entropy *= 64;
         int dig1pos = secureRandom.nextInt(3);
         int dig2pos = secureRandom.nextInt(3);
