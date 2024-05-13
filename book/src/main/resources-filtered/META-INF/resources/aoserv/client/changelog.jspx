@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 aoserv-client - Java client for the AOServ Platform.
-Copyright (C) 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023  AO Industries, Inc.
+Copyright (C) 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024  AO Industries, Inc.
     support@aoindustries.com
     7262 Bull Pen Cir
     Mobile, AL 36695
@@ -37,9 +37,9 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
     shortTitle="Changelog"
     tocLevels="1"
     datePublished="2016-10-29T21:07:28-05:00"
-    dateModified="2023-10-10T02:04:41Z"
+    dateModified="2024-05-13T04:55:18Z"
   >
-    <c:set var="latestRelease" value="1.91.8" />
+    <c:set var="latestRelease" value="1.92.0" />
     <c:if test="${
       fn:endsWith('@{project.version}', '-SNAPSHOT')
       and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')
@@ -81,28 +81,40 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
           <!-- TODO:
           <li>Look into jOOQ: https://www.jooq.org/</li>
           -->
-          <li>
-            Enabled control over Tomcat <ao:a href="https://tomcat.apache.org/tomcat-9.0-doc/config/host.html#Common_Attributes"><code>maxParameterCount</code></ao:a>:
-            <ol>
-              <li>Added <code>PrivateTomcatSite.getMaxParameterCount()</code></li>
-              <li>Added <code>web.tomcat.PrivateTomcatSite.maxParameterCount.set</code> command.</li>
-              <li>Added <code>SharedTomcat.getMaxParameterCount()</code></li>
-              <li>Added <code>web.tomcat.SharedTomcat.maxParameterCount.set</code> command.</li>
-            </ol>
-          </li>
-          <li>
-            Enabled control over Tomcat <ao:a href="https://tomcat.apache.org/tomcat-9.0-doc/config/host.html#Common_Attributes"><code>undeployOldVersions</code></ao:a>
-            setting in support of parallel deployments:
-            <ol>
-              <li>Added <code>PrivateTomcatSite.getUndeployOldVersions()</code></li>
-              <li>Added <code>web.tomcat.PrivateTomcatSite.undeployOldVersions.set</code> command.</li>
-              <li>Added <code>SharedTomcat.getUndeployOldVersions()</code></li>
-              <li>Added <code>web.tomcat.SharedTomcat.undeployOldVersions.set</code> command.</li>
-            </ol>
-          </li>
         </ul>
       </changelog:release>
     </c:if>
+
+    <changelog:release
+      projectName="@{documented.name}"
+      version="1.92.0"
+      datePublished="2024-05-13T04:55:18Z"
+      groupId="@{project.groupId}"
+      artifactId="@{documented.artifactId}"
+      scmUrl="@{project.scm.url}"
+    >
+      <ul>
+        <li>
+          Enabled control over Tomcat <ao:a href="https://tomcat.apache.org/tomcat-9.0-doc/config/host.html#Common_Attributes"><code>maxParameterCount</code></ao:a>:
+          <ol>
+            <li>Added <code>PrivateTomcatSite.getMaxParameterCount()</code></li>
+            <li>Added <code>web.tomcat.PrivateTomcatSite.maxParameterCount.set</code> command.</li>
+            <li>Added <code>SharedTomcat.getMaxParameterCount()</code></li>
+            <li>Added <code>web.tomcat.SharedTomcat.maxParameterCount.set</code> command.</li>
+          </ol>
+        </li>
+        <li>
+          Enabled control over Tomcat <ao:a href="https://tomcat.apache.org/tomcat-9.0-doc/config/host.html#Common_Attributes"><code>undeployOldVersions</code></ao:a>
+          setting in support of parallel deployments:
+          <ol>
+            <li>Added <code>PrivateTomcatSite.getUndeployOldVersions()</code></li>
+            <li>Added <code>web.tomcat.PrivateTomcatSite.undeployOldVersions.set</code> command.</li>
+            <li>Added <code>SharedTomcat.getUndeployOldVersions()</code></li>
+            <li>Added <code>web.tomcat.SharedTomcat.undeployOldVersions.set</code> command.</li>
+          </ol>
+        </li>
+      </ul>
+    </changelog:release>
 
     <changelog:release
       projectName="@{documented.name}"
