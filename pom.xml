@@ -48,6 +48,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
     <!-- AOSH default to interactive mode, but allow overriding on command line -->
     <exec.args>-i</exec.args>
     <!-- com.aoindustries is on original Sonatype Nexus Repository Manager -->
+    <nexusServerId>ossrh-aoindustries</nexusServerId>
     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
     <!-- SonarQube -->
     <sonar.projectKey>com.aoapps.platform:aoapps-client<!-- TODO: ${project.groupId}:${project.artifactId} --></sonar.projectKey>
