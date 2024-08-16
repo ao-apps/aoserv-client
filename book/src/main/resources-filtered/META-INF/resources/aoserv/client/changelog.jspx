@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
     shortTitle="Changelog"
     tocLevels="1"
     datePublished="2016-10-29T21:07:28-05:00"
-    dateModified="2024-05-13T04:55:18Z"
+    dateModified="2024-08-16T19:09:49Z"
   >
     <c:set var="latestRelease" value="1.92.0" />
     <c:if test="${
@@ -54,6 +54,10 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
         scmUrl="@{project.scm.url}"
       >
         <ul>
+          <li>
+            New constant <code>FirewallZone.NM_SHARED</code> as seen in
+            <ao:a href="https://rockylinux.org/news/rocky-linux-9-4-ga-release">Rocky Linux 9</ao:a>.
+          </li>
           <!-- TODO:
           <li>Added schemas (where some object can exist without schema, such as "int"?)</li>
           <li>Added a type registry based on ServiceLoader</li>

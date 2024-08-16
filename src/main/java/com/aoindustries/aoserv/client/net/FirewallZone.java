@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2017, 2018, 2019, 2020, 2021, 2022, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -252,6 +252,7 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
       EXTERNAL,
       HOME,
       INTERNAL,
+      NM_SHARED,
       PUBLIC,
       WORK;
 
@@ -261,6 +262,7 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
       EXTERNAL = Name.valueOf("external");
       HOME = Name.valueOf("home");
       INTERNAL = Name.valueOf("internal");
+      NM_SHARED = Name.valueOf("nm-shared");
       PUBLIC = Name.valueOf("public");
       WORK = Name.valueOf("work");
     } catch (ValidationException e) {
