@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -136,6 +136,23 @@ public final class TransactionSearchCriteria implements AoservStreamable {
     );
   }
 
+  public TransactionSearchCriteria(Administrator administrator) throws IOException, SQLException {
+    before = null;
+
+    // The beginning of last month starts the default search
+    after = getDefaultAfter(System.currentTimeMillis());
+
+    transid = ANY;
+    account = administrator == null ? null : administrator.getUsername().getPackage().getAccount_name();
+    sourceAccount = null;
+    this.administrator = null;
+    type = null;
+    description = null;
+    paymentType = null;
+    paymentInfo = null;
+    paymentConfirmed = ANY;
+  }
+
   public static UnmodifiableTimestamp getDefaultAfter(long time) {
     GregorianCalendar gcal = new GregorianCalendar(Type.DATE_TIME_ZONE);
     gcal.setTimeInMillis(time);
@@ -155,23 +172,6 @@ public final class TransactionSearchCriteria implements AoservStreamable {
     gcal.set(Calendar.SECOND, 0);
     gcal.set(Calendar.MILLISECOND, 0);
     return new UnmodifiableTimestamp(gcal.getTimeInMillis());
-  }
-
-  public TransactionSearchCriteria(Administrator administrator) throws IOException, SQLException {
-    before = null;
-
-    // The beginning of last month starts the default search
-    after = getDefaultAfter(System.currentTimeMillis());
-
-    transid = ANY;
-    account = administrator == null ? null : administrator.getUsername().getPackage().getAccount_name();
-    sourceAccount = null;
-    this.administrator = null;
-    type = null;
-    description = null;
-    paymentType = null;
-    paymentInfo = null;
-    paymentConfirmed = ANY;
   }
 
   @SuppressWarnings("ReturnOfDateField") // UnmodifiableTimestamp

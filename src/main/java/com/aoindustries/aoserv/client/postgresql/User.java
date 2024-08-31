@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -145,6 +145,16 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
       super(id);
     }
 
+    /**
+     * @deprecated  Only required for implementation, do not use directly.
+     *
+     * @see  FastExternalizable
+     */
+    @Deprecated // Java 9: (forRemoval = false)
+    public Name() {
+      // Do nothing
+    }
+
     @Override
     protected void validate() throws ValidationException {
       ValidationResult result = validate(name);
@@ -175,16 +185,6 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
 
     // <editor-fold defaultstate="collapsed" desc="FastExternalizable">
     private static final long serialVersionUID = 2L;
-
-    /**
-     * @deprecated  Only required for implementation, do not use directly.
-     *
-     * @see  FastExternalizable
-     */
-    @Deprecated // Java 9: (forRemoval = false)
-    public Name() {
-      // Do nothing
-    }
 
     @Override
     public long getSerialVersionUID() {
