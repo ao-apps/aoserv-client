@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -353,7 +353,18 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
       // SystemTap
       STAPUSR,
       STAPSYS,
-      STAPDEV;
+      STAPDEV,
+      // Rocky 9
+      FLATPAK,
+      GEOCLUE,
+      KVM,
+      PIPEWIRE,
+      RENDER,
+      RTKIT,
+      SGX,
+      SSSD,
+      SYSTEMD_COREDUMP,
+      SYSTEMD_OOM;
 
   /**
    * @deprecated  Group httpd no longer used.
@@ -452,6 +463,17 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
       STAPUSR = Name.valueOf("stapusr");
       STAPSYS = Name.valueOf("stapsys");
       STAPDEV = Name.valueOf("stapdev");
+      // Rocky 9
+      FLATPAK = Name.valueOf("flatpak");
+      GEOCLUE = Name.valueOf("geoclue");
+      KVM = Name.valueOf("kvm");
+      PIPEWIRE = Name.valueOf("pipewire");
+      RENDER = Name.valueOf("render");
+      RTKIT = Name.valueOf("rtkit");
+      SGX = Name.valueOf("sgx");
+      SSSD = Name.valueOf("sssd");
+      SYSTEMD_COREDUMP = Name.valueOf("systemd-coredump");
+      SYSTEMD_OOM = Name.valueOf("systemd-oom");
       // Group httpd no longer used.
       HTTPD = Name.valueOf("httpd");
     } catch (ValidationException e) {

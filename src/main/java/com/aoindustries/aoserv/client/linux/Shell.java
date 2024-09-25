@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -59,6 +59,7 @@ public final class Shell extends GlobalObjectPosixPathKey<Shell> {
   public static final PosixPath FTPPASSWD;
   public static final PosixPath GIT_SHELL;
   public static final PosixPath PASSWD;
+  public static final PosixPath USR_SBIN_NOLOGIN;
 
   static {
     try {
@@ -75,6 +76,7 @@ public final class Shell extends GlobalObjectPosixPathKey<Shell> {
       FTPPASSWD = PosixPath.valueOf("/usr/bin/ftppasswd").intern();
       GIT_SHELL = PosixPath.valueOf("/usr/bin/git-shell").intern();
       PASSWD = PosixPath.valueOf("/usr/bin/passwd").intern();
+      USR_SBIN_NOLOGIN = PosixPath.valueOf("/usr/sbin/nologin").intern();
     } catch (ValidationException e) {
       throw new AssertionError("These hard-coded values are valid", e);
     }

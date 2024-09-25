@@ -509,7 +509,15 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       // OProfile
       OPROFILE,
       // SonarQube
-      SONARQUBE;
+      SONARQUBE,
+      // Rocky 9
+      FLATPAK,
+      GEOCLUE,
+      PIPEWIRE,
+      RTKIT,
+      SSSD,
+      SYSTEMD_COREDUMP,
+      SYSTEMD_OOM;
 
   /**
    * @deprecated  User httpd no longer used.
@@ -585,6 +593,14 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       OPROFILE = Name.valueOf("oprofile");
       // SonarQube
       SONARQUBE = Name.valueOf("sonarqube");
+      // Rocky 9
+      FLATPAK = Name.valueOf("flatpak");
+      GEOCLUE = Name.valueOf("geoclue");
+      PIPEWIRE = Name.valueOf("pipewire");
+      RTKIT = Name.valueOf("rtkit");
+      SSSD = Name.valueOf("sssd");
+      SYSTEMD_COREDUMP = Name.valueOf("systemd-coredump");
+      SYSTEMD_OOM = Name.valueOf("systemd-oom");
       // User httpd no longer used.
       HTTPD = Name.valueOf("httpd");
     } catch (ValidationException e) {
