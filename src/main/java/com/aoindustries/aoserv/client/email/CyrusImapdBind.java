@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017, 2018, 2019, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2017, 2018, 2019, 2021, 2022, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -160,9 +160,8 @@ public final class CyrusImapdBind extends CachedObjectIntegerKey<CyrusImapdBind>
 
   /**
    * The fully qualified hostname for <code>servername</code>.
-   * <p>
-   * When {@code null}, defaults to {@link CyrusImapdServer#getServername()}.
-   * </p>
+   *
+   * <p>When {@code null}, defaults to {@link CyrusImapdServer#getServername()}.</p>
    */
   public DomainName getServername() {
     return servername;
@@ -183,9 +182,8 @@ public final class CyrusImapdBind extends CachedObjectIntegerKey<CyrusImapdBind>
 
   /**
    * Allows plaintext authentication (PLAIN/LOGIN) on non-TLS links.
-   * <p>
-   * When {@code null}, defaults to {@link CyrusImapdServer#getAllowPlaintextAuth()}.
-   * </p>
+   *
+   * <p>When {@code null}, defaults to {@link CyrusImapdServer#getAllowPlaintextAuth()}.</p>
    */
   public Boolean getAllowPlaintextAuth() {
     return allowPlaintextAuth;

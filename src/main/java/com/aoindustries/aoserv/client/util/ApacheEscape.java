@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2018, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2018, 2021, 2022, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -42,10 +42,9 @@ public final class ApacheEscape {
    * Adds double quotes as-needed.  Please note that '$' is also
    * escaped when found in form <code>${variable}</code>, so this might not be
    * appropriate for <code>${variable}</code> substitutions.
-   * <p>
-   * Please note, the dollar escaping relies on Apache being configured with
-   * <code>Define &lt;dollarVariable&gt; $</code>, as it is performed with a <code>${dollarVariable}</code> hack.
-   * </p>
+   *
+   * <p>Please note, the dollar escaping relies on Apache being configured with
+   * <code>Define &lt;dollarVariable&gt; $</code>, as it is performed with a <code>${dollarVariable}</code> hack.</p>
    *
    * @see  #escape(java.lang.String, java.lang.String, boolean)
    */
@@ -56,18 +55,16 @@ public final class ApacheEscape {
   /**
    * Escapes arbitrary text to be used in an Apache directive.
    * Adds double quotes as-needed.  Optionally allowing '$' unescaped.
-   * <p>
-   * Please note, the dollar escaping relies on Apache being configured with
+   *
+   * <p>Please note, the dollar escaping relies on Apache being configured with
    * <code>Define $ $</code>, as it is performed with a <code>${$}</code> hack.
-   * This is set in the aoserv-httpd-config package, in <code>core.inc</code>.
-   * </p>
-   * <p>
-   * I am unable to find clear documentation on the full set of rules for escaping Apache directives.
+   * This is set in the aoserv-httpd-config package, in <code>core.inc</code>.</p>
+   *
+   * <p>I am unable to find clear documentation on the full set of rules for escaping Apache directives.
    * I have experimented with various values and techniques to achieve this implementation.
    * It seems there is no useful way to encode completely arbitrary values into directives.
    * Thus, this set of rules may not be optimal (may perform more escaping than necessary) or,
-   * even worse, could be incomplete.
-   * </p>
+   * even worse, could be incomplete.</p>
    *
    * @return  the escaped string or the original string when no escaping required
    *

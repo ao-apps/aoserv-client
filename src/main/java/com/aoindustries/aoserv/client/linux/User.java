@@ -75,9 +75,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
 
   /**
    * Used for the various user-provided fields in the <code>/etc/passwd</code> file.
-   * <p>
-   * <a href="https://wikipedia.org/wiki/Gecos_field">https://wikipedia.org/wiki/Gecos_field</a>
-   * </p>
+   *
+   * <p><a href="https://wikipedia.org/wiki/Gecos_field">https://wikipedia.org/wiki/Gecos_field</a></p>
    *
    * @author  AO Industries, Inc.
    */
@@ -273,10 +272,9 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
 
     /**
      * The maximum length of a Linux username.
-     * <p>
-     * <b>Implementation Note:</b><br>
-     * 32 characters
-     * </p>
+     *
+     * <p><b>Implementation Note:</b><br>
+     * 32 characters</p>
      */
     public static final int LINUX_NAME_MAX_LENGTH = 32;
 

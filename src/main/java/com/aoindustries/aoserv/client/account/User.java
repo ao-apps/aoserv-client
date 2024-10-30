@@ -92,9 +92,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
    *     reverse is not implied - email addresses may exist that are not valid user ids.
    *   </li>
    * </ul>
-   * <p>
-   * TODO: Should we allow Unicode here, since we now have a more restrictive {@link com.aoindustries.aoserv.client.linux.User.Name} for shell accounts?
-   * </p>
+   *
+   * <p>TODO: Should we allow Unicode here, since we now have a more restrictive {@link com.aoindustries.aoserv.client.linux.User.Name} for shell accounts?</p>
    *
    * @see  com.aoindustries.aoserv.client.linux.User.Name
    * @see  com.aoindustries.aoserv.client.mysql.User.Name
@@ -269,22 +268,19 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
 
     /**
      * Interns this name much in the same fashion as <code>String.intern()</code>.
-     * <p>
-     * Because this has subtypes, two {@link Name} that are {@link #equals(java.lang.Object)}
+     *
+     * <p>Because this has subtypes, two {@link Name} that are {@link #equals(java.lang.Object)}
      * may not necessarily return the same instance object after interning.  Thus,
      * unless you know objects are of the same class, {@link #equals(java.lang.Object)} should
-     * still be used for equality check instead of the {@code obj1 == obj2} shortcut.
-     * </p>
-     * <p>
-     * To more efficiently check post-interned equivalence, one could also do
+     * still be used for equality check instead of the {@code obj1 == obj2} shortcut.</p>
+     *
+     * <p>To more efficiently check post-interned equivalence, one could also do
      * {@code obj1 == obj2 || (obj1.getClass() != obj2.getClass() && obj1.equals(obj2))},
-     * but is it worth it?
-     * </p>
-     * <p>
-     * And then if we abuse the fact that interned user ids have an interned name, one
+     * but is it worth it?</p>
+     *
+     * <p>And then if we abuse the fact that interned user ids have an interned name, one
      * could check equivalence of post-interned user ids as {@code obj1.getId() == obj2.getId()},
-     * but once again, is it worth it?  Just call {@link #equals(java.lang.Object)}.
-     * </p>
+     * but once again, is it worth it?  Just call {@link #equals(java.lang.Object)}.</p>
      *
      * @see  String#intern()
      */

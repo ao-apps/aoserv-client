@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -774,12 +774,11 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
 
   /**
    * Sorts by username.
-   * <p>
-   * TODO: Consider handling comparisons at the AoservTable and making all
+   *
+   * <p>TODO: Consider handling comparisons at the AoservTable and making all
    * AoservObject's comparable.  We could then return things as sets where
    * appropriate.  Maybe have getMap, getList, getSet, and getSortedSet
-   * as appropriate?
-   * </p>
+   * as appropriate?</p>
    */
   @Override
   public int compareTo(Administrator o) {

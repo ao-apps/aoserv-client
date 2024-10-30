@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2007-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2007-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -163,10 +163,9 @@ public final class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
    * Gets the whois output from the database.  The first access to this, or {@link #getError()}, for a specific object instance
    * will query the master server for the information and then cache the results.  This is done
    * to conserve heap space while still yielding high performance through the caching of the rest of the fields.
-   * <p>
-   * From an outside point of view, the object is still immutable and will yield constant return
-   * values per instance.
-   * </p>
+   *
+   * <p>From an outside point of view, the object is still immutable and will yield constant return
+   * values per instance.</p>
    */
   public String getOutput() throws IOException, SQLException {
     synchronized (outputLock) {
@@ -179,10 +178,9 @@ public final class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
    * Gets the whois error from the database.  The first access to this, or {@link #getOutput()}, for a specific object instance
    * will query the master server for the information and then cache the results.  This is done
    * to conserve heap space while still yielding high performance through the caching of the rest of the fields.
-   * <p>
-   * From an outside point of view, the object is still immutable and will yield constant return
-   * values per instance.
-   * </p>
+   *
+   * <p>From an outside point of view, the object is still immutable and will yield constant return
+   * values per instance.</p>
    */
   public String getError() throws IOException, SQLException {
     synchronized (outputLock) {

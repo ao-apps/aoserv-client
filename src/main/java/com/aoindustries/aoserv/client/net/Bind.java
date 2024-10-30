@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -377,31 +377,32 @@ public final class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
       OperatingSystemVersion osv = hs.getLinuxServer().getHost().getOperatingSystemVersion();
       int osvId = osv.getPkey();
       switch (osvId) {
-        case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64: {
-          int number = (name == null) ? 1 : Integer.parseInt(name);
-          return
-              "Apache HTTP Server #"
-                  + number
-                  + " configured in /etc/httpd/conf/httpd"
-                  + number
-                  + ".conf";
-        }
-        case OperatingSystemVersion.CENTOS_7_X86_64:
-        case OperatingSystemVersion.ROCKY_9_X86_64: {
-          if (name == null) {
-            return "Apache HTTP Server configured in /etc/httpd/conf/httpd.conf";
-          } else {
+        case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64:
+          {
+            int number = (name == null) ? 1 : Integer.parseInt(name);
             return
-                "Apache HTTP Server ("
-                    + name
-                    + ") configured in /etc/httpd/conf/httpd@"
-                    + hs.getSystemdEscapedName()
+                "Apache HTTP Server #"
+                    + number
+                    + " configured in /etc/httpd/conf/httpd"
+                    + number
                     + ".conf";
           }
-        }
-        default: {
+        case OperatingSystemVersion.CENTOS_7_X86_64:
+        case OperatingSystemVersion.ROCKY_9_X86_64:
+          {
+            if (name == null) {
+              return "Apache HTTP Server configured in /etc/httpd/conf/httpd.conf";
+            } else {
+              return
+                  "Apache HTTP Server ("
+                      + name
+                      + ") configured in /etc/httpd/conf/httpd@"
+                      + hs.getSystemdEscapedName()
+                      + ".conf";
+            }
+          }
+        default:
           throw new AssertionError("Unexpected OperatingSystemVersion: " + osv);
-        }
       }
     }
 

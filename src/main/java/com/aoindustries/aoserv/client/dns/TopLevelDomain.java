@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2021, 2022, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -44,11 +44,10 @@ import java.sql.SQLException;
  * is a word without dots (<code>.</code>), and <code>dns_tld</code> is one of
  * the top level domains in the database.  If a top level domain does not exist
  * that properly should, please contact AO Industries to have it added.
- * <p>
- * Also, this is a list of effective top-level domains, for the purposes of
+ *
+ * <p>Also, this is a list of effective top-level domains, for the purposes of
  * domain allocation.  This means it includes things like <code>com.au</code>,
- * whereas the {@link com.aoapps.tlds.TopLevelDomain} only includes <code>au</code>.
- * </p>
+ * whereas the {@link com.aoapps.tlds.TopLevelDomain} only includes <code>au</code>.</p>
  *
  * @see  Zone
  *

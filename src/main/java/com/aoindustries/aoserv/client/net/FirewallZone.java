@@ -68,20 +68,19 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
    *   <li>Not end with a slash (/)</li>
    *   <li>Not contain more than one slash (/)</li>
    * </ul>
-   * <p>
-   *   We're unable to find well-defined rules for valid zone names.  The rules above are based on the source code
-   *   for <a href="https://firewalld.org/">firewalld</a> included with CentOS 7.
-   * </p>
+   *
+   * <p>We're unable to find well-defined rules for valid zone names.  The rules above are based on the source code
+   * for <a href="https://firewalld.org/">firewalld</a> included with CentOS 7.</p>
+   *
    * <ol>
    *   <li>See <code>/usr/lib/python2.7/site-packages/firewall/core/io/zone.py</code>, <code>check_name</code>.</li>
    *   <li>See <code>/usr/lib/python2.7/site-packages/firewall/core/io/io_object.py</code>, <code>check_name</code>.</li>
    *   <li>See <code>/usr/lib/python2.7/site-packages/firewall/functions.py</code>, <code>max_zone_name_len</code>.</li>
    * </ol>
-   * <p>
-   * Additionally, we tried creating a new zone with some UTF-8 characters, specifically Japanese,
+   *
+   * <p>Additionally, we tried creating a new zone with some UTF-8 characters, specifically Japanese,
    * and <code>firewalld-cmd</code> just stalled, not even responding to <code>Ctrl-C</code>.  We are implementing with a
-   * strict ASCII-compatible definition of "alphanumeric".
-   * </p>
+   * strict ASCII-compatible definition of "alphanumeric".</p>
    *
    * @author  AO Industries, Inc.
    */

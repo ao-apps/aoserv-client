@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2020, 2021, 2022, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -27,11 +27,10 @@ package com.aoindustries.aoserv.client;
  * Synchronously notified of table loading progress.  Implementations
  * should execute quickly, so as to not slow down the table loading
  * process.
- * <p>
- * Please note that registering a progress listener can increase the server-side
+ *
+ * <p>Please note that registering a progress listener can increase the server-side
  * overhead, as in some implementations the result sets must be traversed twice:
- * once to count rows then once to return them.
- * </p>
+ * once to count rows then once to return them.</p>
  *
  * @see  AoservTable#addProgressListener
  *
@@ -49,10 +48,9 @@ public interface ProgressListener {
   /**
    * The progress is rounded off to the scale provided by <code>getScale</code>.
    * Whenever the rounded-off value changes, this method is called.
-   * <p>
-   * When a table load fails and auto-retries, this progress may
-   * start back at zero again.
-   * </p>
+   *
+   * <p>When a table load fails and auto-retries, this progress may
+   * start back at zero again.</p>
    */
   void onProgressChanged(AoservTable<?, ?> table, int position, int scale);
 }

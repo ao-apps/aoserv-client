@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -162,30 +162,31 @@ public final class Zone extends CachedObjectStringKey<Zone> implements Removable
     @SuppressWarnings("deprecation")
     com.aoapps.net.AddressFamily addressFamily = ip.getAddressFamily();
     switch (addressFamily) {
-      case INET: {
-        String ipStr = ip.toString();
-        if ("255.255.255.0".equals(netmask)) {
-          int pos = ipStr.indexOf('.');
-          int oct1 = Integer.parseInt(ipStr.substring(0, pos));
-          int pos2 = ipStr.indexOf('.', pos + 1);
-          int oct2 = Integer.parseInt(ipStr.substring(pos + 1, pos2));
-          pos = ipStr.indexOf('.', pos2 + 1);
-          int oct3 = Integer.parseInt(ipStr.substring(pos2 + 1, pos));
-          return oct3 + "." + oct2 + "." + oct1 + ".in-addr.arpa";
-        } else if ("255.255.255.128".equals(netmask)) {
-          // Hurricane Electric compatible
-          int pos = ipStr.indexOf('.');
-          int oct1 = Integer.parseInt(ipStr.substring(0, pos));
-          int pos2 = ipStr.indexOf('.', pos + 1);
-          int oct2 = Integer.parseInt(ipStr.substring(pos + 1, pos2));
-          pos = ipStr.indexOf('.', pos2 + 1);
-          int oct3 = Integer.parseInt(ipStr.substring(pos2 + 1, pos));
-          int oct4 = Integer.parseInt(ipStr.substring(pos + 1));
-          return "subnet" + (oct4 & 128) + "." + oct3 + "." + oct2 + "." + oct1 + ".in-addr.arpa";
-        } else {
-          throw new IllegalArgumentException("Unsupported netmask: " + netmask);
+      case INET:
+        {
+          String ipStr = ip.toString();
+          if ("255.255.255.0".equals(netmask)) {
+            int pos = ipStr.indexOf('.');
+            int oct1 = Integer.parseInt(ipStr.substring(0, pos));
+            int pos2 = ipStr.indexOf('.', pos + 1);
+            int oct2 = Integer.parseInt(ipStr.substring(pos + 1, pos2));
+            pos = ipStr.indexOf('.', pos2 + 1);
+            int oct3 = Integer.parseInt(ipStr.substring(pos2 + 1, pos));
+            return oct3 + "." + oct2 + "." + oct1 + ".in-addr.arpa";
+          } else if ("255.255.255.128".equals(netmask)) {
+            // Hurricane Electric compatible
+            int pos = ipStr.indexOf('.');
+            int oct1 = Integer.parseInt(ipStr.substring(0, pos));
+            int pos2 = ipStr.indexOf('.', pos + 1);
+            int oct2 = Integer.parseInt(ipStr.substring(pos + 1, pos2));
+            pos = ipStr.indexOf('.', pos2 + 1);
+            int oct3 = Integer.parseInt(ipStr.substring(pos2 + 1, pos));
+            int oct4 = Integer.parseInt(ipStr.substring(pos + 1));
+            return "subnet" + (oct4 & 128) + "." + oct3 + "." + oct2 + "." + oct1 + ".in-addr.arpa";
+          } else {
+            throw new IllegalArgumentException("Unsupported netmask: " + netmask);
+          }
         }
-      }
       case INET6:
         throw new IllegalArgumentException("IPv6 not yet implemented: " + ip);
       default:

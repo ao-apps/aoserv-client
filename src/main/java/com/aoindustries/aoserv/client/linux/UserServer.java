@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -70,9 +70,8 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
   /**
    * The UID of the root user.
-   * <p>
-   * Note: Copied from PosixFile.java to avoid interproject dependency.
-   * </p>
+   *
+   * <p>Note: Copied from PosixFile.java to avoid interproject dependency.</p>
    */
   public static final int ROOT_UID = 0;
 

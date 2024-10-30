@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -539,11 +539,10 @@ public abstract class AoservObject<K, T extends AoservObject<K, T>> implements R
 
   /**
    * {@inheritDoc}
-   * <p>
-   * <b>Implementation Note:</b><br>
+   *
+   * <p><b>Implementation Note:</b><br>
    * This default implementation considers the object equal when it is the same class
-   * (via {@link #getClass()} and has equal keys (via {@link #getKey()}).
-   * </p>
+   * (via {@link #getClass()} and has equal keys (via {@link #getKey()}).</p>
    */
   @Override
   public boolean equals(Object obj) {
@@ -604,10 +603,9 @@ public abstract class AoservObject<K, T extends AoservObject<K, T>> implements R
 
   /**
    * {@inheritDoc}
-   * <p>
-   * <b>Implementation Note:</b><br>
-   * This default implementation calls {@link #hashCode()} on the key (from {@link #getKey()}).
-   * </p>
+   *
+   * <p><b>Implementation Note:</b><br>
+   * This default implementation calls {@link #hashCode()} on the key (from {@link #getKey()}).</p>
    */
   @Override
   public int hashCode() {
@@ -644,11 +642,10 @@ public abstract class AoservObject<K, T extends AoservObject<K, T>> implements R
 
   /**
    * {@inheritDoc}
-   * <p>
-   * <b>Implementation Note:</b><br>
+   *
+   * <p><b>Implementation Note:</b><br>
    * This default implementation calls {@link #toStringImpl()}, which
-   * is allowed to throw exceptions.
-   * </p>
+   * is allowed to throw exceptions.</p>
    *
    * @see  #toStringImpl()
    *
@@ -665,11 +662,10 @@ public abstract class AoservObject<K, T extends AoservObject<K, T>> implements R
 
   /**
    * {@link #toString()} implementation that is allowed to throw exceptions.
-   * <p>
-   * <b>Implementation Note:</b><br>
+   *
+   * <p><b>Implementation Note:</b><br>
    * This default implementation calls {@link #toString()} on the key (from {@link #getKey()}).
-   * When the key is {@code null}, uses the default implementation from {@link Object#toString()}.
-   * </p>
+   * When the key is {@code null}, uses the default implementation from {@link Object#toString()}.</p>
    */
   public String toStringImpl() throws IOException, SQLException {
     K pkey = getKey();

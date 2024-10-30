@@ -145,28 +145,31 @@ public final class PasswordGenerator {
         int template = secureRandom.nextInt(3);
         entropy *= 3;
         switch (template) {
-          case 0: {
-            temp1 = secureRandom.nextBoolean() ? 321 : 412;
-            temp2 = secureRandom.nextBoolean() ? 321 : 412;
-            entropy *= 4;
-            break;
-          }
-          case 1: {
-            if (secureRandom.nextBoolean()) {
-              temp1 = secureRandom.nextBoolean() ? 361 : 412;
-              temp2 = secureRandom.nextBoolean() ? 4161 : 3612;
-            } else {
-              temp2 = secureRandom.nextBoolean() ? 361 : 412;
-              temp1 = secureRandom.nextBoolean() ? 4161 : 3612;
+          case 0:
+            {
+              temp1 = secureRandom.nextBoolean() ? 321 : 412;
+              temp2 = secureRandom.nextBoolean() ? 321 : 412;
+              entropy *= 4;
+              break;
             }
-            entropy *= 8;
-            break;
-          }
-          case 2: {
-            temp1 = secureRandom.nextBoolean() ? 416161 : 361612;
-            entropy *= 2;
-            break;
-          }
+          case 1:
+            {
+              if (secureRandom.nextBoolean()) {
+                temp1 = secureRandom.nextBoolean() ? 361 : 412;
+                temp2 = secureRandom.nextBoolean() ? 4161 : 3612;
+              } else {
+                temp2 = secureRandom.nextBoolean() ? 361 : 412;
+                temp1 = secureRandom.nextBoolean() ? 4161 : 3612;
+              }
+              entropy *= 8;
+              break;
+            }
+          case 2:
+            {
+              temp1 = secureRandom.nextBoolean() ? 416161 : 361612;
+              entropy *= 2;
+              break;
+            }
           default:
             throw new AssertionError();
         }
@@ -182,32 +185,37 @@ public final class PasswordGenerator {
           while (digit > 0) {
             currTemp /= 10;
             switch (digit) {
-              case 1: {
-                currWord.append(VOWS[secureRandom.nextInt(VOWS.length)]);
-                entropy *= VOWS.length;
-                break;
-              }
-              case 2: {
-                currWord.append(CONS[secureRandom.nextInt(CONS.length)]);
-                entropy *= CONS.length;
-                break;
-              }
-              case 3: {
-                currWord.append(TERM_VOWS[secureRandom.nextInt(TERM_VOWS.length)]);
-                entropy *= TERM_VOWS.length;
-                break;
-              }
-              case 4: {
-                currWord.append(TERM_CONS[secureRandom.nextInt(TERM_CONS.length)]);
-                entropy *= TERM_CONS.length;
-                break;
-              }
-              case 6: {
-                boolean a = secureRandom.nextBoolean();
-                currWord.append(a ? CONS[secureRandom.nextInt(CONS.length)] : TERM_CONS[secureRandom.nextInt(TERM_CONS.length)]);
-                entropy *= (a ? CONS : TERM_CONS).length;
-                break;
-              }
+              case 1:
+                {
+                  currWord.append(VOWS[secureRandom.nextInt(VOWS.length)]);
+                  entropy *= VOWS.length;
+                  break;
+                }
+              case 2:
+                {
+                  currWord.append(CONS[secureRandom.nextInt(CONS.length)]);
+                  entropy *= CONS.length;
+                  break;
+                }
+              case 3:
+                {
+                  currWord.append(TERM_VOWS[secureRandom.nextInt(TERM_VOWS.length)]);
+                  entropy *= TERM_VOWS.length;
+                  break;
+                }
+              case 4:
+                {
+                  currWord.append(TERM_CONS[secureRandom.nextInt(TERM_CONS.length)]);
+                  entropy *= TERM_CONS.length;
+                  break;
+                }
+              case 6:
+                {
+                  boolean a = secureRandom.nextBoolean();
+                  currWord.append(a ? CONS[secureRandom.nextInt(CONS.length)] : TERM_CONS[secureRandom.nextInt(TERM_CONS.length)]);
+                  entropy *= (a ? CONS : TERM_CONS).length;
+                  break;
+                }
               default:
                 // fall-through to continue loop
             }

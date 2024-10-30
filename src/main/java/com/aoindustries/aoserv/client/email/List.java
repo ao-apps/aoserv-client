@@ -279,9 +279,8 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
 
   /**
    * Checks the validity of a list name.
-   * <p>
-   * TODO: Self-validating type
-   * </p>
+   *
+   * <p>TODO: Self-validating type</p>
    *
    * @see  OperatingSystemVersion#isValidEmailListRegularPath(com.aoindustries.aoserv.client.linux.PosixPath)
    */
@@ -296,64 +295,35 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
     }
     pathStr = pathStr.substring(LIST_DIRECTORY.length() + 1);
     switch (osv) {
-      case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64: {
-        if (pathStr.length() < 2) {
-          return false;
-        }
-        final char firstChar = pathStr.charAt(0);
-        if (pathStr.charAt(1) != '/') {
-          return false;
-        }
-        pathStr = pathStr.substring(2);
-        int len = pathStr.length();
-        if (len < 1 || len > MAX_NAME_LENGTH) {
-          return false;
-        }
-        for (int c = 0; c < len; c++) {
-          char ch = pathStr.charAt(c);
-          if (c == 0) {
-            if (
-                (ch < '0' || ch > '9')
-                    && (ch < 'a' || ch > 'z')
-                    && (ch < 'A' || ch > 'Z')
-            ) {
-              return false;
-            }
-            // First character must match with the name
-            if (Character.toLowerCase(ch) != firstChar) {
-              return false;
-            }
-          } else if (
-              (ch < '0' || ch > '9')
-                  && (ch < 'a' || ch > 'z')
-                  && (ch < 'A' || ch > 'Z')
-                  && ch != '.'
-                  && ch != '-'
-                  && ch != '_'
-          ) {
+      case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64:
+        {
+          if (pathStr.length() < 2) {
             return false;
           }
-        }
-        return true;
-      }
-      case OperatingSystemVersion.CENTOS_7_X86_64:
-      case OperatingSystemVersion.ROCKY_9_X86_64: {
-        int len = pathStr.length();
-        if (len < 1 || len > MAX_NAME_LENGTH) {
-          return false;
-        }
-        for (int c = 0; c < len; c++) {
-          char ch = pathStr.charAt(c);
-          if (c == 0) {
-            if (
-                (ch < '0' || ch > '9')
-                    && (ch < 'a' || ch > 'z')
-                    && (ch < 'A' || ch > 'Z')
-            ) {
-              return false;
-            }
-          } else {
-            if (
+          final char firstChar = pathStr.charAt(0);
+          if (pathStr.charAt(1) != '/') {
+            return false;
+          }
+          pathStr = pathStr.substring(2);
+          int len = pathStr.length();
+          if (len < 1 || len > MAX_NAME_LENGTH) {
+            return false;
+          }
+          for (int c = 0; c < len; c++) {
+            char ch = pathStr.charAt(c);
+            if (c == 0) {
+              if (
+                  (ch < '0' || ch > '9')
+                      && (ch < 'a' || ch > 'z')
+                      && (ch < 'A' || ch > 'Z')
+              ) {
+                return false;
+              }
+              // First character must match with the name
+              if (Character.toLowerCase(ch) != firstChar) {
+                return false;
+              }
+            } else if (
                 (ch < '0' || ch > '9')
                     && (ch < 'a' || ch > 'z')
                     && (ch < 'A' || ch > 'Z')
@@ -364,9 +334,40 @@ public final class List extends CachedObjectIntegerKey<List> implements Removabl
               return false;
             }
           }
+          return true;
         }
-        return true;
-      }
+      case OperatingSystemVersion.CENTOS_7_X86_64:
+      case OperatingSystemVersion.ROCKY_9_X86_64:
+        {
+          int len = pathStr.length();
+          if (len < 1 || len > MAX_NAME_LENGTH) {
+            return false;
+          }
+          for (int c = 0; c < len; c++) {
+            char ch = pathStr.charAt(c);
+            if (c == 0) {
+              if (
+                  (ch < '0' || ch > '9')
+                      && (ch < 'a' || ch > 'z')
+                      && (ch < 'A' || ch > 'Z')
+              ) {
+                return false;
+              }
+            } else {
+              if (
+                  (ch < '0' || ch > '9')
+                      && (ch < 'a' || ch > 'z')
+                      && (ch < 'A' || ch > 'Z')
+                      && ch != '.'
+                      && ch != '-'
+                      && ch != '_'
+              ) {
+                return false;
+              }
+            }
+          }
+          return true;
+        }
       default:
         throw new AssertionError("Unexpected OperatingSystemVersion: " + osv);
     }

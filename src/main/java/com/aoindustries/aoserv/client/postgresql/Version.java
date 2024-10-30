@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2002-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -76,9 +76,8 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
    * Gets the versions of PostgreSQL in order of
    * preference.  Index <code>0</code> is the most
    * preferred.
-   * <p>
-   * TODO: Rename "getPreferredMajorVersions
-   * </p>
+   *
+   * <p>TODO: Rename "getPreferredMajorVersions</p>
    */
   public static String[] getPreferredMinorVersions() {
     return new String[]{

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -62,12 +62,11 @@ import java.util.List;
  * has a unique name per server, and may be served simultaneously on any
  * number of <code>HttpdBind</code>s through any number of
  * <code>HttpdServer</code>s.
- * <p>
- * An <code>HttpdSite</code> only stores the information that is common to
+ *
+ * <p>An <code>HttpdSite</code> only stores the information that is common to
  * all site types.  The site will always reference one, and only one, other
  * type of entry, indicating the type of site and providing the rest of the
- * information about the site.
- * </p>
+ * information about the site.</p>
  *
  * @see  VirtualHost
  * @see  HttpdBind
@@ -683,11 +682,11 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
    * directory.  The site name must be 255 characters or less, and comprised of
    * only <code>a-z</code>, <code>0-9</code>, <code>.</code> or <code>-</code>.  The first
    * character must be <code>a-z</code> or <code>0-9</code>.
-   * <p>
-   * Note: This matches the check constraint on the httpd_sites table.
-   * Note: This matches keepWwwDirs in HttpdSiteManager.
-   * </p>
-   * TODO: Self-validating type for site names (Build on PosixPortableFilename, once it exists?)
+   *
+   * <p>Note: This matches the check constraint on the httpd_sites table.
+   * Note: This matches keepWwwDirs in HttpdSiteManager.</p>
+   *
+   * <p>TODO: Self-validating type for site names (Build on PosixPortableFilename, once it exists?)</p>
    */
   public static boolean isValidSiteName(String name) {
     // These are the other files/directories that may exist under /www.  To avoid

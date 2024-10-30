@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -674,10 +674,9 @@ public abstract class AoservTable<K, V extends AoservObject<K, V>> implements It
 
   /**
    * Gets the ComparisonSortAlgorithm used to sort the table.
-   * <p>
-   * <b>Implementation Note:</b><br>
-   * Defaults to {@link JavaSort}.
-   * </p>
+   *
+   * <p><b>Implementation Note:</b><br>
+   * Defaults to {@link JavaSort}.</p>
    */
   protected ComparisonSortAlgorithm<Object> getSortAlgorithm() {
     return JavaSort.getInstance();
@@ -750,16 +749,14 @@ public abstract class AoservTable<K, V extends AoservObject<K, V>> implements It
 
   /**
    * Gets a modifiable copy of the rows, which may then be manipulated, such as for sorting.
-   * <p>
-   * This gives the table implementation a way to create a defensive copy most
-   * efficient to its underlying storage mechanism.
-   * </p>
-   * <p>
-   * Note: It is best to use {@link #getSortAlgorithm()} when sorting rows, as
+   *
+   * <p>This gives the table implementation a way to create a defensive copy most
+   * efficient to its underlying storage mechanism.</p>
+   *
+   * <p>Note: It is best to use {@link #getSortAlgorithm()} when sorting rows, as
    * the choice of sorting can be very important when objects are pulled from
    * non-heap source like filesystem-based objects.  It is very easy for the
-   * sort itself to end up pulling all objects into heap.
-   * </p>
+   * sort itself to end up pulling all objects into heap.</p>
    *
    * @see  #getRows()
    * @see  #getSortAlgorithm()
@@ -807,10 +804,9 @@ public abstract class AoservTable<K, V extends AoservObject<K, V>> implements It
 
   /**
    * Gets the rows in a more efficient, indexed manner.
-   * <p>
-   * <b>Implementation Note:</b><br>
-   * This default implementation simply throws UnsupportedOperationException.
-   * </p>
+   *
+   * <p><b>Implementation Note:</b><br>
+   * This default implementation simply throws UnsupportedOperationException.</p>
    *
    * @exception UnsupportedOperationException if not supported by the specific table implementation
    */

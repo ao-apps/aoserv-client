@@ -80,10 +80,9 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
 
     /**
      * The maximum length of a MySQL username.
-     * <p>
-     * <b>Implementation Note:</b><br>
-     * 32 characters as of <a href="https://dev.mysql.com/doc/relnotes/mysql/5.7/en/news-5-7-8.html">MySQL 5.7.8</a>
-     * </p>
+     *
+     * <p><b>Implementation Note:</b><br>
+     * 32 characters as of <a href="https://dev.mysql.com/doc/relnotes/mysql/5.7/en/news-5-7-8.html">MySQL 5.7.8</a></p>
      */
     public static final int MYSQL_NAME_MAX_LENGTH = 32;
 

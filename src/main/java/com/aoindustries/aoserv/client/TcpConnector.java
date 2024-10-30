@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -67,10 +67,9 @@ public class TcpConnector extends AoservConnector {
   /**
    * Close cache monitor after 90 minutes of inactivity,
    * when there is some sort of non-global-cached data.
-   * <p>
-   * The cache monitor is only shutdown when there are no registered
-   * {@linkplain AoservTable#addTableListener(com.aoapps.hodgepodge.table.TableListener) table listeners}.
-   * </p>
+   *
+   * <p>The cache monitor is only shutdown when there are no registered
+   * {@linkplain AoservTable#addTableListener(com.aoapps.hodgepodge.table.TableListener) table listeners}.</p>
    */
   private static final long MAX_IDLE_LISTEN_CACHES = 90L * 60 * 1000;
 
@@ -78,15 +77,13 @@ public class TcpConnector extends AoservConnector {
    * Close cache monitor after 60 seconds of inactivity,
    * when there is no non-global-cached data, such as after a call to
    * {@link #clearCaches()}.
-   * <p>
-   * This helps support a more timely shutdown.
+   *
+   * <p>This helps support a more timely shutdown.
    * TODO: Expose a "stop" method that will clear all caches, immediately stop
-   * the cache listener, and remove this connector from the pool of connectors?
-   * </p>
-   * <p>
-   * The cache monitor is only shutdown when there are no registered
-   * {@linkplain AoservTable#addTableListener(com.aoapps.hodgepodge.table.TableListener) table listeners}.
-   * </p>
+   * the cache listener, and remove this connector from the pool of connectors?</p>
+   *
+   * <p>The cache monitor is only shutdown when there are no registered
+   * {@linkplain AoservTable#addTableListener(com.aoapps.hodgepodge.table.TableListener) table listeners}.</p>
    */
   // TODO: Use this value, somehow, in a meaningful way.
   // TODO: private static final long MAX_IDLE_LISTEN_CACHES_NOTHING_CACHED = 60L * 1000;

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -413,13 +413,11 @@ public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
    * directory.  The name must be 12 characters or less, and comprised of
    * only <code>a-z</code>,<code>0-9</code>, or <code>-</code>.  The first
    * character must be <code>a-z</code>.
-   * <p>
-   * Note: This matches the check constraint on the httpd_shared_tomcats table.
-   * Note: This matches keepWwwgroupDirs in HttpdSharedTomcatManager.
-   * </p>
-   * <p>
-   * TODO: Self-validating type (Shared site Site.Name validator, and/or PosixPortableFilename?)
-   * </p>
+   *
+   * <p>Note: This matches the check constraint on the httpd_shared_tomcats table.
+   * Note: This matches keepWwwgroupDirs in HttpdSharedTomcatManager.</p>
+   *
+   * <p>TODO: Self-validating type (Shared site Site.Name validator, and/or PosixPortableFilename?)</p>
    */
   public static boolean isValidSharedTomcatName(String name) {
     // These are the other files/directories that may exist under /www.  To avoid

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2020, 2021, 2022, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -41,27 +41,23 @@ public interface TableLoadListener {
    * with the parameter that was provided in the
    * {@link AoservTable#addTableLoadListener(com.aoindustries.aoserv.client.TableLoadListener, java.lang.Object)}
    * call.
-   * <p>
-   * The object returned is stored and will be the parameter provided in the next call.
-   * </p>
+   *
+   * <p>The object returned is stored and will be the parameter provided in the next call.</p>
    */
   Object onTableLoadStarted(AoservTable<?, ?> table, Object param);
 
   /**
    * Called once the number of rows that will be loaded is known or known to be unknown.
-   * <p>
-   * The number of rows is only known when a {@link ProgressListener} has been
+   *
+   * <p>The number of rows is only known when a {@link ProgressListener} has been
    * registered on the table.  If the row count is required, also add a
-   * {@link ProgressListener}.
-   * </p>
-   * <p>
-   * When a table load auto-retries on failure, this may be called more than once
+   * {@link ProgressListener}.</p>
+   *
+   * <p>When a table load auto-retries on failure, this may be called more than once
    * for a given {@link #onTableLoadStarted(com.aoindustries.aoserv.client.AoservTable, java.lang.Object)}.
-   * Each time, it indicates that the load is starting over.
-   * </p>
-   * <p>
-   * The object returned is stored and will be the parameter provided in the next call.
-   * </p>
+   * Each time, it indicates that the load is starting over.</p>
+   *
+   * <p>The object returned is stored and will be the parameter provided in the next call.</p>
    *
    * @see  ProgressListener
    */
@@ -69,9 +65,8 @@ public interface TableLoadListener {
 
   /**
    * Called as each row is loaded.
-   * <p>
-   * The object returned is stored and will be the parameter provided in the next call.
-   * </p>
+   *
+   * <p>The object returned is stored and will be the parameter provided in the next call.</p>
    *
    * @param  rowNumber  The row number loaded, started at zero.
    */
@@ -79,17 +74,15 @@ public interface TableLoadListener {
 
   /**
    * Called when the table load has failed.
-   * <p>
-   * The object returned is stored and will be the parameter provided in the next call.
-   * </p>
+   *
+   * <p>The object returned is stored and will be the parameter provided in the next call.</p>
    */
   Object onTableLoadFailed(AoservTable<?, ?> table, Object param, Throwable cause);
 
   /**
    * Called when the table is completely loaded.
-   * <p>
-   * The object returned is stored and will be the parameter provided in the next call.
-   * </p>
+   *
+   * <p>The object returned is stored and will be the parameter provided in the next call.</p>
    */
   Object onTableLoadCompleted(AoservTable<?, ?> table, Object param);
 }

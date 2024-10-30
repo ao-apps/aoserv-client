@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -152,9 +152,8 @@ import java.util.Set;
  * to accomplish some common tasks.  All methods are invoked using standard
  * data types.  The underlying implementation changes over time, but
  * this access point does not change as frequently.
- * <p>
- * Most of the {@link Aosh} commands resolve to these method calls.
- * </p>
+ *
+ * <p>Most of the {@link Aosh} commands resolve to these method calls.</p>
  *
  * @see  Aosh
  * @see  AoservConnector
@@ -1071,20 +1070,18 @@ public final class SimpleAoservClient {
    * to an {@link com.aoindustries.aoserv.client.email.List}, it is immediately forwarded to all addresses
    * contained in the list.  The list may accept mail on any number of addresses
    * and forward to any number of recipients.
-   * <p>
-   * Even though the {@link com.aoindustries.aoserv.client.email.List} may receive email on any number of
+   *
+   * <p>Even though the {@link com.aoindustries.aoserv.client.email.List} may receive email on any number of
    * addresses, each address must be part of a {@link Domain} that
    * is hosted on the same {@link Server} as the {@link com.aoindustries.aoserv.client.email.List}.
    * If email in a domain on another {@link Server} is required to be sent
    * to this list, it must be forwarded from the other {@link Server} via
-   * a {@link Forwarding}.
-   * </p>
-   * <p>
-   * The list of destinations for the {@link com.aoindustries.aoserv.client.email.List} is stored on the
+   * a {@link Forwarding}.</p>
+   *
+   * <p>The list of destinations for the {@link com.aoindustries.aoserv.client.email.List} is stored on the
    * {@link Server} in a flat file of one address per line.  This file
    * may be either manipulated through the API or used directly on the
-   * filesystem.
-   * </p>
+   * filesystem.</p>
    *
    * @param  aoServer  the hostname of the server the list is hosted on
    * @param  path  the name of the file that stores the list
@@ -2269,10 +2266,9 @@ public final class SimpleAoservClient {
   /**
    * Adds a new {@link com.aoindustries.aoserv.client.mysql.Database} to the system.  Once added, {@link com.aoindustries.aoserv.client.mysql.User}s may
    * be granted access to the {@link com.aoindustries.aoserv.client.mysql.Database} using a {@link com.aoindustries.aoserv.client.mysql.DatabaseUser}.
-   * <p>
-   * Because updates the the MySQL configurations are batched, the database may not be immediately
-   * created in the MySQL system.  To ensure the database is ready for use, call {@link #waitForMysqlDatabaseRebuild(java.lang.String)}.
-   * </p>
+   *
+   * <p>Because updates the the MySQL configurations are batched, the database may not be immediately
+   * created in the MySQL system.  To ensure the database is ready for use, call {@link #waitForMysqlDatabaseRebuild(java.lang.String)}.</p>
    *
    * @param  name  the name of the new database
    * @param  aoServer  the hostname of the {@link Server}
@@ -2530,11 +2526,10 @@ public final class SimpleAoservClient {
   /**
    * Each {@link Account} can have multiple {@link Package}s associated with it.
    * Each {@link Package} is an allotment of resources with a monthly charge.
-   * <p>
-   * To determine if this connection can set prices:
-   * </p>
-   * <pre>
-   * SimpleAoservClient client=new SimpleAoservClient();
+   *
+   * <p>To determine if this connection can set prices:</p>
+   *
+   * <pre>SimpleAoservClient client=new SimpleAoservClient();
    *
    * boolean canSetPrices=client
    *     .getConnector()
@@ -2542,8 +2537,7 @@ public final class SimpleAoservClient {
    *     .getUsername()
    *     .getPackage()
    *     .getAccount()
-   *     .canSetPrices();
-   * </pre>
+   *     .canSetPrices();</pre>
    *
    * @param  packageName  the name for the new package
    * @param  accounting  the accounting code of the {@link Account}
@@ -2569,11 +2563,10 @@ public final class SimpleAoservClient {
 
   /**
    * Adds a new {@link com.aoindustries.aoserv.client.postgresql.Database} to the system.
-   * <p>
-   * Because updates the the PostgreSQL configurations are batched, the database may not be immediately
+   *
+   * <p>Because updates the the PostgreSQL configurations are batched, the database may not be immediately
    * created in the PostgreSQL system.  To ensure the database is ready for use, call
-   * {@link #waitForPostgresDatabaseRebuild(java.lang.String)}.
-   * </p>
+   * {@link #waitForPostgresDatabaseRebuild(java.lang.String)}.</p>
    *
    * @param  name  the name of the new database
    * @param  aoServer  the hostname of the {@link Server}

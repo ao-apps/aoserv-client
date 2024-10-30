@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -202,9 +202,8 @@ public final class AoservClientConfiguration {
 
   /**
    * Gets the optional SSL truststore path.
-   * <p>
-   * For use by aoserv-daemon and aoserv-backup only.
-   * </p>
+   *
+   * <p>For use by aoserv-daemon and aoserv-backup only.</p>
    */
   public static String getSslTruststorePath() throws ConfigurationException {
     return getProperty("aoserv.client.ssl.truststore.path");
@@ -212,9 +211,8 @@ public final class AoservClientConfiguration {
 
   /**
    * Gets the optional SSL truststore password.
-   * <p>
-   * For use by aoserv-daemon and aoserv-backup only.
-   * </p>
+   *
+   * <p>For use by aoserv-daemon and aoserv-backup only.</p>
    */
   public static String getSslTruststorePassword() throws ConfigurationException {
     return getProperty("aoserv.client.ssl.truststore.password");

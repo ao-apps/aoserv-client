@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017, 2018, 2019, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2017, 2018, 2019, 2021, 2022, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -320,9 +320,8 @@ public final class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
 
   /**
    * The fully qualified hostname for <code>servername</code>.
-   * <p>
-   * When {@code null}, defaults to {@link Server#getHostname()}.
-   * </p>
+   *
+   * <p>When {@code null}, defaults to {@link Server#getHostname()}.</p>
    */
   public DomainName getServername() {
     return servername;

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2017, 2018, 2019, 2020, 2021, 2022, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -154,10 +154,9 @@ public final class Header extends CachedObjectIntegerKey<Header> {
 
   /**
    * The header name, without any final colon.
-   * <p>
-   * In the Apache directive, the final colon is optional.  We choose to not
-   * allow the final colon to avoid any unnecessary ambiguities.
-   * </p>
+   *
+   * <p>In the Apache directive, the final colon is optional.  We choose to not
+   * allow the final colon to avoid any unnecessary ambiguities.</p>
    */
   public String getHeader() {
     return header;

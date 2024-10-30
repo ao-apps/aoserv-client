@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2010-2013, 2016, 2017, 2018, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2010-2013, 2016, 2017, 2018, 2020, 2021, 2022, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -52,10 +52,9 @@ import java.util.concurrent.ConcurrentMap;
  *   <li>Not end with /.. or /.</li>
  *   <li>Not contain any // in the path</li>
  * </ul>
- * <p>
- * TODO: This matches {@link Path} with the exception of disallowing trailing slash except for "/".
- *       Remove this redundancy?  Subclass {@link Path}?
- * </p>
+ *
+ * <p>TODO: This matches {@link Path} with the exception of disallowing trailing slash except for "/".
+ *       Remove this redundancy?  Subclass {@link Path}?</p>
  *
  * @author  AO Industries, Inc.
  */

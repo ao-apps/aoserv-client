@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2009-2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2009-2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -50,22 +50,18 @@ import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 
 /**
- * <p>
  * An implementation of {@link Handler} that logs to the ticket system.
  * It queues log entries and logs them in the background.  The log entries
  * are added in the order received, regardless of priority.
- * </p>
- * <p>
- * Will first look for any open/hold/bounced ticket that is for the same
+ *
+ * <p>Will first look for any open/hold/bounced ticket that is for the same
  * brand, account, language, type, level, prefix, classname, method, and category.
  * If found, it will annotate that ticket.  If not found, it will create a new
- * ticket.
- * </p>
- * <p>
- * To minimize resource consumption, this shares one {@link ExecutorService} for all handlers,
+ * ticket.</p>
+ *
+ * <p>To minimize resource consumption, this shares one {@link ExecutorService} for all handlers,
  * which means tickets are fed to the master(s) sequentially, even across many
- * different connectors.
- * </p>
+ * different connectors.</p>
  *
  * @author  AO Industries, Inc.
  */

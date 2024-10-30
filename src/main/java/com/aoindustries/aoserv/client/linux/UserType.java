@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -41,9 +41,8 @@ import java.util.List;
  * controls which systems the account may access.  If the
  * <code>LinuxAccount</code> is able to access multiple
  * <code>Server</code>s, its type will be the same on all servers.
- * <p>
- * TODO: Make this class an enum?  How would API version compatibility work?  Same for group type.
- * </p>
+ *
+ * <p>TODO: Make this class an enum?  How would API version compatibility work?  Same for group type.</p>
  *
  * @see  User
  * @see  UserServer

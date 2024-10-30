@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2003-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -46,13 +46,11 @@ import java.util.List;
  * locally.  The server notifies the client when a table
  * is updated, and the caches are then invalidated.  Once
  * invalidated, the data is reloaded upon next use.
- * <p>
- * The file format is a simple fixed record length format.
- * </p>
- * <p>
- * TODO: It is possible to use the same column sorting technique
- * to implement the getIndexedRows method from AoservTable.
- * </p>
+ *
+ * <p>The file format is a simple fixed record length format.</p>
+ *
+ * <p>TODO: It is possible to use the same column sorting technique
+ * to implement the getIndexedRows method from AoservTable.</p>
  *
  * @author  AO Industries, Inc.
  */
