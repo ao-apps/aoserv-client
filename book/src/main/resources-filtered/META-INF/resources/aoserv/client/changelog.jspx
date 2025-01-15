@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 aoserv-client - Java client for the AOServ Platform.
-Copyright (C) 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024  AO Industries, Inc.
+Copyright (C) 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025  AO Industries, Inc.
     support@aoindustries.com
     7262 Bull Pen Cir
     Mobile, AL 36695
@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
     shortTitle="Changelog"
     tocLevels="1"
     datePublished="2016-10-29T21:07:28-05:00"
-    dateModified="2024-08-31T19:37:53Z"
+    dateModified="2025-01-15T06:34:15Z"
   >
     <c:set var="latestRelease" value="1.92.0" />
     <c:if test="${
@@ -58,7 +58,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
             New constant <code>FirewallZone.NM_SHARED</code> as seen in
             <ao:a href="https://rockylinux.org/news/rocky-linux-9-4-ga-release">Rocky Linux 9</ao:a>.
           </li>
-          <li>Updated to <ao:a href="https://checkstyle.org/releasenotes.html#Release_10.18.1">Checkstyle 10.18.1</ao:a>.</li>
+          <li>Updated to <ao:a href="https://checkstyle.org/releasenotes.html#Release_10.21.1">Checkstyle 10.21.1</ao:a>.</li>
           <!-- TODO:
           <li>Added schemas (where some object can exist without schema, such as "int"?)</li>
           <li>Added a type registry based on ServiceLoader</li>
