@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -502,6 +502,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       RESELLER,
       // Amazon EC2 cloud-init
       CENTOS,
+      ROCKY,
       // Jenkins
       JENKINS,
       // OProfile
@@ -585,6 +586,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       RESELLER = Name.valueOf("reseller");
       // Amazon EC2 cloud-init
       CENTOS = Name.valueOf("centos");
+      ROCKY = Name.valueOf("rocky");
       // Jenkins
       JENKINS = Name.valueOf("jenkins");
       // OProfile
