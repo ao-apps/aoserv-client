@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2009, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023  AO Industries, Inc.
+ * Copyright (C) 2003-2009, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2025  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -66,7 +66,7 @@ public final class MysqlReplication extends CachedObjectIntegerKey<MysqlReplicat
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated // Java 9: (forRemoval = true)
+  @Deprecated(forRemoval = true)
   public MysqlReplication() {
     // Do nothing
   }
@@ -352,8 +352,7 @@ public final class MysqlReplication extends CachedObjectIntegerKey<MysqlReplicat
     return table.getConnector().requestResult(
         true,
         AoservProtocol.CommandId.GET_MYSQL_SLAVE_STATUS,
-        // Java 9: new AoservConnector.ResultRequest<>
-        new AoservConnector.ResultRequest<SlaveStatus>() {
+        new AoservConnector.ResultRequest<>() {
           private SlaveStatus result;
 
           @Override

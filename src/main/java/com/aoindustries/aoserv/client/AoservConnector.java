@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -1930,8 +1930,7 @@ public abstract class AoservConnector implements SchemaParent {
     return requestResult(
         true,
         AoservProtocol.CommandId.GET_MASTER_ENTROPY,
-        // Java 9: new ResultRequest<>
-        new ResultRequest<Integer>() {
+        new ResultRequest<>() {
           private int numObtained;
 
           @Override
@@ -1975,8 +1974,7 @@ public abstract class AoservConnector implements SchemaParent {
     return requestResult(
         true,
         AoservProtocol.CommandId.ADD_MASTER_ENTROPY,
-        // Java 9: new ResultRequest<>
-        new ResultRequest<Long>() {
+        new ResultRequest<>() {
           private long entropyNeeded;
 
           @Override

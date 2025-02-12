@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -107,7 +107,7 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated // Java 9: (forRemoval = true)
+  @Deprecated(forRemoval = true)
   public UserServer() {
     // Do nothing
   }
@@ -198,8 +198,7 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
     return table.getConnector().requestResult(
         false,
         AoservProtocol.CommandId.COPY_HOME_DIRECTORY,
-        // Java 9: new AoservConnector.ResultRequest<>
-        new AoservConnector.ResultRequest<Long>() {
+        new AoservConnector.ResultRequest<>() {
           private long result;
           @Override
           public void writeRequest(StreamableOutput out) throws IOException {
@@ -377,8 +376,7 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
     return table.getConnector().requestResult(
         true,
         AoservProtocol.CommandId.GET_INBOX_ATTRIBUTES,
-        // Java 9: new AoservConnector.ResultRequest<>
-        new AoservConnector.ResultRequest<InboxAttributes>() {
+        new AoservConnector.ResultRequest<>() {
 
           private InboxAttributes result;
 

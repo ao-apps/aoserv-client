@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2021, 2022, 2024  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2021, 2022, 2024, 2025  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -77,7 +77,7 @@ public final class TopLevelDomain extends GlobalObjectDomainNameKey<TopLevelDoma
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated // Java 9: (forRemoval = true)
+  @Deprecated(forRemoval = true)
   public TopLevelDomain() {
     // Do nothing
   }

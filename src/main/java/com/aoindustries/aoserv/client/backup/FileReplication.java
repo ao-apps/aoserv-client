@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023  AO Industries, Inc.
+ * Copyright (C) 2003-2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2025  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -73,7 +73,7 @@ public final class FileReplication extends CachedObjectIntegerKey<FileReplicatio
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated // Java 9: (forRemoval = true)
+  @Deprecated(forRemoval = true)
   public FileReplication() {
     // Do nothing
   }
@@ -341,8 +341,7 @@ public final class FileReplication extends CachedObjectIntegerKey<FileReplicatio
     return table.getConnector().requestResult(
         true,
         AoservProtocol.CommandId.REQUEST_REPLICATION_DAEMON_ACCESS,
-        // Java 9: new AoservConnector.ResultRequest<>
-        new AoservConnector.ResultRequest<Server.DaemonAccess>() {
+        new AoservConnector.ResultRequest<>() {
           private Server.DaemonAccess daemonAccess;
 
           @Override
@@ -409,8 +408,7 @@ public final class FileReplication extends CachedObjectIntegerKey<FileReplicatio
     return table.getConnector().requestResult(
         true,
         AoservProtocol.CommandId.GET_FAILOVER_FILE_REPLICATION_ACTIVITY,
-        // Java 9: new AoservConnector.ResultRequest<>
-        new AoservConnector.ResultRequest<Activity>() {
+        new AoservConnector.ResultRequest<>() {
           private Activity activity;
 
           @Override

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2018, 2022  AO Industries, Inc.
+ * Copyright (C) 2018, 2022, 2025  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -35,6 +35,6 @@ public interface SchemaParent {
   /**
    * Gets an unmodifiable list of all of the schemas.
    */
-  // Java 1.8: default implementation returning empty list
+  // TODO: Java 1.8: default implementation returning empty list
   List<? extends Schema> getSchemas();
 }

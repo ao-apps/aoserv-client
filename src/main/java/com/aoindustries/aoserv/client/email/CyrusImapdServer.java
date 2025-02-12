@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017, 2018, 2019, 2021, 2022, 2024  AO Industries, Inc.
+ * Copyright (C) 2017, 2018, 2019, 2021, 2022, 2024, 2025  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -182,7 +182,7 @@ public final class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated // Java 9: (forRemoval = true)
+  @Deprecated(forRemoval = true)
   public CyrusImapdServer() {
     // Do nothing
   }

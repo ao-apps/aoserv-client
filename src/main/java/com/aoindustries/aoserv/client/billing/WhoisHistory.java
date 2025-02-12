@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2007-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024  AO Industries, Inc.
+ * Copyright (C) 2007-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -76,7 +76,7 @@ public final class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated // Java 9: (forRemoval = true)
+  @Deprecated(forRemoval = true)
   public WhoisHistory() {
     // Do nothing
   }
@@ -131,8 +131,7 @@ public final class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
       table.getConnector().requestResult(
           true,
           AoservProtocol.CommandId.GET_WHOIS_HISTORY_WHOIS_OUTPUT,
-          // Java 9: new AoservConnector.ResultRequest<>
-          new AoservConnector.ResultRequest<Void>() {
+          new AoservConnector.ResultRequest<>() {
             @Override
             public void writeRequest(StreamableOutput out) throws IOException {
               out.writeCompressedInt(pkey);

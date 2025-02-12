@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2017, 2018, 2019, 2020, 2021, 2022, 2025  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -46,7 +46,7 @@ public interface AoservStreamable extends Streamable, AoservReadable, AoservWrit
   @Override
   void read(StreamableInput in, String protocolVersion) throws IOException;
 
-  // Java 1.8: default method (or inherit from AoservReadable)
+  // TODO: Java 1.8: default method (or inherit from AoservReadable)
   // read(in, com.aoindustries.aoserv.client.schema.AoservProtocol.Version.getVersion(version));
 
   @Override
@@ -62,7 +62,7 @@ public interface AoservStreamable extends Streamable, AoservReadable, AoservWrit
   @Override
   void write(StreamableOutput out, String protocolVersion) throws IOException;
 
-  // Java 1.8: default method (or inherit from AoservWritable)
+  // TODO: Java 1.8: default method (or inherit from AoservWritable)
   // write(out, com.aoindustries.aoserv.client.schema.AoservProtocol.Version.getVersion(version));
 
   @Override

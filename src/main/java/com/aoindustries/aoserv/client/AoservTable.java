@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -421,8 +421,7 @@ public abstract class AoservTable<K, V extends AoservObject<K, V>> implements It
   protected V getObject(boolean allowRetry, final AoservProtocol.CommandId commandId, final Object ... params) throws IOException, SQLException {
     return connector.requestResult(allowRetry,
         commandId,
-        // Java 9: new AoservConnector.ResultRequest<>
-        new AoservConnector.ResultRequest<V>() {
+        new AoservConnector.ResultRequest<>() {
           private V result;
 
           @Override
@@ -926,8 +925,7 @@ public abstract class AoservTable<K, V extends AoservObject<K, V>> implements It
     // Print the results
     SQLUtility.printTable(
         titles,
-        // Java 9: new Iterator<>
-        (Iterable<String[]>) () -> new Iterator<String[]>() {
+        (Iterable<String[]>) () -> new Iterator<>() {
           private int index = 0;
 
           @Override
@@ -1110,8 +1108,7 @@ public abstract class AoservTable<K, V extends AoservObject<K, V>> implements It
   @Deprecated
   public abstract V get(Object key) throws IOException, SQLException;
 
-  // Java 9: new Map<>
-  private final Map<K, V> map = new Map<K, V>() {
+  private final Map<K, V> map = new Map<>() {
     // Map methods
     @Override
     public V get(Object key) {

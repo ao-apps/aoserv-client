@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2006-2009, 2016, 2017, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2016, 2017, 2021, 2022, 2025  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -48,8 +48,7 @@ final class KeySet<K, V extends AoservObject<K, V>> extends AbstractSet<K> {
 
   @Override
   public Iterator<K> iterator() {
-    // Java 9: new Iterator<>
-    return new Iterator<K>() {
+    return new Iterator<>() {
 
       private int cursor = 0;
 

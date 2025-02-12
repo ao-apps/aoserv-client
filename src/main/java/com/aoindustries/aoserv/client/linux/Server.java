@@ -136,7 +136,7 @@ public final class Server
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated // Java 9: (forRemoval = true)
+  @Deprecated(forRemoval = true)
   public Server() {
     // Do nothing
   }
@@ -2485,8 +2485,7 @@ public final class Server
       return table.getConnector().requestResult(
           true,
           AoservProtocol.CommandId.GET_AO_SERVER_LVM_REPORT,
-          // Java 9: new AoservConnector.ResultRequest<>
-          new AoservConnector.ResultRequest<LvmReport>() {
+          new AoservConnector.ResultRequest<>() {
             private String vgs;
             private String pvs;
             private String lvs;

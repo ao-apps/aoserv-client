@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2025  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -79,8 +79,7 @@ public final class SharedTomcatTable extends CachedTableIntegerKey<SharedTomcat>
     return connector.requestResult(
         true,
         AoservProtocol.CommandId.ADD,
-        // Java 9: new AoservConnector.ResultRequest<>
-        new AoservConnector.ResultRequest<Integer>() {
+        new AoservConnector.ResultRequest<>() {
           private int pkey;
           private IntList invalidateList;
 

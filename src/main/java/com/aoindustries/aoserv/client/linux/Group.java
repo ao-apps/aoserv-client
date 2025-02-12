@@ -492,7 +492,7 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated // Java 9: (forRemoval = true)
+  @Deprecated(forRemoval = true)
   public Group() {
     // Do nothing
   }

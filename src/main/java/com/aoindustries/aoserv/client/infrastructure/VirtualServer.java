@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2008-2013, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2008-2013, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -76,7 +76,7 @@ public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated // Java 9: (forRemoval = true)
+  @Deprecated(forRemoval = true)
   public VirtualServer() {
     // Do nothing
   }
@@ -387,8 +387,7 @@ public final class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
     return table.getConnector().requestResult(
         true,
         AoservProtocol.CommandId.REQUEST_VNC_CONSOLE_DAEMON_ACCESS,
-        // Java 9: new AoservConnector.ResultRequest<>
-        new AoservConnector.ResultRequest<Server.DaemonAccess>() {
+        new AoservConnector.ResultRequest<>() {
           private Server.DaemonAccess daemonAccess;
 
           @Override

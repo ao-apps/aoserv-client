@@ -392,7 +392,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
      *
      * @see  FastExternalizable
      */
-    @Deprecated // Java 9: (forRemoval = false)
+    @Deprecated(forRemoval = false)
     public Name() {
       // Do nothing
     }
@@ -625,7 +625,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
    * @see  #init(java.sql.ResultSet)
    * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
-  @Deprecated // Java 9: (forRemoval = true)
+  @Deprecated(forRemoval = true)
   public User() {
     // Do nothing
   }

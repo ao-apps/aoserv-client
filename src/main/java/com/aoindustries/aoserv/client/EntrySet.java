@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2006-2009, 2016, 2017, 2019, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2016, 2017, 2019, 2021, 2022, 2025  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -49,8 +49,7 @@ final class EntrySet<K, V extends AoservObject<K, V>> extends AbstractSet<Map.En
 
   @Override
   public Iterator<Map.Entry<K, V>> iterator() {
-    // Java 9: new Iterator<>
-    return new Iterator<Map.Entry<K, V>>() {
+    return new Iterator<>() {
 
       private int cursor = 0;
 
@@ -66,8 +65,7 @@ final class EntrySet<K, V extends AoservObject<K, V>> extends AbstractSet<Map.En
         }
         final V value = objs.get(cursor);
         final K key = value.getKey();
-        // Java 9: new Map.Entry<>
-        Map.Entry<K, V> next = new Map.Entry<K, V>() {
+        Map.Entry<K, V> next = new Map.Entry<>() {
 
           @Override
           public V setValue(V value) {
