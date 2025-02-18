@@ -343,7 +343,6 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
       MONITORING,
       RESELLER,
       // Amazon EC2 cloud-init
-      CENTOS,
       ROCKY,
       // Jenkins
       JENKINS,
@@ -453,7 +452,6 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
       MONITORING = Name.valueOf("monitoring");
       RESELLER = Name.valueOf("reseller");
       // Amazon EC2 cloud-init
-      CENTOS = Name.valueOf("centos");
       ROCKY = Name.valueOf("rocky");
       // Jenkins
       JENKINS = Name.valueOf("jenkins");

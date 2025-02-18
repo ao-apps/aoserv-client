@@ -501,7 +501,6 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       MONITORING,
       RESELLER,
       // Amazon EC2 cloud-init
-      CENTOS,
       ROCKY,
       // Jenkins
       JENKINS,
@@ -585,7 +584,6 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       MONITORING = Name.valueOf("monitoring");
       RESELLER = Name.valueOf("reseller");
       // Amazon EC2 cloud-init
-      CENTOS = Name.valueOf("centos");
       ROCKY = Name.valueOf("rocky");
       // Jenkins
       JENKINS = Name.valueOf("jenkins");
