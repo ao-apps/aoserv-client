@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
     shortTitle="Changelog"
     tocLevels="1"
     datePublished="2016-10-29T21:07:28-05:00"
-    dateModified="2025-03-02T08:07:26Z"
+    dateModified="2025-03-02T18:54:19Z"
   >
     <c:set var="latestRelease" value="1.92.0" />
     <c:if test="${
@@ -66,6 +66,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
             the <ao:a href="https://cloud-init.io/">cloud-init</ao:a> package.
           </li>
           <li>The httpd package in Rocky 9 includes its own <code>httpd@.service</code>.</li>
+          <li>Added support for HTTP/2 and Brotli compression in Rocky 9.</li>
           <!-- TODO:
           <li>Added schemas (where some object can exist without schema, such as "int"?)</li>
           <li>Added a type registry based on ServiceLoader</li>

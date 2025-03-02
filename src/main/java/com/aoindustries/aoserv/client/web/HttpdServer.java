@@ -87,10 +87,12 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
   private Boolean modAuthzHost;
   private Boolean modAuthzUser;
   private Boolean modAutoindex;
+  private Boolean modBrotli;
   private Boolean modDeflate;
   private Boolean modDir;
   private Boolean modFilter;
   private Boolean modHeaders;
+  private Boolean modHttp2;
   private Boolean modInclude;
   private Boolean modJk;
   private Boolean modLogConfig;
@@ -99,6 +101,7 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
   private Boolean modNegotiation;
   private Boolean modProxy;
   private Boolean modProxyHttp;
+  private Boolean modProxyHttp2;
   private Boolean modReqtimeout;
   private Boolean modRewrite;
   private Boolean modSetenvif;
@@ -182,42 +185,48 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
       case 27:
         return modAutoindex;
       case 28:
-        return modDeflate;
+        return modBrotli;
       case 29:
-        return modDir;
+        return modDeflate;
       case 30:
-        return modFilter;
+        return modDir;
       case 31:
-        return modHeaders;
+        return modFilter;
       case 32:
-        return modInclude;
+        return modHeaders;
       case 33:
-        return modJk;
+        return modHttp2;
       case 34:
-        return modLogConfig;
+        return modInclude;
       case 35:
-        return modMime;
+        return modJk;
       case 36:
-        return modMimeMagic;
+        return modLogConfig;
       case 37:
-        return modNegotiation;
+        return modMime;
       case 38:
-        return modProxy;
+        return modMimeMagic;
       case 39:
-        return modProxyHttp;
+        return modNegotiation;
       case 40:
-        return modReqtimeout;
+        return modProxy;
       case 41:
-        return modRewrite;
+        return modProxyHttp;
       case 42:
-        return modSetenvif;
+        return modProxyHttp2;
       case 43:
-        return modSocacheShmcb;
+        return modReqtimeout;
       case 44:
-        return modSsl;
+        return modRewrite;
       case 45:
-        return modStatus;
+        return modSetenvif;
       case 46:
+        return modSocacheShmcb;
+      case 47:
+        return modSsl;
+      case 48:
+        return modStatus;
+      case 49:
         return modWsgi;
       default:
         throw new IllegalArgumentException("Invalid index: " + i);
@@ -417,6 +426,10 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
     return modAutoindex;
   }
 
+  public Boolean getModBrotli() {
+    return modBrotli;
+  }
+
   public Boolean getModDeflate() {
     return modDeflate;
   }
@@ -431,6 +444,10 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 
   public Boolean getModHeaders() {
     return modHeaders;
+  }
+
+  public Boolean getModHttp2() {
+    return modHttp2;
   }
 
   public Boolean getModInclude() {
@@ -463,6 +480,10 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 
   public Boolean getModProxyHttp() {
     return modProxyHttp;
+  }
+
+  public Boolean getModProxyHttp2() {
+    return modProxyHttp2;
   }
 
   public Boolean getModReqtimeout() {
@@ -577,6 +598,10 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
     if (result.wasNull()) {
       modAutoindex = null;
     }
+    modBrotli = result.getBoolean(pos++);
+    if (result.wasNull()) {
+      modBrotli = null;
+    }
     modDeflate = result.getBoolean(pos++);
     if (result.wasNull()) {
       modDeflate = null;
@@ -592,6 +617,10 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
     modHeaders = result.getBoolean(pos++);
     if (result.wasNull()) {
       modHeaders = null;
+    }
+    modHttp2 = result.getBoolean(pos++);
+    if (result.wasNull()) {
+      modHttp2 = null;
     }
     modInclude = result.getBoolean(pos++);
     if (result.wasNull()) {
@@ -624,6 +653,10 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
     modProxyHttp = result.getBoolean(pos++);
     if (result.wasNull()) {
       modProxyHttp = null;
+    }
+    modProxyHttp2 = result.getBoolean(pos++);
+    if (result.wasNull()) {
+      modProxyHttp2 = null;
     }
     modReqtimeout = result.getBoolean(pos++);
     if (result.wasNull()) {
@@ -685,10 +718,12 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
     modAuthzHost = in.readNullBoolean();
     modAuthzUser = in.readNullBoolean();
     modAutoindex = in.readNullBoolean();
+    modBrotli = in.readNullBoolean();
     modDeflate = in.readNullBoolean();
     modDir = in.readNullBoolean();
     modFilter = in.readNullBoolean();
     modHeaders = in.readNullBoolean();
+    modHttp2 = in.readNullBoolean();
     modInclude = in.readNullBoolean();
     modJk = in.readNullBoolean();
     modLogConfig = in.readNullBoolean();
@@ -697,6 +732,7 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
     modNegotiation = in.readNullBoolean();
     modProxy = in.readNullBoolean();
     modProxyHttp = in.readNullBoolean();
+    modProxyHttp2 = in.readNullBoolean();
     modReqtimeout = in.readNullBoolean();
     modRewrite = in.readNullBoolean();
     modSetenvif = in.readNullBoolean();
@@ -763,10 +799,16 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
       out.writeNullBoolean(modAuthzHost);
       out.writeNullBoolean(modAuthzUser);
       out.writeNullBoolean(modAutoindex);
+      if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_92_1) >= 0) {
+        out.writeNullBoolean(modBrotli);
+      }
       out.writeNullBoolean(modDeflate);
       out.writeNullBoolean(modDir);
       out.writeNullBoolean(modFilter);
       out.writeNullBoolean(modHeaders);
+      if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_92_1) >= 0) {
+        out.writeNullBoolean(modHttp2);
+      }
       out.writeNullBoolean(modInclude);
       out.writeNullBoolean(modJk);
       out.writeNullBoolean(modLogConfig);
@@ -775,6 +817,9 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
       out.writeNullBoolean(modNegotiation);
       out.writeNullBoolean(modProxy);
       out.writeNullBoolean(modProxyHttp);
+      if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_92_1) >= 0) {
+        out.writeNullBoolean(modProxyHttp2);
+      }
       out.writeNullBoolean(modReqtimeout);
       out.writeNullBoolean(modRewrite);
       out.writeNullBoolean(modSetenvif);
