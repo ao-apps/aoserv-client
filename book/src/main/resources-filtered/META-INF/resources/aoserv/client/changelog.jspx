@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
     shortTitle="Changelog"
     tocLevels="1"
     datePublished="2016-10-29T21:07:28-05:00"
-    dateModified="2025-02-18T20:50:15Z"
+    dateModified="2025-03-02T08:07:26Z"
   >
     <c:set var="latestRelease" value="1.92.0" />
     <c:if test="${
@@ -65,6 +65,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
             <ao:a href="https://aws.amazon.com/ec2/">Amazon EC2</ao:a> (and other cloud environments) via
             the <ao:a href="https://cloud-init.io/">cloud-init</ao:a> package.
           </li>
+          <li>The httpd package in Rocky 9 includes its own <code>httpd@.service</code>.</li>
           <!-- TODO:
           <li>Added schemas (where some object can exist without schema, such as "int"?)</li>
           <li>Added a type registry based on ServiceLoader</li>
