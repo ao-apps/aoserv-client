@@ -391,24 +391,24 @@ public final class Profile extends CachedObjectIntegerKey<Profile> {
       sendInvoice = in.readBoolean();
       created = SQLStreamables.readUnmodifiableTimestamp(in);
       billingContact = in.readUTF();
-        {
-          int size = in.readCompressedInt();
-          Set<Email> emails = AoCollections.newLinkedHashSet(size);
-          for (int i = 0; i < size; i++) {
-            emails.add(Email.valueOf(in.readUTF()));
-          }
-          billingEmail = AoCollections.optimalUnmodifiableSet(emails);
+      {
+        int size = in.readCompressedInt();
+        Set<Email> emails = AoCollections.newLinkedHashSet(size);
+        for (int i = 0; i < size; i++) {
+          emails.add(Email.valueOf(in.readUTF()));
         }
+        billingEmail = AoCollections.optimalUnmodifiableSet(emails);
+      }
       billingEmailFormat = in.readEnum(EmailFormat.class);
       technicalContact = in.readUTF();
-        {
-          int size = in.readCompressedInt();
-          Set<Email> emails = AoCollections.newLinkedHashSet(size);
-          for (int i = 0; i < size; i++) {
-            emails.add(Email.valueOf(in.readUTF()));
-          }
-          technicalEmail = AoCollections.optimalUnmodifiableSet(emails);
+      {
+        int size = in.readCompressedInt();
+        Set<Email> emails = AoCollections.newLinkedHashSet(size);
+        for (int i = 0; i < size; i++) {
+          emails.add(Email.valueOf(in.readUTF()));
         }
+        technicalEmail = AoCollections.optimalUnmodifiableSet(emails);
+      }
       technicalEmailFormat = in.readEnum(EmailFormat.class);
     } catch (ValidationException e) {
       throw new IOException(e);

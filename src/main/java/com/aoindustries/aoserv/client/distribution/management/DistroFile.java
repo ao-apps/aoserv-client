@@ -379,20 +379,20 @@ public final class DistroFile extends FilesystemCachedObject<Integer, DistroFile
     }
     writeChars(type, out);
     out.writeLong(mode);
-      {
-        String linuxAccountStr = linuxAccount.toString();
-        if (linuxAccountStr.length() > MAX_LINUX_ACCOUNT_LENGTH) {
-          throw new IOException("linux_account.length()>" + MAX_LINUX_ACCOUNT_LENGTH + ": " + linuxAccountStr.length());
-        }
-        writeChars(linuxAccountStr, out);
+    {
+      String linuxAccountStr = linuxAccount.toString();
+      if (linuxAccountStr.length() > MAX_LINUX_ACCOUNT_LENGTH) {
+        throw new IOException("linux_account.length()>" + MAX_LINUX_ACCOUNT_LENGTH + ": " + linuxAccountStr.length());
       }
-      {
-        String linuxGroupStr = linuxGroup.toString();
-        if (linuxGroupStr.length() > MAX_LINUX_GROUP_LENGTH) {
-          throw new IOException("linux_group.length()>" + MAX_LINUX_GROUP_LENGTH + ": " + linuxGroupStr.length());
-        }
-        writeChars(linuxGroupStr, out);
+      writeChars(linuxAccountStr, out);
+    }
+    {
+      String linuxGroupStr = linuxGroup.toString();
+      if (linuxGroupStr.length() > MAX_LINUX_GROUP_LENGTH) {
+        throw new IOException("linux_group.length()>" + MAX_LINUX_GROUP_LENGTH + ": " + linuxGroupStr.length());
       }
+      writeChars(linuxGroupStr, out);
+    }
     out.writeLong(size);
     out.writeBoolean(hasFileSha);
     if (hasFileSha) {

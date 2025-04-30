@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -190,13 +190,13 @@ public final class PasswordChecker {
        * Generate the backwards version of the password
        */
       String backwards;
-        {
-          char[] backwardsChars = new char[passwordLen];
-          for (int c = 0; c < passwordLen; c++) {
-            backwardsChars[c] = password.charAt(passwordLen - c - 1);
-          }
-          backwards = new String(backwardsChars);
+      {
+        char[] backwardsChars = new char[passwordLen];
+        for (int c = 0; c < passwordLen; c++) {
+          backwardsChars[c] = password.charAt(passwordLen - c - 1);
         }
+        backwards = new String(backwardsChars);
+      }
 
       /*
        * Must not be the same as your username

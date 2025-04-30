@@ -221,14 +221,14 @@ public final class Location extends CachedObjectIntegerKey<Location> implements 
       path = result.getString(3);
       isRegularExpression = result.getBoolean(4);
       authName = result.getString(5);
-        {
-          String s = result.getString(6);
-          authGroupFile = s.isEmpty() ? null : PosixPath.valueOf(s);
-        }
-        {
-          String s = result.getString(7);
-          authUserFile = s.isEmpty() ? null : PosixPath.valueOf(s);
-        }
+      {
+        String s = result.getString(6);
+        authGroupFile = s.isEmpty() ? null : PosixPath.valueOf(s);
+      }
+      {
+        String s = result.getString(7);
+        authUserFile = s.isEmpty() ? null : PosixPath.valueOf(s);
+      }
       require = result.getString(8);
       handler = result.getString(9);
     } catch (ValidationException e) {
@@ -244,14 +244,14 @@ public final class Location extends CachedObjectIntegerKey<Location> implements 
       path = in.readCompressedUTF();
       isRegularExpression = in.readBoolean();
       authName = in.readCompressedUTF();
-        {
-          String s = in.readCompressedUTF();
-          authGroupFile = s.isEmpty() ? null : PosixPath.valueOf(s);
-        }
-        {
-          String s = in.readCompressedUTF();
-          authUserFile = s.isEmpty() ? null : PosixPath.valueOf(s);
-        }
+      {
+        String s = in.readCompressedUTF();
+        authGroupFile = s.isEmpty() ? null : PosixPath.valueOf(s);
+      }
+      {
+        String s = in.readCompressedUTF();
+        authUserFile = s.isEmpty() ? null : PosixPath.valueOf(s);
+      }
       require = in.readCompressedUTF().intern();
       handler = in.readBoolean() ? in.readCompressedUTF().intern() : null;
     } catch (ValidationException e) {

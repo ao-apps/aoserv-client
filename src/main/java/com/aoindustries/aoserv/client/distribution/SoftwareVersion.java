@@ -173,10 +173,10 @@ public final class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
       name = result.getString(2);
       version = result.getString(3);
       updated = UnmodifiableTimestamp.valueOf(result.getTimestamp(4));
-        {
-          String s = result.getString(5);
-          owner = AoservProtocol.FILTERED.equals(s) ? null : User.Name.valueOf(s);
-        }
+      {
+        String s = result.getString(5);
+        owner = AoservProtocol.FILTERED.equals(s) ? null : User.Name.valueOf(s);
+      }
       operatingSystemVersion = result.getInt(6);
       if (result.wasNull()) {
         operatingSystemVersion = -1;
@@ -195,14 +195,14 @@ public final class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
       name = in.readUTF().intern();
       version = in.readUTF();
       updated = SQLStreamables.readUnmodifiableTimestamp(in);
-        {
-          String s = in.readUTF();
-          if (AoservProtocol.FILTERED.equals(s)) {
-            owner = null;
-          } else {
-            owner = User.Name.valueOf(s).intern();
-          }
+      {
+        String s = in.readUTF();
+        if (AoservProtocol.FILTERED.equals(s)) {
+          owner = null;
+        } else {
+          owner = User.Name.valueOf(s).intern();
         }
+      }
       operatingSystemVersion = in.readCompressedInt();
       disableTime = SQLStreamables.readNullUnmodifiableTimestamp(in);
       disableReason = in.readNullUTF();

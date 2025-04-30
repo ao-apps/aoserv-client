@@ -222,10 +222,10 @@ public final class FileReplication extends CachedObjectIntegerKey<FileReplicatio
       connectAddress = HostAddress.valueOf(result.getString(pos++));
       connectFrom = InetAddress.valueOf(result.getString(pos++));
       enabled = result.getBoolean(pos++);
-        {
-          int i = result.getInt(pos++);
-          quotaGid = result.wasNull() ? null : LinuxId.valueOf(i);
-        }
+      {
+        int i = result.getInt(pos++);
+        quotaGid = result.wasNull() ? null : LinuxId.valueOf(i);
+      }
     } catch (ValidationException e) {
       throw new SQLException(e);
     }
@@ -244,10 +244,10 @@ public final class FileReplication extends CachedObjectIntegerKey<FileReplicatio
       connectAddress = InternUtils.intern(HostAddress.valueOf(in.readNullUTF()));
       connectFrom = InternUtils.intern(InetAddress.valueOf(in.readNullUTF()));
       enabled = in.readBoolean();
-        {
-          int i = in.readCompressedInt();
-          quotaGid = (i == -1) ? null : LinuxId.valueOf(i);
-        }
+      {
+        int i = in.readCompressedInt();
+        quotaGid = (i == -1) ? null : LinuxId.valueOf(i);
+      }
     } catch (ValidationException e) {
       throw new IOException(e);
     }

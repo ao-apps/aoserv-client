@@ -232,14 +232,14 @@ public final class Ticket extends CachedObjectIntegerKey<Ticket> {
       adminPriority = InternUtils.intern(in.readNullUTF());
       status = in.readUTF().intern();
       statusTimeout = SQLStreamables.readNullUnmodifiableTimestamp(in);
-        {
-          int size = in.readCompressedInt();
-          Set<Email> emails = AoCollections.newLinkedHashSet(size);
-          for (int i = 0; i < size; i++) {
-            emails.add(Email.valueOf(in.readUTF()));
-          }
-          contactEmails = AoCollections.optimalUnmodifiableSet(emails);
+      {
+        int size = in.readCompressedInt();
+        Set<Email> emails = AoCollections.newLinkedHashSet(size);
+        for (int i = 0; i < size; i++) {
+          emails.add(Email.valueOf(in.readUTF()));
         }
+        contactEmails = AoCollections.optimalUnmodifiableSet(emails);
+      }
       contactPhoneNumbers = in.readUTF();
     } catch (ValidationException e) {
       throw new IOException(e);

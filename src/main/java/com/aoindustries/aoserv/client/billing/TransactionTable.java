@@ -521,48 +521,48 @@ public final class TransactionTable extends CachedTableIntegerKey<Transaction> {
     if (command.equalsIgnoreCase(Command.BILLING_TRANSACTION_ADD)) {
       if (Aosh.checkParamCount(Command.BILLING_TRANSACTION_ADD, args, 13, err)) {
         byte pc;
-          {
-            String paymentConfirmed = args[13];
-            if (
-                "Confirmed".equals(paymentConfirmed)
-                    // Backwards compatibility
-                    || "Y".equals(paymentConfirmed)
-            ) {
-              pc = Transaction.CONFIRMED;
-            } else if (
-                "Pending".equals(paymentConfirmed)
-                    // Backwards compatibility
-                    || "W".equals(paymentConfirmed)
-            ) {
-              pc = Transaction.WAITING_CONFIRMATION;
-            } else if (
-                "Failed".equals(paymentConfirmed)
-                    // Backwards compatibility
-                    || "N".equals(paymentConfirmed)
-            ) {
-              pc = Transaction.NOT_CONFIRMED;
-            } else {
-              throw new IllegalArgumentException("Unknown value for payment_confirmed, should be one of \"Pending\", \"Confirmed\", or \"Failed\": " + paymentConfirmed);
-            }
+        {
+          String paymentConfirmed = args[13];
+          if (
+              "Confirmed".equals(paymentConfirmed)
+                  // Backwards compatibility
+                  || "Y".equals(paymentConfirmed)
+          ) {
+            pc = Transaction.CONFIRMED;
+          } else if (
+              "Pending".equals(paymentConfirmed)
+                  // Backwards compatibility
+                  || "W".equals(paymentConfirmed)
+          ) {
+            pc = Transaction.WAITING_CONFIRMATION;
+          } else if (
+              "Failed".equals(paymentConfirmed)
+                  // Backwards compatibility
+                  || "N".equals(paymentConfirmed)
+          ) {
+            pc = Transaction.NOT_CONFIRMED;
+          } else {
+            throw new IllegalArgumentException("Unknown value for payment_confirmed, should be one of \"Pending\", \"Confirmed\", or \"Failed\": " + paymentConfirmed);
           }
+        }
         int timeType;
         Timestamp time;
-          {
-            String timeStr = args[1];
-            if ("now".equalsIgnoreCase(timeStr)) {
-              timeType = Type.TIME;
-              time = null;
-            } else if ("today".equalsIgnoreCase(timeStr)) {
-              timeType = Type.DATE;
-              time = null;
-            } else if (timeStr.length() <= "YYYY-MM-DD".length()) {
-              timeType = Type.DATE;
-              time = SQLUtility.parseDateTime(timeStr, Type.DATE_TIME_ZONE);
-            } else {
-              timeType = Type.TIME;
-              time = SQLUtility.parseDateTime(timeStr);
-            }
+        {
+          String timeStr = args[1];
+          if ("now".equalsIgnoreCase(timeStr)) {
+            timeType = Type.TIME;
+            time = null;
+          } else if ("today".equalsIgnoreCase(timeStr)) {
+            timeType = Type.DATE;
+            time = null;
+          } else if (timeStr.length() <= "YYYY-MM-DD".length()) {
+            timeType = Type.DATE;
+            time = SQLUtility.parseDateTime(timeStr, Type.DATE_TIME_ZONE);
+          } else {
+            timeType = Type.TIME;
+            time = SQLUtility.parseDateTime(timeStr);
           }
+        }
         out.println(
             connector.getSimpleClient().addTransaction(
                 timeType,
