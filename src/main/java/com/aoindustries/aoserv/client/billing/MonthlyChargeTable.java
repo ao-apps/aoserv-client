@@ -105,10 +105,10 @@ public final class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
             (
                 sourceAccount == null
                     || sourceAccount.getName().equals(mc.getPackage().getAccount_name())
-            ) && (
+              ) && (
                 billingAccount == null
                     || billingAccount.equals(mc.getAccount().getBillingAccount())
-            )
+              )
         ) {
           charges.add(mc);
         }

@@ -181,7 +181,7 @@ public final class PasswordChecker {
               (lowercount > 1 && uppercount == 0)
                   || (uppercount > 1 && lowercount == 0)
                   || (lowercount == 0 && uppercount == 0)
-          )
+            )
       ) {
         results.get(2).result = RESOURCES.getMessage("case.capitalAndLower");
       }

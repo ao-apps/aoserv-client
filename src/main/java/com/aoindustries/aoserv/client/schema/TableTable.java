@@ -281,7 +281,7 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
                           && (
                           "asc".equalsIgnoreCase(expr)
                               || "ascending".equalsIgnoreCase(expr)
-                      )
+                        )
                   ) {
                     sortOrders.set(sortOrders.size() - 1, AoservTable.ASCENDING);
                   } else if (
@@ -289,7 +289,7 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
                           && (
                           "desc".equalsIgnoreCase(expr)
                               || "descending".equalsIgnoreCase(expr)
-                      )
+                        )
                   ) {
                     sortOrders.set(sortOrders.size() - 1, AoservTable.DESCENDING);
                   } else { // if (!expr.isEmpty()) {

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2009-2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024  AO Industries, Inc.
+ * Copyright (C) 2009-2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -286,7 +286,7 @@ public class TicketLoggingHandler extends QueuedHandler {
               Status.OPEN.equals(status)
                   || Status.HOLD.equals(status)
                   || Status.BOUNCED.equals(status)
-          ) && brand.equals(ticket.getBrand())
+            ) && brand.equals(ticket.getBrand())
               && account.equals(ticket.getAccount())
               && language.equals(ticket.getLanguage())
               && ticketType.equals(ticket.getTicketType())

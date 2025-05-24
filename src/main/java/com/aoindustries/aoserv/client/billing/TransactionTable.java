@@ -462,34 +462,34 @@ public final class TransactionTable extends CachedTableIntegerKey<Transaction> {
           (
               criteria.getAfter() == null
                   || tr.getTime().compareTo(criteria.getAfter()) >= 0
-          ) && (
+            ) && (
               criteria.getBefore() == null
                   || tr.getTime().compareTo(criteria.getBefore()) < 0
-          ) && (
+            ) && (
               criteria.getPaymentConfirmed() == TransactionSearchCriteria.ANY
                   || criteria.getPaymentConfirmed() == tr.getPaymentConfirmed()
-          ) && (
+            ) && (
               criteria.getAccount() == null
                   || criteria.getAccount().equals(tr.getAccount_name())
-          ) && (
+            ) && (
               criteria.getSourceAccount() == null
                   || criteria.getSourceAccount().equals(tr.getSourceAccount_name())
-          ) && (
+            ) && (
               criteria.getAdministrator() == null
                   || criteria.getAdministrator().equals(tr.getAdministrator_username())
-          ) && (
+            ) && (
               criteria.getType() == null
                   || criteria.getType().equals(tr.getType_name())
-          ) && (
+            ) && (
               criteria.getDescription() == null || criteria.getDescription().isEmpty()
                   || matchesWords(tr.getDescription(), criteria.getDescription())
-          ) && (
+            ) && (
               criteria.getPaymentType() == null
                   || criteria.getPaymentType().equals(tr.getPaymentType_name())
-          ) && (
+            ) && (
               criteria.getPaymentInfo() == null || criteria.getPaymentInfo().isEmpty()
                   || matchesWords(tr.getPaymentInfo(), criteria.getPaymentInfo())
-          )
+            )
       ) {
         matches.add(tr);
       }

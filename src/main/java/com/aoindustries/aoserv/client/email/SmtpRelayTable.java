@@ -124,7 +124,7 @@ public final class SmtpRelayTable extends CachedTableIntegerKey<SmtpRelay> {
               && (
               (hostId = relay.getLinuxServer_host_id()) == null
                   || hostId == aoPkey
-          )
+            )
               && host.equals(relay.getHost())
       ) {
         return relay;

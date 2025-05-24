@@ -536,7 +536,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
                       || "3".equals(minor)
                       || "4".equals(minor)
               )
-          )
+            )
       ) {
         return "https://jdbc.postgresql.org/documentation/" + URIEncoder.encodeURIComponent(major) + URIEncoder.encodeURIComponent(minor) + "/index.html";
       }
