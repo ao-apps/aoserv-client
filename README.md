@@ -21,7 +21,7 @@ Java client for the [AOServ Platform](https://aoindustries.com/aoserv/).
 * [Project Home](https://aoindustries.com/aoserv/client/)
 * [Changelog](https://aoindustries.com/aoserv/client/changelog)
 * [API Docs](https://aoindustries.com/aoserv/client/apidocs/)
-* [Maven Central Repository](https://central.sonatype.com/artifact/com.aoindustries/aoserv-client)
+* [Central Repository](https://central.sonatype.com/artifact/com.aoindustries/aoserv-client)
 * [GitHub](https://github.com/ao-apps/aoserv-client)
 
 ## Contact Us
