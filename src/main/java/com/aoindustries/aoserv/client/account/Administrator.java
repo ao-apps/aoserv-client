@@ -160,13 +160,13 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
     return PasswordChecker.checkPassword(username, password, PasswordChecker.PasswordStrength.STRICT);
   }
 
-  ///**
-  // * Validates a password and returns a description of the problem.  If the
-  // * password is valid, then {@code null} is returned.
-  // */
-  //public String checkPasswordDescribe(String password) {
-  //  return checkPasswordDescribe(pkey, password);
-  //}
+  // /**
+  //  * Validates a password and returns a description of the problem.  If the
+  //  * password is valid, then {@code null} is returned.
+  //  */
+  // public String checkPasswordDescribe(String password) {
+  //   return checkPasswordDescribe(pkey, password);
+  // }
 
   /**
    * Validates a password and returns a description of the problem.  If the

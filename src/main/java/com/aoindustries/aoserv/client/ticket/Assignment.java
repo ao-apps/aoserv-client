@@ -106,11 +106,11 @@ public final class Assignment extends CachedObjectIntegerKey<Assignment> {
       throw new SQLException("Unable to find Administrator: " + administrator);
     }
     return obj;
-    //Username un=table.getConnector().getUsernames().get(administrator);
-    //if (un == null) {
-    //  return null;
-    //}
-    //return un.getAdministrator();
+    // Username un=table.getConnector().getUsernames().get(administrator);
+    // if (un == null) {
+    //   return null;
+    // }
+    // return un.getAdministrator();
   }
 
   @Override

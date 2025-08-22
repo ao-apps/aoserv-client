@@ -140,8 +140,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       if (name == null) {
         return null;
       }
-      //Name existing = interned.get(name);
-      //return existing != null ? existing : new Name(name);
+      // Name existing = interned.get(name);
+      // return existing != null ? existing : new Name(name);
       return new Name(name, true);
     }
 

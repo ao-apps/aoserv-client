@@ -122,8 +122,8 @@ public final class PosixPath implements
     if (path == null) {
       return null;
     }
-    //PosixPath existing = interned.get(path);
-    //return existing != null ? existing : new PosixPath(path);
+    // PosixPath existing = interned.get(path);
+    // return existing != null ? existing : new PosixPath(path);
     return new PosixPath(path, true);
   }
 

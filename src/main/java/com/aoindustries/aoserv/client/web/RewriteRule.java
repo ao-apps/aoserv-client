@@ -155,7 +155,7 @@ public final class RewriteRule extends CachedObjectIntegerKey<RewriteRule> {
    * @see  #getFlags()
    * @see  #hasFlag(java.lang.String)
    */
-  public boolean hasFlag(String ... flags) {
+  public boolean hasFlag(String... flags) {
     if (flags == null) {
       return false;
     }

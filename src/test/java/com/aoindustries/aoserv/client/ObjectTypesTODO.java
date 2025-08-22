@@ -119,9 +119,9 @@ public class ObjectTypesTODO extends TestCase {
                         Boolean b = (Boolean) value;
                         break;
                       }
-                    //case SchemaType.BYTE: {expectedType=Byte.class; Byte b=(Byte)value; break;}
-                    //case SchemaType.CITY: {expectedType=String.class; String city=(String)value; break;}
-                    //case SchemaType.COUNTRY: {expectedType=String.class; String country=(String)value; break;}
+                    // case SchemaType.BYTE: {expectedType=Byte.class; Byte b=(Byte)value; break;}
+                    // case SchemaType.CITY: {expectedType=String.class; String city=(String)value; break;}
+                    // case SchemaType.COUNTRY: {expectedType=String.class; String country=(String)value; break;}
                     case Type.DATE:
                       {
                         expectedType = Date.class;
@@ -194,14 +194,14 @@ public class ObjectTypesTODO extends TestCase {
                         Long l = (Long) value;
                         break;
                       }
-                    //case SchemaType.OCTAL_INT: {expectedType=Integer.class; Integer i=(Integer)value; break;}
+                    // case SchemaType.OCTAL_INT: {expectedType=Integer.class; Integer i=(Integer)value; break;}
                     case Type.OCTAL_LONG:
                       {
                         expectedType = Long.class;
                         Long l = (Long) value;
                         break;
                       }
-                    //case SchemaType.PACKAGE: {expectedType=String.class; String pack=(String)value; break;}
+                    // case SchemaType.PACKAGE: {expectedType=String.class; String pack=(String)value; break;}
                     case Type.PATH:
                       {
                         expectedType = String.class;
@@ -226,7 +226,7 @@ public class ObjectTypesTODO extends TestCase {
                         Short s = (Short) value;
                         break;
                       }
-                    //case SchemaType.STATE: {expectedType=String.class; String state=(String)value; break;}
+                    // case SchemaType.STATE: {expectedType=String.class; String state=(String)value; break;}
                     case Type.STRING:
                       {
                         expectedType = String.class;
@@ -251,7 +251,7 @@ public class ObjectTypesTODO extends TestCase {
                         String username = (String) value;
                         break;
                       }
-                    //case SchemaType.ZIP: {expectedType=String.class; String zip=(String)value; break;}
+                    // case SchemaType.ZIP: {expectedType=String.class; String zip=(String)value; break;}
                     case Type.ZONE:
                       {
                         expectedType = String.class;

@@ -99,13 +99,13 @@ public class TcpConnector extends AoservConnector {
     @SuppressWarnings({"SleepWhileInLoop", "UseSpecificCatch", "TooBroadCatch"})
     public void run() {
       try {
-        //System.err.println("DEBUG: TcpConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Starting");
+        // System.err.println("DEBUG: TcpConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Starting");
         boolean runMore = true;
         while (runMore && !Thread.currentThread().isInterrupted()) {
           try {
             try (SocketConnection conn = getConnection(1)) {
               try {
-                //System.err.println("DEBUG: TcpConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: conn.identityHashCode="+System.identityHashCode(conn));
+                // System.err.println("DEBUG: TcpConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: conn.identityHashCode="+System.identityHashCode(conn));
                 StreamableOutput out = conn.getRequestOut(AoservProtocol.CommandId.LISTEN_CACHES);
                 // TODO: Only listen for caches on tables where there is either something currently cached
                 // TODO: (how to handle shared caches of global cached tables?) or where there is
@@ -184,7 +184,7 @@ public class TcpConnector extends AoservConnector {
             } else {
               getLogger().log(Level.INFO, null, err);
               try {
-                //System.err.println("DEBUG: TcpConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Sleeping after exception");
+                // System.err.println("DEBUG: TcpConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Sleeping after exception");
                 sleep(getFastRandom().nextInt(50000) + 10000); // Wait between 10 and 60 seconds
               } catch (InterruptedException err2) {
                 getLogger().log(Level.WARNING, null, err2);
@@ -200,7 +200,7 @@ public class TcpConnector extends AoservConnector {
             } else {
               getLogger().log(Level.SEVERE, null, t);
               try {
-                //System.err.println("DEBUG: TcpConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Sleeping after exception");
+                // System.err.println("DEBUG: TcpConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Sleeping after exception");
                 sleep(getFastRandom().nextInt(50000) + 10000); // Wait between 10 and 60 seconds
               } catch (InterruptedException err2) {
                 getLogger().log(Level.WARNING, null, err2);
@@ -209,12 +209,12 @@ public class TcpConnector extends AoservConnector {
               }
             }
           } finally {
-            //System.err.println("DEBUG: TcpConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Clearing caches");
+            // System.err.println("DEBUG: TcpConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Clearing caches");
             clearCaches();
           }
         }
       } finally {
-        //System.err.println("DEBUG: TcpConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Ending");
+        // System.err.println("DEBUG: TcpConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Ending");
         synchronized (cacheMonitorLock) {
           if (cacheMonitor == this) {
             cacheMonitor = null;
@@ -290,7 +290,7 @@ public class TcpConnector extends AoservConnector {
     }
     startCacheMonitor();
     SocketConnection conn = pool.getConnection(maxConnections);
-    //System.err.println("DEBUG: TcpConnector("+connectAs+"-"+getConnectorId()+"): getConnection("+maxConnections+"): conn.identityHashCode="+System.identityHashCode(conn));
+    // System.err.println("DEBUG: TcpConnector("+connectAs+"-"+getConnectorId()+"): getConnection("+maxConnections+"): conn.identityHashCode="+System.identityHashCode(conn));
     return conn;
   }
 
@@ -419,7 +419,7 @@ public class TcpConnector extends AoservConnector {
 
   @Override
   protected final void release(AoservConnection conn) throws IOException {
-    //System.err.println("DEBUG: TcpConnector("+connectAs+"-"+getConnectorId()+"): release("+System.identityHashCode(conn)+"): conn.identityHashCode="+System.identityHashCode(conn));
+    // System.err.println("DEBUG: TcpConnector("+connectAs+"-"+getConnectorId()+"): release("+System.identityHashCode(conn)+"): conn.identityHashCode="+System.identityHashCode(conn));
     pool.release((SocketConnection) conn);
   }
 

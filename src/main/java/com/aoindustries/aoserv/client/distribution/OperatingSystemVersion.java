@@ -48,9 +48,9 @@ public final class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
   static final int COLUMN_PKEY = 0;
   static final String COLUMN_SORT_ORDER_name = "sort_order";
 
-  //public static final String VERSION_1_4 = "1.4";
-  //public static final String VERSION_7_2 = "7.2";
-  //public static final String VERSION_9_2 = "9.2";
+  // public static final String VERSION_1_4 = "1.4";
+  // public static final String VERSION_7_2 = "7.2";
+  // public static final String VERSION_9_2 = "9.2";
   public static final String VERSION_5 = "5";
   public static final String VERSION_5_DOM0 = "5.dom0";
   public static final String VERSION_7 = "7";

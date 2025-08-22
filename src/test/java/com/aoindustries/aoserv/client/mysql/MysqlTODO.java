@@ -296,7 +296,7 @@ public class MysqlTODO extends TestCase {
       boolean connected = false;
       try {
         try (Connection myConn = getConnection(md)) {
-          //conn.createStatement().executeUpdate("create table test (test integer not null)");
+          // conn.createStatement().executeUpdate("create table test (test integer not null)");
           connected = true;
         }
       } catch (SQLException err) {
@@ -314,14 +314,14 @@ public class MysqlTODO extends TestCase {
         }
       }
       if (connected) {
-        //System.out.println("Should not be able to connect to database until MysqlDbUser added: "+md+" - sleeping for 30 seconds");
-        //try {
-        //    Thread.sleep(30000);
-        //} catch (InterruptedException err) {
-        //    logger...
-        //    // Restore the interrupted status
-        //    Thread.currentThread().interrupt();
-        //}
+        // System.out.println("Should not be able to connect to database until MysqlDbUser added: "+md+" - sleeping for 30 seconds");
+        // try {
+        //     Thread.sleep(30000);
+        // } catch (InterruptedException err) {
+        //     logger...
+        //     // Restore the interrupted status
+        //     Thread.currentThread().interrupt();
+        // }
         fail("Should not be able to connect to database until MysqlDbUser added: " + md);
       }
     }

@@ -193,8 +193,8 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
       if (name == null) {
         return null;
       }
-      //Name existing = interned.get(name);
-      //return existing != null ? existing : new Name(name);
+      // Name existing = interned.get(name);
+      // return existing != null ? existing : new Name(name);
       return new Name(name);
     }
 

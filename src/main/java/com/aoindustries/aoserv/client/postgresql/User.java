@@ -129,8 +129,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
       if (id == null) {
         return null;
       }
-      //Name existing = interned.get(id);
-      //return existing != null ? existing : new Name(id);
+      // Name existing = interned.get(id);
+      // return existing != null ? existing : new Name(id);
       return new Name(id, true);
     }
 

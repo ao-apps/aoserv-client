@@ -289,16 +289,16 @@ public abstract class AoservObject<K, T extends AoservObject<K, T>> implements R
     return DomainLabel.valueOf(domainLabel.getLabel());
   }
 
-  ///**
-  // * null-safe conversion from java.util.Date to java.sql.Date, will cast when possible.
-  // */
-  //protected static java.sql.Date getDate(Date date) {
-  //  if (date == null) {
-  //return null;
-  //  if (date instanceof java.sql.Date) {
-  //return (java.sql.Date)date;
-  //  return new java.sql.Date(date.getTime());
-  //}
+  // /**
+  //  * null-safe conversion from java.util.Date to java.sql.Date, will cast when possible.
+  //  */
+  // protected static java.sql.Date getDate(Date date) {
+  //   if (date == null) {
+  // return null;
+  //   if (date instanceof java.sql.Date) {
+  // return (java.sql.Date)date;
+  //   return new java.sql.Date(date.getTime());
+  // }
 
   /**
    * null-safe domain labels conversion.

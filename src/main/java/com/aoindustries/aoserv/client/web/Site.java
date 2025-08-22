@@ -673,9 +673,9 @@ public final class Site extends CachedObjectIntegerKey<Site> implements Disablab
     return Table.TableId.HTTPD_SITES;
   }
 
-  //public void initializePasswdFile(String username, String password) {
-  //    table.getConnector().requestUpdate(AoservProtocol.INITIALIZE_HTTPD_SITE_PASSWD_FILE, pkey, username, UnixCrypt.crypt(username, password));
-  //}
+  // public void initializePasswdFile(String username, String password) {
+  //     table.getConnector().requestUpdate(AoservProtocol.INITIALIZE_HTTPD_SITE_PASSWD_FILE, pkey, username, UnixCrypt.crypt(username, password));
+  // }
 
   /**
    * Checks the format of the name of the site, as used in the <code>/www</code>

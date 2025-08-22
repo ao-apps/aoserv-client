@@ -67,7 +67,7 @@ import java.util.logging.Level;
 public abstract class AoservTable<K, V extends AoservObject<K, V>> implements Iterable<V>, com.aoapps.hodgepodge.table.Table<V> {
 
   protected final AoservConnector connector;
-  //final SimpleAoservClient client;
+  // final SimpleAoservClient client;
   final Class<V> clazz;
 
   private class TableListenersLock {
@@ -218,7 +218,7 @@ public abstract class AoservTable<K, V extends AoservObject<K, V>> implements It
 
   protected AoservTable(AoservConnector connector, Class<V> clazz) {
     this.connector = connector;
-    //this.client = new SimpleAoservClient(connector);
+    // this.client = new SimpleAoservClient(connector);
     this.clazz = clazz;
   }
 
@@ -418,7 +418,7 @@ public abstract class AoservTable<K, V extends AoservObject<K, V>> implements It
   /**
    * Gets a single object or {@code null} when not found.
    */
-  protected V getObject(boolean allowRetry, final AoservProtocol.CommandId commandId, final Object ... params) throws IOException, SQLException {
+  protected V getObject(boolean allowRetry, final AoservProtocol.CommandId commandId, final Object... params) throws IOException, SQLException {
     return connector.requestResult(allowRetry,
         commandId,
         new AoservConnector.ResultRequest<>() {
@@ -455,13 +455,13 @@ public abstract class AoservTable<K, V extends AoservObject<K, V>> implements It
     );
   }
 
-  protected List<V> getObjects(boolean allowRetry, AoservProtocol.CommandId commandId, Object ... params) throws IOException, SQLException {
+  protected List<V> getObjects(boolean allowRetry, AoservProtocol.CommandId commandId, Object... params) throws IOException, SQLException {
     List<V> list = new ArrayList<>();
     getObjects(allowRetry, list, commandId, params);
     return list;
   }
 
-  private void getObjects(boolean allowRetry, final boolean withProgress, final List<V> list, final AoservProtocol.CommandId commandId, final Object ... params) throws IOException, SQLException {
+  private void getObjects(boolean allowRetry, final boolean withProgress, final List<V> list, final AoservProtocol.CommandId commandId, final Object... params) throws IOException, SQLException {
     final int initialSize = list.size();
     // Get a snapshot of all listeners
     final ProgressListener[] progListeners = withProgress ? getProgressListeners() : null;
@@ -641,7 +641,7 @@ public abstract class AoservTable<K, V extends AoservObject<K, V>> implements It
     }
   }
 
-  protected void getObjects(boolean allowRetry, final List<V> list, final AoservProtocol.CommandId commandId, final Object ... params) throws IOException, SQLException {
+  protected void getObjects(boolean allowRetry, final List<V> list, final AoservProtocol.CommandId commandId, final Object... params) throws IOException, SQLException {
     getObjects(allowRetry, true, list, commandId, params);
   }
 
@@ -656,7 +656,7 @@ public abstract class AoservTable<K, V extends AoservObject<K, V>> implements It
     return list;
   }
 
-  protected void getObjectsNoProgress(boolean allowRetry, final List<V> list, final AoservProtocol.CommandId commandId, final Object ... params) throws IOException, SQLException {
+  protected void getObjectsNoProgress(boolean allowRetry, final List<V> list, final AoservProtocol.CommandId commandId, final Object... params) throws IOException, SQLException {
     getObjects(allowRetry, false, list, commandId, params);
   }
 
@@ -665,7 +665,7 @@ public abstract class AoservTable<K, V extends AoservObject<K, V>> implements It
    *
    * @see  #getObjectsNoProgress(boolean, java.util.List, com.aoindustries.aoserv.client.schema.AoservProtocol.CommandId, java.lang.Object...)
    */
-  protected List<V> getObjectsNoProgress(boolean allowRetry, AoservProtocol.CommandId commandId, Object ... params) throws IOException, SQLException {
+  protected List<V> getObjectsNoProgress(boolean allowRetry, AoservProtocol.CommandId commandId, Object... params) throws IOException, SQLException {
     List<V> list = new ArrayList<>();
     getObjectsNoProgress(allowRetry, list, commandId, params);
     return list;

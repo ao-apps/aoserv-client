@@ -94,9 +94,9 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
    */
   public static final int BOOLEAN =  1;
 
-  //public static final int BYTE =  2; // byte/java.lang.Byte
-  //public static final int CITY =  3; // java.lang.String
-  //public static final int COUNTRY =  4; // java.lang.String
+  // public static final int BYTE =  2; // byte/java.lang.Byte
+  // public static final int CITY =  3; // java.lang.String
+  // public static final int COUNTRY =  4; // java.lang.String
 
   /**
    * TODO: UnmodifiableDate.
@@ -160,14 +160,14 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
    */
   public static final int LONG = 16;
 
-  //public static final int OCTAL_INT = 17; // int/java.lang.Integer
+  // public static final int OCTAL_INT = 17; // int/java.lang.Integer
 
   /**
    * @see java.lang.Long
    */
   public static final int OCTAL_LONG = 18;
 
-  //public static final int PACKAGE = 19; // com.aoindustries.aoserv.client.validator.AccountingCode
+  // public static final int PACKAGE = 19; // com.aoindustries.aoserv.client.validator.AccountingCode
 
   /**
    * @see java.lang.Integer
@@ -189,7 +189,7 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
    */
   public static final int SHORT = 23; // short/java.lang.Short
 
-  //public static final int STATE = 24; // java.lang.String
+  // public static final int STATE = 24; // java.lang.String
 
   /**
    * @see java.lang.String
@@ -211,7 +211,7 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
    */
   public static final int USERNAME = 28;
 
-  //public static final int ZIP = 29; // java.lang.String
+  // public static final int ZIP = 29; // java.lang.String
 
   /**
    * @see java.lang.String

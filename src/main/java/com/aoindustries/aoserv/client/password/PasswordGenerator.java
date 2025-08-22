@@ -277,7 +277,7 @@ public final class PasswordGenerator {
         if (dig2pos == 2) {
           pw.append(dig2);
         }
-        //pw.append(" - ").append(entropy/1000000000L);
+        // pw.append(" - ").append(entropy/1000000000L);
 
       } while (entropy < MINIMUM_ENTROPY);
       password = pw.toString();

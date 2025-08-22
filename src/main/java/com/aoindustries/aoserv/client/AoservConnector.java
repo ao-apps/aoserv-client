@@ -1196,7 +1196,7 @@ public abstract class AoservConnector implements SchemaParent {
   }
 
   @SuppressWarnings("SleepWhileInLoop")
-  public final boolean requestBooleanQuery(boolean allowRetry, AoservProtocol.CommandId commandId, Object ... params) throws IOException, SQLException {
+  public final boolean requestBooleanQuery(boolean allowRetry, AoservProtocol.CommandId commandId, Object... params) throws IOException, SQLException {
     int attempt = 1;
     int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
     while (!Thread.currentThread().isInterrupted()) {
@@ -1239,7 +1239,7 @@ public abstract class AoservConnector implements SchemaParent {
   }
 
   @SuppressWarnings("SleepWhileInLoop")
-  public final boolean requestBooleanQueryInvalidating(boolean allowRetry, AoservProtocol.CommandId commandId, Object ... params) throws IOException, SQLException {
+  public final boolean requestBooleanQueryInvalidating(boolean allowRetry, AoservProtocol.CommandId commandId, Object... params) throws IOException, SQLException {
     int attempt = 1;
     int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
     while (!Thread.currentThread().isInterrupted()) {
@@ -1288,7 +1288,7 @@ public abstract class AoservConnector implements SchemaParent {
   }
 
   @SuppressWarnings("SleepWhileInLoop")
-  public final int requestIntQuery(boolean allowRetry, AoservProtocol.CommandId commandId, Object ... params) throws IOException, SQLException {
+  public final int requestIntQuery(boolean allowRetry, AoservProtocol.CommandId commandId, Object... params) throws IOException, SQLException {
     int attempt = 1;
     int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
     while (!Thread.currentThread().isInterrupted()) {
@@ -1331,7 +1331,7 @@ public abstract class AoservConnector implements SchemaParent {
   }
 
   @SuppressWarnings("SleepWhileInLoop")
-  public final int requestIntQueryInvalidating(boolean allowRetry, AoservProtocol.CommandId commandId, Object ... params) throws IOException, SQLException {
+  public final int requestIntQueryInvalidating(boolean allowRetry, AoservProtocol.CommandId commandId, Object... params) throws IOException, SQLException {
     int attempt = 1;
     int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
     while (!Thread.currentThread().isInterrupted()) {
@@ -1380,7 +1380,7 @@ public abstract class AoservConnector implements SchemaParent {
   }
 
   @SuppressWarnings("SleepWhileInLoop")
-  public final long requestLongQuery(boolean allowRetry, AoservProtocol.CommandId commandId, Object ... params) throws IOException, SQLException {
+  public final long requestLongQuery(boolean allowRetry, AoservProtocol.CommandId commandId, Object... params) throws IOException, SQLException {
     int attempt = 1;
     int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
     while (!Thread.currentThread().isInterrupted()) {
@@ -1423,7 +1423,7 @@ public abstract class AoservConnector implements SchemaParent {
   }
 
   @SuppressWarnings("SleepWhileInLoop")
-  public final short requestShortQuery(boolean allowRetry, AoservProtocol.CommandId commandId, Object ... params) throws IOException, SQLException {
+  public final short requestShortQuery(boolean allowRetry, AoservProtocol.CommandId commandId, Object... params) throws IOException, SQLException {
     int attempt = 1;
     int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
     while (!Thread.currentThread().isInterrupted()) {
@@ -1466,7 +1466,7 @@ public abstract class AoservConnector implements SchemaParent {
   }
 
   @SuppressWarnings("SleepWhileInLoop")
-  public final short requestShortQueryInvalidating(boolean allowRetry, AoservProtocol.CommandId commandId, Object ... params) throws IOException, SQLException {
+  public final short requestShortQueryInvalidating(boolean allowRetry, AoservProtocol.CommandId commandId, Object... params) throws IOException, SQLException {
     int attempt = 1;
     int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
     while (!Thread.currentThread().isInterrupted()) {
@@ -1515,7 +1515,7 @@ public abstract class AoservConnector implements SchemaParent {
   }
 
   @SuppressWarnings("SleepWhileInLoop")
-  public final String requestStringQuery(boolean allowRetry, AoservProtocol.CommandId commandId, Object ... params) throws IOException, SQLException {
+  public final String requestStringQuery(boolean allowRetry, AoservProtocol.CommandId commandId, Object... params) throws IOException, SQLException {
     int attempt = 1;
     int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
     while (!Thread.currentThread().isInterrupted()) {
@@ -1561,7 +1561,7 @@ public abstract class AoservConnector implements SchemaParent {
    * Performs a query returning a String of any length (not limited to size &lt;= 64k like requestStringQuery).
    */
   @SuppressWarnings("SleepWhileInLoop")
-  public final String requestLongStringQuery(boolean allowRetry, AoservProtocol.CommandId commandId, Object ... params) throws IOException, SQLException {
+  public final String requestLongStringQuery(boolean allowRetry, AoservProtocol.CommandId commandId, Object... params) throws IOException, SQLException {
     int attempt = 1;
     int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
     while (!Thread.currentThread().isInterrupted()) {
@@ -1608,7 +1608,7 @@ public abstract class AoservConnector implements SchemaParent {
    * Supports nulls.
    */
   @SuppressWarnings("SleepWhileInLoop")
-  public final String requestNullLongStringQuery(boolean allowRetry, AoservProtocol.CommandId commandId, Object ... params) throws IOException, SQLException {
+  public final String requestNullLongStringQuery(boolean allowRetry, AoservProtocol.CommandId commandId, Object... params) throws IOException, SQLException {
     int attempt = 1;
     int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
     while (!Thread.currentThread().isInterrupted()) {
@@ -1765,7 +1765,7 @@ public abstract class AoservConnector implements SchemaParent {
   }
 
   @SuppressWarnings("SleepWhileInLoop")
-  public final void requestUpdate(boolean allowRetry, AoservProtocol.CommandId commandId, Object ... params) throws IOException, SQLException {
+  public final void requestUpdate(boolean allowRetry, AoservProtocol.CommandId commandId, Object... params) throws IOException, SQLException {
     int attempt = 1;
     int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
     while (!Thread.currentThread().isInterrupted()) {
@@ -1807,7 +1807,7 @@ public abstract class AoservConnector implements SchemaParent {
   }
 
   @SuppressWarnings("SleepWhileInLoop")
-  public final void requestUpdateInvalidating(boolean allowRetry, AoservProtocol.CommandId commandId, Object ... params) throws IOException, SQLException {
+  public final void requestUpdateInvalidating(boolean allowRetry, AoservProtocol.CommandId commandId, Object... params) throws IOException, SQLException {
     int attempt = 1;
     int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
     while (!Thread.currentThread().isInterrupted()) {
@@ -1868,7 +1868,7 @@ public abstract class AoservConnector implements SchemaParent {
       // Then send the events
       for (int c = 0; c < size; c++) {
         int tableId = invalidateList.getInt(c);
-        //System.err.println("DEBUG: AoservConnector: tablesUpdated: " + tableId + ": " + SchemaTable.TableId.values()[tableId]);
+        // System.err.println("DEBUG: AoservConnector: tablesUpdated: " + tableId + ": " + SchemaTable.TableId.values()[tableId]);
         tables.get(tableId).tableUpdated();
       }
     }

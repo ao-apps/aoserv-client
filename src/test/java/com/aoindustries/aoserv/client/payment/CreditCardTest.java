@@ -77,11 +77,11 @@ public class CreditCardTest extends TestCase {
         sb.append(randCh);
       }
       String original = sb.toString();
-      //System.out.println(original);
+      // System.out.println(original);
       String randomized = CreditCard.randomize(original);
-      //System.out.println(randomized);
+      // System.out.println(randomized);
       String derandomized = CreditCard.derandomize(randomized);
-      //System.out.println(derandomized);
+      // System.out.println(derandomized);
       assertEquals("original and derandomized do not match", original, derandomized);
     }
   }

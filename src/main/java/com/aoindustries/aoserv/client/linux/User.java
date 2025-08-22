@@ -151,8 +151,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       if (value == null) {
         return null;
       }
-      //Gecos existing = interned.get(value);
-      //return existing != null ? existing : new Gecos(value);
+      // Gecos existing = interned.get(value);
+      // return existing != null ? existing : new Gecos(value);
       return new Gecos(value, true);
     }
 
@@ -371,8 +371,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       if (name == null) {
         return null;
       }
-      //Name existing = interned.get(name);
-      //return existing != null ? existing : new Name(name);
+      // Name existing = interned.get(name);
+      // return existing != null ? existing : new Name(name);
       return new Name(name, true);
     }
 

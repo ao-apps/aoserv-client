@@ -70,10 +70,10 @@ public final class SocketConnection extends AoservConnection {
    */
   private final StreamableInput in;
 
-  ///**
-  // * The first command sequence for this connection.
-  // */
-  //private final long startSeq;
+  // /**
+  //  * The first command sequence for this connection.
+  //  */
+  // private final long startSeq;
 
   /**
    * The next command sequence that will be sent.

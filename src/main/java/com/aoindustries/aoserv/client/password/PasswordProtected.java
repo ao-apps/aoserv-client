@@ -52,7 +52,7 @@ public interface PasswordProtected {
 
   List<PasswordChecker.Result> checkPassword(String password) throws IOException, SQLException;
 
-  //String checkPasswordDescribe(String password);
+  // String checkPasswordDescribe(String password);
 
   boolean canSetPassword() throws IOException, SQLException;
 

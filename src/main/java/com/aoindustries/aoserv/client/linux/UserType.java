@@ -89,29 +89,29 @@ public final class UserType extends GlobalObjectStringKey<UserType> {
       Shell.NOLOGIN,
       Shell.SYNC,
       Shell.HALT,
-      Shell.SHUTDOWN//,
-      //Shell.TRUE
+      Shell.SHUTDOWN // ,
+      // Shell.TRUE
   };
 
   private static final PosixPath[] applicationShells = {
       Shell.BASH,
-      Shell.FALSE//,
-      //Shell.NULL,
-      //Shell.TRUE
+      Shell.FALSE // ,
+      // Shell.NULL,
+      // Shell.TRUE
   };
 
   private static final PosixPath[] userShells = {
-      //Shell.ASH,
+      // Shell.ASH,
       Shell.BASH,
-      //Shell.BASH2,
-      //Shell.BSH,
-      //Shell.CSH,
+      // Shell.BASH2,
+      // Shell.BSH,
+      // Shell.CSH,
       Shell.FALSE,
       Shell.KSH,
       Shell.SH,
       Shell.TCSH,
-      Shell.GIT_SHELL//,
-      //Shell.TRUE
+      Shell.GIT_SHELL // ,
+      // Shell.TRUE
   };
 
   private String description;

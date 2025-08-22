@@ -85,7 +85,7 @@ public final class Aosh extends ShellInterpreter {
     this.connector = connector;
   }
 
-  public Aosh(AoservConnector connector, Reader in, TerminalWriter out, TerminalWriter err, String ... args) {
+  public Aosh(AoservConnector connector, Reader in, TerminalWriter out, TerminalWriter err, String... args) {
     super(in, out, err, args);
     this.connector = connector;
   }

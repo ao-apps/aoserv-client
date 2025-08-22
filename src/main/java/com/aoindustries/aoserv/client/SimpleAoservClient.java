@@ -2762,96 +2762,96 @@ public final class SimpleAoservClient {
     return esr.addSpamEmailMessage(message);
   }
 
-  ///**
-  // * Adds a new support request {@link Ticket} to the system.
-  // *
-  // * @param  accounting  the name of the {@link Account} that the support
-  // *                      request relates to
-  // * @param  business_administrator  the person to contact regarding the ticket
-  // * @param  ticket_type  the {@link TicketType}
-  // * @param  details  the content of the {@link Ticket}
-  // * @param  deadline  the requested deadline for ticket completion or
-  // *                   {@link Ticket#NO_DEADLINE} for none
-  // * @param  client_priority  the priority assigned by the client
-  // * @param  admin_priority  the priority assigned by the ticket administrator
-  // * @param  technology  the {@link Software} that this {@link Ticket}
-  // *                     relates to or {@code null} for none
-  // *
-  // * @exception  IOException  if unable to contact the server
-  // * @exception  SQLException  if unable to access the database or a data integrity
-  // *                           violation occurs
-  // * @exception  IllegalArgumentException  if unable to find the {@link Package},
-  // *                                       {@link Administrator}, {@link TicketType},
-  // *                                       client {@link Priority}, admin {@link Priority},
-  // *                                       or {@link Software}
-  // *
-  // * @see  Administrator#addTicket(Account,TicketType,String,long,TicketPriority,TicketPriority,TechnologyName,Administrator,String,String)
-  // * @see  Administrator#isActiveTicketAdmin
-  // * @see  Action
-  // * @see  Package
-  // * @see  TechnologyName
-  // * @see  Ticket
-  // * @see  TicketPriority
-  // * @see  TicketType
-  // */
-  //public int addTicket(
-  //  String accounting,
-  //  String language,
-  //  String category,
-  //  String ticketType,
-  //  String summary,
-  //  String details,
-  //  String clientPriority,
-  //  String contactEmails,
-  //  String contactPhoneNumbers
-  //) throws IllegalArgumentException, IOException, SQLException {
-  //  return connector.getTickets().addTicket(
-  //    (accounting == null || accounting.length() == 0) ? null : getAccount(accounting),
-  //    getLanguage(language),
-  //    (category == null || category.length() == 0) ? null : getTicketCategory(category),
-  //    getTicketType(ticketType),
-  //    summary,
-  //    (details == null || details.length() == 0) ? null : details,
-  //    getTicketPriority(clientPriority),
-  //    contactEmails,
-  //    contactPhoneNumbers
-  //  );
-  //}
+  // /**
+  //  * Adds a new support request {@link Ticket} to the system.
+  //  *
+  //  * @param  accounting  the name of the {@link Account} that the support
+  //  *                      request relates to
+  //  * @param  business_administrator  the person to contact regarding the ticket
+  //  * @param  ticket_type  the {@link TicketType}
+  //  * @param  details  the content of the {@link Ticket}
+  //  * @param  deadline  the requested deadline for ticket completion or
+  //  *                   {@link Ticket#NO_DEADLINE} for none
+  //  * @param  client_priority  the priority assigned by the client
+  //  * @param  admin_priority  the priority assigned by the ticket administrator
+  //  * @param  technology  the {@link Software} that this {@link Ticket}
+  //  *                     relates to or {@code null} for none
+  //  *
+  //  * @exception  IOException  if unable to contact the server
+  //  * @exception  SQLException  if unable to access the database or a data integrity
+  //  *                           violation occurs
+  //  * @exception  IllegalArgumentException  if unable to find the {@link Package},
+  //  *                                       {@link Administrator}, {@link TicketType},
+  //  *                                       client {@link Priority}, admin {@link Priority},
+  //  *                                       or {@link Software}
+  //  *
+  //  * @see  Administrator#addTicket(Account,TicketType,String,long,TicketPriority,TicketPriority,TechnologyName,Administrator,String,String)
+  //  * @see  Administrator#isActiveTicketAdmin
+  //  * @see  Action
+  //  * @see  Package
+  //  * @see  TechnologyName
+  //  * @see  Ticket
+  //  * @see  TicketPriority
+  //  * @see  TicketType
+  //  */
+  // public int addTicket(
+  //   String accounting,
+  //   String language,
+  //   String category,
+  //   String ticketType,
+  //   String summary,
+  //   String details,
+  //   String clientPriority,
+  //   String contactEmails,
+  //   String contactPhoneNumbers
+  // ) throws IllegalArgumentException, IOException, SQLException {
+  //   return connector.getTickets().addTicket(
+  //     (accounting == null || accounting.length() == 0) ? null : getAccount(accounting),
+  //     getLanguage(language),
+  //     (category == null || category.length() == 0) ? null : getTicketCategory(category),
+  //     getTicketType(ticketType),
+  //     summary,
+  //     (details == null || details.length() == 0) ? null : details,
+  //     getTicketPriority(clientPriority),
+  //     contactEmails,
+  //     contactPhoneNumbers
+  //   );
+  // }
 
-  ///**
-  // * Adds a work entry to a {@link Ticket} when a {@link Ticket} is worked on,
-  // * but not completed.
-  // *
-  // * @param  ticket_id  the pkey of the {@link Ticket}
-  // * @param  administrator  the username of the {@link Administrator}
-  // *                        making the change
-  // * @param  comments  the details of their work
-  // *
-  // * @exception  IOException  if unable to contact the server
-  // * @exception  SQLException  if unable to access the database or a data integrity
-  // *                           violation occurs
-  // * @exception  IllegalArgumentException  if unable to find the {@link Ticket} or
-  // *                                       {@link Administrator}
-  // *
-  // * @see  Ticket#actWorkEntry
-  // * @see  #addTicket
-  // * @see  Action
-  // */
-  //public void addTicketWork(
-  //  int ticket_id,
-  //  String administrator,
-  //  String comments
-  //) throws IllegalArgumentException, IOException, SQLException {
-  //  Ticket ti=connector.getTickets().get(ticket_id);
-  //  if (ti == null) {
-  //    throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
-  //  }
-  //  Administrator pe=connector.getAdministrators().get(administrator);
-  //  if (pe == null) {
-  //    throw new IllegalArgumentException("Unable to find Administrator: " + administrator);
-  //  }
-  //  ti.actWorkEntry(pe, comments);
-  //}
+  // /**
+  //  * Adds a work entry to a {@link Ticket} when a {@link Ticket} is worked on,
+  //  * but not completed.
+  //  *
+  //  * @param  ticket_id  the pkey of the {@link Ticket}
+  //  * @param  administrator  the username of the {@link Administrator}
+  //  *                        making the change
+  //  * @param  comments  the details of their work
+  //  *
+  //  * @exception  IOException  if unable to contact the server
+  //  * @exception  SQLException  if unable to access the database or a data integrity
+  //  *                           violation occurs
+  //  * @exception  IllegalArgumentException  if unable to find the {@link Ticket} or
+  //  *                                       {@link Administrator}
+  //  *
+  //  * @see  Ticket#actWorkEntry
+  //  * @see  #addTicket
+  //  * @see  Action
+  //  */
+  // public void addTicketWork(
+  //   int ticket_id,
+  //   String administrator,
+  //   String comments
+  // ) throws IllegalArgumentException, IOException, SQLException {
+  //   Ticket ti=connector.getTickets().get(ticket_id);
+  //   if (ti == null) {
+  //     throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
+  //   }
+  //   Administrator pe=connector.getAdministrators().get(administrator);
+  //   if (pe == null) {
+  //     throw new IllegalArgumentException("Unable to find Administrator: " + administrator);
+  //   }
+  //   ti.actWorkEntry(pe, comments);
+  // }
 
   /**
    * Adds a new {@link Transaction} to a {@link Account}.
@@ -3065,39 +3065,39 @@ public final class SimpleAoservClient {
     return getUsername(username).arePasswordsSet();
   }
 
-  ///**
-  // * Bounces a {@link Ticket}.
-  // *
-  // * @param  ticket_id  the pkey of the {@link Ticket}
-  // * @param  administrator  the username of the {@link Administrator}
-  // *                        making the change
-  // * @param  comments  the details of the bounce
-  // *
-  // * @exception  IOException  if unable to contact the server
-  // * @exception  SQLException  if unable to access the database or a data integrity
-  // *                           violation occurs
-  // * @exception  IllegalArgumentException  if unable to find the {@link Ticket} or
-  // *                                       {@link Administrator}
-  // *
-  // * @see  Ticket#actBounceTicket
-  // * @see  #addTicket
-  // * @see  Action
-  // */
-  //public void bounceTicket(
-  //  int ticket_id,
-  //  String administrator,
-  //  String comments
-  //) throws IllegalArgumentException, IOException, SQLException {
-  //  Ticket ti=connector.getTickets().get(ticket_id);
-  //  if (ti == null) {
-  //    throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
-  //  }
-  //  Administrator pe = connector.getAdministrators().get(administrator);
-  //  if (pe == null) {
-  //    throw new IllegalArgumentException("Unable to find Administrator: " + administrator);
-  //  }
-  //  ti.actBounceTicket(pe, comments);
-  //}
+  // /**
+  //  * Bounces a {@link Ticket}.
+  //  *
+  //  * @param  ticket_id  the pkey of the {@link Ticket}
+  //  * @param  administrator  the username of the {@link Administrator}
+  //  *                        making the change
+  //  * @param  comments  the details of the bounce
+  //  *
+  //  * @exception  IOException  if unable to contact the server
+  //  * @exception  SQLException  if unable to access the database or a data integrity
+  //  *                           violation occurs
+  //  * @exception  IllegalArgumentException  if unable to find the {@link Ticket} or
+  //  *                                       {@link Administrator}
+  //  *
+  //  * @see  Ticket#actBounceTicket
+  //  * @see  #addTicket
+  //  * @see  Action
+  //  */
+  // public void bounceTicket(
+  //   int ticket_id,
+  //   String administrator,
+  //   String comments
+  // ) throws IllegalArgumentException, IOException, SQLException {
+  //   Ticket ti=connector.getTickets().get(ticket_id);
+  //   if (ti == null) {
+  //     throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
+  //   }
+  //   Administrator pe = connector.getAdministrators().get(administrator);
+  //   if (pe == null) {
+  //     throw new IllegalArgumentException("Unable to find Administrator: " + administrator);
+  //   }
+  //   ti.actBounceTicket(pe, comments);
+  // }
 
   /**
    * Cancels an {@link Account}.  The {@link Account} must already be disabled.
@@ -3118,134 +3118,134 @@ public final class SimpleAoservClient {
     getAccount(accounting).cancel(reason);
   }
 
-  ///**
-  // * Changes the administrative priority of a {@link Ticket}.
-  // *
-  // * @param  ticket_id  the pkey of the {@link Ticket}
-  // * @param  priority  the new {@link Priority}
-  // * @param  administrator  the username of the {@link Administrator}
-  // *                        making the change
-  // * @param  comments  the details of the change
-  // *
-  // * @exception  IOException  if unable to contact the server
-  // * @exception  SQLException  if unable to access the database or a data integrity
-  // *                           violation occurs
-  // * @exception  IllegalArgumentException  if unable to find the {@link Ticket},
-  // *                                       {@link Administrator}, or {@link Priority}
-  // *
-  // * @see  Ticket#actChangeAdminPriority
-  // * @see  #addTicket
-  // * @see  TicketPriority
-  // * @see  Action
-  // */
-  //public void changeTicketAdminPriority(
-  //  int ticket_id,
-  //  String priority,
-  //  String administrator,
-  //  String comments
-  //) throws IllegalArgumentException, IOException, SQLException {
-  //  Ticket ti=connector.getTickets().get(ticket_id);
-  //  if (ti == null) {
-  //    throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
-  //  }
-  //  TicketPriority pr;
-  //  if (priority == null || priority.length() == 0) {
-  //    pr=null;
-  //  } else {
-  //    pr=connector.getTicketPriorities().get(priority);
-  //    if (pr == null) {
-  //      throw new IllegalArgumentException("Unable to find TicketPriority: "+priority);
-  //    }
-  //  }
-  //  Administrator pe = connector.getAdministrators().get(administrator);
-  //  if (pe == null) {
-  //    throw new IllegalArgumentException("Unable to find Administrator: " + administrator);
-  //  }
-  //  ti.actChangeAdminPriority(pr, pe, comments);
-  //}
+  // /**
+  //  * Changes the administrative priority of a {@link Ticket}.
+  //  *
+  //  * @param  ticket_id  the pkey of the {@link Ticket}
+  //  * @param  priority  the new {@link Priority}
+  //  * @param  administrator  the username of the {@link Administrator}
+  //  *                        making the change
+  //  * @param  comments  the details of the change
+  //  *
+  //  * @exception  IOException  if unable to contact the server
+  //  * @exception  SQLException  if unable to access the database or a data integrity
+  //  *                           violation occurs
+  //  * @exception  IllegalArgumentException  if unable to find the {@link Ticket},
+  //  *                                       {@link Administrator}, or {@link Priority}
+  //  *
+  //  * @see  Ticket#actChangeAdminPriority
+  //  * @see  #addTicket
+  //  * @see  TicketPriority
+  //  * @see  Action
+  //  */
+  // public void changeTicketAdminPriority(
+  //   int ticket_id,
+  //   String priority,
+  //   String administrator,
+  //   String comments
+  // ) throws IllegalArgumentException, IOException, SQLException {
+  //   Ticket ti=connector.getTickets().get(ticket_id);
+  //   if (ti == null) {
+  //     throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
+  //   }
+  //   TicketPriority pr;
+  //   if (priority == null || priority.length() == 0) {
+  //     pr=null;
+  //   } else {
+  //     pr=connector.getTicketPriorities().get(priority);
+  //     if (pr == null) {
+  //       throw new IllegalArgumentException("Unable to find TicketPriority: "+priority);
+  //     }
+  //   }
+  //   Administrator pe = connector.getAdministrators().get(administrator);
+  //   if (pe == null) {
+  //     throw new IllegalArgumentException("Unable to find Administrator: " + administrator);
+  //   }
+  //   ti.actChangeAdminPriority(pr, pe, comments);
+  // }
 
-  ///**
-  // * Changes the client's priority of a {@link Ticket}.
-  // *
-  // * @param  ticket_id  the pkey of the {@link Ticket}
-  // * @param  priority  the new {@link Priority}
-  // * @param  administrator  the username of the {@link Administrator}
-  // *                        making the change
-  // * @param  comments  the details of the change
-  // *
-  // * @exception  IOException  if unable to contact the server
-  // * @exception  SQLException  if unable to access the database or a data integrity
-  // *                           violation occurs
-  // * @exception  IllegalArgumentException  if unable to find the {@link Ticket},
-  // *                                       {@link Administrator}, or {@link Priority}
-  // *
-  // * @see  Ticket#actChangeClientPriority
-  // * @see  #addTicket
-  // * @see  TicketPriority
-  // * @see  Action
-  // */
-  //public void changeTicketClientPriority(
-  //  int ticket_id,
-  //  String priority,
-  //  String administrator,
-  //  String comments
-  //) throws IllegalArgumentException, IOException, SQLException {
-  //  Ticket ti=connector.getTickets().get(ticket_id);
-  //  if (ti == null) {
-  //    throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
-  //  }
-  //  TicketPriority pr=connector.getTicketPriorities().get(priority);
-  //  if (pr == null) {
-  //    throw new IllegalArgumentException("Unable to find TicketPriority: "+priority);
-  //  }
-  //  Administrator pe = connector.getAdministrators().get(administrator);
-  //  if (pe == null) {
-  //    throw new IllegalArgumentException("Unable to find Administrator: " + administrator);
-  //  }
-  //  ti.actChangeClientPriority(pr, pe, comments);
-  //}
+  // /**
+  //  * Changes the client's priority of a {@link Ticket}.
+  //  *
+  //  * @param  ticket_id  the pkey of the {@link Ticket}
+  //  * @param  priority  the new {@link Priority}
+  //  * @param  administrator  the username of the {@link Administrator}
+  //  *                        making the change
+  //  * @param  comments  the details of the change
+  //  *
+  //  * @exception  IOException  if unable to contact the server
+  //  * @exception  SQLException  if unable to access the database or a data integrity
+  //  *                           violation occurs
+  //  * @exception  IllegalArgumentException  if unable to find the {@link Ticket},
+  //  *                                       {@link Administrator}, or {@link Priority}
+  //  *
+  //  * @see  Ticket#actChangeClientPriority
+  //  * @see  #addTicket
+  //  * @see  TicketPriority
+  //  * @see  Action
+  //  */
+  // public void changeTicketClientPriority(
+  //   int ticket_id,
+  //   String priority,
+  //   String administrator,
+  //   String comments
+  // ) throws IllegalArgumentException, IOException, SQLException {
+  //   Ticket ti=connector.getTickets().get(ticket_id);
+  //   if (ti == null) {
+  //     throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
+  //   }
+  //   TicketPriority pr=connector.getTicketPriorities().get(priority);
+  //   if (pr == null) {
+  //     throw new IllegalArgumentException("Unable to find TicketPriority: "+priority);
+  //   }
+  //   Administrator pe = connector.getAdministrators().get(administrator);
+  //   if (pe == null) {
+  //     throw new IllegalArgumentException("Unable to find Administrator: " + administrator);
+  //   }
+  //   ti.actChangeClientPriority(pr, pe, comments);
+  // }
 
-  ///**
-  // * Changes the {@link TicketType} of a {@link Ticket}.
-  // *
-  // * @param  ticket_id  the pkey of the {@link Ticket}
-  // * @param  type  the name of the new {@link TicketType}
-  // * @param  administrator  the username of the {@link Administrator}
-  // *                        making the change
-  // * @param  comments  the details of the change
-  // *
-  // * @exception  IOException  if unable to contact the server
-  // * @exception  SQLException  if unable to access the database or a data integrity
-  // *                           violation occurs
-  // * @exception  IllegalArgumentException  if unable to find the {@link Ticket},
-  // *                                       {@link TicketType}, or {@link Administrator}
-  // *
-  // * @see  Ticket#actChangeTicketType
-  // * @see  TicketType
-  // * @see  #addTicket
-  // * @see  TicketPriority
-  // * @see  Action
-  // */
-  //public void changeTicketType(
-  //  int ticket_id,
-  //  String type,
-  //  String administrator,
-  //  String comments
-  //) throws IllegalArgumentException, IOException, SQLException {
-  //  Ticket ti=connector.getTickets().get(ticket_id);
-  //  if (ti == null) {
-  //    throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
-  //  }
-  //  TicketType tt=connector.getTicketTypes().get(type);
-  //  if (tt == null) {
-  //    throw new IllegalArgumentException("Unable to find TicketType: "+type);
-  //  }
-  //  Administrator pe=connector.getAdministrators().get(administrator);
-  //  if (pe == null) {
-  //    throw new IllegalArgumentException("Unable to find Administrator: " + administrator);
-  //  }
-  //  ti.actChangeTicketType(tt, pe, comments);
-  //}
+  // /**
+  //  * Changes the {@link TicketType} of a {@link Ticket}.
+  //  *
+  //  * @param  ticket_id  the pkey of the {@link Ticket}
+  //  * @param  type  the name of the new {@link TicketType}
+  //  * @param  administrator  the username of the {@link Administrator}
+  //  *                        making the change
+  //  * @param  comments  the details of the change
+  //  *
+  //  * @exception  IOException  if unable to contact the server
+  //  * @exception  SQLException  if unable to access the database or a data integrity
+  //  *                           violation occurs
+  //  * @exception  IllegalArgumentException  if unable to find the {@link Ticket},
+  //  *                                       {@link TicketType}, or {@link Administrator}
+  //  *
+  //  * @see  Ticket#actChangeTicketType
+  //  * @see  TicketType
+  //  * @see  #addTicket
+  //  * @see  TicketPriority
+  //  * @see  Action
+  //  */
+  // public void changeTicketType(
+  //   int ticket_id,
+  //   String type,
+  //   String administrator,
+  //   String comments
+  // ) throws IllegalArgumentException, IOException, SQLException {
+  //   Ticket ti=connector.getTickets().get(ticket_id);
+  //   if (ti == null) {
+  //     throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
+  //   }
+  //   TicketType tt=connector.getTicketTypes().get(type);
+  //   if (tt == null) {
+  //     throw new IllegalArgumentException("Unable to find TicketType: "+type);
+  //   }
+  //   Administrator pe=connector.getAdministrators().get(administrator);
+  //   if (pe == null) {
+  //     throw new IllegalArgumentException("Unable to find Administrator: " + administrator);
+  //   }
+  //   ti.actChangeTicketType(tt, pe, comments);
+  // }
 
   /**
    * Checks the strength of a password that will be used for
@@ -3492,40 +3492,40 @@ public final class SimpleAoservClient {
     return getLinuxServerAccount(aoServer, username).passwordMatches(password);
   }
 
-  ///**
-  // * Completes a {@link Ticket}.  Once a {@link Ticket} is completed, no more
-  // * modifications or actions may be applied to the {@link Ticket}.
-  // *
-  // * @param  ticket_id  the pkey of the {@link Ticket}
-  // * @param  administrator  the username of the {@link Administrator}
-  // *                        making the change
-  // * @param  comments  the details of the change
-  // *
-  // * @exception  IOException  if unable to contact the server
-  // * @exception  SQLException  if unable to access the database or a data integrity
-  // *                           violation occurs
-  // * @exception  IllegalArgumentException  if unable to find the {@link Ticket},
-  // *                                       {@link TicketType}, or {@link Administrator}
-  // *
-  // * @see  Ticket#actCompleteTicket
-  // * @see  #addTicket
-  // * @see  Action
-  // */
-  //public void completeTicket(
-  //  int ticket_id,
-  //  String administrator,
-  //  String comments
-  //) throws IllegalArgumentException, IOException, SQLException {
-  //  Ticket ti=connector.getTickets().get(ticket_id);
-  //  if (ti == null) {
-  //    throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
-  //  }
-  //  Administrator pe = connector.getAdministrators().get(administrator);
-  //  if (pe == null) {
-  //    throw new IllegalArgumentException("Unable to find Administrator: " + administrator);
-  //  }
-  //  ti.actCompleteTicket(pe, comments);
-  //}
+  // /**
+  //  * Completes a {@link Ticket}.  Once a {@link Ticket} is completed, no more
+  //  * modifications or actions may be applied to the {@link Ticket}.
+  //  *
+  //  * @param  ticket_id  the pkey of the {@link Ticket}
+  //  * @param  administrator  the username of the {@link Administrator}
+  //  *                        making the change
+  //  * @param  comments  the details of the change
+  //  *
+  //  * @exception  IOException  if unable to contact the server
+  //  * @exception  SQLException  if unable to access the database or a data integrity
+  //  *                           violation occurs
+  //  * @exception  IllegalArgumentException  if unable to find the {@link Ticket},
+  //  *                                       {@link TicketType}, or {@link Administrator}
+  //  *
+  //  * @see  Ticket#actCompleteTicket
+  //  * @see  #addTicket
+  //  * @see  Action
+  //  */
+  // public void completeTicket(
+  //   int ticket_id,
+  //   String administrator,
+  //   String comments
+  // ) throws IllegalArgumentException, IOException, SQLException {
+  //   Ticket ti=connector.getTickets().get(ticket_id);
+  //   if (ti == null) {
+  //     throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
+  //   }
+  //   Administrator pe = connector.getAdministrators().get(administrator);
+  //   if (pe == null) {
+  //     throw new IllegalArgumentException("Unable to find Administrator: " + administrator);
+  //   }
+  //   ti.actCompleteTicket(pe, comments);
+  // }
 
   /**
    * Copies the contents of user's home directory from one server to another.
@@ -5325,34 +5325,34 @@ public final class SimpleAoservClient {
     return connector.getAccount().getAccount().getRootAccount_name();
   }
 
-  ///**
-  // * Places a {@link Ticket} in the hold state.  When in a hold state, a {@link Ticket}
-  // * is not being worked on because the support personnel are waiting for something out of their
-  // * immediate control.
-  // *
-  // * @param  ticket_id  the pkey of the {@link Ticket}
-  // * @param  comments  the details of the change
-  // *
-  // * @exception  IOException  if unable to contact the server
-  // * @exception  SQLException  if unable to access the database or a data integrity
-  // *                           violation occurs
-  // * @exception  IllegalArgumentException  if unable to find the {@link Ticket},
-  // *                                       {@link TicketType}, or {@link Administrator}
-  // *
-  // * @see  Ticket#actHoldTicket
-  // * @see  #addTicket
-  // * @see  Action
-  // */
-  //public void holdTicket(
-  //  int ticket_id,
-  //  String comments
-  //) throws IllegalArgumentException, IOException, SQLException {
-  //  Ticket ti=connector.getTickets().get(ticket_id);
-  //  if (ti == null) {
-  //    throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
-  //  }
-  //  ti.actHoldTicket(comments);
-  //}
+  // /**
+  //  * Places a {@link Ticket} in the hold state.  When in a hold state, a {@link Ticket}
+  //  * is not being worked on because the support personnel are waiting for something out of their
+  //  * immediate control.
+  //  *
+  //  * @param  ticket_id  the pkey of the {@link Ticket}
+  //  * @param  comments  the details of the change
+  //  *
+  //  * @exception  IOException  if unable to contact the server
+  //  * @exception  SQLException  if unable to access the database or a data integrity
+  //  *                           violation occurs
+  //  * @exception  IllegalArgumentException  if unable to find the {@link Ticket},
+  //  *                                       {@link TicketType}, or {@link Administrator}
+  //  *
+  //  * @see  Ticket#actHoldTicket
+  //  * @see  #addTicket
+  //  * @see  Action
+  //  */
+  // public void holdTicket(
+  //   int ticket_id,
+  //   String comments
+  // ) throws IllegalArgumentException, IOException, SQLException {
+  //   Ticket ti=connector.getTickets().get(ticket_id);
+  //   if (ti == null) {
+  //     throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
+  //   }
+  //   ti.actHoldTicket(comments);
+  // }
 
   /**
    * Initializes the password files for an {@link Site}.  These files are
@@ -5825,40 +5825,40 @@ public final class SimpleAoservClient {
     return connector.getAccount().getUser().isUsernameAvailable(username);
   }
 
-  ///**
-  // * Kills a {@link Ticket}.  Once killed, a {@link Ticket} may not be modified in
-  // * any way.
-  // *
-  // * @param  ticket_id  the pkey of the {@link Ticket}
-  // * @param  administrator  the username of the {@link Administrator}
-  // *                        making the change
-  // * @param  comments  the details of the change
-  // *
-  // * @exception  IOException  if unable to contact the server
-  // * @exception  SQLException  if unable to access the database or a data integrity
-  // *                           violation occurs
-  // * @exception  IllegalArgumentException  if unable to find the {@link Ticket},
-  // *                                       {@link TicketType}, or {@link Administrator}
-  // *
-  // * @see  Ticket#actKillTicket
-  // * @see  #addTicket
-  // * @see  Action
-  // */
-  //public void killTicket(
-  //  int ticket_id,
-  //  String administrator,
-  //  String comments
-  //) throws IllegalArgumentException, IOException, SQLException {
-  //  Ticket ti=connector.getTickets().get(ticket_id);
-  //  if (ti == null) {
-  //    throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
-  //  }
-  //  Administrator pe = connector.getAdministrators().get(administrator);
-  //  if (pe == null) {
-  //    throw new IllegalArgumentException("Unable to find Administrator: " + administrator);
-  //  }
-  //  ti.actKillTicket(pe, comments);
-  //}
+  // /**
+  //  * Kills a {@link Ticket}.  Once killed, a {@link Ticket} may not be modified in
+  //  * any way.
+  //  *
+  //  * @param  ticket_id  the pkey of the {@link Ticket}
+  //  * @param  administrator  the username of the {@link Administrator}
+  //  *                        making the change
+  //  * @param  comments  the details of the change
+  //  *
+  //  * @exception  IOException  if unable to contact the server
+  //  * @exception  SQLException  if unable to access the database or a data integrity
+  //  *                           violation occurs
+  //  * @exception  IllegalArgumentException  if unable to find the {@link Ticket},
+  //  *                                       {@link TicketType}, or {@link Administrator}
+  //  *
+  //  * @see  Ticket#actKillTicket
+  //  * @see  #addTicket
+  //  * @see  Action
+  //  */
+  // public void killTicket(
+  //   int ticket_id,
+  //   String administrator,
+  //   String comments
+  // ) throws IllegalArgumentException, IOException, SQLException {
+  //   Ticket ti=connector.getTickets().get(ticket_id);
+  //   if (ti == null) {
+  //     throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
+  //   }
+  //   Administrator pe = connector.getAdministrators().get(administrator);
+  //   if (pe == null) {
+  //     throw new IllegalArgumentException("Unable to find Administrator: " + administrator);
+  //   }
+  //   ti.actKillTicket(pe, comments);
+  // }
 
   /**
    * Moves all resources for one {@link Account} from one {@link Server}
@@ -5939,39 +5939,39 @@ public final class SimpleAoservClient {
     getZone(zone).printZoneFile(out);
   }
 
-  ///**
-  // * Reactivates a {@link Ticket} that is in the hold state.
-  // *
-  // * @param  ticket_id  the pkey of the {@link Ticket}
-  // * @param  administrator  the username of the {@link Administrator}
-  // *                        making the change
-  // * @param  comments  the details of the change
-  // *
-  // * @exception  IOException  if unable to contact the server
-  // * @exception  SQLException  if unable to access the database or a data integrity
-  // *                           violation occurs
-  // * @exception  IllegalArgumentException  if unable to find the {@link Ticket},
-  // *                                       {@link TicketType}, or {@link Administrator}
-  // *
-  // * @see  Ticket#actReactivateTicket
-  // * @see  #addTicket
-  // * @see  Action
-  // */
-  //public void reactivateTicket(
-  //  int ticket_id,
-  //  String administrator,
-  //  String comments
-  //) throws IllegalArgumentException, IOException, SQLException {
-  //  Ticket ti=connector.getTickets().get(ticket_id);
-  //  if (ti == null) {
-  //    throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
-  //  }
-  //  Administrator pe = connector.getAdministrators().get(administrator);
-  //  if (pe == null) {
-  //    throw new IllegalArgumentException("Unable to find Administrator: " + administrator);
-  //  }
-  //  ti.actReactivateTicket(pe, comments);
-  //}
+  // /**
+  //  * Reactivates a {@link Ticket} that is in the hold state.
+  //  *
+  //  * @param  ticket_id  the pkey of the {@link Ticket}
+  //  * @param  administrator  the username of the {@link Administrator}
+  //  *                        making the change
+  //  * @param  comments  the details of the change
+  //  *
+  //  * @exception  IOException  if unable to contact the server
+  //  * @exception  SQLException  if unable to access the database or a data integrity
+  //  *                           violation occurs
+  //  * @exception  IllegalArgumentException  if unable to find the {@link Ticket},
+  //  *                                       {@link TicketType}, or {@link Administrator}
+  //  *
+  //  * @see  Ticket#actReactivateTicket
+  //  * @see  #addTicket
+  //  * @see  Action
+  //  */
+  // public void reactivateTicket(
+  //   int ticket_id,
+  //   String administrator,
+  //   String comments
+  // ) throws IllegalArgumentException, IOException, SQLException {
+  //   Ticket ti=connector.getTickets().get(ticket_id);
+  //   if (ti == null) {
+  //     throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
+  //   }
+  //   Administrator pe = connector.getAdministrators().get(administrator);
+  //   if (pe == null) {
+  //     throw new IllegalArgumentException("Unable to find Administrator: " + administrator);
+  //   }
+  //   ti.actReactivateTicket(pe, comments);
+  // }
 
   /**
    * Refreshes the time window for SMTP server access by resetting the expiration to 24 hours from the current time.

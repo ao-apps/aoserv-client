@@ -204,7 +204,7 @@ public final class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
         Money rate = packageDefinition.getMonthlyRate();
         // We're now including entries for zero-billed packages, too.
         // This will trigger the sending of zero-balance invoices, which will remind people they're getting something for free.
-        //if (rate.getUnscaledValue() != 0) {
+        // if (rate.getUnscaledValue() != 0) {
         charges.add(
             new MonthlyCharge(
                 this,
@@ -218,7 +218,7 @@ public final class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
                 active
             )
         );
-        //}
+        // }
 
         // TODO: Add aoserv_daemon
         // TODO: Add aoserv_master
