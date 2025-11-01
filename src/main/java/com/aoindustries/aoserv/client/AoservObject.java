@@ -410,7 +410,6 @@ public abstract class AoservObject<K, T extends AoservObject<K, T>> implements R
     return com.aoindustries.aoserv.client.linux.User.Name.valueOf(linuxUserName.getName());
   }
 
-
   /**
    * null-safe MAC address conversion.
    */

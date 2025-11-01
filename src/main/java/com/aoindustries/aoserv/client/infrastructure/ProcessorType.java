@@ -82,7 +82,6 @@ public final class ProcessorType extends GlobalObjectStringKey<ProcessorType> {
     return sortOrder;
   }
 
-
   @Override
   public void init(ResultSet result) throws SQLException {
     pkey = result.getString(1);

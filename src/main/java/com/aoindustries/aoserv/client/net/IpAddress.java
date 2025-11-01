@@ -268,7 +268,6 @@ public final class IpAddress extends CachedObjectIntegerKey<IpAddress> {
     return created;
   }
 
-
   public List<Bind> getNetBinds() throws IOException, SQLException {
     return table.getConnector().getNet().getBind().getNetBinds(this);
   }
