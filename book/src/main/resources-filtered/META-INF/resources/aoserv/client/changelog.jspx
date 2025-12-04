@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
     shortTitle="Changelog"
     tocLevels="1"
     datePublished="2016-10-29T21:07:28-05:00"
-    dateModified="2025-07-02T23:05:45Z"
+    dateModified="2025-12-04T02:21:34Z"
   >
     <c:set var="latestRelease" value="1.92.0" />
     <c:if test="${
@@ -66,6 +66,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
           </li>
           <li>The httpd package in Rocky 9 includes its own <code>httpd@.service</code>.</li>
           <li>Added support for HTTP/2 and Brotli compression in Rocky 9.</li>
+          <li>New system group <code>printadmin</code> for <ao:a href="https://docs.rockylinux.org/release_notes/9_7/">Rocky 9.7</ao:a>.</li>
           <!-- TODO:
           <li>Added schemas (where some object can exist without schema, such as "int"?)</li>
           <li>Added a type registry based on ServiceLoader</li>

@@ -364,7 +364,9 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
       SGX,
       SSSD,
       SYSTEMD_COREDUMP,
-      SYSTEMD_OOM;
+      SYSTEMD_OOM,
+      // Rocky 9.7
+      PRINTADMIN;
 
   /**
    * @deprecated  Group httpd no longer used.
@@ -474,6 +476,8 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
       SSSD = Name.valueOf("sssd");
       SYSTEMD_COREDUMP = Name.valueOf("systemd-coredump");
       SYSTEMD_OOM = Name.valueOf("systemd-oom");
+      // Rocky 9.7
+      PRINTADMIN = Name.valueOf("printadmin");
       // Group httpd no longer used.
       HTTPD = Name.valueOf("httpd");
     } catch (ValidationException e) {
