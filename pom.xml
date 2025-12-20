@@ -285,6 +285,52 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>javaee</id>
+      <activation>
+        <property>
+          <name>javaee.skip</name>
+          <value>!true</value>
+        </property>
+      </activation>
+      <dependencyManagement>
+        <dependencies>
+          <!-- Runtime Direct -->
+          <dependency>
+            <groupId>com.aoapps</groupId><artifactId>ao-style</artifactId><version>2.0.1${POST-SNAPSHOT}</version>
+          </dependency>
+          <!-- Runtime Transitive -->
+          <dependency>
+            <groupId>com.aoapps</groupId><artifactId>ao-servlet-util</artifactId><version>5.4.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
+          </dependency>
+          <dependency>
+            <groupId>com.aoapps</groupId><artifactId>ao-web-resources-registry</artifactId><version>0.7.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
+          </dependency>
+          <dependency>
+            <groupId>com.aoapps</groupId><artifactId>ao-web-resources-servlet</artifactId><version>0.6.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
+          </dependency>
+          <!-- javaee-web-api-bom: <groupId>javax.el</groupId><artifactId>javax.el-api</artifactId> -->
+          <!-- javaee-web-api-bom: <groupId>javax.servlet</groupId><artifactId>javax.servlet-api</artifactId> -->
+          <!-- javaee-web-api-bom: <groupId>javax.servlet.jsp</groupId><artifactId>javax.servlet.jsp-api</artifactId> -->
+          <!-- Imports -->
+          <dependency>
+            <groupId>com.aoapps</groupId><artifactId>javaee-web-api-bom</artifactId><version>7.0.1-POST-SNAPSHOT</version>
+            <type>pom</type>
+            <scope>import</scope>
+          </dependency>
+        </dependencies>
+      </dependencyManagement>
+
+      <dependencies>
+        <!-- Runtime Direct -->
+        <dependency>
+          <!-- TODO: This is only used by SocketConnectionPool - worth having here at all?  Impact on transitive dependencies -->
+          <groupId>com.aoapps</groupId><artifactId>ao-style</artifactId>
+          <scope>runtime</scope>
+          <optional>true</optional>
+        </dependency>
+      </dependencies>
+    </profile>
   </profiles>
 
   <dependencyManagement>
@@ -315,23 +361,6 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
       <dependency>
         <groupId>com.aoapps</groupId><artifactId>ao-tempfiles</artifactId><version>3.1.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
       </dependency>
-      <!-- Runtime Direct -->
-      <dependency>
-        <groupId>com.aoapps</groupId><artifactId>ao-style</artifactId><version>2.0.1${POST-SNAPSHOT}</version>
-      </dependency>
-      <!-- Runtime Transitive -->
-      <dependency>
-        <groupId>com.aoapps</groupId><artifactId>ao-servlet-util</artifactId><version>5.4.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
-      </dependency>
-      <dependency>
-        <groupId>com.aoapps</groupId><artifactId>ao-web-resources-registry</artifactId><version>0.7.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
-      </dependency>
-      <dependency>
-        <groupId>com.aoapps</groupId><artifactId>ao-web-resources-servlet</artifactId><version>0.6.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
-      </dependency>
-      <!-- javaee-web-api-bom: <groupId>javax.el</groupId><artifactId>javax.el-api</artifactId> -->
-      <!-- javaee-web-api-bom: <groupId>javax.servlet</groupId><artifactId>javax.servlet-api</artifactId> -->
-      <!-- javaee-web-api-bom: <groupId>javax.servlet.jsp</groupId><artifactId>javax.servlet.jsp-api</artifactId> -->
       <!-- Test Direct -->
       <dependency>
         <groupId>junit</groupId><artifactId>junit</artifactId><version>4.13.2</version>
@@ -349,12 +378,6 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
       </dependency>
       <dependency>
         <groupId>com.google.protobuf</groupId><artifactId>protobuf-java</artifactId><version>4.33.2</version>
-      </dependency>
-      <!-- Imports -->
-      <dependency>
-        <groupId>com.aoapps</groupId><artifactId>javaee-web-api-bom</artifactId><version>7.0.1-POST-SNAPSHOT</version>
-        <type>pom</type>
-        <scope>import</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -382,13 +405,6 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
     <dependency>
       <groupId>com.aoapps</groupId><artifactId>ao-tlds</artifactId>
       <!-- Javadoc-only -->
-      <optional>true</optional>
-    </dependency>
-    <!-- Runtime Direct -->
-    <dependency>
-      <!-- TODO: This is only used by SocketConnectionPool - worth having here at all?  Impact on transitive dependencies -->
-      <groupId>com.aoapps</groupId><artifactId>ao-style</artifactId>
-      <scope>runtime</scope>
       <optional>true</optional>
     </dependency>
     <!-- Test Direct -->
