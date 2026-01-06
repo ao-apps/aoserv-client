@@ -43,7 +43,7 @@ def upstreamProjects = [
   '../oss/tlds', // <groupId>com.aoapps</groupId><artifactId>ao-tlds</artifactId>
 
   // Runtime Direct
-  '../oss/style-javaee', // <groupId>com.aoapps</groupId><artifactId>ao-style</artifactId>
+  '../oss/style', // <groupId>com.aoapps</groupId><artifactId>ao-style</artifactId>
 
   // Test Direct
   // No Jenkins: <groupId>junit</groupId><artifactId>junit</artifactId>
