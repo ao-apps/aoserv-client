@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -166,7 +166,7 @@ public abstract class AoservObject<K, T extends AoservObject<K, T>> implements R
         value1Set = true;
         value2 = expr.evaluate(conn, other);
         value2Set = true;
-        int diff = type.compareTo(value1, value2);
+        int diff = type.compare(value1, value2);
         if (diff != 0) {
           return sortOrders[c] ? diff : -diff;
         }
@@ -222,7 +222,7 @@ public abstract class AoservObject<K, T extends AoservObject<K, T>> implements R
     for (int c = 0; c < len; c++) {
       SqlExpression expr = sortExpressions[c];
       Type type = expr.getType();
-      int diff = type.compareTo(
+      int diff = type.compare(
           expr.evaluate(conn, this),
           value
       );
@@ -248,7 +248,7 @@ public abstract class AoservObject<K, T extends AoservObject<K, T>> implements R
     for (int c = 0; c < len; c++) {
       SqlExpression expr = sortExpressions[c];
       Type type = expr.getType();
-      int diff = type.compareTo(
+      int diff = type.compare(
           expr.evaluate(conn, this),
           objects[c]
       );

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -27,6 +27,7 @@ import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.lang.Strings;
 import com.aoapps.lang.i18n.Money;
+import com.aoapps.lang.text.SmartComparator;
 import com.aoapps.lang.util.InternUtils;
 import com.aoapps.lang.validation.ValidationException;
 import com.aoapps.net.DomainLabel;
@@ -1201,8 +1202,24 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
     return conn.getDns().getZone().getHostTld(domainName) + ".";
   }
 
+  /**
+   * @deprecated  Please use {@link #compare(java.lang.Object, java.lang.Object)}
+   */
+  @Deprecated(forRemoval = true)
   public int compareTo(Object value1, Object value2) throws IllegalArgumentException, SQLException, UnknownHostException {
-    return compareTo(value1, value2, pkey);
+    return compare(value1, value2);
+  }
+
+  public int compare(Object value1, Object value2) throws IllegalArgumentException, SQLException, UnknownHostException {
+    return compare(value1, value2, pkey);
+  }
+
+  /**
+   * @deprecated  Please use {@link #compare(java.lang.Object, java.lang.Object, int)}
+   */
+  @Deprecated(forRemoval = true)
+  public static int compareTo(Object value1, Object value2, int typeId) throws IllegalArgumentException {
+    return compare(value1, value2, typeId);
   }
 
   /**
@@ -1210,7 +1227,7 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
    *
    * @param  value1  the first value being compared
    * @param  value2  the second value being compared
-   * @param  id  the data type
+   * @param  typeId  the data type
    *
    * @return  the value <code>0</code> if the two values are equal;
    *          a value less than <code>0</code> if the first value
@@ -1220,20 +1237,21 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
    *
    * @exception  IllegalArgumentException  if the type is invalid
    */
-  public static int compareTo(Object value1, Object value2, int id) throws IllegalArgumentException {
+  public static int compare(Object value1, Object value2, int typeId) throws IllegalArgumentException {
     if (value1 == null) {
       return value2 == null ? 0 : -1;
     } else {
       if (value2 == null) {
         return 1;
       }
-      switch (id) {
+      switch (typeId) {
         case ACCOUNTING:
           return ((Account.Name) value1).compareTo((Account.Name) value2);
         case PHONE:
-        case STRING:
         case URL:
           return Strings.compareToIgnoreCaseCarefulEquals((String) value1, (String) value2);
+        case STRING:
+          return SmartComparator.ROOT.compare((String) value1, (String) value2);
         case USERNAME:
           return ((com.aoindustries.aoserv.client.account.User.Name) value1).compareTo((com.aoindustries.aoserv.client.account.User.Name) value2);
         case PATH:
@@ -1319,7 +1337,7 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
         case HASHED_KEY:
           return ((HashedKey) value1).compareTo((HashedKey) value2);
         default:
-          throw new IllegalArgumentException("Unknown type: " + id);
+          throw new IllegalArgumentException("Unknown type: " + typeId);
       }
     }
   }
