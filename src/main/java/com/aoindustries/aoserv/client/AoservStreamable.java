@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017, 2018, 2019, 2020, 2021, 2022, 2025  AO Industries, Inc.
+ * Copyright (C) 2017, 2018, 2019, 2020, 2021, 2022, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -37,7 +37,6 @@ import java.io.IOException;
 public interface AoservStreamable extends Streamable, AoservReadable, AoservWritable {
 
   /**
-   *
    * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
    *
    * @see  #read(StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
@@ -53,7 +52,6 @@ public interface AoservStreamable extends Streamable, AoservReadable, AoservWrit
   void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException;
 
   /**
-   *
    * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
    *
    * @see  #write(StreamableOutput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)

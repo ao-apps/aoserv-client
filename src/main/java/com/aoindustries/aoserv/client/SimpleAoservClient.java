@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -8278,8 +8278,7 @@ public final class SimpleAoservClient {
    * @exception  IOException  if unable to contact the server
    * @exception  SQLException  if unable to access the database or a data integrity
    *                           violation occurs
-   * @throws IllegalArgumentException if unable to find the {@link IpAddress} or
-          {@link Package}
+   * @throws IllegalArgumentException if unable to find the {@link IpAddress} or {@link Package}
    *
    * @see  IpAddress#setPackage
    * @see  #addPackage
@@ -8304,8 +8303,7 @@ public final class SimpleAoservClient {
    * @exception  SQLException  if unable to access the database or a data integrity
    *                           violation occurs
    *                           violation occurs
-   * @throws IllegalArgumentException if unable to find the {@link IpAddress} or
-          {@link Package}
+   * @throws IllegalArgumentException if unable to find the {@link IpAddress} or {@link Package}
    *
    * @see  IpAddress#setPackage
    * @see  #addPackage
