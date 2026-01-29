@@ -63,8 +63,8 @@ public final class Category extends CachedObjectIntegerKey<Category> {
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  Category#init(java.sql.ResultSet)
+   * @see  Category#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public Category() {

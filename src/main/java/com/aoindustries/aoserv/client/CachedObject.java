@@ -37,8 +37,8 @@ public abstract class CachedObject<K, T extends CachedObject<K, T>> extends Aose
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  CachedObject#init(java.sql.ResultSet)
+   * @see  CachedObject#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   protected CachedObject() {

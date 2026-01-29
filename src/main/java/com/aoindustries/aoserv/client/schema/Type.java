@@ -74,7 +74,7 @@ import java.util.TimeZone;
 public final class Type extends GlobalObjectIntegerKey<Type> {
 
   /**
-   * The time zone used for all <code>{@link #DATE}</code> to/from String conversions.
+   * The time zone used for all <code>{@link Type#DATE}</code> to/from String conversions.
    * Is "GMT" and is not expected to change, but all date-based parsing, formatting, conversions,
    * comparisons, or filters should use this constant as the time zone.
    */
@@ -343,8 +343,8 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  Type#init(java.sql.ResultSet)
+   * @see  Type#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public Type() {
@@ -1203,7 +1203,7 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
   }
 
   /**
-   * @deprecated  Please use {@link #compare(java.lang.Object, java.lang.Object)}
+   * @deprecated  Please use {@link Type#compare(java.lang.Object, java.lang.Object)}
    */
   @Deprecated(forRemoval = true)
   public int compareTo(Object value1, Object value2) throws IllegalArgumentException, SQLException, UnknownHostException {
@@ -1215,7 +1215,7 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
   }
 
   /**
-   * @deprecated  Please use {@link #compare(java.lang.Object, java.lang.Object, int)}
+   * @deprecated  Please use {@link Type#compare(java.lang.Object, java.lang.Object, int)}
    */
   @Deprecated(forRemoval = true)
   public static int compareTo(Object value1, Object value2, int typeId) throws IllegalArgumentException {

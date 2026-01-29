@@ -96,7 +96,7 @@ public final class PackageTable extends CachedTableIntegerKey<Package> {
   /**
    * {@inheritDoc}
    *
-   * @see  #get(java.lang.Object)
+   * @see  PackageTable#get(java.lang.Object)
    */
   @Override
   public Package get(int pkey) throws IOException, SQLException {
@@ -104,7 +104,7 @@ public final class PackageTable extends CachedTableIntegerKey<Package> {
   }
 
   /**
-   * @see  #get(java.lang.Object)
+   * @see  PackageTable#get(java.lang.Object)
    */
   public Package get(Account.Name name) throws IOException, SQLException {
     return getUniqueRow(Package.COLUMN_NAME, name);

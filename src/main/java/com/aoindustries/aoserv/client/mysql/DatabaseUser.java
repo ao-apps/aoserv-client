@@ -80,8 +80,8 @@ public final class DatabaseUser extends CachedObjectIntegerKey<DatabaseUser> imp
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  DatabaseUser#init(java.sql.ResultSet)
+   * @see  DatabaseUser#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public DatabaseUser() {

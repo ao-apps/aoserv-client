@@ -70,8 +70,8 @@ public final class Header extends CachedObjectIntegerKey<Header> {
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  Header#init(java.sql.ResultSet)
+   * @see  Header#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public Header() {
@@ -273,7 +273,7 @@ public final class Header extends CachedObjectIntegerKey<Header> {
   /**
    * {@inheritDoc}
    *
-   * @see #getApacheDirective(java.lang.String)
+   * @see Header#getApacheDirective(java.lang.String)
    * @see ApacheEscape#DEFAULT_DOLLAR_VARIABLE
    */
   @Override

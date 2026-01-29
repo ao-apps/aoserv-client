@@ -76,7 +76,7 @@ public class TcpConnector extends AoservConnector {
   /**
    * Close cache monitor after 60 seconds of inactivity,
    * when there is no non-global-cached data, such as after a call to
-   * {@link #clearCaches()}.
+   * {@link TcpConnector#clearCaches()}.
    *
    * <p>This helps support a more timely shutdown.
    * TODO: Expose a "stop" method that will clear all caches, immediately stop

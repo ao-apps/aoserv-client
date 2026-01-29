@@ -151,7 +151,7 @@ public final class HostTable extends CachedTableIntegerKey<Host> {
    * @return  the <code>Server</code> or {@code null} if not found
    *
    * @see  Server#toString
-   * @see  #get(java.lang.Object)
+   * @see  HostTable#get(java.lang.Object)
    */
   public Host get(String server) throws SQLException, IOException {
     // Is it the exact hostname of an ao_server?
@@ -209,7 +209,7 @@ public final class HostTable extends CachedTableIntegerKey<Host> {
   /**
    * {@inheritDoc}
    *
-   * @see  #get(java.lang.Object)
+   * @see  HostTable#get(java.lang.Object)
    */
   @Override
   public Host get(int pkey) throws IOException, SQLException {

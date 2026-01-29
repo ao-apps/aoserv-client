@@ -57,8 +57,8 @@ public final class DistroFileType extends GlobalObjectStringKey<DistroFileType> 
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  DistroFileType#init(java.sql.ResultSet)
+   * @see  DistroFileType#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public DistroFileType() {

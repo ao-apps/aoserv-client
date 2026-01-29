@@ -73,8 +73,8 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  PackageDefinition#init(java.sql.ResultSet)
+   * @see  PackageDefinition#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public PackageDefinition() {

@@ -37,8 +37,8 @@ public abstract class GlobalObjectPosixPathKey<T extends GlobalObjectPosixPathKe
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  GlobalObjectPosixPathKey#init(java.sql.ResultSet)
+   * @see  GlobalObjectPosixPathKey#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   protected GlobalObjectPosixPathKey() {

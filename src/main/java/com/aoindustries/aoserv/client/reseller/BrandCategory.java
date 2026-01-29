@@ -56,8 +56,8 @@ public final class BrandCategory extends CachedObjectIntegerKey<BrandCategory> {
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  BrandCategory#init(java.sql.ResultSet)
+   * @see  BrandCategory#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public BrandCategory() {

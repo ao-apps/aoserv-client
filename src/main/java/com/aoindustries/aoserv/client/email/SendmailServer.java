@@ -137,8 +137,8 @@ public final class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  SendmailServer#init(java.sql.ResultSet)
+   * @see  SendmailServer#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public SendmailServer() {
@@ -341,7 +341,7 @@ public final class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
    * Additional instances will have non-empty names.
    * The name is unique per server, including only one default instance.
    *
-   * @see #getSystemdEscapedName()
+   * @see SendmailServer#getSystemdEscapedName()
    */
   public String getName() {
     return name;
@@ -353,7 +353,7 @@ public final class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
    * Additional instances will have non-empty names.
    * The name is unique per server, including only one default instance.
    *
-   * @see #getName()
+   * @see SendmailServer#getName()
    * @see SystemdUtil#encode(java.lang.String)
    */
   public String getSystemdEscapedName() {

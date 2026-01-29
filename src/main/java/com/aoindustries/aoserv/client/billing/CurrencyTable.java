@@ -56,7 +56,7 @@ public final class CurrencyTable extends GlobalTableStringKey<Currency> {
   }
 
   /**
-   * @see  #get(java.lang.String)
+   * @see  CurrencyTable#get(java.lang.String)
    */
   public Currency get(java.util.Currency currency) throws IOException, SQLException {
     if (currency == null) {
@@ -68,8 +68,8 @@ public final class CurrencyTable extends GlobalTableStringKey<Currency> {
   /**
    * {@inheritDoc}
    *
-   * @see  #get(java.lang.String)
-   * @see  #get(java.util.Currency)
+   * @see  CurrencyTable#get(java.lang.String)
+   * @see  CurrencyTable#get(java.util.Currency)
    *
    * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
    */

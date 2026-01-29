@@ -93,8 +93,8 @@ public abstract class AoservObject<K, T extends AoservObject<K, T>> implements R
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  AoservObject#init(java.sql.ResultSet)
+   * @see  AoservObject#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   protected AoservObject() {
@@ -541,7 +541,7 @@ public abstract class AoservObject<K, T extends AoservObject<K, T>> implements R
    *
    * <p><b>Implementation Note:</b><br>
    * This default implementation considers the object equal when it is the same class
-   * (via {@link #getClass()} and has equal keys (via {@link #getKey()}).</p>
+   * (via {@link AoservObject#getClass()} and has equal keys (via {@link AoservObject#getKey()}).</p>
    */
   @Override
   public boolean equals(Object obj) {
@@ -604,7 +604,7 @@ public abstract class AoservObject<K, T extends AoservObject<K, T>> implements R
    * {@inheritDoc}
    *
    * <p><b>Implementation Note:</b><br>
-   * This default implementation calls {@link #hashCode()} on the key (from {@link #getKey()}).</p>
+   * This default implementation calls {@link AoservObject#hashCode()} on the key (from {@link AoservObject#getKey()}).</p>
    */
   @Override
   public int hashCode() {
@@ -628,7 +628,7 @@ public abstract class AoservObject<K, T extends AoservObject<K, T>> implements R
    *
    * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
    *
-   * @see  #read(StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  AoservObject#read(StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated
   @Override
@@ -643,12 +643,12 @@ public abstract class AoservObject<K, T extends AoservObject<K, T>> implements R
    * {@inheritDoc}
    *
    * <p><b>Implementation Note:</b><br>
-   * This default implementation calls {@link #toStringImpl()}, which
+   * This default implementation calls {@link AoservObject#toStringImpl()}, which
    * is allowed to throw exceptions.</p>
    *
-   * @see  #toStringImpl()
+   * @see  AoservObject#toStringImpl()
    *
-   * @throws  WrappedException when {@link #toStringImpl()} throws an exception
+   * @throws  WrappedException when {@link AoservObject#toStringImpl()} throws an exception
    */
   @Override
   public final String toString() {
@@ -660,10 +660,10 @@ public abstract class AoservObject<K, T extends AoservObject<K, T>> implements R
   }
 
   /**
-   * {@link #toString()} implementation that is allowed to throw exceptions.
+   * {@link AoservObject#toString()} implementation that is allowed to throw exceptions.
    *
    * <p><b>Implementation Note:</b><br>
-   * This default implementation calls {@link #toString()} on the key (from {@link #getKey()}).
+   * This default implementation calls {@link AoservObject#toString()} on the key (from {@link AoservObject#getKey()}).
    * When the key is {@code null}, uses the default implementation from {@link Object#toString()}.</p>
    */
   public String toStringImpl() throws IOException, SQLException {
@@ -679,7 +679,7 @@ public abstract class AoservObject<K, T extends AoservObject<K, T>> implements R
    *
    * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
    *
-   * @see  #write(StreamableOutput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  AoservObject#write(StreamableOutput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated
   @Override

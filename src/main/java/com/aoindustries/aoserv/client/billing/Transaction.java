@@ -113,8 +113,8 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  Transaction#init(java.sql.ResultSet)
+   * @see  Transaction#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public Transaction() {
@@ -158,9 +158,9 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
   }
 
   /**
-   * @deprecated  Please provide updated cardInfo via {@link #approved(int, java.lang.String)}.
+   * @deprecated  Please provide updated cardInfo via {@link Transaction#approved(int, java.lang.String)}.
    *
-   * @see  #approved(int, java.lang.String)
+   * @see  Transaction#approved(int, java.lang.String)
    */
   @Deprecated
   public void approved(int creditCardTransaction) throws IOException, SQLException {
@@ -204,9 +204,9 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
   }
 
   /**
-   * @deprecated  Please provide updated cardInfo via {@link #declined(int, java.lang.String)}.
+   * @deprecated  Please provide updated cardInfo via {@link Transaction#declined(int, java.lang.String)}.
    *
-   * @see  #declined(int, java.lang.String)
+   * @see  Transaction#declined(int, java.lang.String)
    */
   @Deprecated
   public void declined(int creditCardTransaction) throws IOException, SQLException {
@@ -250,9 +250,9 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
   }
 
   /**
-   * @deprecated  Please provide updated cardInfo via {@link #held(int, java.lang.String)}.
+   * @deprecated  Please provide updated cardInfo via {@link Transaction#held(int, java.lang.String)}.
    *
-   * @see  #held(int, java.lang.String)
+   * @see  Transaction#held(int, java.lang.String)
    */
   @Deprecated
   public void held(int creditCardTransaction) throws IOException, SQLException {
@@ -260,10 +260,10 @@ public final class Transaction extends CachedObjectIntegerKey<Transaction> {
   }
 
   /**
-   * @deprecated  Please directly access via {@link #getPayment()}.
-   *              Beware that {@link #getPayment()} might return {@code null}.
+   * @deprecated  Please directly access via {@link Transaction#getPayment()}.
+   *              Beware that {@link Transaction#getPayment()} might return {@code null}.
    *
-   * @see  #getPayment()
+   * @see  Transaction#getPayment()
    * @see  Payment#getAuthorizationApprovalCode()
    */
   @Deprecated

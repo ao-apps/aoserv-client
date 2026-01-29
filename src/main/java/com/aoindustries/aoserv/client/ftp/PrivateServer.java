@@ -65,8 +65,8 @@ public final class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  PrivateServer#init(java.sql.ResultSet)
+   * @see  PrivateServer#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public PrivateServer() {

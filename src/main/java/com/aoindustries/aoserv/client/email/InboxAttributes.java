@@ -90,7 +90,7 @@ public final class InboxAttributes implements AoservStreamable {
    *
    * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
    *
-   * @see  #read(StreamableInput, AoservProtocol.Version)
+   * @see  InboxAttributes#read(StreamableInput, AoservProtocol.Version)
    */
   @Deprecated
   @Override
@@ -110,7 +110,7 @@ public final class InboxAttributes implements AoservStreamable {
    *
    * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
    *
-   * @see  #write(StreamableOutput, AoservProtocol.Version)
+   * @see  InboxAttributes#write(StreamableOutput, AoservProtocol.Version)
    */
   @Deprecated
   @Override

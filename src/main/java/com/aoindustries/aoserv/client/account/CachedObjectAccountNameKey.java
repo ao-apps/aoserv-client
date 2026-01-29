@@ -37,8 +37,8 @@ public abstract class CachedObjectAccountNameKey<V extends CachedObjectAccountNa
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  CachedObjectAccountNameKey#init(java.sql.ResultSet)
+   * @see  CachedObjectAccountNameKey#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   protected CachedObjectAccountNameKey() {

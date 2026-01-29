@@ -37,8 +37,8 @@ public abstract class GlobalObjectDomainNameKey<T extends GlobalObjectDomainName
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  GlobalObjectDomainNameKey#init(java.sql.ResultSet)
+   * @see  GlobalObjectDomainNameKey#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   protected GlobalObjectDomainNameKey() {

@@ -85,8 +85,8 @@ public final class Record extends CachedObjectIntegerKey<Record> implements Remo
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  Record#init(java.sql.ResultSet)
+   * @see  Record#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public Record() {
@@ -170,14 +170,14 @@ public final class Record extends CachedObjectIntegerKey<Record> implements Remo
   }
 
   /**
-   * Verifies a flag is either {@link #NO_FLAG} or between 0 and 0xFF.
+   * Verifies a flag is either {@link Record#NO_FLAG} or between 0 and 0xFF.
    */
   public static boolean isValidFlag(short flag) {
     return flag == NO_FLAG || (flag >= 0 && flag <= 0xFF);
   }
 
   /**
-   * @return  {@link #NO_FLAG} when none, or a value between 0 and 0xFF.
+   * @return  {@link Record#NO_FLAG} when none, or a value between 0 and 0xFF.
    */
   public short getFlag() {
     assert isValidFlag(flag);

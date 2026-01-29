@@ -59,8 +59,8 @@ public final class MajordomoVersion extends GlobalObjectStringKey<MajordomoVersi
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  MajordomoVersion#init(java.sql.ResultSet)
+   * @see  MajordomoVersion#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public MajordomoVersion() {

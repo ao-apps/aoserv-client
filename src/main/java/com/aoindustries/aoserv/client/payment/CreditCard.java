@@ -69,7 +69,7 @@ public final class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
    * Randomizes a value by adding a random number of random characters between each character of the original String.
    * The original string must be only comprised of 0-9, space, -, and /
    *
-   * @see  #derandomize(String)
+   * @see  CreditCard#derandomize(String)
    */
   static String randomize(String original) {
     SecureRandom secureRandom = AoservConnector.getSecureRandom();
@@ -100,7 +100,7 @@ public final class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
   /**
    * Derandomizes a value be stripping out all characters that are not 0-9, space, -, or /.
    *
-   * @see  #randomize(String)
+   * @see  CreditCard#randomize(String)
    */
   static String derandomize(String randomized) {
     // Strip all characters except 0-9, space, and -
@@ -159,8 +159,8 @@ public final class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  CreditCard#init(java.sql.ResultSet)
+   * @see  CreditCard#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public CreditCard() {

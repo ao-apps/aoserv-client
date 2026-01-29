@@ -57,8 +57,8 @@ public final class DaemonAcl extends CachedObjectIntegerKey<DaemonAcl>
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  DaemonAcl#init(java.sql.ResultSet)
+   * @see  DaemonAcl#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public DaemonAcl() {

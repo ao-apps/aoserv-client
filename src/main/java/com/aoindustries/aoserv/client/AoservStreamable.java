@@ -39,7 +39,7 @@ public interface AoservStreamable extends Streamable, AoservReadable, AoservWrit
   /**
    * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
    *
-   * @see  #read(StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  AoservStreamable#read(StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated
   @Override
@@ -54,7 +54,7 @@ public interface AoservStreamable extends Streamable, AoservReadable, AoservWrit
   /**
    * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
    *
-   * @see  #write(StreamableOutput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  AoservStreamable#write(StreamableOutput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated
   @Override

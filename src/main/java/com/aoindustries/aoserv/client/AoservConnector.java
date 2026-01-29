@@ -164,7 +164,7 @@ public abstract class AoservConnector implements SchemaParent {
   };*/
 
   /**
-   * @see  #getConnectorId()
+   * @see  AoservConnector#getConnectorId()
    */
   // TODO: AtomicReference
   protected static class IdLock {
@@ -178,27 +178,27 @@ public abstract class AoservConnector implements SchemaParent {
   private final Logger logger;
 
   /**
-   * @see  #getHostname()
+   * @see  AoservConnector#getHostname()
    */
   final HostAddress hostname;
 
   /**
-   * @see  #getLocalIp()
+   * @see  AoservConnector#getLocalIp()
    */
   final InetAddress localIp;
 
   /**
-   * @see  #getPort()
+   * @see  AoservConnector#getPort()
    */
   final Port port;
 
   /**
-   * @see  #getConnectedAs()
+   * @see  AoservConnector#getConnectedAs()
    */
   final User.Name connectAs;
 
   /**
-   * @see  #getAuthenticatedAs()
+   * @see  AoservConnector#getAuthenticatedAs()
    */
   final User.Name authenticateAs;
 
@@ -899,7 +899,7 @@ public abstract class AoservConnector implements SchemaParent {
    * @return  a {@code List<AoservTable>} containing all the tables.  Each
    *          table is at an index corresponding to its unique ID.
    *
-   * @see  #getTable(int)
+   * @see  AoservConnector#getTable(int)
    * @see  Table
    */
   @SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
@@ -1020,7 +1020,7 @@ public abstract class AoservConnector implements SchemaParent {
    *
    * @throws  IOException  if an error occurred while closing or releasing the connection
    *
-   * @see  #getConnection(int)
+   * @see  AoservConnector#getConnection(int)
    * @see  AoservConnection#close()
    */
   protected abstract void release(AoservConnection connection) throws IOException;
@@ -1130,7 +1130,7 @@ public abstract class AoservConnector implements SchemaParent {
   /**
    * This is the preferred mechanism for providing custom requests that have a return value.
    *
-   * @see  #requestResult(boolean, com.aoindustries.aoserv.client.schema.AoservProtocol.CommandId, com.aoindustries.aoserv.client.AoservConnector.ResultRequest)
+   * @see  AoservConnector#requestResult(boolean, com.aoindustries.aoserv.client.schema.AoservProtocol.CommandId, com.aoindustries.aoserv.client.AoservConnector.ResultRequest)
    */
   public static interface ResultRequest<T> {
     /**
@@ -1700,7 +1700,7 @@ public abstract class AoservConnector implements SchemaParent {
   /**
    * This is the preferred mechanism for providing custom requests.
    *
-   * @see  #requestUpdate(boolean, com.aoindustries.aoserv.client.schema.AoservProtocol.CommandId, com.aoindustries.aoserv.client.AoservConnector.UpdateRequest)
+   * @see  AoservConnector#requestUpdate(boolean, com.aoindustries.aoserv.client.schema.AoservProtocol.CommandId, com.aoindustries.aoserv.client.AoservConnector.UpdateRequest)
    */
   public static interface UpdateRequest {
     /**

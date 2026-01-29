@@ -65,7 +65,7 @@ public abstract class Schema implements SchemaParent {
   /**
    * {@inheritDoc}
    *
-   * @see  #getName()
+   * @see  Schema#getName()
    */
   @Override
   public final String toString() {

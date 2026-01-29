@@ -56,8 +56,8 @@ public final class FileReplicationSetting extends CachedObjectIntegerKey<FileRep
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  FileReplicationSetting#init(java.sql.ResultSet)
+   * @see  FileReplicationSetting#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public FileReplicationSetting() {

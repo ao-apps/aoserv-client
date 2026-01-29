@@ -337,7 +337,7 @@ public final class TransactionTable extends CachedTableIntegerKey<Transaction> {
   }
 
   /**
-   * @see #getActiveAccountBalance(com.aoindustries.aoserv.client.account.Account, long)
+   * @see TransactionTable#getActiveAccountBalance(com.aoindustries.aoserv.client.account.Account, long)
    * @see System#currentTimeMillis()
    */
   public Monies getActiveAccountBalance(Account account) throws IOException, SQLException {

@@ -209,7 +209,7 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
     /**
      * Gets a specific version given its unique version string.
      *
-     * @see  #getVersion()
+     * @see  Version#getVersion()
      *
      * @throws  IllegalArgumentException if version not found
      */
@@ -645,8 +645,8 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  AoservProtocol#init(java.sql.ResultSet)
+   * @see  AoservProtocol#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public AoservProtocol() {

@@ -118,8 +118,8 @@ public final class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  CvsRepository#init(java.sql.ResultSet)
+   * @see  CvsRepository#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public CvsRepository() {

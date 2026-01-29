@@ -74,7 +74,7 @@ public class TicketLoggingHandler extends QueuedHandler {
   /**
    * Shares one queue across all handlers.
    * This is created when first accessed, and released when the last handler
-   * is {@linkplain #close() closed}.
+   * is {@linkplain TicketLoggingHandler#close() closed}.
    */
   private static ExecutorService executor;
 

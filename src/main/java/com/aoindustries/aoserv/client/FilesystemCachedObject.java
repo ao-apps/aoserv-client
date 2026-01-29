@@ -43,8 +43,8 @@ public abstract class FilesystemCachedObject<K, T extends FilesystemCachedObject
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  FilesystemCachedObject#init(java.sql.ResultSet)
+   * @see  FilesystemCachedObject#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   protected FilesystemCachedObject() {

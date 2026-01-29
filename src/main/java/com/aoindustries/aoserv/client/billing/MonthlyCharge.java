@@ -78,8 +78,8 @@ public final class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  MonthlyCharge#init(java.sql.ResultSet)
+   * @see  MonthlyCharge#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public MonthlyCharge() {

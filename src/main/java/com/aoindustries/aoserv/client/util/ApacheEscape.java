@@ -46,7 +46,7 @@ public final class ApacheEscape {
    * <p>Please note, the dollar escaping relies on Apache being configured with
    * <code>Define &lt;dollarVariable&gt; $</code>, as it is performed with a <code>${dollarVariable}</code> hack.</p>
    *
-   * @see  #escape(java.lang.String, java.lang.String, boolean)
+   * @see  ApacheEscape#escape(java.lang.String, java.lang.String, boolean)
    */
   public static String escape(String dollarVariable, String value) {
     return escape(dollarVariable, value, false);
@@ -68,7 +68,7 @@ public final class ApacheEscape {
    *
    * @return  the escaped string or the original string when no escaping required
    *
-   * @see  #escape(java.lang.String, java.lang.String)
+   * @see  ApacheEscape#escape(java.lang.String, java.lang.String)
    */
   public static String escape(String dollarVariable, String value, boolean allowVariables) {
     int len = value.length();

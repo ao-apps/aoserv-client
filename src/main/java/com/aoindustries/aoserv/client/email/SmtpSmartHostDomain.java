@@ -54,8 +54,8 @@ public final class SmtpSmartHostDomain extends CachedObjectIntegerKey<SmtpSmartH
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  SmtpSmartHostDomain#init(java.sql.ResultSet)
+   * @see  SmtpSmartHostDomain#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public SmtpSmartHostDomain() {

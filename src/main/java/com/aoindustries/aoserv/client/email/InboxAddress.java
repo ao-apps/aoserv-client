@@ -68,8 +68,8 @@ public final class InboxAddress extends CachedObjectIntegerKey<InboxAddress> imp
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  InboxAddress#init(java.sql.ResultSet)
+   * @see  InboxAddress#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public InboxAddress() {

@@ -38,8 +38,8 @@ public abstract class CachedObjectIntegerKey<V extends CachedObjectIntegerKey<V>
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  CachedObjectIntegerKey#init(java.sql.ResultSet)
+   * @see  CachedObjectIntegerKey#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   protected CachedObjectIntegerKey() {

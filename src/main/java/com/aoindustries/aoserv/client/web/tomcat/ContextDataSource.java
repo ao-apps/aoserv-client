@@ -64,8 +64,8 @@ public final class ContextDataSource extends CachedObjectIntegerKey<ContextDataS
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  ContextDataSource#init(java.sql.ResultSet)
+   * @see  ContextDataSource#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public ContextDataSource() {

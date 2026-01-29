@@ -100,7 +100,7 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
   /**
    * {@inheritDoc}
    *
-   * @see  #get(java.lang.Object)
+   * @see  TableTable#get(java.lang.Object)
    */
   @Override
   public Table get(int tableId) throws IOException, SQLException {
@@ -108,14 +108,14 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
   }
 
   /**
-   * @see  #get(java.lang.Object)
+   * @see  TableTable#get(java.lang.Object)
    */
   public Table get(String name) throws IOException, SQLException {
     return getUniqueRow(Table.COLUMN_NAME, name);
   }
 
   /**
-   * @see  #get(java.lang.Object)
+   * @see  TableTable#get(java.lang.Object)
    */
   public Table get(Table.TableId tableId) throws IOException, SQLException {
     return get(tableId.ordinal());

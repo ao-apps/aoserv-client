@@ -65,7 +65,7 @@ public final class BackupRetentionTable extends GlobalTable<Short, BackupRetenti
   }
 
   /**
-   * @see  #get(java.lang.Object)
+   * @see  BackupRetentionTable#get(java.lang.Object)
    */
   public BackupRetention get(short days) throws IOException, SQLException {
     return getUniqueRow(BackupRetention.COLUMN_DAYS, days);

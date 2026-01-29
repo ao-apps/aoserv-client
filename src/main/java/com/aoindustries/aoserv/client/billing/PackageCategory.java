@@ -61,8 +61,8 @@ public final class PackageCategory extends GlobalObjectStringKey<PackageCategory
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  PackageCategory#init(java.sql.ResultSet)
+   * @see  PackageCategory#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public PackageCategory() {

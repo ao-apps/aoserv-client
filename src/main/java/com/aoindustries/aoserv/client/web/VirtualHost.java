@@ -78,8 +78,8 @@ public final class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  VirtualHost#init(java.sql.ResultSet)
+   * @see  VirtualHost#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public VirtualHost() {
@@ -235,7 +235,7 @@ public final class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
    * Additional binds per (site, ip, bind) will have non-empty names.
    * The name is unique per (site, ip, bind), including only one default bind.
    *
-   * @see #getSystemdEscapedName()
+   * @see VirtualHost#getSystemdEscapedName()
    */
   public String getName() {
     return name;
@@ -245,7 +245,7 @@ public final class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
    * Gets the <a href="https://www.freedesktop.org/software/systemd/man/systemd.unit.html">systemd-encoded</a>
    * name of the bind.
    *
-   * @see #getName()
+   * @see VirtualHost#getName()
    * @see SystemdUtil#encode(java.lang.String)
    */
   public String getSystemdEscapedName() {

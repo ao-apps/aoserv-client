@@ -319,8 +319,8 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  Database#init(java.sql.ResultSet)
+   * @see  Database#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public Database() {
@@ -379,7 +379,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
   /**
    * {@inheritDoc}
    *
-   * @see  #dump(java.io.Writer)
+   * @see  Database#dump(java.io.Writer)
    */
   @Override
   public void dump(PrintWriter out) throws IOException, SQLException {
@@ -436,7 +436,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
   }
 
   /**
-   * Dumps the database in {@link #DUMP_ENCODING} encoding into binary form, optionally gzipped.
+   * Dumps the database in {@link Database#DUMP_ENCODING} encoding into binary form, optionally gzipped.
    */
   public void dump(
       final boolean gzip,

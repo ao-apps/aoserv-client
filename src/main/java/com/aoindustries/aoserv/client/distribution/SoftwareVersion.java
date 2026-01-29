@@ -55,8 +55,8 @@ public final class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  SoftwareVersion#init(java.sql.ResultSet)
+   * @see  SoftwareVersion#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public SoftwareVersion() {

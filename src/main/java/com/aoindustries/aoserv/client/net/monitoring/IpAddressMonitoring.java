@@ -53,8 +53,8 @@ public final class IpAddressMonitoring extends CachedObjectIntegerKey<IpAddressM
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  IpAddressMonitoring#init(java.sql.ResultSet)
+   * @see  IpAddressMonitoring#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public IpAddressMonitoring() {

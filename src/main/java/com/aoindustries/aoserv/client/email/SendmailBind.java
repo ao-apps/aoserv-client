@@ -56,8 +56,8 @@ public final class SendmailBind extends CachedObjectIntegerKey<SendmailBind> {
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  SendmailBind#init(java.sql.ResultSet)
+   * @see  SendmailBind#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public SendmailBind() {

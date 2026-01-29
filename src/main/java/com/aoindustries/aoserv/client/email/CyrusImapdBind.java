@@ -62,8 +62,8 @@ public final class CyrusImapdBind extends CachedObjectIntegerKey<CyrusImapdBind>
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  CyrusImapdBind#init(java.sql.ResultSet)
+   * @see  CyrusImapdBind#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public CyrusImapdBind() {

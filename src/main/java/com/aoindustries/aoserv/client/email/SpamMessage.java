@@ -61,8 +61,8 @@ public final class SpamMessage extends AoservObject<Integer, SpamMessage> implem
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  SpamMessage#init(java.sql.ResultSet)
+   * @see  SpamMessage#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public SpamMessage() {

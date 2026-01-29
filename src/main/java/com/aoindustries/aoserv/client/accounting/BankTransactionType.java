@@ -50,8 +50,8 @@ public final class BankTransactionType extends CachedObjectStringKey<BankTransac
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  BankTransactionType#init(java.sql.ResultSet)
+   * @see  BankTransactionType#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public BankTransactionType() {

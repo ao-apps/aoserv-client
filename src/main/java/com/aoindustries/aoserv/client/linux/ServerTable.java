@@ -81,7 +81,7 @@ public final class ServerTable extends CachedTableIntegerKey<Server> {
   /**
    * {@inheritDoc}
    *
-   * @see  #get(java.lang.Object)
+   * @see  ServerTable#get(java.lang.Object)
    */
   @Override
   public Server get(int pkey) throws IOException, SQLException {
@@ -89,7 +89,7 @@ public final class ServerTable extends CachedTableIntegerKey<Server> {
   }
 
   /**
-   * @see  #get(java.lang.Object)
+   * @see  ServerTable#get(java.lang.Object)
    */
   public Server get(DomainName hostname) throws IOException, SQLException {
     return getUniqueRow(Server.COLUMN_HOSTNAME, hostname);

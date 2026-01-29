@@ -54,7 +54,7 @@ public interface TableLoadListener {
    * {@link ProgressListener}.</p>
    *
    * <p>When a table load auto-retries on failure, this may be called more than once
-   * for a given {@link #onTableLoadStarted(com.aoindustries.aoserv.client.AoservTable, java.lang.Object)}.
+   * for a given {@link TableLoadListener#onTableLoadStarted(com.aoindustries.aoserv.client.AoservTable, java.lang.Object)}.
    * Each time, it indicates that the load is starting over.</p>
    *
    * <p>The object returned is stored and will be the parameter provided in the next call.</p>

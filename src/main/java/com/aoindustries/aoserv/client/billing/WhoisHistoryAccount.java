@@ -53,8 +53,8 @@ public final class WhoisHistoryAccount extends CachedObjectIntegerKey<WhoisHisto
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  WhoisHistoryAccount#init(java.sql.ResultSet)
+   * @see  WhoisHistoryAccount#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public WhoisHistoryAccount() {
@@ -80,7 +80,7 @@ public final class WhoisHistoryAccount extends CachedObjectIntegerKey<WhoisHisto
   }
 
   /**
-   * @see  #getWhoisHistory()
+   * @see  WhoisHistoryAccount#getWhoisHistory()
    */
   public int getWhoisHistory_id() {
     return whoisHistory;
@@ -98,7 +98,7 @@ public final class WhoisHistoryAccount extends CachedObjectIntegerKey<WhoisHisto
   }
 
   /**
-   * @see  #getAccount()
+   * @see  WhoisHistoryAccount#getAccount()
    */
   public Account.Name getAccount_id() {
     return account;

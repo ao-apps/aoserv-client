@@ -56,8 +56,8 @@ public final class CertificateName extends CachedObjectIntegerKey<CertificateNam
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  CertificateName#init(java.sql.ResultSet)
+   * @see  CertificateName#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public CertificateName() {
@@ -153,12 +153,12 @@ public final class CertificateName extends CachedObjectIntegerKey<CertificateNam
   }
 
   /**
-   * Gets the name, which is {@link #getDomain()} or non-wildcard,
-   * or "*." + {@link #getDomain()} for wildcard domains.
+   * Gets the name, which is {@link CertificateName#getDomain()} or non-wildcard,
+   * or "*." + {@link CertificateName#getDomain()} for wildcard domains.
    *
-   * @see  #WILDCARD_PREFIX
-   * @see  #isWildcard()
-   * @see  #getDomain()
+   * @see  CertificateName#WILDCARD_PREFIX
+   * @see  CertificateName#isWildcard()
+   * @see  CertificateName#getDomain()
    */
   public String getName() {
     if (isWildcard) {

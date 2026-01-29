@@ -179,8 +179,8 @@ public final class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  CyrusImapdServer#init(java.sql.ResultSet)
+   * @see  CyrusImapdServer#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public CyrusImapdServer() {
@@ -350,14 +350,14 @@ public final class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
    *
    * @return  the duration or {@link Float#NaN} when not set
    *
-   * @see  #getDeleteDurationUnit()
+   * @see  CyrusImapdServer#getDeleteDurationUnit()
    */
   public float getDeleteDuration() {
     return deleteDuration;
   }
 
   /**
-   * Gets the time unit for {@link #getDeleteDuration()}.
+   * Gets the time unit for {@link CyrusImapdServer#getDeleteDuration()}.
    * When not set, the duration represents days.
    *
    * @return  the unit or {@code null} when not set
@@ -371,14 +371,14 @@ public final class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
    *
    * @return  the duration (never {@link Float#NaN})
    *
-   * @see  #getExpireDurationUnit()
+   * @see  CyrusImapdServer#getExpireDurationUnit()
    */
   public float getExpireDuration() {
     return expireDuration;
   }
 
   /**
-   * Gets the time unit for {@link #getExpireDuration()}.
+   * Gets the time unit for {@link CyrusImapdServer#getExpireDuration()}.
    * When not set, the duration represents days.
    *
    * @return  the unit or {@code null} when not set
@@ -393,14 +393,14 @@ public final class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
    *
    * @return  the duration or {@link Float#NaN} when not set
    *
-   * @see  #getExpungeDurationUnit()
+   * @see  CyrusImapdServer#getExpungeDurationUnit()
    */
   public float getExpungeDuration() {
     return expungeDuration;
   }
 
   /**
-   * Gets the time unit for {@link #getExpungeDuration()}.
+   * Gets the time unit for {@link CyrusImapdServer#getExpungeDuration()}.
    * When not set, the duration represents days.
    *
    * @return  the unit or {@code null} when not set

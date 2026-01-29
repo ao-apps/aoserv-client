@@ -67,7 +67,7 @@ public final class ProcessTable extends AoservTable<SmallIdentifier, Process> {
   }
 
   /**
-   * @see  #get(java.lang.Object)
+   * @see  ProcessTable#get(java.lang.Object)
    */
   public Process get(SmallIdentifier id) throws IOException, SQLException {
     if (id == null) {

@@ -45,8 +45,8 @@ public final class ExpenseCategory extends CachedObjectStringKey<ExpenseCategory
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  ExpenseCategory#init(java.sql.ResultSet)
+   * @see  ExpenseCategory#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public ExpenseCategory() {

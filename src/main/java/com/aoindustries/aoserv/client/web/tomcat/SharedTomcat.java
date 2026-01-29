@@ -70,7 +70,7 @@ public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
    * This matches the default of {@code 1000} since Tomcat 8.5.88, 9.0.74, 10.1.8.
    * Previously, the default was {@code 10000}.
    *
-   * @see  #getMaxParameterCount()
+   * @see  SharedTomcat#getMaxParameterCount()
    */
   public static final int DEFAULT_MAX_PARAMETER_COUNT = 1000;
 
@@ -79,7 +79,7 @@ public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
    * This raises the value from the Tomcat default of 2 MiB to a more real-world
    * value, such as allowing uploads of pictures from modern digital cameras.
    *
-   * @see  #getMaxPostSize()
+   * @see  SharedTomcat#getMaxPostSize()
    */
   public static final int DEFAULT_MAX_POST_SIZE = 16 * 1024 * 1024; // 16 MiB
 
@@ -107,8 +107,8 @@ public final class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  SharedTomcat#init(java.sql.ResultSet)
+   * @see  SharedTomcat#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public SharedTomcat() {

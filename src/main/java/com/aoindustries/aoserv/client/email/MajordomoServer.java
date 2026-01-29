@@ -91,8 +91,8 @@ public final class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  MajordomoServer#init(java.sql.ResultSet)
+   * @see  MajordomoServer#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public MajordomoServer() {

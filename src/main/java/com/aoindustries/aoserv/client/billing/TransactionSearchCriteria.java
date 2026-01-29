@@ -75,7 +75,7 @@ public final class TransactionSearchCriteria implements AoservStreamable {
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  TransactionSearchCriteria#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public TransactionSearchCriteria() {
@@ -233,7 +233,7 @@ public final class TransactionSearchCriteria implements AoservStreamable {
    *
    * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
    *
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  TransactionSearchCriteria#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated
   @Override
@@ -322,7 +322,7 @@ public final class TransactionSearchCriteria implements AoservStreamable {
    *
    * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
    *
-   * @see  #write(com.aoapps.hodgepodge.io.stream.StreamableOutput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  TransactionSearchCriteria#write(com.aoapps.hodgepodge.io.stream.StreamableOutput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated
   @Override

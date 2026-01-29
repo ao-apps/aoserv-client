@@ -63,8 +63,8 @@ public final class MysqlReplication extends CachedObjectIntegerKey<MysqlReplicat
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  MysqlReplication#init(java.sql.ResultSet)
+   * @see  MysqlReplication#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public MysqlReplication() {
@@ -146,7 +146,7 @@ public final class MysqlReplication extends CachedObjectIntegerKey<MysqlReplicat
   /**
    * Determines if monitoring is enabled for this replication.
    * This is based on {@link Host#isMonitoringEnabled()} derived from either
-   * {@link #getLinuxServer()} or {@link #getFailoverFileReplication()}.
+   * {@link MysqlReplication#getLinuxServer()} or {@link MysqlReplication#getFailoverFileReplication()}.
    */
   public boolean isMonitoringEnabled() throws SQLException, IOException {
     com.aoindustries.aoserv.client.linux.Server linuxServer =

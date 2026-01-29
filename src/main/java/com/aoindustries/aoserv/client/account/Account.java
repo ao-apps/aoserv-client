@@ -369,8 +369,8 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  Account#init(java.sql.ResultSet)
+   * @see  Account#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public Account() {
@@ -815,9 +815,9 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
   /**
    * Gets a comma-separated list of account balances.
    *
-   * @see  #getAccountBalance()
+   * @see  Account#getAccountBalance()
    *
-   * @deprecated  Please use {@link #getAccountBalance()} and {@link Monies#toString()} instead
+   * @deprecated  Please use {@link Account#getAccountBalance()} and {@link Monies#toString()} instead
    */
   @Deprecated
   public String getAccountBalanceString() throws IOException, SQLException {
@@ -827,9 +827,9 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
   /**
    * Gets a comma-separated list of account balances before a given time.
    *
-   * @see  #getAccountBalance(java.sql.Timestamp)
+   * @see  Account#getAccountBalance(java.sql.Timestamp)
    *
-   * @deprecated  Please use {@link #getAccountBalance(java.sql.Timestamp)} and {@link Monies#toString()} instead
+   * @deprecated  Please use {@link Account#getAccountBalance(java.sql.Timestamp)} and {@link Monies#toString()} instead
    */
   @Deprecated
   public String getAccountBalanceString(Timestamp before) throws IOException, SQLException {
@@ -1059,7 +1059,7 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
   /**
    * Gets all monthly charges from this account.
    *
-   * @see  #getMonthlyRate()
+   * @see  Account#getMonthlyRate()
    */
   public List<MonthlyCharge> getMonthlyCharges() throws SQLException, IOException {
     return table.getConnector().getBilling().getMonthlyCharge().getMonthlyCharges(this, null);
@@ -1068,7 +1068,7 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
   /**
    * Gets all monthly charges billed to this account.
    *
-   * @see  #getBillingMonthlyRate()
+   * @see  Account#getBillingMonthlyRate()
    */
   public List<MonthlyCharge> getBillingMonthlyCharges() throws SQLException, IOException {
     return table.getConnector().getBilling().getMonthlyCharge().getMonthlyCharges(null, this);
@@ -1080,7 +1080,7 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
    *
    * @return  the total monthly rate of all {@link PackageDefinition} and {@link MonthlyCharge} from this account or {@code null} if unavailable.
    *
-   * @see  #getMonthlyCharges()
+   * @see  Account#getMonthlyCharges()
    */
   public Monies getMonthlyRate() throws SQLException, IOException {
     Monies totalMonthlyRate = Monies.of();
@@ -1102,7 +1102,7 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
    *
    * @return  the total monthly rate of all {@link PackageDefinition} and {@link MonthlyCharge} billed to this account or {@code null} if unavailable.
    *
-   * @see  #getBillingMonthlyCharges()
+   * @see  Account#getBillingMonthlyCharges()
    */
   public Monies getBillingMonthlyRate() throws SQLException, IOException {
     Monies totalMonthlyRate = Monies.of();
@@ -1176,7 +1176,7 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
   }
 
   /**
-   * @deprecated  Please use {@link #isAccountOrParentOf(com.aoindustries.aoserv.client.account.Account)} instead.
+   * @deprecated  Please use {@link Account#isAccountOrParentOf(com.aoindustries.aoserv.client.account.Account)} instead.
    */
   @Deprecated
   public boolean isAccountOrParent(Account other) throws IOException, SQLException {

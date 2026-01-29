@@ -74,8 +74,8 @@ public final class TopLevelDomain extends GlobalObjectDomainNameKey<TopLevelDoma
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  TopLevelDomain#init(java.sql.ResultSet)
+   * @see  TopLevelDomain#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public TopLevelDomain() {

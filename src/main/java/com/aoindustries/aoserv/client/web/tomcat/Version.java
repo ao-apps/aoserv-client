@@ -98,8 +98,8 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  Version#init(java.sql.ResultSet)
+   * @see  Version#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public Version() {
@@ -152,9 +152,9 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
    * @deprecated  Please check all uses of this, because it also returns <code>true</code> for Tomcat 5, which doesn't seem
    *              to match the method name very well.
    *
-   * @see  #isTomcat4_1_X(AoservConnector)
-   * @see  #isTomcat5_5_X(AoservConnector)
-   * @see  #isTomcat6_0_X(AoservConnector)
+   * @see  Version#isTomcat4_1_X(AoservConnector)
+   * @see  Version#isTomcat5_5_X(AoservConnector)
+   * @see  Version#isTomcat6_0_X(AoservConnector)
    */
   @Deprecated
   public boolean isTomcat4(AoservConnector connector) throws SQLException, IOException {

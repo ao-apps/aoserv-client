@@ -73,7 +73,7 @@ public final class TypeTable extends GlobalTableIntegerKey<Type> {
   /**
    * {@inheritDoc}
    *
-   * @see  #get(java.lang.Object)
+   * @see  TypeTable#get(java.lang.Object)
    */
   @Override
   public Type get(int num) throws IOException, SQLException {
@@ -81,7 +81,7 @@ public final class TypeTable extends GlobalTableIntegerKey<Type> {
   }
 
   /**
-   * @see  #get(java.lang.Object)
+   * @see  TypeTable#get(java.lang.Object)
    */
   public Type get(String type) throws IOException, SQLException {
     return getUniqueRow(Type.COLUMN_NAME, type);

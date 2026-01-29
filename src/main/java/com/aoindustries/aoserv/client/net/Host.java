@@ -73,8 +73,8 @@ public final class Host extends CachedObjectIntegerKey<Host> implements Comparab
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  Host#init(java.sql.ResultSet)
+   * @see  Host#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public Host() {
@@ -178,7 +178,7 @@ public final class Host extends CachedObjectIntegerKey<Host> implements Comparab
   /**
    * May be filtered.
    *
-   * @see #getPackageId()
+   * @see Host#getPackageId()
    */
   public Package getPackage() throws IOException, SQLException {
     return table.getConnector().getBilling().getPackage().get(packageId);
@@ -187,7 +187,7 @@ public final class Host extends CachedObjectIntegerKey<Host> implements Comparab
   /**
    * Gets the package id, will not be filtered.
    *
-   * @see #getPackage()
+   * @see Host#getPackage()
    */
   public int getPackageId() {
     return packageId;

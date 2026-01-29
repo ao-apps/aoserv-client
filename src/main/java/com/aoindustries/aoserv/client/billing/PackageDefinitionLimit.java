@@ -64,8 +64,8 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  PackageDefinitionLimit#init(java.sql.ResultSet)
+   * @see  PackageDefinitionLimit#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public PackageDefinitionLimit() {

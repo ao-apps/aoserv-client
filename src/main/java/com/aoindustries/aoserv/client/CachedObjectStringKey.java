@@ -35,8 +35,8 @@ public abstract class CachedObjectStringKey<V extends CachedObjectStringKey<V>> 
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  CachedObjectStringKey#init(java.sql.ResultSet)
+   * @see  CachedObjectStringKey#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   protected CachedObjectStringKey() {

@@ -58,8 +58,8 @@ public final class RewriteRule extends CachedObjectIntegerKey<RewriteRule> {
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  RewriteRule#init(java.sql.ResultSet)
+   * @see  RewriteRule#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public RewriteRule() {
@@ -121,8 +121,8 @@ public final class RewriteRule extends CachedObjectIntegerKey<RewriteRule> {
    *
    * @return  The flags or {@code null} when none.
    *
-   * @see  #hasFlag(java.lang.String)
-   * @see  #hasFlag(java.lang.String...)
+   * @see  RewriteRule#hasFlag(java.lang.String)
+   * @see  RewriteRule#hasFlag(java.lang.String...)
    */
   public String getFlags() {
     return flags;
@@ -131,8 +131,8 @@ public final class RewriteRule extends CachedObjectIntegerKey<RewriteRule> {
   /**
    * Case-insensitive check if contains the given flag.
    *
-   * @see  #getFlags()
-   * @see  #hasFlag(java.lang.String...)
+   * @see  RewriteRule#getFlags()
+   * @see  RewriteRule#hasFlag(java.lang.String...)
    */
   public boolean hasFlag(String flag) {
     if (flags == null) {
@@ -152,8 +152,8 @@ public final class RewriteRule extends CachedObjectIntegerKey<RewriteRule> {
   /**
    * Case-insensitive check if contains any of the given flags.
    *
-   * @see  #getFlags()
-   * @see  #hasFlag(java.lang.String)
+   * @see  RewriteRule#getFlags()
+   * @see  RewriteRule#hasFlag(java.lang.String)
    */
   public boolean hasFlag(String... flags) {
     if (flags == null) {
@@ -221,7 +221,7 @@ public final class RewriteRule extends CachedObjectIntegerKey<RewriteRule> {
   /**
    * {@inheritDoc}
    *
-   * @see #getApacheDirective(java.lang.String)
+   * @see RewriteRule#getApacheDirective(java.lang.String)
    * @see ApacheEscape#DEFAULT_DOLLAR_VARIABLE
    */
   @Override

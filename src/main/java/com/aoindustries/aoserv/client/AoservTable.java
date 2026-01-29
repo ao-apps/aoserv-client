@@ -256,7 +256,7 @@ public abstract class AoservTable<K, V extends AoservObject<K, V>> implements It
    * the cached data for this table expires.  The default of
    * 1000ms of batching is used.
    *
-   * @see  #addTableListener(TableListener, long)
+   * @see  AoservTable#addTableListener(TableListener, long)
    */
   @Override
   public final void addTableListener(TableListener listener) {
@@ -648,7 +648,7 @@ public abstract class AoservTable<K, V extends AoservObject<K, V>> implements It
   /**
    * Limited to {@link Integer#MAX_VALUE} rows.
    *
-   * @see  #getObjects(boolean, java.util.List, com.aoindustries.aoserv.client.schema.AoservProtocol.CommandId, java.lang.Object...)
+   * @see  AoservTable#getObjects(boolean, java.util.List, com.aoindustries.aoserv.client.schema.AoservProtocol.CommandId, java.lang.Object...)
    */
   protected List<V> getObjects(boolean allowRetry, AoservProtocol.CommandId commandId, AoservWritable param1) throws IOException, SQLException {
     List<V> list = new ArrayList<>();
@@ -663,7 +663,7 @@ public abstract class AoservTable<K, V extends AoservObject<K, V>> implements It
   /**
    * Limited to {@link Integer#MAX_VALUE} rows.
    *
-   * @see  #getObjectsNoProgress(boolean, java.util.List, com.aoindustries.aoserv.client.schema.AoservProtocol.CommandId, java.lang.Object...)
+   * @see  AoservTable#getObjectsNoProgress(boolean, java.util.List, com.aoindustries.aoserv.client.schema.AoservProtocol.CommandId, java.lang.Object...)
    */
   protected List<V> getObjectsNoProgress(boolean allowRetry, AoservProtocol.CommandId commandId, Object... params) throws IOException, SQLException {
     List<V> list = new ArrayList<>();
@@ -685,7 +685,7 @@ public abstract class AoservTable<K, V extends AoservObject<K, V>> implements It
    * Sorts the table using the default sort columns and orders.  If no defaults have been provided, then
    * the table is not sorted.
    *
-   * @see  #getDefaultOrderBySqlExpressions()
+   * @see  AoservTable#getDefaultOrderBySqlExpressions()
    */
   protected void sortIfNeeded(List<V> list) throws SQLException, IOException {
     // Get the details for the sorting
@@ -716,7 +716,7 @@ public abstract class AoservTable<K, V extends AoservObject<K, V>> implements It
   /**
    * Gets an approximate number of accessible rows in the database.
    *
-   * @see  #size()
+   * @see  AoservTable#size()
    */
   public int getCachedRowCount() throws IOException, SQLException {
     return size();
@@ -730,7 +730,7 @@ public abstract class AoservTable<K, V extends AoservObject<K, V>> implements It
    * @exception  IOException  if unable to access the server
    * @exception  SQLException  if unable to access the database
    *
-   * @see  #getRowsCopy()
+   * @see  AoservTable#getRowsCopy()
    */
   // TODO: Make rows an autoclosable, and use this to free storage promptly where needed?
   // TODO: This means that tables themselves would not be Iterable.
@@ -752,13 +752,13 @@ public abstract class AoservTable<K, V extends AoservObject<K, V>> implements It
    * <p>This gives the table implementation a way to create a defensive copy most
    * efficient to its underlying storage mechanism.</p>
    *
-   * <p>Note: It is best to use {@link #getSortAlgorithm()} when sorting rows, as
+   * <p>Note: It is best to use {@link AoservTable#getSortAlgorithm()} when sorting rows, as
    * the choice of sorting can be very important when objects are pulled from
    * non-heap source like filesystem-based objects.  It is very easy for the
    * sort itself to end up pulling all objects into heap.</p>
    *
-   * @see  #getRows()
-   * @see  #getSortAlgorithm()
+   * @see  AoservTable#getRows()
+   * @see  AoservTable#getSortAlgorithm()
    */
   public abstract List<V> getRowsCopy() throws IOException, SQLException;
 

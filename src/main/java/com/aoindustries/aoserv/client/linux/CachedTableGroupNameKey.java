@@ -51,7 +51,7 @@ public abstract class CachedTableGroupNameKey<V extends CachedObjectGroupNameKey
   }
 
   /**
-   * @see  #get(java.lang.Object)
+   * @see  CachedTableGroupNameKey#get(java.lang.Object)
    */
   public abstract V get(Group.Name pkey) throws IOException, SQLException;
 }

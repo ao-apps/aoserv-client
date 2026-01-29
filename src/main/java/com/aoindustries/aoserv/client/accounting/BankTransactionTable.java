@@ -70,7 +70,7 @@ public final class BankTransactionTable extends AoservTable<Integer, BankTransac
   }
 
   /**
-   * @see  #get(java.lang.Object)
+   * @see  BankTransactionTable#get(java.lang.Object)
    */
   public BankTransaction get(int transid) throws IOException, SQLException {
     return getObject(true, AoservProtocol.CommandId.GET_OBJECT, Table.TableId.BANK_TRANSACTIONS, transid);

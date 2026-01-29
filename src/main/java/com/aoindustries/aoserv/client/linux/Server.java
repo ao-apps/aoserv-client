@@ -133,8 +133,8 @@ public final class Server
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  Server#init(java.sql.ResultSet)
+   * @see  Server#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public Server() {
@@ -321,8 +321,8 @@ public final class Server
    * Gets the address that should be connected to in order to reach this server.
    * This overrides both getDaemonConnectBind and getDaemonBind.
    *
-   * @see  #getDaemonConnectBind
-   * @see  #getDaemonBind
+   * @see  Server#getDaemonConnectBind
+   * @see  Server#getDaemonBind
    */
   public HostAddress getDaemonConnectAddress() {
     return daemonConnectAddress;

@@ -95,7 +95,7 @@ public final class SpamMessageTable extends AoservTable<Integer, SpamMessage> {
   }
 
   /**
-   * @see  #get(java.lang.Object)
+   * @see  SpamMessageTable#get(java.lang.Object)
    */
   public SpamMessage get(int pkey) throws IOException, SQLException {
     return getObject(true, AoservProtocol.CommandId.GET_OBJECT, Table.TableId.SPAM_EMAIL_MESSAGES, pkey);

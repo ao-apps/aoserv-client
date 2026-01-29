@@ -35,8 +35,8 @@ public abstract class GlobalObject<K, T extends GlobalObject<K, T>> extends Aose
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  GlobalObject#init(java.sql.ResultSet)
+   * @see  GlobalObject#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   protected GlobalObject() {

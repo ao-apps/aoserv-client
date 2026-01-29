@@ -269,9 +269,9 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
     /**
      * Interns this name much in the same fashion as <code>String.intern()</code>.
      *
-     * <p>Because this has subtypes, two {@link Name} that are {@link #equals(java.lang.Object)}
+     * <p>Because this has subtypes, two {@link Name} that are {@link Name#equals(java.lang.Object)}
      * may not necessarily return the same instance object after interning.  Thus,
-     * unless you know objects are of the same class, {@link #equals(java.lang.Object)} should
+     * unless you know objects are of the same class, {@link Name#equals(java.lang.Object)} should
      * still be used for equality check instead of the {@code obj1 == obj2} shortcut.</p>
      *
      * <p>To more efficiently check post-interned equivalence, one could also do
@@ -280,7 +280,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
      *
      * <p>And then if we abuse the fact that interned user ids have an interned name, one
      * could check equivalence of post-interned user ids as {@code obj1.getId() == obj2.getId()},
-     * but once again, is it worth it?  Just call {@link #equals(java.lang.Object)}.</p>
+     * but once again, is it worth it?  Just call {@link Name#equals(java.lang.Object)}.</p>
      *
      * @see  String#intern()
      */
@@ -354,8 +354,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  User#init(java.sql.ResultSet)
+   * @see  User#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public User() {

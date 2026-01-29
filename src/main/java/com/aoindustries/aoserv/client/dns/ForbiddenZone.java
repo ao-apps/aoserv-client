@@ -49,8 +49,8 @@ public final class ForbiddenZone extends GlobalObjectStringKey<ForbiddenZone> {
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  ForbiddenZone#init(java.sql.ResultSet)
+   * @see  ForbiddenZone#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public ForbiddenZone() {

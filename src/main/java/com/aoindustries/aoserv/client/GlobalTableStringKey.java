@@ -49,7 +49,7 @@ public abstract class GlobalTableStringKey<V extends GlobalObjectStringKey<V>> e
   }
 
   /**
-   * @see  #get(java.lang.Object)
+   * @see  GlobalTableStringKey#get(java.lang.Object)
    */
   public abstract V get(String pkey) throws IOException, SQLException;
 }

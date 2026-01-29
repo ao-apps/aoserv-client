@@ -52,8 +52,8 @@ public final class BindFirewallZone extends CachedObjectIntegerKey<BindFirewallZ
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  BindFirewallZone#init(java.sql.ResultSet)
+   * @see  BindFirewallZone#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public BindFirewallZone() {

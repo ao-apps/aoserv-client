@@ -73,7 +73,7 @@ public final class BackupReportTable extends AoservTable<Integer, BackupReport> 
   }
 
   /**
-   * @see  #get(java.lang.Object)
+   * @see  BackupReportTable#get(java.lang.Object)
    */
   public BackupReport get(int pkey) throws IOException, SQLException {
     return getObject(true, AoservProtocol.CommandId.GET_OBJECT, Table.TableId.BACKUP_REPORTS, pkey);

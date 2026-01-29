@@ -70,8 +70,8 @@ public final class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  NoticeLog#init(java.sql.ResultSet)
+   * @see  NoticeLog#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public NoticeLog() {

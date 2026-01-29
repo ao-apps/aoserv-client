@@ -50,7 +50,7 @@ public abstract class GlobalTableDomainNameKey<V extends GlobalObjectDomainNameK
   }
 
   /**
-   * @see  #get(java.lang.Object)
+   * @see  GlobalTableDomainNameKey#get(java.lang.Object)
    */
   public abstract V get(DomainName pkey) throws IOException, SQLException;
 }

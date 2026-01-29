@@ -53,8 +53,8 @@ public final class TcpRedirect extends CachedObjectIntegerKey<TcpRedirect> {
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  TcpRedirect#init(java.sql.ResultSet)
+   * @see  TcpRedirect#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public TcpRedirect() {

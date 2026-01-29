@@ -63,8 +63,8 @@ public final class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  VirtualDisk#init(java.sql.ResultSet)
+   * @see  VirtualDisk#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public VirtualDisk() {

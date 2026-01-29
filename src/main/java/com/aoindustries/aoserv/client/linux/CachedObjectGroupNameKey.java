@@ -37,8 +37,8 @@ public abstract class CachedObjectGroupNameKey<V extends CachedObjectGroupNameKe
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  CachedObjectGroupNameKey#init(java.sql.ResultSet)
+   * @see  CachedObjectGroupNameKey#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   protected CachedObjectGroupNameKey() {

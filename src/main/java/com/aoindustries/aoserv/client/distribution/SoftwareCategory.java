@@ -67,8 +67,8 @@ public final class SoftwareCategory extends GlobalObjectStringKey<SoftwareCatego
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  SoftwareCategory#init(java.sql.ResultSet)
+   * @see  SoftwareCategory#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public SoftwareCategory() {

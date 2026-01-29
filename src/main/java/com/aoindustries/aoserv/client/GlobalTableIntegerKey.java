@@ -52,7 +52,7 @@ public abstract class GlobalTableIntegerKey<V extends GlobalObjectIntegerKey<V>>
   }
 
   /**
-   * @see  #get(java.lang.Object)
+   * @see  GlobalTableIntegerKey#get(java.lang.Object)
    */
   public abstract V get(int pkey) throws IOException, SQLException;
 }

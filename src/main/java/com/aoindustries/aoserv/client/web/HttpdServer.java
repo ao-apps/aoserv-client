@@ -113,8 +113,8 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  HttpdServer#init(java.sql.ResultSet)
+   * @see  HttpdServer#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public HttpdServer() {
@@ -355,7 +355,7 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
    * Additional instances will have non-empty names.
    * The name is unique per server, including only one default instance.
    *
-   * @see #getSystemdEscapedName()
+   * @see HttpdServer#getSystemdEscapedName()
    */
   public String getName() {
     return name;
@@ -367,7 +367,7 @@ public final class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
    * Additional instances will have non-empty names.
    * The name is unique per server, including only one default instance.
    *
-   * @see #getName()
+   * @see HttpdServer#getName()
    * @see SystemdUtil#encode(java.lang.String)
    */
   public String getSystemdEscapedName() {

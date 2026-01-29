@@ -102,7 +102,7 @@ public final class FileReplicationLogTable extends AoservTable<Integer, FileRepl
   }
 
   /**
-   * @see  #get(java.lang.Object)
+   * @see  FileReplicationLogTable#get(java.lang.Object)
    */
   public FileReplicationLog get(int pkey) throws IOException, SQLException {
     return getObject(true, AoservProtocol.CommandId.GET_OBJECT, Table.TableId.FAILOVER_FILE_LOG, pkey);

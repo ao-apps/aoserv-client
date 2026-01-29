@@ -65,8 +65,8 @@ public final class OperatingSystem extends GlobalObjectStringKey<OperatingSystem
   /**
    * @deprecated  Only required for implementation, do not use directly.
    *
-   * @see  #init(java.sql.ResultSet)
-   * @see  #read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
+   * @see  OperatingSystem#init(java.sql.ResultSet)
+   * @see  OperatingSystem#read(com.aoapps.hodgepodge.io.stream.StreamableInput, com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
    */
   @Deprecated(forRemoval = true)
   public OperatingSystem() {
