@@ -50,7 +50,7 @@ binding.setVariable('upstreamProjects', [
   // No Jenkins: <groupId>mysql</groupId><artifactId>mysql-connector-java</artifactId>
 
   // BOM
-  '../oss/javaee-web-api-bom', // <groupId>com.aoapps</groupId><artifactId>javaee-web-api-bom</artifactId>
+  '../oss/jakartaee-web-profile-bom', // <groupId>com.aoapps</groupId><artifactId>jakartaee-web-profile-bom</artifactId>
 ])
 
 /******************************************************************************************

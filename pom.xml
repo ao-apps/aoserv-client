@@ -286,10 +286,10 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
       </build>
     </profile>
     <profile>
-      <id>javaee</id>
+      <id>jakartaee</id>
       <activation>
         <property>
-          <name>javaee.skip</name>
+          <name>jakartaee.skip</name>
           <value>!true</value>
         </property>
       </activation>
@@ -301,20 +301,20 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
           </dependency>
           <!-- Runtime Transitive -->
           <dependency>
-            <groupId>com.aoapps</groupId><artifactId>ao-servlet-util</artifactId><version>5.4.0${POST-SNAPSHOT}</version>
+            <groupId>com.aoapps</groupId><artifactId>ao-servlet-util</artifactId><version>6.0.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
           </dependency>
           <dependency>
             <groupId>com.aoapps</groupId><artifactId>ao-web-resources-registry</artifactId><version>0.7.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
           </dependency>
           <dependency>
-            <groupId>com.aoapps</groupId><artifactId>ao-web-resources-servlet</artifactId><version>0.6.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
+            <groupId>com.aoapps</groupId><artifactId>ao-web-resources-servlet</artifactId><version>0.7.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
           </dependency>
-          <!-- javaee-web-api-bom: <groupId>javax.el</groupId><artifactId>javax.el-api</artifactId> -->
-          <!-- javaee-web-api-bom: <groupId>javax.servlet</groupId><artifactId>javax.servlet-api</artifactId> -->
-          <!-- javaee-web-api-bom: <groupId>javax.servlet.jsp</groupId><artifactId>javax.servlet.jsp-api</artifactId> -->
+          <!-- jakartaee-web-profile-bom: <groupId>jakarta.el</groupId><artifactId>jakarta.el-api</artifactId> -->
+          <!-- jakartaee-web-profile-bom: <groupId>jakarta.servlet</groupId><artifactId>jakarta.servlet-api</artifactId> -->
+          <!-- jakartaee-web-profile-bom: <groupId>jakarta.servlet.jsp</groupId><artifactId>jakarta.servlet.jsp-api</artifactId> -->
           <!-- Imports -->
           <dependency>
-            <groupId>com.aoapps</groupId><artifactId>javaee-web-api-bom</artifactId><version>7.0.1-POST-SNAPSHOT</version>
+            <groupId>com.aoapps</groupId><artifactId>jakartaee-web-profile-bom</artifactId><version>10.0.0${POST-SNAPSHOT}</version>
             <type>pom</type>
             <scope>import</scope>
           </dependency>
