@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -70,6 +70,7 @@ public final class AppProtocol extends GlobalObjectStringKey<AppProtocol> {
   public static final String MILTER = "milter";
   public static final String MYSQL = "MySQL";
   public static final String NTALK = "ntalk";
+  public static final String OPENDKIM = "opendkim";
   public static final String POP3 = "POP3";
   public static final String POSTGRESQL = "PostgreSQL";
   public static final String REDIS = "redis";
@@ -93,6 +94,7 @@ public final class AppProtocol extends GlobalObjectStringKey<AppProtocol> {
   private Port port;
   private String name;
   private boolean isUserService;
+  private boolean isUniquePerHost;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -116,6 +118,8 @@ public final class AppProtocol extends GlobalObjectStringKey<AppProtocol> {
         return name;
       case 3:
         return isUserService;
+      case 4:
+        return isUniquePerHost;
       default:
         throw new IllegalArgumentException("Invalid index: " + i);
     }
@@ -131,6 +135,10 @@ public final class AppProtocol extends GlobalObjectStringKey<AppProtocol> {
 
   public boolean isUserService() {
     return isUserService;
+  }
+
+  public boolean isUniquePerHost() {
+    return isUniquePerHost;
   }
 
   public Port getPort() {
@@ -160,6 +168,7 @@ public final class AppProtocol extends GlobalObjectStringKey<AppProtocol> {
           portNum,
           com.aoapps.net.Protocol.valueOf(result.getString(5).toUpperCase(Locale.ROOT))
       );
+      isUniquePerHost = result.getBoolean(6);
     } catch (ValidationException e) {
       throw new SQLException(e);
     }
@@ -176,6 +185,7 @@ public final class AppProtocol extends GlobalObjectStringKey<AppProtocol> {
           portNum,
           in.readEnum(com.aoapps.net.Protocol.class)
       );
+      isUniquePerHost = in.readBoolean();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -193,6 +203,9 @@ public final class AppProtocol extends GlobalObjectStringKey<AppProtocol> {
       } else {
         out.writeEnum(port.getProtocol());
       }
+    }
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_92_2) >= 0) {
+      out.writeBoolean(isUniquePerHost);
     }
   }
 }

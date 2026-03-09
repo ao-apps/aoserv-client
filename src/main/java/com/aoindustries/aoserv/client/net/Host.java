@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -327,6 +328,21 @@ public final class Host extends CachedObjectIntegerKey<Host> implements Comparab
 
   public List<Bind> getNetBinds(AppProtocol protocol) throws IOException, SQLException {
     return table.getConnector().getNet().getBind().getNetBinds(this, protocol);
+  }
+
+  public Optional<Bind> getUniqueNetBind(AppProtocol protocol) throws IOException, SQLException {
+    if (!protocol.isUniquePerHost()) {
+      throw new IllegalArgumentException("Not AppProtocol.isUniquePerHost: " + protocol);
+    }
+    List<Bind> binds = getNetBinds(protocol);
+    int size = binds.size();
+    if (size == 0) {
+      return Optional.empty();
+    }
+    if (binds.size() > 1) {
+      throw new SQLException("Multiple binds returned with AppProtocol.isUniquePerHost: protocol = " + protocol + ", binds = " + binds);
+    }
+    return Optional.of(binds.get(0));
   }
 
   public Device getNetDevice(String deviceId) throws IOException, SQLException {
