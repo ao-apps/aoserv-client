@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
     shortTitle="Changelog"
     tocLevels="1"
     datePublished="2016-10-29T21:07:28-05:00"
-    dateModified="2026-02-03T14:03:09Z"
+    dateModified="2026-03-09T01:41:46Z"
   >
     <c:set var="latestRelease" value="1.92.1" />
     <c:if test="${
@@ -80,6 +80,10 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
           <!-- TODO:
           <li>Look into jOOQ: https://www.jooq.org/</li>
           -->
+          <li>
+            New system group and user <code>opendkim</code> for
+            <ao:a href="http://www.opendkim.org/">OpenDKIM</ao:a>.
+          </li>
         </ul>
       </changelog:release>
     </c:if>

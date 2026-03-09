@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -506,6 +506,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       JENKINS,
       // OProfile
       OPROFILE,
+      // OpenDKIM
+      OPENDKIM,
       // SonarQube
       SONARQUBE,
       // Rocky 9
@@ -589,6 +591,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       JENKINS = Name.valueOf("jenkins");
       // OProfile
       OPROFILE = Name.valueOf("oprofile");
+      // OpenDKIM
+      OPENDKIM = Name.valueOf("opendkim");
       // SonarQube
       SONARQUBE = Name.valueOf("sonarqube");
       // Rocky 9
