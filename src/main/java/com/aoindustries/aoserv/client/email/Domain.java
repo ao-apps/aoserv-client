@@ -44,6 +44,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * A <code>EmailDomain</code> is one hostname/domain of email
@@ -126,6 +127,24 @@ public final class Domain extends CachedObjectIntegerKey<Domain> implements Remo
 
   public List<DkimKey> getDkimKeys() throws IOException, SQLException {
     return table.getConnector().getEmail().getDkimKey().getDkimKeys(this);
+  }
+
+  /**
+   * A domain may only have a single active signing key.
+   *
+   * @see  DkimKey.Status#SIGNING
+   */
+  public Optional<DkimKey> getSigningDkimKey() throws IOException, SQLException {
+    DkimKey signingDkimKey = null;
+    for (DkimKey dk : getDkimKeys()) {
+      if (dk.getStatus() == DkimKey.Status.SIGNING) {
+        if (signingDkimKey != null) {
+          throw new SQLException("Multiple signing keys not allowed for a single Domain: " + signingDkimKey + " and " + dk);
+        }
+        signingDkimKey = dk;
+      }
+    }
+    return Optional.ofNullable(signingDkimKey);
   }
 
   public List<Address> getEmailAddresses() throws IOException, SQLException {

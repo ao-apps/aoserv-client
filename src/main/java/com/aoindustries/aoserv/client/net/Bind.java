@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -45,6 +45,8 @@ import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.distribution.OperatingSystemVersion;
 import com.aoindustries.aoserv.client.email.CyrusImapdBind;
 import com.aoindustries.aoserv.client.email.CyrusImapdServer;
+import com.aoindustries.aoserv.client.email.DkimKey;
+import com.aoindustries.aoserv.client.email.Domain;
 import com.aoindustries.aoserv.client.email.SendmailBind;
 import com.aoindustries.aoserv.client.email.SendmailServer;
 import com.aoindustries.aoserv.client.ftp.PrivateServer;
@@ -66,6 +68,7 @@ import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -721,6 +724,26 @@ public final class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
       Integer jilterBind_id = ao.getJilterBind_id();
       if (jilterBind_id != null && pkey == jilterBind_id) {
         reasons.add(new CannotRemoveReason<>("Used as aoserv-daemon jilter port for server: " + ao.getHostname(), ao));
+      }
+    }
+
+    // email.DkimKey
+    if (AppProtocol.OPENDKIM.equals(appProtocol)) {
+      // If opendkim and server has any DkimKey
+      Server linuxServer = getHost().getLinuxServer();
+      if (linuxServer != null) {
+        List<Domain> domains = linuxServer.getEmailDomains();
+        List<DkimKey> signingDkimKeys = new ArrayList<>(domains.size());
+        for (Domain ed : domains) {
+          ed.getSigningDkimKey().ifPresent(signingDkimKeys::add);
+        }
+        int signingDkimKeyCount = signingDkimKeys.size();
+        if (signingDkimKeyCount > 0) {
+          reasons.add(new CannotRemoveReason<>(
+              "Used by " + signingDkimKeyCount + " actively signing DKIM " + (signingDkimKeyCount == 1 ? "Key" : "Keys"),
+              signingDkimKeys
+          ));
+        }
       }
     }
 

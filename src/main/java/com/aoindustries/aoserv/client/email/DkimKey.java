@@ -66,7 +66,6 @@ public final class DkimKey extends CachedObjectIntegerKey<DkimKey> {
     /**
      * The key used for current signing, only one may be active per {@link Domain}.
      */
-    // TODO: Method Optional<DkimKey> getSigningKey on Domain since is unique-per-domain?
     SIGNING("signing"),
 
     /**
