@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -91,6 +91,7 @@ public final class Table extends GlobalObjectIntegerKey<Table> {
     EMAIL_ADDRESSES,
     EMAIL_ATTACHMENT_BLOCKS,
     EMAIL_ATTACHMENT_TYPES,
+    email_DkimKey,
     EMAIL_DOMAINS,
     EMAIL_FORWARDING,
     EMAIL_LIST_ADDRESSES,

@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
     shortTitle="Changelog"
     tocLevels="1"
     datePublished="2016-10-29T21:07:28-05:00"
-    dateModified="2026-03-09T06:00:38Z"
+    dateModified="2026-03-13T02:49:56Z"
   >
     <c:set var="latestRelease" value="1.92.1" />
     <c:if test="${
@@ -86,6 +86,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
           </li>
           <li>Added column <code>net.AppProtocol.isUniquePerHost</code></li>
           <li>New constant <code>net.AppProtocol.OPENDKIM</code></li>
+          <li>New table <code>email.DkimKey</code></li>
         </ul>
       </changelog:release>
     </c:if>

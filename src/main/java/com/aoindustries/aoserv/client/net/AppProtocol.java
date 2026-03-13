@@ -204,7 +204,7 @@ public final class AppProtocol extends GlobalObjectStringKey<AppProtocol> {
         out.writeEnum(port.getProtocol());
       }
     }
-    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_92_2) >= 0) {
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_92_2_SNAPSHOT) >= 0) {
       out.writeBoolean(isUniquePerHost);
     }
   }

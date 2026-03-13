@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2018, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2018, 2020, 2021, 2022, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -68,6 +68,12 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 
   public CyrusImapdServerTable getCyrusImapdServer() {
     return CyrusImapdServer;
+  }
+
+  private final DkimKeyTable DkimKey;
+
+  public DkimKeyTable getDkimKey() {
+    return DkimKey;
   }
 
   private final DomainTable Domain;
@@ -196,6 +202,7 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
     newTables.add(BlackholeAddress = new BlackholeAddressTable(connector));
     newTables.add(CyrusImapdBind = new CyrusImapdBindTable(connector));
     newTables.add(CyrusImapdServer = new CyrusImapdServerTable(connector));
+    newTables.add(DkimKey = new DkimKeyTable(connector));
     newTables.add(Domain = new DomainTable(connector));
     newTables.add(Forwarding = new ForwardingTable(connector));
     newTables.add(InboxAddress = new InboxAddressTable(connector));

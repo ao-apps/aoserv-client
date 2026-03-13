@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2018, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2018, 2020, 2021, 2022, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -42,6 +42,7 @@ public class SchemaBeanInfo extends SimpleBeanInfo {
           new PropertyDescriptor("BlackholeAddress",    Schema.class, "getBlackholeAddress",    null),
           new PropertyDescriptor("CyrusImapdBind",      Schema.class, "getCyrusImapdBind",      null),
           new PropertyDescriptor("CyrusImapdServer",    Schema.class, "getCyrusImapdServer",    null),
+          new PropertyDescriptor("DkimKey",             Schema.class, "getDkimKey",             null),
           new PropertyDescriptor("Domain",              Schema.class, "getDomain",              null),
           new PropertyDescriptor("Forwarding",          Schema.class, "getForwarding",          null),
           new PropertyDescriptor("InboxAddress",        Schema.class, "getInboxAddress",        null),

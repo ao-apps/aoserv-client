@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2014, 2016, 2017, 2018, 2019, 2021, 2022, 2025  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2014, 2016, 2017, 2018, 2019, 2021, 2022, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -29,14 +29,16 @@ import com.aoapps.lang.util.InternUtils;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Removable;
+import com.aoindustries.aoserv.client.email.DkimKey;
 import com.aoindustries.aoserv.client.net.IpAddress;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * A <code>DNSRecord</code> is one line of a <code>DNSZone</code>
@@ -370,14 +372,25 @@ public final class Record extends CachedObjectIntegerKey<Record> implements Remo
     return false;
   }
 
+  /**
+   * Gets the {@link DkimKey} using this record, if any.
+   */
+  public Optional<DkimKey> getDkimKey() throws IOException, SQLException {
+    return table.getConnector().getEmail().getDkimKey().getDkimKeyByDnsRecord(this);
+  }
+
   @Override
   public Table.TableId getTableId() {
     return Table.TableId.DNS_RECORDS;
   }
 
   @Override
-  public List<CannotRemoveReason<?>> getCannotRemoveReasons() {
-    return Collections.emptyList();
+  public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws IOException, SQLException {
+    List<CannotRemoveReason<?>> reasons = new ArrayList<>();
+
+    getDkimKey().ifPresent(dkimKey -> reasons.add(new CannotRemoveReason<>("Used for " + dkimKey, dkimKey)));
+
+    return reasons;
   }
 
   @Override
