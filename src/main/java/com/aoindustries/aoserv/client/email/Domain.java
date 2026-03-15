@@ -72,6 +72,7 @@ public final class Domain extends CachedObjectIntegerKey<Domain> implements Remo
   private DomainName domain;
   private int aoServer;
   private Account.Name packageName;
+  private String dkimDisableReason;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -112,6 +113,8 @@ public final class Domain extends CachedObjectIntegerKey<Domain> implements Remo
         return aoServer;
       case COLUMN_PACKAGE:
         return packageName;
+      case 4:
+        return dkimDisableReason;
       default:
         throw new IllegalArgumentException("Invalid index: " + i);
     }
@@ -175,6 +178,13 @@ public final class Domain extends CachedObjectIntegerKey<Domain> implements Remo
     return ao;
   }
 
+  /**
+   * The reason DKIM is disabled on this domain or {@link Optional#empty()} when enabled.
+   */
+  public Optional<String> getDkimDisableReason() {
+    return Optional.ofNullable(dkimDisableReason);
+  }
+
   @Override
   public Table.TableId getTableId() {
     return Table.TableId.EMAIL_DOMAINS;
@@ -183,10 +193,12 @@ public final class Domain extends CachedObjectIntegerKey<Domain> implements Remo
   @Override
   public void init(ResultSet result) throws SQLException {
     try {
-      pkey = result.getInt(1);
-      domain = DomainName.valueOf(result.getString(2));
-      aoServer = result.getInt(3);
-      packageName = Account.Name.valueOf(result.getString(4));
+      int pos = 1;
+      pkey = result.getInt(pos++);
+      domain = DomainName.valueOf(result.getString(pos++));
+      aoServer = result.getInt(pos++);
+      packageName = Account.Name.valueOf(result.getString(pos++));
+      dkimDisableReason = result.getString(pos++);
     } catch (ValidationException e) {
       throw new SQLException(e);
     }
@@ -199,6 +211,7 @@ public final class Domain extends CachedObjectIntegerKey<Domain> implements Remo
       domain = DomainName.valueOf(in.readUTF());
       aoServer = in.readCompressedInt();
       packageName = Account.Name.valueOf(in.readUTF()).intern();
+      dkimDisableReason = in.readNullUTF();
     } catch (ValidationException e) {
       throw new IOException(e);
     }
@@ -237,5 +250,8 @@ public final class Domain extends CachedObjectIntegerKey<Domain> implements Remo
     out.writeUTF(domain.toString());
     out.writeCompressedInt(aoServer);
     out.writeUTF(packageName.toString());
+    if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_92_2_1_SNAPSHOT) >= 0) {
+      out.writeNullUTF(dkimDisableReason);
+    }
   }
 }

@@ -75,7 +75,7 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * All listening network ports must be registered as a <code>NetBind</code>.  The
- * <code>NetBind</code> information is also used for internel server and external
+ * <code>NetBind</code> information is also used for internal server and external
  * network monitoring.  If either a network port is not listening that should,
  * or a network port is listening that should not, monitoring personnel are notified
  * to remove the discrepancy.
@@ -729,13 +729,19 @@ public final class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 
     // email.DkimKey
     if (AppProtocol.OPENDKIM.equals(appProtocol)) {
-      // If opendkim and server has any DkimKey
+      // Note: This matches aoserv-schema:DkimKey-trigger.sql:email."DkimKey_server_has_opendkim_bind"
       Server linuxServer = getHost().getLinuxServer();
       if (linuxServer != null) {
         List<Domain> domains = linuxServer.getEmailDomains();
         List<DkimKey> signingDkimKeys = new ArrayList<>(domains.size());
         for (Domain ed : domains) {
-          ed.getSigningDkimKey().ifPresent(signingDkimKeys::add);
+          Optional<DkimKey> signingKeyOpt = ed.getSigningDkimKey();
+          if (signingKeyOpt.isPresent()) {
+            DkimKey signingKey = signingKeyOpt.get();
+            if (signingKey.getDomain().getDkimDisableReason().isEmpty()) {
+              signingDkimKeys.add(signingKey);
+            }
+          }
         }
         int signingDkimKeyCount = signingDkimKeys.size();
         if (signingDkimKeyCount > 0) {

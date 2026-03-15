@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
     shortTitle="Changelog"
     tocLevels="1"
     datePublished="2016-10-29T21:07:28-05:00"
-    dateModified="2026-03-13T02:49:56Z"
+    dateModified="2026-03-15T07:12:13Z"
   >
     <c:set var="latestRelease" value="1.92.1" />
     <c:if test="${
@@ -80,13 +80,18 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
           <!-- TODO:
           <li>Look into jOOQ: https://www.jooq.org/</li>
           -->
-          <li>
-            New system group and user <code>opendkim</code> for
-            <ao:a href="http://www.opendkim.org/">OpenDKIM</ao:a>.
+          <li>Now supporting <ao:a href="http://www.opendkim.org/">OpenDKIM</ao:a>:
+            <ol>
+              <li>
+                New system group and user <code>opendkim</code> for
+                <ao:a href="http://www.opendkim.org/">OpenDKIM</ao:a>.
+              </li>
+              <li>Added column <code>net.AppProtocol.isUniquePerHost</code></li>
+              <li>New constant <code>net.AppProtocol.OPENDKIM</code></li>
+              <li>New table <code>email.DkimKey</code></li>
+              <li>Added column <code>email.Domain.dkimDisableReason</code></li>
+            </ol>
           </li>
-          <li>Added column <code>net.AppProtocol.isUniquePerHost</code></li>
-          <li>New constant <code>net.AppProtocol.OPENDKIM</code></li>
-          <li>New table <code>email.DkimKey</code></li>
         </ul>
       </changelog:release>
     </c:if>
