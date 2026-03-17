@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025  AO Industries, Inc.
+ * Copyright (C) 2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -26,6 +26,7 @@ package com.aoindustries.aoserv.client.net.reputation;
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
+import com.aoindustries.aoserv.client.DbEnum;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
@@ -52,7 +53,11 @@ public final class LimiterClass extends CachedObjectIntegerKey<LimiterClass> {
     second,
     minute,
     hour,
-    day
+    day;
+
+    static {
+      DbEnum.register(TimeUnit.class);
+    }
   }
 
   private int          limiter;
@@ -160,13 +165,13 @@ public final class LimiterClass extends CachedObjectIntegerKey<LimiterClass> {
       case COLUMN_LIMITER:
         return limiter;
       case 2:
-        return clazz.name();
+        return clazz;
       case 3:
         return synPerIpBurst;
       case 4:
         return synPerIpRate;
       case 5:
-        return synPerIpUnit.name();
+        return synPerIpUnit;
       case 6:
         return synPerIpSize;
       case 7:
@@ -174,13 +179,13 @@ public final class LimiterClass extends CachedObjectIntegerKey<LimiterClass> {
       case 8:
         return synRate;
       case 9:
-        return synUnit.name();
+        return synUnit;
       case 10:
         return packetPerIpBurst;
       case 11:
         return packetPerIpRate;
       case 12:
-        return packetPerIpUnit.name();
+        return packetPerIpUnit;
       case 13:
         return packetPerIpSize;
       case 14:
@@ -188,7 +193,7 @@ public final class LimiterClass extends CachedObjectIntegerKey<LimiterClass> {
       case 15:
         return packetRate;
       case 16:
-        return packetUnit.name();
+        return packetUnit;
       default:
         throw new IllegalArgumentException("Invalid index: " + i);
     }

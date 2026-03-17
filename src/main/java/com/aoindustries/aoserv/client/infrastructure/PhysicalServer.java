@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2008-2013, 2016, 2017, 2018, 2019, 2021, 2022, 2025  AO Industries, Inc.
+ * Copyright (C) 2008-2013, 2016, 2017, 2018, 2019, 2021, 2022, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -27,6 +27,7 @@ import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.lang.util.InternUtils;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
+import com.aoindustries.aoserv.client.DbEnum;
 import com.aoindustries.aoserv.client.net.Host;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -70,7 +71,11 @@ public final class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
     /**
      * The UPS is an APC model and can be monitored for clean shutdown.
      */
-    apc
+    apc;
+
+    static {
+      DbEnum.register(UpsType.class);
+    }
   }
 
   private UpsType upsType;
@@ -108,7 +113,7 @@ public final class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
       case 8:
         return supportsHvm;
       case 9:
-        return upsType.name();
+        return upsType;
       default:
         throw new IllegalArgumentException("Invalid index: " + i);
     }

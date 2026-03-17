@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2014, 2016, 2017, 2018, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2014, 2016, 2017, 2018, 2020, 2021, 2022, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -24,6 +24,7 @@
 package com.aoindustries.aoserv.client.monitoring;
 
 import com.aoapps.lang.i18n.Resources;
+import com.aoindustries.aoserv.client.DbEnum;
 import java.util.ResourceBundle;
 
 /**
@@ -41,6 +42,10 @@ public enum AlertLevel {
   HIGH,
   CRITICAL,
   UNKNOWN;
+
+  static {
+    DbEnum.register(AlertLevel.class);
+  }
 
   private static final Resources RESOURCES = Resources.getResources(ResourceBundle::getBundle, AlertLevel.class);
 

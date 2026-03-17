@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017, 2018, 2019, 2021, 2022, 2024, 2025  AO Industries, Inc.
+ * Copyright (C) 2017, 2018, 2019, 2021, 2022, 2024, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -29,6 +29,7 @@ import com.aoapps.lang.math.SafeMath;
 import com.aoapps.lang.validation.ValidationException;
 import com.aoapps.net.DomainName;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
+import com.aoindustries.aoserv.client.DbEnum;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.net.AppProtocol;
 import com.aoindustries.aoserv.client.net.Bind;
@@ -101,10 +102,16 @@ public final class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
       throw new IllegalArgumentException("TimeUnit not found from suffix: " + ch);
     }
 
+    static {
+      DbEnum.register(TimeUnit.class, timeUnit -> timeUnit.dbValue, TimeUnit::getFromSuffix);
+    }
+
     private final char suffix;
+    private final String dbValue;
 
     private TimeUnit(char suffix) {
       this.suffix = suffix;
+      this.dbValue = String.valueOf(suffix);
     }
 
     public char getSuffix() {
@@ -208,15 +215,15 @@ public final class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
       case 5:
         return deleteDuration;
       case 6:
-        return deleteDurationUnit == null ? null : String.valueOf(deleteDurationUnit.getSuffix());
+        return deleteDurationUnit;
       case 7:
         return expireDuration;
       case 8:
-        return expireDurationUnit == null ? null : String.valueOf(expireDurationUnit.getSuffix());
+        return expireDurationUnit;
       case 9:
         return expungeDuration;
       case 10:
-        return expungeDurationUnit == null ? null : String.valueOf(expungeDurationUnit.getSuffix());
+        return expungeDurationUnit;
       default:
         throw new IllegalArgumentException("Invalid index: " + i);
     }

@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
     shortTitle="Changelog"
     tocLevels="1"
     datePublished="2016-10-29T21:07:28-05:00"
-    dateModified="2026-03-15T07:12:13Z"
+    dateModified="2026-03-17T03:04:24Z"
   >
     <c:set var="latestRelease" value="1.92.1" />
     <c:if test="${
@@ -80,6 +80,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
           <!-- TODO:
           <li>Look into jOOQ: https://www.jooq.org/</li>
           -->
+          <li>New <code>"schema"."Type"</code>: <code>enum</code></li>
           <li>Now supporting <ao:a href="http://www.opendkim.org/">OpenDKIM</ao:a>:
             <ol>
               <li>

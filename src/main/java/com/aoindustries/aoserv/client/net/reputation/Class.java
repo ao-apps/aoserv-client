@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2012, 2016, 2017, 2018, 2022  AO Industries, Inc.
+ * Copyright (C) 2012, 2016, 2017, 2018, 2022, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,6 +22,8 @@
  */
 
 package com.aoindustries.aoserv.client.net.reputation;
+
+import com.aoindustries.aoserv.client.DbEnum;
 
 /**
  * The set of possible classes.
@@ -68,5 +70,9 @@ public enum Class {
   /**
    * Unknown.
    */
-  uu
+  uu;
+
+  static {
+    DbEnum.register(Class.class);
+  }
 }

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2009, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2025  AO Industries, Inc.
+ * Copyright (C) 2003-2009, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -91,7 +91,7 @@ public final class MysqlReplication extends CachedObjectIntegerKey<MysqlReplicat
       case 7:
         return monitoringSecondsBehindCritical == -1 ? null : monitoringSecondsBehindCritical;
       case 8:
-        return maxAlertLevel.name();
+        return maxAlertLevel;
       default:
         throw new IllegalArgumentException("Invalid index: " + i);
     }

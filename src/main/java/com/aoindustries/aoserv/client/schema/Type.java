@@ -45,6 +45,7 @@ import com.aoapps.security.SmallIdentifier;
 import com.aoapps.sql.SQLUtility;
 import com.aoapps.sql.UnmodifiableTimestamp;
 import com.aoindustries.aoserv.client.AoservConnector;
+import com.aoindustries.aoserv.client.DbEnum;
 import com.aoindustries.aoserv.client.GlobalObjectIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.linux.LinuxId;
@@ -84,6 +85,8 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
   public static final String DATE_name = "date";
 
   // TODO: No longer pass type ids, instead pass per-protocol schema+type names
+
+  // TODO: Instead of all these int constants, could become an enum type in schema and Enum in Java
 
   /**
    * @see com.aoindustries.aoserv.client.account.Account.Name
@@ -334,6 +337,11 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
    */
   public static final int HASHED_KEY = 53;
 
+  /**
+   * @see DbEnum
+   */
+  public static final int ENUM = 54;
+
   private static final BigDecimal bigDecimalNegativeOne = BigDecimal.valueOf(-1);
 
   private String name;
@@ -401,10 +409,10 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
    *                      T O B   C C         O   N A   A               S   D N _ I   R A I A   S E L S E S E S N S N N H
    *                      O U O   I I D       S   T D   L         S     E   E _ L N   O S N D   E R E E T E R E E E T T E
    *                        N O   M M O E   F T   E D   _     P S T     R   C L A _ G U S U D M _ _ _ R _ _ _ R _ R I I D
-   *                        T L D A A U M F L N   R R L L P P H H R T   N Z I A B N E P W X R O N N N N P N N N N N F F _
-   *                        I E A L L B A K O A I V E O O K A O O I I U A O M B E A C _ O _ E N A A A A O A A A A A I I K
-   *                        N A T _ _ L I E A M N A S N N E T N R N M R M N A E L M O I R I S E M M M M R M M M M M E E E
-   *               FROM     G N E 2 3 E L Y T E T L S G G Y H E T G E L E E L L S E S D D D S Y E E E E T E E E E E R R Y
+   *                        T L D A A U M F L N   R R L L P P H H R T   N Z I A B N E P W X R O N N N N P N N N N N F F _ E
+   *                        I E A L L B A K O A I V E O O K A O O I I U A O M B E A C _ O _ E N A A A A O A A A A A I I K N
+   *                        N A T _ _ L I E A M N A S N N E T N R N M R M N A E L M O I R I S E M M M M R M M M M M E E E U
+   *               FROM     G N E 2 3 E L Y T E T L S G G Y H E T G E L E E L L S E S D D D S Y E E E E T E E E E E R R Y M
    *
    *             ACCOUNTING X                                     X
    *                BOOLEAN   X   X X X     X   X     X X       X X         X
@@ -452,7 +460,8 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
    *         LINUX_USERNAME                                       X     X                             X       X   X
    *             IDENTIFIER                                       X         X                                       X
    *       SMALL_IDENTIFIER                           X X         X         X                                         X
-   *             HASHED_KEY                                       X                                                     X</pre>
+   *             HASHED_KEY                                       X                                                     X
+   *                   ENUM                     X                 X                                                       X</pre>
    */
   public Object cast(AoservConnector conn, Object value, Type castToType) throws IOException, SQLException {
     try {
@@ -1139,6 +1148,16 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
             // No special casts
             break;
           }
+        case ENUM:
+          {
+            switch (castToType.getId()) {
+              case INT:
+                return (value == null) ? null : ((Enum) value).ordinal();
+              default:
+                // fall-through to throw exception
+            }
+            break;
+          }
         default:
           // fall-through to throw exception
       }
@@ -1336,6 +1355,12 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
           return ((SmallIdentifier) value1).compareTo((SmallIdentifier) value2);
         case HASHED_KEY:
           return ((HashedKey) value1).compareTo((HashedKey) value2);
+        case ENUM:
+          {
+            @SuppressWarnings("unchecked")
+            int diff = ((Enum) value1).compareTo((Enum) value2);
+            return diff;
+          }
         default:
           throw new IllegalArgumentException("Unknown type: " + typeId);
       }
@@ -1643,6 +1668,8 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
         return ((SmallIdentifier) value).toString();
       case HASHED_KEY:
         return ((HashedKey) value).toString();
+      case ENUM:
+        return DbEnum.toDbValue((Enum) value);
       default:
         throw new IllegalArgumentException("Unknown SchemaType: " + type);
     }

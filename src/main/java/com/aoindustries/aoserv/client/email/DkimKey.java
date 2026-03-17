@@ -30,6 +30,7 @@ import com.aoapps.net.DomainLabel;
 import com.aoapps.sql.SQLStreamables;
 import com.aoapps.sql.UnmodifiableTimestamp;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
+import com.aoindustries.aoserv.client.DbEnum;
 import com.aoindustries.aoserv.client.dns.Record;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
@@ -81,9 +82,6 @@ public final class DkimKey extends CachedObjectIntegerKey<DkimKey> {
     private static final Status[] values = values();
 
     private static Status getFromDbValue(String dbValue) {
-      if (dbValue == null) {
-        return null;
-      }
       for (Status value : values) {
         if (dbValue.equals(value.dbValue)) {
           return value;
@@ -92,14 +90,14 @@ public final class DkimKey extends CachedObjectIntegerKey<DkimKey> {
       throw new IllegalArgumentException("Status not found from dbValue: " + dbValue);
     }
 
+    static {
+      DbEnum.register(Status.class, status -> status.dbValue, Status::getFromDbValue);
+    }
+
     private final String dbValue;
 
     private Status(String dbValue) {
       this.dbValue = dbValue;
-    }
-
-    public String getDbValue() {
-      return dbValue;
     }
   }
 
@@ -140,7 +138,7 @@ public final class DkimKey extends CachedObjectIntegerKey<DkimKey> {
       case 3:
         return created;
       case 4:
-        return status.getDbValue();
+        return status;
       case 5:
         return statusTime;
       case COLUMN_DNS_RECORD:
