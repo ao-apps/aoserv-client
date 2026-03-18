@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -25,7 +25,6 @@ package com.aoindustries.aoserv.client.schema;
 
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
-import com.aoapps.lang.util.InternUtils;
 import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.AoservObject;
 import com.aoindustries.aoserv.client.GlobalObjectIntegerKey;
@@ -33,6 +32,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Meta-data for every field of every <code>AoservObject</code> is available as
@@ -50,8 +50,8 @@ public final class Column extends GlobalObjectIntegerKey<Column> {
 
   private String table;
   private String name;
-  private String sinceVersion;
-  private String lastVersion;
+  private AoservProtocol.Version sinceVersion;
+  private AoservProtocol.Version lastVersion;
   private short index;
   private String type;
   private boolean isNullable;
@@ -148,31 +148,31 @@ public final class Column extends GlobalObjectIntegerKey<Column> {
     return name;
   }
 
-  public String getSinceVersion_version() {
+  public AoservProtocol.Version getSinceVersion_version() {
     return sinceVersion;
   }
 
   public AoservProtocol getSinceVersion(AoservConnector connector) throws SQLException, IOException {
-    AoservProtocol obj = connector.getSchema().getAoservProtocol().get(sinceVersion);
+    AoservProtocol obj = connector.getSchema().getAoservProtocol().get(sinceVersion.getVersion());
     if (obj == null) {
       throw new SQLException("Unable to find AoservProtocol: " + sinceVersion);
     }
     return obj;
   }
 
-  public String getLastVersion_version() {
-    return lastVersion;
+  public Optional<AoservProtocol.Version> getLastVersion_version() {
+    return Optional.ofNullable(lastVersion);
   }
 
-  public AoservProtocol getLastVersion(AoservConnector connector) throws SQLException, IOException {
+  public Optional<AoservProtocol> getLastVersion(AoservConnector connector) throws SQLException, IOException {
     if (lastVersion == null) {
-      return null;
+      return Optional.empty();
     }
-    AoservProtocol obj = connector.getSchema().getAoservProtocol().get(lastVersion);
+    AoservProtocol obj = connector.getSchema().getAoservProtocol().get(lastVersion.getVersion());
     if (obj == null) {
       throw new SQLException("Unable to find AoservProtocol: " + lastVersion);
     }
-    return obj;
+    return Optional.of(obj);
   }
 
   public short getIndex() {
@@ -218,8 +218,8 @@ public final class Column extends GlobalObjectIntegerKey<Column> {
     pkey = result.getInt(pos++);
     table = result.getString(pos++);
     name = result.getString(pos++);
-    sinceVersion = result.getString(pos++);
-    lastVersion = result.getString(pos++);
+    sinceVersion = AoservProtocol.Version.getVersion(result.getString(pos++));
+    lastVersion = AoservProtocol.Version.getVersion(result.getString(pos++));
     index = result.getShort(pos++);
     type = result.getString(pos++);
     isNullable = result.getBoolean(pos++);
@@ -233,8 +233,8 @@ public final class Column extends GlobalObjectIntegerKey<Column> {
     pkey = in.readCompressedInt();
     table = in.readUTF().intern();
     name = in.readUTF().intern();
-    sinceVersion = in.readUTF().intern();
-    lastVersion = InternUtils.intern(in.readNullUTF());
+    sinceVersion = AoservProtocol.Version.getVersion(in.readUTF());
+    lastVersion = AoservProtocol.Version.getVersion(in.readNullUTF());
     index = in.readShort();
     type = in.readUTF().intern();
     isNullable = in.readBoolean();
@@ -249,8 +249,8 @@ public final class Column extends GlobalObjectIntegerKey<Column> {
     out.writeUTF(table);
     out.writeUTF(name);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_18) >= 0) {
-      out.writeUTF(sinceVersion);
-      out.writeNullUTF(lastVersion);
+      out.writeUTF(sinceVersion.getVersion());
+      out.writeNullUTF(lastVersion == null ? null : lastVersion.getVersion());
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_17) <= 0) {
       out.writeCompressedInt(index);
@@ -264,10 +264,10 @@ public final class Column extends GlobalObjectIntegerKey<Column> {
     out.writeUTF(description);
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_17) <= 0) {
       if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_101) >= 0) {
-        out.writeUTF(sinceVersion);
+        out.writeUTF(sinceVersion.getVersion());
       }
       if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_104) >= 0) {
-        out.writeNullUTF(lastVersion);
+        out.writeNullUTF(lastVersion == null ? null : lastVersion.getVersion());
       }
     }
   }

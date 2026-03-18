@@ -26,6 +26,7 @@ package com.aoindustries.aoserv.client.schema;
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.security.HashedPassword;
+import com.aoindustries.aoserv.client.DbEnum;
 import com.aoindustries.aoserv.client.GlobalObjectStringKey;
 import java.io.EOFException;
 import java.io.IOException;
@@ -197,9 +198,10 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
     VERSION_1_92_1("1.92.1"),
     VERSION_1_92_2_SNAPSHOT("1.92.2-SNAPSHOT"), // TODO: Non-SNAPSHOT for release
     VERSION_1_92_2_1_SNAPSHOT("1.92.2.1-SNAPSHOT"), // TODO: Non-SNAPSHOT for release
-    VERSION_1_92_2_2_SNAPSHOT("1.92.2.2-SNAPSHOT"); // TODO: Non-SNAPSHOT for release
+    VERSION_1_92_2_2_SNAPSHOT("1.92.2.2-SNAPSHOT"), // TODO: Non-SNAPSHOT for release
+    VERSION_1_92_2_3_SNAPSHOT("1.92.2.3-SNAPSHOT"); // TODO: Non-SNAPSHOT for release
 
-    public static final Version CURRENT_VERSION = VERSION_1_92_2_2_SNAPSHOT;
+    public static final Version CURRENT_VERSION = VERSION_1_92_2_3_SNAPSHOT;
 
     private static final Map<String, Version> versionMap = new HashMap<>();
 
@@ -212,16 +214,25 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
     /**
      * Gets a specific version given its unique version string.
      *
+     * @return  {@code null} when {@code version == null}, otherwise the matching {@link Version}.
+     *
      * @see  Version#getVersion()
      *
      * @throws  IllegalArgumentException if version not found
      */
     public static Version getVersion(String version) {
+      if (version == null) {
+        return null;
+      }
       Version versionEnum = versionMap.get(version);
       if (versionEnum == null) {
         throw new IllegalArgumentException("Version not found: " + version);
       }
       return versionEnum;
+    }
+
+    static {
+      DbEnum.register(Version.class, Version::getVersion, Version::getVersion);
     }
 
     private final String version;

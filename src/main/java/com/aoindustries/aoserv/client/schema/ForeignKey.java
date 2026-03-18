@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2021, 2022, 2025  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2021, 2022, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -25,12 +25,12 @@ package com.aoindustries.aoserv.client.schema;
 
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
-import com.aoapps.lang.util.InternUtils;
 import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.GlobalObjectIntegerKey;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 
 /**
  * A <code>SchemaForeignKey</code> represents when a column in one
@@ -48,8 +48,8 @@ public final class ForeignKey extends GlobalObjectIntegerKey<ForeignKey> {
 
   private int column;
   private int foreignColumn;
-  private String sinceVersion;
-  private String lastVersion;
+  private AoservProtocol.Version sinceVersion;
+  private AoservProtocol.Version lastVersion;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -104,31 +104,31 @@ public final class ForeignKey extends GlobalObjectIntegerKey<ForeignKey> {
     return obj;
   }
 
-  public String getSinceVersion_version() {
+  public AoservProtocol.Version getSinceVersion_version() {
     return sinceVersion;
   }
 
   public AoservProtocol getSinceVersion(AoservConnector connector) throws SQLException, IOException {
-    AoservProtocol obj = connector.getSchema().getAoservProtocol().get(sinceVersion);
+    AoservProtocol obj = connector.getSchema().getAoservProtocol().get(sinceVersion.getVersion());
     if (obj == null) {
       throw new SQLException("Unable to find AoservProtocol: " + sinceVersion);
     }
     return obj;
   }
 
-  public String getLastVersion_version() {
-    return lastVersion;
+  public Optional<AoservProtocol.Version> getLastVersion_version() {
+    return Optional.ofNullable(lastVersion);
   }
 
-  public AoservProtocol getLastVersion(AoservConnector connector) throws SQLException, IOException {
+  public Optional<AoservProtocol> getLastVersion(AoservConnector connector) throws SQLException, IOException {
     if (lastVersion == null) {
-      return null;
+      return Optional.empty();
     }
-    AoservProtocol obj = connector.getSchema().getAoservProtocol().get(lastVersion);
+    AoservProtocol obj = connector.getSchema().getAoservProtocol().get(lastVersion.getVersion());
     if (obj == null) {
       throw new SQLException("Unable to find AoservProtocol: " + lastVersion);
     }
-    return obj;
+    return Optional.of(obj);
   }
 
   @Override
@@ -142,8 +142,8 @@ public final class ForeignKey extends GlobalObjectIntegerKey<ForeignKey> {
     pkey = result.getInt(pos++);
     column = result.getInt(pos++);
     foreignColumn = result.getInt(pos++);
-    sinceVersion = result.getString(pos++);
-    lastVersion = result.getString(pos++);
+    sinceVersion = AoservProtocol.Version.getVersion(result.getString(pos++));
+    lastVersion = AoservProtocol.Version.getVersion(result.getString(pos++));
   }
 
   @Override
@@ -151,8 +151,8 @@ public final class ForeignKey extends GlobalObjectIntegerKey<ForeignKey> {
     pkey = in.readCompressedInt();
     column = in.readCompressedInt();
     foreignColumn = in.readCompressedInt();
-    sinceVersion = in.readUTF().intern();
-    lastVersion = InternUtils.intern(in.readNullUTF());
+    sinceVersion = AoservProtocol.Version.getVersion(in.readUTF());
+    lastVersion = AoservProtocol.Version.getVersion(in.readNullUTF());
   }
 
   @Override
@@ -165,10 +165,10 @@ public final class ForeignKey extends GlobalObjectIntegerKey<ForeignKey> {
       out.writeCompressedInt(-1); // tied_bridge
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_101) >= 0) {
-      out.writeUTF(sinceVersion);
+      out.writeUTF(sinceVersion.getVersion());
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_104) >= 0) {
-      out.writeNullUTF(lastVersion);
+      out.writeNullUTF(lastVersion == null ? null : lastVersion.getVersion());
     }
   }
 }

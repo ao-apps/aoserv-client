@@ -145,7 +145,8 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
       <!--
         Allows running AOSH directly from Maven.
 
-        Defaults to command line argument "-i" for interactive mode.
+        Defaults to command line argument "-i" for interactive mode:
+        mvn -q -N -DskipTests -PPOST-SNAPSHOT -e compile exec:java -Dexec.args="-i"
 
         See https://stackoverflow.com/questions/9846046/run-main-class-of-maven-project
         See https://www.mojohaus.org/exec-maven-plugin/java-mojo.html#additionalClasspathElements

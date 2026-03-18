@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2025  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -34,6 +34,7 @@ import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 
 /**
  * Information about every command in the {@link Aosh} is
@@ -407,8 +408,8 @@ public final class Command extends GlobalObjectStringKey<Command> {
       WAIT_FOR_POSTGRES_USER_REBUILD = "wait_for_postgres_user_rebuild",
       WHOAMI = "whoami";
 
-  private String sinceVersion;
-  private String lastVersion;
+  private AoservProtocol.Version sinceVersion;
+  private AoservProtocol.Version lastVersion;
   private String table;
   private String description;
   private String syntax;
@@ -448,31 +449,31 @@ public final class Command extends GlobalObjectStringKey<Command> {
     return pkey;
   }
 
-  public String getSinceVersion_version() {
+  public AoservProtocol.Version getSinceVersion_version() {
     return sinceVersion;
   }
 
   public AoservProtocol getSinceVersion(AoservConnector connector) throws SQLException, IOException {
-    AoservProtocol obj = connector.getSchema().getAoservProtocol().get(sinceVersion);
+    AoservProtocol obj = connector.getSchema().getAoservProtocol().get(sinceVersion.getVersion());
     if (obj == null) {
       throw new SQLException("Unable to find AoservProtocol: " + sinceVersion);
     }
     return obj;
   }
 
-  public String getLastVersion_version() {
-    return lastVersion;
+  public Optional<AoservProtocol.Version> getLastVersion_version() {
+    return Optional.ofNullable(lastVersion);
   }
 
-  public AoservProtocol getLastVersion(AoservConnector connector) throws SQLException, IOException {
+  public Optional<AoservProtocol> getLastVersion(AoservConnector connector) throws SQLException, IOException {
     if (lastVersion == null) {
-      return null;
+      return Optional.empty();
     }
-    AoservProtocol obj = connector.getSchema().getAoservProtocol().get(lastVersion);
+    AoservProtocol obj = connector.getSchema().getAoservProtocol().get(lastVersion.getVersion());
     if (obj == null) {
       throw new SQLException("Unable to find AoservProtocol: " + lastVersion);
     }
-    return obj;
+    return Optional.of(obj);
   }
 
   public String getTable_name() {
@@ -507,8 +508,8 @@ public final class Command extends GlobalObjectStringKey<Command> {
   public void init(ResultSet result) throws SQLException {
     int pos = 1;
     pkey = result.getString(pos++);
-    sinceVersion = result.getString(pos++);
-    lastVersion = result.getString(pos++);
+    sinceVersion = AoservProtocol.Version.getVersion(result.getString(pos++));
+    lastVersion = AoservProtocol.Version.getVersion(result.getString(pos++));
     table = result.getString(pos++);
     description = result.getString(pos++);
     syntax = result.getString(pos++);
@@ -517,8 +518,8 @@ public final class Command extends GlobalObjectStringKey<Command> {
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey = in.readUTF().intern();
-    sinceVersion = in.readUTF().intern();
-    lastVersion = InternUtils.intern(in.readNullUTF());
+    sinceVersion = AoservProtocol.Version.getVersion(in.readUTF());
+    lastVersion = AoservProtocol.Version.getVersion(in.readNullUTF());
     table = InternUtils.intern(in.readNullUTF());
     description = in.readUTF();
     syntax = in.readUTF();
@@ -532,14 +533,14 @@ public final class Command extends GlobalObjectStringKey<Command> {
       out.writeUTF(description);
       out.writeUTF(syntax);
       if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_101) >= 0) {
-        out.writeUTF(sinceVersion);
+        out.writeUTF(sinceVersion.getVersion());
       }
       if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_102) >= 0) {
-        out.writeNullUTF(lastVersion);
+        out.writeNullUTF(lastVersion == null ? null : lastVersion.getVersion());
       }
     } else {
-      out.writeUTF(sinceVersion);
-      out.writeNullUTF(lastVersion);
+      out.writeUTF(sinceVersion.getVersion());
+      out.writeNullUTF(lastVersion == null ? null : lastVersion.getVersion());
       out.writeNullUTF(table);
       out.writeUTF(description);
       out.writeUTF(syntax);

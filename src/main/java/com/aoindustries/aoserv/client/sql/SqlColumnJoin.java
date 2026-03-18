@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2002-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -26,15 +26,19 @@ package com.aoindustries.aoserv.client.sql;
 import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.AoservObject;
 import com.aoindustries.aoserv.client.AoservTable;
+import com.aoindustries.aoserv.client.DbEnum;
 import com.aoindustries.aoserv.client.schema.Column;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.schema.Type;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * Gets the value for one column by following its reference to another table.
+ * See {@link SqlColumnJoin#SqlColumnJoin(com.aoindustries.aoserv.client.AoservConnector, com.aoindustries.aoserv.client.sql.SqlExpression, com.aoindustries.aoserv.client.schema.Column, com.aoindustries.aoserv.client.schema.Column)}
+ * for allowed type conversions.
  *
  * @author  AO Industries, Inc.
  */
@@ -47,7 +51,19 @@ public final class SqlColumnJoin implements SqlExpression {
   private final Type type;
   private final AoservTable<?, ?> table;
   private final int valueIndex;
+  private final Function<Object, Object> expressionToKeyTypeMapper;
 
+  /**
+   * Supports the following mismatches between expression.type and keyColumn.type, any other mismatch will throw
+   * {@link SQLException}:
+   *
+   * <ol>
+   * <li>{@link Type#FKEY} to {@link Type#PKEY}, converted via {@link Function#identity()}.</li>
+   * <li>{@link Type#PKEY} to {@link Type#FKEY}, converted via {@link Function#identity()}:
+   *     TODO: Remove once fkey types that are non-nullable and unique are converted to pkey.</li>
+   * <li>{@link Type#ENUM} to {@link Type#STRING}, converted via {@link DbEnum#toDbValue(java.lang.Enum)}.</li>
+   * </ol>
+   */
   public SqlColumnJoin(
       AoservConnector conn,
       SqlExpression expression,
@@ -61,6 +77,26 @@ public final class SqlColumnJoin implements SqlExpression {
     this.type = valueColumn.getType(conn);
     this.table = keyColumn.getTable(conn).getAoservTable(conn);
     this.valueIndex = valueColumn.getIndex();
+    // Support specific types of type conversions across joins
+    Type expressionType = expression.getType();
+    int expressionTypeId = expressionType.getId();
+    Type keyType = keyColumn.getType(conn);
+    int keyTypeId = keyType.getId();
+    if (
+        expressionTypeId == keyTypeId
+          // Allow joins from fkey to pkey
+          || (expressionTypeId == Type.FKEY && keyTypeId == Type.PKEY)
+          // Allow joins from pkey to fkey
+          || (expressionTypeId == Type.PKEY && keyTypeId == Type.FKEY)
+    ) {
+      expressionToKeyTypeMapper = Function.identity();
+    } else if (expressionTypeId == Type.ENUM && keyTypeId == Type.STRING) {
+      // Allow joins from enum to string
+      expressionToKeyTypeMapper = value -> DbEnum.toDbValue((Enum<?>) value);
+    } else {
+      throw new SQLException("Join type mismatch: " + expression + " is " + expressionType
+          + " while " + keyColumn + " is " + keyType);
+    }
   }
 
   @Override
@@ -77,7 +113,7 @@ public final class SqlColumnJoin implements SqlExpression {
   public Object evaluate(AoservConnector conn, AoservObject<?, ?> obj) throws IOException, SQLException {
     Object keyValue = expression.evaluate(conn, obj);
     if (keyValue != null) {
-      AoservObject<?, ?> row = table.getUniqueRow(keyIndex, keyValue);
+      AoservObject<?, ?> row = table.getUniqueRow(keyIndex, expressionToKeyTypeMapper.apply(keyValue));
       if (row != null) {
         return row.getColumn(valueIndex);
       }

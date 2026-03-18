@@ -28,7 +28,6 @@ import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.lang.Strings;
 import com.aoapps.lang.i18n.Money;
 import com.aoapps.lang.text.SmartComparator;
-import com.aoapps.lang.util.InternUtils;
 import com.aoapps.lang.validation.ValidationException;
 import com.aoapps.net.DomainLabel;
 import com.aoapps.net.DomainLabels;
@@ -62,6 +61,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.TimeZone;
 
 /**
@@ -345,8 +345,8 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
   private static final BigDecimal bigDecimalNegativeOne = BigDecimal.valueOf(-1);
 
   private String name;
-  private String sinceVersion;
-  private String lastVersion;
+  private AoservProtocol.Version sinceVersion;
+  private AoservProtocol.Version lastVersion;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -1391,31 +1391,31 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
     return name;
   }
 
-  public String getSinceVersion_version() {
+  public AoservProtocol.Version getSinceVersion_version() {
     return sinceVersion;
   }
 
   public AoservProtocol getSinceVersion(AoservConnector connector) throws SQLException, IOException {
-    AoservProtocol obj = connector.getSchema().getAoservProtocol().get(sinceVersion);
+    AoservProtocol obj = connector.getSchema().getAoservProtocol().get(sinceVersion.getVersion());
     if (obj == null) {
       throw new SQLException("Unable to find AoservProtocol: " + sinceVersion);
     }
     return obj;
   }
 
-  public String getLastVersion_version() {
-    return lastVersion;
+  public Optional<AoservProtocol.Version> getLastVersion_version() {
+    return Optional.ofNullable(lastVersion);
   }
 
-  public AoservProtocol getLastVersion(AoservConnector connector) throws SQLException, IOException {
+  public Optional<AoservProtocol> getLastVersion(AoservConnector connector) throws SQLException, IOException {
     if (lastVersion == null) {
-      return null;
+      return Optional.empty();
     }
-    AoservProtocol obj = connector.getSchema().getAoservProtocol().get(lastVersion);
+    AoservProtocol obj = connector.getSchema().getAoservProtocol().get(lastVersion.getVersion());
     if (obj == null) {
       throw new SQLException("Unable to find AoservProtocol: " + lastVersion);
     }
-    return obj;
+    return Optional.of(obj);
   }
 
   @Override
@@ -1428,16 +1428,16 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
     int pos = 1;
     pkey         = result.getInt(pos++);
     name         = result.getString(pos++);
-    sinceVersion = result.getString(pos++);
-    lastVersion  = result.getString(pos++);
+    sinceVersion = AoservProtocol.Version.getVersion(result.getString(pos++));
+    lastVersion  = AoservProtocol.Version.getVersion(result.getString(pos++));
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     pkey         = in.readCompressedInt();
     name         = in.readUTF().intern();
-    sinceVersion = in.readUTF().intern();
-    lastVersion  = InternUtils.intern(in.readNullUTF());
+    sinceVersion = AoservProtocol.Version.getVersion(in.readUTF());
+    lastVersion  = AoservProtocol.Version.getVersion(in.readNullUTF());
   }
 
   @Override
@@ -1450,8 +1450,8 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
       out.writeUTF(name);
     }
     if (protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_69) >= 0) {
-      out.writeUTF(sinceVersion);
-      out.writeNullUTF(lastVersion);
+      out.writeUTF(sinceVersion.getVersion());
+      out.writeNullUTF(lastVersion == null ? null : lastVersion.getVersion());
     }
   }
 
