@@ -199,9 +199,10 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
     VERSION_1_92_2_SNAPSHOT("1.92.2-SNAPSHOT"), // TODO: Non-SNAPSHOT for release
     VERSION_1_92_2_1_SNAPSHOT("1.92.2.1-SNAPSHOT"), // TODO: Non-SNAPSHOT for release
     VERSION_1_92_2_2_SNAPSHOT("1.92.2.2-SNAPSHOT"), // TODO: Non-SNAPSHOT for release
-    VERSION_1_92_2_3_SNAPSHOT("1.92.2.3-SNAPSHOT"); // TODO: Non-SNAPSHOT for release
+    VERSION_1_92_2_3_SNAPSHOT("1.92.2.3-SNAPSHOT"), // TODO: Non-SNAPSHOT for release
+    VERSION_1_92_2_4_SNAPSHOT("1.92.2.4-SNAPSHOT"); // TODO: Non-SNAPSHOT for release
 
-    public static final Version CURRENT_VERSION = VERSION_1_92_2_3_SNAPSHOT;
+    public static final Version CURRENT_VERSION = VERSION_1_92_2_4_SNAPSHOT;
 
     private static final Map<String, Version> versionMap = new HashMap<>();
 

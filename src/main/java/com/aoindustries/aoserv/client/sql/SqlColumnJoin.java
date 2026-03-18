@@ -59,8 +59,6 @@ public final class SqlColumnJoin implements SqlExpression {
    *
    * <ol>
    * <li>{@link Type#FKEY} to {@link Type#PKEY}, converted via {@link Function#identity()}.</li>
-   * <li>{@link Type#PKEY} to {@link Type#FKEY}, converted via {@link Function#identity()}:
-   *     TODO: Remove once fkey types that are non-nullable and unique are converted to pkey.</li>
    * <li>{@link Type#ENUM} to {@link Type#STRING}, converted via {@link DbEnum#toDbValue(java.lang.Enum)}.</li>
    * </ol>
    */
@@ -86,8 +84,6 @@ public final class SqlColumnJoin implements SqlExpression {
         expressionTypeId == keyTypeId
           // Allow joins from fkey to pkey
           || (expressionTypeId == Type.FKEY && keyTypeId == Type.PKEY)
-          // Allow joins from pkey to fkey
-          || (expressionTypeId == Type.PKEY && keyTypeId == Type.FKEY)
     ) {
       expressionToKeyTypeMapper = Function.identity();
     } else if (expressionTypeId == Type.ENUM && keyTypeId == Type.STRING) {
