@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2020, 2021, 2022, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -187,14 +187,17 @@ public final class CommandTable extends GlobalTableStringKey<Command> {
         Command aoshCom = commands.get(c);
         String command = aoshCom.getCommand();
         out.print("    ");
+        int newlineIndent = 4;
         out.print(command);
+        newlineIndent += command.length();
         int space = Math.max(1, 40 - command.length());
         for (int d = 0; d < space; d++) {
           out.print(d > 0 && d < (space - 1) ? '.' : ' ');
         }
+        newlineIndent += space;
         // Print the description without the HTML tags
         String desc = shortOrSchema ? aoshCom.getDescription() : aoshCom.getSyntax();
-        Command.printNoHtml(out, desc);
+        Command.printNoHtml(out, desc, newlineIndent);
         out.println();
       }
     }
