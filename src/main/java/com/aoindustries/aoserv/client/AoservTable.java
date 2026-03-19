@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -37,7 +37,7 @@ import com.aoindustries.aoserv.client.schema.Column;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.schema.Type;
 import com.aoindustries.aoserv.client.sql.Parser;
-import com.aoindustries.aoserv.client.sql.SqlExpression;
+import com.aoindustries.aoserv.client.sql.SqlOrderByExpression;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
@@ -382,15 +382,16 @@ public abstract class AoservTable<K, V extends AoservObject<K, V>> implements It
   protected abstract OrderBy[] getDefaultOrderBy();
 
   // TODO: Make AoservObject Comparable like in AOServ 2.0, and let them sort themselves out
-  public final SqlExpression[] getDefaultOrderBySqlExpressions() throws SQLException, IOException {
+  public final SqlOrderByExpression[] getDefaultOrderBySqlExpressions() throws SQLException, IOException {
     OrderBy[] orderBys = getDefaultOrderBy();
     if (orderBys == null) {
       return null;
     }
     int len = orderBys.length;
-    SqlExpression[] exprs = new SqlExpression[len];
+    SqlOrderByExpression[] exprs = new SqlOrderByExpression[len];
     for (int c = 0; c < len; c++) {
-      exprs[c] = Parser.parseSqlExpression(this, orderBys[c].getExpression());
+      OrderBy orderBy = orderBys[c];
+      exprs[c] = new SqlOrderByExpression(Parser.parseSqlExpression(connector, getTableSchema(), orderBy.getExpression()), orderBy.getOrder());
     }
     return exprs;
   }
@@ -689,14 +690,9 @@ public abstract class AoservTable<K, V extends AoservObject<K, V>> implements It
    */
   protected void sortIfNeeded(List<V> list) throws SQLException, IOException {
     // Get the details for the sorting
-    SqlExpression[] sortExpressions = getDefaultOrderBySqlExpressions();
-    if (sortExpressions != null) {
-      OrderBy[] orderBys = getDefaultOrderBy();
-      boolean[] sortOrders = new boolean[orderBys.length];
-      for (int c = 0; c < orderBys.length; c++) {
-        sortOrders[c] = orderBys[c].getOrder();
-      }
-      connector.sort(getSortAlgorithm(), list, sortExpressions, sortOrders);
+    SqlOrderByExpression[] orderBy = getDefaultOrderBySqlExpressions();
+    if (orderBy != null) {
+      connector.sort(getSortAlgorithm(), list, orderBy);
     }
   }
 

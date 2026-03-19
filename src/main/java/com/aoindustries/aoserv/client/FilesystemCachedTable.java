@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024  AO Industries, Inc.
+ * Copyright (C) 2003-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -32,7 +32,7 @@ import com.aoindustries.aoserv.client.schema.Column;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.sql.SqlColumnValue;
 import com.aoindustries.aoserv.client.sql.SqlComparator;
-import com.aoindustries.aoserv.client.sql.SqlExpression;
+import com.aoindustries.aoserv.client.sql.SqlOrderByExpression;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -193,18 +193,12 @@ public abstract class FilesystemCachedTable<K, V extends FilesystemCachedObject<
     Column schemaColumn = schemaTable.getSchemaColumn(connector, col);
     SqlComparator<V> sortComparator = new SqlComparator<>(
         connector,
-        new SqlExpression[]{
-            new SqlColumnValue(connector, schemaColumn)
-        },
-        new boolean[]{ASCENDING}
+        new SqlOrderByExpression(new SqlColumnValue(connector, schemaColumn), ASCENDING)
     );
 
     SqlComparator<Object> searchComparator = new SqlComparator<>(
         connector,
-        new SqlExpression[]{
-            new SqlColumnValue(connector, schemaColumn)
-        },
-        new boolean[]{ASCENDING}
+        new SqlOrderByExpression(new SqlColumnValue(connector, schemaColumn), ASCENDING)
     );
 
     synchronized (this) {

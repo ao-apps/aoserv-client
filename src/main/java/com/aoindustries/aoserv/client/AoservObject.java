@@ -49,6 +49,7 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.schema.Type;
 import com.aoindustries.aoserv.client.sql.SqlExpression;
+import com.aoindustries.aoserv.client.sql.SqlOrderByExpression;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.sql.ResultSet;
@@ -150,12 +151,10 @@ public abstract class AoservObject<K, T extends AoservObject<K, T>> implements R
   public final int compareTo(
       AoservConnector conn,
       AoservObject<?, ?> other,
-      SqlExpression[] sortExpressions,
-      boolean[] sortOrders
+      SqlOrderByExpression... orderBy
   ) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
-    int len = sortExpressions.length;
-    for (int c = 0; c < len; c++) {
-      SqlExpression expr = sortExpressions[c];
+    for (SqlOrderByExpression orderByExpr : orderBy) {
+      SqlExpression expr = orderByExpr.getExpression();
       Type type = expr.getType();
       Object value1 = null;
       boolean value1Set = false;
@@ -168,7 +167,7 @@ public abstract class AoservObject<K, T extends AoservObject<K, T>> implements R
         value2Set = true;
         int diff = type.compare(value1, value2);
         if (diff != 0) {
-          return sortOrders[c] ? diff : -diff;
+          return orderByExpr.isAscending() ? diff : -diff;
         }
       } catch (RuntimeException e) {
         String getString1;
@@ -215,19 +214,17 @@ public abstract class AoservObject<K, T extends AoservObject<K, T>> implements R
   public final int compareTo(
       AoservConnector conn,
       Comparable<?> value,
-      SqlExpression[] sortExpressions,
-      boolean[] sortOrders
+      SqlOrderByExpression... orderBy
   ) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
-    int len = sortExpressions.length;
-    for (int c = 0; c < len; c++) {
-      SqlExpression expr = sortExpressions[c];
+    for (SqlOrderByExpression orderByExpr : orderBy) {
+      SqlExpression expr = orderByExpr.getExpression();
       Type type = expr.getType();
       int diff = type.compare(
           expr.evaluate(conn, this),
           value
       );
       if (diff != 0) {
-        return sortOrders[c] ? diff : -diff;
+        return orderByExpr.isAscending() ? diff : -diff;
       }
     }
     return 0;
@@ -237,23 +234,23 @@ public abstract class AoservObject<K, T extends AoservObject<K, T>> implements R
   public final int compareTo(
       AoservConnector conn,
       Object[] objects,
-      SqlExpression[] sortExpressions,
-      boolean[] sortOrders
+      SqlOrderByExpression... orderBy
   ) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
-    int len = sortExpressions.length;
+    int len = orderBy.length;
     if (len != objects.length) {
-      throw new IllegalArgumentException("Array length mismatch when comparing AoservObject to Object[]: sortExpressions.length=" + len + ", objects.length=" + objects.length);
+      throw new IllegalArgumentException("Array length mismatch when comparing AoservObject to Object[]: orderBy.length=" + len + ", objects.length=" + objects.length);
     }
 
     for (int c = 0; c < len; c++) {
-      SqlExpression expr = sortExpressions[c];
+      SqlOrderByExpression orderByExpr = orderBy[c];
+      SqlExpression expr = orderByExpr.getExpression();
       Type type = expr.getType();
       int diff = type.compare(
           expr.evaluate(conn, this),
           objects[c]
       );
       if (diff != 0) {
-        return sortOrders[c] ? diff : -diff;
+        return orderByExpr.isAscending() ? diff : -diff;
       }
     }
     return 0;

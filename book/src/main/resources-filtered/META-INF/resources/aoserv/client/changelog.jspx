@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
     shortTitle="Changelog"
     tocLevels="1"
     datePublished="2016-10-29T21:07:28-05:00"
-    dateModified="2026-03-17T03:04:24Z"
+    dateModified="2026-03-19T09:53:30Z"
   >
     <c:set var="latestRelease" value="1.92.1" />
     <c:if test="${
@@ -91,6 +91,27 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
               <li>New constant <code>net.AppProtocol.OPENDKIM</code></li>
               <li>New table <code>email.DkimKey</code></li>
               <li>Added column <code>email.Domain.dkimDisableReason</code></li>
+            </ol>
+          </li>
+          <li>SELECT command improvements:
+            <ol>
+              <li><code>SqlExpression</code> supports aggregate queries.</li>
+              <li>New <code>SqlCount</code> that represents the <code>count(*)</code> aggregate query.</li>
+              <li>
+                New <code>SqlOrderByExpression</code> that combined an expression and the ordering.
+                Converted all uses of parallel <code>SqlExpression[]</code> and <code>boolean[]</code> to now
+                be <code>SqlOrderByExpression ... orderBy</code>.
+              </li>
+              <li>
+                New <code>SqlSelect</code> class representing a parsed SELECT,
+                parsed inside <code>Parser.parseSqlSelect(…)</code>.
+                This cleanly separates parse and execute phases.
+              </li>
+              <li>
+                Supports multiple aggregate expressions in a query, such as
+                <code>SELECT count(*), count(*) FROM <var>table_name</var></code>.
+              </li>
+              <li>Previously private execution moved to public <code>SqlSelect.execute(…)</code>.</li>
             </ol>
           </li>
         </ul>

@@ -33,6 +33,7 @@ import com.aoindustries.aoserv.client.schema.Type;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -67,8 +68,11 @@ public final class SqlColumnJoin implements SqlExpression {
       SqlExpression expression,
       Column keyColumn,
       Column valueColumn
-  ) throws SQLException, IOException {
-    this.expression = expression;
+  ) throws SQLException, IOException, IllegalArgumentException {
+    this.expression = Objects.requireNonNull(expression);
+    if (expression.isAggregate()) {
+      throw new IllegalArgumentException("Aggregate functions not supported for dot-joins.");
+    }
     this.keyColumn = keyColumn;
     this.keyIndex = keyColumn.getIndex();
     this.valueColumn = valueColumn;
@@ -90,7 +94,7 @@ public final class SqlColumnJoin implements SqlExpression {
       // Allow joins from enum to string
       expressionToKeyTypeMapper = value -> DbEnum.toDbValue((Enum<?>) value);
     } else {
-      throw new SQLException("Join type mismatch: " + expression + " is " + expressionType
+      throw new IllegalArgumentException("Join type mismatch: " + expression + " is " + expressionType
           + " while " + keyColumn + " is " + keyType);
     }
   }
@@ -115,6 +119,11 @@ public final class SqlColumnJoin implements SqlExpression {
       }
     }
     return null;
+  }
+
+  @Override
+  public boolean isAggregate() {
+    return false;
   }
 
   @Override

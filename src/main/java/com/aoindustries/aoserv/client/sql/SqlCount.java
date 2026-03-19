@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2026  AO Industries, Inc.
+ * Copyright (C) 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -25,59 +25,57 @@ package com.aoindustries.aoserv.client.sql;
 
 import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.AoservObject;
-import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.schema.Type;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 
 /**
- * Casts one result type to another.
+ * Counts the number of rows.
  *
  * @author  AO Industries, Inc.
  */
-public final class SqlCast implements SqlExpression {
+public final class SqlCount implements SqlExpression {
 
-  private final SqlExpression expression;
-  private final Type castToType;
+  /**
+   * The case-insensitive function name.
+   */
+  public static final String COUNT = "count";
 
-  public SqlCast(SqlExpression expression, Type castToType) {
-    this.expression = expression;
-    this.castToType = castToType;
+  /**
+   * The case-insensitive representation as a function.
+   */
+  public static final String COUNT_FUNCTION = COUNT + "(*)";
+
+  private final Type intType;
+
+  public SqlCount(AoservConnector conn) throws SQLException, IOException {
+    this.intType = Objects.requireNonNull(conn.getSchema().getType().get(Type.INT));
   }
 
   @Override
   public String toString() {
-    return expression.toString() + "::" + Parser.quote(castToType.getName());
+    return COUNT_FUNCTION;
   }
 
   @Override
   public String getColumnName() {
-    return castToType.getName();
+    return COUNT;
   }
 
   @Override
-  public Object evaluate(AoservConnector conn, AoservObject<?, ?> obj) throws IOException, SQLException {
-    return expression.getType().cast(conn, expression.evaluate(conn, obj), castToType);
-  }
-
-  @Override
-  public Object evaluateAggregate(AoservConnector conn, List<AoservObject<?, ?>> rows) throws IOException, SQLException {
-    return expression.getType().cast(conn, expression.evaluateAggregate(conn, rows), castToType);
+  public Object evaluateAggregate(AoservConnector conn, List<AoservObject<?, ?>> rows) {
+    return rows.size();
   }
 
   @Override
   public boolean isAggregate() {
-    return expression.isAggregate();
+    return true;
   }
 
   @Override
   public Type getType() {
-    return castToType;
-  }
-
-  @Override
-  public void getReferencedTables(AoservConnector conn, List<Table> tables) throws IOException, SQLException {
-    expression.getReferencedTables(conn, tables);
+    return intType;
   }
 }

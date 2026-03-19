@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2002-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -43,12 +43,34 @@ public interface SqlExpression {
   /**
    * Evaluates the expression on the given connector and object.
    */
-  Object evaluate(AoservConnector conn, AoservObject<?, ?> obj) throws IOException, SQLException;
+  default Object evaluate(AoservConnector conn, AoservObject<?, ?> obj) throws IOException, SQLException {
+    throw new SQLException("Is an aggregate function: " + toString());
+  }
 
+  /**
+   * Evaluates the aggregate expression on the given connector and rows.
+   */
+  default Object evaluateAggregate(AoservConnector conn, List<AoservObject<?, ?>> rows) throws IOException, SQLException {
+    throw new SQLException("Not an aggregate function: " + toString());
+  }
+
+  /**
+   * Is this an aggregate function?  Controls whether evaluation is performed via
+   * {@link SqlExpression#evaluate(com.aoindustries.aoserv.client.AoservConnector, com.aoindustries.aoserv.client.AoservObject)}
+   * or {@link SqlExpression#evaluateAggregate(com.aoindustries.aoserv.client.AoservConnector, java.util.List)}.
+   * Please be sure to implement the corresponding evaluation function.
+   */
+  boolean isAggregate();
+
+  /**
+   * The return type of this expression.
+   */
   Type getType();
 
   /**
    * Gets all of the tables referenced by this expression.
    */
-  void getReferencedTables(AoservConnector conn, List<Table> tables) throws IOException, SQLException;
+  default void getReferencedTables(AoservConnector conn, List<Table> tables) throws IOException, SQLException {
+    // Do not add any by default
+  }
 }

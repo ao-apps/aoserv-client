@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2019, 2020, 2021, 2022, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -25,12 +25,14 @@ package com.aoindustries.aoserv.client.sql;
 
 import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.AoservTable;
+import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.schema.Column;
 import com.aoindustries.aoserv.client.schema.ForeignKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.schema.Type;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -210,8 +212,12 @@ public final class Parser {
   }
 
   // TODO: Unit tests
-  public static SqlExpression parseSqlExpression(AoservTable<?, ?> table, String expr) throws SQLException, IOException {
-    AoservConnector connector = table.getConnector();
+  public static SqlExpression parseSqlExpression(AoservConnector connector, Table table, String expr)
+      throws SQLException, IOException, IllegalArgumentException {
+    // count(*)
+    if (expr.equals(SqlCount.COUNT_FUNCTION)) {
+      return new SqlCount(connector);
+    }
     int joinPos = indexOfNotQuoted(expr, '.');
     if (joinPos == -1) {
       joinPos = expr.length();
@@ -222,10 +228,9 @@ public final class Parser {
     }
     int columnNameEnd = Math.min(joinPos, castPos);
     String columnName = unquote(expr.substring(0, columnNameEnd));
-    Table tableSchema = table.getTableSchema();
-    Column lastColumn = tableSchema.getSchemaColumn(connector, columnName);
+    Column lastColumn = table.getSchemaColumn(connector, columnName);
     if (lastColumn == null) {
-      throw new IllegalArgumentException("Unable to find column: " + quote(tableSchema.getName()) + '.' + quote(columnName));
+      throw new IllegalArgumentException("Unable to find column: " + quote(table.getName()) + '.' + quote(columnName));
     }
 
     SqlExpression sql = new SqlColumnValue(connector, lastColumn);
@@ -253,7 +258,7 @@ public final class Parser {
         Table valueTable = keyColumn.getTable(connector);
         Column valueColumn = valueTable.getSchemaColumn(connector, columnName);
         if (valueColumn == null) {
-          throw new IllegalArgumentException("Unable to find column: " + quote(valueTable.getName()) + '.' + quote(columnName) + " referenced from " + quote(tableSchema.getName()));
+          throw new IllegalArgumentException("Unable to find column: " + quote(valueTable.getName()) + '.' + quote(columnName) + " referenced from " + quote(table.getName()));
         }
 
         sql = new SqlColumnJoin(connector, sql, keyColumn, valueColumn);
@@ -279,9 +284,129 @@ public final class Parser {
         sql = new SqlCast(sql, type);
         expr = expr.substring(typeNameEnd);
       } else {
-        throw new IllegalArgumentException("Unable to parse: " + expr);
+        throw new IllegalArgumentException("Parse error: Unable to parse: " + expr);
       }
     }
     return sql;
+  }
+
+  /**
+   * Parses a {@link Command#SELECT} command.
+   *
+   * @param args  The first argument must be {@link Command#SELECT}, case-insenstive.
+   */
+  // TODO: Unit tests
+  public static SqlSelect parseSqlSelect(AoservConnector connector, String... args)
+      throws SQLException, IOException, IllegalArgumentException {
+    final int argsLen = args.length;
+    final int minArgs =
+        1 // SELECT
+        + 1 // expression
+        + 1 // FROM
+        + 1; // table
+    if (argsLen < minArgs) {
+      throw new IllegalArgumentException("Parse error: not enough parameters");
+    }
+    if (!args[0].equalsIgnoreCase(Command.SELECT)) {
+      throw new IllegalArgumentException("Parse error: first argument must be " + Command.SELECT + ", case-insensitive: " + args[0]);
+    }
+    // Parse the list of expressions until "FROM" is found
+    List<String> expressionArgs = new ArrayList<>();
+    int i = 1;
+    for (; i < argsLen; i++) {
+      String arg = args[i];
+      if (SqlSelect.FROM.equalsIgnoreCase(arg)) {
+        break;
+      }
+      expressionArgs.add(arg);
+    }
+    if (i >= argsLen - 1) {
+      // The "FROM" was not found
+      throw new IllegalArgumentException("Parse error: parameter not found: " + SqlSelect.FROM);
+    }
+    i++; // Move i past "FROM"
+
+    // Get the table name
+    String tableName = unquote(args[i++]);
+    Table table = connector.getSchema().getTable().get(tableName);
+    if (table == null) {
+      throw new IllegalArgumentException("Parse error: table not found: " + quote(tableName));
+    }
+
+    List<SqlExpression> valueExpressions = new ArrayList<>(expressionArgs.size());
+    // Substitute any * columnName and ,
+    for (String expressionArg : expressionArgs) {
+      String remaining = expressionArg;
+      do {
+        String current;
+        int commaPos = indexOfNotQuoted(remaining, ',');
+        if (commaPos == -1) {
+          current = remaining;
+          remaining = "";
+        } else {
+          current = remaining.substring(0, commaPos);
+          remaining = remaining.substring(commaPos + 1);
+        }
+        if ("*".equals(current)) {
+          for (Column column : table.getSchemaColumns(connector)) {
+            valueExpressions.add(parseSqlExpression(connector, table, quote(column.getName())));
+          }
+        } else {
+          valueExpressions.add(parseSqlExpression(connector, table, current));
+        }
+      } while (!remaining.isEmpty());
+    }
+
+    // Parse any ORDER BY clause
+    List<SqlOrderByExpression> orderBy = new ArrayList<>();
+    if (i < argsLen) {
+      String arg = args[i++];
+      if (!SqlSelect.ORDER.equalsIgnoreCase(arg)) {
+        throw new IllegalArgumentException("Parse error: '" + SqlSelect.ORDER + "' expected, found '" + arg + '\'');
+      }
+      if (i >= argsLen || !SqlSelect.BY.equalsIgnoreCase(args[i++])) {
+        throw new IllegalArgumentException("Parse error: '" + SqlSelect.BY + "' expected");
+      }
+      while (i < argsLen) {
+        String remaining = args[i++];
+        do {
+          String current;
+          int commaPos = indexOfNotQuoted(remaining, ',');
+          if (commaPos == -1) {
+            current = remaining;
+            remaining = "";
+          } else {
+            current = remaining.substring(0, commaPos);
+            remaining = remaining.substring(commaPos + 1);
+          }
+          if (
+              !orderBy.isEmpty()
+                  && (
+                  SqlOrderByExpression.ASC.equalsIgnoreCase(current)
+                      || SqlOrderByExpression.ASCENDING.equalsIgnoreCase(current)
+                )
+          ) {
+            int setAt = orderBy.size() - 1;
+            orderBy.set(setAt, new SqlOrderByExpression(orderBy.get(setAt).getExpression(), AoservTable.ASCENDING));
+          } else if (
+              !orderBy.isEmpty()
+                  && (
+                  SqlOrderByExpression.DESC.equalsIgnoreCase(current)
+                      || SqlOrderByExpression.DESCENDING.equalsIgnoreCase(current)
+                )
+          ) {
+            int setAt = orderBy.size() - 1;
+            orderBy.set(setAt, new SqlOrderByExpression(orderBy.get(setAt).getExpression(), AoservTable.DESCENDING));
+          } else { // if (!expr.isEmpty()) {
+            orderBy.add(new SqlOrderByExpression(parseSqlExpression(connector, table, current), AoservTable.ASCENDING));
+          }
+        } while (!remaining.isEmpty());
+      }
+      if (orderBy.isEmpty()) {
+        throw new IllegalArgumentException("Parse error: no expressions listed after '" + SqlSelect.ORDER + " " + SqlSelect.BY + "'");
+      }
+    }
+
+    return new SqlSelect(valueExpressions, table, orderBy);
   }
 }

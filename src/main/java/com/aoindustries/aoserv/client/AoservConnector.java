@@ -56,7 +56,7 @@ import com.aoindustries.aoserv.client.linux.User.Gecos;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.sql.SqlComparator;
-import com.aoindustries.aoserv.client.sql.SqlExpression;
+import com.aoindustries.aoserv.client.sql.SqlOrderByExpression;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.security.SecureRandom;
@@ -2006,32 +2006,16 @@ public abstract class AoservConnector implements SchemaParent {
   public <K, T extends AoservObject<K, T>> void sort(
       ComparisonSortAlgorithm<? super T> sortAlgorithm,
       T[] list,
-      SqlExpression[] sortExpressions,
-      boolean[] sortOrders
+      SqlOrderByExpression... orderBy
   ) {
-    sortAlgorithm.sort(
-        list,
-        new SqlComparator<>(
-            this,
-            sortExpressions,
-            sortOrders
-        )
-    );
+    sortAlgorithm.sort(list, new SqlComparator<>(this, orderBy));
   }
 
   public <K, T extends AoservObject<K, T>> void sort(
       ComparisonSortAlgorithm<? super T> sortAlgorithm,
       List<T> list,
-      SqlExpression[] sortExpressions,
-      boolean[] sortOrders
+      SqlOrderByExpression... orderBy
   ) {
-    sortAlgorithm.sort(
-        list,
-        new SqlComparator<>(
-            this,
-            sortExpressions,
-            sortOrders
-        )
-    );
+    sortAlgorithm.sort(list, new SqlComparator<>(this, orderBy));
   }
 }
