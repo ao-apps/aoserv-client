@@ -222,7 +222,7 @@ public final class Parser {
     if (joinPos == -1) {
       joinPos = expr.length();
     }
-    int castPos = indexOfNotQuoted(expr, "::");
+    int castPos = indexOfNotQuoted(expr, SqlCast.CAST_SEPARATOR);
     if (castPos == -1) {
       castPos = expr.length();
     }
@@ -248,7 +248,7 @@ public final class Parser {
         if (joinPos == -1) {
           joinPos = expr.length();
         }
-        castPos = indexOfNotQuoted(expr, "::", 1);
+        castPos = indexOfNotQuoted(expr, SqlCast.CAST_SEPARATOR, 1);
         if (castPos == -1) {
           castPos = expr.length();
         }
@@ -270,7 +270,7 @@ public final class Parser {
         if (joinPos == -1) {
           joinPos = expr.length();
         }
-        castPos = indexOfNotQuoted(expr, "::", 2);
+        castPos = indexOfNotQuoted(expr, SqlCast.CAST_SEPARATOR, 2);
         if (castPos == -1) {
           castPos = expr.length();
         }

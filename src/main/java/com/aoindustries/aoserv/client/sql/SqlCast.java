@@ -38,6 +38,11 @@ import java.util.List;
  */
 public final class SqlCast implements SqlExpression {
 
+  /**
+   * The separator that indicates a cast.
+   */
+  static final String CAST_SEPARATOR = "::";
+
   private final SqlExpression expression;
   private final Type castToType;
 
@@ -48,12 +53,12 @@ public final class SqlCast implements SqlExpression {
 
   @Override
   public String toString() {
-    return expression.toString() + "::" + Parser.quote(castToType.getName());
+    return expression.toString() + CAST_SEPARATOR + Parser.quote(castToType.getName());
   }
 
   @Override
   public String getColumnName() {
-    return castToType.getName();
+    return expression.getColumnName() + CAST_SEPARATOR + castToType.getName();
   }
 
   @Override
