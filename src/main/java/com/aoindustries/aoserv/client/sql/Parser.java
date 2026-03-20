@@ -211,6 +211,7 @@ public final class Parser {
     }
   }
 
+  // TODO: Move to SqlExpression.parse
   // TODO: Unit tests
   public static SqlExpression parseSqlExpression(AoservConnector connector, Table table, String expr)
       throws SQLException, IOException, IllegalArgumentException {
@@ -296,6 +297,7 @@ public final class Parser {
    * @param args  The first argument must be {@link Command#SELECT}, case-insenstive.
    */
   // TODO: Unit tests
+  // TODO: Move to SqlSelect.parse
   public static SqlSelect parseSqlSelect(AoservConnector connector, String... args)
       throws SQLException, IOException, IllegalArgumentException {
     final int argsLen = args.length;
