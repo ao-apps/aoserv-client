@@ -309,10 +309,6 @@ public final class Aosh extends ShellInterpreter {
       AoservConnector connector = AoservConnector.getConnector(username, password);
       Aosh aosh = new Aosh(connector, new BufferedReader(new InputStreamReader(System.in)), out, err, null, args);
       aosh.run();
-      if (aosh.isInteractive()) {
-        out.println();
-        out.flush();
-      }
     } catch (Throwable t) {
       logger.log(Level.FINE, null, t);
       err.println("aosh: unable to connect: " + t.getMessage());
