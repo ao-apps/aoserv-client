@@ -267,6 +267,23 @@ public final class Aosh extends ShellInterpreter {
     TerminalWriter out = new TerminalWriter(new BufferedWriter(new OutputStreamWriter(System.out)));
     TerminalWriter err = System.out == System.err ? out : new TerminalWriter(new BufferedWriter(new OutputStreamWriter(System.err)));
     try {
+      // If has any "-h" or "--help" before any "--", show usage and exit
+      for (String arg : args) {
+        if ("--".equals(arg)) {
+          break;
+        }
+        if ("-h".equals(arg) || "--help".equals(arg)) {
+          out.println("Usage: " + Aosh.class.getName() + " [{-h|--help}] [-q] [-i] [--] [command [arguments]]");
+          out.println("    -h or --help  Displays this help.");
+          out.println("    -q            Do not prompt \"Username:\" or \"Password:\" while reading");
+          out.println("                  credentials from standard input.");
+          out.println("    -i            Run in interactive mode");
+          out.println("    command       When command is provided, the command and arguments are");
+          out.println("                  executed instead of reading from standard input.");
+          out.flush();
+          return;
+        }
+      }
       // If has a "-q" argument before any "--", be quiet and don't prompt username/password, and remove from arguments
       boolean quiet = false;
       List<String> newArgs = new ArrayList<>(Arrays.asList(args));
