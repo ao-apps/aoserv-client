@@ -415,7 +415,7 @@ public final class Aosh extends ShellInterpreter {
             || "khong".equalsIgnoreCase(s)
             || "nyet".equalsIgnoreCase(s)
             || "non".equalsIgnoreCase(s)
-            || "nien".equalsIgnoreCase(s)
+            || "nien".equalsIgnoreCase(s) // TODO: Probably intended "nein"
             || "la".equalsIgnoreCase(s)
     ) {
       return false;
