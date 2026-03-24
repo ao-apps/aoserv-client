@@ -61,6 +61,9 @@ import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -264,8 +267,28 @@ public final class Aosh extends ShellInterpreter {
     TerminalWriter out = new TerminalWriter(new BufferedWriter(new OutputStreamWriter(System.out)));
     TerminalWriter err = System.out == System.err ? out : new TerminalWriter(new BufferedWriter(new OutputStreamWriter(System.err)));
     try {
-      User.Name username = getConfigUsername(System.in, err);
-      String password = getConfigPassword(System.in, err);
+      // If has a "-q" argument before any "--", be quiet and don't prompt username/password, and remove from arguments
+      boolean quiet = false;
+      List<String> newArgs = new ArrayList<>(Arrays.asList(args));
+      int i = 0;
+      while (i < newArgs.size()) {
+        String arg = newArgs.get(i);
+        if ("--".equals(arg)) {
+          break;
+        }
+        if ("-q".equals(arg)) {
+          quiet = true;
+          newArgs.remove(i);
+        } else {
+          i++;
+        }
+      }
+      if (newArgs.size() != args.length) {
+        assert newArgs.size() < args.length;
+        args = newArgs.toArray(String[]::new);
+      }
+      User.Name username = getConfigUsername(System.in, err, quiet);
+      String password = getConfigPassword(System.in, err, quiet);
       AoservConnector connector = AoservConnector.getConnector(username, password);
       Aosh aosh = new Aosh(connector, new BufferedReader(new InputStreamReader(System.in)), out, err, null, args);
       aosh.run();
@@ -281,7 +304,7 @@ public final class Aosh extends ShellInterpreter {
     }
   }
 
-  public static User.Name getConfigUsername(InputStream in, TerminalWriter err) throws ConfigurationException, IOException {
+  public static User.Name getConfigUsername(InputStream in, TerminalWriter err, boolean quiet) throws ConfigurationException, IOException {
     User.Name username = AoservClientConfiguration.getUsername();
     if (username == null) {
       try {
@@ -289,12 +312,16 @@ public final class Aosh extends ShellInterpreter {
         String prompt = "Username: ";
         Console console = System.console();
         if (console == null) {
-          err.print(prompt);
-          err.flush();
+          if (!quiet) {
+            err.print(prompt);
+            err.flush();
+          }
           username = User.Name.valueOf(readLine(in));
-          err.flush();
+          if (!quiet) {
+            err.flush();
+          }
         } else {
-          username = User.Name.valueOf(console.readLine(prompt));
+          username = User.Name.valueOf(quiet ? console.readLine() : console.readLine(prompt));
           if (username == null) {
             throw new EOFException("End-of-file reading username");
           }
@@ -306,19 +333,23 @@ public final class Aosh extends ShellInterpreter {
     return username;
   }
 
-  public static String getConfigPassword(InputStream in, TerminalWriter err) throws ConfigurationException, IOException {
+  public static String getConfigPassword(InputStream in, TerminalWriter err, boolean quiet) throws ConfigurationException, IOException {
     String password = AoservClientConfiguration.getPassword();
     if (password == null || password.isEmpty()) {
       // Prompt for the password
       String prompt = "Password: ";
       Console console = System.console();
       if (console == null) {
-        err.print(prompt);
-        err.flush();
+        if (!quiet) {
+          err.print(prompt);
+          err.flush();
+        }
         password = readLine(in);
-        err.flush();
+        if (!quiet) {
+          err.flush();
+        }
       } else {
-        char[] pwchars = console.readPassword(prompt);
+        char[] pwchars = quiet ? console.readPassword() : console.readPassword(prompt);
         if (pwchars == null) {
           throw new EOFException("End-of-file reading password");
         }
