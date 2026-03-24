@@ -27,6 +27,7 @@ import com.aoapps.hodgepodge.io.TerminalWriter;
 import com.aoapps.hodgepodge.util.ShellInterpreter;
 import com.aoapps.lang.SysExits;
 import com.aoapps.lang.exception.ConfigurationException;
+import com.aoapps.lang.util.PropertiesUtils;
 import com.aoapps.lang.validation.ValidationException;
 import com.aoapps.net.DomainName;
 import com.aoapps.net.Email;
@@ -51,6 +52,7 @@ import java.io.BufferedWriter;
 import java.io.CharArrayReader;
 import java.io.Console;
 import java.io.EOFException;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -59,12 +61,14 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.nio.file.Files;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -262,32 +266,67 @@ public final class Aosh extends ShellInterpreter {
     }
   }
 
+  private static final String OPT_CREDENTIALS_FILE = "--credentials-file";
+  private static final String OPT_DELETE_CREDENTIALS_FILE = "--delete-credentials-file";
+
   @SuppressWarnings({"UseOfSystemOutOrSystemErr", "UseSpecificCatch", "BroadCatchBlock", "TooBroadCatch"})
   public static void main(String[] args) {
     TerminalWriter out = new TerminalWriter(new BufferedWriter(new OutputStreamWriter(System.out)));
     TerminalWriter err = System.out == System.err ? out : new TerminalWriter(new BufferedWriter(new OutputStreamWriter(System.err)));
     try {
-      // If has any "-h" or "--help" before any "--", show usage and exit
-      for (String arg : args) {
+      // Arguments may be removed from here during processing
+      List<String> newArgs = new ArrayList<>(Arrays.asList(args));
+      // Parse SWITCH_CREDENTIALS_FILE and OPT_DELETE_CREDENTIALS_FILE
+      File credentialsFile = null;
+      boolean deleteCredentialsFile = false;
+      int i = 0;
+      while (i < newArgs.size()) {
+        String arg = newArgs.get(i);
         if ("--".equals(arg)) {
           break;
         }
-        if ("-h".equals(arg) || "--help".equals(arg)) {
-          out.println("Usage: " + Aosh.class.getName() + " [{-h|--help}] [-q] [-i] [--] [command [arguments]]");
-          out.println("    -h or --help  Displays this help.");
-          out.println("    -q            Do not prompt \"Username:\" or \"Password:\" while reading");
-          out.println("                  credentials from standard input.");
-          out.println("    -i            Run in interactive mode");
-          out.println("    command       When command is provided, the command and arguments are");
-          out.println("                  executed instead of reading from standard input.");
-          out.flush();
+        if (OPT_CREDENTIALS_FILE.equals(arg)) {
+          newArgs.remove(i);
+          if (i >= newArgs.size()) {
+            err.println("aosh: filename required after " + OPT_CREDENTIALS_FILE);
+            err.flush();
+            System.exit(SysExits.EX_USAGE);
+            return;
+          }
+          if (credentialsFile != null) {
+            err.println("aosh: duplicate " + OPT_CREDENTIALS_FILE);
+            err.flush();
+            System.exit(SysExits.EX_USAGE);
+            return;
+          }
+          credentialsFile = new File(newArgs.get(i));
+          newArgs.remove(i);
+        } else if (OPT_DELETE_CREDENTIALS_FILE.equals(arg)) {
+          if (deleteCredentialsFile) {
+            err.println("aosh: duplicate " + OPT_DELETE_CREDENTIALS_FILE);
+            err.flush();
+            System.exit(SysExits.EX_USAGE);
+            return;
+          }
+          deleteCredentialsFile = true;
+          newArgs.remove(i);
+        } else {
+          i++;
+        }
+      }
+      if (deleteCredentialsFile) {
+        // Self-consistency
+        if (credentialsFile == null) {
+          err.println("aosh: " + OPT_DELETE_CREDENTIALS_FILE + " requires " + OPT_CREDENTIALS_FILE);
+          err.flush();
+          System.exit(SysExits.EX_USAGE);
           return;
         }
+        credentialsFile.deleteOnExit();
       }
       // If has a "-q" argument before any "--", be quiet and don't prompt username/password, and remove from arguments
       boolean quiet = false;
-      List<String> newArgs = new ArrayList<>(Arrays.asList(args));
-      int i = 0;
+      i = 0;
       while (i < newArgs.size()) {
         String arg = newArgs.get(i);
         if ("--".equals(arg)) {
@@ -300,12 +339,45 @@ public final class Aosh extends ShellInterpreter {
           i++;
         }
       }
+      // If has any "-h" or "--help" before any "--", show usage and exit
+      for (String arg : newArgs) {
+        if ("--".equals(arg)) {
+          break;
+        }
+        if ("-h".equals(arg) || "--help".equals(arg)) {
+          out.println("Usage: " + Aosh.class.getName() + " [{-h|--help}] [-q] [-i] [" + OPT_CREDENTIALS_FILE + " <filename> [" + OPT_DELETE_CREDENTIALS_FILE + "]] [--] [command [arguments]]");
+          out.println("    -h or --help  Displays this help.");
+          out.println("    -q            Do not prompt \"Username:\" or \"Password:\" while reading");
+          out.println("                  credentials from standard input.");
+          out.println("    -i            Run in interactive mode");
+          out.println("    " + OPT_CREDENTIALS_FILE + "  Will read the given properties file for the username");
+          out.println("                  and password.  If not set, will then check the aoserv-client.properties");
+          out.println("                  on the classpath.  Finally, will prompt user for input.  The properties");
+          out.println("                  are aoserv.client.username and aoserv.client.password");
+          out.println("    " + OPT_DELETE_CREDENTIALS_FILE + "  Deletes the credentials file after it is read");
+          out.println("    command       When command is provided, the command and arguments are");
+          out.println("                  executed instead of reading from standard input.");
+          out.flush();
+          return;
+        }
+      }
+      // Replace args if modified
       if (newArgs.size() != args.length) {
         assert newArgs.size() < args.length;
         args = newArgs.toArray(String[]::new);
       }
-      User.Name username = getConfigUsername(System.in, err, quiet);
-      String password = getConfigPassword(System.in, err, quiet);
+      // Read credentials file
+      Properties credentials;
+      if (credentialsFile == null) {
+        credentials = null;
+      } else {
+        credentials = PropertiesUtils.loadFromFile(credentialsFile);
+        if (deleteCredentialsFile) {
+          Files.delete(credentialsFile.toPath());
+        }
+      }
+      User.Name username = getConfigUsername(credentials, System.in, err, quiet);
+      String password = getConfigPassword(credentials, System.in, err, quiet);
       AoservConnector connector = AoservConnector.getConnector(username, password);
       Aosh aosh = new Aosh(connector, new BufferedReader(new InputStreamReader(System.in)), out, err, null, args);
       aosh.run();
@@ -317,8 +389,27 @@ public final class Aosh extends ShellInterpreter {
     }
   }
 
-  public static User.Name getConfigUsername(InputStream in, TerminalWriter err, boolean quiet) throws ConfigurationException, IOException {
-    User.Name username = AoservClientConfiguration.getUsername();
+  public static User.Name getConfigUsername(Properties credentials, InputStream in, TerminalWriter err, boolean quiet) throws ConfigurationException, IOException {
+    User.Name username = null;
+    // Credentials first
+    if (credentials != null) {
+      String usernameProp = credentials.getProperty("aoserv.client.username");
+      if (
+          usernameProp != null
+              && !(usernameProp = usernameProp.trim()).isEmpty()
+      ) {
+        try {
+          username = User.Name.valueOf(usernameProp);
+        } catch (ValidationException e) {
+          throw new ConfigurationException(e);
+        }
+      }
+    }
+    // aoserv-client.properties next
+    if (username == null) {
+      username = AoservClientConfiguration.getUsername();
+    }
+    // Finally prompt
     if (username == null) {
       try {
         // Prompt for the username
@@ -346,8 +437,17 @@ public final class Aosh extends ShellInterpreter {
     return username;
   }
 
-  public static String getConfigPassword(InputStream in, TerminalWriter err, boolean quiet) throws ConfigurationException, IOException {
-    String password = AoservClientConfiguration.getPassword();
+  public static String getConfigPassword(Properties credentials, InputStream in, TerminalWriter err, boolean quiet) throws ConfigurationException, IOException {
+    String password = null;
+    // Credentials first
+    if (credentials != null) {
+      password = credentials.getProperty("aoserv.client.password");
+    }
+    // aoserv-client.properties next
+    if (password == null || password.isEmpty()) {
+      password = AoservClientConfiguration.getPassword();
+    }
+    // Finally prompt
     if (password == null || password.isEmpty()) {
       // Prompt for the password
       String prompt = "Password: ";
