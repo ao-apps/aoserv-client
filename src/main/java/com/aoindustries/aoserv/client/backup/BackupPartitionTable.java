@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2012, 2016, 2017, 2018, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2002-2012, 2016, 2017, 2018, 2020, 2021, 2022, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -85,7 +85,7 @@ public final class BackupPartitionTable extends CachedTableIntegerKey<BackupPart
   }
 
   @Override
-  public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
+  public boolean handleCommand(String[] rawArgs, String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.GET_BACKUP_PARTITION_TOTAL_SIZE)) {
       if (Aosh.checkParamCount(Command.GET_BACKUP_PARTITION_TOTAL_SIZE, args, 2, err)) {

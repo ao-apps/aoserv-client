@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -85,8 +85,8 @@ public final class Aosh extends ShellInterpreter {
     this.connector = connector;
   }
 
-  public Aosh(AoservConnector connector, Reader in, TerminalWriter out, TerminalWriter err, String... args) {
-    super(in, out, err, args);
+  public Aosh(AoservConnector connector, Reader in, TerminalWriter out, TerminalWriter err, String[] rawArgs, String... args) {
+    super(in, out, err, rawArgs, args);
     this.connector = connector;
   }
 
@@ -124,7 +124,7 @@ public final class Aosh extends ShellInterpreter {
     return true;
   }
 
-  private void echo(String[] args) {
+  private void echo(String... args) {
     for (int c = 1; c < args.length; c++) {
       if (c > 1) {
         out.print(' ');
@@ -135,12 +135,12 @@ public final class Aosh extends ShellInterpreter {
     out.flush();
   }
 
-  public static String executeCommand(AoservConnector connector, String[] args) throws IOException, SQLException {
+  public static String executeCommand(AoservConnector connector, String[] rawArgs, String... args) throws IOException, SQLException {
     StringWriter buff = new StringWriter();
     TerminalWriter out = new TerminalWriter(buff);
     out.setEnabled(false);
     Aosh sh = new Aosh(connector, nullInput, out, out);
-    sh.handleCommand(args);
+    sh.handleCommand(rawArgs, args);
     out.flush();
     return buff.toString();
   }
@@ -166,7 +166,8 @@ public final class Aosh extends ShellInterpreter {
    * @return  <code>true</code> if more commands should be processed
    */
   @Override
-  public boolean handleCommand(String[] args) throws IOException, SQLException {
+  public boolean handleCommand(String[] rawArgs, String... args) throws IOException, SQLException {
+    checkRawArgsVersusArgs(rawArgs, args);
     int argCount = args.length;
     if (argCount > 0) {
       String command = args[0];
@@ -189,13 +190,13 @@ public final class Aosh extends ShellInterpreter {
         } else if (Command.PING.equalsIgnoreCase(command)) {
           ping(args);
         } else if (Command.REPEAT.equalsIgnoreCase(command)) {
-          repeat(args);
+          repeat(rawArgs, args);
         } else if (Command.SLEEP.equalsIgnoreCase(command)) {
           sleep(args);
         } else if (Command.SU.equalsIgnoreCase(command)) {
-          su(args);
+          su(rawArgs, args);
         } else if (Command.TIME.equalsIgnoreCase(command)) {
-          time(args);
+          time(rawArgs, args);
         } else if (Command.WHOAMI.equalsIgnoreCase(command)) {
           whoami(args);
         } else {
@@ -213,7 +214,7 @@ public final class Aosh extends ShellInterpreter {
           }
           if (aoshCommand != null) {
             AoservTable<?, ?> table = aoshCommand.getTable(connector).getAoservTable(connector);
-            done = table.handleCommand(args, in, out, err, isInteractive());
+            done = table.handleCommand(rawArgs, args, in, out, err, isInteractive());
             if (!done) {
               throw new RuntimeException("Command found, but command not processed.  command='" + command + "', table='" + table.getTableName() + '\'');
             }
@@ -221,7 +222,7 @@ public final class Aosh extends ShellInterpreter {
           /*
           for (int c=0;c<numTables;c++) {
             AoservTable table = connector.getTable(c);
-            if (table.handleCommand(args, in, out, err, isInteractive())) {
+            if (table.handleCommand(rawArgs, args, in, out, err, isInteractive())) {
               done = true;
               break;
             }
@@ -236,7 +237,7 @@ public final class Aosh extends ShellInterpreter {
     return true;
   }
 
-  private void invalidate(String[] args) throws IllegalArgumentException, SQLException, IOException {
+  private void invalidate(String... args) throws IllegalArgumentException, SQLException, IOException {
     if (checkRangeParamCount(Command.INVALIDATE, args, 1, 2, err)) {
       String tableName = args[1];
       TableTable schemaTableTable = connector.getSchema().getTable();
@@ -266,7 +267,7 @@ public final class Aosh extends ShellInterpreter {
       User.Name username = getConfigUsername(System.in, err);
       String password = getConfigPassword(System.in, err);
       AoservConnector connector = AoservConnector.getConnector(username, password);
-      Aosh aosh = new Aosh(connector, new BufferedReader(new InputStreamReader(System.in)), out, err, args);
+      Aosh aosh = new Aosh(connector, new BufferedReader(new InputStreamReader(System.in)), out, err, null, args);
       aosh.run();
       if (aosh.isInteractive()) {
         out.println();
@@ -328,8 +329,8 @@ public final class Aosh extends ShellInterpreter {
   }
 
   @Override
-  protected Aosh newShellInterpreter(Reader in, TerminalWriter out, TerminalWriter err, String[] args) {
-    return new Aosh(connector, in, out, err, args);
+  protected Aosh newShellInterpreter(Reader in, TerminalWriter out, TerminalWriter err, String[] rawArgs, String... args) {
+    return new Aosh(connector, in, out, err, rawArgs, args);
   }
 
   public static Account.Name parseAccountingCode(String s, String field) {
@@ -612,7 +613,7 @@ public final class Aosh extends ShellInterpreter {
     }
   }
 
-  private void ping(String[] args) throws IOException, SQLException {
+  private void ping(String... args) throws IOException, SQLException {
     if (checkParamCount(Command.PING, args, 0, err)) {
       out.print(connector.getSimpleClient().ping());
       out.println(" ms");
@@ -636,17 +637,24 @@ public final class Aosh extends ShellInterpreter {
     }
   }
 
-  private void repeat(String[] args) throws IOException, SQLException {
+  private void repeat(String[] rawArgs, String... args) throws IOException, SQLException {
     int argCount = args.length;
     if (argCount > 2) {
       try {
         int count = Integer.parseInt(args[1]);
         if (count >= 0) {
+          String[] newRawArgs;
+          if (rawArgs == null) {
+            newRawArgs = null;
+          } else {
+            newRawArgs = new String[argCount - 2];
+            System.arraycopy(rawArgs, 2, newRawArgs, 0, argCount - 2);
+          }
           String[] newArgs = new String[argCount - 2];
           System.arraycopy(args, 2, newArgs, 0, argCount - 2);
 
           for (int c = 0; c < count; c++) {
-            handleCommand(newArgs);
+            handleCommand(newRawArgs, newArgs);
           }
         } else {
           err.print("aosh: " + Command.REPEAT + ": invalid loop count: ");
@@ -665,7 +673,7 @@ public final class Aosh extends ShellInterpreter {
   }
 
   @SuppressWarnings("SleepWhileInLoop")
-  private void sleep(String[] args) {
+  private void sleep(String... args) {
     if (args.length > 1) {
       try {
         for (int c = 1; c < args.length; c++) {
@@ -695,16 +703,27 @@ public final class Aosh extends ShellInterpreter {
     }
   }
 
-  private void su(String[] args) throws IOException {
+  private void su(String[] rawArgs, String... args) throws IOException {
     int argCount = args.length;
     if (argCount >= 2) {
       try {
-        String[] newArgs = new String[argCount + (isInteractive() ? 0 : -1)];
+        int newArgCount = argCount + (isInteractive() ? 0 : -1);
+        String[] newRawArgs = (rawArgs == null) ? null : new String[newArgCount];
+        String[] newArgs = new String[newArgCount];
         int pos = 0;
         if (isInteractive()) {
+          if (newRawArgs != null) {
+            newRawArgs[pos] = "-i";
+          }
           newArgs[pos++] = "-i";
         }
+        if (newRawArgs != null) {
+          newRawArgs[pos] = "--";
+        }
         newArgs[pos++] = "--";
+        if (newRawArgs != null) {
+          System.arraycopy(rawArgs, 2, newRawArgs, pos, argCount - 2);
+        }
         System.arraycopy(args, 2, newArgs, pos, argCount - 2);
         new Aosh(
             connector.switchUsers(User.Name.valueOf(args[1])
@@ -712,6 +731,7 @@ public final class Aosh extends ShellInterpreter {
             in,
             out,
             err,
+            newRawArgs,
             newArgs
         ).run();
       } catch (ValidationException e) {
@@ -724,14 +744,21 @@ public final class Aosh extends ShellInterpreter {
     }
   }
 
-  private void time(String[] args) throws IOException, SQLException {
+  private void time(String[] rawArgs, String... args) throws IOException, SQLException {
     int argCount = args.length;
     if (argCount > 1) {
+      String[] newRawArgs;
+      if (rawArgs == null) {
+        newRawArgs = null;
+      } else {
+        newRawArgs = new String[argCount - 1];
+        System.arraycopy(rawArgs, 1, newRawArgs, 0, argCount - 1);
+      }
       String[] newArgs = new String[argCount - 1];
       System.arraycopy(args, 1, newArgs, 0, argCount - 1);
       long startTime = System.currentTimeMillis();
       try {
-        handleCommand(newArgs);
+        handleCommand(newRawArgs, newArgs);
       } finally {
         long timeSpan = System.currentTimeMillis() - startTime;
         int mins = (int) (timeSpan / 60000);
@@ -750,7 +777,7 @@ public final class Aosh extends ShellInterpreter {
     }
   }
 
-  private void whoami(String[] args) throws SQLException, IOException {
+  private void whoami(String... args) throws SQLException, IOException {
     if (args.length == 1) {
       out.println(connector.getCurrentAdministrator().getUsername().getUsername());
       out.flush();

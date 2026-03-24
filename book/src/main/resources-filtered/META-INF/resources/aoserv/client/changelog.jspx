@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
     shortTitle="Changelog"
     tocLevels="1"
     datePublished="2016-10-29T21:07:28-05:00"
-    dateModified="2026-03-19T10:43:26Z"
+    dateModified="2026-03-24T06:38:38Z"
   >
     <c:set var="latestRelease" value="1.92.1" />
     <c:if test="${
@@ -113,6 +113,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
               </li>
               <li>Previously private execution moved to public <code>SqlSelect.execute(…)</code>.</li>
               <li>Column name is now <code><i>column</i>::<i>type</i></code> for casts.</li>
+              <li>No longer need to escape double-quotes within select command within AOSH.</li>
             </ol>
           </li>
         </ul>

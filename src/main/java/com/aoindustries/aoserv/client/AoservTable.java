@@ -839,7 +839,7 @@ public abstract class AoservTable<K, V extends AoservObject<K, V>> implements It
    */
   protected abstract V getUniqueRowImpl(int col, Object value) throws IOException, SQLException;
 
-  public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IOException, SQLException {
+  public boolean handleCommand(String[] rawArgs, String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IOException, SQLException {
     return false;
   }
 

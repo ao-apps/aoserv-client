@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2017, 2018, 2019, 2020, 2021, 2022, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -77,7 +77,7 @@ public final class CertificateTable extends CachedTableIntegerKey<Certificate> {
   }
 
   @Override
-  public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
+  public boolean handleCommand(String[] rawArgs, String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.PKI_CERTIFICATE_CHECK)) {
       if (Aosh.checkParamCount(Command.PKI_CERTIFICATE_CHECK, args, 3, err)) {

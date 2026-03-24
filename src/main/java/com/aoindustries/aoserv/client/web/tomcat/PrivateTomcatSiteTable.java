@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2025  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -144,7 +144,7 @@ public final class PrivateTomcatSiteTable extends CachedTableIntegerKey<PrivateT
   }
 
   @Override
-  public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
+  public boolean handleCommand(String[] rawArgs, String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_HTTPD_TOMCAT_STD_SITE)) {
       if (Aosh.checkMinParamCount(Command.ADD_HTTPD_TOMCAT_STD_SITE, args, 11, err)) {

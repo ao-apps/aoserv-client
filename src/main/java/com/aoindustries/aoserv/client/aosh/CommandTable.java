@@ -105,7 +105,7 @@ public final class CommandTable extends GlobalTableStringKey<Command> {
   private static final int numTables = Table.TableId.values().length;
 
   @Override
-  public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IOException, SQLException {
+  public boolean handleCommand(String[] rawArgs, String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IOException, SQLException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.HELP) || "?".equals(command)) {
       int argCount = args.length;

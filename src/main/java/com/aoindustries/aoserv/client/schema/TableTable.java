@@ -116,7 +116,7 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
   }
 
   @Override
-  public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws SQLException, IOException {
+  public boolean handleCommand(String[] rawArgs, String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws SQLException, IOException {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.DESC) || command.equalsIgnoreCase(Command.DESCRIBE)) {
       if (Aosh.checkParamCount(Command.DESCRIBE, args, 1, err)) {
@@ -136,7 +136,8 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
       // Parse
       SqlSelect sqlSelect;
       try {
-        sqlSelect = Parser.parseSqlSelect(connector, args);
+        // Use rawArgs instead of args when available
+        sqlSelect = Parser.parseSqlSelect(connector, (rawArgs != null ? rawArgs : args));
       } catch (IllegalArgumentException e) {
         err.println("aosh: " + Command.SELECT + ": " + e.getMessage());
         err.flush();
@@ -150,7 +151,8 @@ public final class TableTable extends GlobalTableIntegerKey<Table> {
       int argCount = args.length;
       if (argCount >= 2) {
         if ("tables".equalsIgnoreCase(args[1])) {
-          handleCommand(new String[]{"select", "name,", "description", "from", "schema_tables"}, in, out, err, isInteractive);
+          String[] selectCommand = {"select", "name,", "description", "from", "schema_tables"};
+          handleCommand(selectCommand, selectCommand, in, out, err, isInteractive);
         } else {
           err.println("aosh: " + Command.SHOW + ": unknown parameter: " + args[1]);
           err.flush();
