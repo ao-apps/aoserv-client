@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 aoserv-client - Java client for the AOServ Platform.
-Copyright (C) 2022, 2024  AO Industries, Inc.
+Copyright (C) 2022, 2024, 2026  AO Industries, Inc.
     support@aoindustries.com
     7262 Bull Pen Cir
     Mobile, AL 36695
@@ -69,14 +69,14 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
 
   <!-- Schemas have public fields that match the capitalized database table name -->
   <suppress
-    checks="MemberName"
+    checks="GoogleNonConstantFieldName"
     files="[/\\]Schema\.java$"
     message="'([A-Z][a-z]+)+'"
   />
 
   <!-- Allowing underscore separators for methods and data that span database joins -->
   <suppress
-    checks="(LocalVariableName|MemberName|MethodName|ParameterName)"
+    checks="(LocalVariableName|GoogleNonConstantFieldName|MethodName|ParameterName)"
     message="'[a-z]([a-z0-9][a-zA-Z0-9]*)?(_[a-z0-9X]([a-z0-9][a-zA-Z0-9]*)?)*'"
   />
 
