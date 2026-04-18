@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -226,6 +226,9 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
       PG_DATABASE_OWNER,
       // Predefined roles, PostgreSQL 15+ - https://www.postgresql.org/docs/15/predefined-roles.html
       PG_CHECKPOINT,
+      // Predefined roles, PostgreSQL 16+ - https://www.postgresql.org/docs/16/predefined-roles.html
+      PG_USE_RESERVED_CONNECTIONS,
+      PG_CREATE_SUBSCRIPTION,
       // Monitoring
       POSTGRESMON,
       // AO Admin
@@ -254,6 +257,9 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
       PG_DATABASE_OWNER = Name.valueOf("pg_database_owner");
       // Predefined roles, PostgreSQL 15+ - https://www.postgresql.org/docs/15/predefined-roles.html
       PG_CHECKPOINT = Name.valueOf("pg_checkpoint");
+      // Predefined roles, PostgreSQL 16+ - https://www.postgresql.org/docs/16/predefined-roles.html
+      PG_USE_RESERVED_CONNECTIONS = Name.valueOf("pg_use_reserved_connections");
+      PG_CREATE_SUBSCRIPTION = Name.valueOf("pg_create_subscription");
       // Monitoring
       POSTGRESMON = Name.valueOf("postgresmon");
       // AO Admin
@@ -289,6 +295,9 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
             || username.equals(PG_DATABASE_OWNER)
             // Predefined roles, PostgreSQL 15+ - https://www.postgresql.org/docs/15/predefined-roles.html
             || username.equals(PG_CHECKPOINT)
+            // Predefined roles, PostgreSQL 16+ - https://www.postgresql.org/docs/16/predefined-roles.html
+            || username.equals(PG_USE_RESERVED_CONNECTIONS)
+            || username.equals(PG_CREATE_SUBSCRIPTION)
             // Monitoring
             || username.equals(POSTGRESMON)
             // AO Admin

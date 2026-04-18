@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025  AO Industries, Inc.
+ * Copyright (C) 2002-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -71,6 +71,7 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
   public static final String VERSION_13 = "13";
   public static final String VERSION_14 = "14";
   public static final String VERSION_15 = "15";
+  public static final String VERSION_16 = "16";
 
   /**
    * Gets the versions of PostgreSQL in order of
@@ -81,6 +82,7 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
    */
   public static String[] getPreferredMinorVersions() {
     return new String[]{
+        VERSION_16,
         VERSION_15,
         VERSION_14,
         VERSION_13,
@@ -117,7 +119,9 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
             || version.startsWith(VERSION_14 + '.')
             || version.startsWith(VERSION_14 + 'R')
             || version.startsWith(VERSION_15 + '.')
-            || version.startsWith(VERSION_15 + 'R');
+            || version.startsWith(VERSION_15 + 'R')
+            || version.startsWith(VERSION_16 + '.')
+            || version.startsWith(VERSION_16 + 'R');
   }
 
   /**
