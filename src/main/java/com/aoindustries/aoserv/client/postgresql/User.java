@@ -229,6 +229,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
       // Predefined roles, PostgreSQL 16+ - https://www.postgresql.org/docs/16/predefined-roles.html
       PG_USE_RESERVED_CONNECTIONS,
       PG_CREATE_SUBSCRIPTION,
+      // Predefined roles, PostgreSQL 17+ - https://www.postgresql.org/docs/17/predefined-roles.html
+      PG_MAINTAIN,
       // Monitoring
       POSTGRESMON,
       // AO Admin
@@ -260,6 +262,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
       // Predefined roles, PostgreSQL 16+ - https://www.postgresql.org/docs/16/predefined-roles.html
       PG_USE_RESERVED_CONNECTIONS = Name.valueOf("pg_use_reserved_connections");
       PG_CREATE_SUBSCRIPTION = Name.valueOf("pg_create_subscription");
+      // Predefined roles, PostgreSQL 17+ - https://www.postgresql.org/docs/17/predefined-roles.html
+      PG_MAINTAIN = Name.valueOf("pg_maintain");
       // Monitoring
       POSTGRESMON = Name.valueOf("postgresmon");
       // AO Admin
@@ -298,6 +302,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
             // Predefined roles, PostgreSQL 16+ - https://www.postgresql.org/docs/16/predefined-roles.html
             || username.equals(PG_USE_RESERVED_CONNECTIONS)
             || username.equals(PG_CREATE_SUBSCRIPTION)
+            // Predefined roles, PostgreSQL 17+ - https://www.postgresql.org/docs/17/predefined-roles.html
+            || username.equals(PG_MAINTAIN)
             // Monitoring
             || username.equals(POSTGRESMON)
             // AO Admin
