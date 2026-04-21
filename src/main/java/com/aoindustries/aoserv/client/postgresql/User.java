@@ -231,6 +231,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
       PG_CREATE_SUBSCRIPTION,
       // Predefined roles, PostgreSQL 17+ - https://www.postgresql.org/docs/17/predefined-roles.html
       PG_MAINTAIN,
+      // Predefined roles, PostgreSQL 18+ - https://www.postgresql.org/docs/18/predefined-roles.html
+      PG_SIGNAL_AUTOVACUUM_WORKER,
       // Monitoring
       POSTGRESMON,
       // AO Admin
@@ -264,6 +266,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
       PG_CREATE_SUBSCRIPTION = Name.valueOf("pg_create_subscription");
       // Predefined roles, PostgreSQL 17+ - https://www.postgresql.org/docs/17/predefined-roles.html
       PG_MAINTAIN = Name.valueOf("pg_maintain");
+      // Predefined roles, PostgreSQL 18+ - https://www.postgresql.org/docs/18/predefined-roles.html
+      PG_SIGNAL_AUTOVACUUM_WORKER = Name.valueOf("pg_signal_autovacuum_worker");
       // Monitoring
       POSTGRESMON = Name.valueOf("postgresmon");
       // AO Admin
@@ -304,6 +308,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
             || username.equals(PG_CREATE_SUBSCRIPTION)
             // Predefined roles, PostgreSQL 17+ - https://www.postgresql.org/docs/17/predefined-roles.html
             || username.equals(PG_MAINTAIN)
+            // Predefined roles, PostgreSQL 18+ - https://www.postgresql.org/docs/18/predefined-roles.html
+            || username.equals(PG_SIGNAL_AUTOVACUUM_WORKER)
             // Monitoring
             || username.equals(POSTGRESMON)
             // AO Admin
