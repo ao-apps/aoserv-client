@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2006-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025  AO Industries, Inc.
+ * Copyright (C) 2006-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -256,6 +256,7 @@ public final class Server extends CachedObjectIntegerKey<Server> {
    * The supported versions of MySQL.
    */
   public static final String
+      VERSION_8_4_PREFIX = "8.4.",
       VERSION_8_0_PREFIX = "8.0.",
       VERSION_5_7_PREFIX = "5.7.",
       VERSION_5_6_PREFIX = "5.6.",
@@ -284,6 +285,7 @@ public final class Server extends CachedObjectIntegerKey<Server> {
    */
   public static final List<String> PREFERRED_VERSION_PREFIXES = Collections.unmodifiableList(
       Arrays.asList(
+          VERSION_8_4_PREFIX,
           VERSION_8_0_PREFIX,
           VERSION_5_7_PREFIX,
           VERSION_5_6_PREFIX,

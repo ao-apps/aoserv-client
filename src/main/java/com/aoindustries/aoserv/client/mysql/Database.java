@@ -266,10 +266,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
   /**
    * The URL for MySQL JDBC documentation.
    */
-  public static final String
-      CENTOS_JDBC_DOCUMENTATION_URL = "https://dev.mysql.com/doc/connector-j/5.1/en/",
-      CENTOS_7_JDBC_DOCUMENTATION_URL = "https://dev.mysql.com/doc/connector-j/8.0/en/",
-      ROCKY_9_JDBC_DOCUMENTATION_URL = CENTOS_7_JDBC_DOCUMENTATION_URL;
+  public static final String JDBC_DOCUMENTATION_URL = "https://dev.mysql.com/doc/connector-j/en/";
 
   /** The root database for a MySQL installation. */
   public static final Name MYSQL;
@@ -551,18 +548,8 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
   }
 
   @Override
-  public String getJdbcDocumentationUrl() throws SQLException, IOException {
-    int osv = getMysqlServer().getLinuxServer().getHost().getOperatingSystemVersion_id();
-    switch (osv) {
-      case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64:
-        return CENTOS_JDBC_DOCUMENTATION_URL;
-      case OperatingSystemVersion.CENTOS_7_X86_64:
-        return CENTOS_7_JDBC_DOCUMENTATION_URL;
-      case OperatingSystemVersion.ROCKY_9_X86_64:
-        return ROCKY_9_JDBC_DOCUMENTATION_URL;
-      default:
-        throw new SQLException("Unsupported OperatingSystemVersion: " + osv);
-    }
+  public String getJdbcDocumentationUrl() {
+    return JDBC_DOCUMENTATION_URL;
   }
 
   public DatabaseUser getMysqlDbUser(UserServer msu) throws IOException, SQLException {
