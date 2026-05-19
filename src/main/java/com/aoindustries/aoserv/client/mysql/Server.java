@@ -256,6 +256,7 @@ public final class Server extends CachedObjectIntegerKey<Server> {
    * The supported versions of MySQL.
    */
   public static final String
+      VERSION_9_7_PREFIX = "9.7.",
       VERSION_8_4_PREFIX = "8.4.",
       VERSION_8_0_PREFIX = "8.0.",
       VERSION_5_7_PREFIX = "5.7.",
@@ -285,6 +286,7 @@ public final class Server extends CachedObjectIntegerKey<Server> {
    */
   public static final List<String> PREFERRED_VERSION_PREFIXES = Collections.unmodifiableList(
       Arrays.asList(
+          VERSION_9_7_PREFIX,
           VERSION_8_4_PREFIX,
           VERSION_8_0_PREFIX,
           VERSION_5_7_PREFIX,
