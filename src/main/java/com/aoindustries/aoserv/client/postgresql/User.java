@@ -205,16 +205,17 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
   public static final int MAX_USERNAME_LENGTH = Name.POSTGRESQL_NAME_MAX_LENGTH;
 
   /**
-   * The username of the PostgreSQL special users.
+   * The username of the PostgreSQL special users/roles.
    */
   public static final Name
       // Super user
       POSTGRES,
+      // Default roles, PostgreSQL 9.6+ - https://www.postgresql.org/docs/9.6/default-roles.html
+      PG_SIGNAL_BACKEND,
       // Default roles, PostgreSQL 10+ - https://www.postgresql.org/docs/10/default-roles.html
       PG_MONITOR,
       PG_READ_ALL_SETTINGS,
       PG_READ_ALL_STATS,
-      PG_SIGNAL_BACKEND,
       PG_STAT_SCAN_TABLES,
       // Default roles, PostgreSQL 11+ - https://www.postgresql.org/docs/11/default-roles.html
       PG_EXECUTE_SERVER_PROGRAM,
@@ -245,11 +246,12 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
     try {
       // Super user
       POSTGRES = Name.valueOf("postgres");
+      // Default roles, PostgreSQL 9.6+ - https://www.postgresql.org/docs/9.6/default-roles.html
+      PG_SIGNAL_BACKEND = Name.valueOf("pg_signal_backend");
       // Default roles, PostgreSQL 10+ - https://www.postgresql.org/docs/10/default-roles.html
       PG_MONITOR = Name.valueOf("pg_monitor");
       PG_READ_ALL_SETTINGS = Name.valueOf("pg_read_all_settings");
       PG_READ_ALL_STATS = Name.valueOf("pg_read_all_stats");
-      PG_SIGNAL_BACKEND = Name.valueOf("pg_signal_backend");
       PG_STAT_SCAN_TABLES = Name.valueOf("pg_stat_scan_tables");
       // Default roles, PostgreSQL 11+ - https://www.postgresql.org/docs/11/default-roles.html
       PG_EXECUTE_SERVER_PROGRAM = Name.valueOf("pg_execute_server_program");
@@ -287,11 +289,12 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
     return
         // Super user
         username.equals(POSTGRES)
+            // Default roles, PostgreSQL 9.6+ - https://www.postgresql.org/docs/9.6/default-roles.html
+            || username.equals(PG_SIGNAL_BACKEND)
             // Default roles, PostgreSQL 10+ - https://www.postgresql.org/docs/10/default-roles.html
             || username.equals(PG_MONITOR)
             || username.equals(PG_READ_ALL_SETTINGS)
             || username.equals(PG_READ_ALL_STATS)
-            || username.equals(PG_SIGNAL_BACKEND)
             || username.equals(PG_STAT_SCAN_TABLES)
             // Default roles, PostgreSQL 11+ - https://www.postgresql.org/docs/11/default-roles.html
             || username.equals(PG_EXECUTE_SERVER_PROGRAM)
