@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025  AO Industries, Inc.
+ * Copyright (C) 2003-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -58,14 +58,6 @@ public final class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
   public static final String VERSION_9 = "9";
   public static final String VERSION_2006_0 = "2006.0";
   public static final String VERSION_ES_4 = "ES 4";
-
-  /**
-   * @deprecated  What is this used for?
-   *
-   * @see  OperatingSystem#DEFAULT_OPERATING_SYSTEM
-   */
-  @Deprecated
-  public static final String DEFAULT_OPERATING_SYSTEM_VERSION = VERSION_9;
 
   public static final int CENTOS_5_DOM0_X86_64 = 63;
   public static final int CENTOS_5_DOM0_I686 = 64;

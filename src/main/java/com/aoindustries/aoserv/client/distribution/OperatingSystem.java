@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025  AO Industries, Inc.
+ * Copyright (C) 2003-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -50,14 +50,6 @@ public final class OperatingSystem extends GlobalObjectStringKey<OperatingSystem
   public static final String DEBIAN = "debian";
   public static final String ROCKY = "rocky";
   public static final String WINDOWS = "windows";
-
-  /**
-   * @deprecated  What is this used for?
-   *
-   * @see  OperatingSystemVersion#DEFAULT_OPERATING_SYSTEM_VERSION
-   */
-  @Deprecated
-  public static final String DEFAULT_OPERATING_SYSTEM = ROCKY;
 
   private String display;
   private boolean isUnix;
