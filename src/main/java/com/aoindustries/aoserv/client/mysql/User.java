@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -70,6 +70,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
    *   <li>Must start with <code>[a-z]</code></li>
    *   <li>The rest of the characters may contain <code>[a-z,0-9,_]</code></li>
    *   <li>A special exemption is made for the <code>mysql.session</code> and <code>mysql.sys</code> reserved users added in MySQL 5.7.</li>
+   *   <li>A special exemption is made for the <code>mysql.infoschema</code> reserved user added in MySQL 8.0.</li>
    *   <li>Must be a valid {@link com.aoindustries.aoserv.client.linux.User.Name} - this is implied by the above rules</li>
    * </ul>
    *
@@ -97,6 +98,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
           // Allow specific system users that otherwise do not match our allowed username pattern
           !"mysql.sys".equals(name)
               && !"mysql.session".equals(name)
+              && !"mysql.infoschema".equals(name)
       ) {
         int len = name.length();
         if (len == 0) {
@@ -221,6 +223,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
   public static final Name MYSQL_SESSION;
   /** The username of the MySQL <code>mysql.sys</code> user added in MySQL 5.7. */
   public static final Name MYSQL_SYS;
+  /** The username of the MySQL <code>mysql.infoschema</code> user added in MySQL 8.0. */
+  public static final Name MYSQL_INFOSCHEMA;
   /** The default username for MySQL monitoring. */
   public static final Name MYSQLMON;
 
@@ -232,6 +236,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       MYSQL_SESSION = Name.valueOf("mysql.session").intern();
       // The username of the MySQL <code>mysql.sys</code> user added in MySQL 5.7.
       MYSQL_SYS = Name.valueOf("mysql.sys").intern();
+      // The username of the MySQL <code>mysql.infoschema</code> user added in MySQL 8.0.
+      MYSQL_INFOSCHEMA = Name.valueOf("mysql.infoschema").intern();
       // Monitoring
       MYSQLMON = Name.valueOf("mysqlmon").intern();
     } catch (ValidationException e) {
@@ -250,6 +256,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
             || username.equals(MYSQL_SESSION)
             // The username of the MySQL <code>mysql.sys</code> user added in MySQL 5.7.
             || username.equals(MYSQL_SYS)
+            // The username of the MySQL <code>mysql.infoschema</code> user added in MySQL 8.0.
+            || username.equals(MYSQL_INFOSCHEMA)
             // Monitoring
             || username.equals(MYSQLMON);
   }

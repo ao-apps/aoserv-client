@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
     shortTitle="Changelog"
     tocLevels="1"
     datePublished="2016-10-29T21:07:28-05:00"
-    dateModified="2026-06-01T20:55:40Z"
+    dateModified="2026-07-14T05:21:52Z"
   >
     <c:set var="latestRelease" value="1.92.2" />
     <c:if test="${
@@ -80,6 +80,7 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
           <!-- TODO:
           <li>Look into jOOQ: https://www.jooq.org/</li>
           -->
+          <li>Added constants for <ao:a href="https://dev.mysql.com/doc/relnotes/mysql/8.4/en/">MySQL 8.4</ao:a>.</li>
         </ul>
       </changelog:release>
     </c:if>

@@ -715,9 +715,13 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
       utf8_bin,
       utf8_general_ci,
       utf8_unicode_ci,
+      utf8mb3_bin,
+      utf8mb3_general_ci,
+      utf8mb4_bin,
       utf8mb4_general_ci,
       utf8mb4_unicode_ci,
-      utf8mb4_unicode_520_ci
+      utf8mb4_unicode_520_ci,
+      utf8mb4_0900_ai_ci
     }
 
     private final TableName name;
