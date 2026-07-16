@@ -254,15 +254,55 @@ public final class Server extends CachedObjectIntegerKey<Server> {
 
   /**
    * The supported versions of MySQL.
+   *
+   * <p>These are in the order of preference.  Ordinal <code>0</code> is the most preferred.</p>
    */
-  public static final String
-      VERSION_9_7_PREFIX = "9.7.",
-      VERSION_8_4_PREFIX = "8.4.",
-      VERSION_8_0_PREFIX = "8.0.",
-      VERSION_5_7_PREFIX = "5.7.",
-      VERSION_5_6_PREFIX = "5.6.",
-      VERSION_5_0_PREFIX = "5.0.",
-      VERSION_4_1_PREFIX = "4.1.";
+  public enum Version {
+    VERSION_9_7("9.7."),
+    VERSION_8_4("8.4."),
+    VERSION_8_0("8.0."),
+    VERSION_5_7("5.7."),
+    VERSION_5_6("5.6."),
+    VERSION_5_0("5.0."),
+    VERSION_4_1("4.1.");
+
+    private final String prefix;
+
+    private Version(String prefix) {
+      this.prefix = prefix;
+    }
+
+    @Override
+    public String toString() {
+      return prefix + '*';
+    }
+
+    /**
+     * Checks whether this version matches the given X.Y.* version string.
+     */
+    public boolean matches(String versionString) {
+      return versionString.startsWith(prefix);
+    }
+
+    private static final Version[] VALUES = values();
+
+    /**
+     * Gets the version matching the given X.Y.* version string.
+     *
+     * @throws IllegalArgumentException when no matching version found.
+     *         Selected this exception type for consistency with {@link Server#valueOf(java.lang.String)}.
+     *
+     * @see Server#matches(java.lang.String)
+     */
+    public static Version parse(String versionString) throws IllegalArgumentException {
+      for (Version version : VALUES) {
+        if (version.matches(versionString)) {
+          return version;
+        }
+      }
+      throw new IllegalArgumentException("Version not found: " + versionString);
+    }
+  }
 
   /**
    * The directory that contains the MySQL data files.
@@ -276,23 +316,6 @@ public final class Server extends CachedObjectIntegerKey<Server> {
       throw new AssertionError("These hard-coded values are valid", e);
     }
   }
-
-  /**
-   * Gets the versions of MySQL in order of
-   * preference.  Index <code>0</code> is the most
-   * preferred.
-   */
-  public static final List<String> PREFERRED_VERSION_PREFIXES = Collections.unmodifiableList(
-      Arrays.asList(
-          VERSION_9_7_PREFIX,
-          VERSION_8_4_PREFIX,
-          VERSION_8_0_PREFIX,
-          VERSION_5_7_PREFIX,
-          VERSION_5_6_PREFIX,
-          VERSION_5_0_PREFIX,
-          VERSION_4_1_PREFIX
-      )
-  );
 
   /**
    * @deprecated 2019-07-14: Is this still used?

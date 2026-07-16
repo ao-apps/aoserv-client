@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025  AO Industries, Inc.
+ * Copyright (C) 2003-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -1020,15 +1020,15 @@ public final class Server
   public com.aoindustries.aoserv.client.mysql.Server getPreferredMysqlServer() throws IOException, SQLException {
     // Look for the most-preferred version that has an instance on the server
     List<com.aoindustries.aoserv.client.mysql.Server> pss = getMysqlServers();
-    for (String versionPrefix : com.aoindustries.aoserv.client.mysql.Server.PREFERRED_VERSION_PREFIXES) {
+    for (com.aoindustries.aoserv.client.mysql.Server.Version preferredVersion : com.aoindustries.aoserv.client.mysql.Server.Version.values()) {
       for (com.aoindustries.aoserv.client.mysql.Server ps : pss) {
-        if (ps.getVersion().getVersion().startsWith(versionPrefix)) {
+        if (preferredVersion.matches(ps.getVersion().getVersion())) {
           return ps;
         }
       }
     }
 
-    // Default to first available server if no preferred ones round
+    // Default to first available server if no preferred ones found
     return pss.isEmpty() ? null : pss.get(0);
   }
 
@@ -1056,7 +1056,7 @@ public final class Server
       }
     }
 
-    // Default to first available server if no preferred ones round
+    // Default to first available server if no preferred ones found
     return pss.isEmpty() ? null : pss.get(0);
   }
 
