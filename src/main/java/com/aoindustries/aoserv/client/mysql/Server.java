@@ -261,7 +261,6 @@ public final class Server extends CachedObjectIntegerKey<Server> {
       VERSION_8_0_PREFIX = "8.0.",
       VERSION_5_7_PREFIX = "5.7.",
       VERSION_5_6_PREFIX = "5.6.",
-      VERSION_5_1_PREFIX = "5.1.",
       VERSION_5_0_PREFIX = "5.0.",
       VERSION_4_1_PREFIX = "4.1.";
 
@@ -290,7 +289,6 @@ public final class Server extends CachedObjectIntegerKey<Server> {
           VERSION_8_0_PREFIX,
           VERSION_5_7_PREFIX,
           VERSION_5_6_PREFIX,
-          VERSION_5_1_PREFIX,
           VERSION_5_0_PREFIX,
           VERSION_4_1_PREFIX
       )
