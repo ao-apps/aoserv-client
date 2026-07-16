@@ -290,9 +290,9 @@ public final class Server extends CachedObjectIntegerKey<Server> {
      * Gets the version matching the given X.Y.* version string.
      *
      * @throws IllegalArgumentException when no matching version found.
-     *         Selected this exception type for consistency with {@link Server#valueOf(java.lang.String)}.
+     *         Selected this exception type for consistency with {@link Version#valueOf(java.lang.String)}.
      *
-     * @see Server#matches(java.lang.String)
+     * @see Version#matches(java.lang.String)
      */
     public static Version parse(String versionString) throws IllegalArgumentException {
       for (Version version : VALUES) {
