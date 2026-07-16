@@ -125,8 +125,7 @@ public abstract class AoservConnector implements SchemaParent {
    */
   static boolean isImmediateFail(Throwable t) {
     if (
-        t instanceof ThreadDeath
-            || t instanceof InterruptedIOException
+        t instanceof InterruptedIOException
             || t instanceof InterruptedException
             || t instanceof ConfigurationException
     ) {
