@@ -263,8 +263,7 @@ public final class Server extends CachedObjectIntegerKey<Server> {
       VERSION_5_6_PREFIX = "5.6.",
       VERSION_5_1_PREFIX = "5.1.",
       VERSION_5_0_PREFIX = "5.0.",
-      VERSION_4_1_PREFIX = "4.1.",
-      VERSION_4_0_PREFIX = "4.0.";
+      VERSION_4_1_PREFIX = "4.1.";
 
   /**
    * The directory that contains the MySQL data files.
@@ -293,8 +292,7 @@ public final class Server extends CachedObjectIntegerKey<Server> {
           VERSION_5_6_PREFIX,
           VERSION_5_1_PREFIX,
           VERSION_5_0_PREFIX,
-          VERSION_4_1_PREFIX,
-          VERSION_4_0_PREFIX
+          VERSION_4_1_PREFIX
       )
   );
 
