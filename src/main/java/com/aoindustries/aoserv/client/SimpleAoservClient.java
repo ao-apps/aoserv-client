@@ -1051,11 +1051,6 @@ public final class SimpleAoservClient {
         if (added && !ea.isUsed()) {
           ea.remove();
         }
-      } catch (ThreadDeath td) {
-        @SuppressWarnings("ThrowableResultIgnored")
-        Throwable t = Throwables.addSuppressed(td, e);
-        assert t == td;
-        throw td;
       } catch (Throwable t) {
         @SuppressWarnings("ThrowableResultIgnored")
         Throwable t2 = Throwables.addSuppressed(e, t);
@@ -1155,11 +1150,6 @@ public final class SimpleAoservClient {
         if (added && !ea.isUsed()) {
           ea.remove();
         }
-      } catch (ThreadDeath td) {
-        @SuppressWarnings("ThrowableResultIgnored")
-        Throwable t = Throwables.addSuppressed(td, e);
-        assert t == td;
-        throw td;
       } catch (Throwable t) {
         @SuppressWarnings("ThrowableResultIgnored")
         Throwable t2 = Throwables.addSuppressed(e, t);
@@ -1247,11 +1237,6 @@ public final class SimpleAoservClient {
         if (added && !ea.isUsed()) {
           ea.remove();
         }
-      } catch (ThreadDeath td) {
-        @SuppressWarnings("ThrowableResultIgnored")
-        Throwable t = Throwables.addSuppressed(td, e);
-        assert t == td;
-        throw td;
       } catch (Throwable t) {
         @SuppressWarnings("ThrowableResultIgnored")
         Throwable t2 = Throwables.addSuppressed(e, t);
@@ -1992,11 +1977,6 @@ public final class SimpleAoservClient {
         if (added && !ea.isUsed()) {
           ea.remove();
         }
-      } catch (ThreadDeath td) {
-        @SuppressWarnings("ThrowableResultIgnored")
-        Throwable t = Throwables.addSuppressed(td, e);
-        assert t == td;
-        throw td;
       } catch (Throwable t) {
         @SuppressWarnings("ThrowableResultIgnored")
         Throwable t2 = Throwables.addSuppressed(e, t);

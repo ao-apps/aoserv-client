@@ -176,8 +176,6 @@ public abstract class AoservTable<K, V extends AoservObject<K, V>> implements It
               }
             }
           }
-        } catch (ThreadDeath td) {
-          throw td;
         } catch (InterruptedException e) {
           connector.getLogger().log(Level.WARNING, null, e);
           // Restore the interrupted status

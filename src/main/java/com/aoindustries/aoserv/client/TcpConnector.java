@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -192,8 +192,6 @@ public class TcpConnector extends AoservConnector {
                 Thread.currentThread().interrupt();
               }
             }
-          } catch (ThreadDeath td) {
-            throw td;
           } catch (Throwable t) {
             if (isImmediateFail(t)) {
               runMore = false;
