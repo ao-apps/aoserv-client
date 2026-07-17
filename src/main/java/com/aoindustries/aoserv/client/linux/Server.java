@@ -1020,7 +1020,7 @@ public final class Server
   public com.aoindustries.aoserv.client.mysql.Server getPreferredMysqlServer() throws IOException, SQLException {
     // Look for the most-preferred version that has an instance on the server
     List<com.aoindustries.aoserv.client.mysql.Server> pss = getMysqlServers();
-    for (com.aoindustries.aoserv.client.mysql.Server.Version preferredVersion : com.aoindustries.aoserv.client.mysql.Server.Version.values()) {
+    for (com.aoindustries.aoserv.client.mysql.Server.Version preferredVersion : com.aoindustries.aoserv.client.mysql.Server.Version.PREFERRED_VERSIONS) {
       for (com.aoindustries.aoserv.client.mysql.Server ps : pss) {
         if (preferredVersion.matches(ps.getVersion().getVersion())) {
           return ps;

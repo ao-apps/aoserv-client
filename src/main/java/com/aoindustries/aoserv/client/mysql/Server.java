@@ -253,18 +253,16 @@ public final class Server extends CachedObjectIntegerKey<Server> {
   }
 
   /**
-   * The supported versions of MySQL.
-   *
-   * <p>These are in the order of preference.  Ordinal <code>0</code> is the most preferred.</p>
+   * The supported versions of MySQL in series order.
    */
   public enum Version {
-    VERSION_9_7("9.7."),
-    VERSION_8_4("8.4."),
+    VERSION_4_1("4.1."),
     VERSION_8_0("8.0."),
-    VERSION_5_7("5.7."),
-    VERSION_5_6("5.6."),
     VERSION_5_0("5.0."),
-    VERSION_4_1("4.1.");
+    VERSION_5_6("5.6."),
+    VERSION_5_7("5.7."),
+    VERSION_8_4("8.4."),
+    VERSION_9_7("9.7.");
 
     private final String prefix;
 
@@ -302,6 +300,23 @@ public final class Server extends CachedObjectIntegerKey<Server> {
       }
       throw new IllegalArgumentException("Version not found: " + versionString);
     }
+
+    /**
+     * Gets the versions of MySQL in order of
+     * preference.  Index <code>0</code> is the most
+     * preferred.
+     */
+    public static final List<Version> PREFERRED_VERSIONS = Collections.unmodifiableList(
+        Arrays.asList(
+            VERSION_9_7,
+            VERSION_8_4,
+            VERSION_8_0,
+            VERSION_5_7,
+            VERSION_5_6,
+            VERSION_5_0,
+            VERSION_4_1
+        )
+    );
   }
 
   /**
