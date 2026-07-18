@@ -26,6 +26,7 @@ package com.aoindustries.aoserv.client.mysql;
 import com.aoapps.collections.AoCollections;
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
+import com.aoapps.hodgepodge.util.Tuple2;
 import com.aoapps.lang.dto.DtoFactory;
 import com.aoapps.lang.i18n.Resources;
 import com.aoapps.lang.util.Internable;
@@ -417,6 +418,29 @@ public final class Server extends CachedObjectIntegerKey<Server> {
             Database.INFORMATION_SCHEMA,
             Database.PERFORMANCE_SCHEMA,
             Database.SYS
+          );
+        default:
+          throw new AssertionError("Unexpected version of MySQL: " + this);
+      }
+    }
+
+    /**
+     * Gets the system database users that exist for this MySQL version.
+     */
+    public Set<Tuple2<Database.Name, User.Name>> getSystemDatabaseUsers() {
+      // Java 14: Use switch expression
+      switch (this) {
+        case VERSION_4_1:
+        case VERSION_5_0:
+        case VERSION_5_6:
+          // None
+          return Set.of();
+        case VERSION_5_7:
+        case VERSION_8_0:
+        case VERSION_8_4:
+          return Set.of(
+              new Tuple2<>(Database.PERFORMANCE_SCHEMA, User.MYSQL_SESSION),
+              new Tuple2<>(Database.SYS, User.MYSQL_SYS)
           );
         default:
           throw new AssertionError("Unexpected version of MySQL: " + this);
