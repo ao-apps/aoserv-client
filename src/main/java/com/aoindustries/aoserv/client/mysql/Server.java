@@ -264,24 +264,6 @@ public final class Server extends CachedObjectIntegerKey<Server> {
     VERSION_8_4("8.4."),
     VERSION_9_7("9.7.");
 
-    private final String prefix;
-
-    private Version(String prefix) {
-      this.prefix = prefix;
-    }
-
-    @Override
-    public String toString() {
-      return prefix + '*';
-    }
-
-    /**
-     * Checks whether this version matches the given X.Y.* version string.
-     */
-    public boolean matches(String versionString) {
-      return versionString.startsWith(prefix);
-    }
-
     private static final Version[] VALUES = values();
 
     /**
@@ -317,6 +299,25 @@ public final class Server extends CachedObjectIntegerKey<Server> {
             VERSION_4_1
         )
     );
+
+    private final String prefix;
+
+    private Version(String prefix) {
+      this.prefix = prefix;
+    }
+
+    @Override
+    public String toString() {
+      return prefix + '*';
+    }
+
+    /**
+     * Checks whether this version matches the given X.Y.* version string.
+     */
+    public boolean matches(String versionString) {
+      return versionString.startsWith(prefix);
+    }
+
   }
 
   /**
