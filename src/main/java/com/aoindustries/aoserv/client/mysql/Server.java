@@ -390,6 +390,38 @@ public final class Server extends CachedObjectIntegerKey<Server> {
     public boolean supportsDirectGrantTableUpdates() {
       return isBefore(VERSION_8_4);
     }
+
+    /**
+     * Gets the system databases that exist for this MySQL version.
+     */
+    public Set<Database.Name> getSystemDatabases() {
+      // Java 14: Use switch expression
+      switch (this) {
+        case VERSION_4_1:
+          return Set.of(Database.MYSQL);
+        case VERSION_5_0:
+          return Set.of(
+            Database.MYSQL,
+            Database.INFORMATION_SCHEMA
+          );
+        case VERSION_5_6:
+          return Set.of(
+            Database.MYSQL,
+            Database.INFORMATION_SCHEMA,
+            Database.PERFORMANCE_SCHEMA
+          );
+        case VERSION_5_7:
+        case VERSION_8_4:
+          return Set.of(
+            Database.MYSQL,
+            Database.INFORMATION_SCHEMA,
+            Database.PERFORMANCE_SCHEMA,
+            Database.SYS
+          );
+        default:
+          throw new AssertionError("Unexpected version of MySQL: " + this);
+      }
+    }
   }
 
   /**
