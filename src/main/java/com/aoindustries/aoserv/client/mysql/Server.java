@@ -335,7 +335,14 @@ public final class Server extends CachedObjectIntegerKey<Server> {
     }
 
     /**
-     * Account locking (as found in <code>user.account_locked</code>) is supported in MySQL 5.7 and above.
+     * Max user connections (as found in <code>user.max_user_connections</code>) is present in MySQL 5.0 and above.
+     */
+    public boolean hasMaxUserConnections() {
+      return isAtLeast(VERSION_5_0);
+    }
+
+    /**
+     * Account locking (as found in <code>user.account_locked</code>) is present in MySQL 5.7 and above.
      */
     public boolean hasAccountLocked() {
       return isAtLeast(VERSION_5_7);
