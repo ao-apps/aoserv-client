@@ -318,6 +318,28 @@ public final class Server extends CachedObjectIntegerKey<Server> {
       return versionString.startsWith(prefix);
     }
 
+    public boolean isAtLeast(Version other) {
+      return compareTo(other) >= 0;
+    }
+
+    public boolean isAtMost(Version other) {
+      return compareTo(other) <= 0;
+    }
+
+    public boolean isBefore(Version other) {
+      return compareTo(other) < 0;
+    }
+
+    public boolean isAfter(Version other) {
+      return compareTo(other) > 0;
+    }
+
+    /**
+     * Account locking (as found in <code>user.account_locked</code>) is supported in MySQL 5.7 and above.
+     */
+    public boolean hasAccountLocked() {
+      return isAtLeast(VERSION_5_7);
+    }
   }
 
   /**
