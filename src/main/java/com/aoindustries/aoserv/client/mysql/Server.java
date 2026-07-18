@@ -53,6 +53,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -335,6 +336,38 @@ public final class Server extends CachedObjectIntegerKey<Server> {
     }
 
     /**
+     * Gets an unmodifiable set of the user permissions for this MySQL version.
+     *
+     * @see Permission#isUserPermission()
+     * @see Permission#isSupportedOn(com.aoindustries.aoserv.client.mysql.Server.Version)
+     */
+    public Set<Permission> getUserPermissions() {
+      EnumSet<Permission> permissions = EnumSet.noneOf(Permission.class);
+      for (Permission permission : Permission.values()) {
+        if (permission.isUserPermission() && permission.isSupportedOn(this)) {
+          permissions.add(permission);
+        }
+      }
+      return Collections.unmodifiableSet(permissions);
+    }
+
+    /**
+     * Gets an unmodifiable set of the database-user permissions for this MySQL version.
+     *
+     * @see Permission#isDatabaseUserPermission()
+     * @see Permission#isSupportedOn(com.aoindustries.aoserv.client.mysql.Server.Version)
+     */
+    public Set<Permission> getDatabaseUserPermissions() {
+      EnumSet<Permission> permissions = EnumSet.noneOf(Permission.class);
+      for (Permission permission : Permission.values()) {
+        if (permission.isDatabaseUserPermission() && permission.isSupportedOn(this)) {
+          permissions.add(permission);
+        }
+      }
+      return Collections.unmodifiableSet(permissions);
+    }
+
+    /**
      * Max user connections (as found in <code>user.max_user_connections</code>) is present in MySQL 5.0 and above.
      */
     public boolean hasMaxUserConnections() {
@@ -346,6 +379,16 @@ public final class Server extends CachedObjectIntegerKey<Server> {
      */
     public boolean hasAccountLocked() {
       return isAtLeast(VERSION_5_7);
+    }
+
+    /**
+     * Should MySQL permissions be maintained by direct updates to the user and db grant tables?
+     *
+     * @return  {@code true} for older MySQL versions or {@code false} for where platform now uses
+     *                       <code>GRANT</code> and <code>REVOKE</code>.
+     */
+    public boolean supportsDirectGrantTableUpdates() {
+      return isBefore(VERSION_8_4);
     }
   }
 
