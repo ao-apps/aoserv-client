@@ -35,44 +35,46 @@ import java.util.function.Predicate;
  * @author  AO Industries, Inc.
  */
 public enum Permission {
-  SELECT("Select", "Select_priv", Server.Version.VERSION_4_1, User::canSelect, DatabaseUser::canSelect),
-  INSERT("Insert", "Insert_priv", Server.Version.VERSION_4_1, User::canInsert, DatabaseUser::canInsert),
-  UPDATE("Update", "Update_priv", Server.Version.VERSION_4_1, User::canUpdate, DatabaseUser::canUpdate),
-  DELETE("Delete", "Delete_priv", Server.Version.VERSION_4_1, User::canDelete, DatabaseUser::canDelete),
-  CREATE("Create", "Create_priv", Server.Version.VERSION_4_1, User::canCreate, DatabaseUser::canCreate),
-  DROP("Drop", "Drop_priv", Server.Version.VERSION_4_1, User::canDrop, DatabaseUser::canDrop),
-  RELOAD("Reload", "Reload_priv", Server.Version.VERSION_4_1, User::canReload, null),
-  SHUTDOWN("Shutdown", "Shutdown_priv", Server.Version.VERSION_4_1, User::canShutdown, null),
-  PROCESS("Process", "Process_priv", Server.Version.VERSION_4_1, User::canProcess, null),
-  FILE("File", "File_priv", Server.Version.VERSION_4_1, User::canFile, null),
-  GRANT("Grant", "Grant_priv", Server.Version.VERSION_4_1, User::canGrant, DatabaseUser::canGrant),
-  REFERENCES("Reference", "References_priv", Server.Version.VERSION_4_1, User::canReference, DatabaseUser::canReference),
-  INDEX("Index", "Index_priv", Server.Version.VERSION_4_1, User::canIndex, DatabaseUser::canIndex),
-  ALTER("Alter", "Alter_priv", Server.Version.VERSION_4_1, User::canAlter, DatabaseUser::canAlter),
-  SHOW_DB("Show Db", "Show_db_priv", Server.Version.VERSION_4_1, User::canShowDb, null),
-  SUPER("Super", "Super_priv", Server.Version.VERSION_4_1, User::isSuper, null),
-  CREATE_TMP_TABLE("Create Temp", "Create_tmp_table_priv", Server.Version.VERSION_4_1, User::canCreateTempTable, DatabaseUser::canCreateTempTable),
-  LOCK_TABLES("Lock Tables", "Lock_tables_priv", Server.Version.VERSION_4_1, User::canLockTables, DatabaseUser::canLockTables),
-  EXECUTE("Execute", "Execute_priv", Server.Version.VERSION_4_1, User::canExecute, DatabaseUser::canExecute),
-  REPL_SLAVE("Repl Slave", "Repl_slave_priv", Server.Version.VERSION_4_1, User::isReplicationSlave, null),
-  REPL_CLIENT("Repl Client", "Repl_client_priv", Server.Version.VERSION_4_1, User::isReplicationClient, null),
-  CREATE_VIEW("Create View", "Create_view_priv", Server.Version.VERSION_5_0, User::canCreateView, DatabaseUser::canCreateView),
-  SHOW_VIEW("Show View", "Show_view_priv", Server.Version.VERSION_5_0, User::canShowView, DatabaseUser::canShowView),
-  CREATE_ROUTINE("Create Routine", "Create_routine_priv", Server.Version.VERSION_5_0, User::canCreateRoutine, DatabaseUser::canCreateRoutine),
-  ALTER_ROUTINE("Alter Routine", "Alter_routine_priv", Server.Version.VERSION_5_0, User::canAlterRoutine, DatabaseUser::canAlterRoutine),
-  CREATE_USER("Create User", "Create_user_priv", Server.Version.VERSION_5_0, User::canCreateUser, null),
-  EVENT("Event", "Event_priv", Server.Version.VERSION_5_6, User::canEvent, DatabaseUser::canEvent),
-  TRIGGER("Trigger", "Trigger_priv", Server.Version.VERSION_5_6, User::canTrigger, DatabaseUser::canTrigger);
+  SELECT("Select", "Select_priv", "SELECT", Server.Version.VERSION_4_1, User::canSelect, DatabaseUser::canSelect),
+  INSERT("Insert", "Insert_priv", "INSERT", Server.Version.VERSION_4_1, User::canInsert, DatabaseUser::canInsert),
+  UPDATE("Update", "Update_priv", "UPDATE", Server.Version.VERSION_4_1, User::canUpdate, DatabaseUser::canUpdate),
+  DELETE("Delete", "Delete_priv", "DELETE", Server.Version.VERSION_4_1, User::canDelete, DatabaseUser::canDelete),
+  CREATE("Create", "Create_priv", "CREATE", Server.Version.VERSION_4_1, User::canCreate, DatabaseUser::canCreate),
+  DROP("Drop", "Drop_priv", "DROP", Server.Version.VERSION_4_1, User::canDrop, DatabaseUser::canDrop),
+  RELOAD("Reload", "Reload_priv", "RELOAD", Server.Version.VERSION_4_1, User::canReload, null),
+  SHUTDOWN("Shutdown", "Shutdown_priv", "SHUTDOWN", Server.Version.VERSION_4_1, User::canShutdown, null),
+  PROCESS("Process", "Process_priv", "PROCESS", Server.Version.VERSION_4_1, User::canProcess, null),
+  FILE("File", "File_priv", "FILE", Server.Version.VERSION_4_1, User::canFile, null),
+  GRANT("Grant", "Grant_priv", "GRANT OPTION", Server.Version.VERSION_4_1, User::canGrant, DatabaseUser::canGrant),
+  REFERENCES("Reference", "References_priv", "REFERENCES", Server.Version.VERSION_4_1, User::canReference, DatabaseUser::canReference),
+  INDEX("Index", "Index_priv", "INDEX", Server.Version.VERSION_4_1, User::canIndex, DatabaseUser::canIndex),
+  ALTER("Alter", "Alter_priv", "ALTER", Server.Version.VERSION_4_1, User::canAlter, DatabaseUser::canAlter),
+  SHOW_DB("Show Db", "Show_db_priv", "SHOW DATABASES", Server.Version.VERSION_4_1, User::canShowDb, null),
+  SUPER("Super", "Super_priv", "SUPER", Server.Version.VERSION_4_1, User::isSuper, null),
+  CREATE_TMP_TABLE("Create Temp", "Create_tmp_table_priv", "CREATE TEMPORARY TABLES", Server.Version.VERSION_4_1, User::canCreateTempTable, DatabaseUser::canCreateTempTable),
+  LOCK_TABLES("Lock Tables", "Lock_tables_priv", "LOCK TABLES", Server.Version.VERSION_4_1, User::canLockTables, DatabaseUser::canLockTables),
+  EXECUTE("Execute", "Execute_priv", "EXECUTE", Server.Version.VERSION_4_1, User::canExecute, DatabaseUser::canExecute),
+  REPL_SLAVE("Repl Slave", "Repl_slave_priv", "REPLICATION SLAVE", Server.Version.VERSION_4_1, User::isReplicationSlave, null),
+  REPL_CLIENT("Repl Client", "Repl_client_priv", "REPLICATION CLIENT", Server.Version.VERSION_4_1, User::isReplicationClient, null),
+  CREATE_VIEW("Create View", "Create_view_priv", "CREATE VIEW", Server.Version.VERSION_5_0, User::canCreateView, DatabaseUser::canCreateView),
+  SHOW_VIEW("Show View", "Show_view_priv", "SHOW VIEW", Server.Version.VERSION_5_0, User::canShowView, DatabaseUser::canShowView),
+  CREATE_ROUTINE("Create Routine", "Create_routine_priv", "CREATE ROUTINE", Server.Version.VERSION_5_0, User::canCreateRoutine, DatabaseUser::canCreateRoutine),
+  ALTER_ROUTINE("Alter Routine", "Alter_routine_priv", "ALTER ROUTINE", Server.Version.VERSION_5_0, User::canAlterRoutine, DatabaseUser::canAlterRoutine),
+  CREATE_USER("Create User", "Create_user_priv", "CREATE USER", Server.Version.VERSION_5_0, User::canCreateUser, null),
+  EVENT("Event", "Event_priv", "EVENT", Server.Version.VERSION_5_6, User::canEvent, DatabaseUser::canEvent),
+  TRIGGER("Trigger", "Trigger_priv", "TRIGGER", Server.Version.VERSION_5_6, User::canTrigger, DatabaseUser::canTrigger);
 
   private final String displayName;
   private final String mysqlColumn;
+  private final String mysqlPrivilegeType;
   private final Server.Version since;
   private final Predicate<User> userAccessor;
   private final Predicate<DatabaseUser> databaseUserAccessor;
 
-  private Permission(String displayName, String mysqlColumn, Server.Version since, Predicate<User> userAccessor, Predicate<DatabaseUser> databaseUserAccessor) {
+  private Permission(String displayName, String mysqlColumn, String mysqlPrivilegeType, Server.Version since, Predicate<User> userAccessor, Predicate<DatabaseUser> databaseUserAccessor) {
     this.displayName = displayName;
     this.mysqlColumn = mysqlColumn;
+    this.mysqlPrivilegeType = mysqlPrivilegeType;
     this.since = since;
     this.userAccessor = userAccessor;
     this.databaseUserAccessor = databaseUserAccessor;
@@ -98,6 +100,13 @@ public enum Permission {
    */
   public String getMysqlColumn() {
     return mysqlColumn;
+  }
+
+  /**
+   * The privilege type used in MySQL GRANT and REVOKE.
+   */
+  public String getMysqlPrivilegeType() {
+    return mysqlPrivilegeType;
   }
 
   /**

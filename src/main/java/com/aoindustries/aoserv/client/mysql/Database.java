@@ -294,7 +294,8 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
   }
 
   /**
-   * Special MySQL databases may not be added or removed.
+   * Special MySQL databases may not be added or removed and their representation in the MySQL server will never
+   * be updated while applying configuration changes.
    */
   public static boolean isSpecial(Name name) {
     return
@@ -568,6 +569,10 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
     return name;
   }
 
+  /**
+   * Special MySQL databases may not be added or removed and their representation in the MySQL server will never
+   * be updated while applying configuration changes.
+   */
   public boolean isSpecial() {
     return isSpecial(name);
   }

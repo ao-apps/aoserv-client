@@ -446,6 +446,15 @@ public final class Server extends CachedObjectIntegerKey<Server> {
           throw new AssertionError("Unexpected version of MySQL: " + this);
       }
     }
+
+    /**
+     * Is the given user always locked in this version?
+     */
+    public boolean isAlwaysLocked(User.Name user) {
+      return user.equals(User.MYSQL_INFOSCHEMA)
+          || user.equals(User.MYSQL_SESSION)
+          || user.equals(User.MYSQL_SYS);
+    }
   }
 
   /**

@@ -246,7 +246,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
   }
 
   /**
-   * Special MySQL users may not be added or removed.
+   * Special MySQL users may not be added or removed and their representation in the MySQL server will never
+   * be updated while applying configuration changes.
    */
   public static boolean isSpecial(Name username) {
     return
@@ -609,6 +610,10 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
     return obj;
   }
 
+  /**
+   * Special MySQL users may not be added or removed and their representation in the MySQL server will never
+   * be updated while applying configuration changes.
+   */
   public boolean isSpecial() {
     return isSpecial(pkey);
   }
