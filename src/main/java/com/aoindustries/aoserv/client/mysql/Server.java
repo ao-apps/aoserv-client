@@ -257,10 +257,10 @@ public final class Server extends CachedObjectIntegerKey<Server> {
    */
   public enum Version {
     VERSION_4_1("4.1."),
-    VERSION_8_0("8.0."),
     VERSION_5_0("5.0."),
     VERSION_5_6("5.6."),
     VERSION_5_7("5.7."),
+    VERSION_8_0("8.0."),
     VERSION_8_4("8.4."),
     VERSION_9_7("9.7.");
 
