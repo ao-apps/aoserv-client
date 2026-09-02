@@ -140,11 +140,10 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
     return User.checkPassword(username, password);
   }
 
-  /*
-  public String checkPasswordDescribe(String password) {
-    return MysqlUser.checkPasswordDescribe(username, password);
-  }
-  */
+  // public String checkPasswordDescribe(String password) {
+  //   return MysqlUser.checkPasswordDescribe(username, password);
+  // }
+
   @Override
   public void disable(DisableLog dl) throws IOException, SQLException {
     if (isSpecial()) {

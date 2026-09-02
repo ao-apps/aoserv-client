@@ -142,112 +142,113 @@ public final class TicketTable extends CachedTableIntegerKey<Ticket> {
     return getIndexedRows(Ticket.COLUMN_CREATED_BY, ba.getUsername_userId());
   }
 
-  /*
-  @Override
-  public boolean handleCommand(String[] rawArgs, String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-    String command=args[0];
-    if (command.equalsIgnoreCase(Command.ADD_TICKET)) {
-      if (Aosh.checkParamCount(Command.ADD_TICKET, args, 9, err)) {
-        out.println(
-          connector.getSimpleClient().addTicket(
-            args[1],
-            args[2],
-            args[3],
-            args[4],
-            args[5],
-            args[6],
-            args[7],
-            args[8],
-            args[9]
-          )
-        );
-        out.flush();
-      }
-      return true;
-    } else if (command.equalsIgnoreCase(Command.ADD_TICKET_WORK)) {
-      if (Aosh.checkParamCount(Command.ADD_TICKET_WORK, args, 3, err)) {
-        connector.getSimpleClient().addTicketWork(
-          Aosh.parseInt(args[1], "ticket_id"),
-          args[2],
-          args[3]
-        );
-      }
-      return true;
-    } else if (command.equalsIgnoreCase(Command.BOUNCE_TICKET)) {
-      if (Aosh.checkParamCount(Command.BOUNCE_TICKET, args, 3, err)) {
-        connector.getSimpleClient().bounceTicket(
-          Aosh.parseInt(args[1], "ticket_id"),
-          args[2],
-          args[3]
-        );
-      }
-      return true;
-    } else if (command.equalsIgnoreCase(Command.CHANGE_TICKET_ADMIN_PRIORITY)) {
-      if (Aosh.checkParamCount(Command.CHANGE_TICKET_ADMIN_PRIORITY, args, 4, err)) {
-        connector.getSimpleClient().changeTicketAdminPriority(
-          Aosh.parseInt(args[1], "ticket_id"),
-          args[2],
-          args[3],
-          args[4]
-        );
-      }
-      return true;
-    } else if (command.equalsIgnoreCase(Command.CHANGE_TICKET_CLIENT_PRIORITY)) {
-      if (Aosh.checkParamCount(Command.CHANGE_TICKET_CLIENT_PRIORITY, args, 4, err)) {
-        connector.getSimpleClient().changeTicketClientPriority(
-          Aosh.parseInt(args[1], "ticket_id"),
-          args[2],
-          args[3],
-          args[4]
-        );
-      }
-      return true;
-    } else if (command.equalsIgnoreCase(Command.CHANGE_TICKET_TYPE)) {
-      if (Aosh.checkParamCount(Command.CHANGE_TICKET_TYPE, args, 4, err)) {
-        connector.getSimpleClient().changeTicketType(
-          Aosh.parseInt(args[1], "ticket_id"),
-          args[2],
-          args[3],
-          args[4]
-        );
-      }
-      return true;
-    } else if (command.equalsIgnoreCase(Command.COMPLETE_TICKET)) {
-      if (Aosh.checkParamCount(Command.COMPLETE_TICKET, args, 3, err)) {
-        connector.getSimpleClient().completeTicket(
-          Aosh.parseInt(args[1], "ticket_id"),
-          args[2],
-          args[3]
-        );
-      }
-      return true;
-    } else if (command.equalsIgnoreCase(Command.HOLD_TICKET)) {
-      if (Aosh.checkParamCount(Command.HOLD_TICKET, args, 2, err)) {
-        connector.getSimpleClient().holdTicket(
-          Aosh.parseInt(args[1], "ticket_id"),
-          args[2]
-        );
-      }
-      return true;
-    } else if (command.equalsIgnoreCase(Command.KILL_TICKET)) {
-      if (Aosh.checkParamCount(Command.KILL_TICKET, args, 3, err)) {
-        connector.getSimpleClient().killTicket(
-          Aosh.parseInt(args[1], "ticket_id"),
-          args[2],
-          args[3]
-        );
-      }
-      return true;
-    } else if (command.equalsIgnoreCase(Command.REACTIVATE_TICKET)) {
-      if (Aosh.checkParamCount(Command.REACTIVATE_TICKET, args, 3, err)) {
-        connector.getSimpleClient().reactivateTicket(
-          Aosh.parseInt(args[1], "ticket_id"),
-          args[2],
-          args[3]
-        );
-      }
-      return true;
-    }
-    return false;
-  }*/
+  // @Override
+  // public boolean handleCommand(
+  //     String[] rawArgs, String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive
+  // ) throws IllegalArgumentException, IOException, SQLException {
+  //   String command=args[0];
+  //   if (command.equalsIgnoreCase(Command.ADD_TICKET)) {
+  //     if (Aosh.checkParamCount(Command.ADD_TICKET, args, 9, err)) {
+  //       out.println(
+  //         connector.getSimpleClient().addTicket(
+  //           args[1],
+  //           args[2],
+  //           args[3],
+  //           args[4],
+  //           args[5],
+  //           args[6],
+  //           args[7],
+  //           args[8],
+  //           args[9]
+  //         )
+  //       );
+  //       out.flush();
+  //     }
+  //     return true;
+  //   } else if (command.equalsIgnoreCase(Command.ADD_TICKET_WORK)) {
+  //     if (Aosh.checkParamCount(Command.ADD_TICKET_WORK, args, 3, err)) {
+  //       connector.getSimpleClient().addTicketWork(
+  //         Aosh.parseInt(args[1], "ticket_id"),
+  //         args[2],
+  //         args[3]
+  //       );
+  //     }
+  //     return true;
+  //   } else if (command.equalsIgnoreCase(Command.BOUNCE_TICKET)) {
+  //     if (Aosh.checkParamCount(Command.BOUNCE_TICKET, args, 3, err)) {
+  //       connector.getSimpleClient().bounceTicket(
+  //         Aosh.parseInt(args[1], "ticket_id"),
+  //         args[2],
+  //         args[3]
+  //       );
+  //     }
+  //     return true;
+  //   } else if (command.equalsIgnoreCase(Command.CHANGE_TICKET_ADMIN_PRIORITY)) {
+  //     if (Aosh.checkParamCount(Command.CHANGE_TICKET_ADMIN_PRIORITY, args, 4, err)) {
+  //       connector.getSimpleClient().changeTicketAdminPriority(
+  //         Aosh.parseInt(args[1], "ticket_id"),
+  //         args[2],
+  //         args[3],
+  //         args[4]
+  //       );
+  //     }
+  //     return true;
+  //   } else if (command.equalsIgnoreCase(Command.CHANGE_TICKET_CLIENT_PRIORITY)) {
+  //     if (Aosh.checkParamCount(Command.CHANGE_TICKET_CLIENT_PRIORITY, args, 4, err)) {
+  //       connector.getSimpleClient().changeTicketClientPriority(
+  //         Aosh.parseInt(args[1], "ticket_id"),
+  //         args[2],
+  //         args[3],
+  //         args[4]
+  //       );
+  //     }
+  //     return true;
+  //   } else if (command.equalsIgnoreCase(Command.CHANGE_TICKET_TYPE)) {
+  //     if (Aosh.checkParamCount(Command.CHANGE_TICKET_TYPE, args, 4, err)) {
+  //       connector.getSimpleClient().changeTicketType(
+  //         Aosh.parseInt(args[1], "ticket_id"),
+  //         args[2],
+  //         args[3],
+  //         args[4]
+  //       );
+  //     }
+  //     return true;
+  //   } else if (command.equalsIgnoreCase(Command.COMPLETE_TICKET)) {
+  //     if (Aosh.checkParamCount(Command.COMPLETE_TICKET, args, 3, err)) {
+  //       connector.getSimpleClient().completeTicket(
+  //         Aosh.parseInt(args[1], "ticket_id"),
+  //         args[2],
+  //         args[3]
+  //       );
+  //     }
+  //     return true;
+  //   } else if (command.equalsIgnoreCase(Command.HOLD_TICKET)) {
+  //     if (Aosh.checkParamCount(Command.HOLD_TICKET, args, 2, err)) {
+  //       connector.getSimpleClient().holdTicket(
+  //         Aosh.parseInt(args[1], "ticket_id"),
+  //         args[2]
+  //       );
+  //     }
+  //     return true;
+  //   } else if (command.equalsIgnoreCase(Command.KILL_TICKET)) {
+  //     if (Aosh.checkParamCount(Command.KILL_TICKET, args, 3, err)) {
+  //       connector.getSimpleClient().killTicket(
+  //         Aosh.parseInt(args[1], "ticket_id"),
+  //         args[2],
+  //         args[3]
+  //       );
+  //     }
+  //     return true;
+  //   } else if (command.equalsIgnoreCase(Command.REACTIVATE_TICKET)) {
+  //     if (Aosh.checkParamCount(Command.REACTIVATE_TICKET, args, 3, err)) {
+  //       connector.getSimpleClient().reactivateTicket(
+  //         Aosh.parseInt(args[1], "ticket_id"),
+  //         args[2],
+  //         args[3]
+  //       );
+  //     }
+  //     return true;
+  //   }
+  //   return false;
+  // }
 }

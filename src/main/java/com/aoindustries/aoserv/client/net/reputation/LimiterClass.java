@@ -40,7 +40,7 @@ import java.sql.SQLException;
  */
 public final class LimiterClass extends CachedObjectIntegerKey<LimiterClass> {
 
-  static final int COLUMN_PKEY    = 0;
+  static final int COLUMN_PKEY = 0;
   static final int COLUMN_LIMITER = 1;
   static final String COLUMN_LIMITER_name = "limiter";
   static final String COLUMN_CLASS_name = "class";
@@ -60,22 +60,22 @@ public final class LimiterClass extends CachedObjectIntegerKey<LimiterClass> {
     }
   }
 
-  private int          limiter;
-  private Class        clazz;
-  private short        synPerIpBurst;
-  private short        synPerIpRate;
-  private TimeUnit     synPerIpUnit;
-  private short        synPerIpSize;
-  private short        synBurst;
-  private short        synRate;
-  private TimeUnit     synUnit;
-  private int          packetPerIpBurst;
-  private int          packetPerIpRate;
-  private TimeUnit     packetPerIpUnit;
-  private int          packetPerIpSize;
-  private int          packetBurst;
-  private int          packetRate;
-  private TimeUnit     packetUnit;
+  private int limiter;
+  private Class clazz;
+  private short synPerIpBurst;
+  private short synPerIpRate;
+  private TimeUnit synPerIpUnit;
+  private short synPerIpSize;
+  private short synBurst;
+  private short synRate;
+  private TimeUnit synUnit;
+  private int packetPerIpBurst;
+  private int packetPerIpRate;
+  private TimeUnit packetPerIpUnit;
+  private int packetPerIpSize;
+  private int packetBurst;
+  private int packetRate;
+  private TimeUnit packetUnit;
 
   /**
    * @deprecated  Only required for implementation, do not use directly.
@@ -96,23 +96,23 @@ public final class LimiterClass extends CachedObjectIntegerKey<LimiterClass> {
   @Override
   public void init(ResultSet result) throws SQLException {
     int pos = 1;
-    pkey             = result.getInt(pos++);
-    limiter          = result.getInt(pos++);
-    clazz            = Class.valueOf(result.getString(pos++));
-    synPerIpBurst    = result.getShort(pos++);
-    synPerIpRate     = result.getShort(pos++);
-    synPerIpUnit     = TimeUnit.valueOf(result.getString(pos++));
-    synPerIpSize     = result.getShort(pos++);
-    synBurst         = result.getShort(pos++);
-    synRate          = result.getShort(pos++);
-    synUnit          = TimeUnit.valueOf(result.getString(pos++));
+    pkey = result.getInt(pos++);
+    limiter = result.getInt(pos++);
+    clazz = Class.valueOf(result.getString(pos++));
+    synPerIpBurst = result.getShort(pos++);
+    synPerIpRate = result.getShort(pos++);
+    synPerIpUnit = TimeUnit.valueOf(result.getString(pos++));
+    synPerIpSize = result.getShort(pos++);
+    synBurst = result.getShort(pos++);
+    synRate = result.getShort(pos++);
+    synUnit = TimeUnit.valueOf(result.getString(pos++));
     packetPerIpBurst = result.getInt(pos++);
-    packetPerIpRate  = result.getInt(pos++);
-    packetPerIpUnit  = TimeUnit.valueOf(result.getString(pos++));
-    packetPerIpSize  = result.getInt(pos++);
-    packetBurst      = result.getInt(pos++);
-    packetRate       = result.getInt(pos++);
-    packetUnit       = TimeUnit.valueOf(result.getString(pos++));
+    packetPerIpRate = result.getInt(pos++);
+    packetPerIpUnit = TimeUnit.valueOf(result.getString(pos++));
+    packetPerIpSize = result.getInt(pos++);
+    packetBurst = result.getInt(pos++);
+    packetRate = result.getInt(pos++);
+    packetUnit = TimeUnit.valueOf(result.getString(pos++));
   }
 
   @Override
@@ -138,23 +138,23 @@ public final class LimiterClass extends CachedObjectIntegerKey<LimiterClass> {
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey             = in.readCompressedInt();
-    limiter          = in.readCompressedInt();
-    clazz            = Class.valueOf(in.readUTF());
-    synPerIpBurst    = in.readShort();
-    synPerIpRate     = in.readShort();
-    synPerIpUnit     = TimeUnit.valueOf(in.readUTF());
-    synPerIpSize     = in.readShort();
-    synBurst         = in.readShort();
-    synRate          = in.readShort();
-    synUnit          = TimeUnit.valueOf(in.readUTF());
+    pkey = in.readCompressedInt();
+    limiter = in.readCompressedInt();
+    clazz = Class.valueOf(in.readUTF());
+    synPerIpBurst = in.readShort();
+    synPerIpRate = in.readShort();
+    synPerIpUnit = TimeUnit.valueOf(in.readUTF());
+    synPerIpSize = in.readShort();
+    synBurst = in.readShort();
+    synRate = in.readShort();
+    synUnit = TimeUnit.valueOf(in.readUTF());
     packetPerIpBurst = in.readInt();
-    packetPerIpRate  = in.readInt();
-    packetPerIpUnit  = TimeUnit.valueOf(in.readUTF());
-    packetPerIpSize  = in.readInt();
-    packetBurst      = in.readInt();
-    packetRate       = in.readInt();
-    packetUnit       = TimeUnit.valueOf(in.readUTF());
+    packetPerIpRate = in.readInt();
+    packetPerIpUnit = TimeUnit.valueOf(in.readUTF());
+    packetPerIpSize = in.readInt();
+    packetBurst = in.readInt();
+    packetRate = in.readInt();
+    packetUnit = TimeUnit.valueOf(in.readUTF());
   }
 
   @Override

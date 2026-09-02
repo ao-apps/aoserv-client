@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2012, 2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025  AO Industries, Inc.
+ * Copyright (C) 2012, 2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -44,7 +44,7 @@ public final class Host extends CachedObjectLongKey<Host> {
 
   static final int COLUMN_PKEY = 0;
   static final int COLUMN_SET = 1;
-  static final String COLUMN_SET_name  = "set";
+  static final String COLUMN_SET_name = "set";
   static final String COLUMN_HOST_name = "host";
 
   private int set;
@@ -71,11 +71,11 @@ public final class Host extends CachedObjectLongKey<Host> {
   @Override
   public void init(ResultSet result) throws SQLException {
     int pos = 1;
-    pkey           = result.getLong(pos++);
-    set            = result.getInt(pos++);
-    host           = result.getInt(pos++);
+    pkey = result.getLong(pos++);
+    set = result.getInt(pos++);
+    host = result.getInt(pos++);
     goodReputation = result.getShort(pos++);
-    badReputation  = result.getShort(pos++);
+    badReputation = result.getShort(pos++);
   }
 
   @Override
@@ -89,11 +89,11 @@ public final class Host extends CachedObjectLongKey<Host> {
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey           = in.readLong();
-    set            = in.readCompressedInt();
-    host           = in.readInt();
+    pkey = in.readLong();
+    set = in.readCompressedInt();
+    host = in.readInt();
     goodReputation = in.readShort();
-    badReputation  = in.readShort();
+    badReputation = in.readShort();
   }
 
   @Override

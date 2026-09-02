@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -109,9 +109,9 @@ public final class UserServer extends CachedObjectIntegerKey<UserServer> impleme
     return User.checkPassword(username, password);
   }
 
-  /*public String checkPasswordDescribe(String password) {
-    return PostgresUser.checkPasswordDescribe(username, password);
-  }*/
+  // public String checkPasswordDescribe(String password) {
+  //   return PostgresUser.checkPasswordDescribe(username, password);
+  // }
 
   @Override
   public void disable(DisableLog dl) throws IOException, SQLException {

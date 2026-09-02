@@ -406,13 +406,13 @@ public final class User extends CachedObjectUserNameKey<User> implements Removab
     return PasswordChecker.checkPassword(username, password, PasswordChecker.PasswordStrength.STRICT);
   }
 
-  /*public String checkPasswordDescribe(String password) {
-    return checkPasswordDescribe(pkey, password);
-  }
-
-  public static String checkPasswordDescribe(String username, String password) {
-    return PasswordChecker.checkPasswordDescribe(username, password, true, false);
-  }*/
+  // public String checkPasswordDescribe(String password) {
+  //   return checkPasswordDescribe(pkey, password);
+  // }
+  //
+  // public static String checkPasswordDescribe(String username, String password) {
+  //   return PasswordChecker.checkPasswordDescribe(username, password, true, false);
+  // }
 
   @Override
   public void disable(DisableLog dl) throws IOException, SQLException {

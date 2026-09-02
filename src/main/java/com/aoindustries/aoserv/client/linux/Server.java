@@ -1070,10 +1070,9 @@ public final class Server
     return nd.getPrimaryIpAddress();
   }
 
-  /*
-  public PrivateFtpServer getPrivateFtpServer(String path) {
-    return table.getConnector().privateFtpServers.getPrivateFtpServer(this, path);
-  }*/
+  // public PrivateFtpServer getPrivateFtpServer(String path) {
+  //   return table.getConnector().privateFtpServers.getPrivateFtpServer(this, path);
+  // }
 
   public List<PrivateServer> getPrivateFtpServers() throws IOException, SQLException {
     return table.getConnector().getFtp().getPrivateServer().getPrivateFtpServers(this);

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2009, 2016, 2017, 2019, 2021, 2022, 2025  AO Industries, Inc.
+ * Copyright (C) 2003-2009, 2016, 2017, 2019, 2021, 2022, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -51,15 +51,13 @@ public abstract class FilesystemCachedObject<K, T extends FilesystemCachedObject
     // Do nothing
   }
 
-  /*
-  public FileListObject createInstance() throws IOException {
-    T fco=table.getNewObject();
-    if (table != null) {
-      fco.setTable(table);
-    }
-    return fco;
-  }
-   */
+  // public FileListObject createInstance() throws IOException {
+  //   T fco=table.getNewObject();
+  //   if (table != null) {
+  //     fco.setTable(table);
+  //   }
+  //   return fco;
+  // }
 
   @Override
   public final AoservTable<K, T> getTable() {

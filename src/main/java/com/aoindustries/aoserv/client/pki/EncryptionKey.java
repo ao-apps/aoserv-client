@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2007-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025  AO Industries, Inc.
+ * Copyright (C) 2007-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -55,22 +55,20 @@ public final class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
   static final String COLUMN_ACCOUNTING_name = "accounting";
   static final String COLUMN_ID_name = "id";
 
-  /*
-   * Test call
-  public static void main(String[] args) {
-    try {
-      System.out.print(
-        encrypt(
-          "AO Industries, Inc. (Development) <webmaster@freedom.aoindustries.com>",
-          "AO Industries, Inc. (Accounting) <accounting@aoindustries.com>",
-          "Test message"
-        )
-      );
-    } catch (IOException err) {
-      err.printStackTrace();
-    }
-  }
-   */
+  // Test call
+  // public static void main(String[] args) {
+  //   try {
+  //     System.out.print(
+  //       encrypt(
+  //         "AO Industries, Inc. (Development) <webmaster@freedom.aoindustries.com>",
+  //         "AO Industries, Inc. (Accounting) <accounting@aoindustries.com>",
+  //         "Test message"
+  //       )
+  //     );
+  //   } catch (IOException err) {
+  //     err.printStackTrace();
+  //   }
+  // }
 
   /**
    * Uses the provided public key to encrypt the data.

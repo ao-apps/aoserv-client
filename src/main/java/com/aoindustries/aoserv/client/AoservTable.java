@@ -316,27 +316,26 @@ public abstract class AoservTable<K, V extends AoservObject<K, V>> implements It
     return connector;
   }
 
-  /*
-   * Commented-out because I'm not sure if this handles the references like ao_server.server.farm.name
-   *  - Dan 2008-04-18
-  public final SchemaColumn[] getDefaultSortSchemaColumns() {
-    OrderBy[] orderBys=getDefaultOrderBy();
-    if (orderBys == null) {
-      return null;
-    }
-    int len=orderBys.length;
-    SchemaTable schemaTable=connector.schemaTables.get(getTableId());
-    SchemaColumn[] schemaColumns=new SchemaColumn[len];
-    for (int c=0;c<len;c++) {
-      String columnName=orderBys[c].getExpression();
-      SchemaColumn col=schemaTable.getSchemaColumn(connector, columnName);
-      if (col == null) {
-        throw new SQLException("Unable to find SchemaColumn: "+columnName+" on "+schemaTable.getName());
-      }
-      schemaColumns[c]=col;
-    }
-    return schemaColumns;
-  }*/
+  // Commented-out because I'm not sure if this handles the references like ao_server.server.farm.name
+  //  - Dan 2008-04-18
+  // public final SchemaColumn[] getDefaultSortSchemaColumns() {
+  //   OrderBy[] orderBys=getDefaultOrderBy();
+  //   if (orderBys == null) {
+  //     return null;
+  //   }
+  //   int len=orderBys.length;
+  //   SchemaTable schemaTable=connector.schemaTables.get(getTableId());
+  //   SchemaColumn[] schemaColumns=new SchemaColumn[len];
+  //   for (int c=0;c<len;c++) {
+  //     String columnName=orderBys[c].getExpression();
+  //     SchemaColumn col=schemaTable.getSchemaColumn(connector, columnName);
+  //     if (col == null) {
+  //       throw new SQLException("Unable to find SchemaColumn: "+columnName+" on "+schemaTable.getName());
+  //     }
+  //     schemaColumns[c]=col;
+  //   }
+  //   return schemaColumns;
+  // }
 
   /**
    * Indicates ascending sort.
@@ -409,10 +408,9 @@ public abstract class AoservTable<K, V extends AoservObject<K, V>> implements It
     }
   }
 
-  /*
-  protected int getMaxConnectionsPerThread() {
-    return 1;
-  }*/
+  // protected int getMaxConnectionsPerThread() {
+  //   return 1;
+  // }
 
   /**
    * Gets a single object or {@code null} when not found.

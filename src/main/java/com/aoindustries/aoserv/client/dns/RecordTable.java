@@ -133,9 +133,9 @@ public final class RecordTable extends CachedTableIntegerKey<Record> {
     String command = args[0];
     if (command.equalsIgnoreCase(Command.ADD_DNS_RECORD)) {
       if (Aosh.checkMinParamCount(Command.ADD_DNS_RECORD, args, 3, err)) {
-        String zone   = args[1];
+        String zone = args[1];
         String domain = args[2];
-        String type   = args[3];
+        String type = args[3];
         int priority;
         int weight;
         int port;
@@ -154,13 +154,13 @@ public final class RecordTable extends CachedTableIntegerKey<Record> {
               )
                 && (args.length == 5 || args.length == 6)
         ) {
-          priority    = Record.NO_PRIORITY;
-          weight      = Record.NO_WEIGHT;
-          port        = Record.NO_PORT;
-          flag        = Record.NO_FLAG;
-          tag         = null;
+          priority = Record.NO_PRIORITY;
+          weight = Record.NO_WEIGHT;
+          port = Record.NO_PORT;
+          flag = Record.NO_FLAG;
+          tag = null;
           destination = args[4];
-          ttl         = args.length <= 5 || args[5].isEmpty() ? Record.NO_TTL : Aosh.parseInt(args[5], "ttl");
+          ttl = args.length <= 5 || args[5].isEmpty() ? Record.NO_TTL : Aosh.parseInt(args[5], "ttl");
         } else if (
             RecordType.CAA.equals(type)
                 && (args.length == 7 || args.length == 8)
@@ -168,41 +168,41 @@ public final class RecordTable extends CachedTableIntegerKey<Record> {
           priority = Record.NO_PRIORITY;
           weight = Record.NO_WEIGHT;
           port = Record.NO_PORT;
-          flag        = Aosh.parseShort(args[4], "flag");
-          tag         = args[5];
+          flag = Aosh.parseShort(args[4], "flag");
+          tag = args[5];
           destination = args[6];
-          ttl         = args.length <= 7 || args[7].isEmpty() ? Record.NO_TTL : Aosh.parseInt(args[7], "ttl");
+          ttl = args.length <= 7 || args[7].isEmpty() ? Record.NO_TTL : Aosh.parseInt(args[7], "ttl");
         } else if (
             RecordType.MX.equals(type)
                 && (args.length == 6 || args.length == 7)
         ) {
-          priority    = Aosh.parseInt(args[4], "priority");
-          weight      = Record.NO_WEIGHT;
-          port        = Record.NO_PORT;
-          flag        = Record.NO_FLAG;
-          tag         = null;
+          priority = Aosh.parseInt(args[4], "priority");
+          weight = Record.NO_WEIGHT;
+          port = Record.NO_PORT;
+          flag = Record.NO_FLAG;
+          tag = null;
           destination = args[5];
-          ttl         = args.length <= 6 || args[6].isEmpty() ? Record.NO_TTL : Aosh.parseInt(args[6], "ttl");
+          ttl = args.length <= 6 || args[6].isEmpty() ? Record.NO_TTL : Aosh.parseInt(args[6], "ttl");
         } else if (
             RecordType.SRV.equals(type)
                 && (args.length == 8 || args.length == 9)
         ) {
-          priority    = Aosh.parseInt(args[4], "priority");
-          weight      = Aosh.parseInt(args[5], "weight");
-          port        = Aosh.parseInt(args[6], "port");
-          flag        = Record.NO_FLAG;
-          tag         = null;
+          priority = Aosh.parseInt(args[4], "priority");
+          weight = Aosh.parseInt(args[5], "weight");
+          port = Aosh.parseInt(args[6], "port");
+          flag = Record.NO_FLAG;
+          tag = null;
           destination = args[7];
-          ttl         = args.length <= 8 || args[8].isEmpty() ? Record.NO_TTL : Aosh.parseInt(args[8], "ttl");
+          ttl = args.length <= 8 || args[8].isEmpty() ? Record.NO_TTL : Aosh.parseInt(args[8], "ttl");
         } else if (args.length == 10 || Aosh.checkParamCount(Command.ADD_DNS_RECORD, args, 10, err)) {
           // Arbitrary type, all fields
-          priority    = args[4].isEmpty() ? Record.NO_PRIORITY : Aosh.parseInt(args[4], "priority");
-          weight      = args[5].isEmpty() ? Record.NO_WEIGHT   : Aosh.parseInt(args[5], "weight");
-          port        = args[6].isEmpty() ? Record.NO_PORT     : Aosh.parseInt(args[6], "port");
-          flag        = args[7].isEmpty() ? Record.NO_FLAG     : Aosh.parseShort(args[7], "flag");
-          tag         = args[8].isEmpty() ? null               : args[8];
+          priority = args[4].isEmpty() ? Record.NO_PRIORITY : Aosh.parseInt(args[4], "priority");
+          weight = args[5].isEmpty() ? Record.NO_WEIGHT : Aosh.parseInt(args[5], "weight");
+          port = args[6].isEmpty() ? Record.NO_PORT : Aosh.parseInt(args[6], "port");
+          flag = args[7].isEmpty() ? Record.NO_FLAG : Aosh.parseShort(args[7], "flag");
+          tag = args[8].isEmpty() ? null : args[8];
           destination = args[9];
-          ttl         = args.length <= 10 || args[10].isEmpty() ? Record.NO_TTL : Aosh.parseInt(args[10], "ttl");
+          ttl = args.length <= 10 || args[10].isEmpty() ? Record.NO_TTL : Aosh.parseInt(args[10], "ttl");
         } else {
           return true;
         }

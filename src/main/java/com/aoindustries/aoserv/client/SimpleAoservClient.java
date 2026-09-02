@@ -5353,16 +5353,14 @@ public final class SimpleAoservClient {
    * @see  Site#initializePasswdFile
    * @see  SimpleAoservClient#addHttpdTomcatStdSite
    */
-  /*
-  public void initializeHttpdSitePasswdFile(
-    String siteName,
-    String aoServer,
-    String username,
-    String password
-  ) {
-    getHttpdSite(aoServer, siteName).initializePasswdFile(username, password);
-  }
-   */
+  // public void initializeHttpdSitePasswdFile(
+  //   String siteName,
+  //   String aoServer,
+  //   String username,
+  //   String password
+  // ) {
+  //   getHttpdSite(aoServer, siteName).initializePasswdFile(username, password);
+  // }
 
   private static final int numTables = Table.TableId.values().length;
 

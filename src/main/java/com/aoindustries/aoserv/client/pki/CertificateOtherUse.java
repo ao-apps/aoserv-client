@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017, 2018, 2019, 2021, 2022, 2025  AO Industries, Inc.
+ * Copyright (C) 2017, 2018, 2019, 2021, 2022, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -89,20 +89,20 @@ public final class CertificateOtherUse extends CachedObjectIntegerKey<Certificat
   @Override
   public void init(ResultSet result) throws SQLException {
     int pos = 1;
-    pkey           = result.getInt(pos++);
+    pkey = result.getInt(pos++);
     sslCertificate = result.getInt(pos++);
-    sortOrder      = result.getShort(pos++);
-    count          = result.getInt(pos++);
-    display        = result.getString(pos++);
+    sortOrder = result.getShort(pos++);
+    count = result.getInt(pos++);
+    display = result.getString(pos++);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey           = in.readCompressedInt();
+    pkey = in.readCompressedInt();
     sslCertificate = in.readCompressedInt();
-    sortOrder      = in.readShort();
-    count          = in.readCompressedInt();
-    display        = in.readUTF();
+    sortOrder = in.readShort();
+    count = in.readCompressedInt();
+    display = in.readUTF();
   }
 
   @Override

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2011, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024  AO Industries, Inc.
+ * Copyright (C) 2001-2011, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -55,50 +55,50 @@ public final class PasswordGenerator {
   private static final long MINIMUM_ENTROPY = 413000000000L;
 
   private static final String[] CONS = {
-      "b",            "bl",   "br",
-      "c",    "cl",   "cr",
+      "b", "bl", "br",
+      "c", "cl", "cr",
       "ch",
-      "d",                    "dr",   "dw",
-      "f",            "fl",   "fr",
-      "g",            "gl",   "gr",   "gw",
+      "d", "dr", "dw",
+      "f", "fl", "fr",
+      "g", "gl", "gr", "gw",
       "h",
       "j",
-      "k",            "kl",   "kr",
+      "k", "kl", "kr",
       "l",
       "m",
       "n",
-      "p",    "ph",   "pl",   "pr",
+      "p", "ph", "pl", "pr",
       "qu",
       "r",
-      "s",    "sc",   "scr",  "sk",   "sl",   "sm",   "sn",   "sp",   "spl",  "spr",  "st",  "str",  "sw",
+      "s", "sc", "scr", "sk", "sl", "sm", "sn", "sp", "spl", "spr", "st", "str", "sw",
       "sh",
-      "t",    "tr",   "tw",
-      "th",   "thr",
+      "t", "tr", "tw",
+      "th", "thr",
       "v",
-      "w",    "wh",
+      "w", "wh",
       "y",
       "z",
   };
 
   private static final String[] TERM_CONS = {
       "b",
-      "ch",   "tch",  "ck",
+      "ch", "tch", "ck",
       "d",
-      "f",    "ff",
+      "f", "ff",
       "g",
       "k",
-      "l",   "lch",   "ld",  "lf",  "lk",  "lm",  "lp", "lsh",  "lt",  "lth",  "lve",  "ll",
-      "m",    "mp",
-      "n",    "nd",   "ng",  "nk",  "nt",
+      "l", "lch", "ld", "lf", "lk", "lm", "lp", "lsh", "lt", "lth", "lve", "ll",
+      "m", "mp",
+      "n", "nd", "ng", "nk", "nt",
       "p",
-      "r",   "rch",   "rd",  "rf",  "rg",  "rk",  "rm",  "rn",  "rp",  "rsh",  "rt",  "rth",  "rve",
-      "sk",   "sp",   "ss",  "st",
+      "r", "rch", "rd", "rf", "rg", "rk", "rm", "rn", "rp", "rsh", "rt", "rth", "rve",
+      "sk", "sp", "ss", "st",
       "sh",
-      "t",    "tt",
+      "t", "tt",
       "th",
       "ve",
       "x",
-      "z",    "zz",
+      "z", "zz",
   };
 
   private static final String[] VOWS = {
@@ -110,11 +110,11 @@ public final class PasswordGenerator {
   };
 
   private static final String[] TERM_VOWS = {
-      "a",    "ay",   "ya",   "ah",   "ar",   "al",
-      "ey",   "ee",   "er",   "el",
-      "i",    "io",   "yo",
-      "o",    "oi",   "oy",   "oh",   "or",   "ol",
-      "uh",   "ul",
+      "a", "ay", "ya", "ah", "ar", "al",
+      "ey", "ee", "er", "el",
+      "i", "io", "yo",
+      "o", "oi", "oy", "oh", "or", "ol",
+      "uh", "ul",
       "y"
   };
 

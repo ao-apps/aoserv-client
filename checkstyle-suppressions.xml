@@ -193,4 +193,10 @@ along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
   <!-- Will not reorder overloads -->
   <suppress checks="OverloadMethodsDeclarationOrder" />
 
+  <!-- Using multiple spaces for vertical alignment -->
+  <suppress
+    checks="SingleSpaceSeparator"
+    files=".*BeanInfo\.java$"
+  />
+
 </suppressions>

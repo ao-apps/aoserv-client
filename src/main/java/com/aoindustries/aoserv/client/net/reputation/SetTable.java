@@ -63,11 +63,9 @@ public final class SetTable extends CachedTableIntegerKey<Set> {
     return getUniqueRow(Set.COLUMN_IDENTIFIER, identifier);
   }
 
-  /*
-  List<IpReputationSet> getIpReputationSets(Account bu) throws IOException, SQLException {
-    return getIndexedRows(IpReputationSet.COLUMN_ACCOUNTING, bu.getAccounting());
-  }
-   */
+  // List<IpReputationSet> getIpReputationSets(Account bu) throws IOException, SQLException {
+  //   return getIndexedRows(IpReputationSet.COLUMN_ACCOUNTING, bu.getAccounting());
+  // }
 
   @Override
   public Table.TableId getTableId() {

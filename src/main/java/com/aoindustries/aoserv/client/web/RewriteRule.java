@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017, 2018, 2019, 2021, 2022, 2025  AO Industries, Inc.
+ * Copyright (C) 2017, 2018, 2019, 2021, 2022, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -182,24 +182,24 @@ public final class RewriteRule extends CachedObjectIntegerKey<RewriteRule> {
   @Override
   public void init(ResultSet result) throws SQLException {
     int pos = 1;
-    pkey         = result.getInt(pos++);
-    virtualHost  = result.getInt(pos++);
-    sortOrder    = result.getShort(pos++);
-    pattern      = result.getString(pos++);
+    pkey = result.getInt(pos++);
+    virtualHost = result.getInt(pos++);
+    sortOrder = result.getShort(pos++);
+    pattern = result.getString(pos++);
     substitution = result.getString(pos++);
-    flags        = result.getString(pos++);
-    comment      = result.getString(pos++);
+    flags = result.getString(pos++);
+    comment = result.getString(pos++);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey         = in.readCompressedInt();
-    virtualHost  = in.readCompressedInt();
-    sortOrder    = in.readShort();
-    pattern      = in.readUTF();
+    pkey = in.readCompressedInt();
+    virtualHost = in.readCompressedInt();
+    sortOrder = in.readShort();
+    pattern = in.readUTF();
     substitution = in.readUTF();
-    flags        = in.readNullUTF();
-    comment      = in.readNullUTF();
+    flags = in.readNullUTF();
+    comment = in.readNullUTF();
   }
 
   /**

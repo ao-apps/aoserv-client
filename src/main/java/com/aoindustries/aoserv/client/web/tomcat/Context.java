@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025  AO Industries, Inc.
+ * Copyright (C) 2002-2009, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -289,12 +289,11 @@ public final class Context extends CachedObjectIntegerKey<Context> implements Re
   public static boolean isValidDocBase(PosixPath docBase) {
     String docBaseStr = docBase.toString();
     return
-        /* UnixPath checks these:
-        docBase.length()>1
-        && docBase.charAt(0) == '/'
-        && !docBase.contains("//")
-        && !docBase.contains("..")
-        */
+        // UnixPath checks these:
+        // docBase.length()>1
+        // && docBase.charAt(0) == '/'
+        // && !docBase.contains("//")
+        // && !docBase.contains("..")
         docBaseStr.indexOf('"') == -1
             && docBaseStr.indexOf('\\') == -1
             && docBaseStr.indexOf('\n') == -1

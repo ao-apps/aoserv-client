@@ -83,7 +83,7 @@ public final class Version extends GlobalObjectIntegerKey<Version> {
    * <p>TODO: Rename "getPreferredMajorVersions</p>
    */
   public static String[] getPreferredMinorVersions() {
-    return new String[]{
+    return new String[] {
         VERSION_18,
         VERSION_17,
         VERSION_16,

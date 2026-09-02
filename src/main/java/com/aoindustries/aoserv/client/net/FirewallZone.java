@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025  AO Industries, Inc.
+ * Copyright (C) 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -356,12 +356,12 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
   @Override
   public void init(ResultSet result) throws SQLException {
     try {
-      pkey        = result.getInt(1);
-      server      = result.getInt(2);
-      name        = Name.valueOf(result.getString(3));
-      shart      = result.getString(4);
+      pkey = result.getInt(1);
+      server = result.getInt(2);
+      name = Name.valueOf(result.getString(3));
+      shart = result.getString(4);
       description = result.getString(5);
-      fail2ban    = result.getBoolean(6);
+      fail2ban = result.getBoolean(6);
     } catch (ValidationException e) {
       throw new SQLException(e);
     }

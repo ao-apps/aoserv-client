@@ -35,7 +35,7 @@ public class SchemaBeanInfo extends SimpleBeanInfo {
 
   static {
     try {
-      properties = new PropertyDescriptor[]{
+      properties = new PropertyDescriptor[] {
           new PropertyDescriptor("Address",             Schema.class, "getAddress",             null),
           new PropertyDescriptor("AttachmentBlock",     Schema.class, "getAttachmentBlock",     null),
           new PropertyDescriptor("AttachmentType",      Schema.class, "getAttachmentType",      null),
@@ -80,7 +80,7 @@ public class SchemaBeanInfo extends SimpleBeanInfo {
   @Override
   public BeanInfo[] getAdditionalBeanInfo() {
     try {
-      return new BeanInfo[]{
+      return new BeanInfo[] {
           Introspector.getBeanInfo(Schema.class.getSuperclass())
       };
     } catch (IntrospectionException err) {

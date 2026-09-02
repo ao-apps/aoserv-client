@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025  AO Industries, Inc.
+ * Copyright (C) 2012, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -39,7 +39,7 @@ import java.sql.SQLException;
  */
 public final class LimiterSet extends CachedObjectIntegerKey<LimiterSet> {
 
-  static final int COLUMN_PKEY    = 0;
+  static final int COLUMN_PKEY = 0;
   static final int COLUMN_LIMITER = 1;
   static final String COLUMN_LIMITER_name = "limiter";
   static final String COLUMN_SORT_ORDER_name = "sort_order";
@@ -67,9 +67,9 @@ public final class LimiterSet extends CachedObjectIntegerKey<LimiterSet> {
   @Override
   public void init(ResultSet result) throws SQLException {
     int pos = 1;
-    pkey      = result.getInt(pos++);
-    limiter   = result.getInt(pos++);
-    set       = result.getInt(pos++);
+    pkey = result.getInt(pos++);
+    limiter = result.getInt(pos++);
+    set = result.getInt(pos++);
     sortOrder = result.getShort(pos++);
   }
 
@@ -83,9 +83,9 @@ public final class LimiterSet extends CachedObjectIntegerKey<LimiterSet> {
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey      = in.readCompressedInt();
-    limiter   = in.readCompressedInt();
-    set       = in.readCompressedInt();
+    pkey = in.readCompressedInt();
+    limiter = in.readCompressedInt();
+    set = in.readCompressedInt();
     sortOrder = in.readShort();
   }
 

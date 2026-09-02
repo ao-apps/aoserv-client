@@ -225,32 +225,32 @@ public final class Header extends CachedObjectIntegerKey<Header> {
   @Override
   public void init(ResultSet result) throws SQLException {
     int pos = 1;
-    pkey            = result.getInt(pos++);
+    pkey = result.getInt(pos++);
     httpdSiteBind = result.getInt(pos++);
-    sortOrder       = result.getShort(pos++);
-    type            = Type.valueOf(result.getString(pos++));
-    always          = result.getBoolean(pos++);
-    action          = result.getString(pos++);
-    header          = result.getString(pos++);
-    value           = result.getString(pos++);
-    replacement     = result.getString(pos++);
-    when            = result.getString(pos++);
-    comment         = result.getString(pos++);
+    sortOrder = result.getShort(pos++);
+    type = Type.valueOf(result.getString(pos++));
+    always = result.getBoolean(pos++);
+    action = result.getString(pos++);
+    header = result.getString(pos++);
+    value = result.getString(pos++);
+    replacement = result.getString(pos++);
+    when = result.getString(pos++);
+    comment = result.getString(pos++);
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey            = in.readCompressedInt();
+    pkey = in.readCompressedInt();
     httpdSiteBind = in.readCompressedInt();
-    sortOrder       = in.readShort();
-    type            = in.readEnum(Type.class);
-    always          = in.readBoolean();
-    action          = in.readUTF();
-    header          = in.readUTF();
-    value           = in.readNullUTF();
-    replacement     = in.readNullUTF();
-    when            = in.readNullUTF();
-    comment         = in.readNullUTF();
+    sortOrder = in.readShort();
+    type = in.readEnum(Type.class);
+    always = in.readBoolean();
+    action = in.readUTF();
+    header = in.readUTF();
+    value = in.readNullUTF();
+    replacement = in.readNullUTF();
+    when = in.readNullUTF();
+    comment = in.readNullUTF();
   }
 
   /**

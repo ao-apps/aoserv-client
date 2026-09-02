@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2008, 2009, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025  AO Industries, Inc.
+ * Copyright (C) 2008, 2009, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -191,9 +191,9 @@ public final class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
     if (result.wasNull()) {
       minimumDiskSpeedTarget = -1;
     }
-    extents         = result.getInt(pos++);
-    weight          = result.getShort(pos++);
-    weightTarget    = result.getShort(pos++);
+    extents = result.getInt(pos++);
+    weight = result.getShort(pos++);
+    weightTarget = result.getShort(pos++);
     verifyDayOfWeek = result.getInt(pos++);
     verifyHourOfDay = result.getInt(pos++);
   }

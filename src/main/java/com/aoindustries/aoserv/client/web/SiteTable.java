@@ -190,17 +190,16 @@ public final class SiteTable extends CachedTableIntegerKey<Site> {
         out.flush();
       }
       return true;
-      /*} else if (command.equalsIgnoreCase(Command.INITIALIZE_HTTPD_SITE_PASSWD_FILE)) {
-      if (Aosh.checkParamCount(Command.INITIALIZE_HTTPD_SITE_PASSWD_FILE, args, 4, err)) {
-        connector.getSimpleClient().initializeHttpdSitePasswdFile(
-          args[1],
-          args[2],
-          args[3],
-          args[4]
-        );
-      }
-      return true;
-     */
+      // } else if (command.equalsIgnoreCase(Command.INITIALIZE_HTTPD_SITE_PASSWD_FILE)) {
+      //   if (Aosh.checkParamCount(Command.INITIALIZE_HTTPD_SITE_PASSWD_FILE, args, 4, err)) {
+      //     connector.getSimpleClient().initializeHttpdSitePasswdFile(
+      //       args[1],
+      //       args[2],
+      //       args[3],
+      //       args[4]
+      //     );
+      //   }
+      //   return true;
     } else if (command.equalsIgnoreCase(Command.IS_SITE_NAME_AVAILABLE)) {
       if (Aosh.checkParamCount(Command.IS_SITE_NAME_AVAILABLE, args, 1, err)) {
         out.println(connector.getSimpleClient().isSiteNameAvailable(args[1]));

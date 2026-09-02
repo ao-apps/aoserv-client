@@ -152,15 +152,15 @@ public abstract class AoservConnector implements SchemaParent {
   // TODO: Use ao-concurrent per connector instance, stopping when connector is idle (when it stops cache listener due to inactivity)
   static final ExecutorService executorService = Executors.newCachedThreadPool();
 
-  /*private static final String[] profileTitles={
-    "Method",
-    "Parameter",
-    "Use Count",
-    "Total Time",
-    "Min Time",
-    "Avg Time",
-    "Max Time"
-  };*/
+  // private static final String[] profileTitles={
+  //   "Method",
+  //   "Parameter",
+  //   "Use Count",
+  //   "Total Time",
+  //   "Min Time",
+  //   "Avg Time",
+  //   "Max Time"
+  // };
 
   /**
    * @see  AoservConnector#getConnectorId()
@@ -786,12 +786,10 @@ public abstract class AoservConnector implements SchemaParent {
               AoservClientConfiguration.getSslTruststorePath(),
               AoservClientConfiguration.getSslTruststorePassword()
           );
-          /*
-        } else if ("http".equals(protocol)) {
-          connector=new HTTPConnector();
-        } else if ("https".equals(protocol)) {
-          connector=new HTTPSConnector();
-        */
+          // } else if ("http".equals(protocol)) {
+          //   connector=new HTTPConnector();
+          // } else if ("https".equals(protocol)) {
+          //   connector=new HTTPSConnector();
         } else {
           throw new ConfigurationException("Unknown protocol in aoserv.client.protocols: " + protocol);
         }

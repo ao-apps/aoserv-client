@@ -91,12 +91,12 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
   /**
    * @see com.aoindustries.aoserv.client.account.Account.Name
    */
-  public static final int ACCOUNTING =  0;
+  public static final int ACCOUNTING = 0;
 
   /**
    * @see java.lang.Boolean
    */
-  public static final int BOOLEAN =  1;
+  public static final int BOOLEAN = 1;
 
   // public static final int BYTE =  2; // byte/java.lang.Byte
   // public static final int CITY =  3; // java.lang.String
@@ -107,27 +107,27 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
    *
    * @see java.sql.Date
    */
-  public static final int DATE =  5;
+  public static final int DATE = 5;
 
   /**
    * @see java.math.BigDecimal
    */
-  public static final int DECIMAL_2 =  6;
+  public static final int DECIMAL_2 = 6;
 
   /**
    * @see java.math.BigDecimal
    */
-  public static final int DECIMAL_3 =  7;
+  public static final int DECIMAL_3 = 7;
 
   /**
    * @see java.lang.Double
    */
-  public static final int DOUBLE =  8;
+  public static final int DOUBLE = 8;
 
   /**
    * @see com.aoapps.net.Email
    */
-  public static final int EMAIL =  9;
+  public static final int EMAIL = 9;
 
   /**
    * @see java.lang.Integer
@@ -1426,18 +1426,18 @@ public final class Type extends GlobalObjectIntegerKey<Type> {
   @Override
   public void init(ResultSet result) throws SQLException {
     int pos = 1;
-    pkey         = result.getInt(pos++);
-    name         = result.getString(pos++);
+    pkey = result.getInt(pos++);
+    name = result.getString(pos++);
     sinceVersion = AoservProtocol.Version.getVersion(result.getString(pos++));
-    lastVersion  = AoservProtocol.Version.getVersion(result.getString(pos++));
+    lastVersion = AoservProtocol.Version.getVersion(result.getString(pos++));
   }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey         = in.readCompressedInt();
-    name         = in.readUTF().intern();
+    pkey = in.readCompressedInt();
+    name = in.readUTF().intern();
     sinceVersion = AoservProtocol.Version.getVersion(in.readUTF());
-    lastVersion  = AoservProtocol.Version.getVersion(in.readNullUTF());
+    lastVersion = AoservProtocol.Version.getVersion(in.readNullUTF());
   }
 
   @Override

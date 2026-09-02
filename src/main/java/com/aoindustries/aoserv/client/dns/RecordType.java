@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -54,15 +54,15 @@ public final class RecordType extends GlobalObjectStringKey<RecordType> {
    * The possible <code>DNSType</code>s.
    */
   public static final String
-      A     = "A",
-      AAAA  = "AAAA",
+      A = "A",
+      AAAA = "AAAA",
       CNAME = "CNAME",
-      CAA   = "CAA",
-      MX    = "MX",
-      NS    = "NS",
-      PTR   = "PTR",
-      SRV   = "SRV",
-      TXT   = "TXT";
+      CAA = "CAA",
+      MX = "MX",
+      NS = "NS",
+      PTR = "PTR",
+      SRV = "SRV",
+      TXT = "TXT";
 
   private String description;
   private boolean hasPriority;
@@ -203,14 +203,14 @@ public final class RecordType extends GlobalObjectStringKey<RecordType> {
 
   @Override
   public void init(ResultSet result) throws SQLException {
-    pkey         = result.getString("type");
-    description  = result.getString("description");
+    pkey = result.getString("type");
+    description = result.getString("description");
     hasPriority = result.getBoolean("has_priority");
-    hasWeight   = result.getBoolean("has_weight");
-    hasPort     = result.getBoolean("has_port");
-    hasFlag     = result.getBoolean("has_flag");
-    hasTag      = result.getBoolean("has_tag");
-    paramIp     = result.getBoolean("param_ip");
+    hasWeight = result.getBoolean("has_weight");
+    hasPort = result.getBoolean("has_port");
+    hasFlag = result.getBoolean("has_flag");
+    hasTag = result.getBoolean("has_tag");
+    paramIp = result.getBoolean("param_ip");
   }
 
   public boolean hasPriority() {
@@ -239,14 +239,14 @@ public final class RecordType extends GlobalObjectStringKey<RecordType> {
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey         = in.readUTF().intern();
-    description  = in.readUTF();
+    pkey = in.readUTF().intern();
+    description = in.readUTF();
     hasPriority = in.readBoolean();
-    hasWeight   = in.readBoolean();
-    hasPort     = in.readBoolean();
-    hasFlag     = in.readBoolean();
-    hasTag      = in.readBoolean();
-    paramIp     = in.readBoolean();
+    hasWeight = in.readBoolean();
+    hasPort = in.readBoolean();
+    hasFlag = in.readBoolean();
+    hasTag = in.readBoolean();
+    paramIp = in.readBoolean();
   }
 
   @Override

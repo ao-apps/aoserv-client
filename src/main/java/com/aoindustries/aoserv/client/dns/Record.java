@@ -52,23 +52,23 @@ public final class Record extends CachedObjectIntegerKey<Record> implements Remo
 
   static final int COLUMN_ID = 0;
   static final int COLUMN_ZONE = 1;
-  static final String COLUMN_ZONE_name        = "zone";
-  static final String COLUMN_DOMAIN_name      = "domain";
-  static final String COLUMN_TYPE_name        = "type";
-  static final String COLUMN_PRIORITY_name    = "priority";
-  static final String COLUMN_WEIGHT_name      = "weight";
-  static final String COLUMN_TAG_name         = "tag";
+  static final String COLUMN_ZONE_name = "zone";
+  static final String COLUMN_DOMAIN_name = "domain";
+  static final String COLUMN_TYPE_name = "type";
+  static final String COLUMN_PRIORITY_name = "priority";
+  static final String COLUMN_WEIGHT_name = "weight";
+  static final String COLUMN_TAG_name = "tag";
   static final String COLUMN_DESTINATION_name = "destination";
 
-  public static final int   NO_PRIORITY = -1;
-  public static final int   NO_WEIGHT   = -1;
-  public static final int   NO_PORT     = -1;
-  public static final short NO_FLAG     = -1;
-  public static final int   NO_TTL      = -1;
+  public static final int NO_PRIORITY = -1;
+  public static final int NO_WEIGHT = -1;
+  public static final int NO_PORT = -1;
+  public static final short NO_FLAG = -1;
+  public static final int NO_TTL = -1;
 
-  public static final String CAA_TAG_ISSUE        = "issue";
-  public static final String CAA_TAG_ISSUEWILD    = "issuewild";
-  public static final String CAA_TAG_IODEF        = "iodef";
+  public static final String CAA_TAG_ISSUE = "issue";
+  public static final String CAA_TAG_ISSUEWILD = "issuewild";
+  public static final String CAA_TAG_IODEF = "iodef";
   public static final String CAA_TAG_CONTACTEMAIL = "contactemail";
   public static final String CAA_TAG_CONTACTPHONE = "contactphone";
 
@@ -109,19 +109,19 @@ public final class Record extends CachedObjectIntegerKey<Record> implements Remo
       case 4:
         return priority == NO_PRIORITY ? null : priority;
       case 5:
-        return weight == NO_WEIGHT     ? null : weight;
+        return weight == NO_WEIGHT ? null : weight;
       case 6:
-        return port == NO_PORT         ? null : port;
+        return port == NO_PORT ? null : port;
       case 7:
-        return flag == NO_FLAG         ? null : flag;
+        return flag == NO_FLAG ? null : flag;
       case 8:
         return tag;
       case 9:
         return destination;
       case 10:
-        return dhcpAddress == -1      ? null : dhcpAddress;
+        return dhcpAddress == -1 ? null : dhcpAddress;
       case 11:
-        return ttl == NO_TTL          ? null : ttl;
+        return ttl == NO_TTL ? null : ttl;
       default:
         throw new IllegalArgumentException("Invalid index: " + i);
     }
@@ -215,36 +215,36 @@ public final class Record extends CachedObjectIntegerKey<Record> implements Remo
 
   @Override
   public void init(ResultSet result) throws SQLException {
-    pkey        = result.getInt("id");
-    zone        = result.getString("zone");
-    domain      = result.getString("domain");
-    type        = result.getString("type");
-    priority    = result.getInt("priority");
+    pkey = result.getInt("id");
+    zone = result.getString("zone");
+    domain = result.getString("domain");
+    type = result.getString("type");
+    priority = result.getInt("priority");
     if (result.wasNull()) {
       priority = NO_PRIORITY;
     }
-    weight      = result.getInt("weight");
+    weight = result.getInt("weight");
     if (result.wasNull()) {
       weight = NO_WEIGHT;
     }
-    port        = result.getInt("port");
+    port = result.getInt("port");
     if (result.wasNull()) {
       port = NO_PORT;
     }
-    flag        = result.getShort("flag");
+    flag = result.getShort("flag");
     if (result.wasNull()) {
       flag = NO_FLAG;
     }
     if (!isValidFlag(flag)) {
       throw new SQLException("Invalid flag: " + flag);
     }
-    tag         = result.getString("tag");
+    tag = result.getString("tag");
     destination = result.getString("destination");
     dhcpAddress = result.getInt("dhcpAddress");
     if (result.wasNull()) {
       dhcpAddress = -1;
     }
-    ttl         = result.getInt("ttl");
+    ttl = result.getInt("ttl");
     if (result.wasNull()) {
       ttl = NO_TTL;
     }
@@ -252,21 +252,21 @@ public final class Record extends CachedObjectIntegerKey<Record> implements Remo
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
-    pkey        = in.readCompressedInt();
-    zone        = in.readUTF().intern();
-    domain      = in.readUTF().intern();
-    type        = in.readUTF().intern();
-    priority    = in.readCompressedInt();
-    weight      = in.readCompressedInt();
-    port        = in.readCompressedInt();
-    flag        = in.readShort();
+    pkey = in.readCompressedInt();
+    zone = in.readUTF().intern();
+    domain = in.readUTF().intern();
+    type = in.readUTF().intern();
+    priority = in.readCompressedInt();
+    weight = in.readCompressedInt();
+    port = in.readCompressedInt();
+    flag = in.readShort();
     if (!isValidFlag(flag)) {
       throw new IOException("Invalid flag: " + flag);
     }
-    tag         = InternUtils.intern(in.readNullUTF());
+    tag = InternUtils.intern(in.readNullUTF());
     destination = in.readUTF().intern();
     dhcpAddress = in.readCompressedInt();
-    ttl         = in.readCompressedInt();
+    ttl = in.readCompressedInt();
   }
 
   @Override
@@ -409,16 +409,16 @@ public final class Record extends CachedObjectIntegerKey<Record> implements Remo
     if (priority != NO_PRIORITY) {
       sb.append(' ').append(priority);
     }
-    if (weight   != NO_WEIGHT) {
+    if (weight != NO_WEIGHT) {
       sb.append(' ').append(weight);
     }
-    if (port     != NO_PORT) {
+    if (port != NO_PORT) {
       sb.append(' ').append(port);
     }
-    if (flag     != NO_FLAG) {
+    if (flag != NO_FLAG) {
       sb.append(' ').append(flag);
     }
-    if (tag      != null) {
+    if (tag != null) {
       sb.append(' ').append(tag);
     }
     sb.append(' ').append(destination);

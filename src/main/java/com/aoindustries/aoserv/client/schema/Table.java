@@ -252,25 +252,24 @@ public final class Table extends GlobalObjectIntegerKey<Table> {
     // Do nothing
   }
 
-  /* Unused 2021-11-04?
-  public Table(
-    int id,
-    String name,
-    String sinceVersion,
-    String lastVersion,
-    String display,
-    boolean isPublic,
-    String description
-  ) {
-    this.pkey = id;
-    this.name = name;
-    this.sinceVersion = sinceVersion;
-    this.lastVersion = lastVersion;
-    this.display = display;
-    this.isPublic = isPublic;
-    this.description = description;
-  }
-   */
+  // Unused 2021-11-04?
+  // public Table(
+  //   int id,
+  //   String name,
+  //   String sinceVersion,
+  //   String lastVersion,
+  //   String display,
+  //   boolean isPublic,
+  //   String description
+  // ) {
+  //   this.pkey = id;
+  //   this.name = name;
+  //   this.sinceVersion = sinceVersion;
+  //   this.lastVersion = lastVersion;
+  //   this.display = display;
+  //   this.isPublic = isPublic;
+  //   this.description = description;
+  // }
 
   @Override
   protected Object getColumnImpl(int i) {
@@ -497,7 +496,7 @@ public final class Table extends GlobalObjectIntegerKey<Table> {
     // Build the rows
     List<Object[]> rows = new ArrayList<>(columns.size());
     for (Column column : columns) {
-      rows.add(new Object[]{
+      rows.add(new Object[] {
           column.getName(),
           column.getType(connector).getName(),
           Boolean.toString(column.isNullable()),

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -133,28 +133,28 @@ public final class IpAddress extends CachedObjectIntegerKey<IpAddress> {
   /**
    * Gets the arpa address to be used for reverse DNS queries.
    */
-  /*public static String getReverseDnsQuery(String ip) {
-    String arpa = getReverseDnsQueryCache.get(ip);
-    if (arpa == null) {
-      int bits = getIntForIpAddress(ip);
-      arpa =
-        new StringBuilder(29)
-        .append(bits&255)
-        .append('.')
-        .append((bits>>>8)&255)
-        .append('.')
-        .append((bits>>>16)&255)
-        .append('.')
-        .append((bits>>>24)&255)
-        .append(".in-addr.arpa.")
-        .toString();
-      String existingArpa = getReverseDnsQueryCache.putIfAbsent(ip, arpa);
-      if (existingArpa != null) {
-        arpa = existingArpa;
-      }
-    }
-    return arpa;
-  }*/
+  // public static String getReverseDnsQuery(String ip) {
+  //   String arpa = getReverseDnsQueryCache.get(ip);
+  //   if (arpa == null) {
+  //     int bits = getIntForIpAddress(ip);
+  //     arpa =
+  //       new StringBuilder(29)
+  //       .append(bits&255)
+  //       .append('.')
+  //       .append((bits>>>8)&255)
+  //       .append('.')
+  //       .append((bits>>>16)&255)
+  //       .append('.')
+  //       .append((bits>>>24)&255)
+  //       .append(".in-addr.arpa.")
+  //       .toString();
+  //     String existingArpa = getReverseDnsQueryCache.putIfAbsent(ip, arpa);
+  //     if (existingArpa != null) {
+  //       arpa = existingArpa;
+  //     }
+  //   }
+  //   return arpa;
+  // }
 
   private InetAddress inetAddress;
   private int device;

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -219,11 +219,11 @@ public final class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
       }
     }
 
-    /*for (PrivateFtpServer pfs : ao.getPrivateFtpServers()) {
-      if (pfs.pub_linux_server_group == pkey) {
-        reasons.add(new CannotRemoveReason<>("Used by private FTP server "+pfs.getRoot()+" on "+pfs.getLinuxServerGroup().getServer().getHostname(), pfs));
-      }
-    }*/
+    // for (PrivateFtpServer pfs : ao.getPrivateFtpServers()) {
+    //   if (pfs.pub_linux_server_group == pkey) {
+    //     reasons.add(new CannotRemoveReason<>("Used by private FTP server "+pfs.getRoot()+" on "+pfs.getLinuxServerGroup().getServer().getHostname(), pfs));
+    //   }
+    // }
 
     return reasons;
   }

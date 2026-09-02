@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -172,9 +172,9 @@ public final class Administrator extends CachedObjectUserNameKey<Administrator> 
    * Validates a password and returns a description of the problem.  If the
    * password is valid, then {@code null} is returned.
    */
-  /*public static String checkPasswordDescribe(String username, String password) {
-  return PasswordChecker.checkPasswordDescribe(username, password, true, false);
-  }*/
+  // public static String checkPasswordDescribe(String username, String password) {
+  //   return PasswordChecker.checkPasswordDescribe(username, password, true, false);
+  // }
 
   @Override
   public void disable(DisableLog dl) throws IOException, SQLException {

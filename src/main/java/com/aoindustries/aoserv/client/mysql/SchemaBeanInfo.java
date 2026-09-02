@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2018, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2018, 2020, 2021, 2022, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -35,7 +35,7 @@ public class SchemaBeanInfo extends SimpleBeanInfo {
 
   static {
     try {
-      properties = new PropertyDescriptor[]{
+      properties = new PropertyDescriptor[] {
           new PropertyDescriptor("Database",     Schema.class, "getDatabase",     null),
           new PropertyDescriptor("DatabaseUser", Schema.class, "getDatabaseUser", null),
           new PropertyDescriptor("Server",       Schema.class, "getServer",       null),
@@ -59,7 +59,7 @@ public class SchemaBeanInfo extends SimpleBeanInfo {
   @Override
   public BeanInfo[] getAdditionalBeanInfo() {
     try {
-      return new BeanInfo[]{
+      return new BeanInfo[] {
           Introspector.getBeanInfo(Schema.class.getSuperclass())
       };
     } catch (IntrospectionException err) {

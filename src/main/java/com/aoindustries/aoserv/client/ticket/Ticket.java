@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2025  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -402,7 +402,7 @@ public final class Ticket extends CachedObjectIntegerKey<Ticket> {
 
   public TicketType getTicketType() throws IOException, SQLException {
     TicketType ticketTypeObject = table.getConnector().getTicket().getTicketType().get(ticketType);
-    if (ticketTypeObject  == null) {
+    if (ticketTypeObject == null) {
       throw new SQLException("Unable to find TicketType: " + ticketType);
     }
     return ticketTypeObject;
@@ -500,10 +500,9 @@ public final class Ticket extends CachedObjectIntegerKey<Ticket> {
   // </editor-fold>
 
   // <editor-fold desc="Ticket Actions">
-  /*
-  public void actBounceTicket(Administrator administrator, String comments) throws IOException, SQLException {
-    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.BOUNCE_TICKET, pkey, administrator.getUsername_id(), comments);
-  }*/
+  // public void actBounceTicket(Administrator administrator, String comments) throws IOException, SQLException {
+  //   table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.BOUNCE_TICKET, pkey, administrator.getUsername_id(), comments);
+  // }
 
   public void actChangeAdminPriority(Priority priority, Administrator administrator, String comments) throws IOException, SQLException {
     table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.CHANGE_TICKET_ADMIN_PRIORITY,
@@ -603,25 +602,21 @@ public final class Ticket extends CachedObjectIntegerKey<Ticket> {
     table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.SET_TICKET_CONTACT_PHONE_NUMBERS, pkey, contactPhoneNumbers);
   }
 
-  /*
-  public void actCompleteTicket(Administrator administrator, String comments) throws IOException, SQLException {
-    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.COMPLETE_TICKET, pkey, administrator.getUsername_userId(), comments);
-  }*/
+  // public void actCompleteTicket(Administrator administrator, String comments) throws IOException, SQLException {
+  //   table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.COMPLETE_TICKET, pkey, administrator.getUsername_userId(), comments);
+  // }
 
-  /*
-  public void actHoldTicket(String comments) throws IOException, SQLException {
-    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.HOLD_TICKET, pkey, comments);
-  }*/
+  // public void actHoldTicket(String comments) throws IOException, SQLException {
+  //   table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.HOLD_TICKET, pkey, comments);
+  // }
 
-  /*
-  public void actKillTicket(Administrator administrator, String comments) throws IOException, SQLException {
-    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.KILL_TICKET, pkey, administrator.getUsername_userId(), comments);
-  }*/
+  // public void actKillTicket(Administrator administrator, String comments) throws IOException, SQLException {
+  //   table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.KILL_TICKET, pkey, administrator.getUsername_userId(), comments);
+  // }
 
-  /*
-  public void actReactivateTicket(Administrator administrator, String comments) throws IOException, SQLException {
-    table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.REACTIVATE_TICKET, pkey, administrator.getUsername_userId(), comments);
-  }*/
+  // public void actReactivateTicket(Administrator administrator, String comments) throws IOException, SQLException {
+  //   table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.REACTIVATE_TICKET, pkey, administrator.getUsername_userId(), comments);
+  // }
 
   public void actWorkEntry(Administrator administrator, String comments) throws IOException, SQLException {
     table.getConnector().requestUpdateInvalidating(true, AoservProtocol.CommandId.TICKET_WORK, pkey, administrator.getUsername_userId(), comments);

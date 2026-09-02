@@ -226,14 +226,13 @@ public final class Aosh extends ShellInterpreter {
               throw new RuntimeException("Command found, but command not processed.  command='" + command + "', table='" + table.getTableName() + '\'');
             }
           }
-          /*
-          for (int c=0;c<numTables;c++) {
-            AoservTable table = connector.getTable(c);
-            if (table.handleCommand(rawArgs, args, in, out, err, isInteractive())) {
-              done = true;
-              break;
-            }
-          }*/
+          // for (int c=0;c<numTables;c++) {
+          //   AoservTable table = connector.getTable(c);
+          //   if (table.handleCommand(rawArgs, args, in, out, err, isInteractive())) {
+          //     done = true;
+          //     break;
+          //   }
+          // }
           if (!done) {
             err.println("aosh: " + command + ": command not found");
             err.flush();

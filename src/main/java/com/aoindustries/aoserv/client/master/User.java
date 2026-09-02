@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -79,15 +79,15 @@ public final class User extends CachedObjectUserNameKey<User> {
   @Override
   public void init(ResultSet result) throws SQLException {
     try {
-      pkey                   = com.aoindustries.aoserv.client.account.User.Name.valueOf(result.getString(1));
-      isActive              = result.getBoolean(2);
-      canAccessAccounting  = result.getBoolean(3);
+      pkey = com.aoindustries.aoserv.client.account.User.Name.valueOf(result.getString(1));
+      isActive = result.getBoolean(2);
+      canAccessAccounting = result.getBoolean(3);
       canAccessBankAccount = result.getBoolean(4);
-      canInvalidateTables  = result.getBoolean(5);
-      canAccessAdminWeb   = result.getBoolean(6);
-      isDnsAdmin           = result.getBoolean(7);
-      isRouter              = result.getBoolean(8);
-      isClusterAdmin       = result.getBoolean(9);
+      canInvalidateTables = result.getBoolean(5);
+      canAccessAdminWeb = result.getBoolean(6);
+      isDnsAdmin = result.getBoolean(7);
+      isRouter = result.getBoolean(8);
+      isClusterAdmin = result.getBoolean(9);
     } catch (ValidationException e) {
       throw new SQLException(e);
     }
@@ -119,15 +119,15 @@ public final class User extends CachedObjectUserNameKey<User> {
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
     try {
-      pkey                    = com.aoindustries.aoserv.client.account.User.Name.valueOf(in.readUTF()).intern();
-      isActive               = in.readBoolean();
-      canAccessAccounting   = in.readBoolean();
+      pkey = com.aoindustries.aoserv.client.account.User.Name.valueOf(in.readUTF()).intern();
+      isActive = in.readBoolean();
+      canAccessAccounting = in.readBoolean();
       canAccessBankAccount = in.readBoolean();
-      canInvalidateTables   = in.readBoolean();
-      canAccessAdminWeb    = in.readBoolean();
-      isDnsAdmin            = in.readBoolean();
-      isRouter               = in.readBoolean();
-      isClusterAdmin        = in.readBoolean();
+      canInvalidateTables = in.readBoolean();
+      canAccessAdminWeb = in.readBoolean();
+      isDnsAdmin = in.readBoolean();
+      isRouter = in.readBoolean();
+      isClusterAdmin = in.readBoolean();
     } catch (ValidationException e) {
       throw new IOException(e);
     }

@@ -364,18 +364,17 @@ public final class Profile extends CachedObjectIntegerKey<Profile> {
     return isPrivate;
   }
 
-  /*
-  private static String makeEmailList(String[] addresses) {
-    StringBuilder sb = new StringBuilder();
-    int len = addresses.length;
-    for (int c = 0; c < len; c++) {
-      if (c > 0) {
-        sb.append(' ');
-      }
-      sb.append(addresses[c]);
-    }
-    return sb.toString();
-  }*/
+  // private static String makeEmailList(String[] addresses) {
+  //   StringBuilder sb = new StringBuilder();
+  //   int len = addresses.length;
+  //   for (int c = 0; c < len; c++) {
+  //     if (c > 0) {
+  //       sb.append(' ');
+  //     }
+  //     sb.append(addresses[c]);
+  //   }
+  //   return sb.toString();
+  // }
 
   @Override
   public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {

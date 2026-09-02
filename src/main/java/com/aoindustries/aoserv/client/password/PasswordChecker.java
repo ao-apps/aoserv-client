@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -283,24 +283,21 @@ public final class PasswordChecker {
     return results;
   }
 
-  /*
-   * TODO: Need to pull the values from ApplicationResources here based on locales.
-   *
-    public static String checkPasswordDescribe(String username, String password, boolean strict, boolean superLax) {
-    String[] results=checkPassword(username, password, strict, superLax);
-    StringBuilder sb = new StringBuilder();
-    for (int c=0;c<NUM_CATEGORIES;c++) {
-        String desc=results[c];
-        if (desc != null) {
-          if (sb.length()>0) {
-            sb.append('\n');
-          }
-          sb.append(categories[c]).append(": ").append(desc);
-        }
-    }
-    return sb.length() == 0 ? null : sb.toString();
-    }
-  */
+  // TODO: Need to pull the values from ApplicationResources here based on locales.
+  // public static String checkPasswordDescribe(String username, String password, boolean strict, boolean superLax) {
+  //   String[] results=checkPassword(username, password, strict, superLax);
+  //   StringBuilder sb = new StringBuilder();
+  //   for (int c=0;c<NUM_CATEGORIES;c++) {
+  //       String desc=results[c];
+  //       if (desc != null) {
+  //         if (sb.length()>0) {
+  //           sb.append('\n');
+  //         }
+  //         sb.append(categories[c]).append(": ").append(desc);
+  //       }
+  //   }
+  //   return sb.length() == 0 ? null : sb.toString();
+  // }
 
   @SuppressWarnings("ReturnOfCollectionOrArrayField")
   private static synchronized byte[] getDictionary() throws IOException {

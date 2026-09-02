@@ -70,33 +70,32 @@ public final class Column extends GlobalObjectIntegerKey<Column> {
     // Do nothing
   }
 
-  /* Unused 2021-11-04?
-  public Column(
-    int id,
-    String table,
-    String name,
-    String sinceVersion,
-    String lastVersion,
-    short index,
-    String type,
-    boolean isNullable,
-    boolean isUnique,
-    boolean isPublic,
-    String description
-  ) {
-    this.pkey = id;
-    this.table = table;
-    this.name = name;
-    this.sinceVersion = sinceVersion;
-    this.lastVersion = lastVersion;
-    this.index = index;
-    this.type = type;
-    this.isNullable = isNullable;
-    this.isUnique = isUnique;
-    this.isPublic = isPublic;
-    this.description = description;
-  }
-   */
+  // Unused 2021-11-04?
+  // public Column(
+  //   int id,
+  //   String table,
+  //   String name,
+  //   String sinceVersion,
+  //   String lastVersion,
+  //   short index,
+  //   String type,
+  //   boolean isNullable,
+  //   boolean isUnique,
+  //   boolean isPublic,
+  //   String description
+  // ) {
+  //   this.pkey = id;
+  //   this.table = table;
+  //   this.name = name;
+  //   this.sinceVersion = sinceVersion;
+  //   this.lastVersion = lastVersion;
+  //   this.index = index;
+  //   this.type = type;
+  //   this.isNullable = isNullable;
+  //   this.isUnique = isUnique;
+  //   this.isPublic = isPublic;
+  //   this.description = description;
+  // }
 
   @Override
   protected Object getColumnImpl(int i) {

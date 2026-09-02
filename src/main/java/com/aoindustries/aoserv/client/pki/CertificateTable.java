@@ -90,7 +90,7 @@ public final class CertificateTable extends CachedTableIntegerKey<Certificate> {
         List<Object[]> rows = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
           Certificate.Check status = results.get(i);
-          rows.add(new Object[]{
+          rows.add(new Object[] {
               status.getCheck(),
               status.getValue(),
               status.getAlertLevel(),
@@ -99,11 +99,11 @@ public final class CertificateTable extends CachedTableIntegerKey<Certificate> {
         }
         // Display as a table
         SQLUtility.printTable(
-            new String[]{"check", "value", "alert_level", "message"},
+            new String[] {"check", "value", "alert_level", "message"},
             rows,
             out,
             isInteractive,
-            new boolean[]{false, false, false, false}
+            new boolean[] {false, false, false, false}
         );
         out.flush();
       }

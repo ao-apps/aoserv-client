@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2012, 2016, 2017, 2018, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2012, 2016, 2017, 2018, 2020, 2021, 2022, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -61,11 +61,9 @@ public final class LimiterTable extends CachedTableIntegerKey<Limiter> {
     return getUniqueRow(Limiter.COLUMN_PKEY, pkey);
   }
 
-  /*
-  List<IpReputationLimiter> getIpReputationLimiters(NetDevice nd) throws IOException, SQLException {
-    return getIndexedRows(IpReputationLimiter.COLUMN_NET_DEVICE, nd.getPkey());
-  }
-   */
+  // List<IpReputationLimiter> getIpReputationLimiters(NetDevice nd) throws IOException, SQLException {
+  //   return getIndexedRows(IpReputationLimiter.COLUMN_NET_DEVICE, nd.getPkey());
+  // }
 
   @Override
   public Table.TableId getTableId() {

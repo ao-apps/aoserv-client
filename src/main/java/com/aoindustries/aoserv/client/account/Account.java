@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2024, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -198,11 +198,10 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
       return new Name(name);
     }
 
-    /*
-    public static Name valueOfInterned(String name) throws ValidationException {
-      Name existing = interned.get(name);
-      return existing != null ? existing : new Name(name).intern();
-    }*/
+    // public static Name valueOfInterned(String name) throws ValidationException {
+    //   Name existing = interned.get(name);
+    //   return existing != null ? existing : new Name(name).intern();
+    // }
 
     private String name;
     private String upperName;
@@ -1220,262 +1219,261 @@ public final class Account extends CachedObjectAccountNameKey<Account> implement
     if (true) {
       throw new com.aoapps.lang.exception.NotImplementedException("TODO: Finish implementation");
     }
-    /* TODO: Finish implementation:
-    if (from.equals(to)) {
-      throw new SQLException("Cannot move from Server "+from.getHostname()+" to Server "+to.getHostname()+": same Server");
-    }
-
-    AccountHost fromAccountHost = getAccountHost(from.getHost());
-    if (fromAccountHost == null) {
-      throw new SQLException("Unable to find AccountHost for Account="+pkey+" and Server="+from.getHostname());
-    }
-
-    // Grant the account access to the other server if it does not already have access
-    if (out != null) {
-      out.boldOn();
-      out.println("Adding Account Privileges");
-      out.attributesOff();
-      out.flush();
-    }
-    AccountHost toAccountHost = getAccountHost(to.getHost());
-    if (toAccountHost == null) {
-      if (out != null) {
-        out.print("    ");
-        out.println(to.getHostname());
-        out.flush();
-      }
-      addAccountHost(to.getHost());
-    }
-
-    // Add the LinuxServerGroups
-    if (out != null) {
-      out.boldOn();
-      out.println("Adding Linux Groups");
-      out.attributesOff();
-      out.flush();
-    }
-    List<GroupServer> fromLinuxServerGroups=new ArrayList<>();
-    List<GroupServer> toLinuxServerGroups=new SortedArrayList<>();
-    {
-      for (GroupServer lsg : table.getConnector().getLinux().getGroupServer().getRows()) {
-        Package pk=lsg.getLinuxGroup().getPackage();
-        if (pk != null && pk.getAccount_name().equals(pkey)) {
-          Server ao=lsg.getServer();
-          if (ao.equals(from)) {
-            fromLinuxServerGroups.add(lsg);
-          } else if (ao.equals(to)) {
-            toLinuxServerGroups.add(lsg);
-          }
-        }
-      }
-    }
-    for (GroupServer lsg : fromLinuxServerGroups) {
-      if (!toLinuxServerGroups.contains(lsg)) {
-        if (out != null) {
-          out.print("    ");
-          out.print(lsg.getLinuxGroup());
-          out.print(" to ");
-          out.println(to.getHostname());
-          out.flush();
-        }
-        lsg.getLinuxGroup().addLinuxServerGroup(to);
-      }
-    }
-
-    // Add the LinuxServerAccounts
-    if (out != null) {
-      out.boldOn();
-      out.println("Adding Linux Accounts");
-      out.attributesOff();
-      out.flush();
-    }
-    List<UserServer> fromLinuxServerAccounts=new ArrayList<>();
-    List<UserServer> toLinuxServerAccounts=new SortedArrayList<>();
-    {
-      List<UserServer> lsas=table.getConnector().getLinux().getUserServer().getRows();
-      for (UserServer lsa : lsas) {
-        Package pk=lsa.getLinuxAccount().getUsername().getPackage();
-        if (pk != null && pk.getAccount_name().equals(pkey)) {
-          Server ao=lsa.getServer();
-          if (ao.equals(from)) {
-            fromLinuxServerAccounts.add(lsa);
-          } else if (ao.equals(to)) {
-            toLinuxServerAccounts.add(lsa);
-          }
-        }
-      }
-    }
-    for (UserServer lsa : fromLinuxServerAccounts) {
-      if (!toLinuxServerAccounts.contains(lsa)) {
-        if (out != null) {
-          out.print("    ");
-          out.print(lsa.getLinuxAccount());
-          out.print(" to ");
-          out.println(to.getHostname());
-          out.flush();
-        }
-        lsa.getLinuxAccount().addLinuxServerAccount(to, lsa.getHome());
-      }
-    }
-
-    // Wait for Linux Account rebuild
-    if (out != null) {
-      out.boldOn();
-      out.println("Waiting for Linux Account rebuild");
-      out.attributesOff();
-      out.print("    ");
-      out.println(to.getHostname());
-      out.flush();
-    }
-    to.waitForLinuxAccountRebuild();
-
-    // Copy the home directory contents
-    if (out != null) {
-      out.boldOn();
-      out.println("Copying Home Directories");
-      out.attributesOff();
-      out.flush();
-    }
-    for (UserServer lsa : fromLinuxServerAccounts) {
-      if (!toLinuxServerAccounts.contains(lsa)) {
-        if (out != null) {
-          out.print("    ");
-          out.print(lsa.getLinuxAccount());
-          out.print(" to ");
-          out.print(to.getHostname());
-          out.print(": ");
-          out.flush();
-        }
-        long byteCount=lsa.copyHomeDirectory(to);
-        if (out != null) {
-          out.print(byteCount);
-          out.println(byteCount == 1?" byte":" bytes");
-          out.flush();
-        }
-      }
-    }
-
-    // Copy the cron tables
-    if (out != null) {
-      out.boldOn();
-      out.println("Copying Cron Tables");
-      out.attributesOff();
-      out.flush();
-    }
-    for (UserServer lsa : fromLinuxServerAccounts) {
-      if (!toLinuxServerAccounts.contains(lsa)) {
-        if (out != null) {
-          out.print("    ");
-          out.print(lsa.getLinuxAccount());
-          out.print(" to ");
-          out.print(to.getHostname());
-          out.print(": ");
-          out.flush();
-        }
-        String cronTable=lsa.getCronTable();
-        lsa.getLinuxAccount().getLinuxServerAccount(to).setCronTable(cronTable);
-        if (out != null) {
-          out.print(cronTable.length());
-          out.println(cronTable.length() == 1?" byte":" bytes");
-          out.flush();
-        }
-      }
-    }
-
-    // Copy the passwords
-    if (out != null) {
-      out.boldOn();
-      out.println("Copying Passwords");
-      out.attributesOff();
-      out.flush();
-    }
-    for (UserServer lsa : fromLinuxServerAccounts) {
-      if (!toLinuxServerAccounts.contains(lsa)) {
-        if (out != null) {
-          out.print("    ");
-          out.print(lsa.getLinuxAccount());
-          out.print(" to ");
-          out.println(to.getHostname());
-          out.flush();
-        }
-
-        lsa.copyPassword(lsa.getLinuxAccount().getLinuxServerAccount(to));
-      }
-    }
-
-    // Move IP Addresses
-    if (out != null) {
-      out.boldOn();
-      out.println("Moving IP Addresses");
-      out.attributesOff();
-      out.flush();
-    }
-    List<IpAddress> ips=table.getConnector().getNet().getIpAddress().getRows();
-    for (IpAddress ip : ips) {
-      InetAddress inetAddress = ip.getInetAddress();
-      if (
-        ip.isAlias()
-        && !inetAddress.isUnspecified()
-        && !ip.getDevice().getDeviceId().isLoopback()
-        && ip.getPackage().getAccount_name().equals(pkey)
-      ) {
-        if (out != null) {
-          out.print("    ");
-          out.println(ip);
-        }
-        ip.moveTo(to.getHost());
-      }
-    } // TODO: Continue development here
-
-
-
-    // Remove the LinuxServerAccounts
-    if (out != null) {
-      out.boldOn();
-      out.println("Removing Linux Accounts");
-      out.attributesOff();
-      out.flush();
-    }
-    for (UserServer lsa : fromLinuxServerAccounts) {
-      if (out != null) {
-        out.print("    ");
-        out.print(lsa.getLinuxAccount());
-        out.print(" on ");
-        out.println(from.getHostname());
-        out.flush();
-      }
-      lsa.remove();
-    }
-
-    // Remove the LinuxServerGroups
-    if (out != null) {
-      out.boldOn();
-      out.println("Removing Linux Groups");
-      out.attributesOff();
-      out.flush();
-    }
-    for (GroupServer lsg : fromLinuxServerGroups) {
-      if (out != null) {
-        out.print("    ");
-        out.print(lsg.getLinuxGroup());
-        out.print(" on ");
-        out.println(from.getHostname());
-        out.flush();
-      }
-      lsg.remove();
-    }
-
-    // Remove access to the old server
-    if (out != null) {
-      out.boldOn();
-      out.println("Removing Account Privileges");
-      out.attributesOff();
-      out.print("    ");
-      out.println(from.getHostname());
-      out.flush();
-    }
-    fromAccountHost.remove();
-     */
+    // TODO: Finish implementation:
+    // if (from.equals(to)) {
+    //   throw new SQLException("Cannot move from Server "+from.getHostname()+" to Server "+to.getHostname()+": same Server");
+    // }
+    //
+    // AccountHost fromAccountHost = getAccountHost(from.getHost());
+    // if (fromAccountHost == null) {
+    //   throw new SQLException("Unable to find AccountHost for Account="+pkey+" and Server="+from.getHostname());
+    // }
+    //
+    // // Grant the account access to the other server if it does not already have access
+    // if (out != null) {
+    //   out.boldOn();
+    //   out.println("Adding Account Privileges");
+    //   out.attributesOff();
+    //   out.flush();
+    // }
+    // AccountHost toAccountHost = getAccountHost(to.getHost());
+    // if (toAccountHost == null) {
+    //   if (out != null) {
+    //     out.print("    ");
+    //     out.println(to.getHostname());
+    //     out.flush();
+    //   }
+    //   addAccountHost(to.getHost());
+    // }
+    //
+    // // Add the LinuxServerGroups
+    // if (out != null) {
+    //   out.boldOn();
+    //   out.println("Adding Linux Groups");
+    //   out.attributesOff();
+    //   out.flush();
+    // }
+    // List<GroupServer> fromLinuxServerGroups=new ArrayList<>();
+    // List<GroupServer> toLinuxServerGroups=new SortedArrayList<>();
+    // {
+    //   for (GroupServer lsg : table.getConnector().getLinux().getGroupServer().getRows()) {
+    //     Package pk=lsg.getLinuxGroup().getPackage();
+    //     if (pk != null && pk.getAccount_name().equals(pkey)) {
+    //       Server ao=lsg.getServer();
+    //       if (ao.equals(from)) {
+    //         fromLinuxServerGroups.add(lsg);
+    //       } else if (ao.equals(to)) {
+    //         toLinuxServerGroups.add(lsg);
+    //       }
+    //     }
+    //   }
+    // }
+    // for (GroupServer lsg : fromLinuxServerGroups) {
+    //   if (!toLinuxServerGroups.contains(lsg)) {
+    //     if (out != null) {
+    //       out.print("    ");
+    //       out.print(lsg.getLinuxGroup());
+    //       out.print(" to ");
+    //       out.println(to.getHostname());
+    //       out.flush();
+    //     }
+    //     lsg.getLinuxGroup().addLinuxServerGroup(to);
+    //   }
+    // }
+    //
+    // // Add the LinuxServerAccounts
+    // if (out != null) {
+    //   out.boldOn();
+    //   out.println("Adding Linux Accounts");
+    //   out.attributesOff();
+    //   out.flush();
+    // }
+    // List<UserServer> fromLinuxServerAccounts=new ArrayList<>();
+    // List<UserServer> toLinuxServerAccounts=new SortedArrayList<>();
+    // {
+    //   List<UserServer> lsas=table.getConnector().getLinux().getUserServer().getRows();
+    //   for (UserServer lsa : lsas) {
+    //     Package pk=lsa.getLinuxAccount().getUsername().getPackage();
+    //     if (pk != null && pk.getAccount_name().equals(pkey)) {
+    //       Server ao=lsa.getServer();
+    //       if (ao.equals(from)) {
+    //         fromLinuxServerAccounts.add(lsa);
+    //       } else if (ao.equals(to)) {
+    //         toLinuxServerAccounts.add(lsa);
+    //       }
+    //     }
+    //   }
+    // }
+    // for (UserServer lsa : fromLinuxServerAccounts) {
+    //   if (!toLinuxServerAccounts.contains(lsa)) {
+    //     if (out != null) {
+    //       out.print("    ");
+    //       out.print(lsa.getLinuxAccount());
+    //       out.print(" to ");
+    //       out.println(to.getHostname());
+    //       out.flush();
+    //     }
+    //     lsa.getLinuxAccount().addLinuxServerAccount(to, lsa.getHome());
+    //   }
+    // }
+    //
+    // // Wait for Linux Account rebuild
+    // if (out != null) {
+    //   out.boldOn();
+    //   out.println("Waiting for Linux Account rebuild");
+    //   out.attributesOff();
+    //   out.print("    ");
+    //   out.println(to.getHostname());
+    //   out.flush();
+    // }
+    // to.waitForLinuxAccountRebuild();
+    //
+    // // Copy the home directory contents
+    // if (out != null) {
+    //   out.boldOn();
+    //   out.println("Copying Home Directories");
+    //   out.attributesOff();
+    //   out.flush();
+    // }
+    // for (UserServer lsa : fromLinuxServerAccounts) {
+    //   if (!toLinuxServerAccounts.contains(lsa)) {
+    //     if (out != null) {
+    //       out.print("    ");
+    //       out.print(lsa.getLinuxAccount());
+    //       out.print(" to ");
+    //       out.print(to.getHostname());
+    //       out.print(": ");
+    //       out.flush();
+    //     }
+    //     long byteCount=lsa.copyHomeDirectory(to);
+    //     if (out != null) {
+    //       out.print(byteCount);
+    //       out.println(byteCount == 1?" byte":" bytes");
+    //       out.flush();
+    //     }
+    //   }
+    // }
+    //
+    // // Copy the cron tables
+    // if (out != null) {
+    //   out.boldOn();
+    //   out.println("Copying Cron Tables");
+    //   out.attributesOff();
+    //   out.flush();
+    // }
+    // for (UserServer lsa : fromLinuxServerAccounts) {
+    //   if (!toLinuxServerAccounts.contains(lsa)) {
+    //     if (out != null) {
+    //       out.print("    ");
+    //       out.print(lsa.getLinuxAccount());
+    //       out.print(" to ");
+    //       out.print(to.getHostname());
+    //       out.print(": ");
+    //       out.flush();
+    //     }
+    //     String cronTable=lsa.getCronTable();
+    //     lsa.getLinuxAccount().getLinuxServerAccount(to).setCronTable(cronTable);
+    //     if (out != null) {
+    //       out.print(cronTable.length());
+    //       out.println(cronTable.length() == 1?" byte":" bytes");
+    //       out.flush();
+    //     }
+    //   }
+    // }
+    //
+    // // Copy the passwords
+    // if (out != null) {
+    //   out.boldOn();
+    //   out.println("Copying Passwords");
+    //   out.attributesOff();
+    //   out.flush();
+    // }
+    // for (UserServer lsa : fromLinuxServerAccounts) {
+    //   if (!toLinuxServerAccounts.contains(lsa)) {
+    //     if (out != null) {
+    //       out.print("    ");
+    //       out.print(lsa.getLinuxAccount());
+    //       out.print(" to ");
+    //       out.println(to.getHostname());
+    //       out.flush();
+    //     }
+    //
+    //     lsa.copyPassword(lsa.getLinuxAccount().getLinuxServerAccount(to));
+    //   }
+    // }
+    //
+    // // Move IP Addresses
+    // if (out != null) {
+    //   out.boldOn();
+    //   out.println("Moving IP Addresses");
+    //   out.attributesOff();
+    //   out.flush();
+    // }
+    // List<IpAddress> ips=table.getConnector().getNet().getIpAddress().getRows();
+    // for (IpAddress ip : ips) {
+    //   InetAddress inetAddress = ip.getInetAddress();
+    //   if (
+    //     ip.isAlias()
+    //     && !inetAddress.isUnspecified()
+    //     && !ip.getDevice().getDeviceId().isLoopback()
+    //     && ip.getPackage().getAccount_name().equals(pkey)
+    //   ) {
+    //     if (out != null) {
+    //       out.print("    ");
+    //       out.println(ip);
+    //     }
+    //     ip.moveTo(to.getHost());
+    //   }
+    // } // TODO: Continue development here
+    //
+    //
+    //
+    // // Remove the LinuxServerAccounts
+    // if (out != null) {
+    //   out.boldOn();
+    //   out.println("Removing Linux Accounts");
+    //   out.attributesOff();
+    //   out.flush();
+    // }
+    // for (UserServer lsa : fromLinuxServerAccounts) {
+    //   if (out != null) {
+    //     out.print("    ");
+    //     out.print(lsa.getLinuxAccount());
+    //     out.print(" on ");
+    //     out.println(from.getHostname());
+    //     out.flush();
+    //   }
+    //   lsa.remove();
+    // }
+    //
+    // // Remove the LinuxServerGroups
+    // if (out != null) {
+    //   out.boldOn();
+    //   out.println("Removing Linux Groups");
+    //   out.attributesOff();
+    //   out.flush();
+    // }
+    // for (GroupServer lsg : fromLinuxServerGroups) {
+    //   if (out != null) {
+    //     out.print("    ");
+    //     out.print(lsg.getLinuxGroup());
+    //     out.print(" on ");
+    //     out.println(from.getHostname());
+    //     out.flush();
+    //   }
+    //   lsg.remove();
+    // }
+    //
+    // // Remove access to the old server
+    // if (out != null) {
+    //   out.boldOn();
+    //   out.println("Removing Account Privileges");
+    //   out.attributesOff();
+    //   out.print("    ");
+    //   out.println(from.getHostname());
+    //   out.flush();
+    // }
+    // fromAccountHost.remove();
   }
 
   @Override

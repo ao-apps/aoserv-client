@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025  AO Industries, Inc.
+ * Copyright (C) 2002-2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -75,7 +75,7 @@ public final class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
   public static final long DEFAULT_MODE = 02770;
 
   public static long[] getValidModes() {
-    return new long[]{
+    return new long[] {
         0700,
         0750,
         0770,
