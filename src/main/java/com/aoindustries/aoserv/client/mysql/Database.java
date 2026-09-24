@@ -261,6 +261,7 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
   public static final String
       CENTOS_JDBC_DRIVER = "com.mysql.jdbc.Driver",
       CENTOS_7_JDBC_DRIVER = "com.mysql.cj.jdbc.Driver",
+      DEBIAN_13_JDBC_DRIVER = CENTOS_7_JDBC_DRIVER,
       ROCKY_9_JDBC_DRIVER = CENTOS_7_JDBC_DRIVER;
 
   /**
@@ -505,6 +506,8 @@ public final class Database extends CachedObjectIntegerKey<Database> implements 
         return CENTOS_JDBC_DRIVER;
       case OperatingSystemVersion.CENTOS_7_X86_64:
         return CENTOS_7_JDBC_DRIVER;
+      case OperatingSystemVersion.DEBIAN_13_X86_64:
+        return DEBIAN_13_JDBC_DRIVER;
       case OperatingSystemVersion.ROCKY_9_X86_64:
         return ROCKY_9_JDBC_DRIVER;
       default:

@@ -56,6 +56,8 @@ public final class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
   public static final String VERSION_7 = "7";
   public static final String VERSION_7_DOM0 = "7.dom0";
   public static final String VERSION_9 = "9";
+  public static final String VERSION_13 = "13";
+  public static final String VERSION_13_DOM0 = "13.dom0";
   public static final String VERSION_2006_0 = "2006.0";
   public static final String VERSION_ES_4 = "ES 4";
 
@@ -64,6 +66,8 @@ public final class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
   public static final int CENTOS_5_I686_AND_X86_64 = 67;
   public static final int CENTOS_7_DOM0_X86_64 = 69;
   public static final int CENTOS_7_X86_64 = 70;
+  public static final int DEBIAN_13_DOM0_X86_64 = 72;
+  public static final int DEBIAN_13_X86_64 = 73;
   public static final int ROCKY_9_X86_64 = 71;
 
   private String operatingSystem;
@@ -231,6 +235,7 @@ public final class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
       case CENTOS_5_DOM0_I686:
       case CENTOS_5_DOM0_X86_64:
       case CENTOS_7_DOM0_X86_64:
+      case DEBIAN_13_DOM0_X86_64:
         return null;
       default:
         throw new AssertionError("Unexpected OperatingSystemVersion: " + osv);
@@ -271,6 +276,7 @@ public final class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
       case CENTOS_5_DOM0_I686:
       case CENTOS_5_DOM0_X86_64:
       case CENTOS_7_DOM0_X86_64:
+      case DEBIAN_13_DOM0_X86_64:
         return null;
       default:
         throw new AssertionError("Unexpected OperatingSystemVersion: " + osv);
@@ -311,6 +317,7 @@ public final class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
       case CENTOS_5_DOM0_I686:
       case CENTOS_5_DOM0_X86_64:
       case CENTOS_7_DOM0_X86_64:
+      case DEBIAN_13_DOM0_X86_64:
         return null;
       default:
         throw new AssertionError("Unexpected OperatingSystemVersion: " + osv);
