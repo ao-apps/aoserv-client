@@ -182,12 +182,12 @@ public class TcpConnector extends AoservConnector {
             if (isImmediateFail(err)) {
               runMore = false;
             } else {
-              getLogger().log(Level.INFO, null, err);
+              getLogger().log(Level.INFO, "TODO: message here", err);
               try {
                 // System.err.println("DEBUG: TcpConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Sleeping after exception");
                 sleep(getFastRandom().nextInt(50000) + 10000); // Wait between 10 and 60 seconds
               } catch (InterruptedException err2) {
-                getLogger().log(Level.WARNING, null, err2);
+                getLogger().log(Level.WARNING, "TODO: message here", err2);
                 // Restore the interrupted status
                 Thread.currentThread().interrupt();
               }
@@ -196,12 +196,12 @@ public class TcpConnector extends AoservConnector {
             if (isImmediateFail(t)) {
               runMore = false;
             } else {
-              getLogger().log(Level.SEVERE, null, t);
+              getLogger().log(Level.SEVERE, "TODO: message here", t);
               try {
                 // System.err.println("DEBUG: TcpConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Sleeping after exception");
                 sleep(getFastRandom().nextInt(50000) + 10000); // Wait between 10 and 60 seconds
               } catch (InterruptedException err2) {
-                getLogger().log(Level.WARNING, null, err2);
+                getLogger().log(Level.WARNING, "TODO: message here", err2);
                 // Restore the interrupted status
                 Thread.currentThread().interrupt();
               }
@@ -284,7 +284,7 @@ public class TcpConnector extends AoservConnector {
   @Override
   protected final SocketConnection getConnection(int maxConnections) throws InterruptedIOException, IOException {
     if (SwingUtilities.isEventDispatchThread()) {
-      getLogger().log(Level.WARNING, null, new LocalizedIllegalStateException(RESOURCES, "getConnection.isEventDispatchThread"));
+      getLogger().log(Level.WARNING, "TODO: message here", new LocalizedIllegalStateException(RESOURCES, "getConnection.isEventDispatchThread"));
     }
     startCacheMonitor();
     SocketConnection conn = pool.getConnection(maxConnections);

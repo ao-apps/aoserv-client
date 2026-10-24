@@ -796,7 +796,7 @@ public abstract class AoservConnector implements SchemaParent {
 
         return connector;
       } catch (ConfigurationException err) {
-        Logger.getLogger(AoservConnector.class.getName()).log(Level.SEVERE, null, err);
+        Logger.getLogger(AoservConnector.class.getName()).log(Level.SEVERE, "TODO: message here", err);
       }
     }
     throw new ConfigurationException("Unable to connect using any of the available protocols.");

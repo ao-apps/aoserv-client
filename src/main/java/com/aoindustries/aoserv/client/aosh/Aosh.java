@@ -381,7 +381,7 @@ public final class Aosh extends ShellInterpreter {
       Aosh aosh = new Aosh(connector, new BufferedReader(new InputStreamReader(System.in)), out, err, null, args);
       aosh.run();
     } catch (Throwable t) {
-      logger.log(Level.FINE, null, t);
+      logger.log(Level.FINE, "TODO: message here", t);
       err.println("aosh: unable to connect: " + t.getMessage());
       err.flush();
       System.exit(SysExits.getSysExit(t)); // TODO: Review other main methods

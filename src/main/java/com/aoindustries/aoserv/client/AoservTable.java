@@ -177,11 +177,11 @@ public abstract class AoservTable<K, V extends AoservObject<K, V>> implements It
             }
           }
         } catch (InterruptedException e) {
-          connector.getLogger().log(Level.WARNING, null, e);
+          connector.getLogger().log(Level.WARNING, "TODO: message here", e);
           // Restore the interrupted status
           Thread.currentThread().interrupt();
         } catch (Throwable t) {
-          connector.getLogger().log(Level.SEVERE, null, t);
+          connector.getLogger().log(Level.SEVERE, "TODO: message here", t);
         }
       }
     }
