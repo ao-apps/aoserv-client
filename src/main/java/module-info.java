@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2021, 2022, 2023  AO Industries, Inc.
+ * Copyright (C) 2021, 2022, 2023, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -21,6 +21,19 @@
  * along with aoserv-client.  If not, see <https://www.gnu.org/licenses/>.
  */
 module com.aoindustries.aoserv.client {
+  // Direct
+  requires com.aoapps.collections; // <groupId>com.aoapps</groupId><artifactId>ao-collections</artifactId>
+  requires com.aoapps.hodgepodge; // <groupId>com.aoapps</groupId><artifactId>ao-hodgepodge</artifactId>
+  requires com.aoapps.lang; // <groupId>com.aoapps</groupId><artifactId>ao-lang</artifactId>
+  requires com.aoapps.net.types; // <groupId>com.aoapps</groupId><artifactId>ao-net-types</artifactId>
+  requires com.aoapps.security; // <groupId>com.aoapps</groupId><artifactId>ao-security</artifactId>
+  requires com.aoapps.sql; // <groupId>com.aoapps</groupId><artifactId>ao-sql</artifactId>
+  requires static com.aoapps.tlds; // <groupId>com.aoapps</groupId><artifactId>ao-tlds</artifactId>
+  // Java SE
+  requires java.desktop;
+  requires java.logging;
+  requires java.sql;
+
   exports com.aoindustries.aoserv.client;
   exports com.aoindustries.aoserv.client.account;
   exports com.aoindustries.aoserv.client.accounting;
@@ -55,16 +68,4 @@ module com.aoindustries.aoserv.client {
   exports com.aoindustries.aoserv.client.web;
   exports com.aoindustries.aoserv.client.web.jboss;
   exports com.aoindustries.aoserv.client.web.tomcat;
-  // Direct
-  requires com.aoapps.collections; // <groupId>com.aoapps</groupId><artifactId>ao-collections</artifactId>
-  requires com.aoapps.hodgepodge; // <groupId>com.aoapps</groupId><artifactId>ao-hodgepodge</artifactId>
-  requires com.aoapps.lang; // <groupId>com.aoapps</groupId><artifactId>ao-lang</artifactId>
-  requires com.aoapps.net.types; // <groupId>com.aoapps</groupId><artifactId>ao-net-types</artifactId>
-  requires com.aoapps.security; // <groupId>com.aoapps</groupId><artifactId>ao-security</artifactId>
-  requires com.aoapps.sql; // <groupId>com.aoapps</groupId><artifactId>ao-sql</artifactId>
-  requires static com.aoapps.tlds; // <groupId>com.aoapps</groupId><artifactId>ao-tlds</artifactId>
-  // Java SE
-  requires java.desktop;
-  requires java.logging;
-  requires java.sql;
 }
