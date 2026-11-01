@@ -737,7 +737,7 @@ public final class Server extends CachedObjectIntegerKey<Server> {
   /**
    * The maximum length of the name.
    *
-   * @deprecated  Please use {@link User.Name#MAX_LENGTH} instead.
+   * @deprecated  Please use {@link Server.Name#MAX_LENGTH} instead.
    */
   @Deprecated
   public static final int MAX_SERVER_NAME_LENGTH = Name.MAX_LENGTH;
