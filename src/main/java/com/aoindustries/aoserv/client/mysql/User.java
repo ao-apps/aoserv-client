@@ -212,7 +212,7 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
   /**
    * The maximum length of a MySQL username.
    *
-   * @deprecated  Please use {@link Name#MAX_LENGTH} instead.
+   * @deprecated  Please use {@link User.Name#MAX_LENGTH} instead.
    */
   @Deprecated
   public static final int MAX_USERNAME_LENGTH = Name.MYSQL_NAME_MAX_LENGTH;
