@@ -53,6 +53,11 @@ binding.setVariable('upstreamProjects', [
   '../oss/jakartaee-web-profile-bom', // <groupId>com.aoapps</groupId><artifactId>jakartaee-web-profile-bom</artifactId>
 ])
 
+// This project is packaged and deployed via RPM / Debian packages.
+// Also audit per-platform release branches on each build.
+// Note: matches docs-ao/**/dists.jspf:aoservClientDists
+binding.setVariable('scmAdditionalAuditBranches', ['el7', 'el9', 'deb13'])
+
 /******************************************************************************************
  *                                                                                        *
  * Everything below this line is identical for all projects, except the copied matrix     *
