@@ -517,7 +517,9 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       RTKIT,
       SSSD,
       SYSTEMD_COREDUMP,
-      SYSTEMD_OOM;
+      SYSTEMD_OOM,
+      // Valkey
+      VALKEY;
 
   /**
    * @deprecated  User httpd no longer used.
@@ -603,6 +605,8 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       SSSD = Name.valueOf("sssd");
       SYSTEMD_COREDUMP = Name.valueOf("systemd-coredump");
       SYSTEMD_OOM = Name.valueOf("systemd-oom");
+      // Valkey
+      VALKEY = Name.valueOf("valkey");
       // User httpd no longer used.
       HTTPD = Name.valueOf("httpd");
     } catch (ValidationException e) {
