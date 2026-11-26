@@ -357,7 +357,6 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
       STAPSYS,
       STAPDEV,
       // Rocky 9
-      FLATPAK,
       GEOCLUE,
       KVM,
       PIPEWIRE,
@@ -472,7 +471,6 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
       STAPSYS = Name.valueOf("stapsys");
       STAPDEV = Name.valueOf("stapdev");
       // Rocky 9
-      FLATPAK = Name.valueOf("flatpak");
       GEOCLUE = Name.valueOf("geoclue");
       KVM = Name.valueOf("kvm");
       PIPEWIRE = Name.valueOf("pipewire");
