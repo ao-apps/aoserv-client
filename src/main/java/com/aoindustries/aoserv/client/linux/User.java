@@ -511,8 +511,6 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       // SonarQube
       SONARQUBE,
       // Rocky 9
-      PIPEWIRE,
-      RTKIT,
       SSSD,
       SYSTEMD_COREDUMP,
       SYSTEMD_OOM,
@@ -596,8 +594,6 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       // SonarQube
       SONARQUBE = Name.valueOf("sonarqube");
       // Rocky 9
-      PIPEWIRE = Name.valueOf("pipewire");
-      RTKIT = Name.valueOf("rtkit");
       SSSD = Name.valueOf("sssd");
       SYSTEMD_COREDUMP = Name.valueOf("systemd-coredump");
       SYSTEMD_OOM = Name.valueOf("systemd-oom");

@@ -358,9 +358,7 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
       STAPDEV,
       // Rocky 9
       KVM,
-      PIPEWIRE,
       RENDER,
-      RTKIT,
       SGX,
       SSSD,
       SYSTEMD_COREDUMP,
@@ -471,9 +469,7 @@ public final class Group extends CachedObjectGroupNameKey<Group> implements Remo
       STAPDEV = Name.valueOf("stapdev");
       // Rocky 9
       KVM = Name.valueOf("kvm");
-      PIPEWIRE = Name.valueOf("pipewire");
       RENDER = Name.valueOf("render");
-      RTKIT = Name.valueOf("rtkit");
       SGX = Name.valueOf("sgx");
       SSSD = Name.valueOf("sssd");
       SYSTEMD_COREDUMP = Name.valueOf("systemd-coredump");
