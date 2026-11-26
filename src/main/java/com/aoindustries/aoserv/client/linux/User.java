@@ -511,7 +511,6 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       // SonarQube
       SONARQUBE,
       // Rocky 9
-      GEOCLUE,
       PIPEWIRE,
       RTKIT,
       SSSD,
@@ -597,7 +596,6 @@ public final class User extends CachedObjectUserNameKey<User> implements Passwor
       // SonarQube
       SONARQUBE = Name.valueOf("sonarqube");
       // Rocky 9
-      GEOCLUE = Name.valueOf("geoclue");
       PIPEWIRE = Name.valueOf("pipewire");
       RTKIT = Name.valueOf("rtkit");
       SSSD = Name.valueOf("sssd");
